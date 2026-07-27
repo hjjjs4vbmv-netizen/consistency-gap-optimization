@@ -220,12 +220,107 @@ class AdaptiveSignalWindow:
         self.loss_count = loss_count
 
 
+class LocalTBinSignalWindow:
+    """Accumulate raw pair-loss sums/counts for equal-probability t bins."""
+
+    def __init__(self, update_kimg, num_bins, start_nimg=0):
+        self.update_nimg = adaptive_update_interval_nimg(update_kimg)
+        if isinstance(num_bins, bool) or int(num_bins) != num_bins or int(num_bins) < 2:
+            raise ValueError(f'num_bins must be an integer >= 2, got {num_bins}')
+        self.num_bins = int(num_bins)
+        start_nimg = int(start_nimg)
+        if start_nimg < 0:
+            raise ValueError(f'start_nimg must be non-negative, got {start_nimg}')
+        self.next_update_nimg = (start_nimg // self.update_nimg + 1) * self.update_nimg
+        self.loss_sums = [0.0] * self.num_bins
+        self.loss_counts = [0] * self.num_bins
+
+    def add(self, loss_sums, loss_counts):
+        if len(loss_sums) != self.num_bins or len(loss_counts) != self.num_bins:
+            raise ValueError('local t-bin signal size mismatch')
+        for index in range(self.num_bins):
+            self.loss_sums[index] += float(loss_sums[index])
+            self.loss_counts[index] += int(loss_counts[index])
+
+    def pop_if_due(self, cur_nimg):
+        cur_nimg = int(cur_nimg)
+        if cur_nimg < self.next_update_nimg:
+            return None
+        result = (list(self.loss_sums), list(self.loss_counts))
+        self.loss_sums = [0.0] * self.num_bins
+        self.loss_counts = [0] * self.num_bins
+        while self.next_update_nimg <= cur_nimg:
+            self.next_update_nimg += self.update_nimg
+        return result
+
+    def state_dict(self):
+        return {
+            'kind': 'local_tbin',
+            'update_nimg': self.update_nimg,
+            'next_update_nimg': self.next_update_nimg,
+            'num_bins': self.num_bins,
+            'loss_sums': list(self.loss_sums),
+            'loss_counts': list(self.loss_counts),
+        }
+
+    def load_state_dict(self, state):
+        if not isinstance(state, dict):
+            raise ValueError('local t-bin signal window state must be a dict')
+        required = ('update_nimg', 'next_update_nimg', 'num_bins', 'loss_sums', 'loss_counts')
+        missing = [name for name in required if name not in state]
+        if missing:
+            raise ValueError(
+                f'local t-bin signal window state missing required fields: {", ".join(missing)}'
+            )
+        update_nimg = int(state['update_nimg'])
+        next_update_nimg = int(state['next_update_nimg'])
+        num_bins = int(state['num_bins'])
+        loss_sums = [float(value) for value in state['loss_sums']]
+        loss_counts = [int(value) for value in state['loss_counts']]
+        if update_nimg != self.update_nimg:
+            raise ValueError(
+                f'local t-bin window interval mismatch: checkpoint={update_nimg}, '
+                f'current={self.update_nimg}'
+            )
+        if num_bins != self.num_bins or len(loss_sums) != num_bins or len(loss_counts) != num_bins:
+            raise ValueError('local t-bin window bin count mismatch')
+        if next_update_nimg <= 0 or next_update_nimg % self.update_nimg != 0:
+            raise ValueError(
+                f'invalid local t-bin window next_update_nimg: {next_update_nimg}'
+            )
+        if any(count < 0 for count in loss_counts):
+            raise ValueError('local t-bin window counts must be non-negative')
+        self.next_update_nimg = next_update_nimg
+        self.loss_sums = loss_sums
+        self.loss_counts = loss_counts
+
+
 def gather_adaptive_signal_window_state(window, device):
     """Collect each rank's local adaptive-window state for a rank-0 checkpoint."""
     local_state = window.state_dict()
     world_size = dist.get_world_size()
     if world_size == 1:
         rank_states = [local_state]
+    elif isinstance(window, LocalTBinSignalWindow):
+        local_values = torch.tensor(
+            [window.next_update_nimg, *window.loss_sums, *window.loss_counts],
+            dtype=torch.float64,
+            device=device,
+        )
+        gathered_values = [torch.empty_like(local_values) for _ in range(world_size)]
+        torch.distributed.all_gather(gathered_values, local_values)
+        rank_states = []
+        for values in gathered_values:
+            sums_start = 1
+            counts_start = sums_start + window.num_bins
+            rank_states.append({
+                'kind': 'local_tbin',
+                'update_nimg': window.update_nimg,
+                'next_update_nimg': int(values[0]),
+                'num_bins': window.num_bins,
+                'loss_sums': [float(value) for value in values[sums_start:counts_start]],
+                'loss_counts': [int(value) for value in values[counts_start:]],
+            })
     else:
         local_values = torch.tensor(
             [window.next_update_nimg, window.loss_sum, window.loss_count],
@@ -270,6 +365,23 @@ def globally_average_adaptive_loss(loss_sum, loss_count, device):
         torch.distributed.all_reduce(totals)
     total_count = float(totals[1])
     return float(totals[0] / total_count) if total_count > 0 else float('nan')
+
+
+def globally_average_local_tbin_loss(loss_sums, loss_counts, device):
+    """Return per-bin raw-loss means, sample weighted across DDP ranks."""
+    if len(loss_sums) != len(loss_counts):
+        raise ValueError('local t-bin sums/counts size mismatch')
+    totals = torch.tensor(
+        [*loss_sums, *loss_counts], dtype=torch.float64, device=device
+    )
+    if dist.get_world_size() > 1:
+        torch.distributed.all_reduce(totals)
+    num_bins = len(loss_sums)
+    means = []
+    for index in range(num_bins):
+        count = float(totals[num_bins + index])
+        means.append(float(totals[index] / count) if count > 0 else None)
+    return means
 
 
 def globally_average_runtime_pairs(metric_batches, device):
@@ -568,10 +680,18 @@ def training_loop(
         schedule_name = getattr(loss_fn, 'adj', None)
     if schedule_name is None:
         schedule_name = loss_kwargs.get('adj', 'unknown')
-    adaptive_signal_window = (
-        AdaptiveSignalWindow(adaptive_update_kimg, start_nimg=cur_nimg)
-        if schedule_name == 'adaptive_v1' else None
-    )
+    if schedule_name == 'adaptive_v1':
+        adaptive_signal_window = AdaptiveSignalWindow(
+            adaptive_update_kimg, start_nimg=cur_nimg
+        )
+    elif schedule_name in ('local_tbin_v1', 'local_tbin_v2', 'local_tbin_v3'):
+        adaptive_signal_window = LocalTBinSignalWindow(
+            adaptive_update_kimg,
+            num_bins=loss_fn.schedule.num_bins,
+            start_nimg=cur_nimg,
+        )
+    else:
+        adaptive_signal_window = None
     if adaptive_signal_window is not None and resume_state_dump:
         if resumed_adaptive_signal_window_state is None:
             raise RuntimeError(
@@ -715,6 +835,7 @@ def training_loop(
         optimizer.zero_grad(set_to_none=True)
         loss_batches = []
         schedule_metric_batches = []
+        local_signal_batches = []
         for round_idx in range(num_accumulation_rounds):
             with misc.ddp_sync(ddp, (round_idx == num_accumulation_rounds - 1)):
                 images, labels = next(dataset_iterator)
@@ -724,6 +845,13 @@ def training_loop(
                 loss = loss_fn(net=ddp, images=images, labels=labels, augment_pipe=augment_pipe)
                 loss_batches.append(loss.detach())
                 schedule_metric_batches.append(loss_fn.schedule_runtime_metrics())
+                if schedule_name in ('local_tbin_v1', 'local_tbin_v2', 'local_tbin_v3'):
+                    signal = loss_fn.local_training_signal()
+                    if signal is None:
+                        raise RuntimeError(
+                            f'{schedule_name} did not produce raw per-bin signal'
+                        )
+                    local_signal_batches.append(signal)
                 training_stats.report('Loss/loss', loss)
                 if enable_amp:
                     scaler.scale(loss.mean()).backward()
@@ -790,11 +918,26 @@ def training_loop(
         # here, before the maintenance early-continue below.
         cur_nimg += batch_size
         if adaptive_signal_window is not None:
-            adaptive_signal_window.add(loss_sum, loss_count)
-            signal_window = adaptive_signal_window.pop_if_due(cur_nimg)
-            if signal_window is not None:
-                signal_loss = globally_average_adaptive_loss(*signal_window, device=device)
-                loss_fn.update_training_signal(signal_loss)
+            if isinstance(adaptive_signal_window, LocalTBinSignalWindow):
+                local_sums = torch.stack(
+                    [batch['loss_sums'] for batch in local_signal_batches]
+                ).sum(dim=0)
+                local_counts = torch.stack(
+                    [batch['loss_counts'] for batch in local_signal_batches]
+                ).sum(dim=0)
+                adaptive_signal_window.add(local_sums.tolist(), local_counts.tolist())
+                signal_window = adaptive_signal_window.pop_if_due(cur_nimg)
+                if signal_window is not None:
+                    signal_loss = globally_average_local_tbin_loss(
+                        *signal_window, device=device
+                    )
+                    loss_fn.update_training_signal(signal_loss)
+            else:
+                adaptive_signal_window.add(loss_sum, loss_count)
+                signal_window = adaptive_signal_window.pop_if_due(cur_nimg)
+                if signal_window is not None:
+                    signal_loss = globally_average_adaptive_loss(*signal_window, device=device)
+                    loss_fn.update_training_signal(signal_loss)
 
         schedule_runtime_metrics = loss_fn.schedule_runtime_metrics()
         schedule_runtime_metrics.update(runtime_pair_metrics)
@@ -807,6 +950,23 @@ def training_loop(
         training_stats.report0('Schedule/adaptive_active', int(schedule_runtime_metrics['adaptive_active']))
         training_stats.report0('Schedule/r_over_t_mean', schedule_runtime_metrics['r_over_t_mean'])
         training_stats.report0('Schedule/gap_mean', schedule_runtime_metrics['gap_mean'])
+        local_runtime_metrics = loss_fn.schedule_local_runtime_metrics()
+        if local_runtime_metrics is not None:
+            for index in range(len(local_runtime_metrics['gap_scales'])):
+                prefix = f'Schedule/tbin{index}'
+                for key in ('last_raw_loss', 'short_ema', 'long_ema'):
+                    value = local_runtime_metrics[key][index]
+                    if value is not None:
+                        training_stats.report0(f'{prefix}/{key}', value)
+                training_stats.report0(
+                    f'{prefix}/gap_scale', local_runtime_metrics['gap_scales'][index]
+                )
+                training_stats.report0(
+                    f'{prefix}/updates', local_runtime_metrics['bin_updates'][index]
+                )
+                training_stats.report0(
+                    f'{prefix}/active', int(local_runtime_metrics['bin_active'][index])
+                )
 
         # Record the exact state that the following loop iteration will see.
         # This cannot be derived reliably from image count: the first iteration

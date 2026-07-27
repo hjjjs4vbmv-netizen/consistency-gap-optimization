@@ -251,7 +251,18 @@ class InterfaceTest(unittest.TestCase):
         self.assertAlmostEqual(float(r), 1.0)
 
     def test_available_schedules(self):
-        self.assertEqual(schedules.available_schedules(), ['adaptive_v1', 'const', 'sigmoid'])
+        self.assertEqual(
+            schedules.available_schedules(),
+            [
+                'adaptive_v1',
+                'const',
+                'global_sigmoid',
+                'local_tbin_v1',
+                'local_tbin_v2',
+                'local_tbin_v3',
+                'sigmoid',
+            ],
+        )
 
     def test_unknown_schedule_rejected(self):
         with self.assertRaises(ValueError):

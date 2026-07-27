@@ -14,7 +14,12 @@ from training.schedules import get_schedule
 class ECMLoss:
     def __init__(self, P_mean=-1.1, P_std=2.0, sigma_data=0.5, q=2, c=0.0, k=8.0, b=1.0, cut=4.0,
                  adj='sigmoid', adaptive_loss_ema_beta=0.9, adaptive_max_adjust=0.05,
-                 adaptive_min_gap=1e-3, adaptive_warmup_updates=2):
+                 adaptive_min_gap=1e-3, adaptive_warmup_updates=2,
+                 local_tbin_num_bins=4, local_tbin_short_beta=0.9,
+                 local_tbin_long_beta=0.99, local_tbin_warmup_updates=32,
+                 local_tbin_gain=0.5, local_tbin_min_scale=0.75,
+                 local_tbin_max_scale=1.5, local_tbin_deadband=0.02,
+                 local_tbin_min_gap=1e-3, global_gap_scale=1.0):
         self.P_mean = P_mean
         self.P_std = P_std
         self.sigma_data = sigma_data
@@ -31,6 +36,24 @@ class ECMLoss:
                 min_gap=adaptive_min_gap,
                 warmup_updates=adaptive_warmup_updates,
             )
+        elif adj == 'global_sigmoid':
+            schedule_kwargs.update(global_gap_scale=global_gap_scale)
+        elif adj in ('local_tbin_v1', 'local_tbin_v2', 'local_tbin_v3'):
+            schedule_kwargs.update(
+                p_mean=P_mean,
+                p_std=P_std,
+                num_bins=local_tbin_num_bins,
+                short_beta=local_tbin_short_beta,
+                long_beta=local_tbin_long_beta,
+                warmup_updates=local_tbin_warmup_updates,
+                gain=local_tbin_gain,
+                min_scale=local_tbin_min_scale,
+                max_scale=local_tbin_max_scale,
+                deadband=local_tbin_deadband,
+                min_gap=local_tbin_min_gap,
+            )
+            if adj == 'local_tbin_v3':
+                schedule_kwargs.update(global_gap_scale=global_gap_scale)
         self.schedule = get_schedule(adj, **schedule_kwargs)
 
         self.q = q
@@ -43,6 +66,7 @@ class ECMLoss:
         self.c = c
         self._runtime_r_over_t_mean = float('nan')
         self._runtime_gap_mean = float('nan')
+        self._runtime_local_training_signal = None
         dist.print0(f'P_mean: {self.P_mean}, P_std: {self.P_std}, q: {self.q}, k {self.k}, b {self.b}, c: {self.c}')
 
     def update_schedule(self, stage):
@@ -87,6 +111,15 @@ class ECMLoss:
             'r_over_t_mean': float(self._runtime_r_over_t_mean),
             'gap_mean': float(self._runtime_gap_mean),
         }
+
+    def local_training_signal(self):
+        """Return raw per-bin pair-loss sums/counts from the latest microbatch."""
+        return self._runtime_local_training_signal
+
+    def schedule_local_runtime_metrics(self):
+        if hasattr(self.schedule, 'local_runtime_metrics'):
+            return self.schedule.local_runtime_metrics()
+        return None
 
     def _record_schedule_runtime_pair(self, t, r):
         with torch.no_grad():
@@ -146,9 +179,23 @@ class ECMLoss:
         else:
             D_yr = y
 
-        # L2 Loss
+        # Raw squared pair loss. Local t-bin schedules consume this signal before the
+        # ECT sample-error transform and 1/(t-r) weighting are applied.
         loss = (D_yt - D_yr) ** 2
         loss = torch.sum(loss.reshape(loss.shape[0], -1), dim=-1)
+        self._runtime_local_training_signal = None
+        if self.schedule.name in ('local_tbin_v1', 'local_tbin_v2', 'local_tbin_v3'):
+            with torch.no_grad():
+                bin_ids = self.schedule.bin_indices(t).flatten()
+                raw = loss.detach().to(torch.float64)
+                sums = torch.zeros(self.schedule.num_bins, dtype=torch.float64, device=raw.device)
+                counts = torch.zeros_like(sums)
+                sums.scatter_add_(0, bin_ids, raw)
+                counts.scatter_add_(0, bin_ids, torch.ones_like(raw))
+                self._runtime_local_training_signal = {
+                    'loss_sums': sums,
+                    'loss_counts': counts,
+                }
         
         # Producing Adaptive Weighting (p=0.5) through Huber Loss
         if self.c > 0:
