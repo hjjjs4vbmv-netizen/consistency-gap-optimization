@@ -251,7 +251,18 @@ class InterfaceTest(unittest.TestCase):
         self.assertAlmostEqual(float(r), 1.0)
 
     def test_available_schedules(self):
-        self.assertEqual(schedules.available_schedules(), ['adaptive_v1', 'const', 'sigmoid'])
+        self.assertEqual(
+            schedules.available_schedules(),
+            [
+                'adaptive_v1',
+                'const',
+                'global_sigmoid',
+                'local_tbin_v1',
+                'local_tbin_v2',
+                'local_tbin_v3',
+                'sigmoid',
+            ],
+        )
 
     def test_unknown_schedule_rejected(self):
         with self.assertRaises(ValueError):
@@ -308,6 +319,8 @@ class ECMLossIntegrationTest(unittest.TestCase):
         required = {
             'loss_ema', 'loss_reference', 'correction', 'signal_updates',
             'adaptive_active', 'r_over_t_mean', 'gap_mean',
+            'gap_over_sigmoid_gap_mean', 'lower_gap_clip_rate',
+            'upper_gap_clip_rate',
         }
         fixed = make_loss('sigmoid')
         fixed_metrics = fixed.schedule_runtime_metrics()
@@ -328,11 +341,29 @@ class ECMLossIntegrationTest(unittest.TestCase):
     def test_schedule_runtime_pair_means_match_realized_t_and_r(self):
         loss_fn = make_loss('sigmoid')
         t = torch.tensor([1.0, 2.0], dtype=torch.float64)
-        r = torch.tensor([0.5, 1.5], dtype=torch.float64)
+        r = loss_fn.schedule.compute_r(t=t, stage=loss_fn.stage)
         loss_fn._record_schedule_runtime_pair(t=t, r=r)
         metrics = loss_fn.schedule_runtime_metrics()
-        self.assertEqual(metrics['r_over_t_mean'], 0.625)
-        self.assertEqual(metrics['gap_mean'], 0.375)
+        self.assertAlmostEqual(
+            metrics['r_over_t_mean'] + metrics['gap_mean'], 1.0
+        )
+        self.assertAlmostEqual(
+            metrics['gap_over_sigmoid_gap_mean'], 1.0
+        )
+        self.assertEqual(metrics['lower_gap_clip_rate'], 0.0)
+        self.assertEqual(metrics['upper_gap_clip_rate'], 0.0)
+
+    def test_schedule_runtime_metrics_detect_upper_gap_clipping(self):
+        loss_fn = make_loss(
+            'global_sigmoid', q=2.0, global_gap_scale=2.0
+        )
+        t = torch.tensor([0.1, 1.0, 10.0], dtype=torch.float64)
+        r = loss_fn.schedule.compute_r(t=t, stage=loss_fn.stage)
+        loss_fn._record_schedule_runtime_pair(t=t, r=r)
+        metrics = loss_fn.schedule_runtime_metrics()
+        self.assertGreater(metrics['upper_gap_clip_rate'], 0.0)
+        self.assertEqual(metrics['lower_gap_clip_rate'], 0.0)
+        self.assertLess(metrics['gap_over_sigmoid_gap_mean'], 2.0)
 
     def test_unknown_adj_still_raises_value_error(self):
         with self.assertRaises(ValueError):

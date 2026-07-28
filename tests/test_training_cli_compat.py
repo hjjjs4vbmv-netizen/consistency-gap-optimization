@@ -27,6 +27,12 @@ class TrainingCliCompatibilityTest(unittest.TestCase):
         self.assertEqual(params['adaptive_warmup_updates'], 2)
         self.assertEqual(params['adaptive_max_adjust'], 0.05)
         self.assertEqual(params['adaptive_min_gap'], 1e-3)
+        self.assertEqual(params['global_gap_scale'], 1.0)
+
+    def test_zero_disables_numbered_snapshot_and_state_dump(self):
+        params = parse_train_args('--snap', '0', '--dump', '0')
+        self.assertEqual(params['snap'], 0)
+        self.assertEqual(params['dump'], 0)
 
     def test_legacy_mapping_option_is_preserved(self):
         self.assertEqual(parse_train_args('--mapping=const')['mapping'], 'const')
@@ -39,7 +45,10 @@ class TrainingCliCompatibilityTest(unittest.TestCase):
         self.assertEqual(parse_train_args('-q', '1.01')['q'], 1.01)
 
     def test_schedule_and_mapping_are_equivalent_names(self):
-        for schedule in ['const', 'sigmoid', 'adaptive_v1']:
+        for schedule in [
+            'const', 'sigmoid', 'global_sigmoid', 'adaptive_v1',
+            'local_tbin_v1', 'local_tbin_v2', 'local_tbin_v3'
+        ]:
             with self.subTest(schedule=schedule):
                 legacy = parse_train_args('--mapping', schedule)
                 current = parse_train_args('--schedule', schedule)
@@ -49,6 +58,22 @@ class TrainingCliCompatibilityTest(unittest.TestCase):
         self.assertEqual(
             parse_train_args('--schedule', 'adaptive-v1')['mapping'],
             'adaptive_v1',
+        )
+        self.assertEqual(
+            parse_train_args('--schedule', 'local-tbin-v1')['mapping'],
+            'local_tbin_v1',
+        )
+        self.assertEqual(
+            parse_train_args('--schedule', 'local-tbin-v2')['mapping'],
+            'local_tbin_v2',
+        )
+        self.assertEqual(
+            parse_train_args('--schedule', 'global-sigmoid')['mapping'],
+            'global_sigmoid',
+        )
+        self.assertEqual(
+            parse_train_args('--schedule', 'local-tbin-v3')['mapping'],
+            'local_tbin_v3',
         )
 
     def test_help_exposes_both_option_names(self):
@@ -73,6 +98,20 @@ class TrainingCliCompatibilityTest(unittest.TestCase):
         self.assertEqual(loss_kwargs.adaptive_warmup_updates, 3)
         self.assertEqual(loss_kwargs.adaptive_max_adjust, 0.04)
         self.assertEqual(loss_kwargs.adaptive_min_gap, 0.002)
+
+    def test_global_gap_scale_reaches_factorized_schedules(self):
+        for schedule in ['global_sigmoid', 'local_tbin_v3']:
+            with self.subTest(schedule=schedule):
+                params = parse_train_args(
+                    '--schedule', schedule,
+                    '--global-gap-scale', '1.032',
+                )
+                loss_kwargs = ct_train.make_loss_kwargs(dnnlib.EasyDict(params))
+                self.assertEqual(loss_kwargs.adj, schedule)
+                self.assertEqual(loss_kwargs.global_gap_scale, 1.032)
+                with contextlib.redirect_stdout(io.StringIO()):
+                    loss_fn = ECMLoss(**loss_kwargs)
+                self.assertEqual(loss_fn.schedule.global_gap_scale, 1.032)
 
     def test_explicit_sigmoid_disables_adaptive_v1(self):
         params = parse_train_args('--schedule', 'sigmoid')

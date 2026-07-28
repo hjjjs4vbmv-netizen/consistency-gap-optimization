@@ -27,7 +27,7 @@ r = compute_r(t=t, stage=stage, schedule="sigmoid", q=256, k=8, b=1)
 - `t`：任意形状的 torch 张量（训练循环里是 `[N,1,1,1]`），也接受
   python/numpy 标量或数组（内部 `torch.as_tensor` 转换）；返回同形状张量，
   恒有 `0 <= r <= t`。
-- `stage`：训练循环维护的课程阶段；三种调度均保持官方
+- `stage`：训练循环维护的课程阶段；所有调度均保持官方
   `cur_tick // double_ticks` 的整数 stage。`adaptive_v1` 只根据 loss EMA
   修正 `r/t`，不另外改变 stage 课程。
 - 超参默认与 `ct_train.py` CLI 一致：`q=2.0, k=8.0, b=1.0`。
@@ -40,7 +40,16 @@ r = compute_r(t=t, stage=stage, schedule="sigmoid", q=256, k=8, b=1)
 | :-- | :-- | :-- |
 | `const` | `r/t = 1 - decay` | 官方 Eq.(17)，`ECMLoss.t_to_r_const` 原样移植 |
 | `sigmoid` | `r/t = 1 - decay * n(t)`，`n(t) = 1 + k*sigmoid(-b*t)` | 官方 Eq.(18)，训练默认，`ECMLoss.t_to_r_sigmoid` 原样移植 |
+| `global_sigmoid` | `d_new(t) = g d_sigmoid(t)` | 固定的全局 gap calibration |
 | `adaptive_v1` | 官方 `sigmoid` ratio + loss EMA 驱动的有界修正 | Role C 实验 v1 |
+| `local_tbin_v1` | `d_new(t) = ℓ_b(t) d_sigmoid(t)` | 使用 raw pair loss 的四分位 `t`-bin controller |
+| `local_tbin_v2` | v1，并约束裁剪前局部因子 `GM(ℓ_i)=1` | 低 authority local-only |
+| `local_tbin_v3` | `d_new(t) = g ℓ_b(t) d_sigmoid(t)`（裁剪前） | 显式分解 global calibration 与 local redistribution |
+
+这里 `d_sigmoid(t)=t-r_sigmoid(t)`。对 `local_tbin_v2/v3`，准确表述是：
+**the local scale factors have geometric mean one before realized-gap clipping
+effects**。该约束不保证裁剪后的 realized gap 在算术均值、几何均值或期望意义上
+保持全局中性。完整数学定义见 `docs/METHOD_V0.md`。
 
 **官方 fixed 公式不变的保证**：官方公式方法 `t_to_r_const` / `t_to_r_sigmoid`
 **原样保留**在 `training/loss.py` 中作为 parity 基准（训练路径不再调用它们，
@@ -97,7 +106,11 @@ baseline。只有 correction 激活后才应用 `adaptive_min_gap` 上限与上�
 - `loss_ema`、`loss_reference`、`correction`、`signal_updates`；
 - `adaptive_active`：warmup 完成且 correction 控制器已激活；
 - `r_over_t_mean`：最近实际训练 pair 的 `mean(r/t)`；
-- `gap_mean`：最近实际训练 pair 的 `mean((t-r)/t)`。
+- `gap_mean`：最近实际训练 pair 的 `mean((t-r)/t)`；
+- `gap_over_sigmoid_gap_mean`：最近实际 gap 与官方 sigmoid baseline gap
+  比值的 batch mean；
+- `lower_gap_clip_rate`：minimum-gap 下界把 realized gap 向上裁剪的样本率；
+- `upper_gap_clip_rate`：`r>=0` 上界把 realized gap 向下裁剪的样本率。
 
 `train_summary.csv` 每个 attempted iteration 记录这些字段，以及
 `next_loop_cur_tick`。后者是本 iteration 完成后下一循环将使用的真实 tick；若该次
@@ -115,10 +128,12 @@ iteration，因为该次 pair 才会把 correction 用于 `r(t)`。对于
 最终 `adaptive_active` 不为真、没有非零 correction、下一实际 pair 不在结束前，
 或 correction 后少于 4 个 attempted iterations，collector 会拒绝打包。
 
-从旧的 11 列 `train_summary.csv` 续训时，只接受完全匹配的旧标准表头。训练循环
-会先保存 `.pre-telemetry.bak`，再原子迁移到新表头；无法重建的历史 telemetry
+从旧版 `train_summary.csv` 续训时，只接受完全匹配的受支持标准表头。训练循环
+会先保存对应的 `.bak` 文件，再原子迁移到新表头；无法重建的历史 telemetry
 保持空值。collector 允许这一段连续的历史空前缀，并在 metadata 中记录覆盖率与
 首个 telemetry iteration；telemetry 开始后的空洞、部分表头或非法状态都会拒绝。
+2026-07-27 已完成的 factorial runs 早于上述三项 gap diagnostics，因而不能从
+KID/FID 结果反推出历史 clipping rate。
 
 adaptive 运行状态会随 training-state 保存/恢复；完整参数与当前 EMA、
 参考 loss、修正值会写入 checkpoint 中的 `loss_fn`。后续将由 Role D 的独立
@@ -157,5 +172,5 @@ stage 边界。
 ```bash
 python -m unittest tests.test_schedules tests.test_training_cli_compat -v
 # 其中 2 个 ECMLoss.__call__ 端到端用例需 CUDA（A100 激活）
-python -m training.schedules                 # 打印三种调度的 r/t 表
+python -m training.schedules                 # 打印已注册调度的 r/t 表
 ```

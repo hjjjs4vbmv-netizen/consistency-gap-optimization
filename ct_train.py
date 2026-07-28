@@ -38,7 +38,14 @@ class CommaSeparatedList(click.ParamType):
 
 
 def normalize_schedule_name(_ctx, _param, value):
-    return 'adaptive_v1' if value == 'adaptive-v1' else value
+    aliases = {
+        'adaptive-v1': 'adaptive_v1',
+        'global-sigmoid': 'global_sigmoid',
+        'local-tbin-v1': 'local_tbin_v1',
+        'local-tbin-v2': 'local_tbin_v2',
+        'local-tbin-v3': 'local_tbin_v3',
+    }
+    return aliases.get(value, value)
 
 
 def make_loss_kwargs(opts):
@@ -55,6 +62,16 @@ def make_loss_kwargs(opts):
         adaptive_warmup_updates=opts.adaptive_warmup_updates,
         adaptive_max_adjust=opts.adaptive_max_adjust,
         adaptive_min_gap=opts.adaptive_min_gap,
+        local_tbin_num_bins=opts.local_tbin_num_bins,
+        local_tbin_short_beta=opts.local_tbin_short_beta,
+        local_tbin_long_beta=opts.local_tbin_long_beta,
+        local_tbin_warmup_updates=opts.local_tbin_warmup_updates,
+        local_tbin_gain=opts.local_tbin_gain,
+        local_tbin_min_scale=opts.local_tbin_min_scale,
+        local_tbin_max_scale=opts.local_tbin_max_scale,
+        local_tbin_deadband=opts.local_tbin_deadband,
+        local_tbin_min_gap=opts.local_tbin_min_gap,
+        global_gap_scale=opts.global_gap_scale,
     )
 
 #----------------------------------------------------------------------------
@@ -88,8 +105,14 @@ def make_loss_kwargs(opts):
 
 @click.option('--schedule', '--mapping', 'mapping',
               help='Type of t-to-r schedule; --mapping is a compatibility alias', metavar='STR',
-              type=click.Choice(['const', 'sigmoid', 'adaptive_v1', 'adaptive-v1']),
+              type=click.Choice(['const', 'sigmoid', 'global_sigmoid', 'global-sigmoid',
+                                 'adaptive_v1', 'adaptive-v1',
+                                 'local_tbin_v1', 'local-tbin-v1',
+                                 'local_tbin_v2', 'local-tbin-v2',
+                                 'local_tbin_v3', 'local-tbin-v3']),
               callback=normalize_schedule_name, default='sigmoid', show_default=True)
+@click.option('--global-gap-scale', help='Fixed multiplier on the official or local sigmoid gap', metavar='FLOAT',
+              type=click.FloatRange(min=0, min_open=True), default=1.0, show_default=True)
 @click.option('--adaptive-loss-ema-beta', help='EMA beta for adaptive_v1 loss signal', metavar='FLOAT',
               type=click.FloatRange(min=0, max=1, max_open=True), default=0.9, show_default=True)
 @click.option('--adaptive-update-kimg', help='Aggregate adaptive_v1 loss signal every KIMG, independent of ticks', metavar='KIMG',
@@ -99,6 +122,24 @@ def make_loss_kwargs(opts):
 @click.option('--adaptive-max-adjust', help='Maximum absolute adaptive_v1 correction to r/t', metavar='FLOAT',
               type=click.FloatRange(min=0, max=1), default=0.05, show_default=True)
 @click.option('--adaptive-min-gap', help='Minimum relative gap (t-r)/t for adaptive_v1', metavar='FLOAT',
+              type=click.FloatRange(min=0, max=1, min_open=True, max_open=True), default=1e-3, show_default=True)
+@click.option('--local-tbin-num-bins', help='Number of p(t)-quantile bins for local t-bin schedules', metavar='INT',
+              type=click.IntRange(min=2), default=4, show_default=True)
+@click.option('--local-tbin-short-beta', help='Short raw-loss EMA beta for local t-bin schedules', metavar='FLOAT',
+              type=click.FloatRange(min=0, max=1, max_open=True), default=0.9, show_default=True)
+@click.option('--local-tbin-long-beta', help='Long raw-loss EMA beta for local t-bin schedules', metavar='FLOAT',
+              type=click.FloatRange(min=0, max=1, max_open=True), default=0.99, show_default=True)
+@click.option('--local-tbin-warmup-updates', help='Per-bin signal updates before local corrections', metavar='INT',
+              type=click.IntRange(min=0), default=32, show_default=True)
+@click.option('--local-tbin-gain', help='Trend-to-gap-scale gain for local t-bin schedules', metavar='FLOAT',
+              type=click.FloatRange(min=0), default=0.5, show_default=True)
+@click.option('--local-tbin-min-scale', help='Minimum multiplier on the official sigmoid gap', metavar='FLOAT',
+              type=click.FloatRange(min=0, max=1, min_open=True), default=0.75, show_default=True)
+@click.option('--local-tbin-max-scale', help='Maximum multiplier on the official sigmoid gap', metavar='FLOAT',
+              type=click.FloatRange(min=1), default=1.5, show_default=True)
+@click.option('--local-tbin-deadband', help='Absolute log-EMA trend ignored by local t-bin schedules', metavar='FLOAT',
+              type=click.FloatRange(min=0), default=0.02, show_default=True)
+@click.option('--local-tbin-min-gap', help='Minimum relative gap after local scaling', metavar='FLOAT',
               type=click.FloatRange(min=0, max=1, min_open=True, max_open=True), default=1e-3, show_default=True)
 @click.option('--double',        help='How often to reduce dt', metavar='TICKS',                    type=click.IntRange(min=1), default=500, show_default=True)
 
@@ -123,8 +164,8 @@ def make_loss_kwargs(opts):
 @click.option('--desc',          help='String to include in result dir name', metavar='STR',        type=str)
 @click.option('--nosubdir',      help='Do not create a subdirectory for results',                   is_flag=True)
 @click.option('--tick',          help='How often to print progress', metavar='KIMG',                type=click.FloatRange(min=1), default=50, show_default=True)
-@click.option('--snap',          help='How often to save snapshots', metavar='TICKS',               type=click.IntRange(min=1), default=500, show_default=True)
-@click.option('--dump',          help='How often to dump state', metavar='TICKS',                   type=click.IntRange(min=1), default=500, show_default=True)
+@click.option('--snap',          help='How often to save numbered snapshots; 0 disables them', metavar='TICKS', type=click.IntRange(min=0), default=500, show_default=True)
+@click.option('--dump',          help='How often to save numbered state dumps; 0 disables them', metavar='TICKS', type=click.IntRange(min=0), default=500, show_default=True)
 @click.option('--ckpt',          help='How often to save latest checkpoints', metavar='TICKS',      type=click.IntRange(min=1), default=50, show_default=True)
 @click.option('--seed',          help='Random seed  [default: random]', metavar='INT',              type=int)
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
@@ -202,7 +243,10 @@ def main(**kwargs):
     c.ema_beta = opts.ema_beta
     c.update(batch_size=opts.batch, batch_gpu=opts.batch_gpu)
     c.update(loss_scaling=opts.ls, cudnn_benchmark=opts.bench, enable_tf32=opts.tf32, enable_amp=opts.enable_amp)
-    c.update(kimg_per_tick=opts.tick, snapshot_ticks=opts.snap, state_dump_ticks=opts.dump, ckpt_ticks=opts.ckpt,
+    c.update(kimg_per_tick=opts.tick,
+             snapshot_ticks=None if opts.snap == 0 else opts.snap,
+             state_dump_ticks=None if opts.dump == 0 else opts.dump,
+             ckpt_ticks=opts.ckpt,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
 
