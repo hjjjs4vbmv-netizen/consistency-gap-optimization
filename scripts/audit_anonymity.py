@@ -9,7 +9,7 @@ import re
 import subprocess
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Iterable, Iterator, Sequence
+from typing import Iterator, Sequence
 
 
 DEFAULT_EXCLUDES = {
@@ -19,6 +19,13 @@ DEFAULT_EXCLUDES = {
     ".pytest_cache",
     ".vscode",
     "__pycache__",
+}
+
+# These files intentionally contain the literal examples used by the scanner.
+DEFAULT_FILE_EXCLUDES = {
+    "docs/ANONYMIZATION_AUDIT.md",
+    "scripts/audit_anonymity.py",
+    "tests/test_audit_anonymity.py",
 }
 
 TEXT_SUFFIXES = {
@@ -75,7 +82,10 @@ def iter_files(root: Path, use_git: bool = True) -> Iterator[Path]:
             relative = path.relative_to(root)
         except ValueError:
             continue
+        relative_name = relative.as_posix()
         if not path.is_file() or any(part in DEFAULT_EXCLUDES for part in relative.parts):
+            continue
+        if relative_name in DEFAULT_FILE_EXCLUDES:
             continue
         if path.suffix.lower() in TEXT_SUFFIXES or path.name in {"Dockerfile", "Makefile"}:
             yield path
