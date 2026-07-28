@@ -58,7 +58,9 @@ _PRE_NEXT_LOOP_TICK_TRAIN_SUMMARY_FIELDS = (
     'peak_vram_gb',
 )
 
-_TRAIN_SUMMARY_FIELDS = (
+# Schema used by the completed 2026-07 gap-factorial runs. Keep it exact so
+# those checkpoints can resume after the clipping diagnostics were added.
+_PRE_GAP_DIAGNOSTICS_TRAIN_SUMMARY_FIELDS = (
     'attempted_iteration',
     'successful_optimizer_steps',
     'processed_nimg',
@@ -80,6 +82,14 @@ _TRAIN_SUMMARY_FIELDS = (
     'gap_mean',
     'elapsed_sec',
     'peak_vram_gb',
+)
+
+_TRAIN_SUMMARY_FIELDS = (
+    *_PRE_GAP_DIAGNOSTICS_TRAIN_SUMMARY_FIELDS[:-2],
+    'gap_over_sigmoid_gap_mean',
+    'lower_gap_clip_rate',
+    'upper_gap_clip_rate',
+    *_PRE_GAP_DIAGNOSTICS_TRAIN_SUMMARY_FIELDS[-2:],
 )
 
 #----------------------------------------------------------------------------
@@ -104,6 +114,8 @@ def load_and_migrate_train_summary(summary_path):
         backup_path = f'{summary_path}.pre-telemetry.bak'
     elif fieldnames == _PRE_NEXT_LOOP_TICK_TRAIN_SUMMARY_FIELDS:
         backup_path = f'{summary_path}.pre-next-loop-tick.bak'
+    elif fieldnames == _PRE_GAP_DIAGNOSTICS_TRAIN_SUMMARY_FIELDS:
+        backup_path = f'{summary_path}.pre-gap-diagnostics.bak'
     else:
         raise RuntimeError(
             f'resume requested but {summary_path} has an unsupported schema; '
@@ -385,24 +397,34 @@ def globally_average_local_tbin_loss(loss_sums, loss_counts, device):
 
 
 def globally_average_runtime_pairs(metric_batches, device):
-    """Average public r/t telemetry across accumulation rounds and ranks."""
-    r_values = [float(metrics['r_over_t_mean']) for metrics in metric_batches]
-    gap_values = [float(metrics['gap_mean']) for metrics in metric_batches]
-    r_values = [value for value in r_values if math.isfinite(value)]
-    gap_values = [value for value in gap_values if math.isfinite(value)]
+    """Average public realized-pair telemetry across rounds and ranks."""
+    fields = (
+        'r_over_t_mean',
+        'gap_mean',
+        'gap_over_sigmoid_gap_mean',
+        'lower_gap_clip_rate',
+        'upper_gap_clip_rate',
+    )
+    sums_and_counts = []
+    for field in fields:
+        values = [float(metrics[field]) for metrics in metric_batches]
+        values = [value for value in values if math.isfinite(value)]
+        sums_and_counts.extend((sum(values), len(values)))
     totals = torch.tensor(
-        [sum(r_values), len(r_values), sum(gap_values), len(gap_values)],
+        sums_and_counts,
         dtype=torch.float64,
         device=device,
     )
     if dist.get_world_size() > 1:
         torch.distributed.all_reduce(totals)
-    r_count = float(totals[1])
-    gap_count = float(totals[3])
-    return {
-        'r_over_t_mean': float(totals[0] / r_count) if r_count > 0 else float('nan'),
-        'gap_mean': float(totals[2] / gap_count) if gap_count > 0 else float('nan'),
-    }
+    result = {}
+    for index, field in enumerate(fields):
+        total = totals[index * 2]
+        count = float(totals[index * 2 + 1])
+        result[field] = (
+            float(total / count) if count > 0 else float('nan')
+        )
+    return result
 
 
 #----------------------------------------------------------------------------
@@ -950,6 +972,18 @@ def training_loop(
         training_stats.report0('Schedule/adaptive_active', int(schedule_runtime_metrics['adaptive_active']))
         training_stats.report0('Schedule/r_over_t_mean', schedule_runtime_metrics['r_over_t_mean'])
         training_stats.report0('Schedule/gap_mean', schedule_runtime_metrics['gap_mean'])
+        training_stats.report0(
+            'Schedule/gap_over_sigmoid_gap_mean',
+            schedule_runtime_metrics['gap_over_sigmoid_gap_mean'],
+        )
+        training_stats.report0(
+            'Schedule/lower_gap_clip_rate',
+            schedule_runtime_metrics['lower_gap_clip_rate'],
+        )
+        training_stats.report0(
+            'Schedule/upper_gap_clip_rate',
+            schedule_runtime_metrics['upper_gap_clip_rate'],
+        )
         local_runtime_metrics = loss_fn.schedule_local_runtime_metrics()
         if local_runtime_metrics is not None:
             for index in range(len(local_runtime_metrics['gap_scales'])):
@@ -999,6 +1033,9 @@ def training_loop(
                 'adaptive_active': int(schedule_runtime_metrics['adaptive_active']),
                 'r_over_t_mean': f"{schedule_runtime_metrics['r_over_t_mean']:.12g}",
                 'gap_mean': f"{schedule_runtime_metrics['gap_mean']:.12g}",
+                'gap_over_sigmoid_gap_mean': f"{schedule_runtime_metrics['gap_over_sigmoid_gap_mean']:.12g}",
+                'lower_gap_clip_rate': f"{schedule_runtime_metrics['lower_gap_clip_rate']:.12g}",
+                'upper_gap_clip_rate': f"{schedule_runtime_metrics['upper_gap_clip_rate']:.12g}",
                 'elapsed_sec': f'{elapsed_sec:.6f}',
                 'peak_vram_gb': f'{peak_vram_gb:.6f}',
             })

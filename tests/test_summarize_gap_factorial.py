@@ -168,6 +168,28 @@ class SummarizeGapFactorialTests(unittest.TestCase):
                 float(target["local_main_effect_delta"]), -2.5
             )
 
+            with (outdir / "heldout_headlines.csv").open(
+                newline="", encoding="utf-8"
+            ) as handle:
+                headlines = list(csv.DictReader(handle))
+            self.assertEqual(len(headlines), 20)
+            headline = next(
+                row
+                for row in headlines
+                if row["arm"] == "global"
+                and row["nfe"] == "1"
+                and row["metric"] == "kid5k_full"
+            )
+            expected = 100.0 * (9.16 / 10.16 - 1.0)
+            self.assertAlmostEqual(
+                float(headline["headline_relative_percent"]), expected
+            )
+            mean_per_seed_percent = (
+                100.0 * (9.11 / 10.11 - 1.0)
+                + 100.0 * (9.21 / 10.21 - 1.0)
+            ) / 2
+            self.assertNotAlmostEqual(expected, mean_per_seed_percent)
+
             summary = json.loads(
                 (outdir / "factorial_summary.json").read_text(
                     encoding="utf-8"
@@ -179,6 +201,12 @@ class SummarizeGapFactorialTests(unittest.TestCase):
                 summary["matrix"]["unique_metric_files_read_once"], 72
             )
             self.assertTrue(summary["selection_overlap"]["present"])
+            self.assertEqual(
+                summary["heldout_headline"]["seeds"], [1, 2]
+            )
+            self.assertEqual(
+                len(summary["heldout_headline"]["rows"]), 20
+            )
             self.assertEqual(len(summary["summaries"]), 64)
 
     def test_rejects_failed_training_validation_before_writing(self):

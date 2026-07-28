@@ -66,6 +66,9 @@ class ECMLoss:
         self.c = c
         self._runtime_r_over_t_mean = float('nan')
         self._runtime_gap_mean = float('nan')
+        self._runtime_gap_over_sigmoid_gap_mean = float('nan')
+        self._runtime_lower_gap_clip_rate = float('nan')
+        self._runtime_upper_gap_clip_rate = float('nan')
         self._runtime_local_training_signal = None
         dist.print0(f'P_mean: {self.P_mean}, P_std: {self.P_std}, q: {self.q}, k {self.k}, b {self.b}, c: {self.c}')
 
@@ -110,6 +113,15 @@ class ECMLoss:
             'adaptive_active': bool(metrics['adaptive_active']),
             'r_over_t_mean': float(self._runtime_r_over_t_mean),
             'gap_mean': float(self._runtime_gap_mean),
+            'gap_over_sigmoid_gap_mean': float(
+                self._runtime_gap_over_sigmoid_gap_mean
+            ),
+            'lower_gap_clip_rate': float(
+                self._runtime_lower_gap_clip_rate
+            ),
+            'upper_gap_clip_rate': float(
+                self._runtime_upper_gap_clip_rate
+            ),
         }
 
     def local_training_signal(self):
@@ -123,15 +135,76 @@ class ECMLoss:
 
     def _record_schedule_runtime_pair(self, t, r):
         with torch.no_grad():
-            valid = torch.isfinite(t) & torch.isfinite(r) & (t > 0)
+            sigmoid_r = self.t_to_r_sigmoid(t)
+            valid = (
+                torch.isfinite(t)
+                & torch.isfinite(r)
+                & torch.isfinite(sigmoid_r)
+                & (t > 0)
+            )
             if not bool(valid.any()):
                 self._runtime_r_over_t_mean = float('nan')
                 self._runtime_gap_mean = float('nan')
+                self._runtime_gap_over_sigmoid_gap_mean = float('nan')
+                self._runtime_lower_gap_clip_rate = float('nan')
+                self._runtime_upper_gap_clip_rate = float('nan')
                 return
             valid_t = t[valid].to(torch.float64)
             valid_r = r[valid].to(torch.float64)
+            valid_sigmoid_r = sigmoid_r[valid].to(torch.float64)
+            realized_gap = (valid_t - valid_r).clamp_min(0)
+            sigmoid_gap = (valid_t - valid_sigmoid_r).clamp_min(0)
             self._runtime_r_over_t_mean = float((valid_r / valid_t).mean().cpu())
-            self._runtime_gap_mean = float(((valid_t - valid_r) / valid_t).mean().cpu())
+            self._runtime_gap_mean = float((realized_gap / valid_t).mean().cpu())
+
+            positive_sigmoid_gap = sigmoid_gap > 0
+            if bool(positive_sigmoid_gap.any()):
+                self._runtime_gap_over_sigmoid_gap_mean = float(
+                    (
+                        realized_gap[positive_sigmoid_gap]
+                        / sigmoid_gap[positive_sigmoid_gap]
+                    ).mean().cpu()
+                )
+            else:
+                self._runtime_gap_over_sigmoid_gap_mean = float('nan')
+
+            preclip_scale = self.schedule.preclip_gap_scale(t)
+            if preclip_scale is None:
+                self._runtime_lower_gap_clip_rate = float('nan')
+                self._runtime_upper_gap_clip_rate = float('nan')
+                return
+            valid_scale = preclip_scale[valid].to(torch.float64)
+            finite_scale = torch.isfinite(valid_scale) & positive_sigmoid_gap
+            if not bool(finite_scale.any()):
+                self._runtime_lower_gap_clip_rate = float('nan')
+                self._runtime_upper_gap_clip_rate = float('nan')
+                return
+            intended_gap = sigmoid_gap[finite_scale] * valid_scale[finite_scale]
+            compared_gap = realized_gap[finite_scale]
+            compared_t = valid_t[finite_scale]
+            source_dtype = (
+                t.dtype if t.is_floating_point() else torch.get_default_dtype()
+            )
+            tolerance = (
+                16
+                * torch.finfo(source_dtype).eps
+                * torch.maximum(
+                    torch.maximum(intended_gap.abs(), compared_gap.abs()),
+                    compared_t.abs(),
+                )
+            )
+            self._runtime_lower_gap_clip_rate = float(
+                (compared_gap > intended_gap + tolerance)
+                .to(torch.float64)
+                .mean()
+                .cpu()
+            )
+            self._runtime_upper_gap_clip_rate = float(
+                (compared_gap < intended_gap - tolerance)
+                .to(torch.float64)
+                .mean()
+                .cpu()
+            )
 
     # Official fixed t->r formulas, kept verbatim as the parity reference for
     # tests/test_schedules.py; the training path dispatches through

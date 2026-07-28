@@ -17,7 +17,7 @@ Supported schedules:
     'local_tbin_v1' Official sigmoid gap times a bounded per-t-bin multiplier
                     driven by unweighted raw pair-loss trends.
     'local_tbin_v2' V1 signal with conservative bounds and equal-bin
-                    geometric-mean normalization that preserves global scale.
+                    geometric-mean normalization before realized-gap clipping.
     'local_tbin_v3' V2 local redistribution times an explicit global gap
                     multiplier, separating calibration from adaptation.
 
@@ -110,6 +110,11 @@ class Schedule:
             'adaptive_active': False,
         }
 
+    def preclip_gap_scale(self, t):
+        """Return the intended multiplier on the sigmoid gap, if defined."""
+        del t
+        return None
+
     def state_dict(self):
         return {}
 
@@ -167,6 +172,12 @@ class SigmoidSchedule(Schedule):
         r = t * ratio
         return torch.clamp(r, min=0)
 
+    def preclip_gap_scale(self, t):
+        t = _as_tensor(t)
+        if not t.is_floating_point():
+            t = t.to(torch.get_default_dtype())
+        return torch.ones_like(t)
+
 #----------------------------------------------------------------------------
 # Experimental schedules (Role C). Changes relative to the official fixed
 # schedules live below this line only.
@@ -221,6 +232,9 @@ class GlobalSigmoidSchedule(SigmoidSchedule):
     def compute_r(self, t, stage):
         base_r = super().compute_r(t=t, stage=stage)
         return _apply_global_gap_scale(t, base_r, self.global_gap_scale)
+
+    def preclip_gap_scale(self, t):
+        return super().preclip_gap_scale(t) * self.global_gap_scale
 
     def runtime_metrics(self):
         metrics = super().runtime_metrics()
@@ -564,6 +578,16 @@ class LocalTBinV1Schedule(SigmoidSchedule):
         r = torch.nan_to_num(safe_t * (1 - gap), nan=0.0, posinf=finite_max, neginf=0.0)
         return torch.minimum(r.clamp_min(0), safe_t)
 
+    def preclip_gap_scale(self, t):
+        t = _as_tensor(t)
+        if not t.is_floating_point():
+            t = t.to(torch.get_default_dtype())
+        bin_ids = self.bin_indices(t)
+        scales = torch.tensor(
+            self.gap_scales(), dtype=t.dtype, device=t.device
+        )
+        return scales[bin_ids]
+
     def state_dict(self):
         return {
             'short_ema': self.short_ema,
@@ -639,13 +663,14 @@ class LocalTBinV1Schedule(SigmoidSchedule):
 
 @register_schedule('local_tbin_v2')
 class LocalTBinV2Schedule(LocalTBinV1Schedule):
-    """Globally neutral, lower-authority local t-bin controller.
+    """Geometrically normalized, lower-authority local t-bin controller.
 
     V2 keeps V1's raw-loss signal and official sigmoid baseline, but projects
     the active log gap scales onto a bounded zero-mean set.  Since the bins are
     equal-probability under p(t), this makes their geometric mean exactly one:
-    the controller redistributes gap across t regions without globally
-    tightening or widening the official curriculum.
+    the local *scale factors* are geometrically neutral before the minimum-gap
+    and maximum-gap clipping used to realize valid training pairs.  The
+    realized gaps therefore need not be globally neutral.
     """
 
     def __init__(self, q=2.0, k=8.0, b=1.0, p_mean=-1.1, p_std=2.0,
@@ -729,7 +754,7 @@ class LocalTBinV2Schedule(LocalTBinV1Schedule):
 
 @register_schedule('local_tbin_v3')
 class LocalTBinV3Schedule(LocalTBinV2Schedule):
-    """Factorized global calibration and geometrically neutral local control."""
+    """Global calibration times preclip geometric-mean-one local factors."""
 
     def __init__(self, q=2.0, k=8.0, b=1.0, p_mean=-1.1, p_std=2.0,
                  num_bins=4, short_beta=0.9, long_beta=0.99,
@@ -758,6 +783,9 @@ class LocalTBinV3Schedule(LocalTBinV2Schedule):
         local_r = super().compute_r(t=t, stage=stage)
         return _apply_global_gap_scale(t, local_r, self.global_gap_scale)
 
+    def preclip_gap_scale(self, t):
+        return super().preclip_gap_scale(t) * self.global_gap_scale
+
     def runtime_metrics(self):
         metrics = super().runtime_metrics()
         total_scales = [
@@ -779,7 +807,7 @@ class LocalTBinV3Schedule(LocalTBinV2Schedule):
         metadata = super().metadata()
         metadata.update(
             name=self.name,
-            intervention='fixed_global_times_geometrically_neutral_local',
+            intervention='fixed_global_times_preclip_geometric_mean_1_local',
             global_gap_scale=self.global_gap_scale,
             **self.runtime_metrics(),
         )

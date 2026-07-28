@@ -8,6 +8,46 @@ This is a paired three-training-seed (`n=3`) descriptive analysis. The 95% inter
 
 Seed 0 was used to select g\* in the response-curve stage and its fixed/global observations are reused in this formal matrix. Therefore seed 0 has selection/evaluation overlap; interpret selected-g\* effects as selection-aware descriptive estimates.
 
+## Held-out seed 1/2 headline calculation
+
+For arm `A` and metric `M`, the reported headline is
+
+`100 × (mean(M_A,seed1, M_A,seed2) / mean(M_fixed,seed1, M_fixed,seed2) - 1)`.
+
+It is the percentage difference between the two arithmetic metric means. It is **not** the mean of the two per-seed percentage changes.
+
+| Arm | NFE | Metric | Fixed mean | Arm mean | Headline % | Seed 1 % | Seed 2 % |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |
+| global | 1 | kid5k_full | 0.373479 | 0.36385 | -2.57818% | -2.1827% | -2.86679% |
+| global | 1 | fid5k_full | 342.953 | 328.453 | -4.22805% | -6.60986% | -2.22065% |
+| global | 2 | kid5k_full | 0.270937 | 0.219221 | -19.0877% | -70.5018% | -5.25576% |
+| global | 2 | fid5k_full | 246.29 | 200.437 | -18.6174% | -60.8296% | -4.1158% |
+| local-conservative | 1 | kid5k_full | 0.373479 | 0.373456 | -0.00616428% | -0.229682% | 0.156954% |
+| local-conservative | 1 | fid5k_full | 342.953 | 342.824 | -0.0376718% | -0.0915416% | 0.00772972% |
+| local-conservative | 2 | kid5k_full | 0.270937 | 0.270454 | -0.178322% | 0.719665% | -0.419907% |
+| local-conservative | 2 | fid5k_full | 246.29 | 246.1 | -0.0770239% | 0.669709% | -0.333557% |
+| combined-conservative | 1 | kid5k_full | 0.373479 | 0.372011 | -0.393185% | 2.62254% | -2.594% |
+| combined-conservative | 1 | fid5k_full | 342.953 | 336.17 | -1.97794% | -2.10947% | -1.86709% |
+| combined-conservative | 2 | kid5k_full | 0.270937 | 0.218337 | -19.4141% | -69.6979% | -5.88623% |
+| combined-conservative | 2 | fid5k_full | 246.29 | 202.311 | -17.8564% | -57.2435% | -4.32532% |
+| local-aggressive | 1 | kid5k_full | 0.373479 | 0.376354 | 0.769801% | 3.90926% | -1.52131% |
+| local-aggressive | 1 | fid5k_full | 342.953 | 344.336 | 0.403133% | 2.3771% | -1.26053% |
+| local-aggressive | 2 | kid5k_full | 0.270937 | 0.288663 | 6.54272% | 36.9647% | -1.6417% |
+| local-aggressive | 2 | fid5k_full | 246.29 | 261.443 | 6.15255% | 27.5746% | -1.20678% |
+| combined-aggressive | 1 | kid5k_full | 0.373479 | 0.362757 | -2.87073% | -1.84154% | -3.62181% |
+| combined-aggressive | 1 | fid5k_full | 342.953 | 327.906 | -4.38771% | -6.26854% | -2.80254% |
+| combined-aggressive | 2 | kid5k_full | 0.270937 | 0.216254 | -20.1828% | -69.8566% | -6.81906% |
+| combined-aggressive | 2 | fid5k_full | 246.29 | 198.465 | -19.418% | -61.171% | -5.07421% |
+
+At NFE=2, both held-out seeds improve directionally for `global` and `combined-aggressive`, but seed 1 has a much larger effect. Seed 1 accounts for the following share of the total absolute two-seed metric decrease:
+
+| Arm | Metric | Seed 1 share |
+| --- | --- | ---: |
+| global | kid5k_full | 78.3025% |
+| global | fid5k_full | 83.5455% |
+| combined-aggressive | kid5k_full | 73.3761% |
+| combined-aggressive | fid5k_full | 80.5503% |
+
 A “win” means a negative paired contrast because lower is better. For interaction rows, negative means the combination is better than the corresponding additive prediction on the raw scale. The geometric relative percentage for that row is the multiplicative interaction `combined × fixed / (global × local) - 1`.
 
 ## Validated matrix

@@ -35,6 +35,10 @@ class LocalTBinScheduleTest(unittest.TestCase):
         self.assertTrue(torch.allclose(
             t - scaled_r, expected_gap, rtol=1e-12, atol=1e-12
         ))
+        self.assertTrue(torch.equal(
+            global_only.preclip_gap_scale(t),
+            torch.full_like(t, 1.032),
+        ))
 
     def test_invalid_global_gap_scale_is_rejected(self):
         for value in [0, -1, float('nan'), float('inf')]:
@@ -80,6 +84,12 @@ class LocalTBinScheduleTest(unittest.TestCase):
         local_gap = (t - local_r) / t
         expected = baseline_gap * torch.tensor(scales, dtype=torch.float64)
         self.assertTrue(torch.allclose(local_gap, expected, rtol=1e-12, atol=1e-12))
+        self.assertTrue(torch.allclose(
+            schedule.preclip_gap_scale(t),
+            torch.tensor(scales, dtype=torch.float64),
+            rtol=0,
+            atol=0,
+        ))
 
     def test_state_round_trip_preserves_bin_controller(self):
         source = get_schedule('local_tbin_v1', warmup_updates=0)
@@ -185,6 +195,12 @@ class LocalTBinScheduleTest(unittest.TestCase):
         )
         self.assertTrue(torch.allclose(
             t - combined_r, expected_gap, rtol=1e-12, atol=1e-12
+        ))
+        self.assertTrue(torch.allclose(
+            schedule.preclip_gap_scale(t),
+            torch.tensor(local_scales, dtype=torch.float64) * 1.032,
+            rtol=1e-12,
+            atol=1e-12,
         ))
 
 

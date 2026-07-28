@@ -74,9 +74,24 @@ def main() -> None:
     with (run_dir / "train_summary.csv").open(
         newline="", encoding="utf-8"
     ) as handle:
-        rows = list(csv.DictReader(handle))
+        reader = csv.DictReader(handle)
+        fieldnames = set(reader.fieldnames or ())
+        rows = list(reader)
     if not rows:
         fail("train_summary.csv contains no data rows")
+
+    geometry_fields = {
+        "gap_over_sigmoid_gap_mean",
+        "lower_gap_clip_rate",
+        "upper_gap_clip_rate",
+    }
+    present_geometry_fields = geometry_fields & fieldnames
+    if present_geometry_fields and present_geometry_fields != geometry_fields:
+        fail(
+            "partial realized-gap diagnostic schema: "
+            f"{sorted(present_geometry_fields)}"
+        )
+    geometry_recorded = present_geometry_fields == geometry_fields
 
     schedules = {row.get("schedule") for row in rows}
     if schedules != {args.expected_schedule}:
@@ -89,6 +104,16 @@ def main() -> None:
             fail(f"row {index}: grad_scale must be positive")
         finite_float(row, "r_over_t_mean", index)
         finite_float(row, "gap_mean", index)
+        if geometry_recorded:
+            if finite_float(row, "gap_over_sigmoid_gap_mean", index) < 0:
+                fail(
+                    f"row {index}: gap_over_sigmoid_gap_mean must be "
+                    "non-negative"
+                )
+            for field in ("lower_gap_clip_rate", "upper_gap_clip_rate"):
+                value = finite_float(row, field, index)
+                if not 0 <= value <= 1:
+                    fail(f"row {index}: {field} must be in [0, 1]")
         try:
             skipped = int(row["step_skipped"])
         except (KeyError, TypeError, ValueError) as exc:
@@ -141,6 +166,14 @@ def main() -> None:
         "final_correction": finite_float(
             rows[-1], "correction", len(rows) + 1
         ),
+        "realized_gap_diagnostics": {
+            "status": (
+                "recorded"
+                if geometry_recorded
+                else "not_recorded_pre_instrumentation"
+            ),
+            "fields": sorted(geometry_fields),
+        },
         "checkpoint_sha256": actual,
     }
     (run_dir / "validation.json").write_text(

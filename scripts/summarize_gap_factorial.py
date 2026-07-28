@@ -19,13 +19,22 @@ from typing import Dict, List, Mapping, Sequence, Tuple
 
 
 TRAINING_SEEDS = (0, 1, 2)
+HELDOUT_SEEDS = (1, 2)
 NFES = (1, 2)
 METRICS = ("kid5k_full", "fid5k_full")
 PROFILES = ("conservative", "aggressive")
+HEADLINE_ARMS = (
+    "global",
+    "local-conservative",
+    "combined-conservative",
+    "local-aggressive",
+    "combined-aggressive",
+)
 T_CRITICAL_DF2_95 = 4.3026527
 OUTPUT_NAMES = (
     "per_cell_metrics.csv",
     "per_seed_effects.csv",
+    "heldout_headlines.csv",
     "factorial_summary.csv",
     "factorial_summary.json",
     "factorial_summary.md",
@@ -564,6 +573,66 @@ def build_summary(per_seed_rows: Sequence[dict]) -> List[dict]:
     return rows
 
 
+def build_heldout_headlines(cell_rows: Sequence[dict]) -> List[dict]:
+    """Compare arithmetic metric means over seeds 1/2 against fixed sigmoid."""
+    index = {
+        (
+            str(row["arm"]),
+            int(row["training_seed"]),
+            int(row["nfe"]),
+            metric,
+        ): float(row[metric])
+        for row in cell_rows
+        for metric in METRICS
+    }
+    rows = []
+    for arm in HEADLINE_ARMS:
+        for nfe in NFES:
+            for metric in METRICS:
+                fixed = [
+                    index[("fixed", seed, nfe, metric)]
+                    for seed in HELDOUT_SEEDS
+                ]
+                candidate = [
+                    index[(arm, seed, nfe, metric)]
+                    for seed in HELDOUT_SEEDS
+                ]
+                deltas = [
+                    candidate[index] - fixed[index]
+                    for index in range(len(HELDOUT_SEEDS))
+                ]
+                per_seed_relative = [
+                    100.0 * deltas[index] / fixed[index]
+                    for index in range(len(HELDOUT_SEEDS))
+                ]
+                fixed_mean = statistics.fmean(fixed)
+                candidate_mean = statistics.fmean(candidate)
+                absolute_change_total = sum(abs(value) for value in deltas)
+                rows.append(
+                    {
+                        "arm": arm,
+                        "nfe": nfe,
+                        "metric": metric,
+                        "heldout_seeds": "1,2",
+                        "fixed_mean": fixed_mean,
+                        "arm_mean": candidate_mean,
+                        "headline_relative_percent": (
+                            100.0 * (candidate_mean / fixed_mean - 1.0)
+                        ),
+                        "seed1_delta": deltas[0],
+                        "seed2_delta": deltas[1],
+                        "seed1_relative_percent": per_seed_relative[0],
+                        "seed2_relative_percent": per_seed_relative[1],
+                        "seed1_absolute_change_share_percent": (
+                            100.0 * abs(deltas[0]) / absolute_change_total
+                            if absolute_change_total > 0
+                            else 0.0
+                        ),
+                    }
+                )
+    return rows
+
+
 def write_csv(path: Path, rows: Sequence[dict]) -> None:
     if not rows:
         fail(f"refusing to write empty CSV: {path}")
@@ -584,6 +653,7 @@ def build_markdown(
     selected_scale: float,
     selection: Mapping[str, object],
     cell_rows: Sequence[dict],
+    heldout_rows: Sequence[dict],
     summary_rows: Sequence[dict],
 ) -> str:
     lines = [
@@ -605,26 +675,74 @@ def build_markdown(
         "seed 0 has selection/evaluation overlap; interpret selected-g\\* "
         "effects as selection-aware descriptive estimates.",
         "",
-        "A “win” means a negative paired contrast because lower is better. "
-        "For interaction rows, negative means the combination is better than "
-        "the corresponding additive prediction on the raw scale. The "
-        "geometric relative percentage for that row is the multiplicative "
-        "interaction `combined × fixed / (global × local) - 1`.",
+        "## Held-out seed 1/2 headline calculation",
         "",
-        "## Validated matrix",
+        "For arm `A` and metric `M`, the reported headline is",
         "",
-        f"- Unique training cells: {len(cell_rows) // len(NFES)} "
-        "(fixed/global are shared across profiles)",
-        f"- Evaluated training-seed × NFE cells: {len(cell_rows)}",
-        f"- Scalar metric files read exactly once: "
-        f"{len(cell_rows) * len(METRICS)}",
-        f"- Selection artifact status: `{selection.get('status')}`",
+        "`100 × (mean(M_A,seed1, M_A,seed2) / "
+        "mean(M_fixed,seed1, M_fixed,seed2) - 1)`.",
         "",
-        "## Effect definitions",
+        "It is the percentage difference between the two arithmetic metric "
+        "means. It is **not** the mean of the two per-seed percentage changes.",
         "",
-        "| Effect | Raw-scale paired contrast | Log-scale contrast |",
-        "| --- | --- | --- |",
+        "| Arm | NFE | Metric | Fixed mean | Arm mean | Headline % | "
+        "Seed 1 % | Seed 2 % |",
+        "| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |",
     ]
+    for row in heldout_rows:
+        lines.append(
+            f"| {row['arm']} | {row['nfe']} | {row['metric']} | "
+            f"{fmt(float(row['fixed_mean']))} | "
+            f"{fmt(float(row['arm_mean']))} | "
+            f"{fmt(float(row['headline_relative_percent']))}% | "
+            f"{fmt(float(row['seed1_relative_percent']))}% | "
+            f"{fmt(float(row['seed2_relative_percent']))}% |"
+        )
+    lines.extend(
+        [
+            "",
+            "At NFE=2, both held-out seeds improve directionally for "
+            "`global` and `combined-aggressive`, but seed 1 has a much larger "
+            "effect. Seed 1 accounts for the following share of the total "
+            "absolute two-seed metric decrease:",
+            "",
+            "| Arm | Metric | Seed 1 share |",
+            "| --- | --- | ---: |",
+        ]
+    )
+    for row in heldout_rows:
+        if (
+            int(row["nfe"]) == 2
+            and row["arm"] in ("global", "combined-aggressive")
+        ):
+            lines.append(
+                f"| {row['arm']} | {row['metric']} | "
+                f"{fmt(float(row['seed1_absolute_change_share_percent']))}% |"
+            )
+    lines.extend(
+        [
+            "",
+            "A “win” means a negative paired contrast because lower is better. "
+            "For interaction rows, negative means the combination is better than "
+            "the corresponding additive prediction on the raw scale. The "
+            "geometric relative percentage for that row is the multiplicative "
+            "interaction `combined × fixed / (global × local) - 1`.",
+            "",
+            "## Validated matrix",
+            "",
+            f"- Unique training cells: {len(cell_rows) // len(NFES)} "
+            "(fixed/global are shared across profiles)",
+            f"- Evaluated training-seed × NFE cells: {len(cell_rows)}",
+            f"- Scalar metric files read exactly once: "
+            f"{len(cell_rows) * len(METRICS)}",
+            f"- Selection artifact status: `{selection.get('status')}`",
+            "",
+            "## Effect definitions",
+            "",
+            "| Effect | Raw-scale paired contrast | Log-scale contrast |",
+            "| --- | --- | --- |",
+        ]
+    )
     for effect in EFFECT_DEFINITIONS:
         log_label = LOG_EFFECT_DEFINITIONS[effect]
         if effect == "additive_interaction":
@@ -687,6 +805,7 @@ def main(argv: Sequence[str] = None) -> None:
     )
     cell_rows = load_cells(runs_root, eval_root, selected_scale)
     per_seed_rows = build_per_seed_effects(cell_rows)
+    heldout_rows = build_heldout_headlines(cell_rows)
     summary_rows = build_summary(per_seed_rows)
 
     expected_per_seed = (
@@ -710,10 +829,11 @@ def main(argv: Sequence[str] = None) -> None:
     outdir.mkdir(parents=True, exist_ok=True)
     write_csv(outdir / "per_cell_metrics.csv", cell_rows)
     write_csv(outdir / "per_seed_effects.csv", per_seed_rows)
+    write_csv(outdir / "heldout_headlines.csv", heldout_rows)
     write_csv(outdir / "factorial_summary.csv", summary_rows)
 
     summary_json = {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": "passed",
         "evaluation_label": (
             "KID-5k and FID-5k 5,000-sample proxies; not standard "
@@ -757,6 +877,15 @@ def main(argv: Sequence[str] = None) -> None:
                 "the fixed/global formal cells"
             ),
         },
+        "heldout_headline": {
+            "seeds": list(HELDOUT_SEEDS),
+            "definition": (
+                "100 * (arithmetic mean of arm metrics over seeds 1/2 / "
+                "arithmetic mean of fixed metrics over seeds 1/2 - 1)"
+            ),
+            "not_equal_to": "mean of per-seed percentage changes",
+            "rows": heldout_rows,
+        },
         "effect_definitions": EFFECT_DEFINITIONS,
         "log_effect_definitions": LOG_EFFECT_DEFINITIONS,
         "interaction_note": (
@@ -773,7 +902,11 @@ def main(argv: Sequence[str] = None) -> None:
     )
     (outdir / "factorial_summary.md").write_text(
         build_markdown(
-            selected_scale, selection, cell_rows, summary_rows
+            selected_scale,
+            selection,
+            cell_rows,
+            heldout_rows,
+            summary_rows,
         ),
         encoding="utf-8",
     )
