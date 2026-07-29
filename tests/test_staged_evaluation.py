@@ -4,6 +4,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import mock
 
+import numpy as np
+
+from metrics import frechet_inception_distance
 from metrics import metric_main
 from scripts import collect_staged_evaluation_results
 from scripts import run_staged_evaluation
@@ -141,6 +144,34 @@ class StagedEvaluationTest(unittest.TestCase):
             result = metric_main.kid50k_full(opts)
         self.assertEqual(result, {"kid50k_full": 0.125})
         self.assertEqual(compute_kid.call_args.kwargs["random_seed"], 20260730)
+
+    def test_fid_uses_scipy_sqrtm_without_removed_disp_argument(self):
+        class Stats:
+            def get_mean_cov(self):
+                return np.zeros(2), np.eye(2)
+
+        opts = mock.Mock(rank=0)
+        with mock.patch.object(
+            frechet_inception_distance.metric_utils,
+            "compute_feature_stats_for_dataset",
+            return_value=Stats(),
+        ), mock.patch.object(
+            frechet_inception_distance.metric_utils,
+            "compute_feature_stats_for_generator",
+            return_value=Stats(),
+        ), mock.patch.object(
+            frechet_inception_distance.scipy.linalg,
+            "sqrtm",
+            return_value=np.eye(2),
+        ) as sqrtm:
+            result = frechet_inception_distance.compute_fid(
+                opts, max_real=5000, num_gen=5000
+            )
+
+        self.assertEqual(result, 0.0)
+        sqrtm.assert_called_once()
+        np.testing.assert_array_equal(sqrtm.call_args.args[0], np.eye(2))
+        self.assertEqual(sqrtm.call_args.kwargs, {})
 
 
 if __name__ == "__main__":
