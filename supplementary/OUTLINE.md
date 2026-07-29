@@ -41,13 +41,14 @@
 - controller correction, clipping, and realized gap plots
 - failure and negative-result cases
 
-## F. Generalization setting
+## F. Retrospective exploratory setting
 
-- motivation for the predeclared second setting
-- exact single-axis change from the primary setting
-- fixed hyperparameters and asset identities
-- per-seed screening and confirmatory results
-- comparison of effect direction across settings
+- motivation for examining q=128 after the primary protocol
+- explicit statement that q=128 was not frozen before results were observed
+- pre-merge source provenance and material implementation differences
+- dataset archive mismatch and unavailable canonical content comparison
+- per-seed 5k proxy screening results only
+- NFE- and seed-dependent effect direction without confirmatory claims
 
 ## G. Training stability
 

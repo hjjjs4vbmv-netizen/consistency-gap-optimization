@@ -51,6 +51,8 @@ PATTERNS = {
     "email": re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.IGNORECASE),
 }
 
+SENSITIVE_RULES = {"github_token", "generic_secret", "private_key"}
+
 
 @dataclass(frozen=True)
 class Finding:
@@ -95,9 +97,12 @@ def scan_text(relative_path: str, text: str, rules: Sequence[str]) -> Iterator[F
     for line_number, line in enumerate(text.splitlines(), start=1):
         for rule in rules:
             if PATTERNS[rule].search(line):
-                excerpt = line.strip()
-                if len(excerpt) > 200:
-                    excerpt = excerpt[:197] + "..."
+                if rule in SENSITIVE_RULES:
+                    excerpt = "<redacted>"
+                else:
+                    excerpt = line.strip()
+                    if len(excerpt) > 200:
+                        excerpt = excerpt[:197] + "..."
                 yield Finding(rule=rule, path=relative_path, line=line_number, excerpt=excerpt)
 
 

@@ -1,4 +1,4 @@
-method,training_seed,budget_kimg,schedule_q,global_gap_scale,nfe,mid_t,metric,repeat_count,value_mean,value_std,value_min,value_max,checkpoint_sha256
+method,training_seed,budget_kimg,schedule_q,global_gap_scale,nfe,mid_t,metric,repeat_count,value_mean,recomputation_std,value_min,value_max,checkpoint_sha256
 fixed,3,256,128,1.0,1,[],fid5k_full,3,316.6366735784031,1.7778772008049626e-06,316.6366715254873,316.63667460486096,943db8be30a510748343e3843af1705131776e9bd7894073ef682616705f999e
 fixed,3,256,128,1.0,1,[],kid5k_full,3,0.3231235146522522,0.0,0.3231235146522522,0.3231235146522522,943db8be30a510748343e3843af1705131776e9bd7894073ef682616705f999e
 fixed,3,256,128,1.0,2,[0.821],fid5k_full,3,88.1256096344071,1.9672459059240443e-06,88.1256073628272,88.12561077019706,943db8be30a510748343e3843af1705131776e9bd7894073ef682616705f999e

@@ -64,6 +64,15 @@ The release candidate must be scanned for:
 
 An automated scan is a warning system, not proof of anonymity. Every match must be reviewed manually because third-party citations and license contacts may be legitimate.
 
+## Scanner export policy
+
+`scripts/audit_anonymity.py` and its tests are internal
+collaboration-repository tools. They intentionally contain the real
+collaboration repository URL as a detection pattern and are excluded from the
+anonymous submission export. The anonymous export is scanned externally by
+this internal tool before release. Sensitive matches for tokens, generic
+secrets, and private keys are rendered only as `<redacted>`.
+
 ## Release procedure
 
 1. Create a new empty private repository controlled by the submission lead.
@@ -83,7 +92,7 @@ An automated scan is a warning system, not proof of anonymity. Every match must 
 | --- | --- | --- |
 | Clean export repository | pending | Do not reuse collaboration Git history |
 | Anonymous README | pending | Current README is upstream-oriented |
-| Identity/path scan | pending | Scanner to be added |
+| Identity/path scan | in progress | Internal scanner is excluded from the anonymous export; every export finding must be reviewed |
 | Asset manifest | pending | Dataset and transfer SHA values required |
 | Clean-clone smoke | pending | Run only after export exists |
 | Independent reviewer | pending | Assign before Week 6 freeze |

@@ -1,0 +1,44 @@
+{
+  "canonical_content_comparison": "unavailable",
+  "canonical_dataset_archive_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+  "class_count": 10,
+  "dataset_archive_sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+  "dataset_content_manifest_sha256": "e87340fa6eb3dbd9a264b5a18d9a3cc1a1c1b7dd75aebcf6d969b828feed69b8",
+  "formal_comparable_result": false,
+  "generated_sample_count_per_cell": 5000,
+  "image_count": 50000,
+  "independent_sampling_repetitions": 1,
+  "independent_training_seed_count": 3,
+  "metric_code_sha256": "eb8fae9f7dd78cb3e9414fabb560b19ce6e61d18ae4f6fce329f94ce288851f8",
+  "metric_recomputations": 3,
+  "mid_t_by_mode": {
+    "1": [],
+    "2": [
+      0.821
+    ]
+  },
+  "nfe_modes": [
+    1,
+    2
+  ],
+  "only_q_changes_claim_supported": false,
+  "reference_merged_commit": "3a0d603da97dd93ddbb6c7ce49e4a7351d54bb43",
+  "reference_stats_num_items": 50000,
+  "reference_stats_sha256": {
+    "fid_real_mean_cov_50k": "aa1772d335fef7254a698efaf22de6702da4fcf9e1ad72043a2959d075dd4ff0",
+    "kid_real_all_features_50k": "18a565499b4d42a85b04ccf98581da6d315cfc3df5badc9a279f0fc60e419bcc"
+  },
+  "result_status": "legacy_retrospective_exploratory_screening",
+  "sample_seeds": "0-4999",
+  "schema_version": 1,
+  "statistical_unit": "training_seed",
+  "training_seeds": [
+    3,
+    4,
+    5
+  ],
+  "training_source_archive_sha256": "6af4d04198b97f469fdbb168a84848d61e43e585a4f1a7b90bb3e2cd60e1b59b",
+  "training_source_branch_head": "1395daa16415a2f960a0d1fede09e0a9bf8ae70b",
+  "training_source_equivalent_to_reference_main": false,
+  "transfer_checkpoint_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+}

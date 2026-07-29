@@ -28,6 +28,22 @@ class AnonymityAuditTests(unittest.TestCase):
             {"project_mount_path", "github_token", "collaboration_repo_url"},
         )
 
+    def test_sensitive_excerpts_are_redacted(self):
+        secret = "ghp_abcdefghijklmnopqrstuvwxyz123456"
+        findings = list(
+            MODULE.scan_text(
+                "credentials.txt",
+                f"token={secret}\n",
+                sorted(MODULE.PATTERNS),
+            )
+        )
+        rendered_output = "\n".join(
+            f"{item.path}:{item.line}: [{item.rule}] {item.excerpt}"
+            for item in findings
+        )
+        self.assertNotIn(secret, rendered_output)
+        self.assertIn("<redacted>", rendered_output)
+
     def test_clean_relative_paths_pass(self):
         text = "output=${ECT_RUNS_ROOT}/fixed/seed3\nsource=./results/summary.csv\n"
         findings = list(MODULE.scan_text("README.md", text, sorted(MODULE.PATTERNS)))
