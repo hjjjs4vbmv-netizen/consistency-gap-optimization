@@ -100,11 +100,9 @@ An absent, malformed, stale, failed, or hash-mismatched receipt is a hard
 block: do not launch a formal metric job and do not create a partial formal
 table. Quick evaluation does not waive this gate.
 
-The current `kid50k_full` implementation does not yet pass the evaluator seed
-to KID's subset sampler. Until that implementation gap is fixed and covered by
-a deterministic test, KID-50k is **not eligible to run** under this frozen
-protocol. This is a readiness block, not permission to substitute an unseeded
-KID result or to downgrade the formal stage.
+`kid50k_full` passes the frozen evaluator seed to KID's subset sampler. This
+contract is covered by the staged-evaluation test suite. A formal run must
+still record that seed and must not substitute an unseeded KID result.
 
 ### Execution order and result contract
 
