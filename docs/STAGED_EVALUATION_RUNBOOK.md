@@ -38,9 +38,24 @@ Run these stages serially. Do not start a later stage after an incomplete or
 failed predecessor.
 
 1. Existing-checkpoint smoke: use the command above without `--dry-run`.
-2. Fixed-seed image determinism: run `scripts/sample_checkpoint.sh` with seeds
-   `0-63`, NFE `1 2`, `mid_t=0.821`, and work-group sizes `8`/`16` as specified
-   in the protocol.
+2. Fixed-seed image determinism: on the same server, run the acceptance sampler
+   against the smoke checkpoint (or another named candidate) and then validate
+   its emitted artifact. The sampler prints the exact checkpoint-isolated
+   result directory; use that directory in the verifier command.
+
+   ```bash
+   bash scripts/sample_checkpoint.sh /mnt/ect_project/checkpoints/sigmoid_seed0_16k.pkl \
+     --outdir /mnt/ect_project/staged_eval/fixed-seed \
+     --seeds 0-63 --nfe 1 2 --mid-t 0.821 \
+     --work-group-size 8 --verify-work-group-size 16 \
+     --precision fp32 --device cuda
+
+   python scripts/verify_fixed_seed_determinism.py \
+     --result-dir /mnt/ect_project/staged_eval/fixed-seed/<checkpoint-stem>-<sha256-prefix>
+   ```
+
+   The verifier checks the exact 128-image set, both NFE/midpoint settings,
+   repeated-run and 8/16 work-group assertions, and every manifest SHA256.
 3. Collect the smoke table:
 
    ```bash
