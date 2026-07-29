@@ -74,6 +74,28 @@ file:
 - finite-loss/finite-state check passed; and
 - check script version, Git revision, timestamp, and final `status: passed`.
 
+The receipt schema is frozen as follows (additional fields are allowed):
+
+```json
+{
+  "schema_version": 1,
+  "status": "passed",
+  "checkpoint_id": "sigmoid_seed0_16k",
+  "checkpoint_path": "/mnt/ect_project/checkpoints/sigmoid_seed0_16k.pkl",
+  "checkpoint_sha256": "<64-character SHA256>",
+  "training_run_id": "<immutable training-run ID>",
+  "method": "sigmoid",
+  "training_seed": 0,
+  "budget_kimg": 16,
+  "completion_passed": true,
+  "logs_state_consistent": true,
+  "finite_loss_state_passed": true,
+  "checker_version": "1",
+  "checker_git_commit": "<Git revision of the integrity checker>",
+  "checked_at_unix": 0
+}
+```
+
 An absent, malformed, stale, failed, or hash-mismatched receipt is a hard
 block: do not launch a formal metric job and do not create a partial formal
 table. Quick evaluation does not waive this gate.
