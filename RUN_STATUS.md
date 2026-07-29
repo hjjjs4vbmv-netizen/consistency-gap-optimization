@@ -1,6 +1,7 @@
 # Confirmatory 256k — Run Status (seed 3)
 
-Frozen commit: `3a0d603da97dd93ddbb6c7ce49e4a7351d54bb43` (branch role-c/confirmatory-gap-g110)
+Training commit: `3a0d603da97dd93ddbb6c7ce49e4a7351d54bb43` (training_code_sha; recorded in each run dir `commit_sha.txt`)
+PR head: `79143c685e5588948972c17457b1c51c7a77bb49` (pr_head_sha; docs + resume fix only, not a training baseline)
 Output root: `/root/ect_runs/confirmatory_256k/`
 GPU: 1x NVIDIA A100-PCIE-40GB (two runs share the GPU, ~7GB total)
 

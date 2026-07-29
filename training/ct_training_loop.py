@@ -624,7 +624,13 @@ def training_loop(
     elapsed_base_sec = 0.0
     if resume_state_dump:
         dist.print0(f'Loading training state from "{resume_state_dump}"...')
-        data = torch.load(resume_state_dump, map_location=torch.device('cpu'), weights_only=False)
+        # The training-state contains optimizer and persistent module objects.
+        # Only load trusted checkpoints produced by this repository.
+        data = torch.load(
+            resume_state_dump,
+            map_location=torch.device('cpu'),
+            weights_only=False,
+        )
         misc.copy_params_and_buffers(src_module=data['net'], dst_module=net, require_all=True)
         optimizer.load_state_dict(data['optimizer_state'])
         if 'cur_nimg' not in data:

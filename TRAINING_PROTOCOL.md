@@ -69,10 +69,32 @@ to `weights_only=False`. Resume then verified end-to-end.
 ## 5. Resume procedure
 
 Resume replaces `--transfer` with `--resume=<run>/training-state-latest.pt`,
-re-states `--mapping` and `--global-gap-scale` for safety, and writes into a
-new `--outdir` (never overwrites the source). The schedule/gap state is also
-carried in the training-state; after resume confirm
-`gap_over_sigmoid_gap_mean` still equals `1.10` for the global arm.
+re-states `--mapping`, `--global-gap-scale`, and `--seed` for safety.
+The schedule/gap state is also carried in the training-state; after resume
+confirm `gap_over_sigmoid_gap_mean` still equals `1.10` for the global arm.
+
+Two resume modes are distinguished:
+
+### 5a. Verification resume (new outdir, source untouched)
+
+Used to test that resume works correctly. Writes to a **new** `--outdir` so
+the authoritative run handed off to Role D is never modified:
+
+```
+--resume=/root/ect_runs/confirmatory_256k/seed3_global110/training-state-latest.pt --outdir=/root/ect_runs/resume_checks/seed3_global110
+```
+
+### 5b. Actual interruption resume (same outdir, continues the run)
+
+Used only when the original run was interrupted and must continue in-place.
+Writes to the **same** `--outdir`:
+
+```
+--resume=/root/ect_runs/confirmatory_256k/seed3_global110/training-state-latest.pt --outdir=/root/ect_runs/confirmatory_256k/seed3_global110
+```
+
+Do **not** use mode 5b for testing — it overwrites checkpoints in the
+authoritative run directory.
 
 ## 6. Formal run launch conditions (all met)
 
