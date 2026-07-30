@@ -32,6 +32,15 @@ tracked handoff integrity attestation (`D_HANDOFF.md`); its server-side
 machine-readable receipt must be bound under the frozen filename before it can
 pass the formal runner's receipt gate.
 
+Before any formal launch, validate the non-versioned manifest against the Git
+matrix (without `--allow-missing-inputs`):
+
+```bash
+python scripts/validate_staged_runtime_manifest.py \
+  --frozen configs/staged_evaluation_confirmatory_q256.frozen.json \
+  --runtime /mnt/ect_project/staged_eval/checkpoints.json
+```
+
 The first remote job is the quick smoke for one named existing checkpoint. It
 runs both NFE modes and both 5k metrics, producing four metric records total:
 
