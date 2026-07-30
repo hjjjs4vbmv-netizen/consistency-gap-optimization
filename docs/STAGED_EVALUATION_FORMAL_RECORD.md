@@ -58,23 +58,25 @@ All 12 individual paired metric comparisons favor global-only; there are no
 fixed wins or ties. The NFE=2 effect is directionally consistent but has
 substantial between-seed variation, especially for FID.
 
-## Interpretation boundary and artifact locations
+## Interpretation boundary and versioned package
 
 This is formal evidence from a predeclared three-seed paired matrix. Report
 the values as descriptive paired results; with only three independent training
 seeds, do not make a significance claim from these sample standard deviations.
 
-The server-local, machine-generated artifacts are intentionally not versioned
-because they include metric outputs, generated samples, and feature caches:
+The portable result package is versioned at
+`results/confirmatory_q256_formal/`. It retains the machine-generated metric
+values and provenance needed for review, but deliberately omits generated
+samples, feature caches, and host-specific paths:
 
 ```text
-/root/staged_eval/formal-q256-six-8375d46/run_manifest.json
-/root/staged_eval/formal-q256-six-8375d46-summary/evaluation_results.csv
-/root/staged_eval/formal-q256-six-8375d46-summary/paired_differences.csv
-/root/staged_eval/formal-q256-six-8375d46-summary/paired_statistics.json
-/root/staged_eval/formal-q256-six-8375d46-summary/paired_statistics.md
+results/confirmatory_q256_formal/evaluation_results.csv
+results/confirmatory_q256_formal/paired_differences.csv
+results/confirmatory_q256_formal/paired_statistics.json
+results/confirmatory_q256_formal/environment_manifest.json
+results/confirmatory_q256_formal/README.md
 ```
 
 The frozen logical matrix, immutable receipt digests, formal-promotion policy,
-and evaluator implementation are retained in Git. Server-local paths are only
-runtime bindings and do not define the experiment.
+and evaluator implementation are retained in Git. Runtime paths are only host
+bindings and do not define the experiment.
