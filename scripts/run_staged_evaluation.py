@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import platform
 import shlex
 import subprocess
 import sys
@@ -17,6 +18,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL_ID = "staged-checkpoint-evaluation-v1"
 METRIC_SEED = 20260730
 NFE_SETTINGS = {1: [], 2: [0.821]}
+INCEPTION_DETECTOR_URL = (
+    "https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/"
+    "inception-2015-12-05.pt"
+)
 PHASES = {
     "smoke": {
         "evidence_class": "quick",
@@ -58,6 +63,44 @@ def git_head() -> str:
         ).strip()
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
+
+
+def capture_evaluation_environment(
+    dataset_sha256: str, evaluation_git_commit: str,
+) -> dict:
+    """Capture the evaluator runtime needed to compare formal metric runs."""
+    import scipy
+    import torch
+
+    gpu_models = []
+    if torch.cuda.is_available():
+        for index in range(torch.cuda.device_count()):
+            try:
+                gpu_models.append(torch.cuda.get_device_name(index))
+            except RuntimeError as exc:
+                gpu_models.append(f"unavailable: {exc}")
+    return {
+        "evaluation_git_commit": evaluation_git_commit,
+        "python": {
+            "implementation": platform.python_implementation(),
+            "version": platform.python_version(),
+        },
+        "scipy_version": scipy.__version__,
+        "pytorch_version": torch.__version__,
+        "cuda": {
+            "available": torch.cuda.is_available(),
+            "compiled_version": torch.version.cuda,
+            "device_count": torch.cuda.device_count(),
+            "gpu_models": gpu_models,
+        },
+        "inception_detector": {
+            "identifier": "inception-2015-12-05",
+            "url": INCEPTION_DETECTOR_URL,
+            "format": "TorchScript",
+            "kwargs": {"return_features": True},
+        },
+        "dataset_sha256": dataset_sha256,
+    }
 
 
 def load_json(path: Path, label: str) -> dict:
@@ -282,12 +325,16 @@ def build_record(
     phase: str, jobs: list[dict], dataset_sha256: str,
 ) -> dict:
     config = PHASES[phase]
+    evaluation_commit = git_head()
     return {
         "schema_version": 1,
         "protocol": PROTOCOL_ID,
         "phase": phase,
         "evidence_class": config["evidence_class"],
-        "evaluation_git_commit": git_head(),
+        "evaluation_git_commit": evaluation_commit,
+        "evaluation_environment": capture_evaluation_environment(
+            dataset_sha256, evaluation_commit
+        ),
         "dataset": str(data),
         "dataset_sha256": dataset_sha256,
         "precision": "fp32",

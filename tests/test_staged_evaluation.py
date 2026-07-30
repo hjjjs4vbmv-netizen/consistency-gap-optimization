@@ -152,6 +152,14 @@ class StagedEvaluationTest(unittest.TestCase):
                 cells, comparison, data, root, "smoke", jobs,
                 run_staged_evaluation.sha256_file(data),
             )
+            environment = record["evaluation_environment"]
+            self.assertEqual(environment["evaluation_git_commit"], record["evaluation_git_commit"])
+            self.assertTrue(environment["python"]["version"])
+            self.assertTrue(environment["scipy_version"])
+            self.assertTrue(environment["pytorch_version"])
+            self.assertIn("compiled_version", environment["cuda"])
+            self.assertEqual(environment["inception_detector"]["identifier"], "inception-2015-12-05")
+            self.assertEqual(environment["dataset_sha256"], record["dataset_sha256"])
             record["status"] = "completed"
             for job in jobs:
                 job["status"] = "completed"

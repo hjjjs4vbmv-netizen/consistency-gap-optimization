@@ -146,6 +146,12 @@ is exactly `training_seed + budget_kimg + nfe + metric`, the delta is
 duplicated arms are a hard collection failure. The collector emits the
 per-seed `paired_differences.csv` and separate paired statistics JSON/Markdown.
 
+Each quick or formal run manifest must also freeze the evaluator environment:
+evaluation Git commit; Python, SciPy, PyTorch, and CUDA versions; detected GPU
+model(s); the `inception-2015-12-05` TorchScript detector URL/feature mode; and
+the dataset SHA256. This is required for formal comparability after evaluator
+changes such as the SciPy `sqrtm` compatibility fix or an explicit KID seed.
+
 `docs/FINAL_PERFORMANCE_EVALUATION.md` and
 `docs/ROLE_A_QUANTITATIVE_EVALUATION.md` describe earlier scoped experiments.
 For this new cycle, this staged protocol takes precedence for metric settings,
