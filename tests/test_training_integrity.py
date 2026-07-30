@@ -1,5 +1,6 @@
 import csv
 import json
+import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -10,6 +11,9 @@ from scripts import check_training_integrity
 
 
 class TrainingIntegrityTest(unittest.TestCase):
+    def test_checker_adds_repository_root_to_import_path(self):
+        self.assertEqual(sys.path[0], str(check_training_integrity.REPO_ROOT))
+
     def make_run(self, root: Path, finite: bool = True) -> Path:
         run = root / "run"
         run.mkdir()

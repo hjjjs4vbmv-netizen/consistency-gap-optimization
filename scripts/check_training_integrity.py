@@ -10,9 +10,14 @@ import json
 import math
 import pickle
 import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 import torch
 
@@ -35,7 +40,7 @@ def sha256_file(path: Path) -> str:
 def git_head() -> str:
     try:
         return subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[1], text=True
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
         ).strip()
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
