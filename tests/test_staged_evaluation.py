@@ -243,6 +243,29 @@ class StagedEvaluationTest(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "duplicate fixed"):
             collect_staged_evaluation_results.build_pairwise_statistics([row, row], pairing)
 
+    def test_smoke_collection_does_not_attempt_the_full_paired_comparison(self):
+        manifest = {
+            "phase": "smoke",
+            "evidence_class": "smoke_only",
+            "comparison": {
+                "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric"],
+                "baseline_method": "fixed",
+                "candidate_method": "global110",
+                "candidate_label": "global_only",
+                "delta_direction": "global_only - fixed",
+            },
+        }
+        rows = [{
+            "evidence_class": "smoke_only", "metric_name": "fid5k_full",
+            "nfe": 1, "method": "fixed", "metric_value": 10.0,
+            "training_seed": 3, "budget_kimg": 256,
+        }]
+        result = collect_staged_evaluation_results.build_statistics(rows, manifest)
+        self.assertEqual(result["pairwise_statistics"], {
+            "status": "not_computed",
+            "reason": "smoke phase does not form the predeclared comparison matrix",
+        })
+
     def test_fid_uses_scipy_sqrtm_without_removed_disp_argument(self):
         class Stats:
             def get_mean_cov(self):

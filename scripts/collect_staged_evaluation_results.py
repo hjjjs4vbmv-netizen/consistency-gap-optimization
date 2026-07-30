@@ -131,6 +131,18 @@ def build_statistics(rows: list[dict], manifest: dict) -> dict:
             "minimum": min(values),
             "maximum": max(values),
         })
+    # Smoke runs intentionally exercise one checkpoint rather than the entire
+    # fixed/global matrix.  They must never be interpreted as evidence for the
+    # paired comparison (or fail merely because the companion arm was not run).
+    # Quick and formal runs keep the strict missing/duplicate-pair failure.
+    if manifest["phase"] == "smoke":
+        pairwise_statistics = {
+            "status": "not_computed",
+            "reason": "smoke phase does not form the predeclared comparison matrix",
+        }
+    else:
+        pairwise_statistics = build_pairwise_statistics(rows, manifest.get("comparison"))
+
     return {
         "schema_version": 1,
         "protocol": PROTOCOL_ID,
@@ -138,7 +150,7 @@ def build_statistics(rows: list[dict], manifest: dict) -> dict:
         "evidence_class": manifest["evidence_class"],
         "row_count": len(rows),
         "statistics_grouping": ["evidence_class", "metric_name", "nfe", "method"],
-        "pairwise_statistics": build_pairwise_statistics(rows, manifest.get("comparison")),
+        "pairwise_statistics": pairwise_statistics,
         "statistics": summary_rows,
     }
 
