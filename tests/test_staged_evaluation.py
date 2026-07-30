@@ -145,6 +145,26 @@ class StagedEvaluationTest(unittest.TestCase):
         self.assertEqual(result, {"kid50k_full": 0.125})
         self.assertEqual(compute_kid.call_args.kwargs["random_seed"], 20260730)
 
+    def test_collector_computes_deltas_from_explicit_pairing_contract(self):
+        rows = [
+            {"method": "fixed", "training_seed": 4, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 10.0},
+            {"method": "global110", "training_seed": 4, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 8.0},
+            {"method": "fixed", "training_seed": 5, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 12.0},
+            {"method": "global110", "training_seed": 5, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 9.0},
+        ]
+        pairing = {
+            "pairing_key": ["training_seed"],
+            "baseline_method": "fixed",
+            "candidate_method": "global110",
+            "delta_direction": "global110 - fixed",
+        }
+        result = collect_staged_evaluation_results.build_pairwise_statistics(rows, pairing)
+        self.assertEqual(result["status"], "computed")
+        statistic = result["statistics"][0]
+        self.assertEqual(statistic["pair_count"], 2)
+        self.assertEqual(statistic["mean_delta"], -2.5)
+        self.assertEqual([item["delta"] for item in statistic["pairs"]], [-2.0, -3.0])
+
     def test_fid_uses_scipy_sqrtm_without_removed_disp_argument(self):
         class Stats:
             def get_mean_cov(self):

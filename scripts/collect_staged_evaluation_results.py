@@ -137,8 +137,86 @@ def build_statistics(rows: list[dict], manifest: dict) -> dict:
         "evidence_class": manifest["evidence_class"],
         "row_count": len(rows),
         "statistics_grouping": ["evidence_class", "metric_name", "nfe", "method"],
-        "pairwise_statistics": "not computed; provide an explicit pairing contract before calculating deltas",
+        "pairwise_statistics": build_pairwise_statistics(rows, manifest.get("comparison")),
         "statistics": summary_rows,
+    }
+
+
+def build_pairwise_statistics(rows: list[dict], comparison: dict | None) -> dict:
+    if comparison is None:
+        return {"status": "not_computed", "reason": "no explicit pairing contract"}
+    required = ("pairing_key", "baseline_method", "candidate_method", "delta_direction")
+    missing = [field for field in required if field not in comparison]
+    if missing:
+        fail(f"pairing contract is incomplete: {missing}")
+    pairing_key = comparison["pairing_key"]
+    if not isinstance(pairing_key, list) or not pairing_key or not all(
+        isinstance(field, str) and field for field in pairing_key
+    ):
+        fail("pairing_key must be a non-empty list of row field names")
+    unknown = [field for field in pairing_key if any(field not in row for row in rows)]
+    if unknown:
+        fail(f"pairing_key fields are absent from result rows: {unknown}")
+    baseline = comparison["baseline_method"]
+    candidate = comparison["candidate_method"]
+    if not isinstance(baseline, str) or not isinstance(candidate, str) or baseline == candidate:
+        fail("pairing contract must name two distinct methods")
+    direction = comparison["delta_direction"]
+    expected_direction = f"{candidate} - {baseline}"
+    if direction != expected_direction:
+        fail(f"delta_direction must be exactly {expected_direction!r}")
+
+    grouped: dict[tuple[str, int], dict[str, dict[tuple, dict]]] = {}
+    for row in rows:
+        if row["method"] not in (baseline, candidate):
+            continue
+        group = (row["metric_name"], row["nfe"])
+        pair = tuple(row[field] for field in pairing_key)
+        methods = grouped.setdefault(group, {baseline: {}, candidate: {}})
+        if pair in methods[row["method"]]:
+            fail(f"duplicate {row['method']} row for pairing key {pair} in {group}")
+        methods[row["method"]][pair] = row
+
+    if not grouped:
+        fail("pairing contract methods do not appear in result rows")
+    statistics_rows = []
+    for (metric_name, nfe), methods in sorted(grouped.items()):
+        baseline_pairs = set(methods[baseline])
+        candidate_pairs = set(methods[candidate])
+        if baseline_pairs != candidate_pairs:
+            fail(
+                f"unpaired results for {metric_name} nfe={nfe}: "
+                f"baseline_only={sorted(baseline_pairs - candidate_pairs)}, "
+                f"candidate_only={sorted(candidate_pairs - baseline_pairs)}"
+            )
+        pairs = []
+        for pair in sorted(baseline_pairs):
+            baseline_value = methods[baseline][pair]["metric_value"]
+            candidate_value = methods[candidate][pair]["metric_value"]
+            pairs.append({
+                "pair": dict(zip(pairing_key, pair)),
+                "baseline_value": baseline_value,
+                "candidate_value": candidate_value,
+                "delta": candidate_value - baseline_value,
+            })
+        deltas = [item["delta"] for item in pairs]
+        statistics_rows.append({
+            "metric_name": metric_name,
+            "nfe": nfe,
+            "pair_count": len(pairs),
+            "mean_delta": statistics.mean(deltas),
+            "sample_sd_delta": statistics.stdev(deltas) if len(deltas) > 1 else None,
+            "minimum_delta": min(deltas),
+            "maximum_delta": max(deltas),
+            "pairs": pairs,
+        })
+    return {
+        "status": "computed",
+        "pairing_key": pairing_key,
+        "baseline_method": baseline,
+        "candidate_method": candidate,
+        "delta_direction": direction,
+        "statistics": statistics_rows,
     }
 
 
@@ -166,12 +244,29 @@ def write_outputs(outdir: Path, rows: list[dict], summary: dict) -> None:
             f"{row['method']} | {row['count']} | {row['mean']:.9f} | {sample_sd} | "
             f"{row['minimum']:.9f} | {row['maximum']:.9f} |"
         )
-    lines.extend([
-        "",
-        "Statistics are segregated by evidence class, metric, NFE, and method. "
-        "No pairwise delta is emitted without an explicit pairing contract.",
-        "",
-    ])
+    pairwise = summary["pairwise_statistics"]
+    lines.extend(["", "Statistics are segregated by evidence class, metric, NFE, and method."])
+    if pairwise["status"] == "computed":
+        lines.extend([
+            "",
+            "## Paired deltas",
+            "",
+            "Pairing key: `" + ", ".join(pairwise["pairing_key"]) + "`; "
+            "delta: `" + pairwise["delta_direction"] + "`.",
+            "",
+            "| Metric | NFE | Pairs | Mean delta | Sample SD | Min | Max |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ])
+        for row in pairwise["statistics"]:
+            sample_sd = "—" if row["sample_sd_delta"] is None else f"{row['sample_sd_delta']:.9f}"
+            lines.append(
+                f"| {row['metric_name']} | {row['nfe']} | {row['pair_count']} | "
+                f"{row['mean_delta']:.9f} | {sample_sd} | {row['minimum_delta']:.9f} | "
+                f"{row['maximum_delta']:.9f} |"
+            )
+    else:
+        lines.extend(["", "No pairwise delta is emitted: " + pairwise["reason"] + "."])
+    lines.append("")
     (outdir / "evaluation_statistics.md").write_text("\n".join(lines), encoding="utf-8")
 
 
