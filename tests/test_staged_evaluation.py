@@ -32,6 +32,12 @@ class StagedEvaluationTest(unittest.TestCase):
                 "completion_passed": True,
                 "logs_state_consistent": True,
                 "finite_loss_state_passed": True,
+                "checkpoint_load_passed": True,
+                "ema_present": True,
+                "ema_finite_passed": True,
+                "schedule_identity_passed": True,
+                "global_gap_scale_identity_passed": True,
+                "method_identity_passed": True,
                 "checker_version": "1",
                 "checker_git_commit": "0123456789abcdef",
                 "checked_at_unix": 1_753_822_000,
@@ -90,6 +96,19 @@ class StagedEvaluationTest(unittest.TestCase):
             manifest, _, _ = self.make_manifest(root, include_receipt=False)
             cells, _ = run_staged_evaluation.load_cells(manifest, False)
             with self.assertRaisesRegex(SystemExit, "integrity_receipt"):
+                run_staged_evaluation.build_jobs(
+                    cells, root / "cifar.zip", root / "formal", "formal", 29800, False
+                )
+
+    def test_formal_runner_rejects_missing_checkpoint_identity_gate(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            manifest, _, receipt = self.make_manifest(root)
+            payload = json.loads(receipt.read_text(encoding="utf-8"))
+            del payload["ema_finite_passed"]
+            receipt.write_text(json.dumps(payload), encoding="utf-8")
+            cells, _ = run_staged_evaluation.load_cells(manifest, False)
+            with self.assertRaisesRegex(SystemExit, "ema_finite_passed"):
                 run_staged_evaluation.build_jobs(
                     cells, root / "cifar.zip", root / "formal", "formal", 29800, False
                 )

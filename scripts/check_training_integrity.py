@@ -22,7 +22,13 @@ if str(REPO_ROOT) not in sys.path:
 import torch
 
 
-CHECKER_VERSION = "1"
+CHECKER_VERSION = "2"
+
+METHOD_IDENTITIES = {
+    "fixed": ("sigmoid", 1.0),
+    "global110": ("global_sigmoid", 1.10),
+    "global_only": ("global_sigmoid", 1.10),
+}
 
 
 def fail(message: str) -> None:
@@ -154,6 +160,104 @@ def inspect_state(path: Path, budget_kimg: int) -> dict[str, Any]:
     return {"cur_nimg": int(cur_nimg), "tensors_checked": tensors_checked}
 
 
+def finite_float(value: Any, label: str) -> float:
+    try:
+        result = float(value)
+    except (TypeError, ValueError) as exc:
+        fail(f"{label} must be a finite number: {exc}")
+    if not math.isfinite(result):
+        fail(f"{label} must be finite")
+    return result
+
+
+def expected_method_identity(method: str) -> tuple[str, float]:
+    """Resolve the schedule identity promised by a named evaluation method."""
+    if method in METHOD_IDENTITIES:
+        return METHOD_IDENTITIES[method]
+    # Keep the checker usable for pre-existing schedule-named cells while
+    # requiring the declared method to agree with both persisted sources.
+    return method, 1.0
+
+
+def inspect_checkpoint(
+    path: Path, options: dict[str, Any], method: str,
+) -> dict[str, Any]:
+    """Load the evaluated snapshot and verify its EMA/schedule identity.
+
+    The snapshot is an experiment artifact accepted from the trusted training
+    workspace. ``pickle.load`` is therefore intentionally used to match the
+    loader used by the evaluator itself.
+    """
+    try:
+        with path.open("rb") as handle:
+            checkpoint = pickle.load(handle)
+    except Exception as exc:  # pickle failures span many exception classes.
+        fail(f"cannot load checkpoint pickle {path}: {exc}")
+    if not isinstance(checkpoint, dict):
+        fail(f"checkpoint pickle must contain a dictionary: {path}")
+    ema = checkpoint.get("ema")
+    if not isinstance(ema, torch.nn.Module):
+        fail(f"checkpoint has no torch.nn.Module EMA object: {path}")
+
+    ema_tensors_checked = 0
+    for name, tensor in list(ema.named_parameters()) + list(ema.named_buffers()):
+        if tensor.is_floating_point() or tensor.is_complex():
+            ema_tensors_checked += 1
+            if not torch.isfinite(tensor).all().item():
+                fail(f"checkpoint EMA has non-finite tensor {name!r}: {path}")
+
+    loss_fn = checkpoint.get("loss_fn")
+    schedule = getattr(loss_fn, "schedule", None)
+    checkpoint_schedule = getattr(schedule, "name", None)
+    if not isinstance(checkpoint_schedule, str) or not checkpoint_schedule:
+        fail(f"checkpoint loss_fn lacks schedule metadata: {path}")
+    checkpoint_scale = finite_float(
+        getattr(schedule, "global_gap_scale", 1.0),
+        f"checkpoint global_gap_scale ({path})",
+    )
+
+    loss_kwargs = options.get("loss_kwargs")
+    if not isinstance(loss_kwargs, dict):
+        fail("training_options.json lacks loss_kwargs schedule metadata")
+    options_schedule = loss_kwargs.get("adj")
+    if not isinstance(options_schedule, str) or not options_schedule:
+        fail("training_options.json loss_kwargs.adj is missing or invalid")
+    options_scale = finite_float(
+        loss_kwargs.get("global_gap_scale"),
+        "training_options.json loss_kwargs.global_gap_scale",
+    )
+
+    expected_schedule, expected_scale = expected_method_identity(method)
+    if options_schedule != expected_schedule or checkpoint_schedule != expected_schedule:
+        fail(
+            f"declared method {method!r} requires schedule {expected_schedule!r}, "
+            f"got training_options={options_schedule!r}, checkpoint={checkpoint_schedule!r}"
+        )
+    if not math.isclose(options_scale, expected_scale, rel_tol=0.0, abs_tol=1e-12):
+        fail(
+            f"declared method {method!r} requires global_gap_scale={expected_scale}, "
+            f"got training_options={options_scale}"
+        )
+    if not math.isclose(checkpoint_scale, expected_scale, rel_tol=0.0, abs_tol=1e-12):
+        fail(
+            f"declared method {method!r} requires global_gap_scale={expected_scale}, "
+            f"got checkpoint={checkpoint_scale}"
+        )
+    return {
+        "checkpoint_load_passed": True,
+        "ema_present": True,
+        "ema_finite_passed": True,
+        "schedule_identity_passed": True,
+        "global_gap_scale_identity_passed": True,
+        "method_identity_passed": True,
+        "ema_floating_tensors_checked": ema_tensors_checked,
+        "training_options_schedule": options_schedule,
+        "checkpoint_schedule": checkpoint_schedule,
+        "training_options_global_gap_scale": options_scale,
+        "checkpoint_global_gap_scale": checkpoint_scale,
+    }
+
+
 def build_receipt(args: argparse.Namespace) -> dict[str, Any]:
     run_dir = args.run_dir.expanduser().resolve()
     checkpoint = args.checkpoint.expanduser().resolve() if args.checkpoint else run_dir / "network-snapshot-latest.pkl"
@@ -181,6 +285,7 @@ def build_receipt(args: argparse.Namespace) -> dict[str, Any]:
     summary = inspect_summary(paths["summary"], args.budget_kimg)
     log = inspect_log(paths["log"])
     state = inspect_state(paths["state"], args.budget_kimg)
+    checkpoint_identity = inspect_checkpoint(checkpoint, options, args.method)
     if abs(stats["final_kimg"] - summary["final_kimg"]) > 1e-6:
         fail("stats and training summary final kimg disagree")
     if abs(stats["final_kimg"] * 1000 - state["cur_nimg"]) > 1e-6:
@@ -199,6 +304,14 @@ def build_receipt(args: argparse.Namespace) -> dict[str, Any]:
         "completion_passed": True,
         "logs_state_consistent": True,
         "finite_loss_state_passed": True,
+        "checkpoint_load_passed": checkpoint_identity["checkpoint_load_passed"],
+        "ema_present": checkpoint_identity["ema_present"],
+        "ema_finite_passed": checkpoint_identity["ema_finite_passed"],
+        "schedule_identity_passed": checkpoint_identity["schedule_identity_passed"],
+        "global_gap_scale_identity_passed": checkpoint_identity[
+            "global_gap_scale_identity_passed"
+        ],
+        "method_identity_passed": checkpoint_identity["method_identity_passed"],
         "checker_version": args.checker_version,
         "checker_git_commit": git_head(),
         "checked_at_unix": time.time(),
@@ -209,6 +322,7 @@ def build_receipt(args: argparse.Namespace) -> dict[str, Any]:
             "training_summary": summary,
             "log": log,
             "training_state": state,
+            "checkpoint_identity": checkpoint_identity,
             "expected_training_commit": args.expected_training_commit,
         },
     }

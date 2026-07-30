@@ -135,6 +135,9 @@ def verify_integrity_receipt(cell: dict, allow_missing_inputs: bool) -> dict:
         "checkpoint_sha256", "training_run_id", "method", "training_seed",
         "budget_kimg", "completion_passed", "logs_state_consistent",
         "finite_loss_state_passed", "checker_version", "checker_git_commit", "checked_at_unix",
+        "checkpoint_load_passed", "ema_present", "ema_finite_passed",
+        "schedule_identity_passed", "global_gap_scale_identity_passed",
+        "method_identity_passed",
     )
     missing = [field for field in required_fields if field not in receipt]
     if missing:
@@ -153,7 +156,12 @@ def verify_integrity_receipt(cell: dict, allow_missing_inputs: bool) -> dict:
         fail(f"training-integrity receipt training seed mismatch: {receipt_path}")
     if receipt.get("budget_kimg") != cell["budget_kimg"]:
         fail(f"training-integrity receipt budget mismatch: {receipt_path}")
-    for field in ("completion_passed", "logs_state_consistent", "finite_loss_state_passed"):
+    for field in (
+        "completion_passed", "logs_state_consistent", "finite_loss_state_passed",
+        "checkpoint_load_passed", "ema_present", "ema_finite_passed",
+        "schedule_identity_passed", "global_gap_scale_identity_passed",
+        "method_identity_passed",
+    ):
         if receipt.get(field) is not True:
             fail(f"training-integrity receipt did not pass {field}: {receipt_path}")
     if (

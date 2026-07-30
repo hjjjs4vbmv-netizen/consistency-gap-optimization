@@ -90,7 +90,13 @@ The receipt schema is frozen as follows (additional fields are allowed):
   "completion_passed": true,
   "logs_state_consistent": true,
   "finite_loss_state_passed": true,
-  "checker_version": "1",
+  "checkpoint_load_passed": true,
+  "ema_present": true,
+  "ema_finite_passed": true,
+  "schedule_identity_passed": true,
+  "global_gap_scale_identity_passed": true,
+  "method_identity_passed": true,
+  "checker_version": "2",
   "checker_git_commit": "<Git revision of the integrity checker>",
   "checked_at_unix": 0
 }
