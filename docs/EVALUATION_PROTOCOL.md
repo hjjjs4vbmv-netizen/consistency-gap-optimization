@@ -8,6 +8,10 @@ configuration *before* any new comparative result is inspected. Historical
 results in this repository retain their original labels; they are not silently
 promoted to quick or formal results under this protocol.
 
+The prospective q=256 budget and fresh q=128 matrices are additionally frozen
+in [`FROZEN_EVALUATION_MATRICES.md`](FROZEN_EVALUATION_MATRICES.md). Their
+per-budget metric contracts are authoritative for those matrices.
+
 The two stages have deliberately different evidence classes:
 
 | Stage | Purpose | Metrics per checkpoint/NFE | Reporting class |
@@ -134,6 +138,12 @@ from the formal 50k matrix. Every one of the six predeclared checkpoints enters
 formal evaluation when—and only when—its immutable provenance matches the
 frozen matrix and its training-integrity receipt passes. Formal eligibility is
 therefore independent of quick KID/FID performance.
+
+The same rule applies to every prospective frozen matrix. In particular, the
+q=256 budget matrix fixes 5k screening at 512 and 768 kimg and formal 50k
+evaluation at 1024 kimg: screening values may not select the 1024-kimg formal
+cells. The fresh q=128 matrix fixes all six 256-kimg cells as formal 50k.
+Every predeclared checkpoint must complete its assigned contract.
 
 The unified per-cell table must include at least: evidence class, method,
 training seed, checkpoint ID/SHA256, integrity-receipt status, NFE, `mid_t`,

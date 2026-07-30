@@ -5,6 +5,11 @@ This runbook operationalizes `staged-checkpoint-evaluation-v1` from
 on the remote server; the commands below are designed to be checked locally
 with `--dry-run` first and then run unchanged on that server.
 
+The prospective q=256 budget and fresh q=128 logical matrices are frozen in
+[`FROZEN_EVALUATION_MATRICES.md`](FROZEN_EVALUATION_MATRICES.md). They must be
+bound to completed checkpoints and integrity receipts before execution; quick
+results may not select, remove, or substitute their predeclared formal cells.
+
 ## Local preparation
 
 Copy and populate the checkpoint manifest. Every checkpoint must have an
