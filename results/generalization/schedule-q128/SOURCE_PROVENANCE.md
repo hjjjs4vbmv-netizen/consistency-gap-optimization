@@ -10,22 +10,25 @@
 The codeload archive did not contain `.git` metadata. The branch head is
 recorded separately and does not prove that a mutable branch archive was
 downloaded at that exact head; the archive SHA256 is the authoritative
-identity of the executed source.
+identity recorded for the executed source artifact.
 
 ## Relevant-file comparison
 
 | File | Source SHA256 | Reference SHA256 | Result |
 | --- | --- | --- | --- |
-| `ct_train.py` | `edb7d0065d560e79825042b5100b8bede45d60246e2d28d7a46c98c5c12c4180` | `c46ca27588e0fe1526922b4eb2767d1e207f32eea92d56688cb8685f8fe6fdc6` | materially different |
-| `training/ct_training_loop.py` | `132d6c638ebbc14b33859736a163a634a63f03c6b0bf543d77fe84c80a5348f2` | `071750bcf2990f5e8a162e52a965532b13c640625fa491e5bc8f6f968853a3aa` | materially different |
-| `training/loss.py` | `f25af844199e1637a1d2c341ad5cf8f8b538a0d2bd6aa7a6a444c7e4ca9f5084` | `9a44e96e1a5c273a8cace179240e032f78c56b1172afc8ff8a4dfbf3b1c3ec34` | materially different |
-| `training/schedules.py` | `d0a675c73588351b9a9891c179ea96ca244ecf54bb4ab8e151db8421bd48422b` | `0d5a7ea79dbd6168b127924b008bab47070be1463f3a4bd2dff13bea351959e0` | materially different |
+| `ct_train.py` | `edb7d0065d560e79825042b5100b8bede45d60246e2d28d7a46c98c5c12c4180` | `edb7d0065d560e79825042b5100b8bede45d60246e2d28d7a46c98c5c12c4180` | byte-identical |
+| `training/ct_training_loop.py` | `132d6c638ebbc14b33859736a163a634a63f03c6b0bf543d77fe84c80a5348f2` | `2c389b230601fd7b45d251231563b081075c7efefc9160277c34e616629bd11a` | non-material difference for studied fixed/global-only methods |
+| `training/loss.py` | `f25af844199e1637a1d2c341ad5cf8f8b538a0d2bd6aa7a6a444c7e4ca9f5084` | `60afe844dab6071e2306906d95fe36e1d1c2d65ba9d5413a5b84233c67216993` | non-material difference for studied fixed/global-only methods |
+| `training/schedules.py` | `d0a675c73588351b9a9891c179ea96ca244ecf54bb4ab8e151db8421bd48422b` | `00f7b38b2189699f9d27910b61864721f7cacb9987b16d59056f03fc80492abf` | non-material difference for studied fixed/global-only methods |
 | `ct_eval.py` | `0d0f7cb4790f3c089fbcd3690c8fee45dcc421a93a08c6f1f85a19efd3d85c03` | `0d0f7cb4790f3c089fbcd3690c8fee45dcc421a93a08c6f1f85a19efd3d85c03` | byte-identical |
 
 - Executed evaluation/metric code tree SHA256: `eb8fae9f7dd78cb3e9414fabb560b19ce6e61d18ae4f6fce329f94ce288851f8`
-- `ct_eval.py` is byte-identical to the reference checkout.
-- Training-related files are not byte-identical and are treated as
-  materially different for claim classification; no equivalence is inferred.
+- `ct_train.py` and `ct_eval.py` are byte-identical to the reference checkout.
+- The inspected training-path differences are non-material for the studied
+  fixed sigmoid and global-only methods.
+- Full executed-source equivalence is not claimed because the complete
+  executed archive is unavailable and no per-file archive manifest was
+  recorded.
 
 ## Classification
 
