@@ -188,6 +188,33 @@ def select_cells(cells: list[dict], phase: str, smoke_checkpoint_id: str | None)
     return cells
 
 
+def validate_formal_promotion_policy(manifest: dict, cells: list[dict]) -> None:
+    """Reject formal manifests which make quick performance a selection gate."""
+    policy = manifest.get("formal_promotion_policy")
+    if not isinstance(policy, dict):
+        fail("formal evaluation requires a formal_promotion_policy object")
+    if policy.get("eligibility") != "provenance_and_integrity_only":
+        fail("formal eligibility must be provenance_and_integrity_only")
+    if policy.get("quick_metric_performance") != "not_an_eligibility_criterion":
+        fail("quick metric performance must not be a formal eligibility criterion")
+    required_ids = policy.get("required_checkpoint_ids")
+    if (
+        not isinstance(required_ids, list)
+        or not required_ids
+        or not all(isinstance(checkpoint_id, str) and checkpoint_id for checkpoint_id in required_ids)
+        or len(set(required_ids)) != len(required_ids)
+    ):
+        fail("formal_promotion_policy required_checkpoint_ids must be a unique non-empty string list")
+    actual_ids = {cell["checkpoint_id"] for cell in cells}
+    required_ids_set = set(required_ids)
+    if actual_ids != required_ids_set:
+        fail(
+            "formal manifest must contain every predeclared checkpoint; "
+            f"missing={sorted(required_ids_set - actual_ids)}, "
+            f"extra={sorted(actual_ids - required_ids_set)}"
+        )
+
+
 def require_empty(path: Path) -> None:
     if path.exists() and any(path.iterdir()):
         fail(f"refuse to append to non-empty output directory: {path}")
@@ -304,6 +331,10 @@ def main(argv: list[str] | None = None) -> None:
         require_empty(outdir)
 
     cells, comparison = load_cells(args.manifest, args.allow_missing_inputs)
+    if args.phase == "formal":
+        validate_formal_promotion_policy(
+            load_json(args.manifest, "checkpoint manifest"), cells
+        )
     selected = select_cells(cells, args.phase, args.smoke_checkpoint_id)
     jobs = build_jobs(selected, data, outdir, args.phase, args.base_port, args.allow_missing_inputs)
     record = build_record(

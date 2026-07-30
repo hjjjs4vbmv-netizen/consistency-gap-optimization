@@ -30,6 +30,13 @@ class ConfirmatoryQ256MatrixTest(unittest.TestCase):
             {(cell["method"], cell["training_seed"]) for cell in cells},
             {(method, seed) for method in ("fixed", "global110") for seed in (3, 4, 5)},
         )
+        promotion = matrix["formal_promotion_policy"]
+        self.assertEqual(promotion["eligibility"], "provenance_and_integrity_only")
+        self.assertEqual(promotion["quick_metric_performance"], "not_an_eligibility_criterion")
+        self.assertEqual(
+            promotion["required_checkpoint_ids"],
+            [cell["checkpoint_id"] for cell in cells],
+        )
 
         for cell in cells:
             self.assertNotIn("checkpoint", cell)

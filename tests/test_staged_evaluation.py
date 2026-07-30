@@ -113,6 +113,23 @@ class StagedEvaluationTest(unittest.TestCase):
                     cells, root / "cifar.zip", root / "formal", "formal", 29800, False
                 )
 
+    def test_formal_promotion_policy_requires_all_predeclared_checkpoints(self):
+        cells = [
+            {"checkpoint_id": "fixed_seed3"},
+            {"checkpoint_id": "global_seed3"},
+        ]
+        policy = {
+            "formal_promotion_policy": {
+                "eligibility": "provenance_and_integrity_only",
+                "quick_metric_performance": "not_an_eligibility_criterion",
+                "required_checkpoint_ids": ["fixed_seed3", "global_seed3"],
+            }
+        }
+        run_staged_evaluation.validate_formal_promotion_policy(policy, cells)
+        policy["formal_promotion_policy"]["required_checkpoint_ids"] = ["fixed_seed3"]
+        with self.assertRaisesRegex(SystemExit, "every predeclared checkpoint"):
+            run_staged_evaluation.validate_formal_promotion_policy(policy, cells)
+
     def test_collector_writes_long_table_and_segregated_statistics(self):
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

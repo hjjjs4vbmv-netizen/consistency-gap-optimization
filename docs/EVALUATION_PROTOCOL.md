@@ -126,6 +126,15 @@ Execute the cycle in this order and stop on a failed prerequisite:
 7. Run the complete formal 50k matrix only for eligible checkpoints, then
    publish its separate formal summary.
 
+### No result-driven promotion
+
+For the frozen q=256 confirmatory matrix, quick 5k is diagnostic only. It
+must not be used to exclude an unfavorable seed, method, NFE, or checkpoint
+from the formal 50k matrix. Every one of the six predeclared checkpoints enters
+formal evaluation when—and only when—its immutable provenance matches the
+frozen matrix and its training-integrity receipt passes. Formal eligibility is
+therefore independent of quick KID/FID performance.
+
 The unified per-cell table must include at least: evidence class, method,
 training seed, checkpoint ID/SHA256, integrity-receipt status, NFE, `mid_t`,
 metric name/value, generated-sample count and exact seed range, evaluator/KID

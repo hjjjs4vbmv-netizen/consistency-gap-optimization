@@ -30,7 +30,9 @@ each `checkpoint_id`, `method`, `training_seed`, `budget_kimg`, and
 match the frozen receipt SHA256 before a formal launch. Seed 3 is pinned to the
 tracked handoff integrity attestation (`D_HANDOFF.md`); its server-side
 machine-readable receipt must be bound under the frozen filename before it can
-pass the formal runner's receipt gate.
+pass the formal runner's receipt gate. Copy the top-level `comparison` and
+`formal_promotion_policy` unchanged as well; the formal CLI rejects a manifest
+without the frozen six-cell promotion policy.
 
 Before any formal launch, validate the non-versioned manifest against the Git
 matrix (without `--allow-missing-inputs`):
@@ -114,6 +116,12 @@ failed predecessor.
 The formal runner requires a receipt JSON for each checkpoint with
 `status: "passed"` and a matching `checkpoint_sha256`. It refuses the formal
 run before any metric process starts when this gate is not met.
+
+For the frozen q=256 matrix, use all six predeclared cells in this command.
+Quick 5k values are not a promotion gate: no seed, method, NFE, or checkpoint
+may be removed from formal evaluation because of its quick metric performance.
+The only eligibility decision is matching frozen provenance plus a passed,
+SHA-matched training-integrity receipt.
 
 ## Outputs
 

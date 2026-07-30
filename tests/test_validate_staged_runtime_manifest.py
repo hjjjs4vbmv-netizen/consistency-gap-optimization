@@ -99,6 +99,25 @@ class ValidateStagedRuntimeManifestTest(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "receipt SHA256"):
                 validate_staged_runtime_manifest.validate(frozen, runtime)
 
+    def test_rejects_formal_promotion_policy_drift(self):
+        with TemporaryDirectory() as temp_dir:
+            frozen, runtime = self.make_manifests(Path(temp_dir))
+            policy = {
+                "eligibility": "provenance_and_integrity_only",
+                "quick_metric_performance": "not_an_eligibility_criterion",
+                "required_checkpoint_ids": ["confirmatory-256k-seed3-fixed"],
+            }
+            frozen_payload = json.loads(frozen.read_text(encoding="utf-8"))
+            runtime_payload = json.loads(runtime.read_text(encoding="utf-8"))
+            frozen_payload["formal_promotion_policy"] = policy
+            runtime_payload["formal_promotion_policy"] = {
+                **policy, "quick_metric_performance": "metric_selected",
+            }
+            frozen.write_text(json.dumps(frozen_payload), encoding="utf-8")
+            runtime.write_text(json.dumps(runtime_payload), encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "formal_promotion_policy"):
+                validate_staged_runtime_manifest.validate(frozen, runtime)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -77,6 +77,9 @@ def validate(
         missing = sorted(frozen_cells.keys() - runtime_cells.keys())
         extra = sorted(runtime_cells.keys() - frozen_cells.keys())
         fail(f"runtime checkpoint IDs differ from frozen matrix; missing={missing}, extra={extra}")
+    frozen_policy = frozen.get("formal_promotion_policy")
+    if frozen_policy is not None and runtime.get("formal_promotion_policy") != frozen_policy:
+        fail("runtime formal_promotion_policy must exactly match the frozen matrix")
 
     # Reuse the evaluator's strict checkpoint/receipt schema checks so this
     # validator cannot accept a runtime manifest which the formal runner rejects.

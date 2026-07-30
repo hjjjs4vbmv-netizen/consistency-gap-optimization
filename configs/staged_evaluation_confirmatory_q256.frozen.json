@@ -25,6 +25,19 @@
     ],
     "delta_direction": "global_only - fixed"
   },
+  "formal_promotion_policy": {
+    "eligibility": "provenance_and_integrity_only",
+    "quick_metric_performance": "not_an_eligibility_criterion",
+    "required_checkpoint_ids": [
+      "confirmatory-256k-seed3-fixed",
+      "confirmatory-256k-seed3-global110",
+      "confirmatory-256k-seed4-fixed",
+      "confirmatory-256k-seed4-global110",
+      "confirmatory-256k-seed5-fixed",
+      "confirmatory-256k-seed5-global110"
+    ],
+    "rule": "Every predeclared checkpoint with matching provenance and a passed training-integrity receipt must enter the formal 50k matrix. Quick 5k results must not exclude a seed, method, NFE, or checkpoint."
+  },
   "training": {
     "budget_kimg": 256,
     "schedule_q": 256,
