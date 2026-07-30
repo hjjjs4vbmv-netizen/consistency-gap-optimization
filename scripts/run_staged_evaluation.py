@@ -249,7 +249,7 @@ def build_jobs(
                 "--cache=True",
                 "--workers=3",
                 f"--nfe={nfe}",
-                "--mid_t=0.821",
+                *(["--mid_t=0.821"] if nfe == 2 else []),
                 f"--metrics={','.join(config['metrics'])}",
                 "--metric-repeats=1",
                 f"--sample-seeds={config['sample_seeds']}",

@@ -83,12 +83,20 @@ class StagedEvaluationTest(unittest.TestCase):
                 self.assertIn("--metric-repeats=1", command)
                 self.assertIn("--seed=20260730", command)
                 self.assertEqual(job["evidence_class"], "quick")
+                if job["nfe"] == 1:
+                    self.assertFalse(any(argument.startswith("--mid_t=") for argument in job["command"]))
+                else:
+                    self.assertIn("--mid_t=0.821", job["command"])
             for job in formal:
                 command = " ".join(job["command"])
                 self.assertIn("--sample-seeds=0-49999", command)
                 self.assertIn("--metrics=kid50k_full,fid50k_full", command)
                 self.assertEqual(job["integrity_receipt"]["status"], "passed")
                 self.assertEqual(job["mid_t"], [] if job["nfe"] == 1 else [0.821])
+                if job["nfe"] == 1:
+                    self.assertFalse(any(argument.startswith("--mid_t=") for argument in job["command"]))
+                else:
+                    self.assertIn("--mid_t=0.821", job["command"])
 
     def test_formal_runner_rejects_missing_integrity_receipt(self):
         with TemporaryDirectory() as temp_dir:
