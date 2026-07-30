@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "manifest_kind": "frozen-logical-checkpoint-matrix",
+  "protocol": "staged-checkpoint-evaluation-v1",
+  "matrix_id": "confirmatory-q256-fixed-vs-global110-v1",
+  "description": "Authoritative logical matrix for the 256-kimg confirmatory fixed-sigmoid versus global-only g=1.10 experiment. Machine-local checkpoint and receipt paths are deliberately excluded.",
+  "runtime_binding": {
+    "required": true,
+    "versioned_paths": false,
+    "required_runtime_fields": [
+      "checkpoint",
+      "integrity_receipt"
+    ],
+    "binding_rule": "A server manifest must preserve every cell's checkpoint_id and checkpoint_sha256 and bind the named integrity receipt to a local path."
+  },
+  "comparison": {
+    "baseline_method": "fixed",
+    "candidate_method": "global110",
+    "pairing_key": "training_seed",
+    "delta_direction": "global110 - fixed"
+  },
+  "training": {
+    "budget_kimg": 256,
+    "schedule_q": 256,
+    "training_seeds": [
+      3,
+      4,
+      5
+    ]
+  },
+  "method_definitions": {
+    "fixed": {
+      "label": "fixed sigmoid",
+      "schedule_identity": "sigmoid",
+      "global_gap_scale": 1.0,
+      "local_controller": "disabled"
+    },
+    "global110": {
+      "label": "global-only g=1.10",
+      "schedule_identity": "global_sigmoid",
+      "global_gap_scale": 1.1,
+      "local_controller": "disabled"
+    }
+  },
+  "cells": [
+    {
+      "checkpoint_id": "confirmatory-256k-seed3-fixed",
+      "method": "fixed",
+      "training_seed": 3,
+      "budget_kimg": 256,
+      "schedule_q": 256,
+      "schedule_identity": "sigmoid",
+      "global_gap_scale": 1.0,
+      "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "executed_training_source_commit": "3a0d603da97dd93ddbb6c7ce49e4a7351d54bb43",
+      "training_integrity_receipt": {
+        "receipt_id": "confirmatory-256k-seed3-fixed",
+        "receipt_filename": "seed3_fixed_256k.integrity.json",
+        "status": "passed",
+        "receipt_type": "handoff-integrity-attestation",
+        "source": "D_HANDOFF.md",
+        "source_git_blob": "6757919629a4c7fed05dce9b0316f8607d4eeae0"
+      }
+    },
+    {
+      "checkpoint_id": "confirmatory-256k-seed3-global110",
+      "method": "global110",
+      "training_seed": 3,
+      "budget_kimg": 256,
+      "schedule_q": 256,
+      "schedule_identity": "global_sigmoid",
+      "global_gap_scale": 1.1,
+      "checkpoint_sha256": "24875430eea4679a416ae921c3e9ae16142f6416d2a0edf970764384ef964bed",
+      "executed_training_source_commit": "3a0d603da97dd93ddbb6c7ce49e4a7351d54bb43",
+      "training_integrity_receipt": {
+        "receipt_id": "confirmatory-256k-seed3-global110",
+        "receipt_filename": "seed3_global110_256k.integrity.json",
+        "status": "passed",
+        "receipt_type": "handoff-integrity-attestation",
+        "source": "D_HANDOFF.md",
+        "source_git_blob": "6757919629a4c7fed05dce9b0316f8607d4eeae0"
+      }
+    },
+    {
+      "checkpoint_id": "confirmatory-256k-seed4-fixed",
+      "method": "fixed",
+      "training_seed": 4,
+      "budget_kimg": 256,
+      "schedule_q": 256,
+      "schedule_identity": "sigmoid",
+      "global_gap_scale": 1.0,
+      "checkpoint_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "executed_training_source_commit": "ab03f9e03b7b82425282abc3bf661067ca45875a",
+      "training_integrity_receipt": {
+        "receipt_id": "confirmatory-256k-seed4-fixed",
+        "receipt_filename": "seed4_fixed_256k.integrity.json",
+        "receipt_sha256": "f198e212762511570a95686e8c1f58a43f5c28433a9cdbea695433a4ad5704a1",
+        "status": "passed",
+        "checker_git_commit": "125ece6d018e10a1c2cf13ea6e3beeda09667d23"
+      }
+    },
+    {
+      "checkpoint_id": "confirmatory-256k-seed4-global110",
+      "method": "global110",
+      "training_seed": 4,
+      "budget_kimg": 256,
+      "schedule_q": 256,
+      "schedule_identity": "global_sigmoid",
+      "global_gap_scale": 1.1,
+      "checkpoint_sha256": "62a6122a7be523aeb12875d96e96312e9c90efde9eafb75d730c75ceea0e8862",
+      "executed_training_source_commit": "ab03f9e03b7b82425282abc3bf661067ca45875a",
+      "training_integrity_receipt": {
+        "receipt_id": "confirmatory-256k-seed4-global110",
+        "receipt_filename": "seed4_global110_256k.integrity.json",
+        "receipt_sha256": "f75e02aa4d5a03a6a5034601a56beed51c54515b170ec9a929300487fd10cb1f",
+        "status": "passed",
+        "checker_git_commit": "125ece6d018e10a1c2cf13ea6e3beeda09667d23"
+      }
+    },
+    {
+      "checkpoint_id": "confirmatory-256k-seed5-fixed",
+      "method": "fixed",
+      "training_seed": 5,
+      "budget_kimg": 256,
+      "schedule_q": 256,
+      "schedule_identity": "sigmoid",
+      "global_gap_scale": 1.0,
+      "checkpoint_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+      "executed_training_source_commit": "ab03f9e03b7b82425282abc3bf661067ca45875a",
+      "training_integrity_receipt": {
+        "receipt_id": "confirmatory-256k-seed5-fixed",
+        "receipt_filename": "seed5_fixed_256k.integrity.json",
+        "receipt_sha256": "bc36610ff6d519b66bf371dad5341c87adc88a766954ac968576e6af2c4ad8ed",
+        "status": "passed",
+        "checker_git_commit": "125ece6d018e10a1c2cf13ea6e3beeda09667d23"
+      }
+    },
+    {
+      "checkpoint_id": "confirmatory-256k-seed5-global110",
+      "method": "global110",
+      "training_seed": 5,
+      "budget_kimg": 256,
+      "schedule_q": 256,
+      "schedule_identity": "global_sigmoid",
+      "global_gap_scale": 1.1,
+      "checkpoint_sha256": "491dc887990e6d9f6fde70b5d12775aaf4bfc6155b731682926b02061c253e9b",
+      "executed_training_source_commit": "ab03f9e03b7b82425282abc3bf661067ca45875a",
+      "training_integrity_receipt": {
+        "receipt_id": "confirmatory-256k-seed5-global110",
+        "receipt_filename": "seed5_global110_256k.integrity.json",
+        "receipt_sha256": "c038816244ecfcc26956531017b71235e391c3fbe5d3ec2f918831191a48aaba",
+        "status": "passed",
+        "checker_git_commit": "125ece6d018e10a1c2cf13ea6e3beeda09667d23"
+      }
+    }
+  ]
+}

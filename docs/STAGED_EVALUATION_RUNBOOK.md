@@ -15,6 +15,23 @@ cp configs/staged_evaluation_checkpoints.example.json \
   /mnt/ect_project/staged_eval/checkpoints.json
 ```
 
+### Confirmatory q=256 matrix
+
+The current six-cell fixed-sigmoid versus global-only `g=1.10` study is frozen
+in [`../configs/staged_evaluation_confirmatory_q256.frozen.json`](../configs/staged_evaluation_confirmatory_q256.frozen.json).
+It intentionally contains identities, hashes, schedule settings, source
+commits, and receipt identities, but no server paths. Do not point
+`run_staged_evaluation.py` directly at this logical manifest.
+
+On the evaluation server, create a non-versioned runtime manifest which copies
+each `checkpoint_id`, `method`, `training_seed`, `budget_kimg`, and
+`checkpoint_sha256` unchanged, then adds the local `checkpoint` and
+`integrity_receipt` paths. For the seed 4/5 receipt files, also recompute and
+match the frozen receipt SHA256 before a formal launch. Seed 3 is pinned to the
+tracked handoff integrity attestation (`D_HANDOFF.md`); its server-side
+machine-readable receipt must be bound under the frozen filename before it can
+pass the formal runner's receipt gate.
+
 The first remote job is the quick smoke for one named existing checkpoint. It
 runs both NFE modes and both 5k metrics, producing four metric records total:
 
