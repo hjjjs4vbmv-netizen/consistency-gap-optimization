@@ -4,7 +4,7 @@
 
 - **Executed training source commit:** `ab03f9e03b7b82425282abc3bf661067ca45875a`
 - **Training-code baseline:** `6d4bc7d`
-- **PR head / handoff-document commit:** recorded by the Git commit containing this document.
+- **Original PR head / handoff-document commit:** `f299528dfb9cdb8f5be92576673242ccb0c57464`\n- **Documentation-correction commit:** recorded by the Git commit containing this revised document.
 
 The four training jobs were launched from `ab03f9e03b7b82425282abc3bf661067ca45875a`. Its training code is equivalent to baseline `6d4bc7d`; the PR/handoff-document commit is distinct and must not be described as the executed training source.
 
