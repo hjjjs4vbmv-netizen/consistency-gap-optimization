@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "protocol": "staged-checkpoint-evaluation-v1",
+  "cells": [
+    {
+      "checkpoint_id": "sigmoid_seed0_16k",
+      "method": "sigmoid",
+      "training_seed": 0,
+      "budget_kimg": 16,
+      "checkpoint": "/mnt/ect_project/checkpoints/sigmoid_seed0_16k.pkl",
+      "checkpoint_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "integrity_receipt": "/mnt/ect_project/checkpoints/sigmoid_seed0_16k.integrity.json"
+    },
+    {
+      "checkpoint_id": "adaptive_v1_seed0_16k",
+      "method": "adaptive_v1",
+      "training_seed": 0,
+      "budget_kimg": 16,
+      "checkpoint": "/mnt/ect_project/checkpoints/adaptive_v1_seed0_16k.pkl",
+      "checkpoint_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "integrity_receipt": "/mnt/ect_project/checkpoints/adaptive_v1_seed0_16k.integrity.json"
+    }
+  ]
+}
