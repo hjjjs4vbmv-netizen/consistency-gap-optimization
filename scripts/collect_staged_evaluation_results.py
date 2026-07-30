@@ -11,6 +11,7 @@ import statistics
 from pathlib import Path
 
 PROTOCOL_ID = "staged-checkpoint-evaluation-v1"
+PAIRING_KEY = ("training_seed", "budget_kimg", "nfe", "metric_name")
 
 
 def fail(message: str) -> None:
@@ -154,70 +155,136 @@ def build_pairwise_statistics(rows: list[dict], comparison: dict | None) -> dict
         isinstance(field, str) and field for field in pairing_key
     ):
         fail("pairing_key must be a non-empty list of row field names")
+    pairing_key = tuple("metric_name" if field == "metric" else field for field in pairing_key)
+    if pairing_key != PAIRING_KEY:
+        fail(
+            "fixed/global paired analysis requires pairing_key "
+            f"{list(PAIRING_KEY)!r}, got {list(pairing_key)!r}"
+        )
     unknown = [field for field in pairing_key if any(field not in row for row in rows)]
     if unknown:
         fail(f"pairing_key fields are absent from result rows: {unknown}")
     baseline = comparison["baseline_method"]
     candidate = comparison["candidate_method"]
-    if not isinstance(baseline, str) or not isinstance(candidate, str) or baseline == candidate:
-        fail("pairing contract must name two distinct methods")
+    if baseline != "fixed" or candidate != "global110":
+        fail("fixed/global paired analysis requires baseline_method='fixed' and candidate_method='global110'")
+    candidate_label = comparison.get("candidate_label", "global_only")
+    if candidate_label != "global_only":
+        fail("fixed/global paired analysis requires candidate_label='global_only'")
     direction = comparison["delta_direction"]
-    expected_direction = f"{candidate} - {baseline}"
+    expected_direction = "global_only - fixed"
     if direction != expected_direction:
         fail(f"delta_direction must be exactly {expected_direction!r}")
 
-    grouped: dict[tuple[str, int], dict[str, dict[tuple, dict]]] = {}
+    grouped: dict[str, dict[tuple, dict]] = {baseline: {}, candidate: {}}
     for row in rows:
         if row["method"] not in (baseline, candidate):
             continue
-        group = (row["metric_name"], row["nfe"])
         pair = tuple(row[field] for field in pairing_key)
-        methods = grouped.setdefault(group, {baseline: {}, candidate: {}})
-        if pair in methods[row["method"]]:
-            fail(f"duplicate {row['method']} row for pairing key {pair} in {group}")
-        methods[row["method"]][pair] = row
+        if pair in grouped[row["method"]]:
+            fail(f"duplicate {row['method']} row for pairing key {pair}")
+        grouped[row["method"]][pair] = row
 
-    if not grouped:
+    if not grouped[baseline] and not grouped[candidate]:
         fail("pairing contract methods do not appear in result rows")
+    baseline_pairs = set(grouped[baseline])
+    candidate_pairs = set(grouped[candidate])
+    if baseline_pairs != candidate_pairs:
+        fail(
+            "unpaired fixed/global results: "
+            f"fixed_only={sorted(baseline_pairs - candidate_pairs)}, "
+            f"global_only={sorted(candidate_pairs - baseline_pairs)}"
+        )
+
+    differences = []
+    for pair in sorted(baseline_pairs):
+        fixed_row = grouped[baseline][pair]
+        global_row = grouped[candidate][pair]
+        fixed_value = fixed_row["metric_value"]
+        global_value = global_row["metric_value"]
+        delta = global_value - fixed_value
+        winner = "global_only" if delta < 0 else "fixed" if delta > 0 else "tie"
+        differences.append({
+            "training_seed": fixed_row["training_seed"],
+            "budget_kimg": fixed_row["budget_kimg"],
+            "nfe": fixed_row["nfe"],
+            "metric": fixed_row["metric_name"],
+            "fixed_checkpoint_id": fixed_row["checkpoint_id"],
+            "global_only_checkpoint_id": global_row["checkpoint_id"],
+            "fixed_checkpoint_sha256": fixed_row["checkpoint_sha256"],
+            "global_only_checkpoint_sha256": global_row["checkpoint_sha256"],
+            "fixed_value": fixed_value,
+            "global_only_value": global_value,
+            "delta": delta,
+            "winner": winner,
+        })
+
+    statistics_groups: dict[tuple[str, int, int], list[dict]] = {}
+    for difference in differences:
+        key = (difference["metric"], difference["budget_kimg"], difference["nfe"])
+        statistics_groups.setdefault(key, []).append(difference)
     statistics_rows = []
-    for (metric_name, nfe), methods in sorted(grouped.items()):
-        baseline_pairs = set(methods[baseline])
-        candidate_pairs = set(methods[candidate])
-        if baseline_pairs != candidate_pairs:
-            fail(
-                f"unpaired results for {metric_name} nfe={nfe}: "
-                f"baseline_only={sorted(baseline_pairs - candidate_pairs)}, "
-                f"candidate_only={sorted(candidate_pairs - baseline_pairs)}"
-            )
-        pairs = []
-        for pair in sorted(baseline_pairs):
-            baseline_value = methods[baseline][pair]["metric_value"]
-            candidate_value = methods[candidate][pair]["metric_value"]
-            pairs.append({
-                "pair": dict(zip(pairing_key, pair)),
-                "baseline_value": baseline_value,
-                "candidate_value": candidate_value,
-                "delta": candidate_value - baseline_value,
-            })
-        deltas = [item["delta"] for item in pairs]
+    for (metric_name, budget_kimg, nfe), group in sorted(statistics_groups.items()):
+        deltas = [item["delta"] for item in group]
         statistics_rows.append({
             "metric_name": metric_name,
+            "budget_kimg": budget_kimg,
             "nfe": nfe,
-            "pair_count": len(pairs),
+            "pair_count": len(group),
             "mean_delta": statistics.mean(deltas),
             "sample_sd_delta": statistics.stdev(deltas) if len(deltas) > 1 else None,
             "minimum_delta": min(deltas),
             "maximum_delta": max(deltas),
-            "pairs": pairs,
+            "global_wins": sum(item["winner"] == "global_only" for item in group),
+            "fixed_wins": sum(item["winner"] == "fixed" for item in group),
+            "ties": sum(item["winner"] == "tie" for item in group),
         })
     return {
         "status": "computed",
-        "pairing_key": pairing_key,
+        "schema_version": 1,
+        "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric"],
         "baseline_method": baseline,
         "candidate_method": candidate,
+        "candidate_label": candidate_label,
         "delta_direction": direction,
+        "paired_differences": differences,
         "statistics": statistics_rows,
     }
+
+
+def write_paired_outputs(outdir: Path, pairwise: dict) -> None:
+    """Write per-seed fixed/global evidence as standalone reviewable files."""
+    if pairwise["status"] != "computed":
+        return
+    differences = pairwise["paired_differences"]
+    with (outdir / "paired_differences.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(differences[0]))
+        writer.writeheader()
+        writer.writerows(differences)
+    paired_statistics = {
+        key: value for key, value in pairwise.items() if key != "paired_differences"
+    }
+    (outdir / "paired_statistics.json").write_text(
+        json.dumps(paired_statistics, indent=2) + "\n", encoding="utf-8"
+    )
+    lines = [
+        "# Fixed vs global-only paired statistics",
+        "",
+        "Pairing key: `training_seed + budget_kimg + nfe + metric`.",
+        "Delta: `global_only - fixed`; negative values favor global-only.",
+        "",
+        "| Metric | Budget (kimg) | NFE | Pairs | Mean delta | Sample SD | Global wins | Fixed wins | Ties |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in pairwise["statistics"]:
+        sample_sd = "—" if row["sample_sd_delta"] is None else f"{row['sample_sd_delta']:.9f}"
+        lines.append(
+            f"| {row['metric_name']} | {row['budget_kimg']} | {row['nfe']} | "
+            f"{row['pair_count']} | {row['mean_delta']:.9f} | {sample_sd} | "
+            f"{row['global_wins']} | {row['fixed_wins']} | {row['ties']} |"
+        )
+    lines.append("")
+    (outdir / "paired_statistics.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def write_outputs(outdir: Path, rows: list[dict], summary: dict) -> None:
@@ -254,20 +321,21 @@ def write_outputs(outdir: Path, rows: list[dict], summary: dict) -> None:
             "Pairing key: `" + ", ".join(pairwise["pairing_key"]) + "`; "
             "delta: `" + pairwise["delta_direction"] + "`.",
             "",
-            "| Metric | NFE | Pairs | Mean delta | Sample SD | Min | Max |",
-            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+            "| Metric | Budget | NFE | Pairs | Mean delta | Sample SD | Global wins | Fixed wins | Ties |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
         ])
         for row in pairwise["statistics"]:
             sample_sd = "—" if row["sample_sd_delta"] is None else f"{row['sample_sd_delta']:.9f}"
             lines.append(
-                f"| {row['metric_name']} | {row['nfe']} | {row['pair_count']} | "
-                f"{row['mean_delta']:.9f} | {sample_sd} | {row['minimum_delta']:.9f} | "
-                f"{row['maximum_delta']:.9f} |"
+                f"| {row['metric_name']} | {row['budget_kimg']} | {row['nfe']} | {row['pair_count']} | "
+                f"{row['mean_delta']:.9f} | {sample_sd} | {row['global_wins']} | "
+                f"{row['fixed_wins']} | {row['ties']} |"
             )
     else:
         lines.extend(["", "No pairwise delta is emitted: " + pairwise["reason"] + "."])
     lines.append("")
     (outdir / "evaluation_statistics.md").write_text("\n".join(lines), encoding="utf-8")
+    write_paired_outputs(outdir, pairwise)
 
 
 def main(argv: list[str] | None = None) -> None:

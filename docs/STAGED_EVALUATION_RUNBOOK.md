@@ -122,4 +122,7 @@ The collector writes a long-form `evaluation_results.csv` and separate
 checkpoint and dataset identity, integrity status, NFE, both seed contracts,
 metric value, evaluation revision, and run path. Statistics are grouped by
 evidence class, metric, NFE, and method; quick and formal evidence are never
-pooled.
+pooled. For the fixed/global-only confirmatory manifest it additionally writes
+`paired_differences.csv`, `paired_statistics.json`, and
+`paired_statistics.md`; the collector refuses missing or duplicated arms
+instead of producing a partial paired summary.

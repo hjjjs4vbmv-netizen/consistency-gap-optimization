@@ -131,8 +131,11 @@ training seed, checkpoint ID/SHA256, integrity-receipt status, NFE, `mid_t`,
 metric name/value, generated-sample count and exact seed range, evaluator/KID
 seed, dataset SHA256, evaluation Git revision, run path, and completion
 status. Statistics must never pool checkpoints, NFEs, quick and formal rows,
-or different metrics; paired summaries must state their pairing key and the
-delta direction explicitly.
+or different metrics. For the fixed/global-only confirmatory matrix, pairing
+is exactly `training_seed + budget_kimg + nfe + metric`, the delta is
+`global_only - fixed`, and negative values favor global-only. Missing or
+duplicated arms are a hard collection failure. The collector emits the
+per-seed `paired_differences.csv` and separate paired statistics JSON/Markdown.
 
 `docs/FINAL_PERFORMANCE_EVALUATION.md` and
 `docs/ROLE_A_QUANTITATIVE_EVALUATION.md` describe earlier scoped experiments.

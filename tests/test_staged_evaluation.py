@@ -166,23 +166,49 @@ class StagedEvaluationTest(unittest.TestCase):
 
     def test_collector_computes_deltas_from_explicit_pairing_contract(self):
         rows = [
-            {"method": "fixed", "training_seed": 4, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 10.0},
-            {"method": "global110", "training_seed": 4, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 8.0},
-            {"method": "fixed", "training_seed": 5, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 12.0},
-            {"method": "global110", "training_seed": 5, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 9.0},
+            {"method": "fixed", "training_seed": 4, "budget_kimg": 256, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 10.0, "checkpoint_id": "fixed4", "checkpoint_sha256": "a" * 64},
+            {"method": "global110", "training_seed": 4, "budget_kimg": 256, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 8.0, "checkpoint_id": "global4", "checkpoint_sha256": "b" * 64},
+            {"method": "fixed", "training_seed": 5, "budget_kimg": 256, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 12.0, "checkpoint_id": "fixed5", "checkpoint_sha256": "c" * 64},
+            {"method": "global110", "training_seed": 5, "budget_kimg": 256, "metric_name": "fid50k_full", "nfe": 1, "metric_value": 9.0, "checkpoint_id": "global5", "checkpoint_sha256": "d" * 64},
         ]
         pairing = {
-            "pairing_key": ["training_seed"],
+            "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric_name"],
             "baseline_method": "fixed",
             "candidate_method": "global110",
-            "delta_direction": "global110 - fixed",
+            "candidate_label": "global_only",
+            "delta_direction": "global_only - fixed",
         }
         result = collect_staged_evaluation_results.build_pairwise_statistics(rows, pairing)
         self.assertEqual(result["status"], "computed")
         statistic = result["statistics"][0]
         self.assertEqual(statistic["pair_count"], 2)
         self.assertEqual(statistic["mean_delta"], -2.5)
-        self.assertEqual([item["delta"] for item in statistic["pairs"]], [-2.0, -3.0])
+        self.assertEqual(statistic["global_wins"], 2)
+        self.assertEqual(statistic["fixed_wins"], 0)
+        self.assertEqual(statistic["ties"], 0)
+        self.assertEqual([item["delta"] for item in result["paired_differences"]], [-2.0, -3.0])
+        with TemporaryDirectory() as temp_dir:
+            output = Path(temp_dir)
+            collect_staged_evaluation_results.write_paired_outputs(output, result)
+            self.assertTrue((output / "paired_differences.csv").is_file())
+            self.assertTrue((output / "paired_statistics.json").is_file())
+            self.assertTrue((output / "paired_statistics.md").is_file())
+
+    def test_collector_rejects_missing_or_duplicated_fixed_global_pair(self):
+        row = {
+            "method": "fixed", "training_seed": 4, "budget_kimg": 256,
+            "metric_name": "kid50k_full", "nfe": 2, "metric_value": 0.2,
+            "checkpoint_id": "fixed4", "checkpoint_sha256": "a" * 64,
+        }
+        pairing = {
+            "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric_name"],
+            "baseline_method": "fixed", "candidate_method": "global110",
+            "candidate_label": "global_only", "delta_direction": "global_only - fixed",
+        }
+        with self.assertRaisesRegex(SystemExit, "unpaired fixed/global"):
+            collect_staged_evaluation_results.build_pairwise_statistics([row], pairing)
+        with self.assertRaisesRegex(SystemExit, "duplicate fixed"):
+            collect_staged_evaluation_results.build_pairwise_statistics([row, row], pairing)
 
     def test_fid_uses_scipy_sqrtm_without_removed_disp_argument(self):
         class Stats:

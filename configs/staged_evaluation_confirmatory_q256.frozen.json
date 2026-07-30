@@ -16,8 +16,14 @@
   "comparison": {
     "baseline_method": "fixed",
     "candidate_method": "global110",
-    "pairing_key": "training_seed",
-    "delta_direction": "global110 - fixed"
+    "candidate_label": "global_only",
+    "pairing_key": [
+      "training_seed",
+      "budget_kimg",
+      "nfe",
+      "metric"
+    ],
+    "delta_direction": "global_only - fixed"
   },
   "training": {
     "budget_kimg": 256,

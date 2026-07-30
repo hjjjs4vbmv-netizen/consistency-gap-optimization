@@ -18,6 +18,11 @@ class ConfirmatoryQ256MatrixTest(unittest.TestCase):
         self.assertEqual(matrix["training"]["budget_kimg"], 256)
         self.assertEqual(matrix["training"]["schedule_q"], 256)
         self.assertEqual(matrix["training"]["training_seeds"], [3, 4, 5])
+        self.assertEqual(
+            matrix["comparison"]["pairing_key"],
+            ["training_seed", "budget_kimg", "nfe", "metric"],
+        )
+        self.assertEqual(matrix["comparison"]["delta_direction"], "global_only - fixed")
 
         cells = matrix["cells"]
         self.assertEqual(len(cells), 6)
