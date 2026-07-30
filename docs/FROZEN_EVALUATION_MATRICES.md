@@ -9,8 +9,8 @@ The matrices in this document are frozen before the new checkpoints are trained 
 
 The machine-readable specifications are:
 
-- `configs/staged_evaluation_q256_budget_matrix.frozen.json`
-- `configs/staged_evaluation_q128_fresh_matrix.frozen.json`
+- `configs/q256_budget_matrix.frozen.json`
+- `configs/q128_confirmatory_matrix.frozen.json`
 
 Both matrices freeze `NFE=1` as `mid_t=[]`, `NFE=2` as `mid_t=[0.821]`, the evaluator/metric seed as `20260730`, the pairing key as `training_seed + budget_kimg + nfe + metric`, and the paired delta as `global_only - fixed`. A negative delta favors global-only.
 

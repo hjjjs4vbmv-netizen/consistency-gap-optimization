@@ -65,16 +65,16 @@ the values as descriptive paired results; with only three independent training
 seeds, do not make a significance claim from these sample standard deviations.
 
 The portable result package is versioned at
-`results/confirmatory_q256_formal/`. It retains the machine-generated metric
+`results/q256_256k_formal/`. It retains the machine-generated metric
 values and provenance needed for review, but deliberately omits generated
 samples, feature caches, and host-specific paths:
 
 ```text
-results/confirmatory_q256_formal/evaluation_results.csv
-results/confirmatory_q256_formal/paired_differences.csv
-results/confirmatory_q256_formal/paired_statistics.json
-results/confirmatory_q256_formal/environment_manifest.json
-results/confirmatory_q256_formal/README.md
+results/q256_256k_formal/evaluation_results.csv
+results/q256_256k_formal/paired_differences.csv
+results/q256_256k_formal/paired_statistics.json
+results/q256_256k_formal/environment_manifest.json
+results/q256_256k_formal/README.md
 ```
 
 The frozen logical matrix, immutable receipt digests, formal-promotion policy,

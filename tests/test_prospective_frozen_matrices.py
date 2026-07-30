@@ -45,7 +45,7 @@ class ProspectiveFrozenMatricesTest(unittest.TestCase):
             self.assertNotIn("checkpoint_sha256", cell)
 
     def test_q256_budget_matrix_is_complete_and_has_per_budget_metrics(self):
-        matrix = self.load("staged_evaluation_q256_budget_matrix.frozen.json")
+        matrix = self.load("q256_budget_matrix.frozen.json")
         self.assert_common_contract(matrix, 256)
         self.assertEqual(matrix["training"]["budget_kimg"], [512, 768, 1024])
         self.assertEqual(len(matrix["cells"]), 18)
@@ -67,7 +67,7 @@ class ProspectiveFrozenMatricesTest(unittest.TestCase):
         self.assertTrue(all("-1024k-" in checkpoint_id for checkpoint_id in formal_ids))
 
     def test_q128_fresh_matrix_is_complete_and_formal(self):
-        matrix = self.load("staged_evaluation_q128_fresh_matrix.frozen.json")
+        matrix = self.load("q128_confirmatory_matrix.frozen.json")
         self.assert_common_contract(matrix, 128)
         self.assertEqual(matrix["training"]["budget_kimg"], [256])
         self.assertEqual(len(matrix["cells"]), 6)
