@@ -1,0 +1,68 @@
+{
+  "status": "computed",
+  "schema_version": 1,
+  "pairing_key": [
+    "training_seed",
+    "budget_kimg",
+    "nfe",
+    "metric"
+  ],
+  "baseline_method": "fixed",
+  "candidate_method": "global110",
+  "candidate_label": "global_only",
+  "delta_direction": "global_only - fixed",
+  "statistics": [
+    {
+      "metric_name": "fid50k_full",
+      "budget_kimg": 256,
+      "nfe": 1,
+      "pair_count": 3,
+      "mean_delta": -14.1835921090954,
+      "sample_sd_delta": 3.2969383203453773,
+      "minimum_delta": -17.98343091141612,
+      "maximum_delta": -12.081878021569992,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0
+    },
+    {
+      "metric_name": "fid50k_full",
+      "budget_kimg": 256,
+      "nfe": 2,
+      "pair_count": 3,
+      "mean_delta": -126.91688047374475,
+      "sample_sd_delta": 110.56037604257908,
+      "minimum_delta": -211.37397965899058,
+      "maximum_delta": -1.7796730184676193,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0
+    },
+    {
+      "metric_name": "kid50k_full",
+      "budget_kimg": 256,
+      "nfe": 1,
+      "pair_count": 3,
+      "mean_delta": -0.025125434001286823,
+      "sample_sd_delta": 0.010316681602448223,
+      "minimum_delta": -0.0361655056476593,
+      "maximum_delta": -0.015729635953903198,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0
+    },
+    {
+      "metric_name": "kid50k_full",
+      "budget_kimg": 256,
+      "nfe": 2,
+      "pair_count": 3,
+      "mean_delta": -0.14742045352856317,
+      "sample_sd_delta": 0.1290316143174649,
+      "minimum_delta": -0.24028171226382256,
+      "maximum_delta": -8.517876267433167e-05,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0
+    }
+  ]
+}

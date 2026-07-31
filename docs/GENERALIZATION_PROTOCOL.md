@@ -6,14 +6,19 @@ How do global gap calibration and localized feedback separately affect consisten
 
 The primary confirmatory comparison is fixed sigmoid versus global-only gap calibration. Localized feedback is a secondary mechanism analysis and must not replace the primary comparison.
 
-## Status of the q=128 evidence
+## Status of q=128 evidence
 
-The q=128 setting was not formally frozen before its results were observed.
-All q=128 results are therefore treated as legacy retrospective exploratory
-screening evidence produced from a pre-merge implementation, rather than
-confirmatory generalization evidence. The source archive differs materially
-from the reference merged implementation in training-related files, and
-canonical dataset-content equivalence could not be established on this node.
+The existing q=128 results were not formally frozen before they were observed.
+They remain legacy retrospective exploratory screening evidence produced from
+a pre-merge implementation, rather than confirmatory generalization evidence.
+The source archive differs materially from the reference merged implementation
+in training-related files, and canonical dataset-content equivalence could not
+be established on this node.
+
+A separate, fresh prospective q=128 matrix is now frozen in
+[`FROZEN_EVALUATION_MATRICES.md`](FROZEN_EVALUATION_MATRICES.md): fixed versus
+global110, seeds 3/4/5, 256 kimg, NFE=1/2, and KID/FID-50k. It contains no
+results yet and does not promote or reuse the legacy evidence.
 
 ## Primary setting (frozen elsewhere)
 
@@ -74,7 +79,8 @@ The following gate would have been required for prospective promotion, but it wa
 - the metric pipeline passes its reproducibility check,
 - no protocol field changed after results became visible.
 
-No retrospective promotion is permitted. No q=128 FID/KID-50k result is requested by this PR.
+No retrospective promotion is permitted. The fresh prospective matrix requests
+q=128 FID/KID-50k only for newly trained, predeclared checkpoints.
 
 ## Required metadata
 
