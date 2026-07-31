@@ -12,7 +12,7 @@ All evaluations used 50,000 generated samples (seeds `0-49999`), metric seed `20
 | `paired_differences.csv` | 12 seed-level global-only minus fixed differences, with absolute values, relative improvements, and checkpoint provenance. |
 | `paired_statistics.json` | Machine-readable paired descriptive, robustness, and NFE-heterogeneity summaries derived from the difference CSV. |
 | `paired_statistics.md` | Reader-facing paired robustness table, leave-one-seed-out summary, and NFE-heterogeneity table. |
-| `figures/` | Reproducible SVG and PNG main-text figures. |
+| `figures/` | Reproducible SVG, PNG, and PDF main-text figures. |
 | `environment_manifest.json` | Frozen evaluator environment, data identity, NFE settings, and six checkpoint identities without machine paths. |
 
 ## Per-seed absolute values
@@ -45,7 +45,12 @@ Values are mean ± sample SD across the three training seeds. The paired delta i
 
 Use `metric_value` grouped by `metric_name`, `nfe`, and `method` in `evaluation_results.csv` to calculate absolute-value means and sample SDs (`n - 1` denominator). Use `delta` in `paired_differences.csv`, grouped by `metric` and `nfe`, for the paired columns. The complete-precision source values are in the CSVs; Markdown values are rounded to nine decimal places.
 
-## Paired robustness summary
+## Appendix-only sensitivity diagnostics
+
+The following expanded diagnostics are retained for appendix or
+machine-readable review, not for the main-text result summary. The main text
+should report the seed-level paired values, mean paired delta $\pm$ sample SD,
+3/3 directional wins, and the near-flat seed-5 NFE=2 outcome.
 
 The scale-free effect is the per-seed relative improvement
 `100 × (fixed - global-only) / fixed`, where a positive percentage favors
@@ -79,7 +84,7 @@ summary only; bootstrap resampling does not create new independent seeds.
 Leave-one-seed-out summaries retain 2/2 global-only wins in every omission,
 but their effect magnitudes vary substantially at NFE=2.
 
-This is descriptive paired evidence (`n=3` independent training seeds), not a significance claim.
+This is descriptive paired evidence (`n=3` independent training seeds), not a significance claim. Bootstrap resampling of these three seeds does not create additional independent observations.
 
 ## Main-text figures
 
@@ -87,7 +92,7 @@ This is descriptive paired evidence (`n=3` independent training seeds), not a si
 
 ![Mean paired delta and between-seed variation](figures/figure2_mean_delta_seed_variation.png)
 
-Regenerate both SVG and PNG versions with:
+Regenerate SVG, PNG, and PDF versions with:
 
 ```bash
 python scripts/plot_q256_main_results.py

@@ -222,7 +222,7 @@ class StagedEvaluationTest(unittest.TestCase):
         self.assertEqual(statistic["median_delta"], -2.5)
         self.assertAlmostEqual(statistic["mean_relative_improvement_pct"], 22.5)
         self.assertAlmostEqual(statistic["geometric_mean_relative_improvement_pct"], 22.5403330759)
-        self.assertEqual(statistic["worst_case_relative_improvement_pct"], 20.0)
+        self.assertAlmostEqual(statistic["worst_case_relative_improvement_pct"], 20.0)
         self.assertEqual(statistic["rank_consistency_spearman"], 1.0)
         self.assertTrue(statistic["rank_order_exact_match"])
         self.assertEqual(statistic["exact_sign_test"]["p_value"], 0.5)
@@ -231,10 +231,11 @@ class StagedEvaluationTest(unittest.TestCase):
             [4, 5],
         )
         self.assertEqual([item["delta"] for item in result["paired_differences"]], [-2.0, -3.0])
-        self.assertEqual(
+        for observed, expected in zip(
             [item["relative_improvement_pct"] for item in result["paired_differences"]],
             [20.0, 25.0],
-        )
+        ):
+            self.assertAlmostEqual(observed, expected)
         with TemporaryDirectory() as temp_dir:
             output = Path(temp_dir)
             collect_staged_evaluation_results.write_paired_outputs(output, result)

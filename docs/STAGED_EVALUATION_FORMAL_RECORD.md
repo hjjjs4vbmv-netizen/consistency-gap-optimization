@@ -55,8 +55,9 @@ sample standard deviation over the three training seeds.
 | FID-50k | 2 | 197.310118996 | 70.393238523 | -126.916880474 | 110.560376043 | 3 / 3 |
 
 All 12 individual paired metric comparisons favor global-only; there are no
-fixed wins or ties. The NFE=2 effect is directionally consistent but has
-substantial between-seed variation, especially for FID.
+fixed wins or ties. At NFE=2, seed 5 is nearly flat for both endpoints, so the
+larger effects at seeds 3 and 4 should be reported as heterogeneous paired
+outcomes rather than a uniform NFE effect.
 
 ## Main-text figures
 
@@ -75,38 +76,16 @@ diamonds and whiskers are the mean and sample SD, respectively, not confidence
 intervals. NFE=2 has visibly greater between-seed variation, driven by the
 near-flat seed-5 comparison.*
 
-## Paired robustness and NFE heterogeneity
+## Appendix and machine-readable diagnostics
 
-For each seed, the relative improvement is
-`100 × (fixed - global-only) / fixed`, so positive values favor global-only.
-Arithmetic improvement averages these three percentages; geometric improvement
-is `100 × (1 - geometric mean(global-only/fixed))`. Rank consistency is the
-Spearman correlation between lower-is-better seed ranks for fixed and
-global-only. The seed CV applies to the relative improvements, and the
-worst-case column is the least favorable seed.
-
-| Metric | NFE | Arithmetic improvement | Geometric improvement | Median paired delta | Worst-case improvement | Seed CV | Rank consistency |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| KID-50k | 1 | 7.501846% | 7.531510% | -0.023481160 | 5.023325% | 38.111785% | 1.000000 |
-| FID-50k | 1 | 4.544298% | 4.547537% | -12.485467394 | 3.768644% | 21.164185% | 1.000000 |
-| KID-50k | 2 | 50.599851% | 61.818842% | -0.201894470 | 0.249718% | 86.826602% | 0.500000 |
-| FID-50k | 2 | 47.441515% | 55.593373% | -167.596988744 | 3.885378% | 80.519432% | 0.500000 |
-
-The NFE=2-minus-NFE=1 relative-effect contrast has mean +43.098004 percentage
-points for KID and +42.897217 points for FID. It favors a larger NFE=2 effect
-in two of three seeds for each metric, but the third seed has a small negative
-contrast (-4.773607 KID points; -0.358444 FID points). Thus this is effect
-heterogeneity to report, not a claim that NFE modifies the effect generally.
-
-For each metric/NFE stratum, the two-sided exact sign test for the 3/3
-directional split is `p=0.25`. Its resolution is limited by the three
-independent training seeds, so it is included as a descriptive directional
-check rather than a significance result. Deterministic 10,000-resample
-percentile bootstrap intervals and leave-one-seed-out summaries are available
-in the result package as auxiliary sensitivity analyses only; the bootstrap
-does not supply additional independent observations. Each leave-one-seed-out
-subset still has 2/2 global-only wins, although NFE=2 magnitudes are notably
-seed-sensitive.
+Exact sign-test descriptions, bootstrap sensitivity intervals,
+leave-one-seed-out summaries, coefficient-of-variation diagnostics, rank
+consistency, and geometric/median/worst-case summaries are retained outside
+the main text in `paired_statistics.md`, `paired_statistics.json`, and
+`analysis/q256_extended_statistics.json`. They remain descriptive appendix or
+machine-readable material. There are only three independent training seeds;
+bootstrap resampling of those seeds does not create additional independent
+observations.
 
 ## Interpretation boundary and versioned package
 
