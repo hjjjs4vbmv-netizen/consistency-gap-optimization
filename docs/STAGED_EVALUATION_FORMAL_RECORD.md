@@ -58,6 +58,23 @@ All 12 individual paired metric comparisons favor global-only; there are no
 fixed wins or ties. The NFE=2 effect is directionally consistent but has
 substantial between-seed variation, especially for FID.
 
+## Main-text figures
+
+![Figure 1: per-seed paired comparison](../results/q256_256k_formal/figures/figure1_per_seed_paired_comparison.png)
+
+*Figure 1. Per-seed paired comparison at 256 kimg. Each line connects the
+fixed and global-only checkpoint trained with the same seed; open markers are
+fixed and filled markers are global-only. All panels use 50k samples per
+checkpoint and lower values are better. Y-scales are panel-specific.*
+
+![Figure 2: mean paired delta and between-seed variation](../results/q256_256k_formal/figures/figure2_mean_delta_seed_variation.png)
+
+*Figure 2. Paired deltas are global-only minus fixed, so negative values favor
+global-only. Colored points are the three independent training seeds; black
+diamonds and whiskers are the mean and sample SD, respectively, not confidence
+intervals. NFE=2 has visibly greater between-seed variation, driven by the
+near-flat seed-5 comparison.*
+
 ## Paired robustness and NFE heterogeneity
 
 For each seed, the relative improvement is

@@ -12,6 +12,7 @@ All evaluations used 50,000 generated samples (seeds `0-49999`), metric seed `20
 | `paired_differences.csv` | 12 seed-level global-only minus fixed differences, with absolute values, relative improvements, and checkpoint provenance. |
 | `paired_statistics.json` | Machine-readable paired descriptive, robustness, and NFE-heterogeneity summaries derived from the difference CSV. |
 | `paired_statistics.md` | Reader-facing paired robustness table, leave-one-seed-out summary, and NFE-heterogeneity table. |
+| `figures/` | Reproducible SVG and PNG main-text figures. |
 | `environment_manifest.json` | Frozen evaluator environment, data identity, NFE settings, and six checkpoint identities without machine paths. |
 
 ## Per-seed absolute values
@@ -79,3 +80,15 @@ Leave-one-seed-out summaries retain 2/2 global-only wins in every omission,
 but their effect magnitudes vary substantially at NFE=2.
 
 This is descriptive paired evidence (`n=3` independent training seeds), not a significance claim.
+
+## Main-text figures
+
+![Per-seed paired comparison](figures/figure1_per_seed_paired_comparison.png)
+
+![Mean paired delta and between-seed variation](figures/figure2_mean_delta_seed_variation.png)
+
+Regenerate both SVG and PNG versions with:
+
+```bash
+python scripts/plot_q256_main_results.py
+```
