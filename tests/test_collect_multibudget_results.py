@@ -120,6 +120,64 @@ class MultiBudgetCollectorTest(unittest.TestCase):
             {"kid50k_full", "fid50k_full"},
         )
 
+    def test_protocol_tracks_split_5k_budget_curve_from_50k_formal_endpoints(self):
+        rows = []
+        track_specs = {
+            "budget_curve": {
+                "evaluation_contract": "q256-common-5k-v1", "sample_count": 5000,
+                "generation_seed_range": "0-4999", "metric_seed": 20260730,
+                "budgets": (256, 512, 768, 1024), "metrics": ("kid5k_full", "fid5k_full"),
+            },
+            "formal_endpoint": {
+                "evaluation_contract": "q256-formal-50k-v1", "sample_count": 50000,
+                "generation_seed_range": "0-49999", "metric_seed": 20260730,
+                "budgets": (256, 1024), "metrics": ("kid50k_full", "fid50k_full"),
+            },
+        }
+        for track, spec in track_specs.items():
+            for budget in spec["budgets"]:
+                for metric in spec["metrics"]:
+                    for nfe in (1, 2):
+                        for seed in (3, 4, 5):
+                            for method in ("fixed", "global110"):
+                                baseline = 1.0 if metric.startswith("kid") else 100.0
+                                rows.append({
+                                    "method": method, "training_seed": seed, "budget_kimg": budget,
+                                    "nfe": nfe, "metric_name": metric,
+                                    "metric_value": baseline + seed * 0.001 - (0.02 if method == "global110" else 0.0),
+                                    "training_time_hours": budget / 64, "quality_target": "",
+                                    "checkpoint_sha256": "{}-{}-{}-{}".format(method, seed, budget, metric),
+                                    "sample_count": spec["sample_count"],
+                                    "generation_seed_range": spec["generation_seed_range"],
+                                    "metric_seed": spec["metric_seed"],
+                                    "evidence_class": "formal" if track == "formal_endpoint" else (
+                                        "auxiliary" if budget == 1024 else "quick"
+                                    ),
+                                    "evaluation_contract": spec["evaluation_contract"],
+                                    "analysis_track": track,
+                                })
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "two_protocols.csv"
+            with source.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
+                writer.writeheader()
+                writer.writerows(rows)
+            output = root / "collected"
+            collector.main(["--input-csv", str(source), "--outdir", str(output)])
+            with (output / "same_protocol_budget_curves.csv").open(newline="", encoding="utf-8") as handle:
+                curves = list(csv.DictReader(handle))
+            with (output / "formal_endpoint_comparison.csv").open(newline="", encoding="utf-8") as handle:
+                formal = list(csv.DictReader(handle))
+            self.assertGreater((output / "figures" / "same_protocol_budget_curves.pdf").stat().st_size, 0)
+            self.assertGreater((output / "figures" / "formal_endpoint_comparison.pdf").stat().st_size, 0)
+        self.assertEqual({float(row["budget_kimg"]) for row in curves}, {256, 512, 768, 1024})
+        self.assertEqual({row["metric_name"] for row in curves}, {"kid5k_full", "fid5k_full"})
+        self.assertEqual({row["sample_count"] for row in curves}, {"5000"})
+        self.assertEqual({float(row["budget_kimg"]) for row in formal}, {256, 1024})
+        self.assertEqual({row["metric_name"] for row in formal}, {"kid50k_full", "fid50k_full"})
+        self.assertEqual({row["sample_count"] for row in formal}, {"50000"})
+
     def test_budget_curve_script_writes_paper_ready_pdf(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

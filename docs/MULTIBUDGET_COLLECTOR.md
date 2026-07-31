@@ -20,6 +20,12 @@ The CSV is long-form, with one metric per row.
 | training_time_hours | no | Cumulative wall-clock training time at this budget. Required for an actual time-to-quality time. |
 | quality_target | no | Pre-specified threshold for this metric/NFE; repeated consistently across its rows. |
 | checkpoint_sha256 | no | Checkpoint provenance retained in normalized output. |
+| sample_count | required for tagged paper tracks | Number of generated samples used by this metric protocol. |
+| generation_seed_range | required for tagged paper tracks | Generated-sample seed range, for example `0-4999`. |
+| metric_seed | required for tagged paper tracks | Metric evaluator seed. |
+| evidence_class | no | Provenance class, such as `quick`, `auxiliary`, or `formal`. |
+| evaluation_contract | required for tagged paper tracks | Explicit identifier for one shared sampling and metric protocol. |
+| analysis_track | required for tagged paper tracks | `budget_curve` or `formal_endpoint`; determines the separate paper output. |
 
 Endpoint sets may differ by budget. Every
 method/seed/budget/NFE/metric combination implied by the endpoints observed at
@@ -28,6 +34,28 @@ metric-by-budget Cartesian product. This supports the frozen q=256 protocol:
 KID/FID-5k at 512/768 kimg and KID/FID-50k at 1024 kimg. Use the same
 quality_target for all rows of a given metric and NFE. The script
 does not invent a target or convert budget into elapsed wall-clock time.
+
+## Protocol-separated paper outputs
+
+Do not use KID/FID-5k and KID/FID-50k as points on one curve. To request the
+paper outputs, tag every row with an explicit `evaluation_contract` and its
+`analysis_track`. Each track requires one shared `sample_count`,
+`generation_seed_range`, and `metric_seed`; candidate and baseline values must
+also carry identical metadata within every pair.
+
+- `budget_curve`: emits `same_protocol_budget_curves.csv` and its SVG/PNG/PDF
+  figure. Use this for the common 5k protocol at 256/512/768/1024 kimg; the
+  1024-kimg 5k metric can be marked `auxiliary` without becoming its formal
+  endpoint.
+- `formal_endpoint`: emits `formal_endpoint_comparison.csv` and a separate
+  paired endpoint SVG/PNG/PDF figure. Use this for the 50k protocol at 256 and
+  1024 kimg. It is never drawn as part of the 5k budget curve.
+
+The explicit contract, not just `metric_name`, is the guard against mixing
+incompatible sampling protocols.
+
+For a tagged input, `scripts/summarize_budget_curve.py` requires an explicit
+`--analysis-track budget_curve`; it refuses to create an all-protocol curve.
 
 ## Run
 

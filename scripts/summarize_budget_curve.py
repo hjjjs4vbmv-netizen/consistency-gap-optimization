@@ -19,11 +19,11 @@ from pathlib import Path
 
 try:  # Supports both `python scripts/...py` and package-level tests.
     from .collect_multibudget_results import (
-        aggregate_rows, paired_rows, plot_budget_curves, read_rows, validate, write_csv,
+        aggregate_rows, fail, matrix_for_track, paired_rows, plot_budget_curves, read_rows, validate, write_csv,
     )
 except ImportError:
     from collect_multibudget_results import (
-        aggregate_rows, paired_rows, plot_budget_curves, read_rows, validate, write_csv,
+        aggregate_rows, fail, matrix_for_track, paired_rows, plot_budget_curves, read_rows, validate, write_csv,
     )
 
 
@@ -33,17 +33,28 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--outdir", type=Path, required=True)
     parser.add_argument("--baseline-method", default="fixed")
     parser.add_argument("--candidate-method", default="global110")
+    parser.add_argument("--analysis-track", choices=("budget_curve", "formal_endpoint"))
     args = parser.parse_args(argv)
 
     rows = read_rows(args.input_csv.resolve())
     matrix = validate(rows, args.baseline_method, args.candidate_method)
     paired = paired_rows(matrix)
     curves, summary = aggregate_rows(rows, paired, matrix)
+    if matrix["analysis_tracks"]:
+        if args.analysis_track is None:
+            fail("tagged input requires --analysis-track so incompatible protocols are not combined")
+        curves = [row for row in curves if row["analysis_track"] == args.analysis_track]
+        summary = [row for row in summary if row["analysis_track"] == args.analysis_track]
+        if not curves:
+            fail("no rows for analysis_track={}".format(args.analysis_track))
+        plot_matrix = matrix_for_track(matrix, curves)
+    else:
+        plot_matrix = matrix
     outdir = args.outdir.resolve()
     outdir.mkdir(parents=True, exist_ok=True)
     write_csv(outdir / "budget_curve_summary.csv", curves)
     write_csv(outdir / "paired_summary.csv", summary)
-    plot_budget_curves(curves, matrix, outdir)
+    plot_budget_curves(curves, plot_matrix, outdir)
     print("Validated {} metric rows; wrote {}".format(len(rows), outdir / "budget_curves.pdf"))
 
 

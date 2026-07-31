@@ -5,7 +5,8 @@ Required input columns:
 method,training_seed,budget_kimg,nfe,metric_name,metric_value
 
 Optional columns:
-training_time_hours,quality_target,checkpoint_sha256
+training_time_hours,quality_target,checkpoint_sha256,sample_count,
+generation_seed_range,metric_seed,evidence_class,evaluation_contract,analysis_track
 
 The collector validates every observed method/seed/budget/NFE/metric cell,
 allowing metric endpoints to differ by budget, then emits seed-level,
@@ -56,6 +57,17 @@ def optional_float(value: str, field: str, row_number: int) -> float | None:
     return result
 
 
+def optional_int(value: str, field: str, row_number: int) -> int | None:
+    if not value.strip():
+        return None
+    try:
+        result = int(value)
+    except ValueError as exc:
+        fail("row {}: {} must be an integer".format(row_number, field))
+        raise exc
+    return result
+
+
 def read_rows(path: Path) -> list[dict]:
     if not path.is_file():
         fail("input CSV does not exist: {}".format(path))
@@ -81,6 +93,12 @@ def read_rows(path: Path) -> list[dict]:
                 "training_time_hours": optional_float(raw.get("training_time_hours", ""), "training_time_hours", row_number),
                 "quality_target": optional_float(raw.get("quality_target", ""), "quality_target", row_number),
                 "checkpoint_sha256": raw.get("checkpoint_sha256", "").strip(),
+                "sample_count": optional_int(raw.get("sample_count", ""), "sample_count", row_number),
+                "generation_seed_range": raw.get("generation_seed_range", "").strip(),
+                "metric_seed": optional_int(raw.get("metric_seed", ""), "metric_seed", row_number),
+                "evidence_class": raw.get("evidence_class", "").strip(),
+                "evaluation_contract": raw.get("evaluation_contract", "").strip(),
+                "analysis_track": raw.get("analysis_track", "").strip(),
             }
         except (TypeError, ValueError) as exc:
             fail("row {}: malformed required value".format(row_number))
@@ -91,6 +109,12 @@ def read_rows(path: Path) -> list[dict]:
             fail("row {}: invalid method, metric, seed, budget, NFE, or metric value".format(row_number))
         if row["training_time_hours"] is not None and row["training_time_hours"] < 0:
             fail("row {}: training_time_hours must be non-negative".format(row_number))
+        if row["sample_count"] is not None and row["sample_count"] < 1:
+            fail("row {}: sample_count must be positive".format(row_number))
+        if row["analysis_track"] and row["analysis_track"] not in {"budget_curve", "formal_endpoint"}:
+            fail("row {}: analysis_track must be budget_curve or formal_endpoint".format(row_number))
+        if bool(row["analysis_track"]) != bool(row["evaluation_contract"]):
+            fail("row {}: analysis_track and evaluation_contract must be provided together".format(row_number))
         rows.append(row)
     return rows
 
@@ -125,6 +149,34 @@ def validate(rows: list[dict], baseline: str, candidate: str) -> dict:
     extra = set(index) - expected
     if missing or extra:
         fail("matrix incomplete; missing={}, extra={}".format(sorted(missing), sorted(extra)))
+    paired_protocol_fields = (
+        "sample_count", "generation_seed_range", "metric_seed", "evidence_class",
+        "evaluation_contract", "analysis_track",
+    )
+    for seed in seeds:
+        for budget in budgets:
+            for nfe in nfes:
+                for metric in metrics_by_budget[budget]:
+                    fixed = index[(baseline, seed, budget, nfe, metric)]
+                    tested = index[(candidate, seed, budget, nfe, metric)]
+                    if any(fixed[field] != tested[field] for field in paired_protocol_fields):
+                        fail("paired protocol metadata differs for seed={}, budget={}, nfe={}, metric={}".format(
+                            seed, budget, nfe, metric,
+                        ))
+    tracks = sorted({row["analysis_track"] for row in rows if row["analysis_track"]})
+    if tracks and any(not row["analysis_track"] for row in rows):
+        fail("tagged and untagged rows cannot be mixed; assign every row to an explicit analysis_track")
+    for track in tracks:
+        contract_rows = [row for row in rows if row["analysis_track"] == track]
+        contracts = {row["evaluation_contract"] for row in contract_rows}
+        if len(contracts) != 1:
+            fail("analysis_track={} must use exactly one evaluation_contract; split distinct protocols into separate collector inputs".format(track))
+        protocol = {
+            (row["sample_count"], row["generation_seed_range"], row["metric_seed"])
+            for row in contract_rows
+        }
+        if len(protocol) != 1 or None in next(iter(protocol)) or "" in next(iter(protocol)):
+            fail("analysis_track={} requires one explicit sample_count, generation_seed_range, and metric_seed protocol".format(track))
     for metric in metrics:
         for nfe in nfes:
             targets = {
@@ -137,6 +189,7 @@ def validate(rows: list[dict], baseline: str, candidate: str) -> dict:
     return {
         "methods": [baseline, candidate], "seeds": seeds, "budgets": budgets,
         "nfes": nfes, "metrics": metrics, "metrics_by_budget": metrics_by_budget,
+        "analysis_tracks": tracks,
         "budgets_by_metric": {
             metric: [budget for budget in budgets if metric in metrics_by_budget[budget]]
             for metric in metrics
@@ -161,6 +214,12 @@ def paired_rows(matrix: dict) -> list[dict]:
                         "training_seed": seed, "baseline_method": baseline,
                         "candidate_method": candidate, "baseline_value": fixed["metric_value"],
                         "candidate_value": tested["metric_value"],
+                        "sample_count": fixed["sample_count"],
+                        "generation_seed_range": fixed["generation_seed_range"],
+                        "metric_seed": fixed["metric_seed"],
+                        "evidence_class": fixed["evidence_class"],
+                        "evaluation_contract": fixed["evaluation_contract"],
+                        "analysis_track": fixed["analysis_track"],
                         "delta_candidate_minus_baseline": delta,
                         "relative_improvement_pct": (
                             100 * (fixed["metric_value"] - tested["metric_value"]) / fixed["metric_value"]
@@ -192,6 +251,12 @@ def aggregate_rows(rows: list[dict], paired: list[dict], matrix: dict) -> tuple[
                         "method": method, "mean_metric_value": statistics.mean(values),
                         "sample_sd_metric_value": statistics.stdev(values) if len(values) > 1 else None,
                         "seed_count": len(values),
+                        "sample_count": selected_pairs[0]["sample_count"],
+                        "generation_seed_range": selected_pairs[0]["generation_seed_range"],
+                        "metric_seed": selected_pairs[0]["metric_seed"],
+                        "evidence_class": selected_pairs[0]["evidence_class"],
+                        "evaluation_contract": selected_pairs[0]["evaluation_contract"],
+                        "analysis_track": selected_pairs[0]["analysis_track"],
                     })
                 deltas = [row["delta_candidate_minus_baseline"] for row in selected_pairs]
                 summaries.append({
@@ -202,6 +267,12 @@ def aggregate_rows(rows: list[dict], paired: list[dict], matrix: dict) -> tuple[
                     "candidate_wins": sum(row["winner"] == candidate for row in selected_pairs),
                     "baseline_wins": sum(row["winner"] == baseline for row in selected_pairs),
                     "ties": sum(row["winner"] == "tie" for row in selected_pairs),
+                    "sample_count": selected_pairs[0]["sample_count"],
+                    "generation_seed_range": selected_pairs[0]["generation_seed_range"],
+                    "metric_seed": selected_pairs[0]["metric_seed"],
+                    "evidence_class": selected_pairs[0]["evidence_class"],
+                    "evaluation_contract": selected_pairs[0]["evaluation_contract"],
+                    "analysis_track": selected_pairs[0]["analysis_track"],
                 })
     return curves, summaries
 
@@ -314,8 +385,24 @@ def make_panels(matrix: dict, title: str) -> tuple[plt.Figure, object]:
     return figure, axes
 
 
-def plot_budget_curves(curves: list[dict], matrix: dict, figure_dir: Path) -> None:
-    figure, axes = make_panels(matrix, "Budget curves by metric and NFE")
+def matrix_for_track(matrix: dict, records: list[dict]) -> dict:
+    """Return the plotting dimensions for one explicit analysis track."""
+    metrics = sorted({row["metric_name"] for row in records})
+    return {
+        "methods": matrix["methods"], "seeds": matrix["seeds"], "nfes": matrix["nfes"],
+        "metrics": metrics,
+        "budgets_by_metric": {
+            metric: sorted({row["budget_kimg"] for row in records if row["metric_name"] == metric})
+            for metric in metrics
+        },
+    }
+
+
+def plot_budget_curves(
+    curves: list[dict], matrix: dict, figure_dir: Path,
+    stem: str = "budget_curves", title: str = "Budget curves by metric and NFE",
+) -> None:
+    figure, axes = make_panels(matrix, title)
     for metric_index, metric in enumerate(matrix["metrics"]):
         for nfe_index, nfe in enumerate(matrix["nfes"]):
             axis = axes[metric_index][nfe_index]
@@ -340,7 +427,7 @@ def plot_budget_curves(curves: list[dict], matrix: dict, figure_dir: Path) -> No
                  for index, method in enumerate(matrix["methods"])],
         loc="upper center", ncol=2, frameon=False, bbox_to_anchor=(0.60, 0.965),
     )
-    save_figure(figure, figure_dir, "budget_curves")
+    save_figure(figure, figure_dir, stem)
 
 
 def plot_trajectories(rows: list[dict], matrix: dict, figure_dir: Path) -> None:
@@ -379,8 +466,11 @@ def plot_trajectories(rows: list[dict], matrix: dict, figure_dir: Path) -> None:
     save_figure(figure, figure_dir, "per_seed_trajectories")
 
 
-def plot_paired_deltas(paired: list[dict], matrix: dict, figure_dir: Path) -> None:
-    figure, axes = make_panels(matrix, "Paired deltas across training budget")
+def plot_paired_deltas(
+    paired: list[dict], matrix: dict, figure_dir: Path,
+    stem: str = "paired_deltas", title: str = "Paired deltas across training budget",
+) -> None:
+    figure, axes = make_panels(matrix, title)
     colors = {seed: SEED_COLORS[index % len(SEED_COLORS)] for index, seed in enumerate(matrix["seeds"])}
     for metric_index, metric in enumerate(matrix["metrics"]):
         for nfe_index, nfe in enumerate(matrix["nfes"]):
@@ -415,7 +505,34 @@ def plot_paired_deltas(paired: list[dict], matrix: dict, figure_dir: Path) -> No
     legend.append(Line2D([0], [0], color="#111827", marker="D", label="Mean ± sample SD"))
     figure.legend(handles=legend, loc="upper center", ncol=min(5, len(legend)),
                   frameon=False, bbox_to_anchor=(0.56, 0.965), fontsize=8.5)
-    save_figure(figure, figure_dir, "paired_deltas")
+    save_figure(figure, figure_dir, stem)
+
+
+def write_protocol_track_outputs(
+    curves: list[dict], paired: list[dict], summary: list[dict], matrix: dict,
+    outdir: Path, figure_dir: Path,
+) -> list[str]:
+    """Write clearly separated, protocol-defined paper outputs when tagged input is supplied."""
+    written = []
+    for track, csv_name, figure_stem, title in (
+        ("budget_curve", "same_protocol_budget_curves.csv", "same_protocol_budget_curves",
+         "Same-protocol budget curves"),
+        ("formal_endpoint", "formal_endpoint_comparison.csv", "formal_endpoint_comparison",
+         "Formal endpoint paired comparison"),
+    ):
+        track_curves = [row for row in curves if row["analysis_track"] == track]
+        track_paired = [row for row in paired if row["analysis_track"] == track]
+        track_summary = [row for row in summary if row["analysis_track"] == track]
+        if not track_curves:
+            continue
+        if track == "budget_curve":
+            write_csv(outdir / csv_name, track_curves)
+            plot_budget_curves(track_curves, matrix_for_track(matrix, track_curves), figure_dir, figure_stem, title)
+        else:
+            write_csv(outdir / csv_name, track_summary)
+            plot_paired_deltas(track_paired, matrix_for_track(matrix, track_paired), figure_dir, figure_stem, title)
+        written.append(track)
+    return written
 
 
 def plot_time_to_quality(records: list[dict], matrix: dict, figure_dir: Path) -> bool:
@@ -464,9 +581,11 @@ The input was validated as a complete paired matrix with two methods, {} trainin
 | per_seed_trajectories.csv | Seed-level, figure-ready metric trajectories. |
 | paired_deltas.csv | Paired candidate-minus-baseline rows. |
 | paired_summary.csv | Descriptive paired mean, median, SD, and win counts. |
+| same_protocol_budget_curves.csv | Explicit `budget_curve` track only; sampling protocol is shared across all plotted budgets. |
+| formal_endpoint_comparison.csv | Explicit `formal_endpoint` track only; never plotted as part of a 5k budget curve. |
 | time_to_quality.csv | First target crossing, including transparent missing and unreached statuses. |
 | summary_table.md and summary_table.tex | Markdown and LaTeX paired summary tables. |
-| figures | SVG and PNG budget, trajectory, paired-delta{} figures. |
+| figures | SVG, PNG, and PDF budget, trajectory, paired-delta{} figures; tagged inputs also produce separately named same-protocol and formal-endpoint figures. |
 
 All deltas are candidate minus baseline; negative values favor the candidate. Sample SD is descriptive across training seeds, not a confidence interval.
 """.format(
@@ -508,12 +627,14 @@ def main(argv: list[str] | None = None) -> None:
     plot_trajectories(rows, matrix, figure_dir)
     plot_paired_deltas(paired, matrix, figure_dir)
     time_plot_written = plot_time_to_quality(times, matrix, figure_dir)
+    protocol_tracks_written = write_protocol_track_outputs(curves, paired, summary, matrix, outdir, figure_dir)
     write_readme(outdir, matrix, time_plot_written)
     manifest = {key: value for key, value in matrix.items() if key != "index"}
     manifest.update({
         "input_csv": str(args.input_csv.resolve()),
         "row_count": len(rows),
         "time_to_quality_plot_written": time_plot_written,
+        "protocol_tracks_written": protocol_tracks_written,
     })
     (outdir / "collector_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print("Validated {} metric rows; output={}".format(len(rows), outdir))
