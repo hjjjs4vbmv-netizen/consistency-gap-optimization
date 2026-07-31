@@ -1,9 +1,11 @@
 import csv
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts import collect_multibudget_results as collector
+from scripts import summarize_budget_curve
 
 
 class MultiBudgetCollectorTest(unittest.TestCase):
@@ -58,7 +60,7 @@ class MultiBudgetCollectorTest(unittest.TestCase):
             ):
                 self.assertTrue((output / name).is_file(), name)
             for stem in ("budget_curves", "per_seed_trajectories", "paired_deltas", "time_to_quality"):
-                for extension in ("svg", "png"):
+                for extension in ("svg", "png", "pdf"):
                     self.assertGreater((output / "figures" / "{}.{}".format(stem, extension)).stat().st_size, 0)
             with (output / "paired_deltas.csv").open(newline="", encoding="utf-8") as handle:
                 pairs = list(csv.DictReader(handle))
@@ -71,6 +73,70 @@ class MultiBudgetCollectorTest(unittest.TestCase):
         rows = self.make_rows()
         with self.assertRaisesRegex(SystemExit, "matrix incomplete"):
             collector.validate(rows[:-1], "fixed", "global110")
+
+    def test_frozen_q256_endpoint_sets_may_differ_by_budget(self):
+        frozen = json.loads(Path("configs/q256_budget_matrix.frozen.json").read_text(encoding="utf-8"))
+        endpoints = {
+            int(contract["budget_kimg"]): contract["metric_names"]
+            for contract in frozen["evaluation_contracts"]
+        }
+        self.assertEqual(endpoints, {
+            512: ["kid5k_full", "fid5k_full"],
+            768: ["kid5k_full", "fid5k_full"],
+            1024: ["kid50k_full", "fid50k_full"],
+        })
+        rows = []
+        for budget, metrics in endpoints.items():
+            for metric in metrics:
+                for nfe in (1, 2):
+                    for seed in (3, 4, 5):
+                        for method in ("fixed", "global110"):
+                            baseline = 1.0 if metric.startswith("kid") else 100.0
+                            value = baseline + seed * 0.001 - (0.02 if method == "global110" else 0.0)
+                            rows.append({
+                                "method": method, "training_seed": seed, "budget_kimg": budget,
+                                "nfe": nfe, "metric_name": metric, "metric_value": value,
+                                "training_time_hours": budget / 64, "quality_target": "",
+                                "checkpoint_sha256": "{}-{}-{}-{}".format(method, seed, budget, metric),
+                            })
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "frozen_protocol.csv"
+            with source.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
+                writer.writeheader()
+                writer.writerows(rows)
+            output = root / "collected"
+            collector.main(["--input-csv", str(source), "--outdir", str(output)])
+            with (output / "paired_deltas.csv").open(newline="", encoding="utf-8") as handle:
+                paired = list(csv.DictReader(handle))
+        self.assertEqual(len(paired), 36)
+        self.assertEqual(
+            {row["metric_name"] for row in paired if float(row["budget_kimg"]) in (512, 768)},
+            {"kid5k_full", "fid5k_full"},
+        )
+        self.assertEqual(
+            {row["metric_name"] for row in paired if float(row["budget_kimg"]) == 1024},
+            {"kid50k_full", "fid50k_full"},
+        )
+
+    def test_budget_curve_script_writes_paper_ready_pdf(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "input.csv"
+            rows = self.make_rows()
+            with source.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
+                writer.writeheader()
+                writer.writerows(rows)
+            output = root / "figures"
+            summarize_budget_curve.main([
+                "--input-csv", str(source), "--outdir", str(output),
+                "--baseline-method", "fixed", "--candidate-method", "global110",
+            ])
+            self.assertGreater((output / "budget_curves.pdf").stat().st_size, 0)
+            self.assertTrue((output / "budget_curve_summary.csv").is_file())
+            self.assertTrue((output / "paired_summary.csv").is_file())
 
 
 if __name__ == "__main__":

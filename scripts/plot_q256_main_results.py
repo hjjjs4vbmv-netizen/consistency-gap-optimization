@@ -2,7 +2,7 @@
 """Render the two main-text figures for the q=256 formal paired results.
 
 The script reads only the versioned seed-level paired-difference table and
-writes SVG and PNG copies of both figures.  It does not recalculate metrics or
+writes publication-ready SVG, PNG, and PDF copies of both figures. It does not recalculate metrics or
 perform inferential tests.
 """
 
@@ -82,7 +82,11 @@ def padded_limits(values: list[float]) -> tuple[float, float]:
     return low - pad, high + pad
 
 
-def render_figure1(indexed: dict[tuple[str, int], list[dict]], outdir: Path) -> None:
+def render_figure1(
+    indexed: dict[tuple[str, int], list[dict]], outdir: Path,
+    stem: str = "figure1_per_seed_paired_comparison",
+    extensions: tuple[str, ...] = ("svg", "png", "pdf"),
+) -> None:
     """Four slope panels: fixed to global-only for every seed and endpoint."""
     figure, axes = plt.subplots(2, 2, figsize=(10.8, 8.4))
     figure.subplots_adjust(left=0.08, right=0.985, bottom=0.08, top=0.835, hspace=0.22, wspace=0.15)
@@ -109,10 +113,14 @@ def render_figure1(indexed: dict[tuple[str, int], list[dict]], outdir: Path) -> 
     figure.legend(handles=legend, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.58, 0.972), fontsize=10)
     figure.suptitle("Figure 1. Per-seed paired comparison at 256 kimg", x=0.02, y=0.99, ha="left", fontsize=16, fontweight="bold", color=INK)
     figure.text(0.02, 0.902, "50k generated samples per checkpoint; lower values are better. Open markers: fixed; filled markers: global-only. Panel-specific y-scales.", fontsize=10, color=INK)
-    save_figure(figure, outdir, "figure1_per_seed_paired_comparison")
+    save_figure(figure, outdir, stem, extensions)
 
 
-def render_figure2(indexed: dict[tuple[str, int], list[dict]], outdir: Path) -> None:
+def render_figure2(
+    indexed: dict[tuple[str, int], list[dict]], outdir: Path,
+    stem: str = "figure2_mean_delta_seed_variation",
+    extensions: tuple[str, ...] = ("svg", "png", "pdf"),
+) -> None:
     """Seed-level deltas with mean and SD, emphasizing NFE=2 heterogeneity."""
     figure, axes = plt.subplots(1, 2, figsize=(11.2, 5.7))
     figure.subplots_adjust(left=0.075, right=0.985, bottom=0.12, top=0.80, wspace=0.17)
@@ -154,12 +162,12 @@ def render_figure2(indexed: dict[tuple[str, int], list[dict]], outdir: Path) -> 
     figure.legend(handles=seed_legend, loc="upper center", ncol=4, frameon=False, bbox_to_anchor=(0.60, 0.972), fontsize=10)
     figure.suptitle("Figure 2. Mean paired delta and between-seed variation", x=0.02, y=0.99, ha="left", fontsize=16, fontweight="bold", color=INK)
     figure.text(0.02, 0.902, "Points are independent training-seed deltas; negative values favor global-only. Whiskers are sample SD, not confidence intervals. The NFE=2 effect is heterogeneous because seed 5 is near flat.", fontsize=9.7, color=INK)
-    save_figure(figure, outdir, "figure2_mean_delta_seed_variation")
+    save_figure(figure, outdir, stem, extensions)
 
 
-def save_figure(figure: plt.Figure, outdir: Path, stem: str) -> None:
+def save_figure(figure: plt.Figure, outdir: Path, stem: str, extensions: tuple[str, ...]) -> None:
     outdir.mkdir(parents=True, exist_ok=True)
-    for extension in ("svg", "png"):
+    for extension in extensions:
         figure.savefig(outdir / f"{stem}.{extension}", dpi=240, bbox_inches="tight", facecolor="white")
     plt.close(figure)
 
@@ -168,10 +176,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pairs", type=Path, default=Path("results/q256_256k_formal/paired_differences.csv"))
     parser.add_argument("--outdir", type=Path, default=Path("results/q256_256k_formal/figures"))
+    parser.add_argument("--paired-seed-stem", default="figure1_per_seed_paired_comparison")
+    parser.add_argument("--heterogeneity-stem", default="figure2_mean_delta_seed_variation")
+    parser.add_argument("--formats", nargs="+", choices=("svg", "png", "pdf"), default=("svg", "png", "pdf"))
     args = parser.parse_args()
     indexed = data_index(read_pairs(args.pairs.resolve()))
-    render_figure1(indexed, args.outdir.resolve())
-    render_figure2(indexed, args.outdir.resolve())
+    formats = tuple(args.formats)
+    render_figure1(indexed, args.outdir.resolve(), args.paired_seed_stem, formats)
+    render_figure2(indexed, args.outdir.resolve(), args.heterogeneity_stem, formats)
     print(f"Wrote Figure 1 and Figure 2 to {args.outdir.resolve()}")
 
 

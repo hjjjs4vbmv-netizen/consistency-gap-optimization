@@ -8,7 +8,8 @@ Optional columns:
 training_time_hours,quality_target,checkpoint_sha256
 
 The collector validates every observed method/seed/budget/NFE/metric cell,
-then emits seed-level, aggregate, time-to-quality, table, and figure artifacts.
+allowing metric endpoints to differ by budget, then emits seed-level,
+aggregate, time-to-quality, table, and figure artifacts.
 Metrics are treated as lower-is-better.
 """
 
@@ -103,7 +104,11 @@ def validate(rows: list[dict], baseline: str, candidate: str) -> dict:
     seeds = sorted({row["training_seed"] for row in rows})
     budgets = sorted({row["budget_kimg"] for row in rows})
     nfes = sorted({row["nfe"] for row in rows})
-    metrics = sorted({row["metric_name"] for row in rows})
+    metrics_by_budget = {
+        budget: sorted({row["metric_name"] for row in rows if row["budget_kimg"] == budget})
+        for budget in budgets
+    }
+    metrics = sorted({metric for budget_metrics in metrics_by_budget.values() for metric in budget_metrics})
     index = {}
     for row in rows:
         key = (row["method"], row["training_seed"], row["budget_kimg"], row["nfe"], row["metric_name"])
@@ -113,7 +118,8 @@ def validate(rows: list[dict], baseline: str, candidate: str) -> dict:
     expected = {
         (method, seed, budget, nfe, metric)
         for method in (baseline, candidate)
-        for seed in seeds for budget in budgets for nfe in nfes for metric in metrics
+        for seed in seeds for budget in budgets for nfe in nfes
+        for metric in metrics_by_budget[budget]
     }
     missing = expected - set(index)
     extra = set(index) - expected
@@ -130,7 +136,12 @@ def validate(rows: list[dict], baseline: str, candidate: str) -> dict:
                 fail("quality_target must be consistent for metric={} NFE={}".format(metric, nfe))
     return {
         "methods": [baseline, candidate], "seeds": seeds, "budgets": budgets,
-        "nfes": nfes, "metrics": metrics, "index": index,
+        "nfes": nfes, "metrics": metrics, "metrics_by_budget": metrics_by_budget,
+        "budgets_by_metric": {
+            metric: [budget for budget in budgets if metric in metrics_by_budget[budget]]
+            for metric in metrics
+        },
+        "index": index,
     }
 
 
@@ -140,7 +151,7 @@ def paired_rows(matrix: dict) -> list[dict]:
     output = []
     for metric in matrix["metrics"]:
         for nfe in matrix["nfes"]:
-            for budget in matrix["budgets"]:
+            for budget in matrix["budgets_by_metric"][metric]:
                 for seed in matrix["seeds"]:
                     fixed = index[(baseline, seed, budget, nfe, metric)]
                     tested = index[(candidate, seed, budget, nfe, metric)]
@@ -165,7 +176,7 @@ def aggregate_rows(rows: list[dict], paired: list[dict], matrix: dict) -> tuple[
     baseline, candidate = matrix["methods"]
     for metric in matrix["metrics"]:
         for nfe in matrix["nfes"]:
-            for budget in matrix["budgets"]:
+            for budget in matrix["budgets_by_metric"][metric]:
                 selected_pairs = [
                     row for row in paired
                     if (row["metric_name"], row["nfe"], row["budget_kimg"]) == (metric, nfe, budget)
@@ -284,7 +295,7 @@ def style_axis(axis: plt.Axes) -> None:
 
 def save_figure(figure: plt.Figure, figure_dir: Path, stem: str) -> None:
     figure_dir.mkdir(parents=True, exist_ok=True)
-    for extension in ("svg", "png"):
+    for extension in ("svg", "png", "pdf"):
         figure.savefig(
             figure_dir / "{}.{}".format(stem, extension),
             dpi=220, bbox_inches="tight", facecolor="white",
@@ -322,7 +333,7 @@ def plot_budget_curves(curves: list[dict], matrix: dict, figure_dir: Path) -> No
             axis.set_title("{} · NFE={}".format(metric, nfe), loc="left", fontsize=11, fontweight="bold", color=INK)
             axis.set_xlabel("Training budget (kimg)")
             axis.set_ylabel(metric)
-            axis.set_xticks(matrix["budgets"])
+            axis.set_xticks(matrix["budgets_by_metric"][metric])
             style_axis(axis)
     figure.legend(
         handles=[Line2D([0], [0], color=METHOD_COLORS[index], marker="o", label=method)
@@ -355,7 +366,7 @@ def plot_trajectories(rows: list[dict], matrix: dict, figure_dir: Path) -> None:
             axis.set_title("{} · NFE={}".format(metric, nfe), loc="left", fontsize=11, fontweight="bold", color=INK)
             axis.set_xlabel("Training budget (kimg)")
             axis.set_ylabel(metric)
-            axis.set_xticks(matrix["budgets"])
+            axis.set_xticks(matrix["budgets_by_metric"][metric])
             style_axis(axis)
     legend = [Line2D([0], [0], color=colors[seed], marker="o", label="Seed {}".format(seed))
               for seed in matrix["seeds"]]
@@ -375,7 +386,8 @@ def plot_paired_deltas(paired: list[dict], matrix: dict, figure_dir: Path) -> No
         for nfe_index, nfe in enumerate(matrix["nfes"]):
             axis = axes[metric_index][nfe_index]
             means, deviations = [], []
-            for budget in matrix["budgets"]:
+            metric_budgets = matrix["budgets_by_metric"][metric]
+            for budget in metric_budgets:
                 values = [
                     row["delta_candidate_minus_baseline"] for row in paired
                     if (row["metric_name"], row["nfe"], row["budget_kimg"]) == (metric, nfe, budget)
@@ -390,13 +402,13 @@ def plot_paired_deltas(paired: list[dict], matrix: dict, figure_dir: Path) -> No
                 axis.plot([row["budget_kimg"] for row in selected],
                           [row["delta_candidate_minus_baseline"] for row in selected],
                           color=colors[seed], marker="o", linewidth=1.8)
-            axis.errorbar(matrix["budgets"], means, yerr=deviations, color="#111827",
+            axis.errorbar(metric_budgets, means, yerr=deviations, color="#111827",
                           marker="D", linewidth=1.7, capsize=3, zorder=4)
             axis.axhline(0, color="#6B7280", linewidth=1, linestyle=(0, (4, 3)))
             axis.set_title("{} · NFE={}".format(metric, nfe), loc="left", fontsize=11, fontweight="bold", color=INK)
             axis.set_xlabel("Training budget (kimg)")
             axis.set_ylabel("Candidate − baseline")
-            axis.set_xticks(matrix["budgets"])
+            axis.set_xticks(metric_budgets)
             style_axis(axis)
     legend = [Line2D([0], [0], color=colors[seed], marker="o", label="Seed {}".format(seed))
               for seed in matrix["seeds"]]
@@ -443,7 +455,7 @@ def plot_time_to_quality(records: list[dict], matrix: dict, figure_dir: Path) ->
 def write_readme(outdir: Path, matrix: dict, time_plot_written: bool) -> None:
     text = """# Multi-budget collector output
 
-The input was validated as a complete paired matrix with two methods, {} training seeds, {} budgets, {} NFE settings, and {} metrics.
+The input was validated as a complete paired matrix with two methods, {} training seeds, {} budgets, {} NFE settings, and {} metrics. Metrics may differ by budget; completeness is enforced within each budget's observed endpoint set.
 
 | Artifact | Contents |
 | --- | --- |
