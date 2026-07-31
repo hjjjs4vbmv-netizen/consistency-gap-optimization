@@ -159,20 +159,20 @@ def validate(rows: list[dict], baseline: str, candidate: str) -> dict:
                 for metric in metrics_by_budget[budget]:
                     fixed = index[(baseline, seed, budget, nfe, metric)]
                     tested = index[(candidate, seed, budget, nfe, metric)]
-                    if any(fixed[field] != tested[field] for field in paired_protocol_fields):
+                    if any(fixed.get(field) != tested.get(field) for field in paired_protocol_fields):
                         fail("paired protocol metadata differs for seed={}, budget={}, nfe={}, metric={}".format(
                             seed, budget, nfe, metric,
                         ))
-    tracks = sorted({row["analysis_track"] for row in rows if row["analysis_track"]})
-    if tracks and any(not row["analysis_track"] for row in rows):
+    tracks = sorted({row.get("analysis_track", "") for row in rows if row.get("analysis_track", "")})
+    if tracks and any(not row.get("analysis_track", "") for row in rows):
         fail("tagged and untagged rows cannot be mixed; assign every row to an explicit analysis_track")
     for track in tracks:
-        contract_rows = [row for row in rows if row["analysis_track"] == track]
-        contracts = {row["evaluation_contract"] for row in contract_rows}
+        contract_rows = [row for row in rows if row.get("analysis_track", "") == track]
+        contracts = {row.get("evaluation_contract", "") for row in contract_rows}
         if len(contracts) != 1:
             fail("analysis_track={} must use exactly one evaluation_contract; split distinct protocols into separate collector inputs".format(track))
         protocol = {
-            (row["sample_count"], row["generation_seed_range"], row["metric_seed"])
+            (row.get("sample_count"), row.get("generation_seed_range", ""), row.get("metric_seed"))
             for row in contract_rows
         }
         if len(protocol) != 1 or None in next(iter(protocol)) or "" in next(iter(protocol)):

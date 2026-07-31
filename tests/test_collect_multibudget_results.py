@@ -69,10 +69,35 @@ class MultiBudgetCollectorTest(unittest.TestCase):
             with (output / "time_to_quality.csv").open(newline="", encoding="utf-8") as handle:
                 self.assertIn("reached", {row["status"] for row in csv.DictReader(handle)})
 
-    def test_incomplete_matrix_is_rejected(self):
+    def test_missing_method_seed_nfe_cell_fails_closed(self):
         rows = self.make_rows()
+        rows = [
+            row for row in rows
+            if not (row["method"] == "global110" and row["training_seed"] == 5
+                    and row["budget_kimg"] == 1024 and row["nfe"] == 2
+                    and row["metric_name"] == "fid50k_full")
+        ]
         with self.assertRaisesRegex(SystemExit, "matrix incomplete"):
-            collector.validate(rows[:-1], "fixed", "global110")
+            collector.validate(rows, "fixed", "global110")
+
+    def test_inconsistent_quality_target_is_rejected(self):
+        rows = self.make_rows()
+        rows[0]["quality_target"] = 0.75
+        with self.assertRaisesRegex(SystemExit, "quality_target must be consistent"):
+            collector.validate(rows, "fixed", "global110")
+
+    def test_different_sample_counts_cannot_share_budget_curve_track(self):
+        rows = self.make_rows()
+        for row in rows:
+            row.update({
+                "sample_count": 5000, "generation_seed_range": "0-4999",
+                "metric_seed": 20260730, "evidence_class": "quick",
+                "evaluation_contract": "common-5k-v1", "analysis_track": "budget_curve",
+            })
+            if row["budget_kimg"] == 1024:
+                row["sample_count"] = 10000
+        with self.assertRaisesRegex(SystemExit, "requires one explicit sample_count"):
+            collector.validate(rows, "fixed", "global110")
 
     def test_frozen_q256_endpoint_sets_may_differ_by_budget(self):
         frozen = json.loads(Path("configs/q256_budget_matrix.frozen.json").read_text(encoding="utf-8"))
@@ -174,9 +199,13 @@ class MultiBudgetCollectorTest(unittest.TestCase):
         self.assertEqual({float(row["budget_kimg"]) for row in curves}, {256, 512, 768, 1024})
         self.assertEqual({row["metric_name"] for row in curves}, {"kid5k_full", "fid5k_full"})
         self.assertEqual({row["sample_count"] for row in curves}, {"5000"})
+        self.assertEqual({row["analysis_track"] for row in curves}, {"budget_curve"})
+        self.assertEqual({row["evaluation_contract"] for row in curves}, {"q256-common-5k-v1"})
         self.assertEqual({float(row["budget_kimg"]) for row in formal}, {256, 1024})
         self.assertEqual({row["metric_name"] for row in formal}, {"kid50k_full", "fid50k_full"})
         self.assertEqual({row["sample_count"] for row in formal}, {"50000"})
+        self.assertEqual({row["analysis_track"] for row in formal}, {"formal_endpoint"})
+        self.assertEqual({row["evaluation_contract"] for row in formal}, {"q256-formal-50k-v1"})
 
     def test_budget_curve_script_writes_paper_ready_pdf(self):
         with tempfile.TemporaryDirectory() as directory:
