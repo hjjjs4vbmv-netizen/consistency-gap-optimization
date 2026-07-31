@@ -219,13 +219,50 @@ class StagedEvaluationTest(unittest.TestCase):
         self.assertEqual(statistic["global_wins"], 2)
         self.assertEqual(statistic["fixed_wins"], 0)
         self.assertEqual(statistic["ties"], 0)
+        self.assertEqual(statistic["median_delta"], -2.5)
+        self.assertAlmostEqual(statistic["mean_relative_improvement_pct"], 22.5)
+        self.assertAlmostEqual(statistic["geometric_mean_relative_improvement_pct"], 22.5403330759)
+        self.assertEqual(statistic["worst_case_relative_improvement_pct"], 20.0)
+        self.assertEqual(statistic["rank_consistency_spearman"], 1.0)
+        self.assertTrue(statistic["rank_order_exact_match"])
+        self.assertEqual(statistic["exact_sign_test"]["p_value"], 0.5)
+        self.assertEqual(
+            [item["omitted_training_seed"] for item in statistic["leave_one_seed_out"]],
+            [4, 5],
+        )
         self.assertEqual([item["delta"] for item in result["paired_differences"]], [-2.0, -3.0])
+        self.assertEqual(
+            [item["relative_improvement_pct"] for item in result["paired_differences"]],
+            [20.0, 25.0],
+        )
         with TemporaryDirectory() as temp_dir:
             output = Path(temp_dir)
             collect_staged_evaluation_results.write_paired_outputs(output, result)
             self.assertTrue((output / "paired_differences.csv").is_file())
             self.assertTrue((output / "paired_statistics.json").is_file())
             self.assertTrue((output / "paired_statistics.md").is_file())
+
+    def test_collector_reports_nfe_effect_heterogeneity(self):
+        rows = []
+        for nfe, global_values in ((1, (8.0, 9.0, 10.0)), (2, (7.0, 9.0, 11.0))):
+            for seed, fixed_value, global_value in zip((3, 4, 5), (10.0, 12.0, 14.0), global_values):
+                rows.extend([
+                    {"method": "fixed", "training_seed": seed, "budget_kimg": 256, "metric_name": "fid50k_full", "nfe": nfe, "metric_value": fixed_value, "checkpoint_id": f"fixed{seed}", "checkpoint_sha256": f"{seed:x}" * 64},
+                    {"method": "global110", "training_seed": seed, "budget_kimg": 256, "metric_name": "fid50k_full", "nfe": nfe, "metric_value": global_value, "checkpoint_id": f"global{seed}", "checkpoint_sha256": f"{seed + 8:x}" * 64},
+                ])
+        pairing = {
+            "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric_name"],
+            "baseline_method": "fixed", "candidate_method": "global110",
+            "candidate_label": "global_only", "delta_direction": "global_only - fixed",
+        }
+        result = collect_staged_evaluation_results.build_pairwise_statistics(rows, pairing)
+        heterogeneity = result["nfe_effect_heterogeneity"]
+        self.assertEqual(len(heterogeneity), 1)
+        self.assertEqual(heterogeneity[0]["pair_count"], 3)
+        self.assertEqual(
+            [item["training_seed"] for item in heterogeneity[0]["per_seed_changes"]],
+            [3, 4, 5],
+        )
 
     def test_collector_rejects_missing_or_duplicated_fixed_global_pair(self):
         row = {

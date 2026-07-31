@@ -58,6 +58,39 @@ All 12 individual paired metric comparisons favor global-only; there are no
 fixed wins or ties. The NFE=2 effect is directionally consistent but has
 substantial between-seed variation, especially for FID.
 
+## Paired robustness and NFE heterogeneity
+
+For each seed, the relative improvement is
+`100 × (fixed - global-only) / fixed`, so positive values favor global-only.
+Arithmetic improvement averages these three percentages; geometric improvement
+is `100 × (1 - geometric mean(global-only/fixed))`. Rank consistency is the
+Spearman correlation between lower-is-better seed ranks for fixed and
+global-only. The seed CV applies to the relative improvements, and the
+worst-case column is the least favorable seed.
+
+| Metric | NFE | Arithmetic improvement | Geometric improvement | Median paired delta | Worst-case improvement | Seed CV | Rank consistency |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| KID-50k | 1 | 7.501846% | 7.531510% | -0.023481160 | 5.023325% | 38.111785% | 1.000000 |
+| FID-50k | 1 | 4.544298% | 4.547537% | -12.485467394 | 3.768644% | 21.164185% | 1.000000 |
+| KID-50k | 2 | 50.599851% | 61.818842% | -0.201894470 | 0.249718% | 86.826602% | 0.500000 |
+| FID-50k | 2 | 47.441515% | 55.593373% | -167.596988744 | 3.885378% | 80.519432% | 0.500000 |
+
+The NFE=2-minus-NFE=1 relative-effect contrast has mean +43.098004 percentage
+points for KID and +42.897217 points for FID. It favors a larger NFE=2 effect
+in two of three seeds for each metric, but the third seed has a small negative
+contrast (-4.773607 KID points; -0.358444 FID points). Thus this is effect
+heterogeneity to report, not a claim that NFE modifies the effect generally.
+
+For each metric/NFE stratum, the two-sided exact sign test for the 3/3
+directional split is `p=0.25`. Its resolution is limited by the three
+independent training seeds, so it is included as a descriptive directional
+check rather than a significance result. Deterministic 10,000-resample
+percentile bootstrap intervals and leave-one-seed-out summaries are available
+in the result package as auxiliary sensitivity analyses only; the bootstrap
+does not supply additional independent observations. Each leave-one-seed-out
+subset still has 2/2 global-only wins, although NFE=2 magnitudes are notably
+seed-sensitive.
+
 ## Interpretation boundary and versioned package
 
 This is formal evidence from a predeclared three-seed paired matrix. Report
@@ -73,6 +106,7 @@ samples, feature caches, and host-specific paths:
 results/q256_256k_formal/evaluation_results.csv
 results/q256_256k_formal/paired_differences.csv
 results/q256_256k_formal/paired_statistics.json
+results/q256_256k_formal/paired_statistics.md
 results/q256_256k_formal/environment_manifest.json
 results/q256_256k_formal/README.md
 ```

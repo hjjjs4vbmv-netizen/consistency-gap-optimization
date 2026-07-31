@@ -138,4 +138,10 @@ evidence class, metric, NFE, and method; quick and formal evidence are never
 pooled. For the fixed/global-only confirmatory manifest it additionally writes
 `paired_differences.csv`, `paired_statistics.json`, and
 `paired_statistics.md`; the collector refuses missing or duplicated arms
-instead of producing a partial paired summary.
+instead of producing a partial paired summary. The paired outputs retain the
+seed-level relative improvements and report arithmetic/geometric effects,
+median deltas, rank consistency, worst-case effect, seed CV, exact sign-test
+description, bootstrap sensitivity intervals, leave-one-seed-out summaries,
+and the NFE=2-minus-NFE=1 effect-heterogeneity contrast. These remain
+descriptive seed-level summaries rather than expanded independent-sample
+inference.
