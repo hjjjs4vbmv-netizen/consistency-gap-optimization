@@ -1,0 +1,30 @@
+{
+  "checkpoint_storage": "external_to_git",
+  "dataset_byte_identical_to_q256_formal": false,
+  "dataset_sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+  "experiment_id": "q128-fresh-fixed-vs-global110-v1",
+  "methods": {
+    "fixed": {
+      "global_gap_scale": 1.0,
+      "schedule": "sigmoid"
+    },
+    "global110": {
+      "global_gap_scale": 1.1,
+      "schedule": "global_sigmoid"
+    }
+  },
+  "q": 128,
+  "quality_metrics_run": false,
+  "ready_count": 6,
+  "run_count": 6,
+  "schema_version": 1,
+  "seeds": [
+    3,
+    4,
+    5
+  ],
+  "target_kimg": 256,
+  "training_git_branch": "role-e/q128-confirmatory-prep",
+  "training_git_commit": "28b04c086f7984a56e879472c80bf241ada0fd71",
+  "transfer_checkpoint_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+}
