@@ -9,8 +9,10 @@ All evaluations used 50,000 generated samples (seeds `0-49999`), metric seed `20
 | File | Purpose |
 | --- | --- |
 | `evaluation_results.csv` | 24 long-form absolute metric records, including checkpoint IDs and SHA-256s. `run_id` is a portable logical identifier. |
-| `paired_differences.csv` | 12 seed-level global-only minus fixed differences, with both absolute values and checkpoint provenance. |
-| `paired_statistics.json` | Paired descriptive statistics derived from the difference CSV. |
+| `paired_differences.csv` | 12 seed-level global-only minus fixed differences, with absolute values, relative improvements, and checkpoint provenance. |
+| `paired_statistics.json` | Machine-readable paired descriptive, robustness, and NFE-heterogeneity summaries derived from the difference CSV. |
+| `paired_statistics.md` | Reader-facing paired robustness table, leave-one-seed-out summary, and NFE-heterogeneity table. |
+| `figures/` | Reproducible SVG, PNG, and PDF main-text figures. |
 | `environment_manifest.json` | Frozen evaluator environment, data identity, NFE settings, and six checkpoint identities without machine paths. |
 
 ## Per-seed absolute values
@@ -43,4 +45,55 @@ Values are mean ± sample SD across the three training seeds. The paired delta i
 
 Use `metric_value` grouped by `metric_name`, `nfe`, and `method` in `evaluation_results.csv` to calculate absolute-value means and sample SDs (`n - 1` denominator). Use `delta` in `paired_differences.csv`, grouped by `metric` and `nfe`, for the paired columns. The complete-precision source values are in the CSVs; Markdown values are rounded to nine decimal places.
 
-This is descriptive paired evidence (`n=3` independent training seeds), not a significance claim.
+## Appendix-only sensitivity diagnostics
+
+The following expanded diagnostics are retained for appendix or
+machine-readable review, not for the main-text result summary. The main text
+should report the seed-level paired values, mean paired delta $\pm$ sample SD,
+3/3 directional wins, and the near-flat seed-5 NFE=2 outcome.
+
+The scale-free effect is the per-seed relative improvement
+`100 × (fixed - global-only) / fixed`, where a positive percentage favors
+global-only. The arithmetic percentage is the mean of the three seed-level
+percentages; the geometric percentage is `100 × (1 - geometric mean(global-only/fixed))`.
+The worst-case column is the least favorable seed-level relative improvement.
+Rank consistency is Spearman correlation between the lower-is-better seed ranks
+of fixed and global-only. The full-precision values and leave-one-seed-out
+results are in `paired_statistics.json` and `paired_statistics.md`.
+
+| Metric | NFE | Arithmetic improvement | Geometric improvement | Median paired delta | Worst-case improvement | Seed CV | Rank consistency | Global/fixed/tie wins |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| KID-50k | 1 | 7.501846% | 7.531510% | -0.023481160 | 5.023325% | 38.111785% | 1.000000 | 3 / 0 / 0 |
+| FID-50k | 1 | 4.544298% | 4.547537% | -12.485467394 | 3.768644% | 21.164185% | 1.000000 | 3 / 0 / 0 |
+| KID-50k | 2 | 50.599851% | 61.818842% | -0.201894470 | 0.249718% | 86.826602% | 0.500000 | 3 / 0 / 0 |
+| FID-50k | 2 | 47.441515% | 55.593373% | -167.596988744 | 3.885378% | 80.519432% | 0.500000 | 3 / 0 / 0 |
+
+NFE=2 has a larger mean relative effect than NFE=1 in two of three seeds for
+both metrics, but the seed-wise NFE contrast is heterogeneous: the mean
+NFE=2-minus-NFE=1 change is 43.098004 percentage points for KID and 42.897217
+percentage points for FID, while seed 5 changes by -4.773607 and -0.358444
+points respectively. This is a descriptive interaction pattern, not evidence
+for a general NFE interaction.
+
+Each metric/NFE stratum has 3/3 global-only wins. The two-sided exact sign
+test therefore has `p=0.25` in every stratum: with only three independent
+training seeds it is a low-resolution directional check, not a significance
+claim. The package also includes deterministic 10,000-replicate percentile
+bootstrap intervals for the mean relative improvement as a sensitivity
+summary only; bootstrap resampling does not create new independent seeds.
+Leave-one-seed-out summaries retain 2/2 global-only wins in every omission,
+but their effect magnitudes vary substantially at NFE=2.
+
+This is descriptive paired evidence (`n=3` independent training seeds), not a significance claim. Bootstrap resampling of these three seeds does not create additional independent observations.
+
+## Main-text figures
+
+![Per-seed paired comparison](figures/figure1_per_seed_paired_comparison.png)
+
+![Mean paired delta and between-seed variation](figures/figure2_mean_delta_seed_variation.png)
+
+Regenerate SVG, PNG, and PDF versions with:
+
+```bash
+python scripts/plot_q256_main_results.py
+```

@@ -55,8 +55,37 @@ sample standard deviation over the three training seeds.
 | FID-50k | 2 | 197.310118996 | 70.393238523 | -126.916880474 | 110.560376043 | 3 / 3 |
 
 All 12 individual paired metric comparisons favor global-only; there are no
-fixed wins or ties. The NFE=2 effect is directionally consistent but has
-substantial between-seed variation, especially for FID.
+fixed wins or ties. At NFE=2, seed 5 is nearly flat for both endpoints, so the
+larger effects at seeds 3 and 4 should be reported as heterogeneous paired
+outcomes rather than a uniform NFE effect.
+
+## Main-text figures
+
+![Figure 1: per-seed paired comparison](../results/q256_256k_formal/figures/figure1_per_seed_paired_comparison.png)
+
+*Figure 1. Per-seed paired comparison at 256 kimg. Each line connects the
+fixed and global-only checkpoint trained with the same seed; open markers are
+fixed and filled markers are global-only. All panels use 50k samples per
+checkpoint and lower values are better. Y-scales are panel-specific.*
+
+![Figure 2: mean paired delta and between-seed variation](../results/q256_256k_formal/figures/figure2_mean_delta_seed_variation.png)
+
+*Figure 2. Paired deltas are global-only minus fixed, so negative values favor
+global-only. Colored points are the three independent training seeds; black
+diamonds and whiskers are the mean and sample SD, respectively, not confidence
+intervals. NFE=2 has visibly greater between-seed variation, driven by the
+near-flat seed-5 comparison.*
+
+## Appendix and machine-readable diagnostics
+
+Exact sign-test descriptions, bootstrap sensitivity intervals,
+leave-one-seed-out summaries, coefficient-of-variation diagnostics, rank
+consistency, and geometric/median/worst-case summaries are retained outside
+the main text in `paired_statistics.md`, `paired_statistics.json`, and
+`analysis/q256_extended_statistics.json`. They remain descriptive appendix or
+machine-readable material. There are only three independent training seeds;
+bootstrap resampling of those seeds does not create additional independent
+observations.
 
 ## Interpretation boundary and versioned package
 
@@ -73,6 +102,7 @@ samples, feature caches, and host-specific paths:
 results/q256_256k_formal/evaluation_results.csv
 results/q256_256k_formal/paired_differences.csv
 results/q256_256k_formal/paired_statistics.json
+results/q256_256k_formal/paired_statistics.md
 results/q256_256k_formal/environment_manifest.json
 results/q256_256k_formal/README.md
 ```

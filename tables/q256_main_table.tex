@@ -1,0 +1,28 @@
+% Requires: \usepackage{booktabs}
+% Input with: \input{tables/q256_main_table}
+\begin{table}[t]
+  \centering
+  \caption{Predeclared $q=256$ comparison at 256\,kimg. Lower KID-50k and
+  FID-50k are better. Values are mean $\pm$ sample SD across three independent
+  training seeds; $\Delta$ is global-only minus fixed, so negative values favor
+  global-only. Relative improvement is the arithmetic mean of the seed-wise
+  percentage improvements.}
+  \label{tab:q256-256k-main}
+  \small
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{llrrrrr}
+    \toprule
+    Metric & NFE & Fixed & Global-only & $\Delta$ & Rel. imp. & G/F/T \\
+    \midrule
+    KID-50k & 1 & $0.3320 \pm 0.0164$ & $0.3069 \pm 0.0112$ & $-0.0251 \pm 0.0103$ & $7.50\%$ & $3/0/0$ \\
+    FID-50k & 1 & $311.59 \pm 15.06$ & $297.40 \pm 13.97$ & $-14.18 \pm 3.30$ & $4.54\%$ & $3/0/0$ \\
+    KID-50k & 2 & $0.2057 \pm 0.1486$ & $0.0582 \pm 0.0255$ & $-0.1474 \pm 0.1290$ & $50.60\%$ & $3/0/0$ \\
+    FID-50k & 2 & $197.31 \pm 131.44$ & $70.39 \pm 26.81$ & $-126.92 \pm 110.56$ & $47.44\%$ & $3/0/0$ \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{2pt}
+  \parbox{0.94\linewidth}{\footnotesize G/F/T denotes the number of
+  global-only/fixed/tied seed-wise comparisons. The table is descriptive:
+  the independent unit is the training seed ($n=3$).}
+\end{table}
