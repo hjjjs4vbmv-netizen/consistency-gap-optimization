@@ -1,0 +1,15 @@
+{
+  "formal_evaluation_eligibility": "BLOCKED",
+  "frozen_binding_sha256": "79089d822fd6784c1264ac3da42d30d028ef99cb9956bda7a872e7ecb911fdde",
+  "matrix_id": "q128-fresh-fixed-vs-global110-v1",
+  "remaining_blockers": [
+    "dataset_semantic_equivalence",
+    "role_d_receiver_verification"
+  ],
+  "runtime_manifest_sha256": "90d532cb5516a8cd6fa005b1f82fdac149c38693218e0e8ec1b3f578f7359947",
+  "runtime_manifest_versioned": false,
+  "schema_version": 1,
+  "validated_cell_count": 6,
+  "validation_passed": true,
+  "validator": "scripts/validate_staged_runtime_manifest.py"
+}
