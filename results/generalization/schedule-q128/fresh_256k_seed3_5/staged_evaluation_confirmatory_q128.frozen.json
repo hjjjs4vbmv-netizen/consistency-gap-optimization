@@ -1,0 +1,210 @@
+{
+  "cells": [
+    {
+      "budget_kimg": 256,
+      "checkpoint_id": "q128-fresh-256k-seed3-fixed",
+      "checkpoint_sha256": "ed7b78649765dac649a1521fb0b2dd1803758b29232d48d2774bfdca42fc6a2e",
+      "executed_training_source_commit": "28b04c086f7984a56e879472c80bf241ada0fd71",
+      "global_gap_scale": 1.0,
+      "method": "fixed",
+      "schedule_identity": "sigmoid",
+      "schedule_q": 128,
+      "training_integrity_receipt": {
+        "checker_git_commit": "7ef137770bbc8450fe183fc6e6b4c8b861bb4ca0",
+        "receipt_filename": "q128-fresh-256k-seed3-fixed.integrity.json",
+        "receipt_id": "q128-fresh-256k-seed3-fixed",
+        "receipt_sha256": "6933dfce6ab784bf4285a3944ef27f4d32fb4f9fbd53e5e8bbeae736b9689728",
+        "receipt_type": "machine-generated",
+        "status": "passed"
+      },
+      "training_seed": 3
+    },
+    {
+      "budget_kimg": 256,
+      "checkpoint_id": "q128-fresh-256k-seed3-global110",
+      "checkpoint_sha256": "a52eb7dbe55ee93b2993150be93aaa46809e23c28cdc7841a226074fce89842e",
+      "executed_training_source_commit": "28b04c086f7984a56e879472c80bf241ada0fd71",
+      "global_gap_scale": 1.1,
+      "method": "global110",
+      "schedule_identity": "global_sigmoid",
+      "schedule_q": 128,
+      "training_integrity_receipt": {
+        "checker_git_commit": "7ef137770bbc8450fe183fc6e6b4c8b861bb4ca0",
+        "receipt_filename": "q128-fresh-256k-seed3-global110.integrity.json",
+        "receipt_id": "q128-fresh-256k-seed3-global110",
+        "receipt_sha256": "b4cc7beba4fd61933ed97feda8a7ad871bcbf4b0ac77ece8a934c0fac0033286",
+        "receipt_type": "machine-generated",
+        "status": "passed"
+      },
+      "training_seed": 3
+    },
+    {
+      "budget_kimg": 256,
+      "checkpoint_id": "q128-fresh-256k-seed4-fixed",
+      "checkpoint_sha256": "c00ecfdd50fa668cd4d0b1260b2d759976574d81a0c58111054a1ebf8d9eff88",
+      "executed_training_source_commit": "28b04c086f7984a56e879472c80bf241ada0fd71",
+      "global_gap_scale": 1.0,
+      "method": "fixed",
+      "schedule_identity": "sigmoid",
+      "schedule_q": 128,
+      "training_integrity_receipt": {
+        "checker_git_commit": "7ef137770bbc8450fe183fc6e6b4c8b861bb4ca0",
+        "receipt_filename": "q128-fresh-256k-seed4-fixed.integrity.json",
+        "receipt_id": "q128-fresh-256k-seed4-fixed",
+        "receipt_sha256": "bfb7020171568fc259e1c79492f3d2b58178dbe9bae2ce2ed18751f5f82d2cc9",
+        "receipt_type": "machine-generated",
+        "status": "passed"
+      },
+      "training_seed": 4
+    },
+    {
+      "budget_kimg": 256,
+      "checkpoint_id": "q128-fresh-256k-seed4-global110",
+      "checkpoint_sha256": "17ba6ab56075a21c5cca0867ea456d3afd80906d1e11d6c9a130f50e81bd2d6c",
+      "executed_training_source_commit": "28b04c086f7984a56e879472c80bf241ada0fd71",
+      "global_gap_scale": 1.1,
+      "method": "global110",
+      "schedule_identity": "global_sigmoid",
+      "schedule_q": 128,
+      "training_integrity_receipt": {
+        "checker_git_commit": "7ef137770bbc8450fe183fc6e6b4c8b861bb4ca0",
+        "receipt_filename": "q128-fresh-256k-seed4-global110.integrity.json",
+        "receipt_id": "q128-fresh-256k-seed4-global110",
+        "receipt_sha256": "2d68c1fdf5589a1bb7c1e33f7ab96a4e7f3a1a8b068ddacb5de864f633651084",
+        "receipt_type": "machine-generated",
+        "status": "passed"
+      },
+      "training_seed": 4
+    },
+    {
+      "budget_kimg": 256,
+      "checkpoint_id": "q128-fresh-256k-seed5-fixed",
+      "checkpoint_sha256": "cab7619d790dcc0f35df184be14272e8eaf4e83f5285b4df03e37011e0bc9ca0",
+      "executed_training_source_commit": "28b04c086f7984a56e879472c80bf241ada0fd71",
+      "global_gap_scale": 1.0,
+      "method": "fixed",
+      "schedule_identity": "sigmoid",
+      "schedule_q": 128,
+      "training_integrity_receipt": {
+        "checker_git_commit": "7ef137770bbc8450fe183fc6e6b4c8b861bb4ca0",
+        "receipt_filename": "q128-fresh-256k-seed5-fixed.integrity.json",
+        "receipt_id": "q128-fresh-256k-seed5-fixed",
+        "receipt_sha256": "0488d50afa3a09e3c5da885cb9912afe58e63ecea6160b90cb305256b86d3100",
+        "receipt_type": "machine-generated",
+        "status": "passed"
+      },
+      "training_seed": 5
+    },
+    {
+      "budget_kimg": 256,
+      "checkpoint_id": "q128-fresh-256k-seed5-global110",
+      "checkpoint_sha256": "656d8f337b9e122e0d4b9f27db1890e9c629ba15808f0cea7466cc4259d45c32",
+      "executed_training_source_commit": "28b04c086f7984a56e879472c80bf241ada0fd71",
+      "global_gap_scale": 1.1,
+      "method": "global110",
+      "schedule_identity": "global_sigmoid",
+      "schedule_q": 128,
+      "training_integrity_receipt": {
+        "checker_git_commit": "7ef137770bbc8450fe183fc6e6b4c8b861bb4ca0",
+        "receipt_filename": "q128-fresh-256k-seed5-global110.integrity.json",
+        "receipt_id": "q128-fresh-256k-seed5-global110",
+        "receipt_sha256": "98ebed5271b4a52700bab23bf6a1a9f65704b3ae1079480a37b9a4ea644dcceb",
+        "receipt_type": "machine-generated",
+        "status": "passed"
+      },
+      "training_seed": 5
+    }
+  ],
+  "comparison": {
+    "baseline_method": "fixed",
+    "candidate_label": "global_only",
+    "candidate_method": "global110",
+    "delta_direction": "global_only - fixed",
+    "pairing_key": [
+      "training_seed",
+      "budget_kimg",
+      "nfe",
+      "metric"
+    ]
+  },
+  "description": "Runtime identity binding for the predeclared fresh q=128 fixed-sigmoid versus global-only g=1.10 matrix. Machine-local checkpoint and receipt paths are excluded.",
+  "evaluation_contracts": [
+    {
+      "budget_kimg": 256,
+      "evidence_class": "formal",
+      "generation_seed_range": "0-49999",
+      "metric_names": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "metric_seed": 20260730,
+      "sample_count": 50000,
+      "stage": "formal"
+    }
+  ],
+  "formal_promotion_policy": {
+    "eligibility": "provenance_and_integrity_only",
+    "quick_metric_performance": "not_an_eligibility_criterion",
+    "required_evaluation_checkpoint_ids": [
+      "q128-fresh-256k-seed3-fixed",
+      "q128-fresh-256k-seed3-global110",
+      "q128-fresh-256k-seed4-fixed",
+      "q128-fresh-256k-seed4-global110",
+      "q128-fresh-256k-seed5-fixed",
+      "q128-fresh-256k-seed5-global110"
+    ],
+    "required_formal_checkpoint_ids": [
+      "q128-fresh-256k-seed3-fixed",
+      "q128-fresh-256k-seed3-global110",
+      "q128-fresh-256k-seed4-fixed",
+      "q128-fresh-256k-seed4-global110",
+      "q128-fresh-256k-seed5-fixed",
+      "q128-fresh-256k-seed5-global110"
+    ],
+    "rule": "Every predeclared checkpoint must enter formal evaluation when its immutable provenance matches and its training-integrity receipt passes. Quick KID/FID performance, if an implementation smoke is run, may not exclude, add, substitute, or otherwise select a formal checkpoint."
+  },
+  "manifest_kind": "frozen-logical-checkpoint-matrix",
+  "matrix_id": "q128-fresh-fixed-vs-global110-v1",
+  "method_definitions": {
+    "fixed": {
+      "global_gap_scale": 1.0,
+      "label": "fixed sigmoid",
+      "local_controller": "disabled",
+      "schedule_identity": "sigmoid"
+    },
+    "global110": {
+      "global_gap_scale": 1.1,
+      "label": "global-only g=1.10",
+      "local_controller": "disabled",
+      "schedule_identity": "global_sigmoid"
+    }
+  },
+  "nfe_modes": {
+    "1": [],
+    "2": [
+      0.821
+    ]
+  },
+  "protocol": "staged-checkpoint-evaluation-v1",
+  "runtime_binding": {
+    "binding_rule": "The runtime manifest must preserve every frozen cell identity, checkpoint SHA256, executed training commit, and receipt digest, then add machine-local checkpoint and receipt paths.",
+    "required": true,
+    "required_runtime_fields": [
+      "checkpoint",
+      "integrity_receipt"
+    ],
+    "versioned_paths": false
+  },
+  "schema_version": 1,
+  "training": {
+    "budget_kimg": [
+      256
+    ],
+    "schedule_q": 128,
+    "training_seeds": [
+      3,
+      4,
+      5
+    ]
+  }
+}

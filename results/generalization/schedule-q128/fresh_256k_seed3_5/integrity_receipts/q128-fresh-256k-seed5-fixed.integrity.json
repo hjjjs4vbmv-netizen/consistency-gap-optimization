@@ -1,0 +1,56 @@
+{
+  "budget_kimg": 256,
+  "checked_at_unix": 1785679007.016597,
+  "checker_git_commit": "7ef137770bbc8450fe183fc6e6b4c8b861bb4ca0",
+  "checker_version": "2",
+  "checkpoint_id": "q128-fresh-256k-seed5-fixed",
+  "checkpoint_load_passed": true,
+  "checkpoint_path": "/mnt/ect_project/checkpoints/q128_fresh_256k_handoff/files/q128-seed5-fixed-256k.pkl",
+  "checkpoint_sha256": "cab7619d790dcc0f35df184be14272e8eaf4e83f5285b4df03e37011e0bc9ca0",
+  "completion_passed": true,
+  "ema_finite_passed": true,
+  "ema_present": true,
+  "evidence": {
+    "checkpoint_identity": {
+      "checkpoint_global_gap_scale": 1.0,
+      "checkpoint_load_passed": true,
+      "checkpoint_schedule": "sigmoid",
+      "ema_finite_passed": true,
+      "ema_floating_tensors_checked": 424,
+      "ema_present": true,
+      "global_gap_scale_identity_passed": true,
+      "method_identity_passed": true,
+      "schedule_identity_passed": true,
+      "training_options_global_gap_scale": 1.0,
+      "training_options_schedule": "sigmoid"
+    },
+    "expected_training_commit": null,
+    "log": {
+      "clean_exit_marker": "Exiting..."
+    },
+    "run_directory": "/root/ect-runs/q128-fresh-confirmatory-28b04c08-20260801T070624Z/q128-seed5-fixed-256k",
+    "stats": {
+      "final_kimg": 256.0,
+      "records": 251
+    },
+    "training_options": "/root/ect-runs/q128-fresh-confirmatory-28b04c08-20260801T070624Z/q128-seed5-fixed-256k/training_options.json",
+    "training_state": {
+      "cur_nimg": 256000,
+      "tensors_checked": 1248
+    },
+    "training_summary": {
+      "final_kimg": 256.0,
+      "rows": 2000
+    }
+  },
+  "finite_loss_state_passed": true,
+  "global_gap_scale_identity_passed": true,
+  "logs_state_consistent": true,
+  "method": "fixed",
+  "method_identity_passed": true,
+  "schedule_identity_passed": true,
+  "schema_version": 1,
+  "status": "passed",
+  "training_run_id": "q128-seed5-fixed-256k",
+  "training_seed": 5
+}
