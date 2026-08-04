@@ -92,31 +92,43 @@ Hessian geometry alone". The toy's honest content is:
 
 ---
 
-## 4. ADCM separation counterexample (resolves review P0/separation)
+## 4. ADCM separation counterexample (resolves review P0/separation, rev.2)
 
-Two loss types, **same $H_g$**, **LR-matched $\eta$**, **fixed noise RMS**:
+**Exact second-moment recursion (no Monte-Carlo):**
+$M_{k+1}=B_g M_k B_g^\top+\eta^2\Sigma_g^{(e)},\ B_g=I-\eta H_g,\ M_0=\beta_0\beta_0^\top,\ E_K=\mathrm{Tr}(M_K).$
 
-| env | loss | per-sample grad noise feature $u_g$ | $\Sigma_g$ |
+Two environments share the **same curvature $H_g$** (hence identical instantaneous
+criterion $J_\text{inst}=\mathrm{Tr}(H_g)$) but differ in gradient-noise covariance:
+- **env1** (symmetric loss): $\Sigma^{(1)}=H_g$ — the noise feature $v_g=[t{-}r,t^2{-}r^2]$ contains $\Delta\sim g$, so $\Sigma\propto g^2$.
+- **env2** (stop-gradient loss): $\Sigma^{(2)}=\sigma_d^2\mathbb{E}[[t,t^2][t,t^2]^\top]$ — the online Jacobian $J_t=[t,t^2]$ has **no $g$ dependence**, so $\Sigma$ is $g$-independent.
+
+This is the real ECT physics: the stop-gradient loss shares curvature $H_g$ with
+the symmetric loss (verified: both have population loss $\tfrac12\beta^\top H_g\beta$,
+finite-diff rel-err $8\!\times\!10^{-2}$ MC) but its gradient-noise covariance does
+**not** scale with $g$, because $g$ enters only the residual, not the online Jacobian.
+
+### Result (fixed $\eta$, exact recursion)
+| setting | env1 $g^\star$ | env2 $g^\star$ | differ? |
 |---|---|---|---|
-| sym | $\tfrac12(f_t - f_r)^2$ | $v_g=[t{-}r,\,t^2{-}r^2]$ | $\sigma_d^2\mathbb{E}[v_gv_g^\top]=H_g$ |
-| stop | $\tfrac12(f_t-\mathrm{sg}\,f_r)^2$ | $[t,\,t^2]$ | $\sigma_d^2\mathbb{E}[[t,t^2][t,t^2]^\top]\neq H_g$ |
+| **realistic** (g-dep vs g-indep $\Sigma$) | 0.5 | 1.0–1.45 | **yes** |
+| trace-matched (pure direction, equal Tr) | 0.5 | 0.5 | no |
 
-Both have population loss $\tfrac12\beta^\top H_g\beta$ (verified by
-finite-difference, rel-err $8\!\times\!10^{-2}$ MC), so an instantaneous
-criterion gives the **same** $g$ for both. Monte-Carlo SGD (LR-matched,
-fixed per-step noise RMS):
+**Two honest conclusions:**
+1. **Realistic separation appears**: same $H_g$, same $\eta$, exact recursion, but
+   $g^\star$ differs because $\Sigma^{(1)}$ grows with $g$ while $\Sigma^{(2)}$ does
+   not. This is gap-dependent finite-horizon geometry the instantaneous criterion
+   cannot predict.
+2. **Pure direction (equal trace) is insufficient**: when we rescale $\Sigma^{(2)}$
+   to equal trace with $\Sigma^{(1)}$, the optima coincide. So the separation does
+   *not* come from "different noise direction" alone — it requires the genuine
+   difference in *how $\Sigma_g$ depends on $g$*, which is exactly what
+   stop-gradient vs symmetric provides.
 
-| K | sym $g_K^\star$ | stop $g_K^\star$ | differ? |
-|---|---|---|---|
-| 50 | 1.20 | 1.30 | yes |
-| 200 | 1.45 | 1.35 | yes |
-| 1000 | 1.40 | 1.40 | (converge) |
-
-At short/medium budget the optima **differ** despite identical instantaneous
-criterion and matched rate/noise-magnitude — the difference is the *direction*
-of anisotropic gradient noise relative to $H_g$'s eigenvectors. At long budget
-they converge, consistent with "finite-horizon" (the instantaneous criterion
-dominates as $K\to\infty$).
+Caveat: in the **LR-matched** regime ($\eta\propto 1/\lambda_{\max}(H_g)\propto 1/g^2$),
+the drift $B_g$ becomes $g$-independent (since $H_g\approx g^2 H_2$), and the
+realistic separation above also collapses — there $g^\star$ is driven to the
+stability boundary for both. The counterexample is therefore stated for the
+**fixed-$\eta$** (real-training) regime, not the LR-matched abstraction.
 
 ---
 

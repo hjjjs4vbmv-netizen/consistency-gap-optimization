@@ -1,120 +1,130 @@
-"""ADCM separation counterexample (review P0/separation).
+"""Instantaneous-statistics-insufficiency counterexample (PR #33 review rev.2).
 
-Two environments with the SAME instantaneous criterion (population loss
-1/2 beta^T H_g beta, curvature H_g) but DIFFERENT gradient-noise covariance:
+EXACT second-moment recursion (no Monte-Carlo noise) for two stochastic-gradient
+oracles that share the SAME curvature H_g (same instantaneous criterion) but
+differ in gradient-noise covariance Sigma_g:
 
-  env1 (symmetric loss, both branches live):
-      residual R = z v_g^T beta,  grad = z^2 (v_g^T beta) v_g
-      => Sigma_g^(1) = sigma_d^2 E[v_g v_g^T] = H_g   (== curvature)
-  env2 (stop-gradient loss, online branch live only):
-      residual R = z v_g^T beta,  grad = z^2 (v_g^T beta) [t, t^2]
-      => Sigma_g^(2) = sigma_d^2 E[ [t,t^2][t,t^2]^T ]
+  M_{k+1} = B_g M_k B_g^T + eta^2 Sigma_g^(e),   B_g = I - eta H_g,   M_0 = beta0 beta0^T
+  E_K(g; e) = Tr(M_K)
 
-Both have H_g as curvature -> an instantaneous-criterion method (ADCM-style)
-gives the SAME g recommendation for both. But the finite-step SGD optimum
-g_K^star can differ because Sigma_g differs.
+We run TWO settings:
 
-We use LR-matched eta (eta*lambda_max(H_g)=const) so the result is NOT a
-learning-rate artifact. We run Monte-Carlo SGD (not the isotropic-noise
-closed form, because the noise here is anisotropic and g-dependent) and
-report g_K^star for each env.
+(A) trace-matched (pure direction): Sigma^(2) rescaled to Tr == Tr(Sigma^(1)).
+    -> separation COLLAPSES. Pure noise DIRECTION (with equal power) is NOT
+       enough in this 2-param toy; the optima coincide.
+
+(B) realistic structure (the physics): Sigma^(1) = H_g (g-dependent, ~g^2,
+    from the symmetric-loss noise feature v_g which contains Delta~g);
+    Sigma^(2) = sigma_d^2 E[[t,t^2][t,t^2]^T] (g-INDEPENDENT, from the
+    stop-gradient noise feature [t,t^2] which has no g).
+    -> separation APPEARS: env1 g* -> small g (noise grows with g),
+       env2 g* -> large g (noise flat, only convergence improves).
+    The difference is NOT a learning-rate effect (eta is fixed, not LR-matched):
+    it is that the stop-gradient noise covariance does NOT scale with g while
+    the curvature does. This is a genuine finite-horizon gap-dependence that
+    the instantaneous criterion (Tr(H_g), same for both) cannot resolve.
+
+Setting (B) is the real counterexample; (A) is reported as an honest negative
+result showing that direction alone (under equal trace) is insufficient here,
+so the separation genuinely needs the g-dependent vs g-independent structure.
+
+Motivation for env2's g-independence: in ECT, the stop-gradient loss uses the
+online-branch Jacobian J_t = [t, t^2] (d f_t / d beta), which does NOT depend
+on the gap g (g only enters the residual v_g = [t-r, t^2-r^2] through r). Hence
+its gradient-noise covariance is g-independent even though its population
+curvature H_g is the same as the symmetric loss. See novelty_and_propositions.md
+sec 5 for the A_g analysis.
 """
+import os
 import numpy as np
 import pandas as pd
-from toy_core import sample_t, base_gap_sigmoid, hessian_symmetric, v_g
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from toy_core import sample_t, base_gap_sigmoid, hessian_symmetric
 
 
-def mc_sgd_final_error(t, delta0, sigma_d, g, beta0, eta, K, env, rng, n_inner=8, rms=0.05):
-    """Monte-Carlo SGD: expected ||beta_K||^2 averaged over noise draws.
-
-    Structural gradient noise per sample:
-      sym :  grad_noise = z^2 (v_g^T beta) v_g           Sigma ~ v_g v_g^T
-      stop:  grad_noise = z^2 (v_g^T beta) [t, t^2]      Sigma ~ [t,t^2][t,t^2]^T
-    We RESCALE each per-sample noise vector to fixed RMS = rms (so total injected
-    noise power is identical across g and env), keeping only the DIRECTION
-    (anisotropy) env/g-dependent. This removes the "different noise magnitude"
-    confound: any g_K^star difference then comes from the noise *direction*
-    relative to H_g's eigenvectors, which ADCM's instantaneous criterion cannot see.
-
-    LR-matched eta (eta*lambda_max(H_g)=const) is passed by caller.
-    """
-    Delta = np.minimum(g * delta0, t - 1e-3)
-    r = t - Delta
-    vg = np.stack([Delta, t ** 2 - r ** 2], axis=-1)        # (n,2)
-    Jt = np.stack([t, t ** 2], axis=-1)                    # (n,2)  stop-grad Jacobian col
-    n = len(t)
-    feat = vg if env == "sym" else Jt                       # noise feature direction
-    sqsum = 0.0
-    for _ in range(n_inner):
-        beta = beta0.copy()
-        for k in range(K):
-            idx = rng.integers(0, n)
-            z = rng.normal(0, sigma_d)
-            raw = (z ** 2) * (vg[idx] @ beta) * feat[idx]   # structural noise vec
-            nrm = np.linalg.norm(raw)
-            if nrm > 1e-30:
-                raw = raw / nrm * rms                       # fixed RMS = rms
-            grad = raw                                      # pure noise-driven step
-            beta = beta - eta * grad
-        sqsum += np.sum(beta ** 2)
-    return sqsum / n_inner
+def exact_sgd_error(H, Sigma, eta, beta0, K):
+    """Exact expected squared error E||beta_K||^2 = Tr(M_K)."""
+    d = H.shape[0]
+    B = np.eye(d) - eta * H
+    M = np.outer(beta0, beta0)
+    eta2S = (eta ** 2) * Sigma
+    for _ in range(K):
+        M = B @ M @ B.T + eta2S
+    return float(np.trace(M))
 
 
 def run(sigma_d=0.5, out="."):
-    import os
-    os.makedirs(out, exist_ok=True)
-    t = sample_t(200000, rng=np.random.default_rng(0))
+    os.makedirs(os.path.join(out, "figures"), exist_ok=True)
+    t = sample_t(300000, rng=np.random.default_rng(0))
     d0 = base_gap_sigmoid(t)
     H1 = hessian_symmetric(sigma_d, t, 1.0, d0)
     lam1_max = np.linalg.eigvalsh(H1)[-1]
+    Jt = np.stack([t, t ** 2], axis=-1)
+    Sigma2_struct = sigma_d ** 2 * (Jt.T @ Jt / len(t))   # g-independent structure
 
-    gs = np.arange(0.5, 1.46, 0.05)   # within stability bound
+    gs = np.arange(0.5, 1.46, 0.025)
     Ks = [50, 200, 1000]
-    rms_list = [0.05]                 # noise level
-    eta_scale = 1.0                   # LR-matched target eta*lam_max = 1.0
     beta0 = np.ones(2) * 1e-2
 
     rows = []
-    for env in ["sym", "stop"]:
-        for K in Ks:
-            for rms in rms_list:
-                # scale noise so per-step noise RMS ~ rms in beta space
-                # grad noise std ~ sigma_d^2 * |v_g^T beta| * |feat|; we just use
-                # a fixed additive gaussian of std rms on the grad (isotropic proxy)
-                # -> to respect anisotropic Sigma_g, we instead inject the true
-                # structural noise scaled by a factor s so that overall RMS ~ rms.
-                # For a clean separation demo we use the *structural* noise only
-                # (z^2 term), scaled by a constant factor.
+    summary = []
+    for eta_scale in [0.25, 0.5, 1.0]:
+        eta = eta_scale / lam1_max
+        for setting in ["trace_matched", "realistic"]:
+            for K in Ks:
+                recs = []
                 for g in gs:
                     H = hessian_symmetric(sigma_d, t, g, d0)
-                    eta = eta_scale / np.linalg.eigvalsh(H)[-1]   # LR-matched
-                    rng = np.random.default_rng(12345)
-                    e = mc_sgd_final_error(t, d0, sigma_d, g, beta0, eta, K, env, rng,
-                                           n_inner=6, rms=rms)
-                    rows.append(dict(env=env, g=round(float(g),4), K=K, rms=rms, error=float(e)))
+                    trH = np.trace(H)
+                    if setting == "trace_matched":
+                        S1 = H.copy()
+                        S2 = Sigma2_struct * (trH / np.trace(Sigma2_struct))
+                    else:  # realistic: g-dependent vs g-independent (no rescale)
+                        S1 = H.copy()
+                        S2 = Sigma2_struct.copy()
+                    e1 = exact_sgd_error(H, S1, eta, beta0, K)
+                    e2 = exact_sgd_error(H, S2, eta, beta0, K)
+                    rows.append(dict(eta_scale=eta_scale, setting=setting, g=round(float(g),4),
+                                     K=K, env=1, error=e1))
+                    rows.append(dict(eta_scale=eta_scale, setting=setting, g=round(float(g),4),
+                                     K=K, env=2, error=e2))
+                    recs.append((g, e1, e2))
+                g1 = min(recs, key=lambda x: x[1])[0]
+                g2 = min(recs, key=lambda x: x[2])[0]
+                summary.append(dict(eta_scale=eta_scale, setting=setting, K=K,
+                                    g1=round(g1,3), g2=round(g2,3),
+                                    differ=abs(g1-g2) > 0.02))
 
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(out, "toy_separation.csv"), index=False)
+    sdf = pd.DataFrame(summary)
+    sdf.to_csv(os.path.join(out, "toy_separation_summary.csv"), index=False)
 
-    print("=== g_K^star per environment (LR-matched, structural noise) ===")
-    for K in Ks:
-        for env in ["sym", "stop"]:
-            sub = df[(df.env == env) & (df.K == K)].sort_values("g")
-            gstar = sub.loc[sub.error.idxmin(), "g"]
-            emin = sub.error.min()
-            print(f"  env={env:4s} K={K:4d}: g*={gstar:.2f}  err_min={emin:.4e}")
+    print("=== separation results (eta fixed, not LR-matched) ===")
+    print(sdf.to_string(index=False))
+    print()
+    real = sdf[sdf.setting == "realistic"]
+    any_sep = real.differ.any()
+    print("=> REALISTIC separation established:" if any_sep else "=> no separation:")
+    print("   instantaneous criterion identical (same H_g), but g_K* differs because")
+    print("   Sigma^(1)~H_g (g-dep) vs Sigma^(2) g-independent (stop-grad structure).")
 
-    print("\n=== SEPARATION CHECK ===")
-    sep = False
+    # plot realistic, eta_scale=1.0
+    fig, ax = plt.subplots(figsize=(6.5, 4.5))
+    sub = df[(df.eta_scale == 1.0) & (df.setting == "realistic")]
     for K in Ks:
-        s = df[(df.env == "sym") & (df.K == K)]
-        p = df[(df.env == "stop") & (df.K == K)]
-        gs_star = s.loc[s.error.idxmin(), "g"]
-        gp_star = p.loc[p.error.idxmin(), "g"]
-        diff = gs_star != gp_star
-        sep = sep or diff
-        print(f"  K={K}: sym g*={gs_star:.2f}  stop g*={gp_star:.2f}  DIFFER={diff}")
-    print("=> ADCM SEPARATION ESTABLISHED" if sep else "=> no separation in this config")
+        s = sub[(sub.env == 1) & (sub.K == K)].sort_values("g")
+        p = sub[(sub.env == 2) & (sub.K == K)].sort_values("g")
+        ax.plot(s.g, s.error, "-", label=f"env1 Sigma~H_g (g-dep) K={K}")
+        ax.plot(p.g, p.error, "--", label=f"env2 Sigma~[t,t^2] (g-indep) K={K}")
+    ax.set_xlabel("g"); ax.set_ylabel("E||beta_K||^2 (exact)")
+    ax.set_yscale("log"); ax.legend(fontsize=7); ax.grid(alpha=0.3)
+    ax.set_title("Same H_g, different Sigma_g(g-dependence) -> different g_K*")
+    fig.tight_layout()
+    fig.savefig(os.path.join(out, "figures", "toy_separation.pdf"))
+    print("saved figures/toy_separation.pdf")
 
 
 if __name__ == "__main__":

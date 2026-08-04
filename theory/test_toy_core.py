@@ -115,6 +115,21 @@ def test_gd_final_error_decreases_with_K():
     assert e1000 < e50
 
 
+def test_separation_exact_recursion_matches_closed_form():
+    """Exact recursion E_K = Tr(M_K) must match the known 1-D closed form.
+
+    For d=1 (scalar H, Sigma, beta0): E_K = (1-eta*H)^{2K} beta0^2
+        + eta^2 Sigma * (1 - (1-eta*H)^{2K}) / (eta*H*(2-eta*H)).
+    The matrix recursion must reproduce this exactly.
+    """
+    from separation import exact_sgd_error
+    H = np.array([[3.0]]); Sig = np.array([[0.5]]); eta = 0.2; b0 = np.array([1.0]); K = 100
+    rec = exact_sgd_error(H, Sig, eta, b0, K)
+    lam = 3.0; r = 1 - eta*lam; r2K = r**(2*K)
+    closed = r2K * b0[0]**2 + (eta**2 * Sig[0,0]) * (1 - r2K) / (eta*lam*(2-eta*lam))
+    assert abs(rec - closed) / abs(closed) < 1e-9
+
+
 def _run_all():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = 0

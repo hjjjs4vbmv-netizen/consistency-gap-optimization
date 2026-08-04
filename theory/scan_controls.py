@@ -1,17 +1,22 @@
-"""LR-matched and gradient-matched controls for the toy model (review P0-2).
+"""LR-matched control for the toy model (review P0-2).
 
-Tests whether the g-dependent U-shape survives controls that remove the
+Tests whether the g-dependent U-shape survives a control that removes the
 effective-learning-rate interpretation:
 
-  1. eta_scale sweep {0.05,0.1,0.25,0.5,1.0}  (eta = eta_scale/lambda_max(H_1))
+  1. eta_scale sweep {0.05,0.1,0.25,0.5,1.0}  (eta = eta_scale/lambda_max(H_1),
+     fixed across g)
   2. LR-matched:    eta_g = eta_1 * lambda_max(H_1)/lambda_max(H_g)
                     => eta_g * lambda_max(H_g) == eta_1*lambda_max(H_1) = const
                     so the *fastest* direction rate is identical across g;
                     any remaining g-dependence is curvature-shape / slow-dir.
-  3. gradient-RMS matched: choose beta0 so initial grad RMS is equal across g.
 
 Decision rule: if the U-shape disappears under (2), the original U was a
 learning-rate artifact. If it persists, there is gap-specific geometry.
+
+NOTE: an earlier draft mentioned a "gradient-RMS-matched" control; it is NOT
+implemented here (the LR-matched control already removes the rate confound for
+this toy, and gradient-RMS matching is subsumed by LR-matching when the
+gradient is H_g beta). Removed to avoid over-claiming.
 """
 import os
 import numpy as np
