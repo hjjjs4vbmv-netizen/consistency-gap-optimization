@@ -124,21 +124,45 @@ def sgd_expectation_exact(H, beta0, eta, K, nu_vec):
 # --------------------------------------------------------------------------
 
 def stop_gradient_operator(sigma_d, t, g, delta0, t_min=1e-3, stage=0.0):
-    """A_g = E[J_t^T (J_t - J_r)], Jacobian of the pair residual wrt beta.
+    """Stop-gradient linear update operator for ECT.
 
-    residual r_g(t) = z v_g(t)^T beta  =>  J_t = z v_g(t)^T (2x2 row? actually
-    the residual is scalar; J_t is gradient of residual wrt beta = z v_g(t).
-    J_t^T (J_t - J_r) = z^2 (v_t v_t^T - v_t v_r^T). With shared noise z,
-    A_g = E_t[ E_z[z^2] (v_t v_t^T - v_t v_r^T) ] = sigma_d^2 E_t[ v_t v_t^T - v_t v_r^T ].
-    v_t uses the stop-gradient 'target' t (i.e. beta updates only via the t-branch).
+    Model: f_beta(x_t, t) = z (1 + beta1 t + beta2 t^2)   (x_t = m(t) z).
+    Stop-gradient loss: L = 1/2 ( f_beta(x_t,t) - sg f_beta(x_r,r) )^2.
+
+    Pair residual (linear in beta):
+        f_t - sg f_r = z [ beta1 (t-r) + beta2 (t^2 - r^2) ] = z v_g(t)^T beta,
+        with  v_g(t) = [ t-r , t^2 - r^2 ]^T,   r = t - Delta, Delta = min(g*delta0, t-t_min).
+
+    Online-branch Jacobian (d f_t / d beta):
+        J_t = z [ t , t^2 ]^T.
+
+    Gradient of the stop-gradient loss:
+        grad_beta L = (f_t - sg f_r) * d f_t / d beta      (target has no gradient)
+                    = z^2 (v_g^T beta) [ t , t^2 ]^T
+                    = z^2 ( J_t_col v_g^T ) beta,
+    so the linear operator acting on beta is  z^2 [t,t^2]^T v_g^T,  and its
+    population expectation (E[z^2] = sigma_d^2) is
+
+        A_g = sigma_d^2 * E_t[ [t, t^2]^T  v_g(t)^T ]        (2x2, asymmetric).
+
+    Note J_t_col = [t, t^2] is NOT v_g (v_g = [t-r, t^2-r^2]); the asymmetry of
+    A_g vs the symmetric Hessian H_g = sigma_d^2 E_t[v_g v_g^T] is exactly what
+    distinguishes stop-gradient ECT from the symmetric population loss.
+
+    IMPORTANT: the population *loss* E[L] = 1/2 beta^T H_g beta is identical for
+    the symmetric and stop-gradient losses (curvature is H_g either way); only
+    the per-sample gradient NOISE differs (symmetric uses v_g, stop-gradient uses
+    [t, t^2]). This is the basis of the ADCM separation counterexample.
     """
     Delta = np.minimum(g * delta0, t - t_min)
-    vt = np.stack([Delta, 2.0 * t * Delta - Delta ** 2], axis=-1)
-    # r = t - Delta
-    vr = np.stack([Delta, 2.0 * (t - Delta) * Delta - Delta ** 2], axis=-1)
-    M = np.einsum("ni,nj->ij", vt, vt) - np.einsum("ni,nj->ij", vt, vr)
-    M = M / len(t)
-    return sigma_d ** 2 * M
+    r = t - Delta
+    # residual feature v_g(t) = [t - r, t^2 - r^2]   (t-r == Delta)
+    vg = np.stack([Delta, t ** 2 - r ** 2], axis=-1)        # (n, 2)
+    # online-branch Jacobian column J_t = [t, t^2]  (d f_beta / d beta = z*[t, t^2])
+    Jt = np.stack([t, t ** 2], axis=-1)                    # (n, 2)
+    # A[i,j] = E_n[ Jt_col[i] * v_g[j] ] = E[ [t,t^2]^T (v_g)^T ]
+    A = np.einsum("ni,nj->ij", Jt, vg) / len(t)
+    return sigma_d ** 2 * A
 
 
 def asym_spectral_report(A):
