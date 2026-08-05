@@ -4,7 +4,7 @@
 
 审计对象：[PR #34](https://github.com/hjjjs4vbmv-netizen/recurrence_of_ect/pull/34)，head `799b8ac`
 
-审计范围：推导、实现、测试、CSV、与仓库真实 ECT loss 的一致性，以及相对 ADCM 的 novelty。本文不修改 Role C 的产物。
+审计范围：推导、实现、测试、CSV、与仓库真实 ECT loss 的一致性，以及相对 ADCM 的 novelty。本审计不修改训练、schedule、controller 或 Role C 的实验产物。
 
 ## 结论（指定格式）
 
@@ -20,14 +20,20 @@
 
 ## 1. 可复现性检查
 
-我在 PR head 的独立检出目录中执行：
+PR #34 的原始测试可通过：
 
 ```text
 python -m pytest theory/test_true_sg.py -q
-4 passed in 10.89s
+4 passed
 ```
 
-重新运行 `true_sg_operator.py` 后，原始四个预算的结论可复现：
+本 PR 另提供独立复算脚本 `theory/audit_scalar_residual.py`。它直接从定义重建 `A_g`、`H_g` 和 `T_g`，不导入被审计的 `true_sg_operator.py`：
+
+```bash
+python theory/audit_scalar_residual.py
+```
+
+脚本固定 `sample_count=200000`、`seed=0`、`sigma_d=0.5`，生成 `theory/audit_scalar_residual.csv`。CSV 包含完整 `g=0.5:0.05:1.5` 网格上的三个 operator residual，以及 fixed、H-matched、A-matched 在 `K={20,50,100,200,500,1000}` 的 `Tr(M_K)`。原始四个预算的结论为：
 
 | LR mode | `g*`, K=20/50/100/200 | K=200 相对 spread | 结论 |
 |---|---:|---:|---|
@@ -35,7 +41,7 @@ python -m pytest theory/test_true_sg.py -q
 | H-matched | 1.5 / 1.5 / 1.5 / 1.5 | 5013.13 | 单调下降 |
 | A-matched | 0.5 / 0.5 / 0.5 / 0.5 | `1.38e-5` | 几乎平坦，无 crossover |
 
-原任务要求的 `K={500,1000}` 未进入 PR CSV。我用相同代码和随机种子补算：
+原任务要求的 `K={500,1000}` 未进入 PR #34 CSV；审计脚本补算结果为：
 
 | mode | K=500：`g*`, spread | K=1000：`g*`, spread |
 |---|---:|---:|
@@ -129,11 +135,11 @@ a(g)=\langle A_g,A_1\rangle_F/\|A_1\|_F^2
 
 匹配平均算子。`η_gA_g≈η_1A_1` 并不自动推出 `T_g(η_g)=T_1(η_1)`，因为 `T_g` 还含逐样本算子的二阶项。
 
-我补算了 operator residual。对 `g={0.5,0.8,1.2,1.5}`：
+`audit_scalar_residual.py` 在完整 `g=0.5:0.05:1.5` 网格上得到：
 
-- `||A_g-aA_1||/||A_g|| ≤ 5.93e-6`；
-- 逐样本 operator 的加权 RMS scalar residual `≤5.07e-6`；
-- matched 后 `||(T_g-I)-(T_1-I)||/||T_1-I|| ≤1.37e-5`。
+- `||A_g-aA_1||/||A_g|| ≤ 5.923e-6`；
+- 逐样本 operator 的 Frobenius RMS scalar residual `≤5.102e-6`；
+- matched 后 `||(T_g-I)-(T_1-I)||/||T_1-I|| ≤1.361e-5`。
 
 这很好地解释了曲线为何平坦，但也证明它只是近似等价。产生非零 residual 的原因包括 `v_g` 第二分量中的 `-Δ²` 和边界 clamp；因此 PR 文案中的“negative theorem”需改为下列两层：
 
@@ -208,7 +214,7 @@ ADCM 的目标不是简单的 loss-only controller。论文式 (8)–(10)同时�
 7. A-flat test 的阈值是 `1e-2`，比文案声称的 `~1e-6` 宽约三阶；应按实际 claim 设为 `1e-4` 左右，并覆盖完整 gap/budget grid。
 8. 自带 `_run_all()` 捕获失败后仍以 exit code 0 结束；CI 应直接使用 pytest。
 
-## 9. 今日 Go/No-Go 建议
+## 9. Go/No-Go 建议
 
 **Toy finite-horizon mainline：NO-GO。** 精确递推成立，但它给出的是负面结果：正确 A-matching 后 gap 影响几乎完全消失，且所有预算的最优点都在同一边界。
 
