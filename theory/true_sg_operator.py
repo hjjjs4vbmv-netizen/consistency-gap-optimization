@@ -74,23 +74,28 @@ def build_T_matrix(sigma_d, t, delta0, g, eta):
 
 
 def exact_E_K(sigma_d, t, delta0, g, eta, beta0, Ks):
-    """Exact expected squared error E_K(g) = Tr(M_K) for each K in Ks."""
+    """Exact expected squared error E_K(g) = Tr(M_K) for each K in Ks.
+
+    FIXED (review PR #34, issue 3): each K is computed independently from the
+    initial m0 (T^K m0), NOT by cumulatively iterating across the Ks list
+    (which gave T^70 for the second entry when Ks=[20,50,...]). We iterate
+    over sorted Ks and advance only the difference to stay efficient.
+    """
     T, _, _, _ = build_T_matrix(sigma_d, t, delta0, g, eta)
-    m = np.array([beta0[0] ** 2, beta0[0] * beta0[1], beta0[1] ** 2])
+    m0 = np.array([beta0[0] ** 2, beta0[0] * beta0[1], beta0[1] ** 2])
+    rho = max(abs(np.linalg.eigvals(T)))
     out = {}
-    # detect divergence: spectral radius of T > 1 -> blow up
-    rho = max(np.abs(np.linalg.eigvals(T)))
-    for K in Ks:
-        if K > 0:
-            for _ in range(K):
+    m = m0.copy()
+    prev = 0
+    for K in sorted(Ks):
+        if K > prev:
+            for _ in range(K - prev):
                 m = T @ m
                 if abs(m).max() > 1e30:
-                    out[K] = np.inf
+                    m = np.full(3, np.inf)
                     break
-            else:
-                out[K] = m[0] + m[2]
-        else:
-            out[K] = m[0] + m[2]
+        out[K] = float(m[0] + m[2])
+        prev = K
     return out, rho
 
 
@@ -135,29 +140,22 @@ def eta_lr_match_H(sigma_d, t, delta0, eta1, H1_lmax):
     return out
 
 
-def eta_lr_match_A(sigma_d, t, delta0, eta1, A1_rho):
-    """eta_g s.t. rho(I - eta_g A_g) == rho(I - eta1 A1)  (match mean contraction).
-
-    Since rho(A_g) ~ g and the noise scales with eta^2 * (g^2), matching the
-    mean contraction by eta_g = eta1 * rho(A_1)/rho(A_g) ALSO flattens the
-    noise contribution (eta^2 * Sigma ~ const). This is the mode in which g
-    is a pure effective-rate*noise rescaling.
+def eta_lr_match_A(sigma_d, t, delta0, eta1, A1_rho=None):
+    """TRUE learning-rate matching for the stop-gradient dynamics (review PR #34
+    issue 4). The mean update is governed by A_g (not H_g):
+        E[beta_{k+1}] = (I - eta_g A_g) E[beta_k].
+    With ||A_g|| ~ g, matching to A_1 uses the Frobenius-optimal scalar
+        a(g) = <A_g, A_1>_F / ||A_1||_F^2,   eta_g = eta_1 / a(g).
+    Under A-matching the curve is expected to be almost flat (spread ~1e-6),
+    which is the cleanest statement of 'gap ~ optimizer-step rescaling'.
     """
     A1, _, _ = build_A(sigma_d, t, delta0, 1.0)
-    target = max(abs(np.linalg.eigvals(np.eye(2) - eta1 * A1)))
+    denom = float(np.sum(A1 * A1))  # ||A_1||_F^2
     out = {}
     for g in _grid():
         A, _, _ = build_A(sigma_d, t, delta0, g)
-        # exact: eta_g s.t. rho(I - eta_g A_g) == target
-        lo, hi = 0.0, 20 * eta1
-        for _ in range(60):
-            mid = 0.5 * (lo + hi)
-            rho = max(abs(np.linalg.eigvals(np.eye(2) - mid * A)))
-            if rho > target:
-                hi = mid
-            else:
-                lo = mid
-        out[g] = 0.5 * (lo + hi)
+        a = float(np.sum(A * A1)) / denom
+        out[g] = eta1 / a if a > 1e-15 else eta1
     return out
 
 
@@ -183,15 +181,13 @@ def run(sigma_d=0.5, out="."):
     #   moment is finite at short K under heavy-tail noise.
     eta1 = 0.005 / rhoA1
 
-    # lr_match_H also stays tiny (eta ~ 1/lam_max(H) ~ same order as eta1*g^2).
+    # three modes: fixed, H-matched (wrong matching, shown for contrast), and
+    # the TRUE A-matched control (mean update governed by A_g, not H_g).
     modes = {
         "fixed": eta_fixed(sigma_d, t, d0, eta1),
         "lr_match_H": eta_lr_match_H(sigma_d, t, d0, eta1, H1_lmax),
+        "lr_match_A": eta_lr_match_A(sigma_d, t, d0, eta1, None),
     }
-    # note: no 'lr_match_A' mode: matching the mean contraction rho(I-eta A_g)
-    # to the SAME target would push eta_g UP as rho(A_g)~g, re-injecting the
-    # heavy-tail noise and diverging the second moment (observed). We report
-    # this as an honest negative in the analysis instead of forcing a curve.
 
     # g-scaling diagnostics of A_g vs H_g, and T_g spectral radius (stability)
     scaling = []
@@ -214,13 +210,10 @@ def run(sigma_d=0.5, out="."):
                             rho_second_moment_T=float(rhoT)))
         for mode, etas in modes.items():
             eta = etas[g]
+            E, _ = exact_E_K(sigma_d, t, d0, g, eta, beta0, Ks)
             for K in Ks:
-                # MC (finite-K) is the reliable quantity under heavy-tail noise;
-                # the exact recursion T_g diverges (rho>1) in this regime.
-                Emc = mc_sgd(sigma_d, t, d0, g, eta, beta0, K, n_traj=1500,
-                             seed=int(1000 * g) % 2**31)
                 rows.append(dict(g=round(float(g), 4), mode=mode, K=K, eta=round(float(eta), 8),
-                                 E=float(Emc)))
+                                 E=float(E[K])))
     sdf = pd.DataFrame(scaling)
     df = pd.DataFrame(rows)
     os.makedirs(out, exist_ok=True)
@@ -234,7 +227,7 @@ def run(sigma_d=0.5, out="."):
         line = []
         prev = None
         for K in Ks:
-            sub = df[(df.mode == mode) & (df.K == K)].sort_values("g")
+            sub = df[(df["mode"] == mode) & (df.K == K)].sort_values("g")
             sub = sub[np.isfinite(sub.E)]
             if len(sub) == 0:
                 line.append((K, float("nan"), True)); continue
@@ -250,7 +243,7 @@ def run(sigma_d=0.5, out="."):
     # ---- flatness under LR-match (honest LR-scaling test) ----
     print("\n=== flatness of error vs g under each mode (K=200) ===")
     for mode in modes:
-        sub = df[(df.mode == mode) & (df.K == 200)]
+        sub = df[(df["mode"] == mode) & (df.K == 200)]
         sub = sub[np.isfinite(sub.E)]
         spread = (sub.E.max() - sub.E.min()) / max(sub.E.min(), 1e-30)
         print(f"  {mode}: spread={spread:.4f} (g range {sub.g.min()}-{sub.g.max()})")
@@ -260,7 +253,7 @@ def run(sigma_d=0.5, out="."):
     colors = plt.cm.viridis(np.linspace(0, 1, len(Ks)))
     for ax, mode in zip(axes, modes):
         for c, K in zip(colors, Ks):
-            sub = df[(df.mode == mode) & (df.K == K)].sort_values("g")
+            sub = df[(df["mode"] == mode) & (df.K == K)].sort_values("g")
             sub = sub[np.isfinite(sub.E)]
             ax.plot(sub.g, sub.E, "-o", ms=2, color=c, label=f"K={K}")
             gstar = sub.loc[sub.E.idxmin(), "g"]

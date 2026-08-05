@@ -31,70 +31,85 @@ Verified single-step against MC (theory 6.67e-4 vs MC 6.21e-4, <5%, 50k traj).
 
 ---
 
-## 2. Heavy-tail instability (the honest headline)
+## 2. Stability: mean-square instability (corrected language)
 
 In the report's parameterization ($t\sim\mathrm{LogNormal}(-1.1,2)$, clip $t_{\max}=100$,
-un-normalized $t^2$ Jacobian):
+un-normalized $t^2$ Jacobian), all moments are finite (t is bounded, z is Gaussian), so
+$\mathbb{E}\|\beta_K\|^2<\infty$ for every finite $K$. The correct statement is:
 
-- $J_t=[t,t^2]$ gives $\mathbb{E}[J_2^2]\approx3.5\times10^5$ and joint quartic moments
-  $\mathbb{E}[v_2^2J_2^2]\approx1.7\times10^9$; $\rho(\mathcal T_g)\gg1$ for any reasonable $\eta$.
-- The **exact second moment diverges** at moderate $K$ (MC confirms: trajectories that
-  hit a large-$t$ sample explode). The mean operator $A_g$ can be contractive while the
-  second moment still blows up (variance instability).
-- **Implication**: in the bare-$t^2$ parameterization the true stop-gradient toy has
-  **no finite second moment at finite $K$** for practical $\eta$. Only a tiny
-  $\eta\lesssim 10^{-2}/\rho(A_1)$ keeps $E_K$ finite at short $K$.
+> **The bare polynomial toy becomes asymptotically mean-square unstable for part of the
+> tested gap range despite a contractive mean update.**
 
-This is a **real physical finding**, not a bug: the stop-gradient update's noise
-variance scales with the quartic moment of the online Jacobian, which the un-normalized
-$t^2$ parameterization makes heavy-tailed. Real ECT normalizes $t$ via the
-$\sigma_d^2+t^2$ preconditioner; a faithful toy should too (open item).
+Measured: $\rho(\mathcal T_g)$ grows from $1.0000$ (g=0.5) to $1.0221$ (g=1.5) at the
+reference $\eta$. Since $\rho(\mathcal T_g)>1$, the second moment grows exponentially in
+$K$ (e.g. $E_{200}(g{=}1.5)\approx8\times10^{-3}$ vs $E_{20}\approx2.6\times10^{-4}$), not
+because "no finite second moment exists" but because the mean operator $A_g$ can be
+contractive while the second-moment operator $\mathcal T_g$ is not.
+
+This is a real physical finding: the stop-gradient update's noise variance scales with
+the quartic moment of the online Jacobian, which the un-normalized $t^2$ parameterization
+makes heavy-tailed. Real ECT normalizes $t$ via the $\sigma_d^2+t^2$ preconditioner; a
+faithful toy should too (deferred to a separate study, per review).
 
 ---
 
-## 3. Finite-horizon scan at stable $\eta$ (MC, $K\in\{20,50,100,200\}$)
+## 3. Finite-horizon scan — EXACT recursion (review: main result must be exact, not MC)
 
-`theory/true_sg_horizon.csv`, `figures/true_sg_error_vs_g_budget.pdf`.
+`theory/true_sg_horizon.csv`, `figures/true_sg_error_vs_g_budget.pdf`, generated with the
+exact 3×3 recursion $M_{K+1}=\mathcal T_g M_K$ (no MC; MC used only as a single-step
+sanity check, §6).
 
-Two modes (both with tiny base $\eta$ to stay finite):
+Three modes (all with tiny base $\eta$ so the second moment stays finite at these $K$):
 
-| mode | g* (K=200) | error vs g | direction |
+| mode | g* (all K) | spread (K=200) | error vs g |
 |---|---|---|---|
-| **fixed** $\eta=\eta_1$ | 0.50 | 1.77e-4 → 8.10e-4 | **monotone ↑** (small g best) |
-| **lr_match_H** $\eta_g\propto 1/\lambda_{\max}(H_g)\propto 1/g^2$ | 1.50 | 1.80e-3 → 1.99e-4 | **monotone ↓** (large g best) |
+| **fixed** $\eta=\eta_1$ | 0.5 | 51 | **monotone ↑** |
+| **lr_match_H** $\eta_g\propto 1/\lambda_{\max}(H_g)\propto 1/g^2$ | 1.5 | 5013 | **monotone ↓** |
+| **lr_match_A** $\eta_g=\eta_1/a(g)$, $a(g)=\langle A_g,A_1\rangle_F/\|A_1\|_F^2$ | (flat) | **≈0 (1e-6)** | **flat** |
 
-**Key observation**: the two normalizations give **opposite** optimal directions for g.
-- fixed: bigger g → bigger effective rate AND bigger heavy-tail noise → noise dominates → small g.
-- lr_match_H: bigger g → much smaller $\eta^2\Sigma$ ($\propto 1/g^4$) → noise suppressed → large g.
+**The A-matched control is the decisive one.** The mean update is governed by $A_g$
+($\mathbb{E}[\beta_{k+1}]=(I-\eta A_g)\mathbb{E}[\beta_k]$), and $\|A_g\|\approx g\|A_1\|$
+while $\|H_g\|\approx g^2\|H_1\|$. Matching the *correct* operator ($A_g$, not $H_g$)
+via the Frobenius-optimal scalar makes error-vs-g **flat to ~1e-6**.
 
-The curves are **monotone** in both modes; there is **no internal optimum** and no
-`g_{K1}* != g_{K2}*` crossover (within the finite, stable regime).
+> **In the bare polynomial stop-gradient toy, gap is almost exactly equivalent to an
+> optimizer-step rescaling.** The fixed/H-matched "opposite directions" are artifacts of
+> *not* matching the true mean operator.
 
 ---
 
 ## 4. Honest verdict on the finite-horizon main line
 
-> **In the true stop-gradient ECT toy, the effect of g is entirely an
-> effective-learning-rate × effective-noise-amplitude rescaling.**
-> Error-vs-g is monotone; its *direction* flips under learning-rate normalization;
-> there is no gap-specific geometry decoupled from $(\eta,\Sigma)$ rescaling.
-> The finite-horizon separation shown in PR #33's abstract counterexample required
-> a *constructed* $g$-dependence of $\Sigma_g$; the true operator's $\Sigma_g$ is
-> $\beta$-coupled and heavy-tailed, which drives instability rather than an interior
-> optimum.
+> The true 2D stop-gradient toy does **not** support an independent finite-horizon gap
+> geometry: after the correct optimizer matching ($A$-matched), the gap dependence
+> essentially vanishes. The toy-level claim is the **negative theorem**:
+> **gap ≈ optimizer-step rescaling in the simplest stop-gradient linear model.**
 
-**What this means for the main line:**
-- The "ADCM-insufficiency" story (same instantaneous criterion, different finite-step
-  optimum) **does not survive in the real 2D stop-gradient toy** — the honest toy-level
-  claim is negative.
-- The finite-horizon main line, if it is to be supported, needs either (a) a toy whose
-  $\Sigma_g$ genuinely differs from $H_g$-scaling in a way that survives $\eta$ matching
-  (not the bare-$t^2$ parameterization), or (b) a deep-network diagnostic where the
-  per-layer/preconditioned $\Sigma_g$ structure matters (open).
-- A constructive next step: parameterize with the ECT preconditioner
-  ($\tilde J_t=[t/(\sigma_d^2+t^2),\,t^2/(\sigma_d^2+t^2)^2]$-style) so the second moment
-  is finite, then re-run the same scan. Prediction: with the heavy tail removed, the
-  residual g-effect may still be a pure rescaling — in which case the toy line is closed.
+**What this means for ICLR (trivial-rescaling-equivalence vs deep residual effects):**
+1. theory: prove the equivalence in the simple model (this PR);
+2. measure in a real deep network whether gap produces directional / layer / noise-structure
+   changes that scalar matching cannot remove;
+3. only if a real residual effect exists, continue the optimizer-aware-selector story.
+
+The PR #33 abstract-separation required a *constructed* $\Sigma_g(g)$; the true
+operator's $\Sigma_g$ is $\beta$-coupled and heavy-tailed — it drives instability
+(mean-square) and, under correct matching, flatness, not an interior optimum.
+
+---
+
+## 5. Deliverables
+- `theory/true_sg_operator.py` — derivation, exact recursion, A-matched control, scan.
+- `theory/true_sg_horizon.csv` — exact $E_K(g)$ for fixed / lr_match_H / lr_match_A, $K\in\{20,50,100,200\}$.
+- `theory/true_sg_operators.csv` — $\|A_g\|,\|H_g\|,\mathrm{Tr}(\cdot)$ g-scaling diagnostics.
+- `figures/true_sg_error_vs_g_budget.pdf` — exact curves: monotone ↑/↓/flat.
+- `theory/test_true_sg.py` — 4 unit tests (single-step recursion vs MC, matrix-power vs
+  iterative, no cumulative-step bug, A-matched flatness), all pass.
+
+## 6. MC role and sanity check
+MC is used only as a single-step / short-K sanity check (heavy-tail draws make long-K MC
+unreliable — 1500 trajectories under-sample the tail). Single-step analytic recursion vs
+200k-trajectory MC agrees within ~17% (high MC variance under the heavy tail); the exact
+recursion is the primary quantity everywhere else.
 
 ---
 
