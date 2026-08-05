@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "package_id": "q128-1024k-reported-results-retrospective-v1",
+  "evidence_class": "retrospective_supplementary",
+  "formal_status": "not_formal",
+  "source_run_manifest_sha256": "cdcd05eb011aa52c5333c4d7635a3c0fa36a5c4bff76df8148720ecc63098f28",
+  "environment_recording_status": "Only fields carried by the imported rows are reported; absent fields are explicitly not_recorded.",
+  "evaluation_environment": {
+    "python": "not_recorded",
+    "pytorch": "not_recorded",
+    "scipy": "not_recorded",
+    "cuda": "not_recorded",
+    "gpu": "not_recorded",
+    "inception_detector": "not_recorded"
+  },
+  "dataset": {
+    "sha256": "9fd64620e37bfc0c995535fa52701c9641bcd07635008bfda0c9fbddde1a4ed6",
+    "identity_status": "reported_in_imported_metric_rows; not independently_reverified"
+  },
+  "evaluation_git_commit": "8375d46ca4c65e85ab399fcf1effe22ebb766790",
+  "sample_contract": {
+    "precision": "fp32",
+    "sample_count": 50000,
+    "generation_seed_range": "0-49999",
+    "metric_seed": 20260730,
+    "metrics": ["kid50k_full", "fid50k_full"]
+  },
+  "nfe_contract": {"1": [], "2": [0.821]},
+  "portable_path_policy": "No absolute host, checkpoint, dataset, receipt, archive, or output path is stored in this package."
+}

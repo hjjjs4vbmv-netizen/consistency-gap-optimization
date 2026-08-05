@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "verification_role": "Role D independent receiver",
+  "status": "not_received",
+  "verified_at": null,
+  "verifier_identity": null,
+  "archive_sha256": null,
+  "checkpoint_sha256_matches": null,
+  "reason": "No checkpoint archive, integrity receipt, or independent receiver-verification artifact was delivered with the historical 1024-kimg metric import.",
+  "claim_effect": "Checkpoint identity and reported metric binding are not independently verified; this package is retrospective/supplementary only."
+}

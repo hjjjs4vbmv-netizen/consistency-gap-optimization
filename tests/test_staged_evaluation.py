@@ -108,6 +108,21 @@ class StagedEvaluationTest(unittest.TestCase):
                     cells, root / "cifar.zip", root / "formal", "formal", 29800, False
                 )
 
+    def test_formal_cli_requires_a_frozen_matrix(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            manifest, _, _ = self.make_manifest(root)
+            data = root / "cifar.zip"
+            data.write_bytes(b"dataset")
+            with self.assertRaisesRegex(SystemExit, "requires --frozen-matrix"):
+                run_staged_evaluation.main([
+                    "--manifest", str(manifest),
+                    "--data", str(data),
+                    "--outdir", str(root / "formal"),
+                    "--phase", "formal",
+                    "--dry-run",
+                ])
+
     def test_formal_runner_rejects_missing_checkpoint_identity_gate(self):
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -136,6 +151,28 @@ class StagedEvaluationTest(unittest.TestCase):
         run_staged_evaluation.validate_formal_promotion_policy(policy, cells)
         policy["formal_promotion_policy"]["required_checkpoint_ids"] = ["fixed_seed3"]
         with self.assertRaisesRegex(SystemExit, "every predeclared checkpoint"):
+            run_staged_evaluation.validate_formal_promotion_policy(policy, cells)
+
+    def test_formal_promotion_policy_accepts_matching_q128_legacy_names(self):
+        cells = [
+            {"checkpoint_id": "q128-fresh-256k-seed3-fixed"},
+            {"checkpoint_id": "q128-fresh-256k-seed3-global110"},
+        ]
+        required_ids = [cell["checkpoint_id"] for cell in cells]
+        policy = {
+            "formal_promotion_policy": {
+                "eligibility": "provenance_and_integrity_only",
+                "quick_metric_performance": "not_an_eligibility_criterion",
+                "required_formal_checkpoint_ids": required_ids,
+                "required_evaluation_checkpoint_ids": required_ids,
+            }
+        }
+        run_staged_evaluation.validate_formal_promotion_policy(policy, cells)
+
+        policy["formal_promotion_policy"]["required_evaluation_checkpoint_ids"] = [
+            "q128-fresh-256k-seed3-fixed"
+        ]
+        with self.assertRaisesRegex(SystemExit, "must match"):
             run_staged_evaluation.validate_formal_promotion_policy(policy, cells)
 
     def test_collector_writes_long_table_and_segregated_statistics(self):
