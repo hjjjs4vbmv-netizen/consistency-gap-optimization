@@ -8,6 +8,13 @@ is (nearly) a scalar rescaling of the gradient at g=1:
 
     mu_g ~= a_g^star * mu_1 ,   a_g^star = <mu_g, mu_1> / ||mu_1||^2
 
+LR matching (SGD, review fix): to make the parameter update at gap g match
+that at g=1, eta_g * mu_g = eta_1 * mu_1, so
+    eta_g = eta_1 / a_g^star            (NOT a_g^star * eta_1).
+With a_{1.3}^star = 0.769, the matched LR is eta_{1.3} = 1.30 * eta_1.
+For RAdam neither simple formula is licensed without an optimizer-state check
+(this is a gradient-only probe; that check is out of scope and stated as open).
+
 The diagnostic is a GRADIENT-ONLY probe:
   * loads one checkpoint, holds its parameters fixed;
   * never constructs or steps an optimizer;
@@ -113,9 +120,12 @@ def ect_loss_with_fixed_randomness(
     device = images.device
 
     set_dropout_rng_state(dropout_rng_state, device)
-    # force_fp32=True: the diagnostic needs numerically stable gradients.
-    # ECMPrecond defaults to fp16 when trained with use_fp16, which overflows
-    # on 0-255 inputs and yields NaN here (training hides this via GradScaler).
+    # FP32 forward (force_fp32=True) as the numerically stable REFERENCE.
+    # The probe runs in train mode (dropout active); inputs are normalized to
+    # [-1, 1] like the real training loop, so this matches the training data
+    # domain. FP16 AMP is not used because the diagnostic needs the *unscaled*
+    # finite gradient (GradScaler in training would hide fp16 overflow);
+    # see the protocol doc for the FP32-vs-AMP direction caveat.
     d_yt = net(images + eps * t, t, labels, augment_labels=None, force_fp32=True)
 
     if bool((r > 0).any()):
@@ -171,14 +181,16 @@ def vector_dot(named_parameters, reference: dict[str, torch.Tensor]) -> tuple[fl
 class GapGradientProbe:
     """Gradient-only gap sweep at a fixed checkpoint (no optimizer, no state write)."""
 
-    def __init__(self, net: torch.nn.Module, loss: ECMLoss,
-                 gaps: list[float], q: float = 128.0, k: float = 8.0, b: float = 1.0):
+    def __init__(self, net: torch.nn.Module, loss: ECMLoss, gaps: list[float]):
         self.net = net
         self.loss = loss
         self.gaps = sorted(gaps)
         if 1.0 not in self.gaps:
             raise ValueError("gaps must include the reference 1.0")
-        self.q, self.k, self.b = q, k, b
+        # q/k/b come from the checkpoint loss_fn, NOT hardcoded (review).
+        self.q = float(loss.q)
+        self.k = float(loss.k)
+        self.b = float(loss.b)
 
     def _schedule(self, g: float):
         # global_sigmoid with scale g: at g=1.0 this is the official sigmoid.
@@ -200,7 +212,9 @@ class GapGradientProbe:
         # per-gap: accumulate per-parameter gradient SUMS (float64) and norms
         for _ in range(batches):
             images, labels = next(data_iter)
-            images = images.to(device).float()   # dataset yields uint8
+            # Normalize exactly like training/ct_training_loop.py:870
+            #   images = images.to(device).to(torch.float32) / 127.5 - 1
+            images = images.to(device).to(torch.float32) / 127.5 - 1
             labels = labels.to(device)
             # sample randomness ONCE for this minibatch, reuse for every g
             t = (torch.randn(images.shape[0], 1, 1, 1, device=images.device)
@@ -292,19 +306,39 @@ def mean_vector_statistics(mean_sums, reference_gap, batches):
 
 
 def load_checkpoint(pkl_path: Path, device: torch.device):
-    """Load an ECT network snapshot; returns (net, loss, dataset_kwargs).
+    """Load an ECT network snapshot; returns (net, loss, augment_pipe, meta).
 
     The snapshot pkl is a dict with keys ema / loss_fn / augment_pipe /
     dataset_kwargs (same layout the training loop saves).
+
+    CRITICAL (review): the diagnostic must run the network in the SAME mode as
+    training (dropout active) on the SAME input domain ([-1,1]). We therefore
+    return the EMA deepcopy switched to train() mode; the caller normalizes
+    inputs to [-1,1] exactly like training/ct_training_loop.py:870.
     """
     with open(pkl_path, "rb") as f:
         import pickle
         data = pickle.load(f)
     ema = data["ema"]
     loss = data["loss_fn"]
+    augment_pipe = data.get("augment_pipe", None)
+    # schedule must be the official sigmoid (the fixed baseline this study uses)
+    if loss.schedule.name != "sigmoid":
+        raise SystemExit(f"[gap_gradient_hook] checkpoint schedule is "
+                         f"{loss.schedule.name!r}, expected 'sigmoid'")
     net = ema.to(device)
-    net.requires_grad_(True)
-    return net, loss, data.get("dataset_kwargs", {})
+    net.train().requires_grad_(True)      # train mode: dropout active, like training
+    meta = {
+        "schedule": loss.schedule.name,
+        "q": float(loss.q), "k": float(loss.k), "b": float(loss.b),
+        "c": float(loss.c), "stage": int(loss.stage),
+        "P_mean": float(loss.P_mean), "P_std": float(loss.P_std),
+        "augment_pipe": augment_pipe is not None,
+        "image_range": "[-1,1]",
+        "network_mode": "train",
+        "precision": "fp32_force_fp32_reference",
+    }
+    return net, loss, augment_pipe, meta
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -324,8 +358,10 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     device = torch.device(args.device)
-    net, loss, _ = load_checkpoint(Path(args.checkpoint), device)
-    net.eval()
+    net, loss, augment_pipe, meta = load_checkpoint(Path(args.checkpoint), device)
+    net.train()
+    if augment_pipe is not None:
+        augment_pipe.to(device)
 
     # dataset loader (ImageFolderDataset is what ECT uses)
     from training.dataset import ImageFolderDataset
@@ -335,6 +371,8 @@ def main(argv: list[str] | None = None) -> int:
     loader = DataLoader(ds, batch_size=args.batch_size, shuffle=True,
                         num_workers=0, drop_last=True)
     it = iter(loader)
+    meta["augment_used"] = augment_pipe is not None
+    meta["augment_randomness_fixed"] = augment_pipe is None  # None => no augment to fix
 
     probe = GapGradientProbe(net, loss, args.gaps)
     hashes_before = module_state_hashes(net)
@@ -363,6 +401,7 @@ def main(argv: list[str] | None = None) -> int:
         "state_preserved": state_preserved,
         "hashes_before": hashes_before,
         "hashes_after": hashes_after,
+        **meta,
     }
     with (args.out / "gap_gradient_manifest.json").open("w") as f:
         json.dump(manifest, f, indent=2)
