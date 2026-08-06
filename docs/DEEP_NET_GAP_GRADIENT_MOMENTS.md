@@ -113,8 +113,8 @@ for a labeled axis, visible g=1 baseline, and legible layout.
 
 ## Validation and caveats
 
-The result archive SHA256 is
-`2c8730faa5a249a671a983952bf67e1bced79bb56444795da93c9ae783e64cc0`.
+The v2 result archive SHA256 is
+`18470fe78e3b99b3daace10b0b5721e97d057afeedb89d59c4270bda9eaed10d`.
 All six extracted artifact SHA256 values match the sender record.  The
 validation pass found four whole-model rows, exactly 256 unique
 `minibatch x gap` records, 832 layer-by-gap rows, no missing sweep cell, and
@@ -124,5 +124,7 @@ were independently recomputed from the raw batch CSV.
 This is adequate to share as a controlled, within-checkpoint mechanism
 observation.  It is not adequate to claim an optimization or sample-quality
 benefit: it has one checkpoint, one seed, no global110 training counterpart,
-no formal metric endpoint, no independent receiver verification, and no
-q=128/q=256 dataset-semantic equivalence result.
+no formal metric endpoint, and no q=128/q=256 dataset-semantic equivalence
+result.  Independent receiver verification passed for this exploratory
+checkpoint only; it does not verify the historical six `q128-1024k-*`
+checkpoints or promote this result to formal evidence.
