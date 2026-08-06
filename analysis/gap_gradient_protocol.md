@@ -53,21 +53,35 @@ LR matching (SGD, corrected per review):
 | 1.2 | 0.8340 | 0.999998 | 0.0019 |
 | 1.3 | 0.7705 | 0.999996 | 0.0028 |
 
-16 minibatches, batch size 64, seed 20260806. Per-layer residuals (208 layers,
-g=1.3): mean 0.0016, max 0.009. `state_preserved: true`.
+16 minibatches, batch size 64, seed 20260806 (DataLoader shuffle fixed via
+`generator=Generator(seed)`; t/eps sampling seeded identically).
+`state_preserved: true`.
+
+**Per-layer residuals (208 layers), recomputed from the committed CSV (rev.3):**
+| g | mean | median | max | max layer | >2% | >3% |
+|---:|---:|---:|---:|---|---:|---:|
+| 0.9 | 1.16% | 1.21% | 2.31% | dec.8x8_block3.conv0 | 26 | 0 |
+| 1.2 | 1.36% | 1.51% | 2.56% | dec.16x16_up.norm0 | 28 | 0 |
+| 1.3 | 1.73% | 1.85% | 3.76% | dec.16x16_block1.norm0 | 83 | 6 |
+
+**Layerwise interpretation (corrected):** the whole-model mean gradient is
+near-scalar (residual ≤0.30%), but individual layers carry directional
+deviations up to ~3.8% (g=1.3), with 6/208 layers >3%. This is NOT "max 0.9%"
+as previously stated — that was an error in the rev.2 summary; the protocol
+now uses the numbers recomputed from the committed CSV.
 
 ## Comparison with Role D (valid baseline)
 
 | source | g=0.9 residual | g=1.2 | g=1.3 | per-layer max |
 |---|---:|---:|---:|---:|
 | Role D (1000 kimg, normalized+train) | 0.48% | 0.88% | 1.35% | ~12.4% |
-| Role C rev.2 (256 kimg, normalized+train) | 0.13% | 0.19% | 0.28% | ~0.9% |
+| Role C rev.3 (256 kimg, normalized+train) | 0.12% | 0.22% | 0.30% | ~3.8% |
 
-Under the corrected protocol, Role C's residual is small but **no longer the
-near-1e-4 perfect value of the buggy run**; it is 3-5x smaller than Role D's.
-The remaining difference is consistent with the 256-kimg vs 1000-kimg stage
-difference, but with a single seed and different batch counts this is a
-**descriptive** comparison, not an inference.
+Under the corrected protocol, Role C's whole-model residual is 3-5x smaller
+than Role D's, but the per-layer max (3.8% vs 12.4%) is also smaller. The
+remaining difference is **descriptive only** — the two runs differ in
+checkpoint, batch count, batch size, data permutation, and evaluation details,
+so the "256-kimg residual is lower" cannot be attributed to training stage.
 
 ## Protocol caveats / open items
 

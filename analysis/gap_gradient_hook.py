@@ -52,6 +52,15 @@ from training.loss import ECMLoss
 from training.schedules import get_schedule
 
 
+def sha256_file(path: Path) -> str:
+    """SHA256 of a file, streamed."""
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def parse_gaps(value: str) -> list[float]:
     """Parse a comma-separated gap list; must include the reference 1.0."""
     try:
@@ -203,6 +212,9 @@ class GapGradientProbe:
         data_iter: iterable yielding (images, labels) tensors (CPU/GPU ok).
         Returns (moment_rows, layer_rows, manifest) — see the analysis funcs.
         """
+        # Seed controls only the t/eps sampling RNG inside this loop.
+        # The DataLoader shuffle order is NOT controlled here: the caller
+        # must pass a loader built with generator=Generator(seed) (review).
         torch.manual_seed(seed)
         mean_sums: dict[str, dict[str, torch.Tensor]] = defaultdict(dict)
         batch_norm_sq_sums: dict[str, float] = defaultdict(float)
@@ -360,19 +372,37 @@ def main(argv: list[str] | None = None) -> int:
     device = torch.device(args.device)
     net, loss, augment_pipe, meta = load_checkpoint(Path(args.checkpoint), device)
     net.train()
+    # review: augmentation must fail closed — a checkpoint WITH augment is not
+    # supported by this gradient probe (we do not implement paired augment).
     if augment_pipe is not None:
-        augment_pipe.to(device)
+        raise SystemExit(
+            "[gap_gradient_hook] augmentation-enabled checkpoints are not "
+            "supported: the probe does not implement paired augmentation. "
+            "Use a checkpoint with augment_pipe=None.")
+    meta["augment_used"] = False
+    meta["augment_randomness_fixed"] = True
 
-    # dataset loader (ImageFolderDataset is what ECT uses)
+    # dataset loader (ImageFolderDataset is what ECT uses).
+    # review: the DataLoader shuffle must be DETERMINISTIC — the seed must be
+    # fixed BEFORE the loader is created (generator=...), not inside probe.run().
     from training.dataset import ImageFolderDataset
     from torch.utils.data import DataLoader
+    torch.manual_seed(args.seed)
+    generator = torch.Generator(device="cpu").manual_seed(args.seed)
     ds = ImageFolderDataset(path=args.data, use_labels=False, xflip=False,
                             cache=True, resolution=32)
     loader = DataLoader(ds, batch_size=args.batch_size, shuffle=True,
-                        num_workers=0, drop_last=True)
+                        num_workers=0, drop_last=True, generator=generator)
     it = iter(loader)
-    meta["augment_used"] = augment_pipe is not None
-    meta["augment_randomness_fixed"] = augment_pipe is None  # None => no augment to fix
+
+    # provenance: immutable checkpoint/data hashes + runtime identity
+    meta["checkpoint_sha256"] = sha256_file(Path(args.checkpoint))
+    meta["dataset_sha256"] = sha256_file(Path(args.data))
+    meta["torch_version"] = torch.__version__
+    meta["cuda_version"] = torch.version.cuda
+    meta["gpu_name"] = (torch.cuda.get_device_name(0)
+                        if device.type == "cuda" and torch.cuda.is_available() else "cpu")
+    meta["execution_command"] = " ".join(sys.argv)
 
     probe = GapGradientProbe(net, loss, args.gaps)
     hashes_before = module_state_hashes(net)
@@ -401,6 +431,8 @@ def main(argv: list[str] | None = None) -> int:
         "state_preserved": state_preserved,
         "hashes_before": hashes_before,
         "hashes_after": hashes_after,
+        "model_moments_sha256": sha256_file(args.out / "gap_gradient_model_moments.csv"),
+        "layerwise_sha256": sha256_file(args.out / "gap_gradient_layerwise.csv"),
         **meta,
     }
     with (args.out / "gap_gradient_manifest.json").open("w") as f:
