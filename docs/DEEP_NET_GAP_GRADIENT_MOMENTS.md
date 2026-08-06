@@ -36,9 +36,12 @@ receipt above was generated with `scripts/verify_checkpoint_handoff.py`.
 The v2 script adds a unit test that compares the manually controlled loss and
 gradient with the repository's `ECMLoss` under identical randomness, and it
 records parameter/buffer SHA256 values before and after the diagnostic.  The
-archived 64-batch result was produced by v1 and therefore has no per-run
-before/after hash receipt.  It must be rerun with v2 before parameter/buffer
-invariance is claimed for that particular execution.
+64-batch v2 rerun recorded identical parameter hashes
+`d1b0823277dc592c14b4167a31136cbabc60739e6967bac7b35c1dfe4f9b7270` and
+identical buffer hashes
+`30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee`;
+all 416 parameter gradient slots were empty before the diagnostic and present
+after it.  No optimizer was constructed or stepped.
 
 ## Question and controlled protocol
 

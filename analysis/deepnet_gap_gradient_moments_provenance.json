@@ -28,24 +28,31 @@
   "v2_validation_status": {
     "real_ect_loss_and_gradient_parity_test": "passed_in_tests_test_deepnet_gap_gradient_moments",
     "parameter_and_buffer_hash_invariance_test": "passed_in_tests_test_deepnet_gap_gradient_moments",
-    "per_run_parameter_buffer_hash_receipt": "pending_rerun_with_script_version_2"
+    "per_run_parameter_buffer_hash_receipt": "passed_with_script_version_2",
+    "parameter_values_unchanged": true,
+    "buffer_values_unchanged": true,
+    "parameter_sha256": "d1b0823277dc592c14b4167a31136cbabc60739e6967bac7b35c1dfe4f9b7270",
+    "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee",
+    "gradient_slots_populated_before": 0,
+    "gradient_slots_populated_after": 416
   },
-  "evaluation_artifact_archive_sha256": "2c8730faa5a249a671a983952bf67e1bced79bb56444795da93c9ae783e64cc0",
+  "evaluation_artifact_archive_filename": "deepnet_gap_gradient_moments_v2_20260806.tar.gz",
+  "evaluation_artifact_archive_sha256": "18470fe78e3b99b3daace10b0b5721e97d057afeedb89d59c4270bda9eaed10d",
   "server_archive_artifacts_sha256": {
     "deepnet_gap_gradient_moments.csv": "7a0f0891ca4a87984e944857ea081805e8df063ab956474418e3c2f9f3701d68",
     "deepnet_layerwise_residual.csv": "225896e7a209faaaec785921de2e8ec4601c3b579b8827d9457103c554429b12",
     "deepnet_gap_gradient_batch_residual.csv": "b8daee5877b0629dfd4e9b4a82fe91841c30b5fd64d94a2028c4181b17ddfad1",
-    "deepnet_gap_gradient_moments_manifest.json": "d3698a7fa6df349d616a20c35efb16fd0a3cae88fc7a474bf1e603bcf7e65de8",
-    "deepnet_scalar_residual.md": "e9c0d03da258eca614534d9f0f589ce4130ea6791b76d306183c4e9959c0e99b",
-    "deepnet_scalar_residual_vs_g.pdf": "8ba67c75605ca7276002285023b26c60faa1de0525c178edbf1959d326f51718"
+    "deepnet_gap_gradient_moments_manifest.json": "906d1239ec701c011865149ec27e69717a563ed53e4e26ffc95472fe8360ab78",
+    "deepnet_scalar_residual.md": "1741c4991bb70e460c8df298ad127b9f9f8e2d3ed9554b95ba98cd2b5ae9f3b7",
+    "deepnet_scalar_residual_vs_g.pdf": "c67098d31e41be85078c65bddc1be7bcd6e90268b5ee62b303bab7f2a6ae208f"
   },
   "repository_artifacts_sha256": {
     "deepnet_gap_gradient_moments.csv": "9b8269984bc12104da0655f3bfa838a7ab5d5088c8f61deb62a9d513c16cb19d",
     "deepnet_layerwise_residual.csv": "1b487973343c5308d748e6b7c773ca43b443ab1f985e4fc1c764c36c2941d1cc",
     "deepnet_gap_gradient_batch_residual.csv": "4c0c0a396f15482246271301054326c131588c5569e918e6e56bfd7cd1af44eb",
-    "deepnet_gap_gradient_moments_manifest.json": "d3698a7fa6df349d616a20c35efb16fd0a3cae88fc7a474bf1e603bcf7e65de8",
-    "deepnet_scalar_residual.md": "e9c0d03da258eca614534d9f0f589ce4130ea6791b76d306183c4e9959c0e99b",
-    "deepnet_scalar_residual_vs_g.pdf": "8ba67c75605ca7276002285023b26c60faa1de0525c178edbf1959d326f51718"
+    "deepnet_gap_gradient_moments_manifest.json": "906d1239ec701c011865149ec27e69717a563ed53e4e26ffc95472fe8360ab78",
+    "deepnet_scalar_residual.md": "1741c4991bb70e460c8df298ad127b9f9f8e2d3ed9554b95ba98cd2b5ae9f3b7",
+    "deepnet_scalar_residual_vs_g.pdf": "c67098d31e41be85078c65bddc1be7bcd6e90268b5ee62b303bab7f2a6ae208f"
   },
   "repository_csv_normalization": "CSV payloads are semantically unchanged server exports with CRLF line endings normalized to LF so git diff --check passes. The original byte-level hashes remain in server_archive_artifacts_sha256.",
   "randomness_contract": "For every minibatch and every g, the image batch, per-example timestep vector, shared epsilon tensor, dropout RNG state, and model parameter values were held fixed. No optimizer was created or stepped.",

@@ -12,6 +12,11 @@ The scalar fit is the least-squares projection `a_g*=<mu_g,mu_1>/||mu_1||^2`; th
 - checkpoint SHA256: `eda4c12e95bca6308b897e54dbc3e61b93d0f46c9299a113b7eb4f2bd36b83a5`
 - dataset SHA256: `a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1`
 - batches: 64; batch size: 128; seed: 20260806
+- parameter values unchanged: `True`
+- buffers unchanged: `True`
+- parameter SHA256 (before/after): `d1b0823277dc592c14b4167a31136cbabc60739e6967bac7b35c1dfe4f9b7270` / `d1b0823277dc592c14b4167a31136cbabc60739e6967bac7b35c1dfe4f9b7270`
+- buffer SHA256 (before/after): `30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee` / `30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee`
+- gradient slots populated (before/after): 0 / 416
 
 ## Whole-model moments
 
