@@ -89,6 +89,18 @@ is 1.35% at g=1.3.  Smaller g increases gradient magnitude, while larger g
 reduces it.  Although the unnormalized variance trace drops with gradient
 magnitude, the normalized noise scale remains near 0.041 across the sweep.
 
+## Optimizer-update boundary
+
+This diagnostic measures **raw gradients only**: `optimizer_created=false`
+and `optimizer_steps=0`. Near-collinearity of raw gradients does not
+establish equivalence of RAdam parameter updates, because adaptive first- and
+second-moment states can absorb or transform scalar gradient changes. In
+particular, the prospective training contract uses RAdam with `eta=1e-4`,
+`beta1=0.9`, and `beta2=0.999`; no result here licenses the learning-rate
+substitution `eta_g = eta_1 / a*_g`. The measured scalar fit is therefore not
+evidence that changing gap is equivalent to changing learning rate, and must
+not be used as such in experimental design or paper claims.
+
 The batch-level directional residual is stable in magnitude, but not zero:
 
 | g | mean | standard deviation | minimum | maximum |
