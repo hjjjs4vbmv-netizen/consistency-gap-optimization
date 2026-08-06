@@ -328,6 +328,11 @@ def load_checkpoint(path: Path, device: torch.device) -> tuple[torch.nn.Module, 
     if "loss_fn" not in payload:
         fail(f"checkpoint lacks persisted loss_fn: {path}")
     net = payload["ema"].to(device)
+    # Snapshots are exported for inference and commonly freeze EMA
+    # parameters.  Re-enabling autograd changes only the tensor flag; no
+    # parameter value, buffer, or optimizer state is mutated by this script.
+    for parameter in net.parameters():
+        parameter.requires_grad_(True)
     net.train()
     return net, payload["loss_fn"]
 
