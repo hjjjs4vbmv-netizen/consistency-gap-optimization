@@ -1,0 +1,46 @@
+{
+  "checkpoint": "/data/raw/ECT/ect_runs/g_screen/g1_0/network-snapshot-latest.pkl",
+  "data": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+  "gaps": [
+    0.9,
+    1.0,
+    1.2,
+    1.3
+  ],
+  "batches": 16,
+  "batch_size": 64,
+  "seed": 20260806,
+  "device": "cuda",
+  "state_preserved": true,
+  "hashes_before": {
+    "parameter_sha256": "9a9762dd8bef7a0339c6bfe9701725f590f1d4577881a71a491f96627b1fce80",
+    "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+  },
+  "hashes_after": {
+    "parameter_sha256": "9a9762dd8bef7a0339c6bfe9701725f590f1d4577881a71a491f96627b1fce80",
+    "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+  },
+  "model_moments_sha256": "da56483aeac8aedf46e901989fe30caca92bfcf4ca494fa23124fc1853b26ef6",
+  "layerwise_sha256": "80230b9cb713bf7c1c7d68336829ba15f7eee2c02b5a50495583958d4efb0f29",
+  "schedule": "sigmoid",
+  "q": 128.0,
+  "k": 8.0,
+  "b": 1.0,
+  "c": 0.0,
+  "stage": 0,
+  "P_mean": -1.1,
+  "P_std": 2.0,
+  "augment_pipe": false,
+  "augmentation_policy": "fail_closed_if_present",
+  "image_range": "[-1,1]",
+  "network_mode": "train",
+  "precision": "fp32_force_fp32_reference",
+  "augment_used": false,
+  "augment_randomness_fixed": "not_applicable",
+  "checkpoint_sha256": "0c98d39259733b8b7f72e7cbc36904816a84f55d2705e32c361fc6a66d79cfc6",
+  "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+  "torch_version": "2.6.0+cu124",
+  "cuda_version": "12.4",
+  "gpu_name": "NVIDIA A100 80GB PCIe",
+  "execution_command": "analysis/gap_gradient_hook.py --checkpoint /data/raw/ECT/ect_runs/g_screen/g1_0/network-snapshot-latest.pkl --data /data/raw/ECT/datasets/cifar10-32x32.zip --gaps 0.9,1.0,1.2,1.3 --batches 16 --batch-size 64 --device cuda"
+}
