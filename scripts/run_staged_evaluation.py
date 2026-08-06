@@ -240,7 +240,21 @@ def validate_formal_promotion_policy(manifest: dict, cells: list[dict]) -> None:
         fail("formal eligibility must be provenance_and_integrity_only")
     if policy.get("quick_metric_performance") != "not_an_eligibility_criterion":
         fail("quick metric performance must not be a formal eligibility criterion")
+    # Older frozen q=128 matrices predate the common
+    # ``required_checkpoint_ids`` spelling and carry both of the more explicit
+    # names below.  Accept that representation only when the two lists agree;
+    # otherwise a server could silently evaluate a different set from the one
+    # declared for formal promotion.
     required_ids = policy.get("required_checkpoint_ids")
+    if required_ids is None:
+        formal_ids = policy.get("required_formal_checkpoint_ids")
+        evaluation_ids = policy.get("required_evaluation_checkpoint_ids")
+        if formal_ids != evaluation_ids:
+            fail(
+                "required_formal_checkpoint_ids and "
+                "required_evaluation_checkpoint_ids must match"
+            )
+        required_ids = formal_ids
     if (
         not isinstance(required_ids, list)
         or not required_ids
@@ -362,6 +376,13 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--outdir", type=Path, required=True)
     parser.add_argument("--phase", choices=tuple(PHASES), required=True)
+    parser.add_argument(
+        "--frozen-matrix", type=Path,
+        help=(
+            "Git-tracked frozen checkpoint matrix required for formal runs; "
+            "the runtime manifest is checked against it before any metric job starts"
+        ),
+    )
     parser.add_argument("--smoke-checkpoint-id")
     parser.add_argument("--base-port", type=int, default=29800)
     parser.add_argument("--dry-run", action="store_true")
@@ -370,6 +391,8 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.allow_missing_inputs and not args.dry_run:
         fail("--allow-missing-inputs is only allowed with --dry-run")
+    if args.phase == "formal" and args.frozen_matrix is None:
+        fail("formal evaluation requires --frozen-matrix")
     data = args.data.expanduser().resolve()
     if not data.is_file() and not (args.dry_run and args.allow_missing_inputs):
         fail(f"dataset not found: {data}")
@@ -377,6 +400,15 @@ def main(argv: list[str] | None = None) -> None:
     if not args.dry_run:
         require_empty(outdir)
 
+    if args.phase == "formal":
+        # Import lazily: the validator reuses this module's strict receipt
+        # checks, so importing it at module scope would create a cycle.
+        from scripts import validate_staged_runtime_manifest
+
+        validate_staged_runtime_manifest.validate(
+            args.frozen_matrix, args.manifest,
+            allow_missing_inputs=args.allow_missing_inputs,
+        )
     cells, comparison = load_cells(args.manifest, args.allow_missing_inputs)
     if args.phase == "formal":
         validate_formal_promotion_policy(

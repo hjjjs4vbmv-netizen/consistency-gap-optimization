@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "manifest_kind": "retrospective-source-run-manifest",
+  "package_id": "q128-1024k-reported-results-retrospective-v1",
+  "evidence_class": "retrospective_supplementary",
+  "formal_status": "not_formal",
+  "historical_import": {
+    "git_commit": "f53910ba7ed1890b05d1da6f8a9b616d03e8e576",
+    "committed_at": "2026-08-03T14:34:35+08:00",
+    "reported_source_manifest": "not_delivered; historical row referenced an inaccessible machine-local path",
+    "reported_job_count": 12,
+    "reported_metric_record_count": 24
+  },
+  "frozen_matrix_assessment": {
+    "prospective_1024k_matrix_present": false,
+    "repository_frozen_matrix": "configs/q128_confirmatory_matrix.frozen.json",
+    "repository_frozen_matrix_budget_kimg": 256,
+    "repository_frozen_checkpoint_prefix": "q128-fresh-256k-",
+    "conclusion": "The reported 1024-kimg checkpoint set was not bound to a repository-frozen prospective matrix before metrics were viewed."
+  },
+  "reported_evaluation_contract": {
+    "evaluation_git_commit": "8375d46ca4c65e85ab399fcf1effe22ebb766790",
+    "precision": "fp32",
+    "sample_count": 50000,
+    "generation_seed_range": "0-49999",
+    "metric_seed": 20260730,
+    "metric_names": ["kid50k_full", "fid50k_full"],
+    "nfe_modes": {"1": [], "2": [0.821]}
+  },
+  "artifact_availability": {
+    "original_source_manifest": "unavailable",
+    "training_provenance": "unavailable",
+    "integrity_receipts": "unavailable",
+    "checkpoint_archives": "unavailable",
+    "role_d_receiver_verification": "not_received",
+    "original_evaluation_commands": "not_recorded"
+  },
+  "portable_records": {
+    "checkpoint_manifest": "checkpoint_manifest.csv",
+    "raw_metric_records": "evaluation_results.csv",
+    "receiver_verification": "receiver_verification.json",
+    "validation_report": "validation_report.md"
+  }
+}

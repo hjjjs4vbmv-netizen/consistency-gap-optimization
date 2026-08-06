@@ -112,6 +112,7 @@ failed predecessor.
 
    ```bash
    python scripts/run_staged_evaluation.py \
+     --frozen-matrix configs/staged_evaluation_confirmatory_q256.frozen.json \
      --manifest /mnt/ect_project/staged_eval/checkpoints.json \
      --data /mnt/ect_project/datasets/cifar10-32x32.zip \
      --outdir /mnt/ect_project/staged_eval/formal \
@@ -120,7 +121,18 @@ failed predecessor.
 
 The formal runner requires a receipt JSON for each checkpoint with
 `status: "passed"` and a matching `checkpoint_sha256`. It refuses the formal
-run before any metric process starts when this gate is not met.
+run before any metric process starts when this gate is not met. It also now
+requires `--frozen-matrix` and validates the server manifest against that
+matrix before it creates an evaluation record. As a server-only dry-run gate,
+run:
+
+```bash
+bash scripts/preflight_formal_evaluation.sh \
+  --frozen-matrix configs/staged_evaluation_confirmatory_q256.frozen.json \
+  --runtime-manifest /mnt/ect_project/staged_eval/checkpoints.json \
+  --data /mnt/ect_project/datasets/cifar10-32x32.zip \
+  --outdir /mnt/ect_project/staged_eval/formal
+```
 
 For the frozen q=256 matrix, use all six predeclared cells in this command.
 Quick 5k values are not a promotion gate: no seed, method, NFE, or checkpoint
