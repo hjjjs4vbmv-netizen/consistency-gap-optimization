@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "experiment_id": "gap_lr_matched_q128_s3_v1",
+  "status": "prepared_blocked_by_fresh_radam_update_audit",
+  "source_commit": "aae014c3a630a3a86801238cd0a8ff4ecd39c3d8",
+  "scientific_question": "From a common pretrained EDM initialization and fresh RAdam state, can initial-state RAdam update matching explain the finite-budget quality effect of g=1.3?",
+  "shared_training": {
+    "dataset_id": "cifar10_32x32_training_archive",
+    "transfer_checkpoint_id": "edm_cifar10_uncond_vp",
+    "seed": 3,
+    "q": 128,
+    "k": 8,
+    "b": 1,
+    "c": 0,
+    "duration_kimg": 256,
+    "batch_size": 128,
+    "batch_gpu": 16,
+    "optimizer": "RAdam",
+    "dropout": 0.2,
+    "augment": 0,
+    "ema_beta": 0.9993,
+    "fp16": true,
+    "amp": true,
+    "double_ticks": 10000,
+    "mapping": "global_sigmoid"
+  },
+  "checkpoint_policy": {
+    "requested_kimg": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "tick_kimg": 32,
+    "snapshot_ticks": 1,
+    "state_dump_ticks": 1,
+    "latest_checkpoint_ticks": 1,
+    "authoritative_progress_field": "train_summary.csv:processed_kimg",
+    "latest_only_is_valid": false
+  },
+  "evaluation": {
+    "primary_nfe": 1,
+    "primary_metrics": [
+      "fid5k_full",
+      "kid5k_full"
+    ],
+    "generated_samples": 5000,
+    "evaluation_seed_policy": "identical_across_arms",
+    "nfe2_status": "deferred_checkpoint_only"
+  },
+  "arms": [
+    {
+      "arm": "A",
+      "run_id": "arm_a_g1_0_lr_fixed_s3",
+      "gap_scale": 1.0,
+      "learning_rate": 0.0001,
+      "learning_rate_source": "frozen_baseline",
+      "launch_status": "blocked_by_common_update_audit_gate"
+    },
+    {
+      "arm": "B",
+      "run_id": "arm_b_g1_3_lr_fixed_s3",
+      "gap_scale": 1.3,
+      "learning_rate": 0.0001,
+      "learning_rate_source": "frozen_baseline",
+      "launch_status": "blocked_by_common_update_audit_gate"
+    },
+    {
+      "arm": "C",
+      "run_id": "arm_c_g1_3_lr_matched_s3",
+      "gap_scale": 1.3,
+      "learning_rate": null,
+      "learning_rate_source": "pending_fresh_RAdam_update_audit",
+      "launch_status": "blocked_by_unresolved_c0_star",
+      "learning_rate_expression": "c0_star*0.0001",
+      "control_name": "initial_state_one_step_RAdam_update_matched"
+    }
+  ],
+  "scope_exclusions": [
+    "additional_gap_values",
+    "additional_training_seeds",
+    "fid50k",
+    "new_controller",
+    "nfe2_retraining"
+  ],
+  "initial_state": {
+    "network": "same_pretrained_edm_transfer_checkpoint",
+    "optimizer": "fresh_RAdam",
+    "exp_avg": 0,
+    "exp_avg_sq": 0,
+    "optimizer_step": 0,
+    "gradscaler": "same_fresh_initial_state",
+    "resume_from_trained_state": false
+  },
+  "update_match_gate": {
+    "reference_gap": 1.0,
+    "target_gap": 1.3,
+    "base_learning_rate": 0.0001,
+    "c0_star": null,
+    "definition": "dot(delta_1_3,delta_1_0)/dot(delta_1_3,delta_1_3)",
+    "matched_lr_formula": "c0_star*1.0e-4",
+    "diagnostic_state": "common_fresh_initial_state",
+    "control_name": "initial_state_one_step_RAdam_update_matched",
+    "whole_trajectory_matching_claim": false,
+    "required_outputs": [
+      "update_cosine",
+      "whole_model_update_residual",
+      "layerwise_update_residual",
+      "update_norms",
+      "amp_unscale_verification",
+      "parameter_state_hash_invariance",
+      "optimizer_state_hash_invariance",
+      "gradscaler_state_hash_invariance"
+    ],
+    "required_audit_status": "PASS",
+    "formal_launch_allowed": false
+  },
+  "longitudinal_update_audit": {
+    "training_cost": "no_additional_training",
+    "reference_arm": "A",
+    "checkpoint_kimg": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "outputs": [
+      "cK_star",
+      "update_cosine",
+      "update_residual"
+    ],
+    "purpose": "measure drift of the initialization-level update match"
+  },
+  "prior_raw_gradient_evidence": {
+    "a_1_3_star_approx": 0.77,
+    "checkpoint": "q128_256k_EMA",
+    "interpretation": "FP32 raw mean-gradient geometry only",
+    "allowed_for_arm_c_learning_rate": false
+  }
+}
