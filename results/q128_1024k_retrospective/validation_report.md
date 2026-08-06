@@ -28,6 +28,6 @@ and Role D receiver-verification blockers remain open.
 
 ## Commands
 
-Run `bash results/q128_1024k_formal/reproduction_commands.sh` to re-run the
+Run `bash results/q128_1024k_retrospective/reproduction_commands.sh` to re-run the
 portable structural validation.  The exact original evaluator and collector
 commands are `NOT_RECORDED`; the original source manifest is unavailable.

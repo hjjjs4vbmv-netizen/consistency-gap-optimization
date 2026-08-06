@@ -18,7 +18,7 @@ the original source manifest were not delivered to this repository.
 
 ## What is preserved
 
-`results/q128_1024k_formal/` is a portable, path-free audit package.  It
+`results/q128_1024k_retrospective/` is a portable, path-free audit package.  It
 preserves the 24 reported raw metric values and the six reported checkpoint
 SHA-256 values, but labels them `reported_unverified`.  The directory name is
 only a storage path retained for continuity; the package metadata and every
@@ -38,5 +38,5 @@ within-q128 retrospective comparisons.  They do not support cross-q
 generalization and must not be used to explain q256-256k FID.  The separate
 q128/q256 dataset semantic-equivalence blocker is also still open.
 
-See `results/q128_1024k_formal/README.md` for the audit inventory and the
+See `results/q128_1024k_retrospective/README.md` for the audit inventory and the
 unresolved evidence ledger.
