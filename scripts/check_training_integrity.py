@@ -22,7 +22,14 @@ if str(REPO_ROOT) not in sys.path:
 import torch
 
 
-CHECKER_VERSION = "2"
+CHECKER_VERSION = "3"
+
+# training_stats reduces progress as float32.  At a million images that
+# representation can differ from the integer image counter by a fraction of
+# an image, while train_summary.csv preserves the exact counter.  Use the
+# integer counter when available and allow at most one image of telemetry
+# rounding in the legacy float comparison.
+TELEMETRY_PROGRESS_TOLERANCE_NIMG = 1.0
 
 METHOD_IDENTITIES = {
     "fixed": ("sigmoid", 1.0),
@@ -117,7 +124,16 @@ def inspect_summary(path: Path, budget_kimg: int) -> dict[str, Any]:
         fail(f"training summary has invalid final processed_kimg: {exc}")
     if not math.isfinite(final_kimg) or final_kimg < budget_kimg:
         fail(f"training summary stops at {final_kimg} kimg, below declared {budget_kimg} kimg")
-    return {"rows": len(rows), "final_kimg": final_kimg}
+    final_nimg = None
+    if "processed_nimg" in rows[-1] and str(rows[-1]["processed_nimg"]).strip():
+        try:
+            parsed_nimg = float(rows[-1]["processed_nimg"])
+        except (TypeError, ValueError) as exc:
+            fail(f"training summary has invalid final processed_nimg: {exc}")
+        if not math.isfinite(parsed_nimg) or not parsed_nimg.is_integer():
+            fail(f"training summary final processed_nimg is not an integer: {parsed_nimg!r}")
+        final_nimg = int(parsed_nimg)
+    return {"rows": len(rows), "final_kimg": final_kimg, "final_nimg": final_nimg}
 
 
 def inspect_log(path: Path) -> dict[str, Any]:
@@ -286,10 +302,18 @@ def build_receipt(args: argparse.Namespace) -> dict[str, Any]:
     log = inspect_log(paths["log"])
     state = inspect_state(paths["state"], args.budget_kimg)
     checkpoint_identity = inspect_checkpoint(checkpoint, options, args.method)
-    if abs(stats["final_kimg"] - summary["final_kimg"]) > 1e-6:
+    if (
+        abs(stats["final_kimg"] - summary["final_kimg"]) * 1000
+        > TELEMETRY_PROGRESS_TOLERANCE_NIMG
+    ):
         fail("stats and training summary final kimg disagree")
-    if abs(stats["final_kimg"] * 1000 - state["cur_nimg"]) > 1e-6:
+    if (
+        abs(stats["final_kimg"] * 1000 - state["cur_nimg"])
+        > TELEMETRY_PROGRESS_TOLERANCE_NIMG
+    ):
         fail("stats and training state progress disagree")
+    if summary["final_nimg"] is not None and summary["final_nimg"] != state["cur_nimg"]:
+        fail("training summary and training state processed_nimg disagree")
     checkpoint_sha256 = sha256_file(checkpoint)
     return {
         "schema_version": 1,

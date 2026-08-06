@@ -91,6 +91,23 @@ class TrainingIntegrityTest(unittest.TestCase):
             self.assertTrue(receipt["method_identity_passed"])
             self.assertEqual(receipt["evidence"]["training_state"]["cur_nimg"], 16000)
 
+    def test_allows_float32_progress_rounding_when_integer_state_agrees(self):
+        with TemporaryDirectory() as temp_dir:
+            run = self.make_run(Path(temp_dir))
+            (run / "stats.jsonl").write_text(json.dumps({
+                "Loss/loss": {"mean": 1.0},
+                # A realistic float32-style reporting discrepancy of 0.025 image.
+                "Progress/kimg": {"mean": 16.000025},
+            }) + "\n", encoding="utf-8")
+            args = type("Args", (), {
+                "run_dir": run, "checkpoint": None, "checkpoint_id": "fixed_seed7_16k",
+                "method": "fixed", "training_seed": 7, "budget_kimg": 16,
+                "training_run_id": "fixed-seed7-16k", "expected_training_commit": None,
+                "checker_version": "3",
+            })()
+            receipt = check_training_integrity.build_receipt(args)
+            self.assertEqual(receipt["status"], "passed")
+
     def test_rejects_non_finite_loss(self):
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
