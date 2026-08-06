@@ -25,6 +25,11 @@
   "role_d_receiver_verifier_commit": "60f14ad7e26fc1eaac303e958007840945112e67",
   "evaluation_commit": "ba1752087e93ca1010041ce8aa023ff032f067e2",
   "evaluation_runner_sha256": "a5dcd2fb12bac27825936140b94430ee49a81fc91482c2ce7015748686709128",
+  "v2_validation_status": {
+    "real_ect_loss_and_gradient_parity_test": "passed_in_tests_test_deepnet_gap_gradient_moments",
+    "parameter_and_buffer_hash_invariance_test": "passed_in_tests_test_deepnet_gap_gradient_moments",
+    "per_run_parameter_buffer_hash_receipt": "pending_rerun_with_script_version_2"
+  },
   "evaluation_artifact_archive_sha256": "2c8730faa5a249a671a983952bf67e1bced79bb56444795da93c9ae783e64cc0",
   "server_archive_artifacts_sha256": {
     "deepnet_gap_gradient_moments.csv": "7a0f0891ca4a87984e944857ea081805e8df063ab956474418e3c2f9f3701d68",

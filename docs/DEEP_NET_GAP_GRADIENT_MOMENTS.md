@@ -31,6 +31,15 @@ The sender handoff declaration is
 `analysis/q128_transfer_1000k_sender_handoff.json`; the received Role D
 receipt above was generated with `scripts/verify_checkpoint_handoff.py`.
 
+## v2 validation extension
+
+The v2 script adds a unit test that compares the manually controlled loss and
+gradient with the repository's `ECMLoss` under identical randomness, and it
+records parameter/buffer SHA256 values before and after the diagnostic.  The
+archived 64-batch result was produced by v1 and therefore has no per-run
+before/after hash receipt.  It must be rerun with v2 before parameter/buffer
+invariance is claimed for that particular execution.
+
 ## Question and controlled protocol
 
 The question is local: at a fixed real ECT checkpoint, does changing the

@@ -43,7 +43,7 @@ import matplotlib.pyplot as plt
 from training.schedules import get_schedule
 
 
-SCRIPT_VERSION = 1
+SCRIPT_VERSION = 2
 
 
 def fail(message: str) -> None:
@@ -56,6 +56,35 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def tensor_collection_sha256(tensors: Iterable[tuple[str, torch.Tensor]]) -> str:
+    """Hash names, metadata, and exact values without depending on device."""
+    digest = hashlib.sha256()
+    for name, tensor in tensors:
+        value = tensor.detach().cpu().contiguous()
+        digest.update(name.encode("utf-8"))
+        digest.update(str(value.dtype).encode("ascii"))
+        digest.update(str(tuple(value.shape)).encode("ascii"))
+        # Scalar integer buffers (e.g. BatchNorm num_batches_tracked) cannot
+        # be byte-viewed until flattened.
+        digest.update(value.reshape(-1).view(torch.uint8).numpy().tobytes())
+    return digest.hexdigest()
+
+
+def module_state_hashes(net: torch.nn.Module) -> dict[str, str]:
+    """Return separate immutable-value hashes for model parameters and buffers."""
+    return {
+        "parameter_sha256": tensor_collection_sha256(net.named_parameters()),
+        "buffer_sha256": tensor_collection_sha256(net.named_buffers()),
+    }
+
+
+def set_dropout_rng_state(state: torch.Tensor, device: torch.device) -> None:
+    if device.type == "cuda":
+        torch.cuda.set_rng_state(state, device=device)
+    else:
+        torch.set_rng_state(state)
 
 
 def parse_gaps(value: str) -> list[float]:
@@ -117,10 +146,10 @@ def ect_loss_with_fixed_randomness(
     # There is no augmentation in the saved run.  Resetting before both
     # network calls exactly mirrors ECMLoss' shared dropout-mask protocol.
     device = images.device
-    torch.cuda.set_rng_state(dropout_rng_state, device=device)
+    set_dropout_rng_state(dropout_rng_state, device)
     d_yt = net(images + eps * t, t, labels, augment_labels=None)
     if bool((r > 0).any()):
-        torch.cuda.set_rng_state(dropout_rng_state, device=device)
+        set_dropout_rng_state(dropout_rng_state, device)
         with torch.no_grad():
             d_yr = net(images + eps * r, r, labels, augment_labels=None)
         d_yr = torch.nan_to_num(d_yr)
@@ -302,6 +331,11 @@ def write_report(path: Path, manifest: dict[str, Any], moments: list[dict[str, f
         f"- checkpoint SHA256: `{manifest['checkpoint_sha256']}`",
         f"- dataset SHA256: `{manifest['dataset_sha256']}`",
         f"- batches: {manifest['batches']}; batch size: {manifest['batch_size']}; seed: {manifest['seed']}",
+        f"- parameter values unchanged: `{manifest['parameter_values_unchanged']}`",
+        f"- buffers unchanged: `{manifest['buffer_values_unchanged']}`",
+        f"- parameter SHA256 (before/after): `{manifest['parameter_sha256_before']}` / `{manifest['parameter_sha256_after']}`",
+        f"- buffer SHA256 (before/after): `{manifest['buffer_sha256_before']}` / `{manifest['buffer_sha256_after']}`",
+        f"- gradient slots populated (before/after): {manifest['gradient_slots_populated_before']} / {manifest['gradient_slots_populated_after']}",
         "",
         "## Whole-model moments",
         "",
@@ -382,6 +416,9 @@ def main() -> None:
     named_parameters = [(name, parameter) for name, parameter in net.named_parameters() if parameter.requires_grad]
     if not named_parameters:
         fail("EMA network has no trainable parameters")
+    net.zero_grad(set_to_none=True)
+    state_before = module_state_hashes(net)
+    gradient_slots_before = sum(parameter.grad is not None for _, parameter in named_parameters)
     mean_sums: dict[str, dict[str, torch.Tensor]] = {
         str(gap): {name: torch.zeros_like(parameter, dtype=torch.float64) for name, parameter in named_parameters}
         for gap in args.gaps
@@ -410,7 +447,7 @@ def main() -> None:
         rnd_normal = torch.randn((args.batch_size, 1, 1, 1), device=device, generator=random_generator)
         t = (rnd_normal * loss_template.P_std + loss_template.P_mean).exp()
         eps = torch.randn(images.shape, device=device, generator=random_generator)
-        dropout_state = torch.cuda.get_rng_state(device=device)
+        dropout_state = torch.cuda.get_rng_state(device=device) if device.type == "cuda" else torch.get_rng_state()
         baseline_gradients: dict[str, torch.Tensor] | None = None
 
         # Run g=1 first so every other gap can record an exact per-batch dot.
@@ -450,6 +487,11 @@ def main() -> None:
             })
         del baseline_gradients, images, labels, t, eps
 
+    state_after = module_state_hashes(net)
+    gradient_slots_after = sum(parameter.grad is not None for _, parameter in named_parameters)
+    if state_before != state_after:
+        fail("diagnostic changed checkpoint parameter values or buffers")
+
     moments, layerwise = mean_vector_statistics(mean_sums, 1.0, args.batches, batch_norm_sq_sums, batch_layer_norm_sq_sums)
     batches = batch_residual_rows(batch_rows, moments, 1.0)
     manifest = {
@@ -468,6 +510,14 @@ def main() -> None:
         "seed": args.seed,
         "optimizer_created": False,
         "optimizer_steps": 0,
+        "parameter_sha256_before": state_before["parameter_sha256"],
+        "parameter_sha256_after": state_after["parameter_sha256"],
+        "buffer_sha256_before": state_before["buffer_sha256"],
+        "buffer_sha256_after": state_after["buffer_sha256"],
+        "parameter_values_unchanged": state_before["parameter_sha256"] == state_after["parameter_sha256"],
+        "buffer_values_unchanged": state_before["buffer_sha256"] == state_after["buffer_sha256"],
+        "gradient_slots_populated_before": gradient_slots_before,
+        "gradient_slots_populated_after": gradient_slots_after,
         "randomness_contract": "same images, per-example t, shared epsilon, and dropout RNG state for every g within each minibatch",
         "scalar_fit_formula": "dot(mu_g, mu_1) / dot(mu_1, mu_1)",
         "elapsed_seconds": time.time() - started,
