@@ -11,9 +11,10 @@ replaced.  The protected main history or immutable tag is the required
 time-order evidence.
 
 The frozen training source is the exact `executed_training_source_commit` in
-the matrix.  Only after the matrix has met the merge/tag condition above may
-you train from that source commit; do not train from an arbitrary later
-working tree.
+the matrix: clean `main` commit
+`aae014c3a630a3a86801238cd0a8ff4ecd39c3d8`.  Only after the matrix has met
+the merge/tag condition above may you train from that source commit; do not
+train from an arbitrary later working tree or an unmerged mixed-purpose branch.
 
 For each cell, retain and hash the final checkpoint, final training state,
 `training_options.json`, dataset, integrity receipt, and a transfer archive.

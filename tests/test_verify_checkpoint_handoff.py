@@ -16,6 +16,12 @@ class VerifyCheckpointHandoffTest(unittest.TestCase):
         self.assertEqual(freeze["required_location"], "merged_main_or_immutable_protected_tag")
         self.assertTrue(freeze["branch_push_is_insufficient"])
         self.assertIn("merged into main", freeze["training_prohibited_until"])
+        contract = matrix["training_contract"]
+        self.assertEqual(contract["training_source_status"], "clean_main_commit")
+        self.assertEqual(
+            contract["executed_training_source_commit"],
+            "aae014c3a630a3a86801238cd0a8ff4ecd39c3d8",
+        )
 
     def test_independent_verifier_recomputes_archive_and_checkpoint_hashes(self):
         with TemporaryDirectory() as temp_dir:
