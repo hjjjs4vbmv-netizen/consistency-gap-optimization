@@ -12,10 +12,15 @@ the q=256 FID values.
 The portable evidence binding is
 `analysis/deepnet_gap_gradient_moments_provenance.json`.  It records the
 checkpoint, training-state, data, sender-receipt, checkpoint-archive,
-evaluation-commit, runner, and result-archive hashes.  A post-hoc
-machine-readable training-integrity receipt and independent Role D receiver
-verification have not been received; this is an explicit blocker on any
-formal use of this checkpoint.
+evaluation-commit, runner, and result-archive hashes.  The post-hoc
+machine-readable training-integrity receipt is present and passed at
+`analysis/deepnet_training_integrity_receipt.posthoc.json` (SHA256
+`e02de8e126ac28a1be6650bf8a3c25c8c0a32de0533c66b3004e10a946a63e8c`).
+It verifies clean completion, loss/state finiteness, EMA, and schedule
+identity, but cannot attest an expected training commit because the completed
+run did not persist `commit_sha.txt`.  Independent Role D receiver
+verification remains absent, which is an explicit blocker on any formal use
+of this checkpoint.
 
 ## Question and controlled protocol
 

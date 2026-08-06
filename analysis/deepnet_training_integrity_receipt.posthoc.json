@@ -1,0 +1,57 @@
+{
+  "budget_kimg": 1000,
+  "checked_at_unix": 1785998457.755304,
+  "checker_git_commit": "275c8f3d29aa6915056a933ffba1bbfc685fd83b",
+  "checker_version": "3",
+  "checkpoint_id": "q128-transfer-1000k-seed3-fixed-exploratory",
+  "checkpoint_load_passed": true,
+  "checkpoint_path": "/data/raw/ECT/ect_runs/pr_gpu_smoke_role_d_v4_20260806/network-snapshot-000020.pkl",
+  "checkpoint_sha256": "eda4c12e95bca6308b897e54dbc3e61b93d0f46c9299a113b7eb4f2bd36b83a5",
+  "completion_passed": true,
+  "ema_finite_passed": true,
+  "ema_present": true,
+  "evidence": {
+    "checkpoint_identity": {
+      "checkpoint_global_gap_scale": 1.0,
+      "checkpoint_load_passed": true,
+      "checkpoint_schedule": "sigmoid",
+      "ema_finite_passed": true,
+      "ema_floating_tensors_checked": 424,
+      "ema_present": true,
+      "global_gap_scale_identity_passed": true,
+      "method_identity_passed": true,
+      "schedule_identity_passed": true,
+      "training_options_global_gap_scale": 1.0,
+      "training_options_schedule": "sigmoid"
+    },
+    "expected_training_commit": null,
+    "log": {
+      "clean_exit_marker": "Exiting..."
+    },
+    "run_directory": "/data/raw/ECT/ect_runs/pr_gpu_smoke_role_d_v4_20260806",
+    "stats": {
+      "final_kimg": 1000.0640258789062,
+      "records": 21
+    },
+    "training_options": "/data/raw/ECT/ect_runs/pr_gpu_smoke_role_d_v4_20260806/training_options.json",
+    "training_state": {
+      "cur_nimg": 1000064,
+      "tensors_checked": 1248
+    },
+    "training_summary": {
+      "final_kimg": 1000.064,
+      "final_nimg": 1000064,
+      "rows": 7813
+    }
+  },
+  "finite_loss_state_passed": true,
+  "global_gap_scale_identity_passed": true,
+  "logs_state_consistent": true,
+  "method": "fixed",
+  "method_identity_passed": true,
+  "schedule_identity_passed": true,
+  "schema_version": 1,
+  "status": "passed",
+  "training_run_id": "pr_gpu_smoke_role_d_v4_20260806",
+  "training_seed": 3
+}
