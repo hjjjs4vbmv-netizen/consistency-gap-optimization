@@ -19,14 +19,17 @@ machine-readable training-integrity receipt is present and passed at
 It verifies clean completion, loss/state finiteness, EMA, and schedule
 identity, but cannot attest an expected training commit because the completed
 run did not persist `commit_sha.txt`.  Independent Role D receiver
-verification remains absent, which is an explicit blocker on any formal use
-of this checkpoint.
+verification passed for this one exploratory checkpoint at
+`analysis/deepnet_role_d_receiver_verification.json` (SHA256
+`e092db3727de6915ed0e3b6113da9744d2ea9dda5e60d7fe84697756fd2ad8c5`):
+ECT002 recomputed both the received archive digest and checkpoint digest.
+This closes the receiver-identity gap for this supplementary diagnostic only;
+it does not make the checkpoint prospective or formal, and does not verify
+the six historical `q128-1024k-*` checkpoints.
 
 The sender handoff declaration is
-`analysis/q128_transfer_1000k_sender_handoff.json`.  A separate Role D
-operator can verify its archive with `scripts/verify_checkpoint_handoff.py`
-and return a receiver receipt; until that happens, the provenance field stays
-`not_received`.
+`analysis/q128_transfer_1000k_sender_handoff.json`; the received Role D
+receipt above was generated with `scripts/verify_checkpoint_handoff.py`.
 
 ## Question and controlled protocol
 
