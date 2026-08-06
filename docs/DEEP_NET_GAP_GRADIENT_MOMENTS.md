@@ -22,6 +22,12 @@ run did not persist `commit_sha.txt`.  Independent Role D receiver
 verification remains absent, which is an explicit blocker on any formal use
 of this checkpoint.
 
+The sender handoff declaration is
+`analysis/q128_transfer_1000k_sender_handoff.json`.  A separate Role D
+operator can verify its archive with `scripts/verify_checkpoint_handoff.py`
+and return a receiver receipt; until that happens, the provenance field stays
+`not_received`.
+
 ## Question and controlled protocol
 
 The question is local: at a fixed real ECT checkpoint, does changing the

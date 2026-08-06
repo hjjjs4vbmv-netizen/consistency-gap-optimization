@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "manifest_kind": "frozen-logical-evaluation-matrix",
+  "protocol": "staged-checkpoint-evaluation-v1",
+  "matrix_id": "q128-prospective-fixed-vs-global110-1024k-v1",
+  "evidence_class_before_execution": "prospective_predeclared",
+  "historical_exclusion": "This matrix applies only to the six q128-prospective-1024k-* checkpoint IDs below. It does not apply to q128-1024k-* reported results or q128-transfer-1000k-seed3-fixed-exploratory.",
+  "training_contract": {
+    "executed_training_source_commit": "3b11c32d34b567c60d59307add74be05aa74be14",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "transfer_checkpoint_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da",
+    "optimizer": "RAdam(lr=0.0001, betas=[0.9,0.999], eps=1e-08)",
+    "ema_beta": 0.9999,
+    "amp": "enabled; GradScaler state must be retained in every training state",
+    "resume_policy": "fresh transfer initialization only; no resume from a historical q128 checkpoint",
+    "final_kimg": 1024,
+    "required_per_cell_artifacts": ["checkpoint", "training_options.json", "training-state", "integrity receipt", "archive", "commit_sha.txt"]
+  },
+  "comparison": {
+    "baseline_method": "fixed",
+    "candidate_method": "global110",
+    "candidate_label": "global_only",
+    "delta_direction": "global_only - fixed",
+    "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric"]
+  },
+  "method_definitions": {
+    "fixed": {"schedule_identity": "sigmoid", "global_gap_scale": 1.0, "local_controller": "disabled"},
+    "global110": {"schedule_identity": "global_sigmoid", "global_gap_scale": 1.1, "local_controller": "disabled"}
+  },
+  "training": {"schedule_q": 128, "training_seeds": [3, 4, 5], "budget_kimg": [1024]},
+  "evaluation_contracts": [
+    {"budget_kimg": 1024, "stage": "formal", "evidence_class": "formal", "metric_names": ["kid50k_full", "fid50k_full"], "sample_count": 50000, "generation_seed_range": "0-49999", "metric_seed": 20260730}
+  ],
+  "nfe_modes": {"1": [], "2": [0.821]},
+  "formal_promotion_policy": {
+    "eligibility": "provenance_and_integrity_only",
+    "quick_metric_performance": "not_an_eligibility_criterion",
+    "rule": "Every cell must complete at 1024 kimg with the frozen contract, bind all required provenance hashes, pass a training-integrity receipt, and receive independent Role D archive/checkpoint verification before formal evaluation. No metric may select, replace, omit, or add a cell.",
+    "required_checkpoint_ids": ["q128-prospective-1024k-seed3-fixed", "q128-prospective-1024k-seed3-global110", "q128-prospective-1024k-seed4-fixed", "q128-prospective-1024k-seed4-global110", "q128-prospective-1024k-seed5-fixed", "q128-prospective-1024k-seed5-global110"]
+  },
+  "cells": [
+    {"checkpoint_id": "q128-prospective-1024k-seed3-fixed", "method": "fixed", "training_seed": 3, "budget_kimg": 1024, "schedule_q": 128, "schedule_identity": "sigmoid", "global_gap_scale": 1.0},
+    {"checkpoint_id": "q128-prospective-1024k-seed3-global110", "method": "global110", "training_seed": 3, "budget_kimg": 1024, "schedule_q": 128, "schedule_identity": "global_sigmoid", "global_gap_scale": 1.1},
+    {"checkpoint_id": "q128-prospective-1024k-seed4-fixed", "method": "fixed", "training_seed": 4, "budget_kimg": 1024, "schedule_q": 128, "schedule_identity": "sigmoid", "global_gap_scale": 1.0},
+    {"checkpoint_id": "q128-prospective-1024k-seed4-global110", "method": "global110", "training_seed": 4, "budget_kimg": 1024, "schedule_q": 128, "schedule_identity": "global_sigmoid", "global_gap_scale": 1.1},
+    {"checkpoint_id": "q128-prospective-1024k-seed5-fixed", "method": "fixed", "training_seed": 5, "budget_kimg": 1024, "schedule_q": 128, "schedule_identity": "sigmoid", "global_gap_scale": 1.0},
+    {"checkpoint_id": "q128-prospective-1024k-seed5-global110", "method": "global110", "training_seed": 5, "budget_kimg": 1024, "schedule_q": 128, "schedule_identity": "global_sigmoid", "global_gap_scale": 1.1}
+  ]
+}
