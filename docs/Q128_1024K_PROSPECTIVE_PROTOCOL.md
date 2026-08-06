@@ -5,6 +5,10 @@ declaration for six **new** checkpoint identities.  Its repository commit is
 the time-order evidence.  It cannot make any existing `q128-1024k-*` result
 prospective.
 
+The frozen training source is the exact `executed_training_source_commit` in
+the matrix.  Push the matrix commit first, then train from that source commit;
+do not train from an arbitrary later working tree.
+
 For each cell, retain and hash the final checkpoint, final training state,
 `training_options.json`, dataset, integrity receipt, and a transfer archive.
 Persist `commit_sha.txt` in the run directory before training so the receipt
