@@ -31,6 +31,12 @@ import torch
 
 from training.schedules import get_schedule
 
+LAYERWISE_FIELDS = (
+    "layer", "update_1_l2", "update_1p3_l2", "update_cosine",
+    "c0_star_requested", "least_squares_scale_1p3_to_1", "layerwise_residual",
+    "layerwise_residual_with_model_c0_star",
+)
+
 
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
@@ -162,6 +168,8 @@ def gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[str, torch.
     cosine = dot / math.sqrt(n1_sq * n13_sq)
     residual_sq = max(_norm_sq((c_star * update_13[name] - update_1[name] for name in update_1)), 0.0)
     whole = {
+        "gauge_defined": True,
+        "gauge_error": None,
         "update_1_l2": math.sqrt(n1_sq),
         "update_1p3_l2": math.sqrt(n13_sq),
         "update_dot": dot,
@@ -200,8 +208,22 @@ def gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[str, torch.
     return whole, layers
 
 
-def virtual_radam_update(common_net, loss_template, images, labels, *, gain: float,
-                         t: torch.Tensor, eps: torch.Tensor, dropout_rng_state: torch.Tensor,
+def undefined_gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[str, torch.Tensor],
+                            error: str) -> dict[str, Any]:
+    """Retain update telemetry when a skipped/degenerate step has no gauge."""
+    n1_sq, n13_sq = _norm_sq(update_1.values()), _norm_sq(update_13.values())
+    dot = _dot(update_13, update_1)
+    cosine = dot / math.sqrt(n1_sq * n13_sq) if n1_sq and n13_sq else None
+    return {
+        "gauge_defined": False, "gauge_error": error,
+        "update_1_l2": math.sqrt(n1_sq), "update_1p3_l2": math.sqrt(n13_sq),
+        "update_dot": dot, "update_cosine": cosine,
+        "c0_star_requested": None, "least_squares_scale_1p3_to_1": None,
+        "whole_model_residual": None,
+    }
+
+
+def virtual_radam_update(common_net, loss_template, microbatches, *, gain: float,
                          lr: float, betas: tuple[float, float], eps_opt: float,
                          scaler_template, amp: bool) -> tuple[dict[str, torch.Tensor], dict[str, Any]]:
     """Execute a real, disposable RAdam step and return its parameter delta."""
@@ -214,10 +236,15 @@ def virtual_radam_update(common_net, loss_template, images, labels, *, gain: flo
     schedule = get_schedule("global_sigmoid", q=float(loss_template.q), k=float(loss_template.k),
                             b=float(loss_template.b), global_gap_scale=gain)
     optimizer.zero_grad(set_to_none=True)
-    with torch.autocast(device_type=images.device.type, enabled=amp):
+    loss_sum, loss_count = 0.0, 0
+    # Deliberately no autocast context: ct_training_loop uses GradScaler but
+    # relies on the EDM network's own fp16 selection, not torch.autocast.
+    for images, labels, t, eps, dropout_rng_state in microbatches:
         loss = fixed_ect_loss(net, loss_template, schedule, images, labels, t, eps, dropout_rng_state)
         loss_mean = loss.mean()
-    scaler.scale(loss_mean).backward() if amp else loss_mean.backward()
+        scaler.scale(loss_mean).backward() if amp else loss_mean.backward()
+        loss_sum += float(loss.detach().double().sum().cpu())
+        loss_count += loss.numel()
     if amp:
         scaler.unscale_(optimizer)
     nonfinite_before_sanitize = False
@@ -238,7 +265,8 @@ def virtual_radam_update(common_net, loss_template, images, labels, *, gain: flo
     delta = _delta_by_name(common_net, net)
     detail = {
         "gain": gain,
-        "loss_mean": float(loss_mean.detach().double().cpu()),
+        "loss_mean": loss_sum / loss_count,
+        "accumulation_rounds": len(microbatches),
         "amp_enabled": amp,
         "amp_unscale_called": amp,
         "nonfinite_before_sanitize": nonfinite_before_sanitize,
@@ -259,41 +287,56 @@ def virtual_radam_update(common_net, loss_template, images, labels, *, gain: flo
 
 def run_pair(common_net, loss_template, images, labels, *, gains=(1.0, 1.3), lr=1e-4,
              betas=(0.9, 0.999), eps_opt=1e-8, amp=True, initial_scale=65536.0,
-             random_seed: int | None = None) -> tuple[dict[str, Any], list[dict[str, float]]]:
+             random_seed: int | None = None,
+             microbatch_size: int | None = None) -> tuple[dict[str, Any], list[dict[str, float]]]:
     """Run the pair while proving the common source objects are unchanged."""
     if tuple(gains) != (1.0, 1.3):
         raise ValueError("this audit is defined for exactly gains (1.0, 1.3)")
     device = images.device
-    if random_seed is not None:
-        torch.manual_seed(random_seed)
-        if device.type == "cuda":
-            torch.cuda.manual_seed_all(random_seed)
-    source_before = module_state_hashes(common_net)
-    source_optimizer = torch.optim.RAdam(common_net.parameters(), lr=lr, betas=betas, eps=eps_opt)
-    source_optimizer_before = state_sha256(source_optimizer.state_dict())
-    scaler_template = _new_scaler(device, amp, initial_scale)
-    source_scaler_before = state_sha256(scaler_template.state_dict())
-    t = (torch.randn(images.shape[0], 1, 1, 1, device=device) * loss_template.P_std + loss_template.P_mean).exp()
-    eps = torch.randn_like(images)
-    dropout_rng_state = get_rng_state(device).clone()
-    # Keep global RNG state outside the audit invariant as well; this makes the
-    # diagnostic safe to call from a live process between checkpoint actions.
-    cpu_rng_after_sampling = torch.get_rng_state().clone()
-    cuda_rng_after_sampling = (torch.cuda.get_rng_state(device=device).clone() if device.type == "cuda" else None)
-    deltas, branches = {}, []
-    for gain in gains:
-        delta, detail = virtual_radam_update(common_net, loss_template, images, labels, gain=gain,
-            t=t, eps=eps, dropout_rng_state=dropout_rng_state, lr=lr, betas=betas,
-            eps_opt=eps_opt, scaler_template=scaler_template, amp=amp)
-        deltas[gain] = delta
-        branches.append(detail)
-    torch.set_rng_state(cpu_rng_after_sampling)
-    if cuda_rng_after_sampling is not None:
-        torch.cuda.set_rng_state(cuda_rng_after_sampling, device=device)
-    whole, layers = gauge_metrics(deltas[1.0], deltas[1.3])
-    source_after = module_state_hashes(common_net)
-    source_optimizer_after = state_sha256(source_optimizer.state_dict())
-    source_scaler_after = state_sha256(scaler_template.state_dict())
+    microbatch_size = images.shape[0] if microbatch_size is None else microbatch_size
+    if microbatch_size < 1 or images.shape[0] % microbatch_size:
+        raise ValueError("microbatch_size must be a positive divisor of batch size")
+    cpu_rng_before = torch.get_rng_state().clone()
+    cuda_rng_before = torch.cuda.get_rng_state(device=device).clone() if device.type == "cuda" else None
+    try:
+        if random_seed is not None:
+            torch.manual_seed(random_seed)
+            if device.type == "cuda":
+                torch.cuda.manual_seed_all(random_seed)
+        source_before = module_state_hashes(common_net)
+        source_optimizer = torch.optim.RAdam(common_net.parameters(), lr=lr, betas=betas, eps=eps_opt)
+        source_optimizer_before = state_sha256(source_optimizer.state_dict())
+        scaler_template = _new_scaler(device, amp, initial_scale)
+        source_scaler_before = state_sha256(scaler_template.state_dict())
+        microbatches = []
+        # Sampling per microbatch intentionally mirrors ct_training_loop: a
+        # global batch with --batch-gpu=16 makes eight separate RNG calls.
+        for start in range(0, images.shape[0], microbatch_size):
+            image_micro = images[start:start + microbatch_size]
+            label_micro = labels[start:start + microbatch_size]
+            t = (torch.randn(image_micro.shape[0], 1, 1, 1, device=device)
+                 * loss_template.P_std + loss_template.P_mean).exp()
+            eps = torch.randn_like(image_micro)
+            microbatches.append((image_micro, label_micro, t, eps, get_rng_state(device).clone()))
+        deltas, branches = {}, []
+        for gain in gains:
+            delta, detail = virtual_radam_update(common_net, loss_template, microbatches, gain=gain,
+                lr=lr, betas=betas, eps_opt=eps_opt, scaler_template=scaler_template, amp=amp)
+            deltas[gain] = delta
+            branches.append(detail)
+        try:
+            whole, layers = gauge_metrics(deltas[1.0], deltas[1.3])
+        except RuntimeError as exc:
+            whole, layers = undefined_gauge_metrics(deltas[1.0], deltas[1.3], str(exc)), []
+        source_after = module_state_hashes(common_net)
+        source_optimizer_after = state_sha256(source_optimizer.state_dict())
+        source_scaler_after = state_sha256(scaler_template.state_dict())
+    finally:
+        # The caller's RNG stream is state, too: a diagnostic must not consume
+        # it, including when an overflow or another exception is raised.
+        torch.set_rng_state(cpu_rng_before)
+        if cuda_rng_before is not None:
+            torch.cuda.set_rng_state(cuda_rng_before, device=device)
     audit = {
         "gains": list(gains),
         "fresh_radam": {"lr": lr, "betas": list(betas), "eps": eps_opt,
@@ -302,8 +345,12 @@ def run_pair(common_net, loss_template, images, labels, *, gains=(1.0, 1.3), lr=
                                 "same_dropout_rng_state": True,
                                 "minibatch_images_sha256": tensor_sha256(images),
                                 "minibatch_labels_sha256": tensor_sha256(labels),
-                                "t_sha256": tensor_sha256(t), "noise_sha256": tensor_sha256(eps),
-                                "dropout_rng_state_sha256": tensor_sha256(dropout_rng_state)},
+                                "microbatch_size": microbatch_size,
+                                "accumulation_rounds": len(microbatches),
+                                "t_sha256": state_sha256([t for _, _, t, _, _ in microbatches]),
+                                "noise_sha256": state_sha256([eps for _, _, _, eps, _ in microbatches]),
+                                "dropout_rng_state_sha256": state_sha256(
+                                    [state for _, _, _, _, state in microbatches])},
         "source_state_non_committing": {
             "parameter_hash_before": source_before, "parameter_hash_after": source_after,
             "optimizer_state_hash_before": source_optimizer_before,
@@ -338,6 +385,8 @@ def parse_args(argv=None):
     parser.add_argument("--checkpoint", required=True, type=Path)
     parser.add_argument("--data", required=True, help="EDM ImageFolderDataset zip/directory")
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--batch-gpu", type=int, default=None,
+                        help="training microbatch size; reproduces gradient accumulation")
     parser.add_argument("--seed", type=int, default=20260807)
     parser.add_argument("--state-kimg", type=float, default=None,
                         help="provenance label; accepts 32/64/128/256 or any future checkpoint age")
@@ -355,8 +404,11 @@ def parse_args(argv=None):
         raise SystemExit("--betas must be beta1,beta2") from exc
     if len(args.betas) != 2:
         raise SystemExit("--betas must contain exactly two values")
-    if args.batch_size < 1 or args.lr <= 0 or args.initial_scale <= 0:
+    if (args.batch_size < 1 or args.lr <= 0 or args.initial_scale <= 0
+            or (args.batch_gpu is not None and args.batch_gpu < 1)):
         raise SystemExit("batch size, lr, and initial scale must be positive")
+    if args.batch_gpu is not None and args.batch_size % args.batch_gpu:
+        raise SystemExit("--batch-size must be divisible by --batch-gpu")
     return args
 
 
@@ -378,11 +430,13 @@ def main(argv=None) -> int:
     labels = labels.to(device)
     audit, layers = run_pair(net, loss, images, labels, lr=args.lr, betas=args.betas,
                              eps_opt=args.eps_opt, amp=args.amp,
-                             initial_scale=args.initial_scale, random_seed=args.seed)
+                             initial_scale=args.initial_scale, random_seed=args.seed,
+                             microbatch_size=args.batch_gpu)
     audit["provenance"] = {
         "checkpoint": str(args.checkpoint), "checkpoint_sha256": sha256_file(args.checkpoint),
         "data": str(args.data), "dataset_sha256": sha256_file(Path(args.data)),
-        "state_kimg": args.state_kimg, "batch_size": args.batch_size, "seed": args.seed,
+        "state_kimg": args.state_kimg, "batch_size": args.batch_size, "batch_gpu": args.batch_gpu,
+        "seed": args.seed,
         "device": str(device), "torch_version": torch.__version__, "cuda_version": torch.version.cuda,
         "schedule": loss.schedule.name, "q": float(loss.q), "k": float(loss.k), "b": float(loss.b),
         "stage": int(loss.stage), "amp_training_order": "scale, backward, unscale, sanitize, step, update",
@@ -394,7 +448,7 @@ def main(argv=None) -> int:
         json.dump(audit, handle, indent=2, allow_nan=False)
         handle.write("\n")
     with layer_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(layers[0]))
+        writer = csv.DictWriter(handle, fieldnames=LAYERWISE_FIELDS)
         writer.writeheader(); writer.writerows(layers)
     print(json.dumps(audit["whole_model"], indent=2))
     print(f"source state preserved: {audit['source_state_non_committing']['preserved']}")

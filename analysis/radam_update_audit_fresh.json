@@ -1,7 +1,7 @@
 {
   "status": "not_executed_missing_pr42_common_initialization",
   "reason": "This checkout does not contain the PR #42 pretrained EDM snapshot or its paired dataset. No synthetic result is represented as a pretrained-EDM audit.",
-  "required_command": "python analysis/radam_update_gauge.py --checkpoint /path/to/pr42/network-snapshot.pkl --data /path/to/cifar10-32x32.zip --state-kimg <32|64|128|256> --batch-size 64 --seed 20260807 --device cuda",
+  "required_command": "python analysis/radam_update_gauge.py --checkpoint /path/to/pr42/network-snapshot.pkl --data /path/to/cifar10-32x32.zip --state-kimg <32|64|128|256> --batch-size 128 --batch-gpu 16 --seed 20260807 --device cuda",
   "expected_outputs_on_execution": [
     "whole_model.update_cosine",
     "whole_model.update_1_l2",

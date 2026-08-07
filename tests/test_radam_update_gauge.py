@@ -3,6 +3,7 @@ import importlib.util
 import math
 from pathlib import Path
 import unittest
+from unittest import mock
 
 import torch
 
@@ -62,6 +63,7 @@ class RAdamUpdateGaugeTests(unittest.TestCase):
         self.assertEqual(source["optimizer_state_hash_before"], source["optimizer_state_hash_after"])
         self.assertEqual(source["gradscaler_hash_before"], source["gradscaler_hash_after"])
         self.assertEqual(audit["fresh_radam"]["optimizer_step"], 0)
+        self.assertTrue(audit["whole_model"]["gauge_defined"])
         self.assertEqual(len(audit["randomness_contract"]["t_sha256"]), 64)
         self.assertEqual(len(audit["randomness_contract"]["noise_sha256"]), 64)
         self.assertEqual(len(audit["branches"]), 2)
@@ -81,6 +83,32 @@ class RAdamUpdateGaugeTests(unittest.TestCase):
         self.assertTrue(audit["source_state_non_committing"]["preserved"])
         self.assertTrue(all(branch["grad_scale_before"] == 128.0 for branch in audit["branches"]))
 
+    def test_microbatch_accumulation_matches_training_step_shape_and_preserves_rng(self):
+        net = TinyEDM().train()
+        images = torch.linspace(-0.8, 0.8, 8).reshape(8, 1, 1, 1)
+        labels = torch.empty((8, 0))
+        rng_before = torch.get_rng_state().clone()
+        audit, _ = MODULE.run_pair(net, TinyLoss(), images, labels, amp=False,
+                                   random_seed=1, microbatch_size=4)
+        self.assertTrue(torch.equal(rng_before, torch.get_rng_state()))
+        self.assertEqual(audit["randomness_contract"]["accumulation_rounds"], 2)
+        self.assertTrue(all(branch["accumulation_rounds"] == 2 for branch in audit["branches"]))
+        self.assertTrue(all(branch["optimizer_step_after"] == 1 for branch in audit["branches"]))
+
+    def test_probe_does_not_introduce_autocast_not_used_by_training_loop(self):
+        source = Path(SCRIPT).read_text(encoding="utf-8")
+        self.assertNotIn("with torch.autocast(", source)
+
+    def test_degenerate_update_is_a_recorded_audit_not_a_crash(self):
+        net = TinyEDM().train()
+        images = torch.zeros(4, 1, 1, 1)
+        labels = torch.empty((4, 0))
+        with mock.patch.object(MODULE, "gauge_metrics", side_effect=RuntimeError("simulated skip")):
+            audit, layers = MODULE.run_pair(net, TinyLoss(), images, labels, amp=False, random_seed=1)
+        self.assertFalse(audit["whole_model"]["gauge_defined"])
+        self.assertEqual(audit["whole_model"]["gauge_error"], "simulated skip")
+        self.assertEqual(layers, [])
+
     def test_requested_c_star_and_residual_follow_protocol_formula(self):
         one = {"block.weight": torch.tensor([2.0, 0.0], dtype=torch.float64)}
         thirteen = {"block.weight": torch.tensor([1.0, 0.0], dtype=torch.float64)}
@@ -94,8 +122,10 @@ class RAdamUpdateGaugeTests(unittest.TestCase):
 
     def test_parse_args_supports_future_checkpoint_age(self):
         args = MODULE.parse_args(["--checkpoint", "state.pkl", "--data", "data.zip",
-                                  "--state-kimg", "256", "--no-amp"])
+                                  "--state-kimg", "256", "--batch-size", "64",
+                                  "--batch-gpu", "16", "--no-amp"])
         self.assertEqual(args.state_kimg, 256.0)
+        self.assertEqual(args.batch_gpu, 16)
         self.assertFalse(args.amp)
         self.assertTrue(math.isclose(args.betas[1], 0.999))
 

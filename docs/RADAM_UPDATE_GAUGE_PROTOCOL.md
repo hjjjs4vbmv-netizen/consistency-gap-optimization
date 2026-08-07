@@ -25,7 +25,14 @@ two disposable branches.  Both branches have:
 The sole branch difference is `global_gap_scale`: `1.0` versus `1.3`.
 Augmentation-enabled checkpoints fail closed because paired augmentation is
 not implemented.  The update follows the training-loop order exactly:
-`scale → backward → unscale → sanitize → step → update`.
+`scale → backward → unscale → sanitize → step → update`.  It intentionally
+does **not** enter `torch.autocast`: the repository's training loop uses a
+GradScaler while the EDM network itself selects fp16.
+
+When the training run used `batch-gpu < batch`, provide `--batch-gpu` as well.
+The probe then samples `t`, noise, and dropout state separately for each
+microbatch, accumulates their gradients in the training-loop order, and makes
+one RAdam step.  The audit records the number of accumulation rounds.
 
 The source model, source fresh optimizer, and source GradScaler never receive
 a step.  Their before/after SHA-256 hashes must match.  Each branch also
@@ -62,7 +69,8 @@ audit, not that expectation, is the evidence.
 python analysis/radam_update_gauge.py \
   --checkpoint /path/to/network-snapshot.pkl \
   --data /path/to/cifar10-32x32.zip \
-  --state-kimg 128 --batch-size 64 --seed 20260807 --device cuda
+  --state-kimg 128 --batch-size 128 --batch-gpu 16 \
+  --seed 20260807 --device cuda
 ```
 
 The command overwrites only these two explicit analysis outputs:
