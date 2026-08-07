@@ -2,6 +2,7 @@
 import importlib.util
 import math
 from pathlib import Path
+import tempfile
 import unittest
 from unittest import mock
 
@@ -119,6 +120,35 @@ class RAdamUpdateGaugeTests(unittest.TestCase):
         self.assertAlmostEqual(layers[0]["c0_star"], 2.0)
         self.assertAlmostEqual(layers[0]["layerwise_residual"], 0.0)
         self.assertAlmostEqual(layers[0]["layerwise_residual_with_model_c0_star"], 0.0)
+
+    def test_dataset_hash_supports_files_and_deterministic_directories(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            archive = root / "dataset.zip"
+            archive.write_bytes(b"archive contents")
+            self.assertEqual(MODULE.dataset_sha256(archive),
+                             (MODULE.sha256_file(archive), "sha256_file"))
+
+            first = root / "first"
+            second = root / "second"
+            for directory in (first, second):
+                (directory / "nested").mkdir(parents=True)
+                (directory / "nested" / "sample.bin").write_bytes(b"sample contents")
+            first_hash, first_algorithm = MODULE.dataset_sha256(first)
+            second_hash, second_algorithm = MODULE.dataset_sha256(second)
+            self.assertEqual(first_algorithm, "sha256_directory_v1")
+            self.assertEqual(second_algorithm, "sha256_directory_v1")
+            self.assertEqual(first_hash, second_hash)
+
+            renamed = root / "renamed"
+            (renamed / "nested").mkdir(parents=True)
+            (renamed / "nested" / "renamed.bin").write_bytes(b"sample contents")
+            renamed_hash, _ = MODULE.dataset_sha256(renamed)
+            self.assertNotEqual(first_hash, renamed_hash)
+
+            (second / "nested" / "sample.bin").write_bytes(b"changed contents")
+            changed_hash, _ = MODULE.dataset_sha256(second)
+            self.assertNotEqual(first_hash, changed_hash)
 
     def test_parse_args_supports_future_checkpoint_age(self):
         args = MODULE.parse_args(["--checkpoint", "state.pkl", "--data", "data.zip",

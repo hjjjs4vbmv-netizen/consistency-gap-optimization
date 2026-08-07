@@ -10,6 +10,11 @@ It works directly with any ECT snapshot, including the prospective
 32/64/128/256 kimg states.  `--state-kimg` is provenance only; it does not
 change parameters, optimizer initialization, or the calculation.
 
+This is a **fresh-state sanity probe**, not a measurement of the update from a
+resumed training optimizer.  It deliberately initializes RAdam with empty
+moments and a new GradScaler.  A stateful continuation claim requires a
+separate run that restores the training optimizer and scaler states.
+
 ## Invariants
 
 For a single invocation the tool loads one `ema` network snapshot and creates
@@ -77,5 +82,8 @@ The command overwrites only these two explicit analysis outputs:
 
 The JSON includes update cosine/norms, whole-model residual, AMP unscale and
 skipped-step telemetry, all source and virtual branch hashes, optimizer steps,
-checkpoint/data hashes, and runtime provenance.  The CSV includes layerwise
-norms, cosine, both scale conventions, and residuals.
+checkpoint/data hashes, and runtime provenance.  `dataset_sha256` supports
+both ZIP files and directory datasets: directory hashes are deterministic over
+sorted relative paths and file contents, and `dataset_hash_algorithm` records
+which form was used.  The CSV includes layerwise norms, cosine, `c0_star`, and
+residuals.

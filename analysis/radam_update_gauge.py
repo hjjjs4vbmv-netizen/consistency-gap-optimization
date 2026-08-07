@@ -1,10 +1,11 @@
 """One-step, non-committing RAdam update gauge for the ECT gap intervention.
 
 This is deliberately an *update* probe, rather than the gradient-only probe in
-``gap_gradient_hook.py``.  It makes two disposable copies of one pretrained
-EDM, starts a fresh RAdam on each (``m=v=0``, optimizer step zero), and runs
-the training-loop AMP order once for g=1.0 and g=1.3.  The source model,
-optimizer, and GradScaler are never stepped.
+``gap_gradient_hook.py``.  It is a fresh-state sanity probe: it makes two
+disposable copies of one pretrained EDM, starts a fresh RAdam on each
+(``m=v=0``, optimizer step zero), and runs the training-loop AMP order once
+for g=1.0 and g=1.3.  It is not an audit of a resumed training optimizer
+state.  The source model, optimizer, and GradScaler are never stepped.
 
 The CLI accepts any of the 32/64/128/256 kimg snapshots: checkpoint age is
 only provenance, not an assumption of this diagnostic.
@@ -44,6 +45,39 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def sha256_directory(path: Path) -> str:
+    """Hash a dataset directory by sorted relative path and file content.
+
+    Absolute locations and metadata are intentionally excluded so that a copied
+    dataset has the same provenance hash.  Directory entries are included to
+    distinguish otherwise identical file sets with different structure.
+    """
+    digest = hashlib.sha256()
+    digest.update(b"radam-update-gauge-directory-sha256-v1\\0")
+    entries = sorted(path.rglob("*"), key=lambda entry: entry.relative_to(path).as_posix())
+    for entry in entries:
+        relative = entry.relative_to(path).as_posix().encode("utf-8")
+        if entry.is_dir():
+            digest.update(b"directory\\0" + relative + b"\\0")
+        elif entry.is_file():
+            digest.update(b"file\\0" + relative + b"\\0")
+            with entry.open("rb") as handle:
+                for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                    digest.update(chunk)
+        else:
+            raise ValueError(f"dataset directory contains unsupported entry: {entry}")
+    return digest.hexdigest()
+
+
+def dataset_sha256(path: Path) -> tuple[str, str]:
+    """Return a deterministic provenance hash and its algorithm identifier."""
+    if path.is_file():
+        return sha256_file(path), "sha256_file"
+    if path.is_dir():
+        return sha256_directory(path), "sha256_directory_v1"
+    raise FileNotFoundError(f"dataset path does not exist or is not a regular file/directory: {path}")
 
 
 def _hash_value(digest: "hashlib._Hash", value: Any) -> None:
@@ -429,9 +463,11 @@ def main(argv=None) -> int:
                              eps_opt=args.eps_opt, amp=args.amp,
                              initial_scale=args.initial_scale, random_seed=args.seed,
                              microbatch_size=args.batch_gpu)
+    data_sha256, dataset_hash_algorithm = dataset_sha256(Path(args.data))
     audit["provenance"] = {
         "checkpoint": str(args.checkpoint), "checkpoint_sha256": sha256_file(args.checkpoint),
-        "data": str(args.data), "dataset_sha256": sha256_file(Path(args.data)),
+        "data": str(args.data), "dataset_sha256": data_sha256,
+        "dataset_hash_algorithm": dataset_hash_algorithm,
         "state_kimg": args.state_kimg, "batch_size": args.batch_size, "batch_gpu": args.batch_gpu,
         "seed": args.seed,
         "device": str(device), "torch_version": torch.__version__, "cuda_version": torch.version.cuda,
