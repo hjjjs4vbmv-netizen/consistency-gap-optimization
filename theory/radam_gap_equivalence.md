@@ -137,6 +137,22 @@ constants over the trajectory. The empirical question for the three-arm study:
 is there a training phase where `prod L` is large enough to turn the ~0.3-3.8%
 gradient residual into a finite-budget quality difference?
 
+**Numeric anchor (theory/test_radam_trajectory_bound.py, real torch.optim.RAdam):**
+- convex quadratic (smooth, contraction): injected residual 1e-3 at step 20
+  → state diff 0.72e-3 at K=200, **amplification 0.72 < 1** (no amplification).
+- non-convex MLP (early/transient): amplification is **> 1 and grows with LR
+  and with earlier injection**:
+  | lr | inj step 2 | inj step 5 | inj step 10 |
+  |---:|---:|---:|---:|
+  | 0.01 | 1.06 | 1.05 | 1.03 |
+  | 0.03 | **1.31** | 1.26 | 1.19 |
+  | 0.10 | **1.36** | 1.30 | 1.19 |
+  (deterministic — independent of added noise; earlier injection → larger
+  amplification, consistent with the product-of-Lipschitz structure).
+This demonstrates the mechanism qualitatively: in the adaptive/transient phase
+a small per-step residual can be amplified along the trajectory, so
+finite-horizon divergence does not require a large single-step residual.
+
 ---
 
 ## 6. Non-trivial terms (open, acknowledged, not proven today)
