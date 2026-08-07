@@ -1,40 +1,33 @@
-# Novelty position matrix（2026-08-06）
+# Novelty position matrix（2026-08-06；更新于 2026-08-07）
 
 ## 一页结论
 
-当前最可防守的定位不是“首次自适应 gap / 首次 difficulty-aware schedule / 首次研究 CM noise”，而是一个更窄、仍待真实深网证据支持的问题：**在同一参数状态与完全 paired minibatch 上，gap 引起的平均 gradient 能否被单一正标量吸收；若能，scalar matching 后是否仍留下 gap-conditioned gradient-noise 或实际 optimizer update residual。** 在 Role D 通过前，这只能写成 diagnostic question / candidate contribution，不能写成已证实贡献。
+已有工作已经覆盖 adaptive discretization、difficulty-aware curriculum 和 consistency-training variance reduction。当前可防守的新位置更窄：**PR #38 已在一个真实 q=128 exploratory EMA checkpoint 上提供完全 paired 的 raw-gradient scalar-equivalence evidence；尚未解决的是 common fresh RAdam/GradScaler state 下的 update residual，以及它是否能解释 finite-budget ranking。**
 
 | 工作 | 已解决什么 | 我们不能声称什么 | 我们仍可能贡献什么 |
 |---|---|---|---|
-| **ADCM** — *Adaptive Discretization for Consistency Models* ([NeurIPS 2025](https://papers.nips.cc/paper_files/paper/2025/file/84706cdfc192cd0351daf48f379847e6-Paper-Conference.pdf)) | 以 local consistency 保证 trainability、global consistency 约束 target denoising error，并用 Gauss–Newton 自适应优化 discretization step；已把训练效率和有限 image budget 纳入实验。 | 不能声称“首次自适应 gap/discretization”；不能把 ADCM 说成 loss-only；不能仅凭“finite budget”宣称区分，也不能说 Role C toy 已证明 ADCM 的瞬时准则失败。 | **Scalar-equivalence diagnosis：**在同一深网参数状态上检验不同 gap 的 mean gradient 是否只是标量重缩放，并报告 ADCM-style observables 之外的 direction/residual。若 residual 稳定且能预测后续训练差异，才形成 optimizer-aware 区分。 |
-| **CCM** — *See Further When Clear: Curriculum Consistency Model* ([CVPR 2025](https://openaccess.thecvf.com/content/CVPR2025/papers/Liu_See_Further_When_Clear_Curriculum_Consistency_Model_CVPR_2025_paper.pdf)) | 用 PSNR 衡量不同 timestep 的学习难度，动态改变 teacher 的迭代步数，使 consistency distillation 的 curriculum difficulty 更均衡。 | 不能声称“首次 difficulty-aware curriculum/schedule”；不能把任何按 `t` 分 bin 或按难度调 pair 的方法本身当作 novelty；CCM 是 distillation 设定，也不能被写成与本项目完全同一训练机制。 | **Optimizer residual：**在 difficulty 已被 gap/teacher-step 调整之后，测量 scalar-matched gradient residual；若要使用“optimizer”一词，还必须在相同 RAdam state 上复算 candidate update，而不是只报告 loss 或 gradient norm。 |
-| **SCT** — *Stable Consistency Tuning* ([arXiv:2410.18958](https://arxiv.org/abs/2410.18958); [OpenReview](https://openreview.net/forum?id=5RoPe2ShXx)) | 把 CM training/tuning 表述为 TD-style value estimation，并利用 score identity 构造 variance-reduced target；已直接研究和降低 consistency training variance。 | 不能声称“首次发现/研究 CM noise 或 variance matters”；不能把 per-example loss variance 当作 SCT 未覆盖的 gradient-noise covariance；也不能把“做了 variance controller”本身写成新机制。 | **Gap-conditioned noise structure：**在固定 `theta`、真实 ECT loss、完全 paired minibatch 下，分解 `Cov(G_g)` 与 scalar-matched paired residual covariance，说明 gap 改变的是哪些 layer/direction，而不只是一个总 variance 数字。 |
-| **Role C toy** — bare linear stop-gradient squared-pair dynamics ([audit](../theory/theorem_audit_0805.md)) | 在线性高斯、平方 pair loss、每步独立重采样和 SGD 等条件下，区分 `H_g`、mean update `A_g` 与 second-moment operator `T_g`；给出逐样本 scalar rescaling 导致有限时域等价的充分条件。 | 不能声称 toy 已得到 budget-dependent optimum/crossover；A-matched 后现有 grid 几乎平坦且最优边界不随 budget 改变。不能把 toy 的 parameter second moment 当成深网 generation error，也不能自动外推到 RAdam。 | **Scalar-equivalence baseline / negative control：**用精确/近似等价 toy 校准 Role D estimator，验证 `a_g^star`、mean residual 与 noise residual 的实现；深网只有显著偏离该 baseline，才支持独立 gap mechanism。 |
+| **ADCM** — *Adaptive Discretization for Consistency Models* ([NeurIPS 2025](https://papers.nips.cc/paper_files/paper/2025/file/84706cdfc192cd0351daf48f379847e6-Paper-Conference.pdf)) | 用 local/global consistency 与 Gauss–Newton 自适应优化 discretization step，并研究有限训练预算与训练效率。 | 不能声称首次 adaptive gap；不能说 ADCM 是 loss-only 或忽略 finite budget；PR #38 也没有证明 ADCM 的瞬时准则失败。 | **Scalar-equivalence diagnosis：**PR #38 显示单 checkpoint 上 raw mean gradients 近乎共线但不完全等价；未来可检验这种 residual 是否跨 state 稳定并提供 ADCM observables 之外的信息。 |
+| **CCM** — *See Further When Clear: Curriculum Consistency Model* ([CVPR 2025](https://openaccess.thecvf.com/content/CVPR2025/papers/Liu_See_Further_When_Clear_Curriculum_Consistency_Model_CVPR_2025_paper.pdf)) | 用 PSNR 衡量 timestep difficulty，动态改变 teacher steps，使 consistency-distillation curriculum 更均衡。 | 不能声称首次 difficulty-aware schedule，也不能把按 `t` 分 bin 或调 pair difficulty 本身作为 novelty；CCM 与本项目训练设定不完全相同。 | **Optimizer residual：**在 difficulty/gap 已改变 raw gradient 后，测量 fresh RAdam state 对 scalar relation 的吸收或破坏；该项仍未实现。 |
+| **SCT** — *Stable Consistency Tuning* ([arXiv:2410.18958](https://arxiv.org/abs/2410.18958); [OpenReview](https://openreview.net/forum?id=5RoPe2ShXx)) | 用 score identity 构造 variance-reduced target，直接研究并降低 consistency training variance。 | 不能声称首次研究 CM noise；不能把 per-example loss variance 当 gradient covariance，也不能把“variance controller”本身写成新机制。 | **Gap-conditioned noise structure：**PR #38 已报告 raw minibatch-gradient variance trace 与 layerwise residual；仍需 fresh-state、paired residual covariance、跨 checkpoint/seed 重现及与质量 ranking 的联系。 |
+| **Role C toy** — bare linear stop-gradient squared-pair dynamics ([audit](../theory/theorem_audit_0805.md)) | 区分 `H_g`、mean update `A_g` 与 second-moment operator `T_g`，并给出逐样本 scalar rescaling 导致有限时域等价的充分条件。 | 不能声称 toy 存在 budget-dependent optimum；A-matched 后当前结果近乎平坦。不能把 parameter second moment 当生成误差或自动外推到 RAdam。 | **Scalar-equivalence baseline：**它为 PR #38 的 `a_g^star` 和 residual 提供 negative-control 基线；PR #38 的小而非零 residual 是深网 observation，不是新的普遍 theorem。 |
 
-## Claim ledger
+## 当前可写的证据声明
 
-**现在可以写：**
+> On one exploratory q=128 EMA checkpoint, 64 paired FP32 minibatches show that changing the global gap multiplier primarily rescales the whole-model raw mean gradient: all mean-gradient cosines exceed 0.9999 and the largest whole-model directional residual is 1.35%, while some layerwise residuals reach 12.41%.
 
-> Prior work already adapts discretization, balances timestep difficulty, and reduces consistency-training variance. We therefore test a narrower optimizer-aware question: whether gap-conditioned minibatch gradients at a fixed network state remain equivalent after scalar matching, and whether any residual has stable directional or covariance structure.
+必须紧接限制：这是 [PR #38](https://github.com/hjjjs4vbmv-netizen/recurrence_of_ect/pull/38) 的 single-checkpoint supplementary raw-gradient evidence；optimizer 未创建或 step，不能推出 RAdam update equivalence、学习率替代、formal endpoint 或生成质量改善。
 
-**Role D 通过后才可能写：**
+## 仍待完成的候选贡献
 
-> Under the audited checkpoints and paired minibatch distribution, gap changes leave a reproducible scalar-matched gradient/noise residual that is not explained by loss scale alone.
+[PR #42](https://github.com/hjjjs4vbmv-netizen/recurrence_of_ect/pull/42) 所需的 fresh-state virtual RAdam audit 尚未完成。只有它给出有限、可复算的 `c0_star`、update cosine/residual、AMP unscale 与 state-invariance evidence 后，才能把 Arm C 称为 **initialization-level one-step RAdam-update matched control**；即使通过，也不能声称整个训练轨迹始终 matched。
 
-这仍是 checkpoint- and optimizer-specific empirical statement；除非另有跨 checkpoint、seed、budget 和 optimizer 验证，不得升级为普遍 theorem。
-
-**禁止写：**
+## 禁止声明
 
 - “We are the first to adapt the gap / use difficulty / study CM variance.”
 - “ADCM ignores finite budgets”或“ADCM only looks at loss.”
 - “Loss variance is gradient-noise covariance.”
+- “PR #38 proves gap is equivalent to learning-rate scaling.”
 - “The Role C toy proves a budget-dependent optimal gap.”
-- “Gradient residual equals optimizer residual”——对当前 RAdam 训练，后者需要克隆 optimizer state 后单独测量。
+- “Raw-gradient residual equals optimizer residual.”
 
-## 决策边界
-
-- **Role D 若 scalar matching 后 residual 约为数值零：**主线收口为 negative result / diagnostic lemma；不要继续包装成新 adaptive schedule。
-- **若 gradient residual 非零但 RAdam update residual 消失：**只能声称 gradient geometry 有差异，不能声称 optimizer mechanism。
-- **若 paired gradient 与 optimizer residual 均稳定、跨 checkpoint/seed 重现，并能预测 budget ranking：**才有资格把“optimizer-aware gap effect”升级为论文候选贡献。
-
-本矩阵只处理 ADCM、CCM、SCT 与 Role C toy 四个已知直接威胁；不以“未继续扩张搜索”推断不存在其他先行工作。
+本矩阵只处理 ADCM、CCM、SCT、Role C toy 与当前 PR #38/#42 的直接边界；不以停止扩张搜索推断不存在其他先行工作。
