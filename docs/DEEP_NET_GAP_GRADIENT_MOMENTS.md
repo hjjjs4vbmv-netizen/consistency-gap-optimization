@@ -21,15 +21,16 @@ identity, but cannot attest an expected training commit because the completed
 run did not persist `commit_sha.txt`.  Independent Role D receiver
 verification passed for this one exploratory checkpoint at
 `analysis/deepnet_role_d_receiver_verification.json` (SHA256
-`e092db3727de6915ed0e3b6113da9744d2ea9dda5e60d7fe84697756fd2ad8c5`):
+`31b79ac41d533861df426ffe4a4976f3390c432616f9c7456a517172fcec2743`):
 ECT002 recomputed both the received archive digest and checkpoint digest.
 This closes the receiver-identity gap for this supplementary diagnostic only;
-it does not make the checkpoint prospective or formal, and does not verify
-the six historical `q128-1024k-*` checkpoints.
+it does not make the checkpoint prospective or formal, and does not validate
+any separate evaluation program.
 
 The sender handoff declaration is
-`analysis/q128_transfer_1000k_sender_handoff.json`; the received Role D
-receipt above was generated with `scripts/verify_checkpoint_handoff.py`.
+`analysis/q128_transfer_1000k_sender_handoff.json`; the received receipt was
+generated with the standalone `scripts/verify_handoff.py` archive/checkpoint
+identity verifier.
 
 ## v2 validation extension
 
@@ -95,8 +96,8 @@ This diagnostic measures **raw gradients only**: `optimizer_created=false`
 and `optimizer_steps=0`. Near-collinearity of raw gradients does not
 establish equivalence of RAdam parameter updates, because adaptive first- and
 second-moment states can absorb or transform scalar gradient changes. In
-particular, the prospective training contract uses RAdam with `eta=1e-4`,
-`beta1=0.9`, and `beta2=0.999`; no result here licenses the learning-rate
+particular, the measured run used RAdam with `eta=1e-4`, `beta1=0.9`, and
+`beta2=0.999`; no result here licenses the learning-rate
 substitution `eta_g = eta_1 / a*_g`. The measured scalar fit is therefore not
 evidence that changing gap is equivalent to changing learning rate, and must
 not be used as such in experimental design or paper claims.
@@ -137,6 +138,6 @@ This is adequate to share as a controlled, within-checkpoint mechanism
 observation.  It is not adequate to claim an optimization or sample-quality
 benefit: it has one checkpoint, one seed, no global110 training counterpart,
 no formal metric endpoint, and no q=128/q=256 dataset-semantic equivalence
-result.  Independent receiver verification passed for this exploratory
-checkpoint only; it does not verify the historical six `q128-1024k-*`
-checkpoints or promote this result to formal evidence.
+result. Independent receiver verification passed for this exploratory
+checkpoint only; it does not validate any other checkpoints or promote this
+result to formal evidence.

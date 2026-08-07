@@ -22,8 +22,8 @@
   "sender_handoff_manifest_status": "ready_for_independent_role_d_execution",
   "role_d_receiver_verification": "passed_for_this_exploratory_checkpoint_only",
   "role_d_receiver_verification_file": "analysis/deepnet_role_d_receiver_verification.json",
-  "role_d_receiver_verification_sha256": "e092db3727de6915ed0e3b6113da9744d2ea9dda5e60d7fe84697756fd2ad8c5",
-  "role_d_receiver_verifier_commit": "60f14ad7e26fc1eaac303e958007840945112e67",
+  "role_d_receiver_verification_sha256": "31b79ac41d533861df426ffe4a4976f3390c432616f9c7456a517172fcec2743",
+  "role_d_receiver_verifier": "scripts/verify_handoff.py (standalone archive/checkpoint identity verifier)",
   "evaluation_commit": "ba1752087e93ca1010041ce8aa023ff032f067e2",
   "evaluation_runner_sha256": "a5dcd2fb12bac27825936140b94430ee49a81fc91482c2ce7015748686709128",
   "v2_validation_status": {
@@ -59,7 +59,7 @@
   "randomness_contract": "For every minibatch and every g, the image batch, per-example timestep vector, shared epsilon tensor, dropout RNG state, and model parameter values were held fixed. No optimizer was created or stepped.",
   "formal_eligibility": "not_eligible_despite_receiver_verification",
   "prohibited_claims": [
-    "formal_q128_1024k_result",
+    "formal_result",
     "prospective_frozen_matrix_evidence",
     "cross_q_generalization",
     "explanation_of_q256_fid",
