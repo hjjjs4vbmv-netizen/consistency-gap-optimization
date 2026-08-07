@@ -109,16 +109,16 @@ class RAdamUpdateGaugeTests(unittest.TestCase):
         self.assertEqual(audit["whole_model"]["gauge_error"], "simulated skip")
         self.assertEqual(layers, [])
 
-    def test_requested_c_star_and_residual_follow_protocol_formula(self):
+    def test_requested_c_star_scales_u13_to_u1(self):
         one = {"block.weight": torch.tensor([2.0, 0.0], dtype=torch.float64)}
         thirteen = {"block.weight": torch.tensor([1.0, 0.0], dtype=torch.float64)}
         whole, layers = MODULE.gauge_metrics(one, thirteen)
-        # Requested: ||d_1.3||^2 / <d_1.3,d_1> = 1/2, not the inverse LS fit.
-        self.assertAlmostEqual(whole["c0_star_requested"], 0.5)
-        self.assertAlmostEqual(whole["least_squares_scale_1p3_to_1"], 2.0)
-        self.assertAlmostEqual(whole["whole_model_residual"], 0.75)
-        self.assertAlmostEqual(layers[0]["layerwise_residual"], 0.75)
-        self.assertAlmostEqual(layers[0]["layerwise_residual_with_model_c0_star"], 0.75)
+        # Requested: c0_star * d_1.3 ≈ d_1, so c0_star = <d_1.3,d_1>/||d_1.3||^2 = 2.
+        self.assertAlmostEqual(whole["c0_star"], 2.0)
+        self.assertAlmostEqual(whole["whole_model_residual"], 0.0)
+        self.assertAlmostEqual(layers[0]["c0_star"], 2.0)
+        self.assertAlmostEqual(layers[0]["layerwise_residual"], 0.0)
+        self.assertAlmostEqual(layers[0]["layerwise_residual_with_model_c0_star"], 0.0)
 
     def test_parse_args_supports_future_checkpoint_age(self):
         args = MODULE.parse_args(["--checkpoint", "state.pkl", "--data", "data.zip",

@@ -33,7 +33,7 @@ from training.schedules import get_schedule
 
 LAYERWISE_FIELDS = (
     "layer", "update_1_l2", "update_1p3_l2", "update_cosine",
-    "c0_star_requested", "least_squares_scale_1p3_to_1", "layerwise_residual",
+    "c0_star", "layerwise_residual",
     "layerwise_residual_with_model_c0_star",
 )
 
@@ -155,16 +155,15 @@ def _dot(left: dict[str, torch.Tensor], right: dict[str, torch.Tensor]) -> float
 def gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[str, torch.Tensor]) -> tuple[dict[str, float], list[dict[str, float]]]:
     """Compute the requested gauge and whole-model/per-layer residuals.
 
-    ``c_star`` intentionally follows the formula in the protocol request:
-    ||d_1.3||² / <d_1.3,d_1>.  It is reported separately from the conventional
-    least-squares scale because those two quantities are reciprocals (for
-    collinear nonzero vectors), while the requested residual is c_star*d_1.3-d_1.
+    ``c_star`` is the least-squares coefficient for the stated target
+    ``c_star * d_1.3 ≈ d_1``: <d_1.3,d_1> / ||d_1.3||².  The residual below
+    uses that same coefficient.
     """
     n1_sq, n13_sq = _norm_sq(update_1.values()), _norm_sq(update_13.values())
     dot = _dot(update_13, update_1)
     if n1_sq <= 0 or n13_sq <= 0 or dot == 0:
         raise RuntimeError("zero or orthogonal virtual update; gauge is undefined")
-    c_star = n13_sq / dot
+    c_star = dot / n13_sq
     cosine = dot / math.sqrt(n1_sq * n13_sq)
     residual_sq = max(_norm_sq((c_star * update_13[name] - update_1[name] for name in update_1)), 0.0)
     whole = {
@@ -174,8 +173,7 @@ def gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[str, torch.
         "update_1p3_l2": math.sqrt(n13_sq),
         "update_dot": dot,
         "update_cosine": cosine,
-        "c0_star_requested": c_star,
-        "least_squares_scale_1p3_to_1": dot / n13_sq,
+        "c0_star": c_star,
         "whole_model_residual": math.sqrt(residual_sq) / math.sqrt(n1_sq),
     }
     by_layer: dict[str, list[str]] = defaultdict(list)
@@ -189,7 +187,7 @@ def gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[str, torch.
         if l1_sq == 0 or l13_sq == 0 or ldot == 0:
             c_layer, cosine_layer, residual, residual_with_model_c = (math.nan,) * 4
         else:
-            c_layer = l13_sq / ldot
+            c_layer = ldot / l13_sq
             cosine_layer = ldot / math.sqrt(l1_sq * l13_sq)
             lres_sq = _norm_sq(c_layer * update_13[name] - update_1[name] for name in names)
             residual = math.sqrt(max(lres_sq, 0.0)) / math.sqrt(l1_sq)
@@ -200,8 +198,7 @@ def gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[str, torch.
             "update_1_l2": math.sqrt(l1_sq),
             "update_1p3_l2": math.sqrt(l13_sq),
             "update_cosine": cosine_layer,
-            "c0_star_requested": c_layer,
-            "least_squares_scale_1p3_to_1": ldot / l13_sq if l13_sq else math.nan,
+            "c0_star": c_layer,
             "layerwise_residual": residual,
             "layerwise_residual_with_model_c0_star": residual_with_model_c,
         })
@@ -218,7 +215,7 @@ def undefined_gauge_metrics(update_1: dict[str, torch.Tensor], update_13: dict[s
         "gauge_defined": False, "gauge_error": error,
         "update_1_l2": math.sqrt(n1_sq), "update_1p3_l2": math.sqrt(n13_sq),
         "update_dot": dot, "update_cosine": cosine,
-        "c0_star_requested": None, "least_squares_scale_1p3_to_1": None,
+        "c0_star": None,
         "whole_model_residual": None,
     }
 

@@ -43,10 +43,10 @@ gradient proxy.
 ## Calculation
 
 Let `d1 = Δθ_1` and `d13 = Δθ_1.3`.  The audit reports their norms and cosine,
-then uses the requested convention:
+then calculates the coefficient for the requested target `c0_star * d13 ≈ d1`:
 
 ```
-c0_star = ||d13||² / <d13, d1>
+c0_star = <d13, d1> / ||d13||²
 rho0    = ||c0_star * d13 - d1|| / ||d1||
 ```
 
@@ -54,10 +54,7 @@ rho0    = ||c0_star * d13 - d1|| / ||d1||
 same calculation within each enclosing parameter module.  Its
 `layerwise_residual_with_model_c0_star` applies the single whole-model
 `c0_star` to every layer, while `layerwise_residual` uses each layer's own
-requested `c0_star` to localize direction mismatch.  For interpretation, the
-output additionally reports `least_squares_scale_1p3_to_1`, which is
-`<d13,d1>/||d13||²`.  It is the reciprocal of `c0_star` for exactly collinear
-updates.  Keeping both fields avoids silently changing the requested formula.
+coefficient to localize direction mismatch.
 
 At the first RAdam step, the optimizer is in its unrectified regime.  Therefore
 the updates are expected to remain close to a gradient-scale relation, but the
