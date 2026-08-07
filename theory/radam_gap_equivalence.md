@@ -78,11 +78,23 @@ and the parameter update scales linearly:
 U_g = a U_1   =>   c_g^* = a   =>   eta_g = eta_1 / a  (to match U_g = U_1)
 ```
 
-*Proof sketch.* Induction: `m_1^g = beta1 m_0^g + (1-beta1) G^g = a(beta1 m_0^1 + (1-beta1) G^1) = a m_1^1`;
-`v` likewise with `(G^g)^2 = a^2 (G^1)^2`. Since `r_k=1` and `eps=0`, the update is
-`eta * mhat` (or `eta * mhat/sqrt(vhat)` with `vhat` irrelevant when... — in the
-pure first-moment regime, only `m` matters), so `U_g = a U_1`. Matching
-`eta_g U_g = eta_1 U_1` gives `eta_g = eta_1 / a`.
+*Proof (induction).* Base `k=0`: by assumption `m_0^g = a m_0^1`, `v_0^g = a^2 v_0^1`.
+Inductive step: assume `m_{k-1}^g = a m_{k-1}^1`, `v_{k-1}^g = a^2 v_{k-1}^1`.
+Then
+```
+m_k^g = beta1 m_{k-1}^g + (1-beta1) G^g
+      = beta1 (a m_{k-1}^1) + (1-beta1) (a G^1)      [G^g = a G^1]
+      = a [ beta1 m_{k-1}^1 + (1-beta1) G^1 ]
+      = a m_k^1.
+v_k^g = beta2 v_{k-1}^g + (1-beta2) (G^g)^2
+      = beta2 (a^2 v_{k-1}^1) + (1-beta2) (a^2 (G^1)^2)
+      = a^2 v_k^1.
+```
+Bias correction is linear in `m`, `v` (and `n` is identical across arms), so
+`mhat_k^g = a mhat_k^1`, `vhat_k^g = a^2 vhat_k^1`. In the unrectified regime
+`r_k = 1` and the update is `eta * mhat` (the `sqrt(vhat)` term is not present
+in this regime), hence `U_g = a U_1`. Matching `eta_g U_g = eta_1 U_1` gives
+`eta_g = eta_1 / a`. ∎
 
 **Consequence.** In the fresh-state / unrectified phase, `c_g^*` should track the
 raw-gradient `1/a_g` value. **This is the "null" expectation for Role D's
@@ -122,20 +134,47 @@ adaptive preconditioner re-absorbs the scalar.
 
 ## 5. Approximate trajectory bound (P-R3)
 
-Let the state residual after best matching satisfy
+*Setup.* Write the state updates of the two arms (gap `g` vs reference `1`),
+both run with their matched LR (`eta_g = c_g^* eta_1`, or simply `eta` for the
+reference):
+
 ```
-|| Phi_g(z, xi; c_g^* eta) - Phi_1(z, xi; eta) || <= eps_k,
+z_{k+1}^g = Phi_g(z_k^g, xi_k; c_g^* eta),   z_{k+1}^1 = Phi_1(z_k^1, xi_k; eta).
 ```
-and let the reference dynamics be `L_k`-Lipschitz in state. Standard recursion
-(report §5.3) gives
+
+Same random `xi_k` in both arms (paired execution). Let the one-step state
+residual after best matching be bounded by
 ```
-|| z_K^g - z_K^1 || <= sum_{j=0}^{K-1} ( prod_{ell=j+1}^{K-1} L_ell ) eps_j.
+|| Phi_g(z, xi; c_g^* eta) - Phi_1(z, xi; eta) || <= eps_k(z),   for all z, xi,
 ```
-This is **not** an FID theorem; it is a checkable statement that a small
-per-step residual `eps_j` can be *amplified* by the product of Lipschitz
-constants over the trajectory. The empirical question for the three-arm study:
-is there a training phase where `prod L` is large enough to turn the ~0.3-3.8%
-gradient residual into a finite-budget quality difference?
+and let the reference dynamics be `L_k`-Lipschitz in state:
+```
+|| Phi_1(z, xi; eta) - Phi_1(z', xi; eta) || <= L_k || z - z' ||.
+```
+
+*Derivation.* Let `D_k = || z_k^g - z_k^1 ||`. Triangle inequality:
+```
+D_{k+1} = || Phi_g(z_k^g) - Phi_1(z_k^1) ||
+        = || [Phi_g(z_k^g) - Phi_1(z_k^g)] + [Phi_1(z_k^g) - Phi_1(z_k^1)] ||
+       <= || Phi_g(z_k^g) - Phi_1(z_k^g) ||  +  || Phi_1(z_k^g) - Phi_1(z_k^1) ||
+       <= eps_k  +  L_k D_k.
+```
+Unrolling the recursion `D_{k+1} <= eps_k + L_k D_k` with `D_0 = 0`:
+```
+D_K <= eps_{K-1} + L_{K-1} eps_{K-2} + L_{K-1} L_{K-2} eps_{K-3} + ...
+     = sum_{j=0}^{K-1} ( prod_{ell=j+1}^{K-1} L_ell ) eps_j.   ∎
+```
+Here `prod_{ell=K}^{K-1} := 1` (empty product), so the last term is `eps_{K-1}`.
+
+*Interpretation.* Each past residual `eps_j` is propagated forward, multiplied
+by the product of the Lipschitz constants of the subsequent steps. If `prod L > 1`
+(amplification — measured in the MLP/transient regime), past residuals grow;
+if `prod L < 1` (contraction — measured in the convex regime), they decay. This
+is **not** an FID theorem; it is a checkable statement that a small per-step
+residual `eps_j` can be *amplified* by the product of Lipschitz constants over
+the trajectory. The empirical question for the three-arm study: is there a
+training phase where `prod L` is large enough to turn the ~0.3-3.8% gradient
+residual into a finite-budget quality difference?
 
 **Numeric anchor (theory/test_radam_trajectory_bound.py, real torch.optim.RAdam):**
 - convex quadratic (smooth, contraction): injected residual 1e-3 at step 20
