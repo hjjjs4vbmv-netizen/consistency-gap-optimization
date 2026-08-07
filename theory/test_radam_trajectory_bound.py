@@ -63,7 +63,9 @@ def run_arm_mlp(dim, lr, steps, inject_step=None, inject=None, seed=1, noise=0.0
     for k in range(steps):
         opt.zero_grad()
         out = net(xs)
-        loss = ((out - ys) ** 2).mean() + noise * torch.norm(flat())
+        # NOTE: no detached regularizer here — a detached 'noise * ||flat()||'
+        # term would contribute no gradient; removed to avoid ambiguity.
+        loss = ((out - ys) ** 2).mean()
         loss.backward()
         opt.step()
         if inject_step is not None and k == inject_step:

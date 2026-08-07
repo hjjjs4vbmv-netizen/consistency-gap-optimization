@@ -122,49 +122,72 @@ A **constant** positive gradient rescaling is absorbed by rectified RAdam.
 
 ---
 
-## 5. P-R3 — History-induced gauge breaking (the headline)
+## 5. P-R3 — Coordinate-wise history gauge theorem (the headline)
 
-**Setup.** The gradient is NOT a constant scalar rescaling:
+**Setup.** Rectified RAdam, ignore `eps` and weight decay, identical step index
+across arms. Per parameter coordinate `i`, the update is
+`U_{g,i} ∝ mhat_{g,i} / sqrt(vhat_{g,i})`, `U_{1,i} ∝ mhat_{1,i} / sqrt(vhat_{1,i})`.
+
+**Definition (coordinate-wise history gauge).**
 ```
-G^g_j = a_j G^1_j + E_j,   with a_j varying over time (E_j small).
-```
-RAdam moments are history-weighted sums:
-```
-m_k^g = (1-beta1) sum_{j<=k} beta1^{k-j} a_j G^1_j + ...
-v_k^g = (1-beta2) sum_{j<=k} beta2^{k-j} a_j^2 (G^1_j)^2 + ...
+h_{k,i} := (mhat^g_{k,i} / mhat^1_{k,i}) * sqrt( vhat^1_{k,i} / vhat^g_{k,i} )
+         = U_{g,i} / U_{1,i}.
 ```
 
-**Claim.** If `a_j` is not constant over the recent history (`a_j != a_{j-1}`),
-then **no single scalar `a` makes both** `m_k^g = a m_k^1` **and**
-`v_k^g = a^2 v_k^1` **hold simultaneously** (the first-moment sum weights
-`a_j`, the second weights `a_j^2`; they cannot share one factor when `a_j`
-varies). Hence the best scalar gauge leaves a residual:
+**Theorem.** For rectified RAdam (same step index, `eps=0`, no weight decay):
 ```
-R_opt(k) = ||U_g(k) - c_k^* U_1(k)|| / ||U_1(k)|| > 0
+U_{g,i} = h_{k,i} U_{1,i}   for every coordinate i,   i.e.  U_g = h_k ⊙ U_1.
 ```
-even when **every instantaneous raw-gradient residual `E_j` is zero**.
+Consequently,
+```
+U_g = s U_1  for some scalar s   ⟺   h_{k,i} = s on all effective coordinates.
+```
 
-**This is the sharp prediction:**
+*Proof.* Direct from the update formula: `U_{g,i}/U_{1,i} =
+(mhat_g / mhat_1) · sqrt(vhat_1 / vhat_g) = h_{k,i}`. ∎
+
+**Corollary 1 (constant-scale null, = P-R2).** If `G^g_j = a G^1_j` for all
+`j <= k` (constant `a`), then `mhat^g = a mhat^1`, `vhat^g = a^2 vhat^1`, so
+`h_{k,i} = 1` for all `i` → `U_g = U_1`. Verified: `h` std ~8e-6,
+`R_opt ~1.9e-6` (machine-level).
+
+**Corollary 2 (generic history breaking).** If `a_j` varies over time and
+different coordinates have different temporal gradient compositions, then in
+general `h_{k,i} != h_{k,l}` for some `i,l`, so `U_g` is NOT a scalar multiple
+of `U_1` and `R_opt(k) > 0` — **even when every instantaneous gradient residual
+is zero**. This is the sharp prediction:
 > instantaneous gradient near-scalar   ⇏   history-conditioned optimizer
 > update near-scalar.
 
-The genuine GFCT signal is **scale history**, not the current gradient scale.
+**Not a blanket implication:** time-varying `a_j` does NOT by itself force
+`R_opt > 0` (e.g. a single-parameter model, or all gradients along one fixed
+direction, keep `h` coordinate-constant). The theorem is the iff statement:
+non-scalar breaking ⇔ `h_k` coordinate-varying.
 
-**Numeric anchor** (real RAdam, `a_j` alternates 1.3 / 0.8 in 20-step blocks,
-instantaneous residual = 0 by construction):
-
-| phase | residual |
-|---|---|
-| inside a constant-`a` block | **0.0000** (scalar fully absorbed) |
-| just after `a_j` changes | **0.24 - 0.30** (history can't track new scale) |
-| residual jumps | +0.24, +0.10, +0.16 (each change) |
-
-**History statistic `H_k` (proposed for Role D):**
+**Analytic residual.** Let `w_i = U_{1,i}^2`. Since `U_{g,i} = h_i U_{1,i}`:
 ```
-H_k = (effective second-moment scale) / (effective first-moment scale) - 1
+s* = <U_g,U_1>/||U_1||^2 = sum_i w_i h_i / sum_i w_i   (update-energy-weighted mean of h)
+||U_g - s* U_1||^2 = sum_i w_i (h_i - s*)^2             (weighted dispersion of h)
+R_opt(k) = sqrt( weighted variance of h_k ) / ||U_1||
 ```
-intended to predict the update residual `R_opt(k)` from the mismatch between
-the two history-weighted scale signals.
+So the non-scalar residual is exactly the **weighted dispersion of the
+coordinate-wise history gauge**.
+
+**History dispersion statistic `H_k` (exact, for Role D):**
+```
+H_k^2 := sum_i w_i (h_{k,i} - s*_k)^2 / sum_i w_i        (weighted variance)
+```
+Under the idealized rectified-RAdam assumption, `H_k` is proportional to the
+update residual `R_opt(k)` (up to `||U_1||` normalization), so it is a
+directly measurable internal-theory quantity for the three-arm study.
+
+**Numeric anchor** (`theory/test_radam_history_gauge.py`, real RAdam):
+- identity `U_{g,i} = h_{k,i} U_{1,i}` holds to rel-err **9.2e-8**;
+- constant `a`: `h` coordinate std ~8e-6, `R_opt ~1.9e-6` (P-R2 null);
+- time-varying `a` (alternating 1.3/0.8, 20-step blocks, instantaneous
+  residual = 0 by construction): `h` coordinate std 0.95-3.4, `R_opt` 0.14-0.27
+  — a **synthetic existence example / mechanism check** (not "all time-varying
+  `a_j` imply breaking").
 
 ---
 
