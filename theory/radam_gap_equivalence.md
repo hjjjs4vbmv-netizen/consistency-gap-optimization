@@ -1,14 +1,14 @@
-# RAdam Gap Equivalence — Proposition Draft (Role C, rev.2)
+# RAdam Gap Equivalence — Proposition Draft (Role C, rev.3)
 
 Date: 2026-08-07. Branch: `theory/radam-gap-equivalence`.
 Part of the GFCT main line: **separate optimizer reparameterization from genuine
 gap effects in the optimizer-update space.**
 
-rev.2 addresses the review: (i) splits the two `c*` definitions to match
+rev.3 addresses the review: (i) splits the two `c*` definitions to match
 PR #42; (ii) fixes the cumulative-displacement bug (now measures single-step
-updates); (iii) reframes the headline as **constant-scale invariance vs
-history-induced gauge breaking** (RAdam's warm-up phase is ~5 steps, not
-32-256 kimg).
+updates); (iii) **upgrades P-R3 to the coordinate-wise history gauge theorem**
+— `U_g = h_k ⊙ U_1`, scalar equivalence ⟺ `h_k` coordinate-constant — with the
+exact weighted-dispersion residual formula and the measurable `H_k` statistic.
 
 ---
 
