@@ -1,0 +1,26 @@
+{
+  "archive_filename": "q128-transfer-1000k-seed3-fixed-exploratory_20260806.tar",
+  "archive_sha256_matches": true,
+  "checkpoint_sha256_matches": true,
+  "checkpoints": [
+    {
+      "checkpoint_id": "q128-transfer-1000k-seed3-fixed-exploratory",
+      "expected_sha256": "eda4c12e95bca6308b897e54dbc3e61b93d0f46c9299a113b7eb4f2bd36b83a5",
+      "filename": "network-snapshot-000020.pkl",
+      "match": true,
+      "observed_sha256": "eda4c12e95bca6308b897e54dbc3e61b93d0f46c9299a113b7eb4f2bd36b83a5"
+    }
+  ],
+  "claim_effect": "Archive and declared checkpoint identities were independently recomputed.",
+  "expected_archive_sha256": "e52356ce05db13fc5d274f920b8e80e086e07e375d234c01acb29796e7e16608",
+  "handoff_id": "q128-transfer-1000k-seed3-fixed-exploratory-role-d-v1",
+  "observed_archive_sha256": "e52356ce05db13fc5d274f920b8e80e086e07e375d234c01acb29796e7e16608",
+  "schema_version": 1,
+  "sender_manifest_filename": "q128_transfer_1000k_sender_handoff.json",
+  "sender_manifest_sha256": "10c405a604d48bf0edea2eccca72f02a6d3e3d05d1c236835a21aac9cc68cdb8",
+  "status": "passed",
+  "verification_role": "Role D independent receiver",
+  "verified_at_utc": "2026-08-06T07:11:48.994089+00:00",
+  "verifier_identity": "Role D / ECT002",
+  "verifier_python": "3.12.2"
+}
