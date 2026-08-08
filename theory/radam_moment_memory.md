@@ -121,11 +121,13 @@ which unequal decay rates are one (important but not the only) source.
 
 ---
 
-## 3. Corollary 1 — Constant-scale null (phase-qualified)
+## 3. Corollary 1 — Constant-scale null (phase-qualified, sign-qualified)
 
-**Statement (rectified phase only).** If `δ_j ≡ δ` (constant for all `j ≤ t`)
-and the step is in the **rectified** regime (update ∝ `mhat/sqrt(vhat)`), then
-`A^(1) = A^(2) = δ`, so `h_{t,i} = 1 + O(δ²)`.
+**Statement (rectified phase only, positive scale).** Assume (i) `δ_j ≡ δ`
+(constant for all `j ≤ t`), (ii) the step is in the **rectified** regime
+(update ∝ `mhat/sqrt(vhat)`), and (iii) **`1 + δ > 0`** (the constant scale is
+positive — the regime relevant to ECT's gap multipliers, where `a = 1+δ ≈ 0.77`).
+Then `A^(1) = A^(2) = δ`, so `h_{t,i} = 1 + O(δ²)`.
 
 *Proof.*
 ```
@@ -135,6 +137,13 @@ A^(2) = δ · (Σ q_{tj} G_j²)/(Σ q_{tj} G_j²) = δ
 ```
 Under the idealized `eps=0` assumption the cancellation is **exact** (`h=1`);
 the measured `~1e-4` residual is the `eps` effect, not a `δ²` term.
+
+**Sign qualification (per review).** The positivity `1 + δ > 0` is necessary.
+In the idealized identity, `m^g = (1+δ)m`, `v^g = (1+δ)²v`, so
+`h = (1+δ)/|1+δ|`. With `1+δ > 0` this is `h = 1` (the null); with
+`1+δ < 0` it gives `h = -1` (a sign flip, not a null). The assumption `a>0`
+is exactly the actual ECT regime (gap multipliers are positive), but must be
+stated for the theorem to hold as written.
 
 **Important phase qualification (self-review fix).** In the **unrectified**
 phase (first ~5 steps, update ∝ `mhat`), the coordinate gauge is `h = a = 1+δ`
@@ -203,23 +212,34 @@ D_{t,i} := A^(1)_{t,i} - A^(2)_{t,i}
 ```
 (the first-order `h_{t,i} - 1`). Coordinate heterogeneity is necessary but not
 sufficient for `R_opt > 0`: what matters is whether `D_{t,i}` is constant on
-the effective support, not whether each `A` individually differs. The precise
-first-order statement:
+the effective support, not whether each `A` individually differs.
+
+**Off-support qualification (per review).** The iff must carry an off-support
+condition. On a coordinate with reference `m_{t,i} = 0` (`i ∉ S_t`), the
+reference update is `U_{1,i} = 0`, but a time-varying `δ_j` history can give
+`m^g_{t,i} = Σ_j p δ_j G_{j,i} ≠ 0`, hence `U_{g,i} ≠ 0`. This contributes
+off-support energy `Σ_{i∉S_t} U_{g,i}²` to `R_opt` independently of `D`. The
+precise first-order statement is therefore:
 
 ```
-R_opt(t) > 0  (first order in ||δ||)  ⟺  D_{t,i} is not coordinate-constant
-                                          on the effective support.
+[ U_{g,i} = 0 for all i ∉ S_t ]  ⇒  ( R_opt(t) > 0  ⟺  D_{t,i} not coord-constant on S_t )
 ```
 
-*Proof.* By the exact identity, `h_{t,i} - 1 = D_{t,i} + O(δ²)`. If `D_i ≠ D_l`
-then `h_i ≠ h_l`, so by the rev.3 iff theorem `U_g` is not a scalar multiple of
-`U_1`, giving `R_opt > 0` to first order. Conversely, if `D` is constant, then
-`h` is constant to first order and `R_opt = O(δ²)`. ∎
+and in general `R_opt` has **two independent first-order sources**: (i) `D`
+non-constant on `S_t`, and (ii) off-support candidate energy (coordinates where
+the reference update vanishes but the candidate's does not).
+
+*Proof (on-support part).* By the exact identity, `h_{t,i} - 1 = D_{t,i} + O(δ²)`
+on `S_t`. If `D_i ≠ D_l` then `h_i ≠ h_l`, so by the rev.3 iff theorem `U_g` is
+not a scalar multiple of `U_1`, giving `R_opt > 0` to first order. Conversely,
+if `D` is constant on `S_t` **and** there is no off-support candidate energy,
+then `h` is constant to first order and `R_opt = O(δ²)`. ∎
 
 *Why this tightening matters.* It is possible for `A^(1)_i ≠ A^(1)_l` while
 `A^(2)_i ≠ A^(2)_l` *cancels* the difference (`D_i = D_l`); in that case the
 coordinate heterogeneity produces no first-order `R_opt`. The earlier draft's
-"different temporal composition ⇒ R_opt > 0" was too strong.
+"different temporal composition ⇒ R_opt > 0" was too strong. And even with `D`
+constant on `S_t`, off-support energy can still drive `R_opt > 0`.
 
 ---
 
