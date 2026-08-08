@@ -1,9 +1,18 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "experiment_id": "gap_lr_matched_q128_s3_v1",
-  "status": "prepared_blocked_by_fresh_radam_update_audit",
-  "source_commit": "aae014c3a630a3a86801238cd0a8ff4ecd39c3d8",
-  "scientific_question": "From a common pretrained EDM initialization and fresh RAdam state, can initial-state RAdam update matching explain the finite-budget quality effect of g=1.3?",
+  "status": "prepared_blocked_by_nonzero_radam_history_gauge_audit",
+  "source_policy": {
+    "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
+    "training_paths": [
+      "ct_train.py",
+      "training"
+    ],
+    "protocol_commit_source": "audit_receipt.source.protocol_commit",
+    "require_protocol_commit_equals_head": true,
+    "require_training_paths_equal_training_code_commit": true
+  },
+  "scientific_question": "Can the finite-budget quality effect of g=1.3 be absorbed by a fresh-linearized LR control, or does a same-nonzero-state RAdam counterfactual reveal structured optimizer-history residuals?",
   "shared_training": {
     "dataset_id": "cifar10_32x32_training_archive",
     "transfer_checkpoint_id": "edm_cifar10_uncond_vp",
@@ -52,10 +61,10 @@
     {
       "arm": "A",
       "run_id": "arm_a_g1_0_lr_fixed_s3",
-      "gap_scale": 1.0,
+      "gap_scale": 1,
       "learning_rate": 0.0001,
       "learning_rate_source": "frozen_baseline",
-      "launch_status": "blocked_by_common_update_audit_gate"
+      "launch_status": "blocked_by_machine_audit_receipt"
     },
     {
       "arm": "B",
@@ -63,25 +72,18 @@
       "gap_scale": 1.3,
       "learning_rate": 0.0001,
       "learning_rate_source": "frozen_baseline",
-      "launch_status": "blocked_by_common_update_audit_gate"
+      "launch_status": "blocked_by_machine_audit_receipt"
     },
     {
       "arm": "C",
       "run_id": "arm_c_g1_3_lr_matched_s3",
       "gap_scale": 1.3,
       "learning_rate": null,
-      "learning_rate_source": "pending_fresh_RAdam_update_audit",
-      "launch_status": "blocked_by_unresolved_c0_star",
+      "learning_rate_source": "audit_receipt.fresh_linearized_control.c0_star",
       "learning_rate_expression": "c0_star*0.0001",
-      "control_name": "initial_state_one_step_RAdam_update_matched"
+      "control_name": "fresh-linearized matched control",
+      "launch_status": "blocked_by_machine_audit_receipt"
     }
-  ],
-  "scope_exclusions": [
-    "additional_gap_values",
-    "additional_training_seeds",
-    "fid50k",
-    "new_controller",
-    "nfe2_retraining"
   ],
   "initial_state": {
     "network": "same_pretrained_edm_transfer_checkpoint",
@@ -92,27 +94,60 @@
     "gradscaler": "same_fresh_initial_state",
     "resume_from_trained_state": false
   },
-  "update_match_gate": {
-    "reference_gap": 1.0,
+  "fresh_linearized_control": {
+    "reference_gap": 1,
     "target_gap": 1.3,
     "base_learning_rate": 0.0001,
     "c0_star": null,
     "definition": "dot(delta_1_3,delta_1_0)/dot(delta_1_3,delta_1_3)",
     "matched_lr_formula": "c0_star*1.0e-4",
-    "diagnostic_state": "common_fresh_initial_state",
-    "control_name": "initial_state_one_step_RAdam_update_matched",
     "whole_trajectory_matching_claim": false,
+    "optimizer_state_aware_claim": false,
+    "status": "pending_external_receipt"
+  },
+  "optimizer_mechanism_gate": {
+    "status": "pending_nonzero_state_receipt",
+    "minimum_audited_states": 3,
+    "minimum_successful_optimizer_steps": 6,
+    "same_pre_state_required": true,
+    "only_current_gap_changes": true,
     "required_outputs": [
+      "raw_a_star",
+      "raw_residual",
+      "update_s_star",
+      "update_c_star",
       "update_cosine",
-      "whole_model_update_residual",
-      "layerwise_update_residual",
-      "update_norms",
-      "amp_unscale_verification",
-      "parameter_state_hash_invariance",
-      "optimizer_state_hash_invariance",
-      "gradscaler_state_hash_invariance"
+      "reference_update_norm",
+      "candidate_update_norm",
+      "R_opt",
+      "h_update",
+      "h_moment_ideal",
+      "layerwise",
+      "support_threshold",
+      "off_support_energy",
+      "excluded_reference_energy",
+      "H_exact",
+      "H_thresholded",
+      "abs_H_exact_minus_R_opt",
+      "abs_H_thresholded_minus_R_opt"
     ],
-    "required_audit_status": "PASS",
+    "required_invariants": [
+      "paired_minibatch_rng",
+      "amp_invariants_passed",
+      "virtual_step_non_committing",
+      "parameter_hash_unchanged",
+      "optimizer_hash_unchanged",
+      "gradscaler_hash_unchanged"
+    ]
+  },
+  "audit_receipt_gate": {
+    "environment_variable": "GAP_LR_AUDIT_RECEIPT",
+    "validator": "scripts/validate_gap_lr_audit_receipt.py",
+    "schema_version": 1,
+    "required_status": "passed",
+    "required_verdict": "formal_launch_allowed",
+    "manual_pass_environment_variable_allowed": false,
+    "free_form_c0_environment_variable_allowed": false,
     "formal_launch_allowed": false
   },
   "longitudinal_update_audit": {
@@ -124,13 +159,31 @@
       128,
       256
     ],
+    "identical_counterfactual_state_required": true,
     "outputs": [
-      "cK_star",
-      "update_cosine",
-      "update_residual"
+      "raw_a_star",
+      "raw_residual",
+      "update_s_star",
+      "update_c_star",
+      "R_opt",
+      "h_update",
+      "h_moment_ideal",
+      "layerwise",
+      "support_threshold",
+      "off_support_energy",
+      "excluded_reference_energy",
+      "H_exact",
+      "H_thresholded"
     ],
-    "purpose": "measure drift of the initialization-level update match"
+    "purpose": "audit optimizer-history gauge and scalar-equivalence drift from identical states"
   },
+  "scope_exclusions": [
+    "additional_gap_values",
+    "additional_training_seeds",
+    "fid50k",
+    "new_controller",
+    "nfe2_retraining"
+  ],
   "prior_raw_gradient_evidence": {
     "a_1_3_star_approx": 0.77,
     "checkpoint": "q128_256k_EMA",
