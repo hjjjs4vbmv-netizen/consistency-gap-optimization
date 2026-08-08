@@ -1,0 +1,28 @@
+{
+  "status": "not_executed_pending_server_training_state",
+  "scope": "stateful_radam_from_nonzero_z_K",
+  "reason": "This checkout does not contain a real training-state-*.pt with non-zero RAdam moments and GradScaler. No synthetic result is represented as a stateful audit.",
+  "required_z_K_fields": [
+    "net (θ_K)",
+    "optimizer_state with nonzero finite m_K/v_K and n_K>0",
+    "gradscaler_state (GradScaler_K; required when --amp)"
+  ],
+  "required_command": "python analysis/radam_stateful_update_audit.py --training-state /path/to/training-state-XXXXXX.pt --checkpoint /path/to/network-snapshot.pkl --data /path/to/cifar10-32x32.zip --state-kimg <32|64|128|256> --batch-size 128 --batch-gpu 16 --seed 20260808 --device cuda",
+  "expected_outputs_on_execution": [
+    "whole_model.residual_convention",
+    "whole_model.a_K_star",
+    "whole_model.R_grad",
+    "whole_model.R_grad_a_convention",
+    "whole_model.s_K_star",
+    "whole_model.R_pred",
+    "whole_model.c_K_star",
+    "whole_model.R_opt",
+    "whole_model.H_K",
+    "whole_model.R_opt_minus_R_grad",
+    "whole_model.off_support_energy",
+    "whole_model.predicted_vs_actual_relative_l2",
+    "whole_model.h_K_i_abs_diff_mean",
+    "source_state_non_committing.preserved"
+  ],
+  "protocol": "docs/RADAM_STATEFUL_UPDATE_AUDIT_PROTOCOL.md"
+}

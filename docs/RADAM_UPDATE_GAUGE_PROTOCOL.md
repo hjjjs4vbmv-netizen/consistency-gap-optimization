@@ -12,8 +12,12 @@ change parameters, optimizer initialization, or the calculation.
 
 This is a **fresh-state sanity probe**, not a measurement of the update from a
 resumed training optimizer.  It deliberately initializes RAdam with empty
-moments and a new GradScaler.  A stateful continuation claim requires a
-separate run that restores the training optimizer and scaler states.
+moments and a new GradScaler.  Fresh-state `c_0^*` is only an implementation
+sanity check.  The core claim — starting from a real non-zero optimizer state
+`z_K = (θ_K, m_K, v_K, n_K, GradScaler_K)` and comparing `R_opt(K) - R_grad(K)`
+plus moment-predicted versus actual `h_{K,i}` — is implemented separately in
+`analysis/radam_stateful_update_audit.py` (see
+`docs/RADAM_STATEFUL_UPDATE_AUDIT_PROTOCOL.md`).
 
 ## Invariants
 
