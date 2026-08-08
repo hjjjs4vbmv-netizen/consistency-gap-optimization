@@ -86,6 +86,15 @@ def _warmup_nonzero_state(step: int = 64):
 
 
 class StatefulRAdamAuditTests(unittest.TestCase):
+    def test_source_commit_uses_repository_working_directory(self):
+        expected = "a" * 40
+        with mock.patch.object(MODULE.subprocess, "check_output", return_value=expected + "\n") as output:
+            self.assertEqual(MODULE._source_commit(), expected)
+        output.assert_called_once_with(
+            ["git", "rev-parse", "HEAD"], cwd=MODULE.REPO_ROOT, text=True,
+            stderr=MODULE.subprocess.DEVNULL,
+        )
+
     def test_refuses_fresh_zero_moments(self):
         net = TinyEDM().train()
         optimizer = torch.optim.RAdam(net.parameters(), lr=1e-3)

@@ -835,7 +835,7 @@ def _source_commit() -> str | None:
     """Best-effort source revision; script SHA remains authoritative if absent."""
     try:
         return subprocess.check_output(
-            ["git", "-C", str(REPO_ROOT), "rev-parse", "HEAD"], text=True,
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True,
             stderr=subprocess.DEVNULL,
         ).strip()
     except (OSError, subprocess.CalledProcessError):
