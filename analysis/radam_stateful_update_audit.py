@@ -9,12 +9,12 @@ state
 forks two disposable branches that share one minibatch / ``t`` / noise /
 dropout RNG, and differs only by ``global_gap_scale`` ``g ∈ {1.0, 1.3}``.
 
-Each branch reports gradient scalars ``a_K^*``, ``R_grad(K)`` and optimizer
-scalars ``s_K^*``, ``c_K^*``, ``R_opt(K)``, plus layer summaries ``h_{K,i}``,
-``H_K``, and off-support energy.  The critical comparison is
-``R_opt(K) - R_grad(K)`` (not the identity ``H_K = R_opt``), together with
-whether idealized moment-predicted ``h_{K,i}`` matches actual-update
-``h_{K,i}``.
+Each branch reports gradient scalars ``a_K^*``, ``R_grad(K)`` and the distinct
+optimizer scalars ``s_K^*`` (update scale), ``c_K^*`` (candidate LR
+multiplier), and ``R_opt(K)``.  Its coordinate/layer summary is #45's
+support-aware history gauge ``h_update_i = U_g,i / U_1,i`` with explicit
+off-support candidate energy and a moment-memory comparison.  ``H_K`` is kept
+only as the marked residual-decomposition identity check.
 """
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ import csv
 import json
 import math
 import pickle
+import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -42,18 +43,37 @@ from training.schedules import get_schedule
 
 LAYERWISE_FIELDS = (
     "layer",
-    "h_K_i_actual",
-    "h_K_i_predicted",
-    "h_K_i_abs_diff",
     "update_1_l2",
     "update_1p3_l2",
     "update_cosine",
+    "s_K_star_layer",
     "c_K_star_layer",
+    "R_opt_layer",
+    "layer_residual_with_global_scale",
+    "support_atol",
+    "support_coordinate_count",
+    "coordinate_count",
+    "support_coordinate_coverage",
+    "support_energy_coverage",
+    "h_update_weighted_mean",
+    "h_update_weighted_std",
+    "h_update_p05",
+    "h_update_p50",
+    "h_update_p95",
+    "h_moment_coordinate_count",
+    "h_moment_weighted_mean",
+    "h_moment_weighted_std",
+    "h_moment_p50",
+    "h_update_minus_moment_weighted_rmse",
+    "h_update_minus_moment_eps_weighted_rmse",
+    "off_support_candidate_energy_exact",
     "predicted_1_l2",
     "predicted_1p3_l2",
-    "s_K_star_layer",
-    "off_support_energy_actual",
-    "off_support_energy_predicted",
+    "s_K_star_predicted_layer",
+    "c_K_star_predicted_layer",
+    "R_pred_layer",
+    "predicted_layer_residual_with_global_scale",
+    "predicted_off_support_candidate_energy_exact",
 )
 
 
@@ -95,60 +115,184 @@ def _scale_and_residual(reference: dict[str, torch.Tensor],
     return scale, residual, cosine
 
 
-def off_support_energy(reference: dict[str, torch.Tensor],
-                       probe: dict[str, torch.Tensor],
-                       scale: float) -> float:
-    """Relative energy of ``reference`` orthogonal to ``span(probe)``.
+def _update_scale_and_residual(reference: dict[str, torch.Tensor],
+                               candidate: dict[str, torch.Tensor]
+                               ) -> tuple[float, float, float, float, float]:
+    """Return the #43/#45 update scale, reverse LR multiplier, and residual.
 
-    With the LS coefficient ``scale`` for ``scale * probe ≈ reference``, this is
-    ``||reference - scale*probe||² / ||reference||²`` (= ``R_opt²`` when scale
-    is ``c_K^*``).
+    ``s`` has the update-scale convention ``candidate ≈ s * reference``;
+    ``c`` is the distinct Arm-C learning-rate convention
+    ``c * candidate ≈ reference``.  ``R`` is deliberately the
+    reference-normalized residual of the ``s`` projection, as in the theorem.
     """
-    n_ref_sq = _norm_sq(reference.values())
-    if n_ref_sq <= 0:
-        return math.nan
-    residual_sq = max(_norm_sq(reference[name] - scale * probe[name] for name in reference), 0.0)
-    return residual_sq / n_ref_sq
+    ref_sq = _norm_sq(reference.values())
+    cand_sq = _norm_sq(candidate.values())
+    if ref_sq <= 0 or cand_sq <= 0:
+        raise RuntimeError("zero vector; scalar fit is undefined")
+    dot = _dot(candidate, reference)
+    s_star = dot / ref_sq
+    c_star = dot / cand_sq
+    residual_sq = max(_norm_sq(candidate[name] - s_star * reference[name]
+                                for name in reference), 0.0)
+    residual = math.sqrt(residual_sq) / math.sqrt(ref_sq)
+    cosine = dot / math.sqrt(ref_sq * cand_sq)
+    return s_star, c_star, residual, cosine, residual_sq
 
 
-def layerwise_h(reference: dict[str, torch.Tensor],
-                probe: dict[str, torch.Tensor],
-                model_scale: float) -> tuple[float, list[dict[str, float]]]:
-    """Per-layer residuals with the whole-model scale, plus energy-weighted H.
+def _flat_by_layer(values: dict[str, torch.Tensor], names: list[str]) -> torch.Tensor:
+    return torch.cat([values[name].detach().double().reshape(-1) for name in names])
 
-    ``H`` is the energy-weighted RMS of layer residuals and equals the
-    whole-model residual by construction (the identity ``H_K = R_opt``),
-    because every layer's residual energy is included even when a layer's
-    relative ``h_{K,i}`` is undefined (zero reference energy).
+
+def _quantile(values: torch.Tensor, q: float) -> float:
+    return float(torch.quantile(values, q).cpu()) if values.numel() else math.nan
+
+
+def _weighted_mean_std(values: torch.Tensor, weights: torch.Tensor) -> tuple[float, float]:
+    total = float(weights.sum())
+    if total <= 0:
+        return math.nan, math.nan
+    mean = float((values * weights).sum() / total)
+    variance = max(float(((values - mean).square() * weights).sum() / total), 0.0)
+    return mean, math.sqrt(variance)
+
+
+def support_aware_gauge_summary(
+        reference: dict[str, torch.Tensor],
+        candidate: dict[str, torch.Tensor], *, s_star: float, c_star: float,
+        support_atol: float, moments_reference: dict[str, tuple[torch.Tensor, torch.Tensor]] | None = None,
+        moments_candidate: dict[str, tuple[torch.Tensor, torch.Tensor]] | None = None,
+        eps: float | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Summarize #45's coordinate ratio, support, and moment-memory gauge.
+
+    The exact #43 residual decomposition uses exact ``U_1 != 0`` support.
+    ``support_atol`` additionally defines the reported effective support used
+    for robust coordinate summaries; its nonzero-threshold exclusion is
+    reported separately and is never passed off as the exact identity.
     """
+    ref_sq = _norm_sq(reference.values())
+    if ref_sq <= 0:
+        raise RuntimeError("zero reference update; history gauge is undefined")
     by_layer: dict[str, list[str]] = defaultdict(list)
     for name in reference:
         by_layer[gauge.layer_name(name)].append(name)
-    layers = []
-    weighted_res_sq = 0.0
-    total_ref_sq = 0.0
+
+    total_exact_on_dispersion = 0.0
+    total_exact_off_energy = 0.0
+    total_effective_ref_energy = 0.0
+    total_effective_coordinates = 0
+    total_coordinates = 0
+    total_moment_coordinates = 0
+    total_moment_weight = 0.0
+    total_moment_diff_sq = 0.0
+    total_moment_eps_diff_sq = 0.0
+    layer_rows: list[dict[str, Any]] = []
     for layer, names in sorted(by_layer.items()):
-        ref_sq = _norm_sq(reference[name] for name in names)
-        probe_sq = _norm_sq(probe[name] for name in names)
-        res_sq = max(_norm_sq(model_scale * probe[name] - reference[name] for name in names), 0.0)
-        weighted_res_sq += res_sq
-        total_ref_sq += ref_sq
-        if ref_sq == 0:
-            # Relative residual undefined; energy still feeds H_K.
-            h_i = 0.0 if res_sq == 0 else math.nan
-            off = 0.0 if res_sq == 0 else math.nan
-        else:
-            h_i = math.sqrt(res_sq) / math.sqrt(ref_sq)
-            off = res_sq / ref_sq
-        layers.append({
+        ref = _flat_by_layer(reference, names)
+        cand = _flat_by_layer(candidate, names)
+        weights = ref.square()
+        exact_mask = ref != 0
+        support_mask = ref.abs() > support_atol
+        ref_l2_sq = float(weights.sum())
+        cand_l2_sq = float(cand.square().sum())
+        dot = float((cand * ref).sum())
+        layer_s = dot / ref_l2_sq if ref_l2_sq else math.nan
+        layer_c = dot / cand_l2_sq if cand_l2_sq else math.nan
+        layer_residual_sq = max(float((cand - layer_s * ref).square().sum()), 0.0)
+        global_c_residual_sq = max(float((c_star * cand - ref).square().sum()), 0.0)
+        exact_on_dispersion = (float(((cand[exact_mask] / ref[exact_mask] - s_star).square()
+                                     * weights[exact_mask]).sum())
+                               if bool(exact_mask.any()) else 0.0)
+        exact_off_energy = float(cand[~exact_mask].square().sum())
+        total_exact_on_dispersion += exact_on_dispersion
+        total_exact_off_energy += exact_off_energy
+        total_effective_ref_energy += float(weights[support_mask].sum())
+        total_effective_coordinates += int(support_mask.sum())
+        total_coordinates += ref.numel()
+
+        h_update = cand[support_mask] / ref[support_mask]
+        h_weights = weights[support_mask]
+        h_mean, h_std = _weighted_mean_std(h_update, h_weights)
+        moment_mask = torch.zeros_like(support_mask)
+        h_moment = torch.empty(0, dtype=torch.float64)
+        h_moment_eps = torch.empty(0, dtype=torch.float64)
+        h_difference_rmse = math.nan
+        h_difference_eps_rmse = math.nan
+        if moments_reference is not None and moments_candidate is not None:
+            m1 = torch.cat([moments_reference[name][0].detach().double().reshape(-1) for name in names])
+            v1 = torch.cat([moments_reference[name][1].detach().double().reshape(-1) for name in names])
+            mg = torch.cat([moments_candidate[name][0].detach().double().reshape(-1) for name in names])
+            vg = torch.cat([moments_candidate[name][1].detach().double().reshape(-1) for name in names])
+            moment_mask = support_mask & (m1 != 0) & (v1 > 0) & (vg > 0)
+            if bool(moment_mask.any()):
+                h_moment = ((mg[moment_mask] / m1[moment_mask])
+                            * torch.sqrt(v1[moment_mask] / vg[moment_mask]))
+                h_moment_eps = ((mg[moment_mask] / m1[moment_mask])
+                                * ((torch.sqrt(v1[moment_mask]) + float(eps or 0.0))
+                                   / (torch.sqrt(vg[moment_mask]) + float(eps or 0.0))))
+                update_on_moment = cand[moment_mask] / ref[moment_mask]
+                moment_weights = weights[moment_mask]
+                weight_sum = float(moment_weights.sum())
+                h_difference_rmse = math.sqrt(max(float(
+                    ((update_on_moment - h_moment).square() * moment_weights).sum() / weight_sum), 0.0))
+                h_difference_eps_rmse = math.sqrt(max(float(
+                    ((update_on_moment - h_moment_eps).square() * moment_weights).sum() / weight_sum), 0.0))
+                total_moment_coordinates += int(moment_mask.sum())
+                total_moment_weight += weight_sum
+                total_moment_diff_sq += float(
+                    ((update_on_moment - h_moment).square() * moment_weights).sum())
+                total_moment_eps_diff_sq += float(
+                    ((update_on_moment - h_moment_eps).square() * moment_weights).sum())
+        layer_rows.append({
             "layer": layer,
-            "h_K_i": h_i,
-            "off_support_energy": off,
-            "ref_l2": math.sqrt(ref_sq),
-            "probe_l2": math.sqrt(probe_sq),
+            "update_1_l2": math.sqrt(ref_l2_sq),
+            "update_1p3_l2": math.sqrt(cand_l2_sq),
+            "update_cosine": dot / math.sqrt(ref_l2_sq * cand_l2_sq) if ref_l2_sq and cand_l2_sq else math.nan,
+            "s_K_star_layer": layer_s,
+            "c_K_star_layer": layer_c,
+            "R_opt_layer": math.sqrt(layer_residual_sq / ref_l2_sq) if ref_l2_sq else math.nan,
+            "layer_residual_with_global_scale": (
+                math.sqrt(global_c_residual_sq / ref_l2_sq) if ref_l2_sq else math.nan),
+            "support_atol": support_atol,
+            "support_coordinate_count": int(support_mask.sum()),
+            "coordinate_count": ref.numel(),
+            "support_coordinate_coverage": float(support_mask.double().mean()),
+            "support_energy_coverage": (float(weights[support_mask].sum() / ref_l2_sq)
+                                        if ref_l2_sq else math.nan),
+            "h_update_weighted_mean": h_mean,
+            "h_update_weighted_std": h_std,
+            "h_update_p05": _quantile(h_update, 0.05),
+            "h_update_p50": _quantile(h_update, 0.50),
+            "h_update_p95": _quantile(h_update, 0.95),
+            "h_moment_coordinate_count": int(moment_mask.sum()),
+            "h_moment_weighted_mean": _weighted_mean_std(h_moment, weights[moment_mask])[0],
+            "h_moment_weighted_std": _weighted_mean_std(h_moment, weights[moment_mask])[1],
+            "h_moment_p50": _quantile(h_moment, 0.50),
+            "h_update_minus_moment_weighted_rmse": h_difference_rmse,
+            "h_update_minus_moment_eps_weighted_rmse": h_difference_eps_rmse,
+            "off_support_candidate_energy_exact": exact_off_energy / ref_sq,
         })
-    H = math.sqrt(weighted_res_sq / total_ref_sq) if total_ref_sq > 0 else math.nan
-    return H, layers
+    exact_residual_energy = (total_exact_on_dispersion + total_exact_off_energy) / ref_sq
+    whole = {
+        "support_atol": support_atol,
+        "exact_support_coordinate_count": sum(int((_flat_by_layer(reference, names) != 0).sum())
+                                              for names in by_layer.values()),
+        "effective_support_coordinate_count": total_effective_coordinates,
+        "coordinate_count": total_coordinates,
+        "effective_support_coordinate_coverage": total_effective_coordinates / total_coordinates,
+        "effective_support_energy_coverage": total_effective_ref_energy / ref_sq,
+        "on_support_gauge_dispersion_energy": total_exact_on_dispersion / ref_sq,
+        "off_support_candidate_energy_exact": total_exact_off_energy / ref_sq,
+        "history_gauge_dispersion_H_K": math.sqrt(max(exact_residual_energy, 0.0)),
+        "history_gauge_identity_residual_energy": exact_residual_energy,
+        "moment_effective_support_coordinate_count": total_moment_coordinates,
+        "moment_effective_support_energy_coverage": total_moment_weight / ref_sq,
+        "h_update_minus_moment_weighted_rmse": (
+            math.sqrt(total_moment_diff_sq / total_moment_weight) if total_moment_weight else math.nan),
+        "h_update_minus_moment_eps_weighted_rmse": (
+            math.sqrt(total_moment_eps_diff_sq / total_moment_weight) if total_moment_weight else math.nan),
+    }
+    return whole, layer_rows
 
 
 def _grad_by_name(net: torch.nn.Module) -> dict[str, torch.Tensor]:
@@ -325,7 +469,8 @@ def stateful_radam_state_summary(net: torch.nn.Module,
 def virtual_stateful_step(common_net, common_optimizer, loss_template, microbatches, *,
                           gain: float, scaler_template, amp: bool
                           ) -> tuple[dict[str, torch.Tensor], dict[str, torch.Tensor],
-                                     dict[str, torch.Tensor], dict[str, Any]]:
+                                     dict[str, torch.Tensor],
+                                     dict[str, tuple[torch.Tensor, torch.Tensor]], dict[str, Any]]:
     """One disposable AMP-ordered step from a copied non-zero optimizer state."""
     net = copy.deepcopy(common_net).train().requires_grad_(True)
     optimizer = torch.optim.RAdam(
@@ -384,6 +529,16 @@ def virtual_stateful_step(common_net, common_optimizer, loss_template, microbatc
         name: parameter.detach().double().cpu() - before_params[name]
         for name, parameter in net.named_parameters()
     }
+    moments_after = {
+        name: (
+            optimizer.state[parameter]["exp_avg"].detach().double().cpu().clone(),
+            optimizer.state[parameter]["exp_avg_sq"].detach().double().cpu().clone(),
+        )
+        for name, parameter in net.named_parameters()
+        if parameter in optimizer.state
+        and "exp_avg" in optimizer.state[parameter]
+        and "exp_avg_sq" in optimizer.state[parameter]
+    }
     detail = {
         "gain": gain,
         "loss_mean": loss_sum / loss_count,
@@ -404,85 +559,46 @@ def virtual_stateful_step(common_net, common_optimizer, loss_template, microbatc
         "optimizer_step_after": _optimizer_step_count(optimizer),
         "moments_nontrivial_before": True,
     }
-    return grads, predicted, actual, detail
+    return grads, predicted, actual, moments_after, detail
 
 
-def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13) -> tuple[dict[str, Any], list[dict[str, float]]]:
-    """Assemble a_K^*, R_grad, s_K^*, c_K^*, R_opt, H_K, h_{K,i}, off-support.
-
-    Critical residuals ``R_grad`` and ``R_opt`` share the same ``c``-convention
-    algebra ``scale * probe_{1.3} ≈ reference_1``, residual ``/ ||reference||``,
-    so ``R_opt - R_grad`` compares identical quantities.  ``a_K^*`` remains the
-    gap-hook coefficient ``g_{1.3} ≈ a g_1`` for LR-matching interpretation.
-    """
-    # a-convention coefficient (gap_gradient_hook); residual kept only as telemetry.
-    a_star, r_grad_a, grad_cosine = _scale_and_residual(
-        grads_1, grads_13, fit_probe_to_reference=False,
+def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13, *,
+                   moments_1, moments_13, eps: float, support_atol: float
+                   ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Implement the #43/#45 paired measurement, not a new theory layer."""
+    a_star, c_grad_star, r_grad, grad_cosine, _ = _update_scale_and_residual(grads_1, grads_13)
+    s_pred, c_pred, r_pred, pred_cosine, _ = _update_scale_and_residual(pred_1, pred_13)
+    s_star, c_star, r_opt, opt_cosine, _ = _update_scale_and_residual(act_1, act_13)
+    actual_gauge, layers_actual = support_aware_gauge_summary(
+        act_1, act_13, s_star=s_star, c_star=c_star, support_atol=support_atol,
+        moments_reference=moments_1, moments_candidate=moments_13, eps=eps,
     )
-    # Matched c-convention residual used for R_opt - R_grad.
-    _, r_grad, _ = _scale_and_residual(grads_1, grads_13, fit_probe_to_reference=True)
-    s_star, r_pred, pred_cosine = _scale_and_residual(pred_1, pred_13, fit_probe_to_reference=True)
-    c_star, r_opt, opt_cosine = _scale_and_residual(act_1, act_13, fit_probe_to_reference=True)
-
-    H_actual, layers_actual = layerwise_h(act_1, act_13, c_star)
-    H_predicted, layers_predicted = layerwise_h(pred_1, pred_13, s_star)
-    # Identity checks (should be numerical no-ops; still recorded).
-    identity_H_equals_R_opt = abs(H_actual - r_opt) <= 1e-12 * max(1.0, abs(r_opt))
-    # a- and c-convention relative residuals both equal |sin θ|; record the gap.
-    a_c_residual_gap = abs(r_grad_a - r_grad)
+    predicted_gauge, layers_predicted = support_aware_gauge_summary(
+        pred_1, pred_13, s_star=s_pred, c_star=c_pred, support_atol=support_atol,
+    )
+    identity_H_equals_R_opt = abs(actual_gauge["history_gauge_dispersion_H_K"] - r_opt) <= (
+        1e-12 * max(1.0, abs(r_opt)))
+    identity_energy_gap = abs(actual_gauge["history_gauge_identity_residual_energy"] - r_opt ** 2)
 
     pred_by_layer = {row["layer"]: row for row in layers_predicted}
     layer_rows = []
-    h_abs_diffs = []
     for row in layers_actual:
-        layer = row["layer"]
-        pred_row = pred_by_layer[layer]
-        h_actual = row["h_K_i"]
-        h_predicted = pred_row["h_K_i"]
-        abs_diff = (abs(h_actual - h_predicted)
-                    if math.isfinite(h_actual) and math.isfinite(h_predicted) else math.nan)
-        if math.isfinite(abs_diff):
-            h_abs_diffs.append(abs_diff)
-        # Layer-local coefficients for localization (same conventions as model).
-        names = [name for name in act_1 if gauge.layer_name(name) == layer]
-        try:
-            c_layer, _, _ = _scale_and_residual(
-                {name: act_1[name] for name in names},
-                {name: act_13[name] for name in names},
-                fit_probe_to_reference=True,
-            )
-        except RuntimeError:
-            c_layer = math.nan
-        try:
-            s_layer, _, _ = _scale_and_residual(
-                {name: pred_1[name] for name in names},
-                {name: pred_13[name] for name in names},
-                fit_probe_to_reference=True,
-            )
-        except RuntimeError:
-            s_layer = math.nan
-        layer_dot = sum(float((act_13[name] * act_1[name]).sum()) for name in names)
-        n1 = _norm_sq(act_1[name] for name in names)
-        n13 = _norm_sq(act_13[name] for name in names)
-        cosine = layer_dot / math.sqrt(n1 * n13) if n1 and n13 else math.nan
+        pred_row = pred_by_layer[row["layer"]]
         layer_rows.append({
-            "layer": layer,
-            "h_K_i_actual": h_actual,
-            "h_K_i_predicted": h_predicted,
-            "h_K_i_abs_diff": abs_diff,
-            "update_1_l2": math.sqrt(n1),
-            "update_1p3_l2": math.sqrt(n13),
-            "update_cosine": cosine,
-            "c_K_star_layer": c_layer,
-            "predicted_1_l2": pred_row["ref_l2"],
-            "predicted_1p3_l2": pred_row["probe_l2"],
-            "s_K_star_layer": s_layer,
-            "off_support_energy_actual": row["off_support_energy"],
-            "off_support_energy_predicted": pred_row["off_support_energy"],
+            **row,
+            "predicted_1_l2": pred_row["update_1_l2"],
+            "predicted_1p3_l2": pred_row["update_1p3_l2"],
+            "s_K_star_predicted_layer": pred_row["s_K_star_layer"],
+            "c_K_star_predicted_layer": pred_row["c_K_star_layer"],
+            "R_pred_layer": pred_row["R_opt_layer"],
+            "predicted_layer_residual_with_global_scale": pred_row[
+                "layer_residual_with_global_scale"],
+            "predicted_off_support_candidate_energy_exact": pred_row[
+                "off_support_candidate_energy_exact"],
         })
 
-    # Predicted-vs-actual update agreement on each gain (should be ~0 if the
-    # analytical RAdam predictor matches torch.optim.RAdam).
+    # Analytical RAdam prediction is retained as a step-implementation check;
+    # the moment-memory gauge above is the mechanism diagnostic.
     pred_vs_actual = {}
     for gain, predicted, actual in ((1.0, pred_1, act_1), (1.3, pred_13, act_13)):
         denom = math.sqrt(_norm_sq(actual.values()))
@@ -495,31 +611,36 @@ def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13) -> tuple[d
     whole = {
         "gauge_defined": True,
         "gauge_error": None,
-        "residual_convention": "c_star_probe_to_reference",
+        "residual_convention": "reference_normalized_candidate_minus_s_star_reference",
         "a_K_star": a_star,
+        "c_grad_star": c_grad_star,
         "R_grad": r_grad,
-        "R_grad_a_convention": r_grad_a,
-        "R_grad_a_c_abs_gap": a_c_residual_gap,
         "grad_cosine": grad_cosine,
         "s_K_star": s_star,
-        "R_pred": r_pred,
         "c_K_star": c_star,
         "R_opt": r_opt,
         "update_cosine": opt_cosine,
+        "s_K_star_predicted": s_pred,
+        "c_K_star_predicted": c_pred,
+        "R_pred": r_pred,
         "predicted_update_cosine": pred_cosine,
-        "H_K": H_actual,
-        "H_K_predicted": H_predicted,
-        "H_K_equals_R_opt_identity": identity_H_equals_R_opt,
         "R_opt_minus_R_grad": r_opt - r_grad,
-        "off_support_energy": off_support_energy(act_1, act_13, c_star),
-        "off_support_energy_predicted": off_support_energy(pred_1, pred_13, s_star),
-        "predicted_vs_actual_relative_l2": pred_vs_actual,
-        "h_K_i_abs_diff_mean": (sum(h_abs_diffs) / len(h_abs_diffs)) if h_abs_diffs else math.nan,
-        "h_K_i_abs_diff_max": max(h_abs_diffs) if h_abs_diffs else math.nan,
+        "H_K": actual_gauge["history_gauge_dispersion_H_K"],
+        "H_K_is_identity_check": True,
+        "H_K_equals_R_opt_identity": identity_H_equals_R_opt,
+        "H_K_squared_minus_R_opt_squared_energy_gap": identity_energy_gap,
+        "predicted_H_K": predicted_gauge["history_gauge_dispersion_H_K"],
+        "predicted_H_K_is_identity_check": True,
         "update_1_l2": math.sqrt(_norm_sq(act_1.values())),
         "update_1p3_l2": math.sqrt(_norm_sq(act_13.values())),
         "grad_1_l2": math.sqrt(_norm_sq(grads_1.values())),
         "grad_1p3_l2": math.sqrt(_norm_sq(grads_13.values())),
+        "predicted_vs_actual_relative_l2": pred_vs_actual,
+        **actual_gauge,
+        "predicted_on_support_gauge_dispersion_energy": predicted_gauge[
+            "on_support_gauge_dispersion_energy"],
+        "predicted_off_support_candidate_energy_exact": predicted_gauge[
+            "off_support_candidate_energy_exact"],
     }
     return whole, layer_rows
 
@@ -528,11 +649,13 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
                       gains=(1.0, 1.3), amp=True, initial_scale=65536.0,
                       scaler_state: dict[str, Any] | None = None,
                       random_seed: int | None = None,
-                      microbatch_size: int | None = None
-                      ) -> tuple[dict[str, Any], list[dict[str, float]]]:
+                      microbatch_size: int | None = None, support_atol: float = 0.0
+                      ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Fork ``z_K``, run the paired g=1.0/1.3 step, leave the source untouched."""
     if tuple(gains) != (1.0, 1.3):
         raise ValueError("this audit is defined for exactly gains (1.0, 1.3)")
+    if not math.isfinite(support_atol) or support_atol < 0:
+        raise ValueError("support_atol must be finite and >= 0")
     state_summary = stateful_radam_state_summary(common_net, common_optimizer)
     if not state_summary["valid"]:
         raise RuntimeError(
@@ -572,15 +695,16 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
                  * loss_template.P_std + loss_template.P_mean).exp()
             eps = torch.randn_like(image_micro)
             microbatches.append((image_micro, label_micro, t, eps, gauge.get_rng_state(device).clone()))
-        grads, predicted, actual, branches = {}, {}, {}, []
+        grads, predicted, actual, moments, branches = {}, {}, {}, {}, []
         for gain in gains:
-            g_grad, g_pred, g_act, detail = virtual_stateful_step(
+            g_grad, g_pred, g_act, g_moments, detail = virtual_stateful_step(
                 common_net, common_optimizer, loss_template, microbatches,
                 gain=gain, scaler_template=scaler_template, amp=amp,
             )
             grads[gain] = g_grad
             predicted[gain] = g_pred
             actual[gain] = g_act
+            moments[gain] = g_moments
             branches.append(detail)
         skipped = [branch["gain"] for branch in branches if branch["step_skipped"]]
         if skipped:
@@ -591,7 +715,7 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
                     f"{skipped}; refuse R_opt/R_grad and predicted-vs-actual h "
                     "(actual Δθ is zero while moment-predicted updates are not)"
                 ),
-                "residual_convention": "c_star_probe_to_reference",
+                "residual_convention": "reference_normalized_candidate_minus_s_star_reference",
                 "a_K_star": None, "R_grad": None, "s_K_star": None,
                 "c_K_star": None, "R_opt": None, "H_K": None,
                 "R_opt_minus_R_grad": None,
@@ -600,13 +724,15 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
             try:
                 whole, layers = summarize_pair(
                     grads[1.0], grads[1.3], predicted[1.0], predicted[1.3],
-                    actual[1.0], actual[1.3],
+                    actual[1.0], actual[1.3], moments_1=moments[1.0],
+                    moments_13=moments[1.3], eps=float(group0["eps"]),
+                    support_atol=support_atol,
                 )
             except RuntimeError as exc:
                 whole, layers = {
                     "gauge_defined": False,
                     "gauge_error": str(exc),
-                    "residual_convention": "c_star_probe_to_reference",
+                    "residual_convention": "reference_normalized_candidate_minus_s_star_reference",
                     "a_K_star": None, "R_grad": None, "s_K_star": None,
                     "c_K_star": None, "R_opt": None, "H_K": None,
                     "R_opt_minus_R_grad": None,
@@ -628,6 +754,7 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
             "moments_nontrivial": True,
             "state_validation": state_summary,
             "gradscaler_restored": scaler_state is not None,
+            "support_atol": support_atol,
         },
         "randomness_contract": {
             "same_minibatch": True, "same_t": True, "same_noise": True,
@@ -702,6 +829,17 @@ def _json_safe(value: Any) -> Any:
     return value
 
 
+def _source_commit() -> str | None:
+    """Best-effort source revision; script SHA remains authoritative if absent."""
+    try:
+        return subprocess.check_output(
+            ["git", "-C", str(REPO_ROOT), "rev-parse", "HEAD"], text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--training-state", required=True, type=Path,
@@ -719,6 +857,8 @@ def parse_args(argv=None):
     parser.add_argument("--amp", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--initial-scale", type=float, default=65536.0,
                         help="used only for --no-amp runs; AMP requires restored gradscaler_state")
+    parser.add_argument("--support-atol", type=float, default=0.0,
+                        help="absolute near-zero threshold for effective h summaries; exact support is also recorded")
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--betas", default="0.9,0.999")
     parser.add_argument("--eps", dest="eps_opt", type=float, default=1e-8)
@@ -731,8 +871,9 @@ def parse_args(argv=None):
     if len(args.betas) != 2:
         raise SystemExit("--betas must contain exactly two values")
     if (args.batch_size < 1 or args.lr <= 0 or args.initial_scale <= 0
+            or not math.isfinite(args.support_atol) or args.support_atol < 0
             or (args.batch_gpu is not None and args.batch_gpu < 1)):
-        raise SystemExit("batch size, lr, and initial scale must be positive")
+        raise SystemExit("batch size, lr, initial scale, and support atol must be valid")
     if args.batch_gpu is not None and args.batch_size % args.batch_gpu:
         raise SystemExit("--batch-size must be divisible by --batch-gpu")
     return args
@@ -751,6 +892,11 @@ def main(argv=None) -> int:
     state_summary = stateful_radam_state_summary(net, optimizer)
     if not state_summary["valid"]:
         missing_z_K.extend(state_summary["errors"])
+    if state_summary["n_K"] is None or state_summary["n_K"] < 6:
+        missing_z_K.append("n_K >= 6 (post-warmup nonzero-state mechanism gate)")
+    if (state_meta["successful_optimizer_steps"] is None
+            or state_meta["successful_optimizer_steps"] < 6):
+        missing_z_K.append("successful_optimizer_steps >= 6 in training-state")
     if args.amp and scaler_state is None:
         missing_z_K.append("GradScaler_K (training-state key gradscaler_state)")
     if missing_z_K:
@@ -782,9 +928,12 @@ def main(argv=None) -> int:
         net, optimizer, loss, images, labels,
         amp=args.amp, initial_scale=args.initial_scale, scaler_state=scaler_state,
         random_seed=args.seed, microbatch_size=args.batch_gpu,
+        support_atol=args.support_atol,
     )
     data_sha256, dataset_hash_algorithm = gauge.dataset_sha256(Path(args.data))
     audit["provenance"] = {
+        "source_commit": _source_commit(),
+        "analysis_script_sha256": gauge.sha256_file(Path(__file__)),
         "training_state": str(args.training_state),
         "training_state_sha256": gauge.sha256_file(args.training_state),
         "checkpoint": str(args.checkpoint),
@@ -792,6 +941,7 @@ def main(argv=None) -> int:
         "data": str(args.data), "dataset_sha256": data_sha256,
         "dataset_hash_algorithm": dataset_hash_algorithm,
         "state_kimg": args.state_kimg, "batch_size": args.batch_size, "batch_gpu": args.batch_gpu,
+        "support_atol": args.support_atol,
         "seed": args.seed, "device": str(device),
         "torch_version": torch.__version__, "cuda_version": torch.version.cuda,
         "schedule": loss.schedule.name, "q": float(loss.q), "k": float(loss.k), "b": float(loss.b),

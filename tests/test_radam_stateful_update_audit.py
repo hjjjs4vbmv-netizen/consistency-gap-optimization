@@ -122,18 +122,27 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         whole = audit["whole_model"]
         self.assertTrue(whole["gauge_defined"])
         for key in ("a_K_star", "R_grad", "s_K_star", "c_K_star", "R_opt",
-                    "H_K", "R_opt_minus_R_grad", "off_support_energy", "R_pred"):
+                    "H_K", "R_opt_minus_R_grad", "R_pred",
+                    "on_support_gauge_dispersion_energy",
+                    "off_support_candidate_energy_exact",
+                    "h_update_minus_moment_weighted_rmse"):
             self.assertIn(key, whole)
             self.assertIsInstance(whole[key], float)
             self.assertTrue(math.isfinite(whole[key]))
-        self.assertEqual(whole["residual_convention"], "c_star_probe_to_reference")
-        self.assertLess(whole["R_grad_a_c_abs_gap"], 1e-9)
+        self.assertEqual(whole["residual_convention"],
+                         "reference_normalized_candidate_minus_s_star_reference")
         self.assertTrue(whole["H_K_equals_R_opt_identity"])
         self.assertAlmostEqual(whole["H_K"], whole["R_opt"], places=12)
-        self.assertAlmostEqual(whole["off_support_energy"], whole["R_opt"] ** 2, places=12)
+        self.assertAlmostEqual(
+            whole["on_support_gauge_dispersion_energy"]
+            + whole["off_support_candidate_energy_exact"],
+            whole["R_opt"] ** 2, places=12,
+        )
         self.assertGreater(len(layers), 1)
-        self.assertIn("h_K_i_actual", layers[0])
-        self.assertIn("h_K_i_predicted", layers[0])
+        self.assertIn("h_update_weighted_mean", layers[0])
+        self.assertIn("h_moment_weighted_mean", layers[0])
+        self.assertIn("layer_residual_with_global_scale", layers[0])
+        self.assertEqual(set(layers[0]), set(MODULE.LAYERWISE_FIELDS))
 
     def test_idealized_predictor_matches_actual_update(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
@@ -144,35 +153,66 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         # Float32 RAdam vs double predictor: agree to better than 1e-3 relative.
         self.assertLess(rel["1.0"], 1e-3)
         self.assertLess(rel["1.3"], 1e-3)
-        self.assertLess(audit["whole_model"]["h_K_i_abs_diff_max"], 1e-3)
+        self.assertTrue(math.isfinite(
+            audit["whole_model"]["h_update_minus_moment_weighted_rmse"]
+        ))
 
     def test_scale_conventions_match_requested_targets(self):
         reference = {"w": torch.tensor([2.0, 0.0], dtype=torch.float64)}
         probe = {"w": torch.tensor([1.0, 0.0], dtype=torch.float64)}
-        # c * probe ≈ reference => c = 2
-        c, r_opt, _ = MODULE._scale_and_residual(reference, probe, fit_probe_to_reference=True)
+        # The #43/#45 update scale is probe ≈ s * reference => s = 0.5.
+        s, c, r_opt, _, _ = MODULE._update_scale_and_residual(reference, probe)
+        self.assertAlmostEqual(s, 0.5)
+        # c * probe ≈ reference => c = 2 (Arm-C LR multiplier).
         self.assertAlmostEqual(c, 2.0)
         self.assertAlmostEqual(r_opt, 0.0)
-        # a * reference ≈ probe => a = 0.5
-        a, r_grad, _ = MODULE._scale_and_residual(reference, probe, fit_probe_to_reference=False)
-        self.assertAlmostEqual(a, 0.5)
-        self.assertAlmostEqual(r_grad, 0.0)
 
-    def test_R_grad_and_R_opt_share_c_convention_sine_residual(self):
-        reference = {"w": torch.tensor([1.0, 0.0], dtype=torch.float64)}
-        probe = {"w": torch.tensor([1.0, 1.0], dtype=torch.float64)}
-        _, r_a, _ = MODULE._scale_and_residual(reference, probe, fit_probe_to_reference=False)
-        _, r_c, _ = MODULE._scale_and_residual(reference, probe, fit_probe_to_reference=True)
-        # Both conventions equal |sin θ|; critical difference uses the c form.
-        self.assertAlmostEqual(r_a, r_c, places=12)
-        whole, _ = MODULE.summarize_pair(
-            reference, probe, reference, probe, reference, probe,
+    def test_history_gauge_decomposes_on_and_off_support(self):
+        reference = {"w": torch.tensor([2.0, 0.0], dtype=torch.float64)}
+        candidate = {"w": torch.tensor([1.0, 3.0], dtype=torch.float64)}
+        s, c, r_opt, _, _ = MODULE._update_scale_and_residual(reference, candidate)
+        summary, layers = MODULE.support_aware_gauge_summary(
+            reference, candidate, s_star=s, c_star=c, support_atol=0.0,
         )
-        self.assertEqual(whole["residual_convention"], "c_star_probe_to_reference")
-        self.assertAlmostEqual(whole["R_grad"], r_c, places=12)
-        self.assertAlmostEqual(whole["R_opt"], r_c, places=12)
-        self.assertAlmostEqual(whole["R_opt_minus_R_grad"], 0.0, places=12)
-        self.assertLess(whole["R_grad_a_c_abs_gap"], 1e-12)
+        self.assertAlmostEqual(s, 0.5)
+        self.assertAlmostEqual(c, 0.2)
+        self.assertAlmostEqual(summary["on_support_gauge_dispersion_energy"], 0.0)
+        self.assertAlmostEqual(summary["off_support_candidate_energy_exact"], 9 / 4)
+        self.assertAlmostEqual(summary["history_gauge_dispersion_H_K"], r_opt)
+        self.assertAlmostEqual(
+            summary["on_support_gauge_dispersion_energy"]
+            + summary["off_support_candidate_energy_exact"], r_opt ** 2,
+        )
+        self.assertEqual(layers[0]["support_coordinate_count"], 1)
+
+    def test_coordinate_history_and_moment_gauges_are_reported(self):
+        reference = {"w": torch.tensor([2.0, 4.0], dtype=torch.float64)}
+        candidate = {"w": torch.tensor([1.0, 8.0], dtype=torch.float64)}
+        moments_1 = {"w": (torch.tensor([2.0, 2.0]), torch.tensor([1.0, 1.0]))}
+        moments_13 = {"w": (torch.tensor([1.0, 4.0]), torch.tensor([1.0, 1.0]))}
+        s, c, _, _, _ = MODULE._update_scale_and_residual(reference, candidate)
+        summary, layers = MODULE.support_aware_gauge_summary(
+            reference, candidate, s_star=s, c_star=c, support_atol=0.0,
+            moments_reference=moments_1, moments_candidate=moments_13, eps=0.0,
+        )
+        self.assertAlmostEqual(layers[0]["h_update_weighted_mean"], 1.7)
+        self.assertAlmostEqual(layers[0]["h_update_p50"], 1.25)
+        self.assertEqual(layers[0]["h_moment_coordinate_count"], 2)
+        self.assertAlmostEqual(summary["h_update_minus_moment_weighted_rmse"], 0.0)
+
+    def test_effective_support_threshold_does_not_replace_exact_decomposition(self):
+        reference = {"w": torch.tensor([2.0, 1e-9], dtype=torch.float64)}
+        candidate = {"w": torch.tensor([1.0, 1.0], dtype=torch.float64)}
+        s, c, r_opt, _, _ = MODULE._update_scale_and_residual(reference, candidate)
+        summary, _ = MODULE.support_aware_gauge_summary(
+            reference, candidate, s_star=s, c_star=c, support_atol=1e-8,
+        )
+        self.assertEqual(summary["exact_support_coordinate_count"], 2)
+        self.assertEqual(summary["effective_support_coordinate_count"], 1)
+        self.assertAlmostEqual(
+            summary["on_support_gauge_dispersion_energy"]
+            + summary["off_support_candidate_energy_exact"], r_opt ** 2,
+        )
 
     def test_microbatch_accumulation_preserves_rng(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
@@ -189,21 +229,6 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         source = Path(SCRIPT).read_text(encoding="utf-8")
         self.assertNotIn("with torch.autocast(", source)
 
-    def test_H_equals_R_opt_with_zero_reference_layer(self):
-        act_1 = {
-            "enc.weight": torch.tensor([1.0, 0.0], dtype=torch.float64),
-            "dec.weight": torch.tensor([0.0, 0.0], dtype=torch.float64),
-        }
-        act_13 = {
-            "enc.weight": torch.tensor([0.5, 0.0], dtype=torch.float64),
-            "dec.weight": torch.tensor([1.0, 0.0], dtype=torch.float64),
-        }
-        c, r_opt, _ = MODULE._scale_and_residual(act_1, act_13, fit_probe_to_reference=True)
-        H, layers = MODULE.layerwise_h(act_1, act_13, c)
-        self.assertAlmostEqual(H, r_opt, places=12)
-        by_layer = {row["layer"]: row for row in layers}
-        self.assertTrue(math.isnan(by_layer["dec"]["h_K_i"]))
-
     def test_amp_without_gradscaler_state_fails_closed(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
         with self.assertRaisesRegex(RuntimeError, "GradScaler_K"):
@@ -217,12 +242,12 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         real_step = MODULE.virtual_stateful_step
 
         def skip_one(*args, **kwargs):
-            grads, predicted, actual, detail = real_step(*args, **kwargs)
+            grads, predicted, actual, moments, detail = real_step(*args, **kwargs)
             if kwargs.get("gain") == 1.3:
                 detail = dict(detail)
                 detail["step_skipped"] = True
                 actual = {name: torch.zeros_like(value) for name, value in actual.items()}
-            return grads, predicted, actual, detail
+            return grads, predicted, actual, moments, detail
 
         with mock.patch.object(MODULE, "virtual_stateful_step", side_effect=skip_one):
             audit, layers = MODULE.run_stateful_pair(

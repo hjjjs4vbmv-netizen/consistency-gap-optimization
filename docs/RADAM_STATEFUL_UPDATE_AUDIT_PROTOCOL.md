@@ -25,7 +25,9 @@ that state remains a near-scalar update rematch once RAdam moments are live.
 The CLI fails closed if any model parameter is missing RAdam state, a moment is
 zero/NaN at the collection level, the per-parameter counters are not the same
 positive integer `n_K`, or `--amp` is on without `gradscaler_state`.  There is
-no silent fresh-scaler fallback.
+no silent fresh-scaler fallback.  A mechanism receipt additionally requires
+`n_K >= 6` and serialized `successful_optimizer_steps >= 6`, so a warm-up or
+fresh-state measurement cannot be mislabelled as Role-D evidence.
 
 ## Invariants
 
@@ -43,77 +45,81 @@ The source `z_K` is never stepped.  Before/after SHA-256 hashes of parameters,
 optimizer state, and GradScaler must match.
 
 If AMP skips `optimizer.step` on either branch, the gauge is undefined: actual
-`Δθ` is zero while moment-predicted updates are not, so `R_opt` and
-predicted-vs-actual `h` are not comparable.
+`Δθ` is zero while the candidate moment map is not a comparable completed
+update. The receipt records the skip status rather than emitting a gauge.
 
 ## Metrics
 
-### Shared residual convention
+### Scalar conventions
 
-`R_grad` and `R_opt` use the **same** least-squares algebra
-(`residual_convention = c_star_probe_to_reference`):
-
-```text
-scale * probe_{1.3} ≈ reference_1
-R = ||scale * probe_{1.3} - reference_1|| / ||reference_1||
-```
-
-so `R_opt(K) - R_grad(K)` subtracts isomorphic quantities.  Both equal
-`|sin θ|` of the angle between the two vectors.
-
-### Gradient side
+The measurement follows #43/#45 exactly.  The two directions are both
+reported and never relabelled:
 
 ```text
-a_K^*   = <g_{1.3}, g_1> / ||g_1||²          # gap-hook / LR-matching coefficient
-R_grad  = ||c_g g_{1.3} - g_1|| / ||g_1||    # c-convention, matched to R_opt
-          where c_g = <g_{1.3}, g_1> / ||g_{1.3}||²
+s_K^* = <U_g, U_1> / ||U_1||²       # U_g ≈ s_K^* U_1, update scale
+c_K^* = <U_g, U_1> / ||U_g||²       # c_K^* U_g ≈ U_1, candidate LR multiplier
+R_opt = ||U_g - s_K^* U_1|| / ||U_1||
 ```
 
-`R_grad_a_convention = ||g_{1.3} - a_K^* g_1|| / ||g_{1.3}||` is retained as
-telemetry; it equals `R_grad` up to numerics (`R_grad_a_c_abs_gap`).
+For the raw gradients the analogous `a_K^*` and `R_grad` use the update-scale
+direction: `g_g ≈ a_K^* g_1`, reference-normalized.  Consequently,
+`R_opt(K) - R_grad(K)` is an empirical diagnostic with **no claimed sign** on
+real ECT, not an invariance theorem.
 
-### Optimizer side (actual update Δθ)
+The analytical RAdam update is retained as an implementation check and reports
+its own `s_K_star_predicted`, `c_K_star_predicted`, and `R_pred`; it is not a
+substitute for the measured moment-memory gauge below.
+
+### Support-aware coordinate history gauge
+
+With `U_1 = Δθ_1` and `U_g = Δθ_1.3`, the theorem gauge on support is
 
 ```text
-c_K^*   = <d_{1.3}, d_1> / ||d_{1.3}||²      # c_K^* d_{1.3} ≈ d_1
-R_opt   = ||c_K^* d_{1.3} - d_1|| / ||d_1||
+h_update_i = U_g,i / U_1,i.
 ```
 
-### Idealized moment-predicted update
+The receipt records both the exact support `U_1,i != 0` (used for the exact
+decomposition) and an optional effective support
+`|U_1,i| > --support-atol` for robust coordinate summaries.  Each layer reports
+support coordinate/energy coverage plus weighted mean and standard deviation
+of `h_update`, and unweighted p05/p50/p95 quantiles.  The old quantity
+`||c_K^* U_g^(l) - U_1^(l)|| / ||U_1^(l)||` is retained only under its accurate
+name: `layer_residual_with_global_scale`; it is not `h_{K,i}`.
 
-Using the restored moments and the post-sanitize gradients, the tool evaluates
-the analytical RAdam map (matching `torch.optim.RAdam` with `weight_decay=0`)
-**without** stepping the source optimizer:
+On the exact support, the receipt separately reports
 
 ```text
-s_K^*   = <p_{1.3}, p_1> / ||p_{1.3}||²      # s_K^* p_{1.3} ≈ p_1
-R_pred  = ||s_K^* p_{1.3} - p_1|| / ||p_1||
+on_support_gauge_dispersion
+  = Σ_{U_1,i≠0} U_1,i² (h_update_i - s_K^*)² / ||U_1||²
+off_support_candidate_energy_exact
+  = Σ_{U_1,i=0} U_g,i² / ||U_1||².
 ```
 
-### Layer / coordinate summary
+Their sum reconstructs `R_opt²` numerically.  `H_K` is the square root of
+that sum and is flagged as an **identity check**, never independent evidence.
 
-For each enclosing module path `i`:
+### Moment-memory comparison
 
-- `h_{K,i}` actual: layer residual of `d` under whole-model `c_K^*`
-- `h_{K,i}` predicted: layer residual of `p` under whole-model `s_K^*`
-- `H_K`: energy-weighted RMS of the actual layer residual energies
-
-`H_K = R_opt` is an **identity** (same residual energy, two aggregations).  Do
-not treat equality as evidence.  Off-support energy is the relative energy of
-`d_1` orthogonal to `span(d_{1.3})`:
+For effective coordinates with `m_1,i != 0`, `v_1,i > 0`, and `v_g,i > 0`,
+the audit reports
 
 ```text
-off_support = ||d_1 - c_K^* d_{1.3}||² / ||d_1||² = R_opt²
+h_moment_i = (m_g,i / m_1,i) * sqrt(v_1,i / v_g,i).
 ```
+
+It also reports the implementation-aware `eps` variant and the update-energy
+weighted RMSE of `h_update - h_moment` (whole model and per layer).  Under the
+idealized rectified-RAdam assumptions this identity is exact; for real ECT its
+mismatch is a falsifiable diagnostic, not a theorem claim.
 
 ### Critical comparisons
 
-1. `R_opt(K) - R_grad(K)` — under the shared `c`-convention, how much live
-   moments inflate (or shrink) the directional residual relative to the raw
-   gradient residual.
-2. Whether idealized moment-predicted `h_{K,i}` matches actual-update
-   `h_{K,i}` (and whether `predicted_vs_actual_relative_l2` is near zero on
-   each branch).
+1. `R_opt(K) - R_grad(K)`.
+2. Actual `h_update` dispersion, exact off-support candidate energy, and their
+   reconstruction of `R_opt²`.
+3. Actual-update versus moment-memory gauge discrepancy on effective support.
+4. Analytical predicted-vs-actual update agreement, as a separate optimizer
+   implementation check.
 
 ## Run
 
@@ -122,7 +128,7 @@ python analysis/radam_stateful_update_audit.py \
   --training-state /path/to/training-state-XXXXXX.pt \
   --checkpoint /path/to/network-snapshot.pkl \
   --data /path/to/cifar10-32x32.zip \
-  --state-kimg 128 --batch-size 128 --batch-gpu 16 \
+  --state-kimg 128 --batch-size 128 --batch-gpu 16 --support-atol 0 \
   --seed 20260808 --device cuda
 ```
 
@@ -130,3 +136,8 @@ Outputs (overwritten only on a successful run):
 
 - `analysis/radam_update_audit_stateful.json`
 - `analysis/radam_update_stateful_layerwise.csv`
+
+The JSON receipt includes the source commit plus analysis-script SHA-256,
+training-state/checkpoint/dataset hashes, `n_K`, serialized successful-step
+count, AMP skip telemetry, effective-support threshold/coverage, and
+source-state preservation hashes.
