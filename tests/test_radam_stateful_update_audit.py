@@ -36,22 +36,31 @@ class TinyLoss:
 
 
 class TinyEDM(torch.nn.Module):
+    """Small stochastic EDM fixture with a non-degenerate dropout path.
+
+    The audit resets the identical dropout RNG state for the ``t`` and ``r``
+    forwards.  A single-feature dropout fixture can consequently mask the
+    entire sample-wise difference, leaving the zero-at-the-origin ECT loss
+    with no backward signal.  Keep several independently masked features so
+    this test exercises the shared-RNG contract without that artefact.
+    """
+
     def __init__(self):
         super().__init__()
-        self.encoder = torch.nn.Linear(1, 1)
-        self.decoder = torch.nn.Linear(1, 1)
+        self.encoder = torch.nn.Linear(1, 4)
+        self.decoder = torch.nn.Linear(4, 1)
         self.dropout = torch.nn.Dropout(p=0.2)
         with torch.no_grad():
-            self.encoder.weight.fill_(0.8)
-            self.encoder.bias.fill_(0.1)
-            self.decoder.weight.fill_(0.6)
+            self.encoder.weight.fill_(0.2)
+            self.encoder.bias.copy_(torch.tensor((-0.1, 0.0, 0.1, 0.2)))
+            self.decoder.weight.fill_(0.15)
             self.decoder.bias.fill_(0.2)
 
     def forward(self, x, sigma, labels, augment_labels=None):
         del labels, augment_labels
         y = x + sigma.reshape(-1, 1, 1, 1)
-        y = self.encoder(y.reshape(-1, 1)).reshape_as(x)
-        return self.decoder(self.dropout(y).reshape(-1, 1)).reshape_as(x)
+        y = self.encoder(y.reshape(-1, 1))
+        return self.decoder(self.dropout(y)).reshape_as(x)
 
 
 def _warmup_nonzero_state(step: int = 64):
@@ -215,15 +224,19 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         )
 
     def test_microbatch_accumulation_preserves_rng(self):
-        net, optimizer, images, labels, loss = _warmup_nonzero_state()
-        rng_before = torch.get_rng_state().clone()
-        audit, _ = MODULE.run_stateful_pair(
-            net, optimizer, loss, images, labels, amp=False,
-            random_seed=1202, microbatch_size=4,
-        )
-        self.assertTrue(torch.equal(rng_before, torch.get_rng_state()))
-        self.assertEqual(audit["randomness_contract"]["accumulation_rounds"], 2)
-        self.assertTrue(audit["whole_model"]["gauge_defined"])
+        # Regression sweep for the seeds that exposed single-channel dropout
+        # degeneracy in the original fixture.
+        for seed in range(1190, 1211):
+            with self.subTest(seed=seed):
+                net, optimizer, images, labels, loss = _warmup_nonzero_state()
+                rng_before = torch.get_rng_state().clone()
+                audit, _ = MODULE.run_stateful_pair(
+                    net, optimizer, loss, images, labels, amp=False,
+                    random_seed=seed, microbatch_size=4,
+                )
+                self.assertTrue(torch.equal(rng_before, torch.get_rng_state()))
+                self.assertEqual(audit["randomness_contract"]["accumulation_rounds"], 2)
+                self.assertTrue(audit["whole_model"]["gauge_defined"])
 
     def test_probe_does_not_introduce_autocast(self):
         source = Path(SCRIPT).read_text(encoding="utf-8")
