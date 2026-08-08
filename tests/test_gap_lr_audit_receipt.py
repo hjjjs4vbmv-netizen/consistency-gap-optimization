@@ -3,6 +3,7 @@ import subprocess
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from scripts import validate_gap_lr_audit_receipt as validator
 
@@ -69,6 +70,22 @@ class ReceiptValidatorTests(unittest.TestCase):
         state["metrics"]["R_opt"] = float("nan")
         with self.assertRaisesRegex(SystemExit, "must be finite"):
             validator.validate_state(state, 0)
+
+    def test_git_helper_uses_cwd_instead_of_dash_c(self):
+        repo = Path("/tmp/example-repository")
+        with mock.patch.object(
+            validator.subprocess,
+            "check_output",
+            return_value="abc123\\n",
+        ) as check_output:
+            result = validator.git(repo, "rev-parse", "HEAD")
+
+        self.assertEqual(result, "abc123")
+        check_output.assert_called_once_with(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo),
+            text=True,
+        )
 
     def test_missing_receipt_fails_closed(self):
         repo = Path(__file__).resolve().parents[1]

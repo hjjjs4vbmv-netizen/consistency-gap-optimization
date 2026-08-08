@@ -46,7 +46,9 @@ def digest(path):
 
 def git(repo, *args):
     return subprocess.check_output(
-        ["git", "-C", str(repo)] + list(args), text=True
+        ["git"] + list(args),
+        cwd=str(repo),
+        text=True,
     ).strip()
 
 
@@ -141,15 +143,14 @@ def main():
     result = subprocess.run(
         [
             "git",
-            "-C",
-            str(args.repo),
             "diff",
             "--quiet",
             training_commit,
             "--",
             "ct_train.py",
             "training",
-        ]
+        ],
+        cwd=str(args.repo),
     )
     if result.returncode != 0:
         fail("working training code differs from training_code_commit")
