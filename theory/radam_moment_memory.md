@@ -41,8 +41,29 @@ h_{t,i} = U^g_{t,i} / U_{t,i}
 
 ## 2. Exact memory identity (upgraded per review)
 
+**Effective support (domain condition — added per review).** The gauges involve
+divisions by the signed first moment `m_t` and the (positive) second moment
+`v_t`. Define the **effective support** at step `t` as
+
+```
+S_t := { i : m_{t,i} ≠ 0  AND  v_{t,i} > 0 }.
+```
+
+- On `S_t` the quantities `A^(1), A^(2), B^(2), m^g/m, v^g/v, h` are all
+  well-defined.
+- Coordinates with `m_{t,i} = 0` (signed-moment cancellation) are **outside**
+  the support: `A^(1)` and `m^g/m` are undefined there (denominator zero), and
+  `h` is undefined. These coordinates inherit the **off-support treatment** of
+  PR #43 (rev.4): scalar update equivalence requires `U_{g,i} = 0` there, and
+  the residual formula carries the explicit `Σ_{i∉S_t} U_{g,i}²` term.
+- `v_{t,i} > 0` is included because RAdam's rectified update divides by
+  `sqrt(vhat)`; `v_{t,i} = 0` (no gradient history) also drops the coordinate
+  out of the rectified update.
+
+All statements below are **on `S_t`** unless noted.
+
 Define the **first-moment history gauge**, **second-moment history gauge**, and
-**second-moment quadratic gauge**:
+**second-moment quadratic gauge** (for `i ∈ S_t`):
 
 ```
 A^(1)_{t,i} := ( Σ_j p_{tj} δ_j G_{j,i} ) / ( Σ_j p_{tj} G_{j,i} ),   p_{tj} ∝ β1^{t-j}
@@ -50,8 +71,9 @@ A^(2)_{t,i} := ( Σ_j q_{tj} δ_j G_{j,i}² ) / ( Σ_j q_{tj} G_{j,i}² ), q_{tj
 B^(2)_{t,i} := ( Σ_j q_{tj} δ_j² G_{j,i}² ) / ( Σ_j q_{tj} G_{j,i}² )
 ```
 
-**Exact identity (theorem).** For rectified RAdam (same step index; bias
-correction cancels), the coordinate-wise history gauge is **exactly**
+**Exact identity (theorem).** For rectified RAdam, same step index, bias
+correction cancels, and for every `i ∈ S_t`, the coordinate-wise history gauge
+is **exactly**
 
 ```
 m^g_t / m_t   = 1 + A^(1)_{t,i}                       (exact, linear in δ)
@@ -60,8 +82,8 @@ v^g_t / v_t   = 1 + 2 A^(2)_{t,i} + B^(2)_{t,i}        (exact, quadratic in δ)
 h_{t,i} = (1 + A^(1)_{t,i}) / sqrt( 1 + 2 A^(2)_{t,i} + B^(2)_{t,i} )
 ```
 
-*Proof.* `m^g = Σ p (1+δ_j) G = m + Σ p δ_j G`, divide by `m`:
-`1 + (ΣpδG)/(ΣpG) = 1 + A^(1)`. Similarly `v^g = Σ q (1+δ_j)² G²
+*Proof.* `m^g = Σ p (1+δ_j) G = m + Σ p δ_j G`, divide by `m` (nonzero on
+`S_t`): `1 + (ΣpδG)/(ΣpG) = 1 + A^(1)`. Similarly `v^g = Σ q (1+δ_j)² G²
 = v + 2ΣqδG² + Σqδ²G²`, divide by `v`: `1 + 2A^(2) + B^(2)`. Then `h =
 (m^g/m)·sqrt(v/v^g)` by the rectified update ratio. ∎
 
@@ -82,12 +104,17 @@ h - 1 = A^(1) - A^(2) - A^(1)A^(2) - ½ B^(2) + ³⁄₂ (A^(2))² + O(||δ||³)
 
 **Mechanism (corrected per review).** The gauge deviation is the **difference
 between the effective scale histories seen by the first and second moments**.
-This mismatch has two sources, and either alone suffices:
+This mismatch has two sources:
 1. **different decay kernels** (`β1 ≠ β2`): the same δ_j history is forgotten at
    different rates by `m` and `v`;
 2. **different gradient weighting** (`G_j` vs `G_j²`): even with `β1 = β2`,
    weighting gradients vs squared gradients yields different effective averages
    of the same δ_j history.
+
+Either source can independently induce the mismatch **under a nontrivial scale
+history** (i.e. when `δ_j` varies over the history); the statement is not
+unconditional — with `δ_j ≡ δ` both sources give identical gauges and the null
+holds regardless of kernels/weighting.
 
 So the mechanism is **first/second-moment effective-history mismatch**, of
 which unequal decay rates are one (important but not the only) source.
@@ -214,12 +241,22 @@ Then the gauges are exact:
 A^(1)_i = ( β1^Δ P_a δ_a + P_b δ_b ) / ( β1^Δ P_a + P_b )   = δ_b + (δ_a - δ_b) α^(1)_i
 A^(2)_i = ( β2^Δ Q_a δ_a + Q_b δ_b ) / ( β2^Δ Q_a + Q_b )   = δ_b + (δ_a - δ_b) α^(2)_i
 ```
-where the **old-block effective fractions** are
+where the **old-block effective weights** are
 
 ```
-α^(1)_i := β1^Δ P_{a,i} / ( β1^Δ P_{a,i} + P_{b,i} )
-α^(2)_i := β2^Δ Q_{a,i} / ( β2^Δ Q_{a,i} + Q_{b,i} )
+α^(1)_i := β1^Δ P_{a,i} / ( β1^Δ P_{a,i} + P_{b,i} )    (signed, on m-support)
+α^(2)_i := β2^Δ Q_{a,i} / ( β2^Δ Q_{a,i} + Q_{b,i} )    (nonnegative, in [0,1])
 ```
+
+**Sign caveat (per review).** `α^(1)` is an **effective signed old-block
+weight/ratio**, NOT a probability-like `[0,1]` fraction: the first-moment sums
+`P_a, P_b` are *signed* gradient sums, so `α^(1) < 0` or `α^(1) > 1` can occur,
+and the denominator `β1^Δ P_a + P_b = m_t` is zero exactly off the m-support
+(coordinates with `m_{t,i} = 0` — consistent with §2's effective support; there
+`A^(1)` is undefined and the coordinate is excluded from `S_t`). `α^(2)` is
+nonnegative and in `[0,1]` because `Q_a, Q_b ≥ 0` (squared gradients), with the
+denominator `v_t > 0` on `S_t`. The factorization holds wherever the gauges are
+defined (i.e. on `S_t`).
 
 **Clean formula.** The gauge deviation factors exactly:
 
@@ -237,8 +274,9 @@ coordinate-constant and `R_opt > 0` (first order).
 *Why this is rigorous (vs the earlier draft).* The old "dominated by `δ_b-δ_a`
 times a positive factor" is not generally valid — the first-moment gradients can
 have signs and cancellations. The factored formula `D_i = (δ_a-δ_b)(α_i^(1)-α_i^(2))`
-holds exactly, with no sign assumptions. The old-block fractions `α` are
-well-defined in `[0,1]` and their difference is the clean driver.
+holds exactly, with no sign assumptions and no positivity claim on `α^(1)`.
+The difference of the two effective weights is the clean driver (defined on
+`S_t`; off-support coordinates handled per §2 / PR #43).
 
 ---
 
@@ -262,14 +300,22 @@ well-defined in `[0,1]` and their difference is the clean driver.
 Role D measures `a_K*` (best-fit instantaneous scale), `c_K*`, `s_K*`,
 `R_grad(K)`, `R_opt(K)`, and `h_{K,i}` / `H_K`.
 
-**Theorem-guaranteed predictions (safe):**
+**Theorem-guaranteed predictions — qualified (per review).** These hold
+**only** under the theorem's assumptions: exact scalar history
+`G^g_j = (1+δ_j) G_j` (i.e. no non-scalar `E_j`), idealized rectified RAdam
+(`eps=0`, no weight decay), same step index, and on the effective support.
 - `h_{K,i}^moment ≈ h_{K,i}^update`: the coordinate gauge computed from the
   moment formula `(m^g/m)·sqrt(v/v^g)` should match the actual-update ratio
-  (validating the memory identity — this is the primary, assumption-light
-  check);
+  (validating the memory identity);
 - `R_opt(K)` should be predictable from the coordinate dispersion of
   `D_{K,i} := A^(1)_{K,i} - A^(2)_{K,i}` (the exact two-block formula gives
   the mechanism, and the weighted-dispersion identity ties `H_K` to `R_opt`).
+
+**On real ECT these are falsifiable predictions / diagnostics, not guaranteed**
+**theorems**: real training has non-scalar `E_j ≠ 0`, `eps > 0`, weight decay,
+AMP, and `a_K*` is a best-fit scalar rather than the exact `1+δ_j`. The
+`h^moment ≈ h^update` check is the one that stays most assumption-light and is
+the recommended first diagnostic.
 
 **Empirical hypotheses (NOT theorem-guaranteed, per review):**
 - `a_K*` roughly constant across states ⇒ `H_K ≈ 0` (null);
