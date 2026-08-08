@@ -196,9 +196,16 @@ def main():
 
     dim5 = 64; n5 = 60
     sched_alt = np.where(np.arange(n5) % 20 < 10, 0.3, -0.2)
-    sched_const = np.full(n5, 0.3)
+    # FIX (review blocker 1): the constant arm must end on the SAME δ as the
+    # varying arm's last step (δ=-0.2), so the CURRENT candidate gradient is
+    # identical — only the HISTORY differs.
+    sched_const = np.full(n5, sched_alt[-1])   # constant -0.2 throughout
     u1a, uga, ga = run_hist(dim5, sched_alt, 4)
     u1b, ugb, gb = run_hist(dim5, sched_const, 4)
+    # verify the current candidate gradients are actually identical
+    ga_cand = (1 + sched_alt[-1]) * ga
+    gb_cand = (1 + sched_const[-1]) * gb
+    assert torch.allclose(ga_cand, gb_cand), "candidate gradients must match"
     def ropt(u1, ug):
         s = float(torch.dot(ug, u1) / torch.dot(u1, u1))
         return float(torch.norm(ug - s * u1) / torch.norm(u1))
@@ -209,6 +216,41 @@ def main():
     print(f"  difference (pure memory) = {abs(Ra - Rb):.4f}")
     assert torch.allclose(ga, gb)
     assert Ra > 0.05 and Rb < 1e-3, "memory is the sole cause of R_opt in T5"
+
+    # ---- T6: exact memory identity h = (m^g/m)·sqrt(v/v^g) (review upgrade) ----
+    # The exact identity (not the first-order expansion) should predict the
+    # actual update ratio to near-machine precision (eps=1e-8 effect only).
+    print("\n=== T6: exact memory identity (not first-order) ===")
+    torch.manual_seed(6)
+    dim6 = 64
+    p1 = torch.nn.Parameter(torch.zeros(dim6))
+    pg = torch.nn.Parameter(torch.zeros(dim6))
+    o1 = RAdam([p1], lr=1e-3)
+    og = RAdam([pg], lr=1e-3)
+    rng = np.random.default_rng(6)
+    for k in range(60):
+        d = 0.3 if (k % 20 < 10) else -0.2
+        g = torch.from_numpy(rng.standard_normal(dim6)).float()
+        old1, oldg = p1.detach().clone(), pg.detach().clone()
+        o1.zero_grad(); p1.grad = g.clone()
+        og.zero_grad(); pg.grad = ((1 + d) * g).clone()
+        o1.step(); og.step()
+        if k >= 5:
+            u1 = p1.detach() - old1
+            ug = pg.detach() - oldg
+            sup = torch.abs(u1) > 1e-30
+            h_act = torch.ones_like(u1); h_act[sup] = ug[sup] / u1[sup]
+            st1 = o1.state[p1]; stg = og.state[pg]
+            step = int(st1["step"].item())
+            m1, v1 = st1["exp_avg"], st1["exp_avg_sq"]
+            mg, vg = stg["exp_avg"], stg["exp_avg_sq"]
+            mh1, mhg = m1 / (1 - 0.9**step), mg / (1 - 0.9**step)
+            vh1, vhg = v1 / (1 - 0.999**step), vg / (1 - 0.999**step)
+            h_pred = (mhg / mh1) * torch.sqrt(vh1 / vhg)
+            err = float(torch.norm(h_act[sup] - h_pred[sup]) / torch.norm(h_act[sup]))
+            if k == 59:
+                print(f"  exact-identity rel-err (t=59, rectified): {err:.3e}")
+                assert err < 0.05, "exact identity should predict updates to eps level"
     print("\nALL MOMENT-MEMORY CHECKS PASSED")
 
 

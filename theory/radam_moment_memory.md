@@ -39,37 +39,58 @@ h_{t,i} = U^g_{t,i} / U_{t,i}
 
 ---
 
-## 2. First-order expansion
+## 2. Exact memory identity (upgraded per review)
 
-Define the **first-moment history gauge** and **second-moment history gauge**:
+Define the **first-moment history gauge**, **second-moment history gauge**, and
+**second-moment quadratic gauge**:
 
 ```
 A^(1)_{t,i} := ( Σ_j p_{tj} δ_j G_{j,i} ) / ( Σ_j p_{tj} G_{j,i} ),   p_{tj} ∝ β1^{t-j}
 A^(2)_{t,i} := ( Σ_j q_{tj} δ_j G_{j,i}² ) / ( Σ_j q_{tj} G_{j,i}² ), q_{tj} ∝ β2^{t-j}
+B^(2)_{t,i} := ( Σ_j q_{tj} δ_j² G_{j,i}² ) / ( Σ_j q_{tj} G_{j,i}² )
 ```
 
-**Lemma (first-order).** To first order in `||δ||`:
+**Exact identity (theorem).** For rectified RAdam (same step index; bias
+correction cancels), the coordinate-wise history gauge is **exactly**
 
 ```
-m^g_t / m_t   = 1 + A^(1)_{t,i} + O(||δ||²)
-v^g_t / v_t   = 1 + 2 A^(2)_{t,i} + O(||δ||²)
-sqrt(v_t/v^g_t) = (1 + 2 A^(2))^{-1/2} = 1 - A^(2)_{t,i} + O(||δ||²)
+m^g_t / m_t   = 1 + A^(1)_{t,i}                       (exact, linear in δ)
+v^g_t / v_t   = 1 + 2 A^(2)_{t,i} + B^(2)_{t,i}        (exact, quadratic in δ)
+
+h_{t,i} = (1 + A^(1)_{t,i}) / sqrt( 1 + 2 A^(2)_{t,i} + B^(2)_{t,i} )
 ```
 
-**Theorem (moment-memory).** For rectified RAdam, to first order in `||δ||`:
+*Proof.* `m^g = Σ p (1+δ_j) G = m + Σ p δ_j G`, divide by `m`:
+`1 + (ΣpδG)/(ΣpG) = 1 + A^(1)`. Similarly `v^g = Σ q (1+δ_j)² G²
+= v + 2ΣqδG² + Σqδ²G²`, divide by `v`: `1 + 2A^(2) + B^(2)`. Then `h =
+(m^g/m)·sqrt(v/v^g)` by the rectified update ratio. ∎
+
+This is **not a Taylor heuristic**: it is an exact identity of the moment
+recursion. The first-order expansion is its corollary:
+
+**Corollary (first order).** Expanding the exact identity in `||δ||`:
 
 ```
 h_{t,i} - 1 = A^(1)_{t,i} - A^(2)_{t,i} + O(||δ||²)
 ```
 
-*Proof.* `h = (m^g/m)·sqrt(v/v^g) = (1+A^(1))(1-A^(2)) + O(δ²)
-= 1 + A^(1) - A^(2) + O(δ²)`, where cross term `A^(1)A^(2)` is second order. ∎
+and to second order (explicit cross/quadratic terms):
 
-**Interpretation.** The history gauge deviation is the **difference between the
-β1-weighted mean of `δ` (over gradients) and the β2-weighted mean of `δ` (over
-gradient squares)**. It is zero iff these two history-weighted means coincide.
-The two memory time-scales (`β1=0.9` vs `β2=0.999`) are the mechanism: the same
-`δ_j` history is averaged with different forget rates by the two moments.
+```
+h - 1 = A^(1) - A^(2) - A^(1)A^(2) - ½ B^(2) + ³⁄₂ (A^(2))² + O(||δ||³)
+```
+
+**Mechanism (corrected per review).** The gauge deviation is the **difference
+between the effective scale histories seen by the first and second moments**.
+This mismatch has two sources, and either alone suffices:
+1. **different decay kernels** (`β1 ≠ β2`): the same δ_j history is forgotten at
+   different rates by `m` and `v`;
+2. **different gradient weighting** (`G_j` vs `G_j²`): even with `β1 = β2`,
+   weighting gradients vs squared gradients yields different effective averages
+   of the same δ_j history.
+
+So the mechanism is **first/second-moment effective-history mismatch**, of
+which unequal decay rates are one (important but not the only) source.
 
 ---
 
@@ -123,59 +144,101 @@ the `δ=±0.3` block-alternating scale used in the synthetic check the error is
 ~7-12%, dominated by first-order truncation (plus `eps`), not by a flaw in the
 mechanism.
 
-**Accuracy at real-ECT scale (round-2 self-review).** The block-alternating
-synthetic is a *worst case* (large δ jumps at block boundaries inflate
-`A^(1)-A^(2)` and the second-order cross term). For smooth, small δ — the
-real-ECT regime, where `a ≈ 0.77` for g=1.3 gives `δ ≈ -0.23` — the measured
-rel-err of the first-order formula is **0.2-0.3%**:
+**Accuracy as a function of δ amplitude (honest, per review).** The
+block-alternating synthetic is a *worst case* (large δ jumps at block
+boundaries inflate `A^(1)-A^(2)` and the second-order cross term). For smaller,
+smoother δ the first-order rel-err drops:
 
 | δ amplitude | rel-err |
 |---|---:|
-| 0.10 (g≈0.90) | 0.1% |
-| 0.15 (g≈0.85) | 0.2% |
-| 0.23 (g≈0.77, real ECT) | 0.2% |
-| 0.30 (g≈0.70) | 0.3% |
+| 0.10 | 0.1% |
+| 0.15 | 0.2% |
+| 0.23 | 0.2% |
+| 0.30 | 0.3% |
 
-So for real ECT the first-order moment-memory formula is quantitatively
-reliable; the synthetic block test overstates the error and should be read as a
-mechanism demonstration, not an accuracy ceiling.
-
----
-
-## 5. Corollary 3 — Coordinate heterogeneity ⇒ R_opt > 0
-
-**Statement.** If coordinates `i,l` have different temporal gradient
-compositions (`{G_{j,i}}_j` vs `{G_{j,l}}_j` are not proportional), then
-`A^(1)_{t,i} ≠ A^(1)_{t,l}` in general, hence `h_{t,i} ≠ h_{t,l}`, and by the
-coordinate-wise gauge theorem (rev.3) the best-scalar update residual satisfies
-
-```
-R_opt(t) > 0   (first order in ||δ||).
-```
-
-*Proof sketch.* `h_{t,i} - h_{t,l} = (A^(1)_i - A^(2)_i) - (A^(1)_l - A^(2)_l)
-+ O(δ²)`. If `G_i` and `G_l` have different temporal profiles, `A^(1)_i ≠ A^(1)_l`
-generically, so `h` is not coordinate-constant on the effective support ⇒
-`R_opt > 0` by the iff theorem.
+**Important caveat (added per review).** This is a *synthetic* accuracy
+statement only. The observed `a* ≈ 0.755` (from #38) is the whole-model
+**mean-gradient best scalar fit**, not evidence that per-training-step
+`1 + δ_j` is exact, small, or smooth. The δ=0.23 row should be read as
+"amplitude matched to the observed whole-model scalar coefficient", **not**
+"the real-ECT regime". Whether the formula is quantitatively reliable for the
+actual experiment requires Role D's real history measurement; it is not
+established here.
 
 ---
 
-## 6. Sufficient condition for gauge dispersion (today's plan item)
+## 5. Corollary 3 — Gauge-dispersion condition ⇒ R_opt > 0 (tightened)
 
-For a **two-block** history (δ = δ_a for `j ≤ t0`, δ = δ_b for `t0 < j ≤ t`),
-with the block boundary at `t0` and `t - t0` steps of δ_b:
+**Corrected statement (per review).** The object of interest is the **gauge
+deviation**
+```
+D_{t,i} := A^(1)_{t,i} - A^(2)_{t,i}
+```
+(the first-order `h_{t,i} - 1`). Coordinate heterogeneity is necessary but not
+sufficient for `R_opt > 0`: what matters is whether `D_{t,i}` is constant on
+the effective support, not whether each `A` individually differs. The precise
+first-order statement:
 
 ```
-A^(1) = [ β1^{t-t0} S_a^{(1)} δ_a + S_b^{(1)} δ_b ] / [ β1^{t-t0} S_a^{(1)} + S_b^{(1)} ]
-A^(2) = [ β2^{t-t0} S_a^{(2)} δ_a + S_b^{(2)} δ_b ] / [ β2^{t-t0} S_a^{(2)} + S_b^{(2)} ]
+R_opt(t) > 0  (first order in ||δ||)  ⟺  D_{t,i} is not coordinate-constant
+                                          on the effective support.
 ```
-where `S_a^(m), S_b^(m)` are the accumulated (unweighted) moment sums in each
-block. Because `β1^{Δ} ≠ β2^{Δ}` for `Δ > 0`, the two gauges weight the old vs
-new block differently. **Sufficient condition for nonzero dispersion:**
-`δ_a ≠ δ_b` AND `Δ > 0` AND the block sums `S_a^(m), S_b^(m)` do not make the
-two ratios accidentally equal. Concretely, right after a scale change
-(`Δ` small), `A^(2)` still reflects the old block longer (β2 decays slower),
-so `A^(1) - A^(2)` is dominated by `δ_b - δ_a` times a positive factor.
+
+*Proof.* By the exact identity, `h_{t,i} - 1 = D_{t,i} + O(δ²)`. If `D_i ≠ D_l`
+then `h_i ≠ h_l`, so by the rev.3 iff theorem `U_g` is not a scalar multiple of
+`U_1`, giving `R_opt > 0` to first order. Conversely, if `D` is constant, then
+`h` is constant to first order and `R_opt = O(δ²)`. ∎
+
+*Why this tightening matters.* It is possible for `A^(1)_i ≠ A^(1)_l` while
+`A^(2)_i ≠ A^(2)_l` *cancels* the difference (`D_i = D_l`); in that case the
+coordinate heterogeneity produces no first-order `R_opt`. The earlier draft's
+"different temporal composition ⇒ R_opt > 0" was too strong.
+
+---
+
+## 6. Two-block history: exact gauge-dispersion formula (per review)
+
+Consider a **two-block** history: `δ_j = δ_a` for `j ≤ t0`, `δ_j = δ_b` for
+`t0 < j ≤ t`. Let `Δ = t - t0` (steps since the block boundary) and define the
+**block-weighted moment sums** (these carry the exponential decay *within* each
+block — they are not "unweighted"):
+
+```
+P_{a,i} := Σ_{j≤t0} β1^{t0-j} G_{j,i},      P_{b,i} := Σ_{t0<j≤t} β1^{t-j} G_{j,i}
+Q_{a,i} := Σ_{j≤t0} β2^{t0-j} G_{j,i}²,     Q_{b,i} := Σ_{t0<j≤t} β2^{t-j} G_{j,i}²
+```
+
+Then the gauges are exact:
+
+```
+A^(1)_i = ( β1^Δ P_a δ_a + P_b δ_b ) / ( β1^Δ P_a + P_b )   = δ_b + (δ_a - δ_b) α^(1)_i
+A^(2)_i = ( β2^Δ Q_a δ_a + Q_b δ_b ) / ( β2^Δ Q_a + Q_b )   = δ_b + (δ_a - δ_b) α^(2)_i
+```
+where the **old-block effective fractions** are
+
+```
+α^(1)_i := β1^Δ P_{a,i} / ( β1^Δ P_{a,i} + P_{b,i} )
+α^(2)_i := β2^Δ Q_{a,i} / ( β2^Δ Q_{a,i} + Q_{b,i} )
+```
+
+**Clean formula.** The gauge deviation factors exactly:
+
+```
+D_i := A^(1)_i - A^(2)_i = (δ_a - δ_b) · ( α^(1)_i - α^(2)_i )
+```
+
+**Sufficient condition.** To first order,
+```
+h_i ≠ 1   ⟺   δ_a ≠ δ_b  AND  α^(1)_i ≠ α^(2)_i.
+```
+And if `α^(1)_i - α^(2)_i` differs across coordinates, then `D_i` is not
+coordinate-constant and `R_opt > 0` (first order).
+
+*Why this is rigorous (vs the earlier draft).* The old "dominated by `δ_b-δ_a`
+times a positive factor" is not generally valid — the first-moment gradients can
+have signs and cancellations. The factored formula `D_i = (δ_a-δ_b)(α_i^(1)-α_i^(2))`
+holds exactly, with no sign assumptions. The old-block fractions `α` are
+well-defined in `[0,1]` and their difference is the clean driver.
 
 ---
 
@@ -196,22 +259,32 @@ so `A^(1) - A^(2)` is dominated by `δ_b - δ_a` times a positive factor.
 
 ## 8. Relation to Role D
 
-Role D measures `a_K*` (instantaneous scale), `c_K*`, `s_K*`, `R_grad(K)`,
-`R_opt(K)`, and `h_{K,i}` / `H_K`. The theorem predicts:
-- if `a_K*` is roughly constant across states, `H_K` ≈ 0 (null);
-- if `a_K*` varies (δ_j history nontrivial), `R_opt(K) - R_grad(K) > 0`, and the
-  **moment-predicted** `h_{t,i}` from the `A^(1)-A^(2)` formula should match the
-  **actual-update** `h_{t,i}` (validating the memory mechanism).
+Role D measures `a_K*` (best-fit instantaneous scale), `c_K*`, `s_K*`,
+`R_grad(K)`, `R_opt(K)`, and `h_{K,i}` / `H_K`.
+
+**Theorem-guaranteed predictions (safe):**
+- `h_{K,i}^moment ≈ h_{K,i}^update`: the coordinate gauge computed from the
+  moment formula `(m^g/m)·sqrt(v/v^g)` should match the actual-update ratio
+  (validating the memory identity — this is the primary, assumption-light
+  check);
+- `R_opt(K)` should be predictable from the coordinate dispersion of
+  `D_{K,i} := A^(1)_{K,i} - A^(2)_{K,i}` (the exact two-block formula gives
+  the mechanism, and the weighted-dispersion identity ties `H_K` to `R_opt`).
+
+**Empirical hypotheses (NOT theorem-guaranteed, per review):**
+- `a_K*` roughly constant across states ⇒ `H_K ≈ 0` (null);
+- `R_opt(K) - R_grad(K) > 0` when the δ_j history is nontrivial. This is a
+  **diagnostic hypothesis, not a theorem consequence**: `a_K*` is a best-fit
+  scalar coefficient, not the exact `1+δ_j` assumed by the theorem, and ECT has
+  non-scalar `E_j ≠ 0`; moreover the optimizer can partly compress as well as
+  amplify a residual, so `R_opt > R_grad` is not unconditionally guaranteed.
+  The size and sign of `R_opt - R_grad` should be measured and compared with
+  the moment-predicted `D_{K,i}` dispersion.
 
 **The key comparison is `R_opt(K) - R_grad(K)`, not `H_K = R_opt`** (the latter
-is an identity). `R_grad(K)` is the raw-gradient directional residual (already
-known to be small, ~0.3% whole-model); `R_opt(K)` is the optimizer-update
-residual. The theorem's quantitative content is:
-- `R_opt(K) - R_grad(K) ≈ 0` when the δ_j history is trivial (constant or
-  short-memory) → gap stays in the optimizer-equivalence class;
-- `R_opt(K) - R_grad(K) > 0` when the δ_j history is nontrivial → the
-  optimizer memory converts a near-scalar instantaneous gap into a genuine
-  update-direction difference, and the size should track `A^(1)-A^(2)`.
+is an identity). The quantitative content to test on real checkpoints is
+whether `R_opt - R_grad` tracks the `D_{K,i}` dispersion predicted by the
+memory identity.
 
 ---
 
