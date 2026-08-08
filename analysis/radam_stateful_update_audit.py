@@ -11,10 +11,12 @@ dropout RNG, and differs only by ``global_gap_scale`` ``g ∈ {1.0, 1.3}``.
 
 Each branch reports gradient scalars ``a_K^*``, ``R_grad(K)`` and the distinct
 optimizer scalars ``s_K^*`` (update scale), ``c_K^*`` (candidate LR
-multiplier), and ``R_opt(K)``.  Its coordinate/layer summary is #45's
-support-aware history gauge ``h_update_i = U_g,i / U_1,i`` with explicit
-off-support candidate energy and a moment-memory comparison.  ``H_K`` is kept
-only as the marked residual-decomposition identity check.
+multiplier), and ``R_opt(K)``.  Its coordinate/layer summary uses #45's
+support-aware update-gauge notation ``h_update_i = U_g,i / U_1,i`` with
+explicit off-support candidate energy.  The moment ratio is retained as a
+current-step RAdam mapping-consistency check, not independent temporal-history
+evidence.  ``H_K`` is kept only as the marked residual-decomposition identity
+check.
 """
 from __future__ import annotations
 
@@ -49,7 +51,7 @@ LAYERWISE_FIELDS = (
     "s_K_star_layer",
     "c_K_star_layer",
     "R_opt_layer",
-    "layer_residual_with_global_scale",
+    "layer_residual_with_global_c_star",
     "support_atol",
     "support_coordinate_count",
     "coordinate_count",
@@ -72,7 +74,7 @@ LAYERWISE_FIELDS = (
     "s_K_star_predicted_layer",
     "c_K_star_predicted_layer",
     "R_pred_layer",
-    "predicted_layer_residual_with_global_scale",
+    "predicted_layer_residual_with_global_c_star",
     "predicted_off_support_candidate_energy_exact",
 )
 
@@ -163,7 +165,7 @@ def support_aware_gauge_summary(
         moments_candidate: dict[str, tuple[torch.Tensor, torch.Tensor]] | None = None,
         eps: float | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Summarize #45's coordinate ratio, support, and moment-memory gauge.
+    """Summarize #45's coordinate notation plus the current-step RAdam check.
 
     The exact #43 residual decomposition uses exact ``U_1 != 0`` support.
     ``support_atol`` additionally defines the reported effective support used
@@ -251,7 +253,7 @@ def support_aware_gauge_summary(
             "s_K_star_layer": layer_s,
             "c_K_star_layer": layer_c,
             "R_opt_layer": math.sqrt(layer_residual_sq / ref_l2_sq) if ref_l2_sq else math.nan,
-            "layer_residual_with_global_scale": (
+            "layer_residual_with_global_c_star": (
                 math.sqrt(global_c_residual_sq / ref_l2_sq) if ref_l2_sq else math.nan),
             "support_atol": support_atol,
             "support_coordinate_count": int(support_mask.sum()),
@@ -591,8 +593,8 @@ def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13, *,
             "s_K_star_predicted_layer": pred_row["s_K_star_layer"],
             "c_K_star_predicted_layer": pred_row["c_K_star_layer"],
             "R_pred_layer": pred_row["R_opt_layer"],
-            "predicted_layer_residual_with_global_scale": pred_row[
-                "layer_residual_with_global_scale"],
+            "predicted_layer_residual_with_global_c_star": pred_row[
+                "layer_residual_with_global_c_star"],
             "predicted_off_support_candidate_energy_exact": pred_row[
                 "off_support_candidate_energy_exact"],
         })

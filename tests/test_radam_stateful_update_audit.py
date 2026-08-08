@@ -141,7 +141,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         self.assertGreater(len(layers), 1)
         self.assertIn("h_update_weighted_mean", layers[0])
         self.assertIn("h_moment_weighted_mean", layers[0])
-        self.assertIn("layer_residual_with_global_scale", layers[0])
+        self.assertIn("layer_residual_with_global_c_star", layers[0])
         self.assertEqual(set(layers[0]), set(MODULE.LAYERWISE_FIELDS))
 
     def test_idealized_predictor_matches_actual_update(self):

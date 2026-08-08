@@ -1,7 +1,7 @@
 {
   "status": "not_executed_pending_server_training_state",
-  "scope": "stateful_role_d_radam_history_gauge_from_nonzero_z_K",
-  "reason": "This checkout does not contain a real AMP-restored training-state-*.pt with non-zero RAdam moments, successful_optimizer_steps >= 6, and GradScaler state. No synthetic result is represented as mechanism evidence.",
+  "scope": "stateful_radam_coordinate_update_gauge_from_nonzero_z_K",
+  "reason": "This checkout does not contain a real AMP-restored training-state-*.pt with non-zero RAdam moments, successful_optimizer_steps >= 6, and GradScaler state. No synthetic result is represented as a real stateful measurement; temporal-history mechanism evidence additionally requires a separate cross-state design.",
   "required_z_K_fields": [
     "net (θ_K)",
     "optimizer_state with nonzero finite m_K/v_K and n_K>0",

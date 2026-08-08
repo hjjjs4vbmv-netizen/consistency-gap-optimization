@@ -13,6 +13,8 @@ z_K = (θ_K, m_K, v_K, n_K, GradScaler_K)
 
 restored from `training-state-*.pt`, then asks whether the gap intervention at
 that state remains a near-scalar update rematch once RAdam moments are live.
+It is a **single-state measurement**: it does not by itself establish the
+#45 temporal-history mechanism.
 
 ## Required inputs
 
@@ -70,7 +72,7 @@ The analytical RAdam update is retained as an implementation check and reports
 its own `s_K_star_predicted`, `c_K_star_predicted`, and `R_pred`; it is not a
 substitute for the measured moment-memory gauge below.
 
-### Support-aware coordinate history gauge
+### Support-aware coordinate update gauge
 
 With `U_1 = Δθ_1` and `U_g = Δθ_1.3`, the theorem gauge on support is
 
@@ -84,7 +86,8 @@ decomposition) and an optional effective support
 support coordinate/energy coverage plus weighted mean and standard deviation
 of `h_update`, and unweighted p05/p50/p95 quantiles.  The old quantity
 `||c_K^* U_g^(l) - U_1^(l)|| / ||U_1^(l)||` is retained only under its accurate
-name: `layer_residual_with_global_scale`; it is not `h_{K,i}`.
+name: `layer_residual_with_global_c_star`; it is not `h_{K,i}`.  This field
+uses the reverse/LR-matching `c_K^*` convention, whereas `R_opt` uses `s_K^*`.
 
 On the exact support, the receipt separately reports
 
@@ -98,7 +101,7 @@ off_support_candidate_energy_exact
 Their sum reconstructs `R_opt²` numerically.  `H_K` is the square root of
 that sum and is flagged as an **identity check**, never independent evidence.
 
-### Moment-memory comparison
+### Moment/update mapping consistency check
 
 For effective coordinates with `m_1,i != 0`, `v_1,i > 0`, and `v_g,i > 0`,
 the audit reports
@@ -107,19 +110,28 @@ the audit reports
 h_moment_i = (m_g,i / m_1,i) * sqrt(v_1,i / v_g,i).
 ```
 
-It also reports the implementation-aware `eps` variant and the update-energy
-weighted RMSE of `h_update - h_moment` (whole model and per layer).  Under the
-idealized rectified-RAdam assumptions this identity is exact; for real ECT its
-mismatch is a falsifiable diagnostic, not a theorem claim.
+It also reports the implementation-aware `h_moment_eps` variant and the
+update-energy weighted RMSE of `h_update - h_moment_eps` (whole model and per
+layer).  For the same rectified RAdam step this is primarily an
+**optimizer implementation/algebra consistency check**: both quantities are
+two expressions of the same current-step mapping, subject to the recorded
+support, epsilon, weight-decay, and numerical details.  It must not be framed
+as independent evidence of #45's temporal-history mechanism.
 
 ### Critical comparisons
 
-1. `R_opt(K) - R_grad(K)`.
+1. `R_opt(K) - R_grad(K)` as a state-conditioned non-scalar-effect diagnostic.
 2. Actual `h_update` dispersion, exact off-support candidate energy, and their
    reconstruction of `R_opt²`.
-3. Actual-update versus moment-memory gauge discrepancy on effective support.
+3. `h_update` versus `h_moment_eps` as an optimizer mapping-consistency check.
 4. Analytical predicted-vs-actual update agreement, as a separate optimizer
    implementation check.
+
+Temporal-history mechanism evidence requires a **cross-state** design not
+implemented by this one-state receipt: measure how `a_K^*` changes with `K`
+and test the #45 coordinate-history `D_i` prediction from the corresponding
+per-step scale history.  Do not infer that evidence merely from a nonzero
+`h_update - h_moment_eps` value at one state.
 
 ## Run
 
