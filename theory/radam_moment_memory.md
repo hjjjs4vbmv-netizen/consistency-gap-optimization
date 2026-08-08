@@ -119,10 +119,26 @@ near-scalar".
 `h - 1 = A^(1) - A^(2) + O(δ²)` was verified against the real RAdam update:
 the moment-predicted `h` matches the actual update with relative error that
 scales as `δ²` (measured: 0.002 at δ×0.1, 0.014 at ×0.3, 0.119 at ×1.0). So at
-the `δ=±0.3` scale used in the synthetic check the error is ~7-12%, dominated
-by first-order truncation (plus `eps`), not by a flaw in the mechanism. For
-quantitative use on real ECT the relevant `δ_j` is small (gap-scale deviation
-~0.1-0.3), where the approximation is accurate to a few percent.
+the `δ=±0.3` block-alternating scale used in the synthetic check the error is
+~7-12%, dominated by first-order truncation (plus `eps`), not by a flaw in the
+mechanism.
+
+**Accuracy at real-ECT scale (round-2 self-review).** The block-alternating
+synthetic is a *worst case* (large δ jumps at block boundaries inflate
+`A^(1)-A^(2)` and the second-order cross term). For smooth, small δ — the
+real-ECT regime, where `a ≈ 0.77` for g=1.3 gives `δ ≈ -0.23` — the measured
+rel-err of the first-order formula is **0.2-0.3%**:
+
+| δ amplitude | rel-err |
+|---|---:|
+| 0.10 (g≈0.90) | 0.1% |
+| 0.15 (g≈0.85) | 0.2% |
+| 0.23 (g≈0.77, real ECT) | 0.2% |
+| 0.30 (g≈0.70) | 0.3% |
+
+So for real ECT the first-order moment-memory formula is quantitatively
+reliable; the synthetic block test overstates the error and should be read as a
+mechanism demonstration, not an accuracy ceiling.
 
 ---
 

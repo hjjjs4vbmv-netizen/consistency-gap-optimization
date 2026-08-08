@@ -175,6 +175,40 @@ def main():
             print(f"  R_opt - R_grad = {R_opt - R_grad:.4f}")
             assert R_opt > R_grad + 0.01, \
                 "optimizer memory should raise residual above the gradient residual"
+    # ---- T5: clean memory attribution (round-2 self-review) ----
+    # Same CURRENT gradient, different δ history -> any R_opt difference is
+    # PURELY memory-induced (excludes "last-step gradient differs" confound).
+    print("\n=== T5: clean memory attribution (same current grad, diff history) ===")
+    def run_hist(dim, delta_sched, seed):
+        torch.manual_seed(seed)
+        pa = torch.nn.Parameter(torch.zeros(dim)); pb = torch.nn.Parameter(torch.zeros(dim))
+        oa = RAdam([pa], lr=1e-3); ob = RAdam([pb], lr=1e-3)
+        rng = np.random.default_rng(seed)
+        last_g = None
+        for k, d in enumerate(delta_sched):
+            g = torch.from_numpy(rng.standard_normal(dim)).float()
+            last_g = g
+            olda, oldb = pa.detach().clone(), pb.detach().clone()
+            oa.zero_grad(); pa.grad = g.clone()
+            ob.zero_grad(); pb.grad = ((1 + d) * g).clone()
+            oa.step(); ob.step()
+        return pa.detach() - olda, pb.detach() - oldb, last_g
+
+    dim5 = 64; n5 = 60
+    sched_alt = np.where(np.arange(n5) % 20 < 10, 0.3, -0.2)
+    sched_const = np.full(n5, 0.3)
+    u1a, uga, ga = run_hist(dim5, sched_alt, 4)
+    u1b, ugb, gb = run_hist(dim5, sched_const, 4)
+    def ropt(u1, ug):
+        s = float(torch.dot(ug, u1) / torch.dot(u1, u1))
+        return float(torch.norm(ug - s * u1) / torch.norm(u1))
+    Ra, Rb = ropt(u1a, uga), ropt(u1b, ugb)
+    print(f"  last-step gradients identical: {torch.allclose(ga, gb)}")
+    print(f"  time-varying δ: R_opt = {Ra:.4f}")
+    print(f"  constant   δ: R_opt = {Rb:.4f}")
+    print(f"  difference (pure memory) = {abs(Ra - Rb):.4f}")
+    assert torch.allclose(ga, gb)
+    assert Ra > 0.05 and Rb < 1e-3, "memory is the sole cause of R_opt in T5"
     print("\nALL MOMENT-MEMORY CHECKS PASSED")
 
 
