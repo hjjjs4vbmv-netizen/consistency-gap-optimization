@@ -73,19 +73,31 @@ The two memory time-scales (`β1=0.9` vs `β2=0.999`) are the mechanism: the sam
 
 ---
 
-## 3. Corollary 1 — Constant-scale null (quantitative)
+## 3. Corollary 1 — Constant-scale null (phase-qualified)
 
-**Statement.** If `δ_j ≡ δ` (constant for all `j ≤ t`), then
+**Statement (rectified phase only).** If `δ_j ≡ δ` (constant for all `j ≤ t`)
+and the step is in the **rectified** regime (update ∝ `mhat/sqrt(vhat)`), then
 `A^(1) = A^(2) = δ`, so `h_{t,i} = 1 + O(δ²)`.
 
 *Proof.*
 ```
 A^(1) = δ · (Σ p_{tj} G_j)/(Σ p_{tj} G_j) = δ
 A^(2) = δ · (Σ q_{tj} G_j²)/(Σ q_{tj} G_j²) = δ
-=> h - 1 = δ - δ + O(δ²) = O(δ²)
+=> h - 1 = δ - δ + O(δ²) = O(δ²)   (rectified update)
 ```
-This makes the rev.3 P-R2 null **quantitative**: the constant-scale gauge
-deviation is second order, not merely "small".
+Under the idealized `eps=0` assumption the cancellation is **exact** (`h=1`);
+the measured `~1e-4` residual is the `eps` effect, not a `δ²` term.
+
+**Important phase qualification (self-review fix).** In the **unrectified**
+phase (first ~5 steps, update ∝ `mhat`), the coordinate gauge is `h = a = 1+δ`
+(first order in δ), NOT `1+O(δ²)`. So the constant-scale null is **not** a
+full-history `O(δ²)` statement; it holds only after rectification activates.
+This matches P-R1 (unrectified scale equivariance) and P-R2 (rectified null):
+- step 0-4 (unrectified): `h - 1 = δ = 0.30` (measured, first order);
+- step ≥5 (rectified): `h - 1 ≈ 1e-4` (measured, ~eps-level).
+
+The earlier draft (and PR #45 T1 test, which sampled only step 40) overstated
+this as a full-history `O(δ²)` null; corrected here.
 
 ---
 
@@ -102,6 +114,15 @@ distortion is **history-induced**: it is present even if every instantaneous
 gradient residual `E_j = G^g_j - (1+δ_j)G_j` is exactly zero (δ is the exact
 scalar). This is the quantitative form of "instantaneous near-scalar ⇏ update
 near-scalar".
+
+*Accuracy (self-review).* The first-order formula
+`h - 1 = A^(1) - A^(2) + O(δ²)` was verified against the real RAdam update:
+the moment-predicted `h` matches the actual update with relative error that
+scales as `δ²` (measured: 0.002 at δ×0.1, 0.014 at ×0.3, 0.119 at ×1.0). So at
+the `δ=±0.3` scale used in the synthetic check the error is ~7-12%, dominated
+by first-order truncation (plus `eps`), not by a flaw in the mechanism. For
+quantitative use on real ECT the relevant `δ_j` is small (gap-scale deviation
+~0.1-0.3), where the approximation is accurate to a few percent.
 
 ---
 
@@ -165,6 +186,16 @@ Role D measures `a_K*` (instantaneous scale), `c_K*`, `s_K*`, `R_grad(K)`,
 - if `a_K*` varies (δ_j history nontrivial), `R_opt(K) - R_grad(K) > 0`, and the
   **moment-predicted** `h_{t,i}` from the `A^(1)-A^(2)` formula should match the
   **actual-update** `h_{t,i}` (validating the memory mechanism).
+
+**The key comparison is `R_opt(K) - R_grad(K)`, not `H_K = R_opt`** (the latter
+is an identity). `R_grad(K)` is the raw-gradient directional residual (already
+known to be small, ~0.3% whole-model); `R_opt(K)` is the optimizer-update
+residual. The theorem's quantitative content is:
+- `R_opt(K) - R_grad(K) ≈ 0` when the δ_j history is trivial (constant or
+  short-memory) → gap stays in the optimizer-equivalence class;
+- `R_opt(K) - R_grad(K) > 0` when the δ_j history is nontrivial → the
+  optimizer memory converts a near-scalar instantaneous gap into a genuine
+  update-direction difference, and the size should track `A^(1)-A^(2)`.
 
 ---
 

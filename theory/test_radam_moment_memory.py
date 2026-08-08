@@ -70,15 +70,21 @@ def main():
     dim = 64
     n = 60
 
-    # ---- T1: constant δ = 0.3 -> h - 1 = O(δ²) ----
+    # ---- T1: constant δ = 0.3 ----
+    # self-review fix: report BOTH phases. Unrectified (steps 0-4): h-1 = δ
+    # (first order, P-R1). Rectified (step >= 5): h-1 ~ eps-level (null).
     d_const = np.full(n, 0.3)
     hc, Gc, _ = run_arms(dim, d_const, seed=1)
     hc_dev = (hc - 1.0).abs()
-    print("=== T1: constant δ = 0.3 (quantitative null) ===")
-    print(f"  max |h-1| over coords, step 40: {hc_dev[40].max().item():.4e}")
-    print(f"  δ² = {0.09:.2f} (should bound h-1: O(δ²))")
-    # corollary says h-1 = O(δ²); check it's far below δ=0.3
-    assert hc_dev[40].max().item() < 0.09, "constant δ should give second-order h-1"
+    print("=== T1: constant δ = 0.3 (phase-qualified null) ===")
+    print(f"  max |h-1| step 0 (unrectified): {hc_dev[0].max().item():.4f}  (expect ~δ=0.3)")
+    print(f"  max |h-1| step 4 (unrectified): {hc_dev[4].max().item():.4f}")
+    print(f"  max |h-1| step 6 (rectified):   {hc_dev[6].max().item():.4e}  (null)")
+    print(f"  max |h-1| step 40 (rectified):  {hc_dev[40].max().item():.4e}")
+    # unrectified phase: h-1 ~ δ (first order)
+    assert abs(hc_dev[0].max().item() - 0.3) < 0.05, "unrectified h-1 = δ"
+    # rectified phase: h-1 much smaller than δ (null)
+    assert hc_dev[6].max().item() < 0.01, "rectified constant-scale null"
 
     # ---- T2: time-varying δ_j (two blocks) -> h-1 ≈ A1-A2 ----
     d_alt = np.where(np.arange(n) % 20 < 10, 0.3, -0.2).astype(float)
@@ -97,22 +103,59 @@ def main():
               f"match rel-err={err:.2e}")
         assert err < 0.3, "first-order formula should approximate actual h"
 
-    # ---- T3: coordinate heterogeneity -> R_opt > 0 ----
-    # use two coordinates with very different gradient scales so temporal
-    # composition differs -> h coordinate-varying
-    print("\n=== T3: coordinate heterogeneity -> R_opt > 0 ===")
-    torch.manual_seed(3)
-    # custom: coordinate 0 has big gradient magnitude, coordinate 1 small
-    p1 = torch.nn.Parameter(torch.zeros(2))
-    pg = torch.nn.Parameter(torch.zeros(2))
+    # ---- T3: coordinate heterogeneity -> R_opt > 0 (high-dim, self-review) ----
+    # 64 coordinates with INDEPENDENT per-coordinate gradient series -> widely
+    # different temporal compositions -> h coordinate-varying -> R_opt > 0.
+    print("\n=== T3: coordinate heterogeneity -> R_opt > 0 (64-dim) ===")
+    dim3 = 64
+    p1 = torch.nn.Parameter(torch.zeros(dim3))
+    pg = torch.nn.Parameter(torch.zeros(dim3))
     o1 = RAdam([p1], lr=1e-3)
     og = RAdam([pg], lr=1e-3)
     rng = np.random.default_rng(3)
+    h_std_hist = []
     for k in range(60):
         d = 0.3 if (k % 20 < 10) else -0.2
-        # INDEPENDENT random series per coordinate -> different temporal
-        # gradient compositions (not proportional).
-        g = torch.tensor([rng.standard_normal(), 0.05 * rng.standard_normal()])
+        # each coordinate its own random walk-ish series (slow vs fast mix)
+        g = torch.from_numpy(rng.standard_normal(dim3)).float()
+        g[dim3 // 2:] *= 0.1                       # second half small-scale
+        old1, oldg = p1.detach().clone(), pg.detach().clone()
+        o1.zero_grad(); p1.grad = g.clone()
+        og.zero_grad(); pg.grad = ((1 + d) * g).clone()
+        o1.step(); og.step()
+        u1 = p1.detach() - old1
+        ug = pg.detach() - oldg
+        if k >= 5:   # rectified phase only
+            sup = torch.abs(u1) > TINY
+            h = ug[sup] / u1[sup]
+            w = u1[sup].square()
+            s_star = float((w * h).sum() / (w.sum() + TINY))
+            R = float(torch.norm(ug - s_star * u1) / (torch.norm(u1) + TINY))
+            h_std_hist.append((h.std().item(), R))
+            if k == 59:
+                print(f"  h std (t=59): {h.std().item():.4f}  "
+                      f"s* = {s_star:.4f}  R_opt = {R:.4f}")
+                # mechanism demonstration: coordinate-varying h => R_opt > 0
+                assert R > 0.01, "high-dim heterogeneity should give clear R_opt > 0"
+    # R_opt should be substantially above 0 across the rectified phase
+    maxR = max(r for _, r in h_std_hist)
+    print(f"  max R_opt over rectified phase: {maxR:.4f}  (well above 0)")
+    assert maxR > 0.02, "time-varying heterogeneous history should create R_opt > 0"
+    # ---- T4: R_opt vs R_grad (leader's key comparison) ----
+    # R_grad = raw-gradient directional residual (known small); R_opt = the
+    # optimizer-update residual. The theorem's content is R_opt - R_grad > 0
+    # under a nontrivial δ history, NOT H = R_opt (an identity).
+    print("\n=== T4: R_opt(K) - R_grad(K) under time-varying δ ===")
+    torch.manual_seed(4)
+    dim4 = 64
+    p1 = torch.nn.Parameter(torch.zeros(dim4))
+    pg = torch.nn.Parameter(torch.zeros(dim4))
+    o1 = RAdam([p1], lr=1e-3)
+    og = RAdam([pg], lr=1e-3)
+    rng = np.random.default_rng(4)
+    for k in range(60):
+        d = 0.3 if (k % 20 < 10) else -0.2
+        g = torch.from_numpy(rng.standard_normal(dim4)).float()
         old1, oldg = p1.detach().clone(), pg.detach().clone()
         o1.zero_grad(); p1.grad = g.clone()
         og.zero_grad(); pg.grad = ((1 + d) * g).clone()
@@ -120,15 +163,18 @@ def main():
         u1 = p1.detach() - old1
         ug = pg.detach() - oldg
         if k == 59:
-            sup = torch.abs(u1) > TINY
-            h = ug[sup] / u1[sup]
-            w = u1[sup].square()
-            s_star = float((w * h).sum() / (w.sum() + TINY))
-            R = float(torch.norm(ug - s_star * u1) / (torch.norm(u1) + TINY))
-            print(f"  h per coord (t=59): {h.detach().numpy()}")
-            print(f"  s* = {s_star:.4f}, R_opt = {R:.4f}")
-            # mechanism demonstration: coordinate-varying h => R_opt > 0
-            assert R > 1e-3, "coordinate heterogeneity should give R_opt > 0"
+            # R_grad: raw-gradient residual (instantaneous scalar relation exact)
+            grad1 = g.clone(); gradg = ((1 + d) * g).clone()
+            s_grad = float(torch.dot(gradg, grad1) / torch.dot(grad1, grad1))
+            R_grad = float(torch.norm(gradg - s_grad * grad1) / torch.norm(grad1))
+            # R_opt: update residual
+            s_opt = float(torch.dot(ug, u1) / torch.dot(u1, u1))
+            R_opt = float(torch.norm(ug - s_opt * u1) / torch.norm(u1))
+            print(f"  R_grad = {R_grad:.2e} (instantaneous, ~0 by construction)")
+            print(f"  R_opt  = {R_opt:.4f} (optimizer update)")
+            print(f"  R_opt - R_grad = {R_opt - R_grad:.4f}")
+            assert R_opt > R_grad + 0.01, \
+                "optimizer memory should raise residual above the gradient residual"
     print("\nALL MOMENT-MEMORY CHECKS PASSED")
 
 
