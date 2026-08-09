@@ -5,11 +5,22 @@ Data: real paired sweep from `gap_lr_matched_q128_s3_v1` arm_a (g=1.0) 256-kimg
 state; 20 replay steps pairing g=1.0 (reference) vs g=1.3 (candidate) with
 identical (batch, t, noise, dropout) per step.
 
-## Correction note
+## Correction note (two fixes)
 
-An earlier version of this doc reported RMSE ≈ 0.19 and Corr ≈ 0.28 from a
-top-5000 subsample. **That subsample was not representative and is retracted.**
-The full, support-aware diagnosis below is the correct result.
+1. An earlier version reported RMSE ≈ 0.19 / Corr ≈ 0.28 from a top-5000
+   subsample. **That subsample was not representative and is retracted.**
+2. The pipeline originally recovered a **global** best-fit δ_j and multiplied
+   it back coordinate-wise. Self-review found this is **wrong under non-scalar
+   gradients** (A1's coordinate spread ~100x too small). The correct gauges use
+   the paired gradients directly:
+   ```
+   A1 = Σ_j p_j (G^g_j − G_j) / Σ_j p_j G_j          (exact: δ_i G_i = G^g_i − G_i)
+   A2 = Σ_j q_j (G^g_j − G_j) G_j / Σ_j q_j G_j²
+   B2 = Σ_j q_j (G^g_j − G_j)² / Σ_j q_j G_j²
+   ```
+   Verified exact to machine precision, and on a non-scalar synthetic (δ spread
+   0.1) it gives RMSE(ĥ,h_actual)=0.0000, Corr=1.0000. The results below use
+   this corrected formula.
 
 ## Support-aware full result
 
@@ -25,28 +36,30 @@ The full, support-aware diagnosis below is the correct result.
 
 ## Why Corr ≈ 0 (the mechanism, not noise)
 
-On the effective support:
+On the effective support (corrected formula):
 
-| quantity | mean | std | notes |
-|---|---:|---:|---|
-| h^actual | **0.837** | 0.058 | tightly concentrated, 100% in [0.5,1.5] |
-| ĥ (predicted) | 1.002 | 0.441 | median 1.003, p5-p95 = [0.975, 1.025], min -161 / max +266 |
-| A^(1) | -0.231 | **0.342** | signed first-moment gauge, wide spread |
-| A^(2) | -0.233 | 0.013 | stable |
-| B^(2) | 0.055 | 0.006 | stable |
+| atol | n | RMSE | Corr | ĥ median | h^actual median |
+|---|---:|---:|---:|---:|---:|
+| 1e-6 | 43.5M | 592 | 0.000 | 0.998 | 0.841 |
+| 1e-5 | 0.99M | 3.44 | -0.001 | **1.001** | **0.837** |
 
-- **ĥ is ≈ 1 on 90% of effective coords** (A^(1) ≈ A^(2) ≈ -0.23 cancel), the
-  #45 Corollary-1 scalar null. Its extreme tail (|ĥ| ≫ 1) comes from
-  coordinates where the *signed* first-moment denominator `Σ p G` is near zero
-  — the sign-qualification caveat of #45; those are excluded by a support-atol
-  on A^(1)'s denominator in any rigorous use.
-- **h^actual is ≈ 0.837 on the same coords** — tightly concentrated, and
+| quantity | mean (effective support) | notes |
+|---|---:|---|
+| h^actual | **0.837** | tightly concentrated (std 0.058), 100% in [0.5,1.5] |
+| ĥ (predicted) | **1.001** | median 1.001, scalar null |
+| A^(1), A^(2), B^(2) | -0.23, -0.23, 0.055 | A1≈A2 cancel |
+
+- **ĥ ≈ 1 on the effective support** (A^(1) ≈ A^(2) ≈ -0.23 cancel), the #45
+  Corollary-1 scalar null, now computed with the correct paired-gradient
+  formula.
+- **h^actual ≈ 0.837 on the same coords** — tightly concentrated and
   systematically below 1.
 
-So both ĥ (on its central 90%) and h^actual are near-constant but at **different
-values** (≈1 vs ≈0.837): the scalar chain predicts the null value 1, while the
-actual update ratio is 0.837. Hence Corr ≈ 0 (no coordinate-level co-variation)
-even though both are stable — they are stably different.
+So both ĥ and h^actual are near-constant but at **different values** (≈1 vs
+≈0.837): the scalar chain predicts the null 1, the actual update ratio is 0.837.
+Corr ≈ 0 because both are stable at different values — they are stably
+different. This is **not a pipeline artifact** (the corrected formula is exact
+to machine precision); it is a real non-scalar-gradient effect.
 
 ## Honest answer to "how much does moment-history explain of real R_opt?"
 
