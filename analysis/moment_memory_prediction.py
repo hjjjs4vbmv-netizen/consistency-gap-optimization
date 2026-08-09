@@ -157,14 +157,14 @@ def main(args=None):
         "eval_step": t,
         "delta_mean": float(np.mean(delta_hist)),
         "delta_std": float(np.std(delta_hist)),
-        "h_pred": h_pred.tolist(),
-        "h_actual": h_act.tolist(),
-        "weights": w.tolist(),
+        "h_pred_support_fraction": float((w > 0).mean()),
         "weighted_RMSE_h_pred_vs_actual": rmse,
         "corr_h_pred_vs_actual": r,
         "Disp_h_pred": disp,
         "R_opt": R_opt,
         "Disp_vs_R_opt": (disp / R_opt) if R_opt > 1e-12 else math.nan,
+        "h_pred_mean": float(np.mean(h_pred[w > 0])) if (w > 0).any() else math.nan,
+        "h_actual_mean": float(np.mean(h_act[w > 0])) if (w > 0).any() else math.nan,
     }
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(result, indent=2))
