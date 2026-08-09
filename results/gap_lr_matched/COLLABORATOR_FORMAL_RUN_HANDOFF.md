@@ -24,7 +24,7 @@ Role E downstream task.
 - Internal post-run receipt SHA256:
   `3b715ba8b1bd1ce5b4109ea7968235d5547adf01f45ee7d6e3594521d625ebe9`
 - GitHub-sanitized post-run receipt SHA256:
-  `5e57adfa8232a12f67c3300d4efe888bbea9f5f4f5acacceb8875e8e479b5d00`
+  `645fdeb2f0831cef84f2aa030d067fb299f58ec92e4931a0175b0266192a5cd7`
 - Dataset SHA256:
   `a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1`
 - Transfer checkpoint SHA256:
@@ -36,6 +36,20 @@ The three `training_options.json` files are identical after removing only the
 three preregistered differences (`global_gap_scale`, optimizer LR, and
 `run_dir`). The three initialization-image hashes match, and the three
 data-image hashes match.
+
+## Historical authorization and branch-head semantics
+
+The completed launch was executed from, and remains permanently bound to,
+protocol commit `2f1005b1a14446c0efdf86a95f20a2d7fb172121`. The byte-identical final
+authorization receipt in this delivery is immutable historical launch
+evidence.
+
+Merging this post-run evidence PR into `role-e/gap-lr-matched` will advance
+that branch and therefore PR #42 beyond the historical launch commit. At that
+new HEAD, the existing launch validator is expected to reject the old receipt
+because `HEAD != receipt.source.protocol_commit`. The validator must not be
+weakened. Any rerun from a new HEAD requires a newly reviewed and authorized
+receipt bound to that exact HEAD.
 
 ## Fork-state index
 
@@ -51,7 +65,7 @@ is authoritative.
 | 128 | 128.128 | `training-state-000004.pt` | `network-snapshot-000004.pkl` |
 | 256 | 256.000 | `training-state-000008.pt` | `network-snapshot-000008.pkl` |
 
-The arm directories under the ECT002 run root are:
+The logical arm run IDs are:
 
 - `arm_a_g1_0_lr_fixed_s3`
 - `arm_b_g1_3_lr_fixed_s3`
@@ -72,6 +86,10 @@ Python RNG, sampler/DataLoader position, and worker prefetch state are not
 stored. EMA is stored in the paired numbered network snapshot rather than the
 training-state file.
 
+Use Arm A as the canonical longitudinal reference trajectory at every K. Do
+not mix A/B/C checkpoints across K into a pseudo-trajectory; B and C states are
+retained for their own trajectory provenance and follow-up checks.
+
 The current `analysis/radam_stateful_update_audit.py` loader accepts
 `sigmoid` but rejects the formal snapshots' `global_sigmoid` schedule name.
 Role D must make a downstream loader-compatibility change before running the
@@ -80,6 +98,9 @@ unchanged.
 
 ## Validation notes
 
+- Repository anonymity audit: 0 findings across 9 rules.
+- Additional Linux/macOS absolute-path scan across all five delivery artifacts:
+  0 findings.
 - No fatal error, traceback, or OOM was found in A/B/C logs.
 - Each arm emitted the same non-fatal PyTorch `destroy_process_group()` cleanup
   warning after normal completion.

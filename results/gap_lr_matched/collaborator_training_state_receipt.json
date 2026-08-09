@@ -16,24 +16,30 @@
       "server.address",
       "server.port",
       "server.hostname",
-      "server.account"
+      "server.account",
+      "source.authorization_receipt_absolute_path",
+      "source.dataset_absolute_path",
+      "source.transfer_absolute_path",
+      "launch.run_root_absolute_path",
+      "launch.launcher_log_absolute_path",
+      "arms.*.run_dir_absolute_path"
     ],
     "internal_server_receipt_sha256": "3b715ba8b1bd1ce5b4109ea7968235d5547adf01f45ee7d6e3594521d625ebe9"
   },
   "source": {
     "protocol_commit": "2f1005b1a14446c0efdf86a95f20a2d7fb172121",
     "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
-    "authorization_receipt": "/data/raw/ECT/ect_runs/gap_lr_matched_receipt_0809/final_gap_lr_audit_receipt.json",
+    "authorization_receipt": "final_gap_lr_audit_receipt.json",
     "authorization_receipt_sha256": "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa",
-    "dataset": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "dataset": "cifar10-32x32.zip",
     "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
-    "transfer": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+    "transfer": "edm-cifar10-32x32-uncond-vp.pkl",
     "transfer_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
   },
   "launch": {
     "launch_utc": "2026-08-09T02:20:18Z",
-    "run_root": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1",
-    "launcher_log": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1.launcher.log",
+    "run_id": "gap_lr_matched_q128_s3_v1",
+    "launcher_log": "gap_lr_matched_q128_s3_v1.launcher.log",
     "completion_marker": "ALL FORMAL ARMS COMPLETE",
     "launcher_and_trainers_exited": true,
     "fatal_error_scan_clear": true
@@ -76,6 +82,8 @@
     "optimizer_param_state_count": 416,
     "optimizer_per_parameter_fields": ["step", "exp_avg", "exp_avg_sq"],
     "role_d_same_saved_state_current_gap_fork": true,
+    "role_d_reference_trajectory": "A",
+    "mix_states_from_different_arms_across_k": false,
     "bitwise_uninterrupted_trajectory_continuation": false,
     "not_saved_in_training_state": [
       "PyTorch CPU RNG",
@@ -92,7 +100,7 @@
     "A": {
       "gap_scale": 1.0,
       "learning_rate": 0.0001,
-      "run_dir": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3",
+      "run_id": "arm_a_g1_0_lr_fixed_s3",
       "final_attempted_iteration": 2000,
       "final_successful_optimizer_steps": 1991,
       "final_gradscaler_scale": 128.0,
@@ -106,7 +114,7 @@
     "B": {
       "gap_scale": 1.3,
       "learning_rate": 0.0001,
-      "run_dir": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_b_g1_3_lr_fixed_s3",
+      "run_id": "arm_b_g1_3_lr_fixed_s3",
       "final_attempted_iteration": 2000,
       "final_successful_optimizer_steps": 1992,
       "final_gradscaler_scale": 256.0,
@@ -120,7 +128,7 @@
     "C": {
       "gap_scale": 1.3,
       "learning_rate": 0.00012963523762588692,
-      "run_dir": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_c_g1_3_lr_matched_s3",
+      "run_id": "arm_c_g1_3_lr_matched_s3",
       "final_attempted_iteration": 2000,
       "final_successful_optimizer_steps": 1992,
       "final_gradscaler_scale": 256.0,

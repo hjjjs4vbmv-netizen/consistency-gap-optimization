@@ -7,7 +7,11 @@
   "source_policy": {
     "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
     "protocol_commit": "2f1005b1a14446c0efdf86a95f20a2d7fb172121",
-    "protocol_commit_resolution": "audit_receipt.source.protocol_commit must equal HEAD",
+    "protocol_commit_resolution": "at launch, audit_receipt.source.protocol_commit must equal HEAD",
+    "historical_launch_commit": "2f1005b1a14446c0efdf86a95f20a2d7fb172121",
+    "post_run_merge_advances_protocol_branch": true,
+    "validator_head_binding_unchanged": true,
+    "rerun_from_new_head_requires_new_authorized_receipt": true,
     "training_paths": [
       "ct_train.py",
       "training"
@@ -31,6 +35,7 @@
     "validator_exit_code": 0,
     "receipt": "results/gap_lr_matched/final_gap_lr_audit_receipt.json",
     "receipt_sha256": "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa",
+    "receipt_is_immutable_historical_authorization": true,
     "validated_c0_star": 1.2963523762588691
   },
   "smoke_test": {
@@ -163,6 +168,8 @@
       "000004",
       "000008"
     ],
+    "reference_arm": "A",
+    "mix_states_from_different_arms_across_k": false,
     "identical_counterfactual_state_required": true,
     "status": "FORMAL_CHECKPOINTS_AVAILABLE_PENDING_ROLE_D_AUDIT"
   },
@@ -179,7 +186,8 @@
     "cuda_visible_devices": "1",
     "master_ports": [29641, 29642, 29643],
     "completion_marker": "ALL FORMAL ARMS COMPLETE",
-    "post_run_receipt": "results/gap_lr_matched/collaborator_training_state_receipt.json"
+    "post_run_receipt": "results/gap_lr_matched/collaborator_training_state_receipt.json",
+    "post_run_receipt_sha256": "645fdeb2f0831cef84f2aa030d067fb299f58ec92e4931a0175b0266192a5cd7"
   },
   "matching_claim": "Arm C is fresh-linearized at the common initialization; no entire-trajectory or optimizer-state-aware matching claim."
 }
