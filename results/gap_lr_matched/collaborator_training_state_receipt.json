@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "receipt_type": "collaborator_training_state_verification",
+  "experiment_id": "gap_lr_matched_q128_s3_v1",
+  "status": "passed",
+  "verdict": "role_d_same_saved_state_fork_ready",
+  "verified_at_utc": "2026-08-09T04:22:20Z",
+  "server": {
+    "identifier": "ECT002",
+    "formal_gpu": 1,
+    "device": "NVIDIA A100 80GB PCIe"
+  },
+  "publication": {
+    "sanitized_for_github": true,
+    "removed_internal_connection_fields": [
+      "server.address",
+      "server.port",
+      "server.hostname",
+      "server.account"
+    ],
+    "internal_server_receipt_sha256": "3b715ba8b1bd1ce5b4109ea7968235d5547adf01f45ee7d6e3594521d625ebe9"
+  },
+  "source": {
+    "protocol_commit": "2f1005b1a14446c0efdf86a95f20a2d7fb172121",
+    "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
+    "authorization_receipt": "/data/raw/ECT/ect_runs/gap_lr_matched_receipt_0809/final_gap_lr_audit_receipt.json",
+    "authorization_receipt_sha256": "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa",
+    "dataset": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "transfer": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+    "transfer_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+  },
+  "launch": {
+    "launch_utc": "2026-08-09T02:20:18Z",
+    "run_root": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1",
+    "launcher_log": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1.launcher.log",
+    "completion_marker": "ALL FORMAL ARMS COMPLETE",
+    "launcher_and_trainers_exited": true,
+    "fatal_error_scan_clear": true
+  },
+  "cross_arm_contract": {
+    "normalized_training_options_equal": true,
+    "only_registered_option_differences": [
+      "loss_kwargs.global_gap_scale",
+      "optimizer_kwargs.lr",
+      "run_dir"
+    ],
+    "seed": 3,
+    "batch_size": 128,
+    "batch_gpu": 16,
+    "optimizer": "RAdam",
+    "amp": true,
+    "duration_kimg": 256,
+    "model_init_image_sha256": "3518230aef6442742bbcd1f303407f279728b2edd66feef94d65c2616e5c57f2",
+    "data_image_sha256": "38e1c721cfbc101b94a5289c3096a756ad9505b6484c561d3d2483b6cc3517cb"
+  },
+  "checkpoint_contract": {
+    "requested_kimg": [32, 64, 128, 256],
+    "actual_kimg": [32.128, 64.128, 128.128, 256.0],
+    "numbered_state_ids": ["000001", "000002", "000004", "000008"],
+    "state_size_bytes": 669421866,
+    "all_12_states_exist": true,
+    "all_12_states_deserialized": true,
+    "top_level_keys": [
+      "attempted_iteration",
+      "cur_nimg",
+      "cur_tick",
+      "elapsed_sec",
+      "gradscaler_state",
+      "loss_fn_state",
+      "net",
+      "optimizer_state",
+      "successful_optimizer_steps",
+      "tick_start_nimg"
+    ],
+    "optimizer_param_state_count": 416,
+    "optimizer_per_parameter_fields": ["step", "exp_avg", "exp_avg_sq"],
+    "role_d_same_saved_state_current_gap_fork": true,
+    "bitwise_uninterrupted_trajectory_continuation": false,
+    "not_saved_in_training_state": [
+      "PyTorch CPU RNG",
+      "CUDA RNG",
+      "NumPy RNG",
+      "Python random RNG",
+      "sampler/DataLoader position",
+      "DataLoader worker and prefetch state",
+      "EMA network"
+    ],
+    "ema_pairing_note": "Use the same-number network-snapshot-*.pkl when EMA state is required."
+  },
+  "arms": {
+    "A": {
+      "gap_scale": 1.0,
+      "learning_rate": 0.0001,
+      "run_dir": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3",
+      "final_attempted_iteration": 2000,
+      "final_successful_optimizer_steps": 1991,
+      "final_gradscaler_scale": 128.0,
+      "states": {
+        "000001": {"actual_kimg": 32.128, "successful_optimizer_steps": 243, "gradscaler_scale": 256.0, "sha256": "dcda9f67e807daf4a769a06e9217880200cbe19c4802ca8f053fefd9361eb67a"},
+        "000002": {"actual_kimg": 64.128, "successful_optimizer_steps": 493, "gradscaler_scale": 256.0, "sha256": "91763eea8b8523ceaec57017b83de47cb272ecb4389e56a5dad64cb5a073f4e2"},
+        "000004": {"actual_kimg": 128.128, "successful_optimizer_steps": 993, "gradscaler_scale": 256.0, "sha256": "cd49080a4d000a549657ae196b4c267b85cfaa083058347b80e36e0486f7650d"},
+        "000008": {"actual_kimg": 256.0, "successful_optimizer_steps": 1991, "gradscaler_scale": 128.0, "sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8"}
+      }
+    },
+    "B": {
+      "gap_scale": 1.3,
+      "learning_rate": 0.0001,
+      "run_dir": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_b_g1_3_lr_fixed_s3",
+      "final_attempted_iteration": 2000,
+      "final_successful_optimizer_steps": 1992,
+      "final_gradscaler_scale": 256.0,
+      "states": {
+        "000001": {"actual_kimg": 32.128, "successful_optimizer_steps": 243, "gradscaler_scale": 256.0, "sha256": "2d289a13d0d40943baa9553e2165b83e90034156d1baf4ebb84f42896ec778c4"},
+        "000002": {"actual_kimg": 64.128, "successful_optimizer_steps": 493, "gradscaler_scale": 256.0, "sha256": "3407ccaf9893146a59619f7fd2f6a3c0de5bedde86a09e9e1e7c1b98b349798e"},
+        "000004": {"actual_kimg": 128.128, "successful_optimizer_steps": 993, "gradscaler_scale": 256.0, "sha256": "bb8412b50ec7c4363237b258ef0a5d4652af638a0ec17ca217bcf93f00b738fb"},
+        "000008": {"actual_kimg": 256.0, "successful_optimizer_steps": 1992, "gradscaler_scale": 256.0, "sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96"}
+      }
+    },
+    "C": {
+      "gap_scale": 1.3,
+      "learning_rate": 0.00012963523762588692,
+      "run_dir": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_c_g1_3_lr_matched_s3",
+      "final_attempted_iteration": 2000,
+      "final_successful_optimizer_steps": 1992,
+      "final_gradscaler_scale": 256.0,
+      "states": {
+        "000001": {"actual_kimg": 32.128, "successful_optimizer_steps": 243, "gradscaler_scale": 256.0, "sha256": "cfa8d66445079c3e59de458141fa0be5149838de5c53ba66e631a6c8227a4fa3"},
+        "000002": {"actual_kimg": 64.128, "successful_optimizer_steps": 493, "gradscaler_scale": 256.0, "sha256": "5eafc43d9fe86e9c97ac96235b3307f118407ad4521f093a18908a9ea5640e23"},
+        "000004": {"actual_kimg": 128.128, "successful_optimizer_steps": 993, "gradscaler_scale": 256.0, "sha256": "0d4522cacfc17ea875039f73dd13d4d075ea688f95e9242eb81a24e36210f958"},
+        "000008": {"actual_kimg": 256.0, "successful_optimizer_steps": 1992, "gradscaler_scale": 256.0, "sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c"}
+      }
+    }
+  },
+  "validation": {
+    "server_receipt_validator_exit_code": 0,
+    "validated_c0_star": 1.2963523762588691,
+    "repository_head_matches_protocol_commit": true,
+    "repository_worktree_clean": true,
+    "training_paths_match_training_code_commit": true,
+    "numbered_states_not_replaced_by_latest": true
+  },
+  "known_scope_boundaries_and_followups": [
+    "These states support the preregistered Role D same-saved-state counterfactual using an externally paired audit minibatch; they do not reproduce the uninterrupted trajectory's exact next minibatch.",
+    "The current Role D audit loader accepts sigmoid but rejects global_sigmoid; Role D needs a downstream compatibility change before consuming these formal snapshots.",
+    "The frozen receipt unit-test suite is 5/6 because one mock uses the literal characters backslash-n; the real server validator passed with exit code 0.",
+    "Each arm emitted a non-fatal PyTorch destroy_process_group cleanup warning after normal completion.",
+    "FID/KID evaluation has not been run in this Collaborator receipt."
+  ]
+}
