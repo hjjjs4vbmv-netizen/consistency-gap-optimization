@@ -54,26 +54,38 @@ def moment_memory_terms(grad_hist_1: list[np.ndarray], grad_hist_g: list[np.ndar
     """Return (A1, A2, B2, delta_hist) at step t from gradient histories.
 
     grad_hist_1[j] / grad_hist_g[j] are (d,) arrays for steps j = 0..t.
+
+    CORRECTED (self-review): we do NOT recover a global best-fit delta_j and
+    multiply it back. With G^g_{j,i} = (1 + δ_{j,i}) G_{j,i}, the identity
+      δ_{j,i} G_{j,i} = G^g_{j,i} - G_{j,i}
+    holds COORDINATE-WISE, so the gauges are computed directly from the paired
+    gradients (exact, no scalar-delta approximation):
+      A1_i = Σ_j p_j (G^g_j - G_j)_i  /  Σ_j p_j G_{j,i}
+      A2_i = Σ_j q_j (G^g_j - G_j)_i G_{j,i} / Σ_j q_j G_{j,i}²
+      B2_i = Σ_j q_j (G^g_j - G_j)_i²  /  Σ_j q_j G_{j,i}²
+    This is exact to machine precision even when δ is coordinate-dependent
+    (non-scalar), which the earlier global-delta method was not.
     """
     d = grad_hist_1[0].shape[0]
-    A1 = np.zeros(d); A2 = np.zeros(d); B2 = np.zeros(d)
     num1 = np.zeros(d); den1 = np.zeros(d)
     num2 = np.zeros(d); den2 = np.zeros(d)
     numB = np.zeros(d)
     delta_hist = []
     for j in range(t + 1):
         G = grad_hist_1[j]; Gg = grad_hist_g[j]
-        dj = recover_delta_j(Gg, G)
-        delta_hist.append(dj)
+        D = Gg - G                     # coordinate-wise δ·G (exact)
+        delta_hist.append(recover_delta_j(Gg, G))   # kept only as a scalar summary
         p = BETA1 ** (t - j)
         q = BETA2 ** (t - j)
-        num1 += p * dj * G; den1 += p * G
-        num2 += q * dj * G * G; den2 += q * G * G
-        numB += q * dj * dj * G * G
+        num1 += p * D; den1 += p * G
+        num2 += q * D * G; den2 += q * G * G
+        numB += q * D * D
     with np.errstate(divide="ignore", invalid="ignore"):
-        A1 = np.where(np.abs(den1) > 1e-30, num1 / np.where(np.abs(den1) > 1e-30, den1, 1.0), 0.0)
-        A2 = np.where(np.abs(den2) > 1e-30, num2 / np.where(np.abs(den2) > 1e-30, den2, 1.0), 0.0)
-        B2 = np.where(np.abs(den2) > 1e-30, numB / np.where(np.abs(den2) > 1e-30, den2, 1.0), 0.0)
+        safe1 = np.abs(den1) > 1e-30
+        safe2 = np.abs(den2) > 1e-30
+        A1 = np.where(safe1, num1 / np.where(safe1, den1, 1.0), 0.0)
+        A2 = np.where(safe2, num2 / np.where(safe2, den2, 1.0), 0.0)
+        B2 = np.where(safe2, numB / np.where(safe2, den2, 1.0), 0.0)
     return A1, A2, B2, np.array(delta_hist)
 
 
