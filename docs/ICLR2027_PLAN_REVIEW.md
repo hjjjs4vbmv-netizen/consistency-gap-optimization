@@ -178,8 +178,31 @@ arm_b $g=1.3$,两者 `global_sigmoid`、lr 固定 1e-4、256 kimg)上,评估 FID
 **注意:** g=1.3 与 g=1.0 差的是整个 gap(标量+非标量分量),故不能断言残差本身
 导致质量提升;但关键点已定——残差无害,带它的臂更好。
 
+## 7. 未来预测实验 + Arm C 控制(2026-08-11 追加)
+
+审查 §2.4 的"单一最重要动作"——判明残差是否有害——现已有三重实测证据:
+
+**Arm C(scale-matched control):** g=1.3 的 FID 改善被 scale-match 消除 NFE1 84%、NFE2 100%。
+→ 质量改善大部分是平凡标量 LR 重缩放(见 `analysis/arm_c_scale_matched_control_result.md`)。
+
+**P1(附庸性):** 残差附庸于标量 gap,偏相关 ≈ 0(见 `analysis/p1_non_epiphenomenality_result.md`)。
+
+**未来预测(梯度级):** 训练 4 seeds × 2 gaps(256 kimg),在 32/64k 算早期 R_grad,
+预测 256k FID。结果:**阴性**——早期 R_grad 跨 seed 近恒定(0.0085-0.0096),不预测未来 FID
+(改善幅度 6-63 FID)。相关不可靠(n=4,符号翻转,+0.992 是 4 点偶然)。
+→ 早期梯度残差不能 out-of-sample 预测未来 FID(见 `analysis/future_prediction_result.md`)。
+
+**三重证据一致指向:** 非标量梯度残差是真实但(梯度级)无后果的现象。
+优化器记忆机制仍真实(h_actual≠h_pred),但质量后果大部分平凡,早期梯度信号不预测未来。
+
+**唯一剩余活口:** 优化器级未来预测(早期 R_opt → 未来 FID)未测——训练只存最终
+training-state。需重训存早期 optimizer state。但鉴于 Arm C,翻盘概率不高。
+
+**Go/No-Go 交 leader 判断:** 是否花计算测优化器级未来预测,还是接受三重证据定 workshop。
+
 ## 文件
 - 本审查:`docs/ICLR2027_PLAN_REVIEW.md`。
 - 战略(已按实测修订):`docs/ICLR2027_STRATEGY.tex`。
-- 实测结果:`analysis/g13_vs_g10_fid_result.md`。
+- 实测结果:`analysis/g13_vs_g10_fid_result.md`、`analysis/arm_c_scale_matched_control_result.md`、
+  `analysis/p1_non_epiphenomenality_result.md`、`analysis/future_prediction_result.md`。
 - 记忆:`iclr2027-gfct-strategy`(已更新实测结论)。

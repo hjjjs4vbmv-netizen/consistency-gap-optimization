@@ -120,14 +120,23 @@ Adam-atan2、DeVA 均只分析标量/全局缩放)。
 \end{tabular}
 \end{center}
 
-\subsection{诊断规划的边界(P1 附庸性)}
-P1 检验(偏相关 $\approx 0$)表明残差\emph{附庸于标量 gap},在标量 gap 之外不增加
-对 FID 的预测力。因此:
+\subsection{诊断规划的边界(P1 附庸性 + Arm C + 未来预测)}
+三重实测证据一致指向残差是真实但(梯度级)无后果的现象:
 \begin{itemize}
-  \item \textbf{不声称}残差是质量诊断信号(被 P1 证伪)
-  \item \textbf{不声称}残差有害或可修正(被 $g{=}1.3$ 赢 FID 证伪)
+  \item \textbf{P1 附庸性:}偏相关 $\approx 0$,残差附庸于标量 gap
+  \item \textbf{Arm C scale-matched control:}$g{=}1.3$ 改善被 scale-match 消除
+        84--100\%(质量改善大部分是平凡 LR 重缩放)
+  \item \textbf{未来预测(梯度级):}早期 $R_{\mathrm{grad}}$ 跨 seed 近恒定,不预测
+        未来 FID(阴性)
+\end{itemize}
+因此:
+\begin{itemize}
+  \item \textbf{不声称}残差是质量诊断信号(被 P1 + 未来预测证伪)
+  \item \textbf{不声称}残差有害或可修正(被 $g{=}1.3$ 赢 FID + Arm C 证伪)
   \item \textbf{不投} ICLR 主会(诊断信号论题不成立)
 \end{itemize}
+\textbf{唯一剩余活口:}优化器级未来预测(早期 $R_{\mathrm{opt}}$,需重训存早期
+optimizer state),但鉴于 Arm C 翻盘概率不高。Go/No-Go 交 leader 判断。
 
 \subsection{剩余规划}
 \begin{enumerate}[leftmargin=*,itemsep=1pt]
