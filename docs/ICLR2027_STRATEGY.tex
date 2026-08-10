@@ -1,0 +1,602 @@
+\documentclass[UTF8,11pt,a4paper]{ctexart}
+
+% ------------------------------------------------------------------
+% 宏包
+% ------------------------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[expansion=false,protrusion=true]{microtype}
+\usepackage{unicode-math}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}{定义}[section]
+\newtheorem{proposition}{命题}[section]
+\newtheorem{hypothesis}{假设}[section]
+\newtheorem{corollary}{推论}[section]
+\renewcommand{\proofname}{证明}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\EE}{\mathbb{E}}
+
+\title{\textbf{GFCT:面向 ICLR 2027 的研究战略}%
+\thanks{团队内部科研汇报。Role~C(理论负责人)。对应仓库 `recurrence\_of\_ect`。}}
+\author{Role C --- 理论负责人}
+\date{2026-08-10}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本报告回答一个核心问题:如何使 GFCT 研究线进入 ICLR 2027。结论先行:按当前
+框架投稿,几乎不可能被接收——其核心缺陷并非 FID 竞争力不足,而在于核心理论结论
+与实测数据不一致。然而,项目现有的负结果(标量 moment-memory 预测 $h\approx1$,
+实际 $h\approx0.837$,且由非标量梯度残差主导)据我们所查文献此前未被直接研究,
+是唯一可发表的资产。本报告提出两项关键修订:(i) \emph{反转论文主线},将非标量
+残差作为正面贡献,将 moment-memory 链作为被严格检验并证伪的 null model;
+(ii) \emph{升级贡献类型},从诊断升级为机制加方法——证明残差是不稳定与质量退化
+的\emph{原因},并给出可修复的 residual-corrected update。报告形式化了十二个实验
+(E1--E12),按"确立现象、解析结构、确立因果、验证修复、确立普适、确立意义、
+确立前沿、保障稳健"的逻辑链组织,各含可证伪假设、判定标准与风险。需强调:
+本方案的核心前提——残差有害——尚未被证实,且受到 $\mathrm{Corr}\approx 0$ 与
+$g{=}1.3$ 已赢 FID 数据的挑战;任何 GPU 投入前须先判明该前提(见正文 §3.1 与
+审查文档)。
+\end{abstract}
+
+\tableofcontents
+
+% ------------------------------------------------------------------
+\section{目标与约束}
+\label{sec:purpose}
+
+本工作唯一目标是使论文被 ICLR 2027 接收。该目标受两条硬性约束:
+
+\begin{itemize}
+  \item ICLR 2026 录用率约 $27.4\%$。即便论文撰写成熟,被拒概率仍接近四分之三,
+        且审稿过程存在噪声,任何表述歧义之处均可能被拒。
+  \item ICLR 审稿指南明确:缺乏 SOTA 结果本身不构成拒稿理由。因此 CIFAR-10 基准
+        与 FID 不拔尖并非致命因素。真正的高风险在于 \emph{soundness}——即理论与
+        自身实测不一致。
+\end{itemize}
+
+后续所有决策均以上述两条为基准。
+
+% ------------------------------------------------------------------
+\section{理论资产}
+\label{sec:intro}
+
+\subsection{标量等价假设}
+少步生成式训练普遍默认一个假设:训练中的干预——如 schedule 或离散化 gap 的
+改变——\emph{标量等价}于学习率改变,即能被参数更新上的单个标量乘子吸收。
+形式化地,设 $U_1(z,\xi)$ 为参考 gap $g=1$ 下 RAdam 的单步更新,
+$U_g(z,\xi)$ 为候选 gap 下的更新,两者自\emph{相同}优化器状态
+$z=(\theta,m,v,n)$ 与\emph{相同}随机性 $\xi$ 出发。该假设表述为
+\begin{equation}
+  U_g \;\approx\; s\, U_1,
+  \label{eq:scalar}
+\end{equation}
+其中 $s$ 为标量;若成立,则 gap 等价于学习率乘以 $c=1/s$。
+
+\subsection{逐坐标 gauge}
+在参考更新的有效支撑上,定义逐坐标\emph{更新比 gauge}
+\begin{equation}
+  h_{k,i} \;=\; \frac{U_{g,k,i}}{U_{1,k,i}}, \qquad
+  i \in \mathcal{S}_k \;:=\; \bigl\{ i : U_{1,k,i}\neq 0 \bigr\}.
+  \label{eq:gauge}
+\end{equation}
+标量等价 \eqref{eq:scalar} 成立当且仅当 $h_{k,i}$ 在 $\mathcal{S}_k$ 上恒为常数、
+且候选更新在支撑外消失(命题~\ref{prop:scalar})。该 gauge 提供对干预是否保持
+标量等价的逐坐标诊断。
+
+\subsection{Moment-memory 恒等式}
+对两臂步序号一致的 rectified RAdam,gauge 满足精确恒等式
+\begin{equation}
+  h_{k,i} \;=\;
+  \frac{\bigl(1 + A^{(1)}_{k,i}\bigr)}
+       {\sqrt{1 + 2 A^{(2)}_{k,i} + B^{(2)}_{k,i}}},
+  \label{eq:exact}
+\end{equation}
+其中 $p_{tj}\propto\beta_1^{t-j}$、$q_{tj}\propto\beta_2^{t-j}$,且
+\begin{align}
+  A^{(1)}_{k,i} &= \frac{\sum_j p_{kj}\,\delta_j\,G_{j,i}}
+                        {\sum_j p_{kj}\,G_{j,i}},
+  &
+  A^{(2)}_{k,i} &= \frac{\sum_j q_{kj}\,\delta_j\,G_{j,i}^2}
+                        {\sum_j q_{kj}\,G_{j,i}^2},\\[2pt]
+  B^{(2)}_{k,i} &= \frac{\sum_j q_{kj}\,\delta_j^2\,G_{j,i}^2}
+                        {\sum_j q_{kj}\,G_{j,i}^2},
+  &
+  \delta_j &= \frac{\langle G^g_j, G_j\rangle}{\lVert G_j\rVert^2} - 1.
+  \label{eq:terms}
+\end{align}
+其中 $G_j$ 为参考梯度,$G^g_j$ 为候选梯度,$\delta_j$ 为每步最优拟合的标量尺度。
+\eqref{eq:exact} 为精确恒等式而非 Taylor 近似;其一阶推论为
+$h-1 = A^{(1)}-A^{(2)}+O(\lVert\delta\rVert^2)$。
+
+\begin{proposition}[标量等价当且仅当 gauge 恒定]
+\label{prop:scalar}
+对步序号一致、eps 为零、无 weight decay 的 rectified RAdam,
+$U_g = s\,U_1$ 当且仅当对一切 $i\in\mathcal{S}_k$ 有 $h_{k,i}=s$、
+对一切 $i\notin\mathcal{S}_k$ 有 $U_{g,k,i}=0$。精确投影残差的平方满足
+\begin{equation}
+  \bigl\lVert U_g - s^\star_k U_1\bigr\rVert^2
+  \;=\; \sum_{i\in\mathcal{S}_k} w_i\,\bigl(h_{k,i}-s^\star_k\bigr)^2
+      \;+\; \sum_{i\notin\mathcal{S}_k} U_{g,k,i}^2,
+  \label{eq:residual}
+\end{equation}
+其中 $w_i=U_{1,k,i}^2$、$s^\star_k = \langle U_g,U_1\rangle/\lVert U_1\rVert^2$。
+\end{proposition}
+
+\subsection{真实数据上的测量结果}
+在真实 256~kimg ECT 状态上进行的 paired counterfactual 审计(gap $1.0$ vs.\ $1.3$,
+随机性逐位一致)得到如下结果:
+\begin{itemize}
+  \item \textbf{标量 null 在有效支撑上成立。} 由 \eqref{eq:exact} 预测的 gauge
+        为 $h\approx 1.001$,其中 $A^{(1)}\approx A^{(2)}\approx -0.23$,相互抵消。
+  \item \textbf{实际更新比系统性偏移。} $h_{\mathrm{actual}}\approx 0.837$,分布
+        高度集中,$\mathrm{Corr}\approx 0$——预测与实际稳定地不同。
+  \item \textbf{主导因素为非标量梯度残差。} 每步存在量级约 $3.2\%$ 的非标量残差
+        $E_j$,主导更新失真;标量链 \eqref{eq:exact} 无法捕捉该偏移。
+\end{itemize}
+
+需要说明的是,这是一个真实且有价值的发现。领域的 scale-invariance 文献
+($\beta_1{=}\beta_2$、Adam-atan2、DeVA)均分析\emph{标量}/全局缩放,未涉及
+非标量残差内容。问题不在于该发现本身,而在于其当前被置于论文末尾作为结论性
+说明,而非作为核心论点。
+
+% ------------------------------------------------------------------
+\section{现状评估:为何按当前框架投稿会被拒}
+\label{sec:strategy}
+
+核心理论 moment-memory 预测 $h\approx1$,而实测 $h\approx0.837$,且如我们自身所
+承认,驱动因素为理论未建模的非标量残差。置于 ICLR 最看重的 soundness 标准下,
+审稿人面对"理论预测 $1$,实测 $0.84$,原因未被理论覆盖"时,通常判定为理论有误
+或论文前后不一致——审稿人不会代为重构叙事。
+
+此外,研究对象为 CIFAR-10 上的普通 ECM/DDPM++ 一致性模型,而领域已整体转向
+MeanFlow / flow map、RL 后训练与蒸馏,一致性模型亦逐步走向连续时间、取消离散化。
+FID 亦不具竞争力。上述因素单独均非致命,叠加后进一步削弱竞争力。
+
+本质上,当前框架属于\emph{诊断}性质,而诊断天然狭窄、且具有负结果属性。ICLR
+主会不倾向接收负结果,狭窄的新颖性在 $27.4\%$ 录用率下空间有限。仅对现有内容
+做进一步打磨,无法突破这一限制。
+
+\subsection{必须正视的前提矛盾(对抗性审查发现)}
+将贡献升级为"机制+方法"的前提是:残差是质量退化的\emph{原因},故修正它能
+\emph{改善}质量。然而该前提被我们自己的数据直接反驳:
+
+\begin{itemize}
+  \item \textbf{头号相关为约零。} 现有 paired 审计测得 $\mathrm{Corr}\approx 0$
+        ——残差与结果几乎没有相关。
+  \item \textbf{带残差的 g=1.3 臂大幅胜出(已实测)。} 在被测残差的同一批状态上
+        (\texttt{gap\_lr\_matched\_q128\_s3\_v1} 的 arm\_a $g=1.0$ vs.\ arm\_b
+        $g=1.3$,两者 \texttt{global\_sigmoid}、lr 固定),$g=1.3$ 的 FID-5k 相对
+        $g=1.0$ 改善约 $34$--$36\%$(NFE1: $208.1$ vs.\ $315.8$;NFE2: $56.6$ vs.\
+        $87.7$),KID 改善约 $37$--$45\%$。带非标量残差的臂质量明显更好。因此
+        Arm C 的"修复"不仅修一个没坏的东西,还会向 $g=1.0$ 更差的 FID 移动
+        ——E2 因果干预被该数据\emph{反指}(详见 \texttt{analysis/g13\_vs\_g10\_fid\_result.md})。
+  \item \textbf{各向异性是自适应优化器的设计功能。} AdaGrad/Adam/Muon 存在的
+        全部理由就是梯度各向异性。把候选梯度投影到标量参考方向等于标量化优化器,
+        可能丢掉真实信号——Arm C 的改善与"换了个优化器"难以区分。
+\end{itemize}
+
+因此,``机制+方法 40-50\%'' 的估计过度乐观。现实区间(见审查
+`docs/ICLR2027\_PLAN\_REVIEW.md`):坚持机制+方法约为 $10$--$15\%$;收缩为诚实的
+诊断(非标量梯度内容的结构刻画,此点在 2025--26 文献中确实未被占据)约为
+$20$--$30\%$。**在任何 GPU 投入之前,必须先判明残差是否真的有害。**
+
+% ------------------------------------------------------------------
+\section{修订方案}
+\label{sec:contribution}
+
+需进行两项修订,二者均不可偏废。
+
+\subsection{动作一:反转论文主线}
+将非标量梯度残差作为正面贡献,moment-memory 链降级为被严格检验并证伪的
+\emph{null model}。后者并非失败,而是用于度量"标量等价在何处失效"的基准工具。
+
+\subsection{动作二:升级贡献类型}
+将贡献从\emph{诊断}(一项测量加一项警示)升级为\emph{机制加方法}。论文应呈现为:
+\begin{quote}
+在少步训练中识别出一个失败模式(非标量梯度残差),证明其是不稳定与质量退化的
+\textbf{原因},并给出能将其\textbf{修复}的 residual-corrected update。
+\end{quote}
+诊断型论文的录用概率约 $20$--$30\%$;机制加方法型约 $40$--$50\%$。
+
+\subsection{贡献清单}
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+  \item 标量等价性的 state-conditioned 形式化——首个严格的、逐坐标的、状态条件的
+        处理:训练干预是否等价于学习率变化。
+  \item 一项新的测量手段:支撑感知的 gauge 离散度(support-aware gauge dispersion)。
+  \item 一项可证伪的警示性结论:主导更新失真是非标量梯度内容,而非标量
+        moment-memory。
+  \item 一个机制(E1):残差预测不稳定与质量退化。
+  \item 一个方法(E2):将 $h$ 恢复至 $1$ 的 residual-corrected update,可改善
+        稳定性与 FID。
+\end{enumerate}
+
+\subsection{禁止声称}
+下列声称已被既有文献占据,写入将直接削弱新颖性声明,应明确禁止:``首次自适应
+离散化''(ADCM)、``首次 optimizer-aware update matching''(Filter-then-Weight)、
+``首次优化器不变性分析''($\beta_1{=}\beta_2$、Adam-atan2、DeVA)、``首次
+history-gauge 定理''($H_k=R_{\mathrm{opt}}(k)$ 为本项目内部恒等式)、``gap 等价
+于改变学习率''(已被 $h=0.837$ 推翻)。
+
+\subsection{相关工作定位}
+相关工作部分须逐条说明差别:$\beta_1{=}\beta_2$ 为\emph{全局标量}结果;Adam-atan2
+与 DeVA 处理\emph{标量}缩放分解;ADCM 为质量优化 schedule,不涉及 optimizer-state
+等价;SCT 讨论目标/方差理论,不讨论更新几何;Dead-Direction Conditioners 的
+``gauge'' 指对称轨道——本项目的 gauge 改称为 ``逐坐标更新比 gauge'',以避免
+术语撞车。
+
+% ------------------------------------------------------------------
+\section{实验计划}
+\label{sec:experiments}
+
+E1 与 E2 为门控实验,决定论文属于机制加方法还是诊断。为使"机制 + 方法"论证
+在审稿面前严密,本计划将实验扩展为一个完整程序,按逻辑链组织:
+
+\begin{enumerate}[leftmargin=*,itemsep=1pt,label=\textbf{\arabic*.}]
+  \item \textbf{确立现象} --- E1(残差跨状态预测失败)
+  \item \textbf{解析结构} --- E5(残差分解)、E6(剂量响应)、E7(优化器状态依赖)
+  \item \textbf{确立因果} --- E2(残差修正干预)
+  \item \textbf{验证修复} --- E8(诊断有效性)、E9(修正权衡)、E10(修复基线)
+  \item \textbf{确立普适} --- E3(普适性)
+  \item \textbf{确立意义} --- E12(残差中介 gap 到 FID)
+  \item \textbf{确立前沿} --- E4(MeanFlow 泛化)
+  \item \textbf{保障稳健} --- E11(多 seed 与支撑阈值敏感性)
+\end{enumerate}
+
+其中 E1、E5、E6、E7、E2 共同构成"机制"论证:E1 证明残差预测失败,E5 解析其
+结构、E6 证明其为干预的系统函数、E7 证明其效应依赖优化器状态,E2 用受控干预
+确立因果。E8、E9、E10、E12 共同构成"方法"论证:E8 证明残差可预测、E9 给出可
+调的修正、E10 证明修正的针对性、E12 将整个优化器分析连接到生成质量。E3 与
+E4 建立普适性与前沿相关性;E11 保障全部结论的稳健性。
+
+\subsection{硬性门控:残差是否有害——现已实测判定}
+对抗性审查(见 `docs/ICLR2027\_PLAN\_REVIEW.md`)确认,本方案最薄弱的环节是
+E2 的前提——残差有害。原计划要求先完成两项零成本判定。该判定现已执行并得到
+决定性结论(见 `analysis/g13\_vs\_g10\_fid\_result.md`):
+
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+  \item \textbf{严格推导 $3.2\%$ 幅值到 $16\%$ $h$ 偏移的归因}(即 $1.001\to0.837$)。
+        尚未完成;该数字仍无推导。若无法推出,反转主线不依赖此数字。
+  \item \textbf{预注册一个带残差那臂真正退化的指标,并调和它与 $g{=}1.3$ 已赢 FID
+        的矛盾。} \textbf{已完成(实测)}:干净对比 $g{=}1.3$ vs.\ $g{=}1.0$ 的
+        FID-5k/KID-5k 显示 $g{=}1.3$(带残差的臂)在 NFE1/NFE2 全面大幅胜出
+        (FID $-34$/$-36\%$,KID $-37$/$-45\%$)。**未找到任何残差导致退化的指标。**
+\end{enumerate}
+
+\textbf{结论:机制+方法前提被实测数据证伪。} 带非标量残差的臂质量明显更好,残差
+\emph{无害}。E2 因果干预不仅无支撑,而且被反指——Arm C(投影回 $g{=}1.0$ 方向)会
+向更差的 FID 移动。
+
+\textbf{因此,E2 从"门控因果实验"降级为"探索性消融"。} 不将其作为论文主结果,
+不作为机制+方法的支撑;仅作为验证"残差修正方向与质量方向相反"的一次消融,并
+作为"设计启示"(gap 的非标量部分对应更优质量)报告。
+
+\textbf{论文定位:收缩为诚实诊断。} 可辩护的贡献:非标量梯度残差\emph{存在}且
+\emph{有结构}($a_K^*{=}0.761$、$R_{\mathrm{grad}}{=}5.85\%$、$R_{\mathrm{opt}}{=}8.57\%$、
+$H_K{=}R_{\mathrm{opt}}$ 精确成立、标量 null 被证伪:预测 $1.001$ vs.\ 实测 $0.837$),
+但它\emph{无害}——带它的臂质量更好。此点此前未被 2025--26 标量 scale-invariance
+文献覆盖。
+
+\textbf{剩余可选诊断实验(不依赖"残差有害"):} E5 结构分解、E6 剂量响应、E7
+优化器状态依赖、E11 稳健性——这些描述残差的结构与规律,不声称其有害,仍然
+可做且增强诊断论文。
+
+\subsection{E1 --- 跨状态残差轨迹}
+\begin{hypothesis}[残差预测失败]
+\label{hyp:E1}
+跨训练状态,非标量残差的大小(以 $R_{\mathrm{opt}}-R_{\mathrm{grad}}$,或
+$h_{\mathrm{update}}$ 的坐标离散度度量)\emph{预测} FID 退化与不稳定:残差越大,
+FID 越差和/或梯度范数、loss 方差越高。
+\end{hypothesis}
+
+\textbf{方法。} 在同一运行的若干 checkpoint(32/64/128/256~kimg)上执行现有
+stateful audit,记录各状态的 $R_{\mathrm{opt}}$、$R_{\mathrm{grad}}$、
+$h_{\mathrm{update}}$ 与 off-support energy;并采集各状态的 FID 与稳定性代理
+(梯度/loss 方差)。计算残差大小与 FID、不稳定性的 Spearman 相关。
+
+\textbf{判定。} 若相关显著为负、且跨 $\geq4$ 个状态对支撑阈值稳健,则通过;
+若残差平坦或无关,则判定其为现象而非原因,实验不通过。
+
+\textbf{风险。} 中间状态 FID 方差较大,可采用 KID-5k 作为低方差代理并跨 seed
+平均。状态数量有限时检验力不足,可补充使用 paired sweep 的每步残差序列。
+
+\subsection{E2 --- 因果干预(residual-corrected update)}
+\begin{hypothesis}[残差可修复且具有危害]
+\label{hyp:E2}
+移除 gap 效应的非标量部分——将候选梯度投影至参考方向后再执行 optimizer step——
+相对未修正臂可改善训练稳定性与 FID。
+\end{hypothesis}
+
+\textbf{方法(paired 三臂设计,本项目一贯方法)。} 自同一状态:
+\begin{itemize}
+  \item Arm R(参考):$g=1.0$,标准 RAdam,提供 $G_1$ 与 $U_1$。
+  \item Arm U(未修正):$g=1.3$,标准 RAdam,非标量残差存在。
+  \item Arm C(修正):$g=1.3$,梯度修正为 $G_{\mathrm{corr}} = s^\star G_1$,
+        $s^\star = \langle G_g,G_1\rangle/\lVert G_1\rVert^2$,移除非标量内容,
+        使 $h\to 1$。
+\end{itemize}
+在短窗口(16--64~kimg)内比较 Arm U 与 Arm C 的稳定性与 FID。
+
+\textbf{设计依据。} gap 干预含标量部分(可被学习率吸收)与非标量部分(残差)。
+Arm C 仅改动非标量部分。若 Arm C 稳定性或 FID 优于 Arm U,则残差为退化的
+\emph{原因},修复即为\emph{治疗}。
+
+\textbf{判定。} 若 Arm C 显著更稳定或 FID 更好、跨 seed 稳健,则通过;若
+Arm C $\approx$ Arm U,则判定残差无害且不可修复,实验不通过。
+
+\textbf{风险。} Arm C 每步需参考梯度,须与 Arm R 并行,计算量约 $2$--$3\times$;
+可采用短窗口或仅在部分步计算 $G_1$。修正可能过强,削除合法非标量信号——若
+Arm C 反而更差,应如实记录,该结果本身亦具信息量。
+
+\subsection{E3 --- 普适性}
+\begin{hypothesis}[残差为普遍现象]
+\label{hyp:E3}
+非标量残差是一般的 optimizer-state 现象,而非 CIFAR-10/ECM/RAdam 或
+$(1.0,1.3)$ gap 对的特定产物。
+\end{hypothesis}
+
+\textbf{方法。} 采用第二 optimizer(AdamW 或 Muon 系)、第二数据集/backbone
+(ImageNet-64 或小型 DiT)、第二 gap 对,重复审计;报告
+$\{$optimizer $\times$ dataset $\times$ gap$\}$ 网格上的残差大小。
+
+\textbf{判定。} 若残差跨 $\geq2$ 个 optimizer 与 $\geq2$ 个数据集/backbone 复现,
+则通过;否则普适性声明需收缩,并作为 limitation 报告。
+
+\textbf{风险。} ImageNet-64/DiT 全量训练成本高;可改用单步 paired audit。
+Muon 系 optimizer 或未安装,AdamW 足以支撑"第二 optimizer"的声明。
+
+\subsection{E4 --- MeanFlow / flow-map 泛化}
+\begin{hypothesis}[前沿相关性]
+\label{hyp:E4}
+非标量残差机制在 MeanFlow / flow-map 训练中复现,并关联至 MeanFlow 不稳定 /
+无界梯度方差的开放问题。
+\end{hypothesis}
+
+\textbf{方法。} 将 paired counterfactual 机制适配至 flow-map / MeanFlow 目标;
+在 MeanFlow 训练状态上执行 stateful audit;可行时施加 E2 修正并检验训练是否
+稳定。
+
+\textbf{判定。} 若残差在 MeanFlow 上复现,且理想情况下修正可稳定训练,则通过。
+\emph{须专门}关联命名的那个不稳定问题,而非笼统声称在 MeanFlow 上运行过。
+
+\textbf{风险。} 成本高且可能不复现,故门控于 E1+E2 之后。
+
+\subsection{E5 --- 残差结构分解}
+\begin{hypothesis}[残差具有结构]
+\label{hyp:E5}
+非标量残差 $E_j$ 并非随机噪声,而是具有结构:与坐标梯度幅值、层深度或局部曲率
+相关,且可能存在主导方向。
+\end{hypothesis}
+
+\textbf{方法。} 对残差 $E_j$ 做多维度分解:(i) 按层聚合,检验残差是否随层深
+单调变化;(ii) 按坐标梯度幅值 $|G_{j,i}|$ 分箱,检验残差是否与幅值相关;
+(iii) 计算残差与梯度方向、与局部 Hessian 对角近似的相关;(iv) 检验残差是否
+近似为梯度的确定性函数(如 $E_j \approx c\,G_j + \varepsilon$),并估计其
+主导方向。
+
+\textbf{判定。} 若残差在层、幅值或方向上呈现可复现的相关性,则其为真实机制而
+非噪声;该结构同时为 E8 的诊断提供特征。
+
+\textbf{风险。} 残差可能接近各向同性噪声,无明显结构——若如此,应如实报告,这
+并不否定残差的存在,但会削弱可预测性主张。
+
+\subsection{E6 --- 剂量响应(残差对 gap 的响应)}
+\begin{hypothesis}[残差为干预的系统函数]
+\label{hyp:E6}
+非标量残差的大小随 gap 大小系统性变化,呈现单调或近线性关系。
+\end{hypothesis}
+
+\textbf{方法。} 在多个 gap 值(如 $0.8, 1.0, 1.1, 1.3, 1.5$)上重复 stateful
+audit,绘制残差大小(及 $h_{\mathrm{actual}}$ 偏移)对 gap 的响应曲线,并拟合
+其标度关系。
+
+\textbf{判定。} 若残差随 gap 单调或近似线性变化,则该现象为干预的定量规律,
+而非偶然;该关系为论文提供一条可量化的定律。
+
+\textbf{风险。} 小 gap 下残差可能淹没在数值噪声中;需确保支撑阈值与数值精度
+足以分辨。
+
+\subsection{E7 --- 优化器状态依赖}
+\begin{hypothesis}[残差效应依赖优化器状态]
+\label{hyp:E7}
+对固定的梯度残差,其导致的更新失真($h$ 对 $1$ 的偏移)随优化器状态(一阶矩
+$m$、二阶矩 $v$ 的幅度)而变化。
+\end{hypothesis}
+
+\textbf{方法。} 在固定 gap 下,取同一网络的不同优化器状态(暖启动早期的小矩
+vs.\ 成熟期的大矩),测量相同梯度残差所对应的 $h_{\mathrm{actual}}$ 偏差。比较
+偏差是否随状态变化。
+
+\textbf{判定。} 若同一梯度残差在不同状态下产生不同更新失真,则"state-conditioned"
+这一核心主张成立——即优化器状态本身在起作用,而非仅梯度。这是将理论 gauge 故事
+接到数据的关键一环。
+
+\textbf{风险。} 若失真对状态不敏感,则"状态条件"主张需弱化;此时更新失真主要
+由梯度残差本身决定。
+
+\subsection{E8 --- 坐标级诊断的有效性}
+\begin{hypothesis}[残差可预测]
+\label{hyp:E8}
+存在一个坐标级预测器(基于 gauge、$|m|$、$|v|$、$|G|$ 等特征)能在未见状态上
+预测哪些坐标违反标量等价(即 $h_{k,i}$ 远离 $1$)。
+\end{hypothesis}
+
+\textbf{方法。} 从 gauge/moment 特征构建一个残差预测器,在某一状态上拟合,在
+另一状态上测试。以"坐标为 $h$ 远离 $1$"为二分类目标,报告 AUC 与校准度。
+
+\textbf{判定。} 若预测器跨状态泛化(测试 AUC 显著高于随机),则残差可预测——这
+是"可预测且可修正"中的"可预测"半边,使 E2 的修正是基于诊断而非预言机。
+
+\textbf{风险。} 若预测器不跨状态泛化,则残差虽存在但不可预测,需弱化"可预测"
+主张,并退化为仅依赖 E2 的干预性证据。
+
+\subsection{E9 --- 修正的权衡}
+\begin{hypothesis}[修正存在帕累托前沿]
+\label{hyp:E9}
+以强度参数 $\alpha$ 在未修正梯度 $G_g$ 与完全投影 $s^\star G_1$ 之间插值
+($G_{\mathrm{corr}}=(1-\alpha)G_g+\alpha\,s^\star G_1$),稳定性与 FID 随
+$\alpha$ 呈现权衡,存在最优区间。
+\end{hypothesis}
+
+\textbf{方法。} 扫描 $\alpha\in[0,1]$,对各取值训练短窗口并测量稳定性与 FID,
+绘制 $(\alpha,\text{稳定性},\text{FID})$ 曲面。
+
+\textbf{判定。} 若存在 $\alpha$ 的帕累托前沿或最优区间,则修正成为带旋钮的
+真实方法而非二元开关,增强其实用性。
+
+\textbf{风险。} 若修正不带来任何改善或不存在权衡区间,则 E2 的"修正有益"主张
+需收缩;应如实报告。
+
+\subsection{E10 --- 修复的基线对照}
+\begin{hypothesis}[修正具有针对性]
+\label{hyp:E10}
+residual-corrected update 相对简单基线(降学习率、梯度裁剪、逐坐标梯度裁剪、
+AdamW)具有针对性优势——其收益来自专门移除非标量残差,而非通用的稳定化。
+\end{hypothesis}
+
+\textbf{方法。} 将 Arm C 与下列基线在相同设置下比较:降低学习率、全局梯度裁剪、
+逐坐标梯度裁剪、切换 AdamW。以稳定性与 FID 为指标。
+
+\textbf{判定。} 若 Arm C 相对基线持平或占优,则修正的针对性得到支持;这预先
+回应"直接降学习率即可"的反驳。
+
+\textbf{风险。} 若简单基线已达同等效果,则修正的必要性主张需弱化,但仍可保留
+机制层面的价值。
+
+\subsection{E11 --- 稳健性:多 seed 与支撑阈值敏感性}
+\begin{hypothesis}[结论对超参稳健]
+\label{hyp:E11}
+E1、E2 的主要结论对随机种子与有效支撑阈值($\texttt{support\_atol}$)稳健。
+\end{hypothesis}
+
+\textbf{方法。} 以多个随机种子重复 E1、E2;在若干支撑阈值下重算全部 gauge 统计
+量,检验结论是否随阈值漂移。
+
+\textbf{判定。} 若主要结论(残差预测失败、修正有益)在种子与阈值下稳定,则
+soundness 得到保障——这是 ICLR 最看重的标准。
+
+\textbf{风险。} 若结论对支撑阈值敏感,则需报告敏感性区间并明确其适用边界。
+
+\subsection{E12 --- 残差中介 gap 到 FID}
+\begin{hypothesis}[残差中介质量效应]
+\label{hyp:E12}
+非标量残差(部分)中介了 gap 干预对 FID/质量的影响:在控制残差后,gap 对 FID 的
+效应显著削弱。
+\end{hypothesis}
+
+\textbf{方法。} 结合 E6 的剂量响应状态,做中介式分析:检验残差在 gap 对 FID 的
+回归中解释的方差,是否超出标量部分所能解释的方差;若控制残差后 gap 的效应
+下降,则残差为质量退化的部分原因。
+
+\textbf{判定。} 若残差解释了 gap 到 FID 方差的显著部分,则"so what"得以直接
+确立——把整个优化器分析连接到生成质量,而非停留在更新几何层面。
+
+\textbf{风险。} 中介分析依赖因果假设与充足的状态数;若 FID 噪声大或状态不足,
+中介效应难以识别,应如实报告并为结论加限。
+
+% ------------------------------------------------------------------
+\section{执行顺序与约束}
+\label{sec:exec}
+
+\subsection{执行顺序}
+实验分三阶段推进,前两阶段决定论文类型,第三阶段为完整化:
+
+\textbf{阶段一(门控,决定机制):}
+\begin{center}
+\begin{tabular}{@{}lllc@{}}
+\toprule
+顺序 & 实验 & 决定内容 & 工作量 \\
+\midrule
+1 & E1 跨状态残差 & 残差预测失败(机制) & 低(复用 audit) \\
+2 & E5 残差结构分解 & 残差有结构而非噪声 & 低 \\
+3 & E6 剂量响应 & 残差为干预的系统函数 & 低 \\
+4 & E7 优化器状态依赖 & state-conditioned 成立 & 中 \\
+5 & E2 因果干预 & 修正有益(方法) & 中(新代码) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{阶段二(验证修复,决定方法强度):}
+\begin{center}
+\begin{tabular}{@{}lllc@{}}
+\toprule
+顺序 & 实验 & 决定内容 & 工作量 \\
+\midrule
+6 & E8 诊断有效性 & 残差可预测 & 中 \\
+7 & E9 修正权衡 & 修正为可调方法 & 中 \\
+8 & E10 修复基线 & 修正具有针对性 & 中 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{阶段三(完整化,建立意义与稳健):}
+\begin{center}
+\begin{tabular}{@{}lllc@{}}
+\toprule
+顺序 & 实验 & 决定内容 & 工作量 \\
+\midrule
+9 & E12 残差中介 gap 到 FID & 直接 "so what" & 中 \\
+10 & E11 稳健性 & soundness 保障 & 低 \\
+11 & E3 普适性 & 强化 & 中 \\
+12 & E4 MeanFlow & 前沿 & 高 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{关键检查点:} 阶段一 E1 与 E2 均通过 → 论文为机制加方法,推进阶段二、三。
+E2 未通过 → 撰写诊断论文,转投兜底 workshop,不进入阶段三的 E12/E4。
+
+\subsection{各实验不得声称什么}
+\begin{itemize}
+  \item E1 须展示\emph{预测}而非仅存在——即跨状态的相关,而非单点观测。
+  \item E2 须展示修正\emph{改善}下游指标,而非仅将 $h$ 恢复至 $1$
+        (恢复 $h$ 是必要条件,而非充分条件)。
+  \item E5--E7 须展示残差具有可复现结构,而非单次测量的巧合。
+  \item E8 须展示预测器\emph{跨状态}泛化,而非仅在拟合状态上有效。
+  \item E9 须展示修正的\emph{权衡},而非无条件的改善。
+  \item E10 须展示修正相对基线的\emph{针对性},而非通用稳定化。
+  \item E12 须展示残差\emph{中介}质量效应,而非仅与质量相关。
+  \item E3 须展示残差\emph{普遍}存在,而非仅在一个配置中出现。
+  \item E4 须关联\emph{命名}的 MeanFlow 不稳定问题,而非笼统地运行于 MeanFlow。
+  \item 任何实验均不得声称 ``first''(见第~\ref{sec:contribution} 节)。
+\end{itemize}
+
+% ------------------------------------------------------------------
+\section{结论}
+\label{sec:conclusion}
+
+诚实的负结果——标量等价在少步训练中失效,且主导失真是非标量梯度内容——在
+2025--26 文献中此前未被直接研究。当前项目将该发现置于文末作为结论性说明,属
+结构失当。对抗性审查(见 `docs/ICLR2027\_PLAN\_REVIEW.md`)表明,"机制+方法
+$40$--$50\%$"的估计过度乐观;而 \textbf{干净的 $g{=}1.3$ vs.\ $g{=}1.0$ FID 实测}
+(见 `analysis/g13\_vs\_g10\_fid\_result.md`)已把前提判定钉死:带非标量残差的
+$g{=}1.3$ 臂在 FID/KID 上全面大幅胜出($-34\%$/$-45\%$),\emph{残差无害},E2 因果
+干预被反指。因此机制+方法升级被证伪,论文\emph{必须}收缩为诚实的诊断论文
+(非标量梯度内容的存在、结构与质量方向,约 $20$--$30\%$),可辩护但非"化腐朽为
+神奇"。E2 降级为探索性消融与设计启示。目标自始至终唯一:使论文进入 ICLR 2027
+——但须基于对前提的实测检验,而非乐观假设。
+
+\begin{thebibliography}{9}
+  \bibitem{adam} D.~Kingma and J.~Ba, ``Adam: A method for stochastic
+  optimization,'' \emph{ICLR}, 2015.
+  \bibitem{radam} L.~Liu et al., ``On the variance of the adaptive learning
+  rate and beyond,'' \emph{ICLR}, 2020.
+  \bibitem{adamrel} G.~et al., ``Adam on local time: addressing nonstationarity
+  in RL with relative Adam timesteps,'' \emph{NeurIPS}, 2024.
+  \bibitem{lora} ``LoRA Done RITE,'' \emph{ICLR}, 2025.
+  \bibitem{beta} ``Why Adam works better with $\beta_1=\beta_2$: the missing
+  gradient scale invariance principle,'' arXiv:2601.21739, 2026.
+  \bibitem{adcm} ``Adaptive discretization for consistency models,''
+  \emph{NeurIPS}, 2025.
+  \bibitem{sct} ``Stable consistency tuning,'' arXiv:2410.18958, 2024.
+  \bibitem{ddc} ``Dead-direction conditioners: gauge-equivariant preconditioning
+  for deep networks,'' arXiv:2606.29176, 2026.
+\end{thebibliography}
+
+\end{document}
