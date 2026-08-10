@@ -1,0 +1,202 @@
+"""Scalar-History Predictor: how much of the real optimizer residual is
+explained by a scalar gradient-scale history through RAdam moment memory?
+
+This is the SCIENTIFIC mechanism test (vs the coordinate-wise oracle, which is
+only an algebra/implementation sanity check).
+
+Protocol (per step j, from the stored paired gradient history):
+  1. global scalar  a_j* = <G_j^1.3, G_j^1.0> / ||G_j^1.0||^2   (ONE scalar)
+  2. scalar-predicted gradient  Ĝ_j^1.3 = a_j* G_j^1.0
+  3. replay RAdam from the REAL optimizer state (m,v,step) with two histories:
+       reference:  G_j^1.0
+       scalar:     Ĝ_j^1.3
+     -> two virtual optimizer trajectories
+  4. at target step t, the predicted update ratio
+       ĥ^scalar_{t,i} = U^scalar_{t,i} / U^1_{t,i}
+     vs the real observed update ratio h^actual_{t,i} = U^1.3_{t,i}/U^1_{t,i}
+
+Outputs:
+  wRMSE(ĥ^scalar, h^actual)
+  Corr(ĥ^scalar, h^actual)
+  ρ_scalar = Disp(ĥ^scalar) / R_opt     (fraction of real residual explained)
+"""
+from __future__ import annotations
+
+import argparse
+import copy
+import json
+import math
+import sys
+from pathlib import Path
+
+import numpy as np
+import torch
+from torch.optim import RAdam
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+BETA1, BETA2 = 0.9, 0.999
+
+
+def global_scalar(grad_g: np.ndarray, grad_1: np.ndarray) -> float:
+    """ONE global scalar: a* = <Gg,G1>/||G1||²."""
+    denom = float(np.sum(grad_1 * grad_1))
+    if denom <= 0:
+        return 1.0
+    return float(np.sum(grad_g * grad_1) / denom)
+
+
+def flatten_opt_state(opt_state: dict) -> tuple[torch.Tensor, torch.Tensor, int]:
+    """Flatten the real optimizer m/v/step across all params into (d,) tensors."""
+    ms, vs = [], []
+    step = 0
+    for st in opt_state["state"].values():
+        ms.append(st["exp_avg"].reshape(-1))
+        vs.append(st["exp_avg_sq"].reshape(-1))
+        step = max(step, int(st["step"]))
+    return torch.cat(ms), torch.cat(vs), step
+
+
+def replay_from_state(grad_hist: list[np.ndarray], dim: int, m0: torch.Tensor,
+                      v0: torch.Tensor, step0: int, lr: float,
+                      betas=(BETA1, BETA2), eps: float = 1e-8):
+    """Replay RAdam from a given (flattened) optimizer state over a history.
+
+    Returns per-step parameter updates. The real m/v/step are set manually on a
+    dummy parameter of shape (dim,), so the moments start from the real state.
+    """
+    p = torch.nn.Parameter(torch.zeros(dim))
+    opt = RAdam([p], lr=lr, betas=betas, eps=eps)
+    # manually seed the optimizer state (RAdam state is lazy-created)
+    opt.state[p]["step"] = torch.tensor(step0)
+    opt.state[p]["exp_avg"] = m0.clone()
+    opt.state[p]["exp_avg_sq"] = v0.clone()
+    updates = []
+    for g in grad_hist:
+        old = p.detach().clone()
+        opt.zero_grad()
+        p.grad = torch.from_numpy(g).float()
+        opt.step()
+        updates.append((p.detach() - old).numpy())
+    return updates
+
+
+def weighted_rmse(h_pred, h_act, w):
+    sup = w > 0
+    if not sup.any():
+        return math.nan
+    return math.sqrt(float(np.sum(w[sup] * (h_pred[sup] - h_act[sup]) ** 2) / np.sum(w[sup])))
+
+
+def corr(h_pred, h_act, w):
+    sup = w > 0
+    if sup.sum() < 2:
+        return math.nan
+    wp = w[sup]; x, y = h_pred[sup], h_act[sup]
+    xm = np.sum(wp * x) / np.sum(wp); ym = np.sum(wp * y) / np.sum(wp)
+    cov = np.sum(wp * (x - xm) * (y - ym))
+    vx = np.sum(wp * (x - xm) ** 2); vy = np.sum(wp * (y - ym) ** 2)
+    if vx <= 0 or vy <= 0:
+        return math.nan
+    return float(cov / math.sqrt(vx * vy))
+
+
+def dispersion(h, w):
+    sup = w > 0
+    if not sup.any():
+        return math.nan
+    wp = w[sup]
+    m = np.sum(wp * h[sup]) / np.sum(wp)
+    return math.sqrt(float(np.sum(wp * (h[sup] - m) ** 2) / np.sum(wp)))
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--training-state", type=Path, required=True,
+                    help="real training-state (for the optimizer m/v/step)")
+    ap.add_argument("--grad-history-1", type=Path, required=True)
+    ap.add_argument("--grad-history-g", type=Path, required=True)
+    ap.add_argument("--u1", type=Path, required=True)
+    ap.add_argument("--ug", type=Path, required=True)
+    ap.add_argument("--eval-step", type=int, default=-1)
+    ap.add_argument("--lr", type=float, default=1e-4)
+    ap.add_argument("--out", type=Path, default=Path("analysis/scalar_history_prediction.json"))
+    a = ap.parse_args(argv)
+
+    # load real optimizer state, flatten m/v/step
+    data = torch.load(a.training_state, map_location="cpu", weights_only=False)
+    opt_state = data["optimizer_state"]
+    m0, v0, step0 = flatten_opt_state(opt_state)
+    dim = m0.numel()
+
+    G1 = np.load(a.grad_history_1)   # (T, d)
+    Gg = np.load(a.grad_history_g)   # (T, d)
+    u1 = np.load(a.u1)               # (d,)
+    ug = np.load(a.ug)               # (d,)
+    T = G1.shape[0]
+    t = T - 1 if a.eval_step < 0 else min(a.eval_step, T - 1)
+    d = G1.shape[1]
+
+    # per-step global scalar
+    a_star = [global_scalar(Gg[j], G1[j]) for j in range(t + 1)]
+    # scalar-predicted gradient history
+    Ghat = np.stack([a_star[j] * G1[j] for j in range(t + 1)])
+
+    # replay from the REAL optimizer state (flattened m/v/step)
+    upd_1 = replay_from_state([G1[j] for j in range(t + 1)], d, m0, v0, step0, a.lr)
+    upd_scalar = replay_from_state([Ghat[j] for j in range(t + 1)], d, m0, v0, step0, a.lr)
+
+    # predicted update ratio at step t
+    u1_pred = upd_1[t]; us_pred = upd_scalar[t]
+    h_pred = np.ones(d)
+    sup = np.abs(u1_pred) > 1e-30
+    h_pred[sup] = us_pred[sup] / u1_pred[sup]
+
+    # actual update ratio
+    h_act = np.ones(d)
+    sup_act = np.abs(u1) > 1e-30
+    h_act[sup_act] = ug[sup_act] / u1[sup_act]
+
+    # weights: reference update energy, on the effective support
+    w = u1 ** 2
+    eff = (np.abs(u1) > 1e-5) & (np.abs(u1_pred) > 1e-5)
+    w_eff = w[eff]
+
+    rmse = weighted_rmse(h_pred[eff], h_act[eff], w_eff)
+    r = corr(h_pred[eff], h_act[eff], w_eff)
+    disp = dispersion(h_pred[eff], w_eff)
+    s_opt = float(np.sum(ug * u1) / max(np.sum(u1 * u1), 1e-30))
+    R_opt = float(np.linalg.norm(ug - s_opt * u1) / max(np.linalg.norm(u1), 1e-30))
+    rho = disp / R_opt if R_opt > 1e-12 else math.nan
+
+    result = {
+        "T_steps": T, "eval_step": t,
+        "a_star_mean": float(np.mean(a_star)),
+        "a_star_std": float(np.std(a_star)),
+        "h_pred_scalar_mean": float(np.mean(h_pred[eff])),
+        "h_actual_mean": float(np.mean(h_act[eff])),
+        "weighted_RMSE_scalar_vs_actual": rmse,
+        "corr_scalar_vs_actual": r,
+        "Disp_h_scalar": disp,
+        "R_opt": R_opt,
+        "rho_scalar_explained_fraction": rho,
+        "effective_coords": int(eff.sum()),
+    }
+    a.out.parent.mkdir(parents=True, exist_ok=True)
+    a.out.write_text(json.dumps(result, indent=2))
+
+    print("=== Scalar-History Predictor (mechanism test) ===")
+    print(f"steps={T}, eval t={t}, effective coords={eff.sum()}")
+    print(f"a_j*: mean={result['a_star_mean']:.4f}, std={result['a_star_std']:.4f}")
+    print(f"ĥ^scalar mean={result['h_pred_scalar_mean']:.4f}, h^actual mean={result['h_actual_mean']:.4f}")
+    print(f"wRMSE(ĥ^scalar, h^actual) = {rmse:.4f}")
+    print(f"Corr(ĥ^scalar, h^actual) = {r:.4f}")
+    print(f"Disp(ĥ^scalar) = {disp:.4f}, R_opt = {R_opt:.4f}")
+    print(f"ρ_scalar = Disp/R_opt = {rho:.4f}  (fraction of real residual explained)")
+    print(f"wrote {a.out}")
+
+
+if __name__ == "__main__":
+    main()
