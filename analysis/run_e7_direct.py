@@ -24,8 +24,6 @@ from analysis.radam_stateful_update_audit import (
 from training.dataset import ImageFolderDataset
 from torch.utils.data import DataLoader
 
-BASE = Path("/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1")
-ARM = "arm_a_g1_0_lr_fixed_s3"
 DATA = "/data/raw/ECT/datasets/cifar10-32x32.zip"
 
 def load_loss_from_ckpt(path: Path):
@@ -36,14 +34,15 @@ def load_loss_from_ckpt(path: Path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--tick", type=int, required=True)
+    ap.add_argument("--training-state", type=Path, required=True)
+    ap.add_argument("--checkpoint", type=Path, required=True)
     ap.add_argument("--device", default="cuda")
     a = ap.parse_args()
 
     device = torch.device(a.device)
-    ts = BASE / ARM / f"training-state-{a.tick:06d}.pt"
-    ckpt = BASE / ARM / "network-snapshot-latest.pkl"
-    print(f"tick={a.tick}  training-state={ts}")
+    ts = a.training_state
+    ckpt = a.checkpoint
+    print(f"training-state={ts}")
 
     net, optimizer, scaler_state, loss_fn_state, meta = load_training_state(
         ts, device, lr=1e-4, betas=(0.9, 0.999), eps_opt=1e-8)
