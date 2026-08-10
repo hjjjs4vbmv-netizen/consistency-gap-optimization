@@ -90,11 +90,49 @@ Use Arm A as the canonical longitudinal reference trajectory at every K. Do
 not mix A/B/C checkpoints across K into a pseudo-trajectory; B and C states are
 retained for their own trajectory provenance and follow-up checks.
 
-The current `analysis/radam_stateful_update_audit.py` loader accepts
-`sigmoid` but rejects the formal snapshots' `global_sigmoid` schedule name.
-Role D must make a downstream loader-compatibility change before running the
-longitudinal audit; the frozen launcher and training code must remain
-unchanged.
+The original #44 `analysis/radam_stateful_update_audit.py` loader accepted
+`sigmoid` but rejected the formal snapshots' `global_sigmoid` schedule name.
+The downstream Collaborator infrastructure branch fixes that analysis-only
+compatibility check and adds a regression test. The frozen launcher and
+training implementation remain unchanged.
+
+## Downstream execution entry points
+
+Run the artifact verifier in the ECT PyTorch environment before either GPU
+job. It recomputes the canonical dataset/transfer hashes, verifies the
+receipt-bound state hashes, records the previously unindexed EMA snapshot
+hashes, and deserializes the exact files selected for the role.
+
+Role D uses only Arm A and the four numbered state/snapshot pairs:
+
+```bash
+ECT_EXPERIMENT_ROOT=/path/to/gap_lr_matched_q128_s3_v1 \
+ECT_DATA=/path/to/cifar10-32x32.zip \
+ECT_TRANSFER=/path/to/edm-cifar10-32x32-uncond-vp.pkl \
+ROLE_D_OUT=/new/path/role_d_longitudinal \
+ROLE_D_GPU=0 \
+bash scripts/run_gap_lr_longitudinal_audit.sh
+```
+
+The runner fixes one audit seed across all four K points, so the externally
+paired minibatch, t, noise, and dropout random stream are identical across the
+trajectory. Every virtual branch is non-committing by the #44 audit contract.
+
+Role E uses the three final numbered EMA snapshots and one frozen NFE=1
+protocol (`FP32`, sample seeds `0-4999`, evaluator seed `20260730`, one metric
+repeat):
+
+```bash
+ECT_EXPERIMENT_ROOT=/path/to/gap_lr_matched_q128_s3_v1 \
+ECT_DATA=/path/to/cifar10-32x32.zip \
+ECT_TRANSFER=/path/to/edm-cifar10-32x32-uncond-vp.pkl \
+ROLE_E_OUT=/new/path/role_e_nfe1 \
+ROLE_E_GPU=0 \
+bash scripts/run_gap_lr_nfe1_quality.sh
+```
+
+Both launchers refuse to overwrite an existing result directory. They do not
+resume, mutate, or otherwise touch the completed training runs.
 
 ## Validation notes
 

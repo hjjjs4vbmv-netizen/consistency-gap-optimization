@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "experiment_id": "gap_lr_matched_q128_s3_v1",
+  "owner": "Collaborator",
+  "status": "code_ready_for_server_execution",
+  "no_new_training": true,
+  "frozen_training_implementation_modified": false,
+  "analysis_loader": {
+    "path": "analysis/radam_stateful_update_audit.py",
+    "global_sigmoid_compatible": true,
+    "checkpoint_rewrite_required": false,
+    "accepted_schedule_identities": [
+      "sigmoid",
+      "global_sigmoid"
+    ]
+  },
+  "artifact_verifier": {
+    "path": "scripts/prepare_gap_lr_downstream.py",
+    "role_d_scope": "Arm A states and paired snapshots at 32.128/64.128/128.128/256.000 kimg",
+    "role_e_scope": "A/B/C final numbered EMA snapshots at 256.000 kimg",
+    "checks": [
+      "dataset SHA256",
+      "transfer checkpoint SHA256",
+      "receipt-bound training-state SHA256",
+      "network-snapshot SHA256",
+      "training-state deserialize and required keys",
+      "416 complete RAdam parameter states",
+      "GradScaler state",
+      "EMA/loss snapshot deserialize",
+      "global_sigmoid arm identity"
+    ],
+    "read_only": true
+  },
+  "role_d_launcher": {
+    "path": "scripts/run_gap_lr_longitudinal_audit.sh",
+    "reference_arm": "A",
+    "state_ids": [
+      "000001",
+      "000002",
+      "000004",
+      "000008"
+    ],
+    "same_audit_seed_across_k": 20260810,
+    "mixes_arms_across_k": false
+  },
+  "role_e_launcher": {
+    "path": "scripts/run_gap_lr_nfe1_quality.sh",
+    "checkpoint_state_id": "000008",
+    "arms": [
+      "A",
+      "B",
+      "C"
+    ],
+    "nfe": 1,
+    "precision": "fp32",
+    "metrics": [
+      "fid5k_full",
+      "kid5k_full"
+    ],
+    "sample_seeds": "0-4999",
+    "evaluator_seed": 20260730,
+    "metric_repeats": 1
+  },
+  "server_side_results": {
+    "longitudinal_metrics": "pending Role D execution",
+    "quality_metrics": "pending Role E execution",
+    "infrastructure_blocker_known": false
+  }
+}
