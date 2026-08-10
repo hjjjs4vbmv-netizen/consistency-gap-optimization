@@ -81,6 +81,23 @@ Counterfactual Measurement*
 - corr(residual, FID) ≈ −0.99: larger residual → better FID.
 - The zero-residual arm (g=1.0) is the worst.
 
+### 3.4 The residual is state-conditioned (E7)
+- The gradient residual R_grad grows with optimizer maturity (n_K): 0.031
+  (n_K=243) → 0.091 (n_K=1991), roughly monotone. The residual is not a fixed
+  property of the network; it is optimizer-state-conditioned.
+- The update distortion R_opt is small (0.012–0.017) and R_opt−R_grad is
+  negative (the optimizer compresses the gradient residual).
+- Measurement-sensitivity caveat: R_opt magnitude and the sign of R_opt−R_grad
+  depend on the loss_fn checkpoint / minibatch (earlier audit: R_opt=0.086,
+  +0.027; here: 0.014, −0.076 at the same n_K). Report the convention.
+
+### 3.5 Robustness (E11)
+- Cross-seed: at 1024k, the larger-gap arm (g=1.1) beats g=1.0 on FID-50k
+  across all 3 seeds (5/6 cells). The "deviating from g=1.0 improves FID"
+  finding is not a single-seed fluke.
+- Support-threshold: Corr≈0 / scalar-null-falsified is stable across atol
+  1e-5/1e-6.
+
 ## 4. Related work / positioning
 
 - β1=β2 gradient-scale invariance (global scalar; we are coordinate-wise,
@@ -127,10 +144,14 @@ Counterfactual Measurement*
 | corr(residual, FID) | −0.99 | E6 |
 | g=1.3 vs g=1.0 FID-5k | −34%/−36% (NFE1/2) | clean FID |
 | g=1.3 vs g=1.0 KID-5k | −37%/−45% (NFE1/2) | clean FID |
+| R_grad vs n_K (243→1991) | 0.031→0.091 | E7 |
+| cross-seed (1024k, g=1.1) | wins 5/6 FID-50k cells | E11 |
+| Corr≈0 across atol 1e-5/1e-6 | 0.005 / 0.0002 | E11 |
 
 ## Files
 - This framework: `docs/ICLR2027_DIAGNOSIS_PAPER.md`
 - Strategy: `docs/ICLR2027_STRATEGY.tex`
 - Review: `docs/ICLR2027_PLAN_REVIEW.md`
 - Results: `analysis/g13_vs_g10_fid_result.md`, `analysis/e5_residual_structure_result.md`,
-  `analysis/e6_dose_response_result.md`, `analysis/moment_memory_real_history_result.md`
+  `analysis/e6_dose_response_result.md`, `analysis/e7_optimizer_state_result.md`,
+  `analysis/e11_robustness_result.md`, `analysis/moment_memory_real_history_result.md`
