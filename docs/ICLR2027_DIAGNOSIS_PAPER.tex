@@ -1,0 +1,191 @@
+\documentclass[11pt,a4paper]{article}
+
+% ------------------------------------------------------------------
+% Packages
+% ------------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[expansion=false,protrusion=true]{microtype}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{hypothesis}{Hypothesis}[section]
+
+\newcommand{\R}{\mathbb{R}}
+
+\title{\textbf{Non-Scalar Gradient Content in Few-Step Consistency Training: A Paired Counterfactual Measurement}%
+\thanks{Draft framework for ICLR 2027. Role~C (theory lead). All numbers from the
+repository's own audits/evaluations; see `analysis/`.}}
+\author{Role C --- Theory Lead}
+\date{2026-08-10}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Few-step generative training commonly assumes that a training intervention---a
+change in the discretization gap---is \emph{scalar-equivalent} to a learning-rate
+change, i.e.\ absorbable by a single scalar multiplier on the parameter update.
+We test this assumption in the optimizer-update space, conditioned on a fixed,
+nontrivial RAdam state, using a paired counterfactual audit (identical minibatch,
+timestep, noise, dropout; gap $g=1.0$ vs.\ $g=1.3$).
+
+We find that the scalar moment-memory chain---an exact identity relating the
+coordinate-wise update-ratio gauge to the gradient-scale history---predicts
+$h\approx 1.001$, but the actual update ratio is $h\approx 0.837$, driven by a
+non-scalar per-step gradient residual. The residual is reproducible and
+structured: it grows with layer depth and is a monotone function of $|g-1|$, but
+is not magnitude-driven. Crucially, the residual is \emph{not} harmful: the arm
+carrying it ($g=1.3$) achieves dramatically better FID/KID than the zero-residual
+arm ($g=1.0$) at both NFE=1 and NFE=2 (FID $-34\%$/$-36\%$, KID $-37\%$/$-45\%$).
+
+We conclude that scalar-equivalence reasoning in few-step training is
+systematically violated by non-scalar gradient content---a phenomenon the field's
+scale-invariance literature (which analyzes only scalar/global rescaling) does
+not cover---but that this content is benign, not a source of quality degradation.
+We provide a reproducible paired-counterfactual measurement and a structural
+characterization of where and why scalar equivalence fails.
+\end{abstract}
+
+\tableofcontents
+
+% ------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+The scalar-equivalence assumption: a schedule/gap change is often treated as a
+learning-rate change. We ask whether it holds in the optimizer-update space,
+conditioned on a fixed optimizer state. The honest finding: it fails, but
+benignly.
+
+% ------------------------------------------------------------------
+\section{Setup and method}
+\label{sec:method}
+
+Rectified RAdam, coordinate-wise update-ratio gauge
+\begin{equation}
+  h_{k,i} \;=\; \frac{U_{g,k,i}}{U_{1,k,i}}, \qquad
+  i \in \mathcal{S}_k \;:=\; \bigl\{ i : U_{1,k,i}\neq 0 \bigr\}.
+  \label{eq:gauge}
+\end{equation}
+The moment-memory identity as a falsifiable null model:
+\begin{equation}
+  h_{k,i} \;=\;
+  \frac{\bigl(1 + A^{(1)}_{k,i}\bigr)}
+       {\sqrt{1 + 2 A^{(2)}_{k,i} + B^{(2)}_{k,i}}}.
+  \label{eq:exact}
+\end{equation}
+The paired counterfactual audit (identical randomness; $g=1.0$ vs.\ $g=1.3$).
+Measured audit numbers: $a_K^*=0.761$, $R_{\mathrm{grad}}=5.85\%$,
+$R_{\mathrm{opt}}=8.57\%$, $H_K=R_{\mathrm{opt}}$ exact (energy gap $1.7\times
+10^{-18}$), $R_{\mathrm{opt}}-R_{\mathrm{grad}}=+0.027$.
+
+% ------------------------------------------------------------------
+\section{Results: the diagnosis}
+\label{sec:results}
+
+\subsection{The scalar null is falsified}
+Predicted $h\approx 1.001$ (median) vs.\ actual $h\approx 0.837$ (std $0.058$),
+$\mathrm{Corr}\approx 0$ (both stably different, not noisy).
+
+\subsection{The residual is structured, not noise (E5)}
+Gauge deviation from $1$ grows with layer depth (pearson $+0.46$); not
+magnitude-correlated; gradient direction residual is a monotone function of
+$|g-1|$.
+
+\subsection{The residual is not harmful (E6 + clean FID)}
+$g=1.3$ (max residual) vs.\ $g=1.0$ (zero residual): FID-5k $-34\%$/$-36\%$,
+KID-5k $-37\%$/$-45\%$ at NFE=1/2. $\mathrm{corr}(\text{residual},\text{FID})
+\approx -0.99$: larger residual $\to$ better FID. The zero-residual arm
+($g=1.0$) is the worst.
+
+\subsection{The residual is state-conditioned (E7)}
+The gradient residual $R_{\mathrm{grad}}$ grows with optimizer maturity
+($n_K$): $0.031$ ($n_K=243$) $\to$ $0.091$ ($n_K=1991$), roughly monotone. The
+update distortion $R_{\mathrm{opt}}$ is small ($0.012$--$0.017$) and
+$R_{\mathrm{opt}}-R_{\mathrm{grad}}$ is negative (the optimizer compresses the
+gradient residual). Measurement-sensitivity caveat: $R_{\mathrm{opt}}$ magnitude
+and the sign of $R_{\mathrm{opt}}-R_{\mathrm{grad}}$ depend on the
+\texttt{loss\_fn} checkpoint / minibatch (earlier audit:
+$R_{\mathrm{opt}}=0.086$, $+0.027$; here: $0.014$, $-0.076$ at the same
+$n_K$).
+
+\subsection{Robustness (E11)}
+Cross-seed: at 1024k, the larger-gap arm ($g=1.1$) beats $g=1.0$ on FID-50k
+across all 3 seeds (5/6 cells). Support-threshold: $\mathrm{Corr}\approx 0$ /
+scalar-null-falsified is stable across atol $10^{-5}$/$10^{-6}$.
+
+% ------------------------------------------------------------------
+\section{Related work and positioning}
+\label{sec:related}
+
+\begin{itemize}
+  \item $\beta_1{=}\beta_2$ gradient-scale invariance (global scalar; we are
+        coordinate-wise, state-conditioned, non-scalar).
+  \item Adam-atan2 / DeVA (scalar rescaling decomposition; we analyze non-scalar
+        content).
+  \item ADCM (schedule for quality; we analyze optimizer-state equivalence).
+  \item SCT (objective/variance theory; we analyze update geometry).
+  \item Dead-Direction Conditioners (symmetry-orbit gauge; we rename ours to
+        ``coordinate-wise update-ratio gauge'').
+\end{itemize}
+
+% ------------------------------------------------------------------
+\section{Discussion and limitations}
+\label{sec:discussion}
+
+$g=1.3$ differs in the whole gap (scalar + non-scalar), so we do not claim the
+residual \emph{causes} the FID improvement---only that it is not harmful.
+FID-5k (not FID-50k), 256-kimg runs, seed 3, single schedule pair. The
+residual-magnitude measurement convention varies (3.2\% from 20-step replay vs.\
+5.85\%/8.57\% from single-step audit); we report the audit values. The
+$3.2\%\to16\%$ attribution ($1.001\to0.837$) is not derived; we report the
+measured $h_{\mathrm{actual}}$ directly.
+
+% ------------------------------------------------------------------
+\section{What this paper does not claim}
+\label{sec:notclaim}
+
+\begin{itemize}
+  \item NOT ``the residual is harmful'' (falsified: $g=1.3$ wins FID).
+  \item NOT ``a residual-corrected update improves quality'' (contraindicated).
+  \item NOT ``first adaptive discretization / optimizer invariance / history-gauge
+        theorem'' (preempted).
+  \item NOT ``gap is equivalent to learning-rate change'' (falsified by
+        $h=0.837$).
+\end{itemize}
+
+% ------------------------------------------------------------------
+\section{Measured numbers}
+\label{sec:numbers}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+quantity & value & source \\
+\midrule
+$a_K^*$ (gradient scalar fit) & 0.761 & stateful audit \\
+$R_{\mathrm{grad}}$ & 5.85\% & stateful audit \\
+$R_{\mathrm{opt}}$ & 8.57\% & stateful audit \\
+$H_K = R_{\mathrm{opt}}$ & exact ($1.7\times10^{-18}$) & stateful audit \\
+$h_{\mathrm{predicted}}$ (scalar null) & 1.001 & moment-memory \\
+$h_{\mathrm{actual}}$ & 0.837 (std 0.058) & moment-memory result \\
+$\mathrm{Corr}(h_{\mathrm{pred}},h_{\mathrm{actual}})$ & $\approx 0$ & moment-memory result \\
+gauge dev vs.\ depth (pearson) & $+0.46$ & E5 \\
+$\mathrm{corr}(\text{residual},\text{FID})$ & $-0.99$ & E6 \\
+$g=1.3$ vs.\ $g=1.0$ FID-5k & $-34\%$/$-36\%$ (NFE1/2) & clean FID \\
+$g=1.3$ vs.\ $g=1.0$ KID-5k & $-37\%$/$-45\%$ (NFE1/2) & clean FID \\
+$R_{\mathrm{grad}}$ vs.\ $n_K$ ($243\to1991$) & $0.031\to0.091$ & E7 \\
+cross-seed (1024k, $g=1.1$) & wins 5/6 FID-50k cells & E11 \\
+$\mathrm{Corr}\approx 0$ across atol $10^{-5}$/$10^{-6}$ & 0.005 / 0.0002 & E11 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}
