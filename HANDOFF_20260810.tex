@@ -92,6 +92,52 @@ $\mathrm{corr}(\text{残差},|g-1|)$ & $+0.938$ \\
 诊断信号论题不成立。
 
 % ------------------------------------------------------------------
+\section{诊断规划(来自 ICLR2027\_STRATEGY)}
+\label{sec:plan}
+
+\subsection{诊断论文的定位与主张}
+诊断论文(`docs/ICLR2027\_DIAGNOSIS\_PAPER`)主张:
+\begin{quote}
+非标量梯度内容在少步训练中系统性存在、有结构、状态条件、普遍、\emph{良性}——
+标量 moment-memory 恒等式($h{=}1.001$)被实测($h{=}0.837$)证伪。
+\end{quote}
+此点此前未被 2025--26 标量 scale-invariance 文献覆盖($\beta_1{=}\beta_2$、
+Adam-atan2、DeVA 均只分析标量/全局缩放)。
+
+\subsection{诊断证据链(已实测)}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+环节 & 实验 & 结论 \\
+\midrule
+存在 & moment-memory & 标量 null 被证伪 \\
+有结构 & E5 & 深度趋势 + 剂量响应 \\
+无害 & E6 + 干净 FID & 与 FID 反相关 $r{=}{-}0.99$ \\
+状态条件 & E7 & $R_{\mathrm{grad}}$ 随 $n_K$ 增长 \\
+稳健 & E11 & 跨 3 seed + 支撑阈值 \\
+普遍 & E3 & 梯度残差跨 optimizer 复现 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{诊断规划的边界(P1 附庸性)}
+P1 检验(偏相关 $\approx 0$)表明残差\emph{附庸于标量 gap},在标量 gap 之外不增加
+对 FID 的预测力。因此:
+\begin{itemize}
+  \item \textbf{不声称}残差是质量诊断信号(被 P1 证伪)
+  \item \textbf{不声称}残差有害或可修正(被 $g{=}1.3$ 赢 FID 证伪)
+  \item \textbf{不投} ICLR 主会(诊断信号论题不成立)
+\end{itemize}
+
+\subsection{剩余规划}
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+  \item 把论文定位更新为 workshop 级诚实负结果
+  \item 投 ``I Can't Believe It's Not Better'' workshop 或 benchmark track
+  \item 可选补强:第二数据集/backbone 挣"普遍"(若预算允许)
+  \item 不可行项(MeanFlow 泛化、ImageNet-64、E12 中介)降级为 future work
+\end{enumerate}
+
+% ------------------------------------------------------------------
 \section{最终定位}
 \label{sec:position}
 

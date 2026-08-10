@@ -70,6 +70,22 @@ $\mathrm{corr}(\text{残差},|g-1|)$ & $+0.938$ \\
 诊断信号论题不成立。
 \end{frame}
 
+\begin{frame}{诊断规划(来自 ICLR2027\_STRATEGY)}
+\textbf{诊断论文主张:} 非标量梯度内容在少步训练中系统性存在、有结构、状态条件、
+普遍、\emph{良性}——标量 moment-memory 恒等式($h{=}1.001$)被实测($h{=}0.837$)
+证伪。此点未被 2025--26 标量 scale-invariance 文献覆盖。
+
+\textbf{证据链(已实测):} 存在(moment-memory)→ 有结构(E5)→ 无害(E6 + 干净 FID)
+→ 状态条件(E7)→ 稳健(E11)→ 普遍(E3)。
+
+\textbf{边界(P1 附庸性):} 残差附庸于标量 gap(偏相关 $\approx 0$),不增加对 FID
+的预测力。因此\textbf{不声称}诊断信号、\textbf{不声称}有害/可修正、\textbf{不投}
+ICLR 主会。
+
+\textbf{剩余规划:} 更新定位为 workshop 级诚实负结果;投 ``I Can't Believe It's
+Not Better'' workshop;可选补强第二数据集挣"普遍";不可行项降级 future work。
+\end{frame}
+
 \begin{frame}{最终定位}
 \begin{block}{诚实结论}
 非标量梯度残差存在、有结构、状态条件、普遍、\emph{良性}——但\emph{附庸于标量
