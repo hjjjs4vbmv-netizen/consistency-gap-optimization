@@ -287,6 +287,26 @@ $H_K{=}R_{\mathrm{opt}}$ 精确成立、标量 null 被证伪:预测 $1.001$ vs.
 优化器状态依赖、E11 稳健性——这些描述残差的结构与规律,不声称其有害,仍然
 可做且增强诊断论文。
 
+\subsection{实测诊断证据(2026-08-10,已执行)}
+诊断定位已由实测数据支撑(详见 `analysis/e5\_residual\_structure\_result.md`、
+`analysis/e6\_dose\_response\_result.md`):
+
+\begin{itemize}
+  \item \textbf{E5 残差有结构(非噪声)。} 坐标 gauge 偏离 $1$ 的程度随层深增大
+        (pearson $+0.46$);残差与更新幅值无关;梯度方向残差随 $|g-1|$ 单调增长。
+        层级 gauge 偏离小($\sim3$--$5\%$)且集中,无单一"坏层"。
+  \item \textbf{E6 剂量响应:残差与 FID 强反相关。} 残差单调于 $|g-1|$;而
+        FID 在 $g{=}1.0$(零残差)最差、$g{=}1.3$(最大残差)最佳
+        ($\mathrm{corr}(\text{残差},\text{FID})\approx -0.99$)。零残差臂最差,
+        残差无害。
+  \item \textbf{E7 优化器状态依赖:基础设施受阻。} 审计要求 checkpoint 与
+        training-state 均为 sigmoid,而 arm 状态为 global\_sigmoid、g\_screen
+        g1\_0 仅一个状态——无法在不动核心审计的前提下测多状态。列为待办/受阻。
+\end{itemize}
+
+三条实测结论(E5 结构、E6 剂量、g=1.3-vs-1.0 FID)共同钉死诊断定位:非标量残差
+存在、有结构、无害——带它的臂质量更好。
+
 \subsection{E1 --- 跨状态残差轨迹}
 \begin{hypothesis}[残差预测失败]
 \label{hyp:E1}
