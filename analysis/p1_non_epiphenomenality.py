@@ -14,8 +14,9 @@ from __future__ import annotations
 import math
 import numpy as np
 
-# residual (gradient direction_residual) at gaps where measured
-RESID = {"0.9": 0.01164, "1.0": 0.00000, "1.2": 0.01356, "1.3": 0.01731}
+# residual (gradient direction_residual) at 7 gaps (measured 2026-08-10, g_screen g1_0 ckpt)
+RESID = {"0.8": 0.01573, "0.9": 0.0115, "1.0": 0.00000, "1.05": 0.00924,
+         "1.1": 0.01248, "1.2": 0.01627, "1.3": 0.02093}
 # FID-5k NFE1 means (g_screen)
 FID = {"0.9": 245.15, "1.0": 315.67, "1.05": 314.89, "1.1": 302.11, "1.2": 219.63, "1.3": 206.75}
 
