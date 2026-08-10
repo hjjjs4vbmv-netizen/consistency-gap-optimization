@@ -1,0 +1,128 @@
+\documentclass[UTF8,11pt,a4paper]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[expansion=false,protrusion=true]{microtype}
+
+\newcommand{\R}{\mathbb{R}}
+
+\title{\textbf{ECT 项目交接报告 — 2026-08-10(Role C)}%
+\thanks{面向项目 leader 与 mentor 的汇报。对应仓库 `recurrence\_of\_ect`,分支
+`role-c/g13-vs-g10-fid-0809`。}}
+\author{Role C --- 理论负责人}
+\date{2026-08-10}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本报告总结 2026-08-10 围绕 ICLR 2027 战略的实测工作。核心结论:通过一系列
+\emph{实测}实验,把方案的生死判断钉死——非标量梯度残差存在、有结构、状态条件、
+普遍、\emph{良性},但\emph{附庸于标量 gap}。因此"机制+方法"与"诊断信号"两条
+升级路径均被证伪,论文最终定位为 \emph{workshop 级诚实负结果},不投 ICLR 主会。
+\end{abstract}
+
+\tableofcontents
+
+% ------------------------------------------------------------------
+\section{战略轨迹}
+\label{sec:trajectory}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+阶段 & 结论 \\
+\midrule
+机制+方法($40$--$50\%$) & 被 $g{=}1.3$ 赢 FID 证伪 \\
+诚实诊断($20$--$30\%$) & 被"良性"非结果质疑 \\
+诊断信号转向($30$--$35\%$) & 被 P1 附庸性检验证伪(偏相关 $\approx 0$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+最终定位:\textbf{workshop 级诚实负结果}。
+
+% ------------------------------------------------------------------
+\section{实测诊断证据}
+\label{sec:evidence}
+
+六个实验,全部实测:
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+环节 & 实验 & 结论 \\
+\midrule
+存在 & moment-memory & 标量 null 被证伪($h$ $1.001$ vs.\ $0.837$, $\mathrm{Corr}\approx 0$) \\
+有结构 & E5 & 深度趋势($\rho\approx 0.4$)+ 剂量响应,非噪声 \\
+无害 & E6 + 干净 FID & 与 FID 反相关 $r{=}{-}0.99$;$g{=}1.3$ 赢 $-34\%$/$-45\%$ \\
+状态条件 & E7 & $R_{\mathrm{grad}}$ 随 $n_K$ 增长($0.031\to0.091$) \\
+稳健 & E11 & 跨 3 seed(1024k 5/6)+ 支撑阈值 \\
+普遍 & E3 & 梯度残差跨 optimizer 复现(AdamW $0.095$ vs.\ RAdam $0.091$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{关键数字:} $a_K^*{=}0.761$、$R_{\mathrm{grad}}{=}5.85\%$、
+$R_{\mathrm{opt}}{=}8.57\%$、$H_K{=}R_{\mathrm{opt}}$ 精确($1.7\times10^{-18}$)、
+$h_{\mathrm{pred}}{=}1.001$ vs.\ $h_{\mathrm{actual}}{=}0.837$。
+
+% ------------------------------------------------------------------
+\section{P1 决定性结果}
+\label{sec:p1}
+
+\textbf{残差附庸于标量 gap。} 在 7 个 gap 上实测残差,6 个共同 gap 上计算:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+相关 & 值 \\
+\midrule
+$\mathrm{corr}(\text{残差},\text{FID})$ & $-0.817$ \\
+$\mathrm{corr}(|g-1|,\text{FID})$ & $-0.899$ \\
+$\mathrm{corr}(\text{残差},|g-1|)$ & $+0.938$ \\
+\textbf{偏相关(残差, FID $|$ $|g-1|$)} & \textbf{$+0.168\approx 0$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+残差几乎由 $|g-1|$ 决定,在标量 gap 之外\textbf{不增加对 FID 的预测力}。
+诊断信号论题不成立。
+
+% ------------------------------------------------------------------
+\section{最终定位}
+\label{sec:position}
+
+\begin{quote}
+非标量梯度残差存在、有结构、状态条件、普遍、\emph{良性}——但\emph{附庸于标量
+gap}。它是少步训练的真实特征,但不是质量诊断信号,也不有害。\textbf{论文定位:
+workshop 级诚实负结果,不投 ICLR 主会。}
+\end{quote}
+
+% ------------------------------------------------------------------
+\section{交付物}
+\label{sec:deliverables}
+
+\begin{itemize}
+  \item \textbf{诊断论文}: `docs/ICLR2027\_DIAGNOSIS\_PAPER.{md,tex,pdf}`
+  \item \textbf{战略文档}: `docs/ICLR2027\_STRATEGY.{tex,pdf,md}`
+  \item \textbf{对抗性审查}: `docs/ICLR2027\_PLAN\_REVIEW.md`
+  \item \textbf{实验结果}(7 份): `analysis/g13\_vs\_g10\_fid\_result.md`、
+        `e5/e6/e7/e11/e3/p1\_*\_result.md`
+  \item \textbf{Git}: 分支 `role-c/g13-vs-g10-fid-0809`,23 个 commit 领先 main,
+        未合并 main
+\end{itemize}
+
+% ------------------------------------------------------------------
+\section{待办}
+\label{sec:todo}
+
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+  \item 本地 push 分支(勿推 main)
+  \item 把论文定位更新为 workshop 级诚实负结果
+  \item 可选:投 ``I Can't Believe It's Not Better'' workshop
+\end{enumerate}
+
+\end{document}
