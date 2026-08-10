@@ -98,6 +98,13 @@ Counterfactual Measurement*
 - Support-threshold: Corr≈0 / scalar-null-falsified is stable across atol
   1e-5/1e-6.
 
+### 3.6 Universality (E3)
+- The gradient residual R_grad reproduces with AdamW (0.095 vs 0.091 for RAdam
+  at the same state): the non-scalar GRADIENT residual is a property of the
+  loss/gradient, not optimizer-specific.
+- The update distortion R_opt is optimizer-dependent: AdamW amplifies
+  (R_opt=0.39, R_opt−R_grad positive), RAdam compresses (R_opt=0.014, negative).
+
 ## 4. Related work / positioning
 
 - β1=β2 gradient-scale invariance (global scalar; we are coordinate-wise,
@@ -147,6 +154,8 @@ Counterfactual Measurement*
 | R_grad vs n_K (243→1991) | 0.031→0.091 | E7 |
 | cross-seed (1024k, g=1.1) | wins 5/6 FID-50k cells | E11 |
 | Corr≈0 across atol 1e-5/1e-6 | 0.005 / 0.0002 | E11 |
+| R_grad with AdamW (vs RAdam) | 0.095 (vs 0.091) | E3 |
+| R_opt with AdamW (vs RAdam) | 0.39 (vs 0.014) | E3 |
 
 ## Files
 - This framework: `docs/ICLR2027_DIAGNOSIS_PAPER.md`
@@ -154,4 +163,5 @@ Counterfactual Measurement*
 - Review: `docs/ICLR2027_PLAN_REVIEW.md`
 - Results: `analysis/g13_vs_g10_fid_result.md`, `analysis/e5_residual_structure_result.md`,
   `analysis/e6_dose_response_result.md`, `analysis/e7_optimizer_state_result.md`,
-  `analysis/e11_robustness_result.md`, `analysis/moment_memory_real_history_result.md`
+  `analysis/e11_robustness_result.md`, `analysis/e3_universality_result.md`,
+  `analysis/moment_memory_real_history_result.md`

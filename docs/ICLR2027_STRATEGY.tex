@@ -310,10 +310,15 @@ $H_K{=}R_{\mathrm{opt}}$ 精确成立、标量 null 被证伪:预测 $1.001$ vs.
   \item \textbf{E11 稳健性(已用现有跨 seed 数据完成)。} 1024k 预算下较大 gap 臂
         (g=1.1)在全部 3 个 seed 上赢 FID-50k(5/6 cell);moment-memory 的
         $\mathrm{Corr}\approx 0$ 在 atol 1e-5/1e-6 下稳定。
+  \item \textbf{E3 普适性(已用 AdamW 完成)。} 梯度残差 $R_{\mathrm{grad}}$ 跨
+        optimizer 复现(AdamW $0.095$ vs.\ RAdam $0.091$),是非标量梯度内容为
+        loss/梯度属性的证据,非 RAdam 特有;更新失真 $R_{\mathrm{opt}}$ 随
+        optimizer 不同(AdamW 放大 $0.39$,RAdam 压缩 $0.014$)。
 \end{itemize}
 
-五条实测结论(E5 结构、E6 剂量、E7 状态条件、E11 稳健、g=1.3-vs-1.0 FID)共同
-钉死诊断定位:非标量残差存在、有结构、状态条件、无害——带它的臂质量更好。
+六条实测结论(E5 结构、E6 剂量、E7 状态条件、E11 稳健、E3 普遍、g=1.3-vs-1.0
+FID)共同钉死诊断定位:非标量残差存在、有结构、状态条件、普遍、无害——带它的
+臂质量更好。
 
 \subsection{E1 --- 跨状态残差轨迹}
 \begin{hypothesis}[残差预测失败]
