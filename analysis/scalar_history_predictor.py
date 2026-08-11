@@ -210,6 +210,11 @@ def main(argv=None):
     }
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(result, indent=2))
+    # persist per-coordinate data on the effective support so R² / Corr / wRMSE
+    # can be independently recomputed (auditability)
+    np.save(a.out.parent / "h_pred_scalar.npy", h_pred[eff])
+    np.save(a.out.parent / "h_actual.npy", h_act[eff])
+    np.save(a.out.parent / "weights.npy", w[eff])
 
     print("=== Scalar-History Predictor (mechanism test) ===")
     print(f"steps={T}, eval t={t}, effective coords={eff.sum()}")
