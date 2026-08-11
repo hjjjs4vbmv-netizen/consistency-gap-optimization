@@ -1,0 +1,16 @@
+{
+  "evidence_class": "NFE1 FID-50k, single training seed",
+  "training_seed": 3,
+  "sample_seeds": "0-49999",
+  "evaluator_seed": 20260730,
+  "fid_A": 314.552820089198,
+  "fid_B": 205.63556229379822,
+  "fid_C": 296.8896917090583,
+  "B_minus_A": -108.91725779539979,
+  "C_minus_A": -17.66312838013971,
+  "C_minus_B": 91.25412941526008,
+  "matching_absorption_fraction": 0.8378298468244605,
+  "retained_gap_fraction": 0.1621701531755395,
+  "claim": "Fresh-update LR matching removes approximately 84% of the observed g=1.3 NFE=1 FID advantage.",
+  "claim_boundary": "Publication-scale sampling evidence from one training seed; not evidence of cross-training-seed robustness."
+}
