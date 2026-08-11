@@ -9,6 +9,7 @@ PYTHON="${ECT_PYTHON:-$REPO/.venv/bin/python}"
 EXPERIMENT_ROOT="${ECT_EXPERIMENT_ROOT:?set ECT_EXPERIMENT_ROOT to the formal experiment directory}"
 DATA="${ECT_DATA:?set ECT_DATA to the canonical CIFAR-10 archive}"
 TRANSFER="${ECT_TRANSFER:?set ECT_TRANSFER to the pretrained EDM checkpoint}"
+LAUNCHER_LOG="${ECT_LAUNCHER_LOG:-${EXPERIMENT_ROOT}.launcher.log}"
 OUT_ROOT="${ROLE_D_OUT:?set ROLE_D_OUT to a new external result directory}"
 GPU="${ROLE_D_GPU:-0}"
 SEED=20260810
@@ -18,6 +19,7 @@ test -x "$PYTHON"
 test -d "$EXPERIMENT_ROOT"
 test -f "$DATA"
 test -f "$TRANSFER"
+test -f "$LAUNCHER_LOG"
 if [ -e "$OUT_ROOT" ]; then
     echo "REFUSING: Role D output already exists: $OUT_ROOT" >&2
     exit 3
@@ -28,6 +30,7 @@ mkdir -p "$OUT_ROOT"
     --experiment-root "$EXPERIMENT_ROOT" \
     --data "$DATA" \
     --transfer "$TRANSFER" \
+    --launcher-log "$LAUNCHER_LOG" \
     --scope role-d \
     --out "$OUT_ROOT/artifact_manifest.json"
 

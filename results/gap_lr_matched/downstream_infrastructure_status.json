@@ -2,7 +2,7 @@
   "schema_version": 1,
   "experiment_id": "gap_lr_matched_q128_s3_v1",
   "owner": "Collaborator",
-  "status": "code_ready_for_server_execution",
+  "status": "role_d_artifact_bundle_verified",
   "no_new_training": true,
   "frozen_training_implementation_modified": false,
   "analysis_loader": {
@@ -25,9 +25,13 @@
       "network-snapshot SHA256",
       "training-state deserialize and required keys",
       "416 complete RAdam parameter states",
-      "GradScaler state",
+      "all RAdam parameter steps equal the receipt-bound successful update count",
+      "receipt-bound GradScaler scale",
       "EMA/loss snapshot deserialize",
-      "global_sigmoid arm identity"
+      "global_sigmoid arm identity",
+      "Arm A train_summary checkpoint rows",
+      "Arm A training_options run/schedule/gap/LR identity",
+      "run log, launch provenance, and detached launcher log SHA256"
     ],
     "read_only": true
   },
@@ -62,6 +66,17 @@
     "metric_repeats": 1
   },
   "server_side_results": {
+    "role_d_artifact_bundle": {
+      "status": "passed",
+      "handoff_id": "gap_lr_matched_q128_s3_v1_20260811",
+      "trajectory_id": "arm_a_g1_0_lr_fixed_s3",
+      "strict_manifest_sha256": "8367a4d4ea8f1880f391868782e22eab1025301f3642d70ba0a47828aa615209",
+      "checksum_file_sha256": "5d07fd09766b04ea9c0d7d4d214b5e6e29db2187cc148ac5c8b3e81985549c1b",
+      "public_receipt": "results/gap_lr_matched/role_d_formal_arm_a_handoff_receipt.json",
+      "public_receipt_sha256": "69cbf573739df551c10d51cfd8d2bd90a30422a7d58504f6fd63e1aa18c769b1",
+      "single_uninterrupted_run": true,
+      "mixes_runs_or_arms": false
+    },
     "longitudinal_metrics": "pending Role D execution",
     "quality_metrics": "pending Role E execution",
     "infrastructure_blocker_known": false

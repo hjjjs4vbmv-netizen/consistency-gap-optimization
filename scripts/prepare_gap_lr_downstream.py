@@ -11,6 +11,7 @@ training artifact.
 from __future__ import annotations
 
 import argparse
+import csv
 import gc
 import hashlib
 import json
@@ -28,6 +29,10 @@ DEFAULT_RECEIPT = (
 EXPERIMENT_ID = "gap_lr_matched_q128_s3_v1"
 STATE_IDS = ("000001", "000002", "000004", "000008")
 FINAL_STATE_ID = "000008"
+ROLE_D_ARM = "A"
+ROLE_D_RUN_LOG = Path("logs/A.log")
+ROLE_D_LAUNCH_PROVENANCE = Path("launch_provenance.txt")
+ROLE_D_RUN_PROVENANCE = ("train_summary.csv", "training_options.json")
 REQUIRED_STATE_KEYS = {
     "attempted_iteration",
     "cur_nimg",
@@ -43,6 +48,7 @@ REQUIRED_STATE_KEYS = {
 
 
 def sha256_file(path: Path) -> str:
+    print(f"hashing: {path}", flush=True)
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
@@ -62,6 +68,7 @@ def _torch_load(path: Path):
 
 
 def inspect_training_state(path: Path, expected: dict[str, Any]) -> dict[str, Any]:
+    print(f"deserializing training state: {path}", flush=True)
     data = _torch_load(path)
     try:
         if not isinstance(data, dict):
@@ -90,6 +97,17 @@ def inspect_training_state(path: Path, expected: dict[str, Any]) -> dict[str, An
             raise RuntimeError(
                 f"successful_optimizer_steps {actual_steps} != receipt {expected_steps}"
             )
+        parameter_steps = {
+            int(parameter_state["step"].item())
+            if hasattr(parameter_state["step"], "item")
+            else int(parameter_state["step"])
+            for parameter_state in optimizer_states.values()
+        }
+        if parameter_steps != {actual_steps}:
+            raise RuntimeError(
+                "optimizer parameter steps do not all match "
+                f"successful_optimizer_steps {actual_steps}: {sorted(parameter_steps)}"
+            )
         expected_nimg = int(round(float(expected["actual_kimg"]) * 1000))
         actual_nimg = int(data["cur_nimg"])
         if actual_nimg != expected_nimg:
@@ -97,13 +115,22 @@ def inspect_training_state(path: Path, expected: dict[str, Any]) -> dict[str, An
         scaler = data["gradscaler_state"]
         if not isinstance(scaler, dict) or "scale" not in scaler:
             raise RuntimeError("GradScaler state is absent or malformed")
+        scaler_scale = float(scaler["scale"])
+        expected_scaler_scale = float(expected["gradscaler_scale"])
+        if not math.isclose(
+            scaler_scale, expected_scaler_scale, rel_tol=0.0, abs_tol=1e-12
+        ):
+            raise RuntimeError(
+                f"GradScaler scale {scaler_scale} != receipt {expected_scaler_scale}"
+            )
         return {
             "deserialized": True,
             "top_level_keys": sorted(data),
             "optimizer_param_state_count": len(optimizer_states),
             "successful_optimizer_steps": actual_steps,
             "cur_nimg": actual_nimg,
-            "gradscaler_scale": float(scaler["scale"]),
+            "optimizer_parameter_steps": sorted(parameter_steps),
+            "gradscaler_scale": scaler_scale,
         }
     finally:
         del data
@@ -112,6 +139,7 @@ def inspect_training_state(path: Path, expected: dict[str, Any]) -> dict[str, An
 
 def inspect_network_snapshot(path: Path, expected_gap: float) -> dict[str, Any]:
     # Formal snapshots are trusted experiment artifacts produced by this repo.
+    print(f"deserializing network snapshot: {path}", flush=True)
     with path.open("rb") as handle:
         payload = pickle.load(handle)
     try:
@@ -152,6 +180,203 @@ def selected_states(scope: str, arms: dict[str, Any]):
     if scope == "role-e":
         return [(arm, FINAL_STATE_ID) for arm in arms]
     return [(arm, state_id) for arm in arms for state_id in STATE_IDS]
+
+
+def index_file(path: Path) -> tuple[dict[str, Any], list[str]]:
+    record: dict[str, Any] = {"path": str(path.resolve())}
+    if not path.is_file():
+        record["status"] = "missing"
+        return record, [f"missing provenance file: {path}"]
+    record.update(
+        status="passed",
+        size_bytes=path.stat().st_size,
+        sha256=sha256_file(path),
+    )
+    return record, []
+
+
+def inspect_train_summary(
+    path: Path, expected_states: dict[str, Any]
+) -> tuple[dict[str, Any], list[str]]:
+    errors: list[str] = []
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    if not rows:
+        return {"row_count": 0, "checkpoint_rows": {}}, ["train summary is empty"]
+    required_columns = {
+        "attempted_iteration",
+        "successful_optimizer_steps",
+        "processed_kimg",
+        "schedule",
+    }
+    missing_columns = sorted(required_columns - set(rows[0]))
+    if missing_columns:
+        return {
+            "row_count": len(rows),
+            "checkpoint_rows": {},
+        }, [f"train summary missing columns: {missing_columns}"]
+
+    checkpoint_rows: dict[str, Any] = {}
+    for state_id in STATE_IDS:
+        expected = expected_states[state_id]
+        expected_kimg = float(expected["actual_kimg"])
+        matches = [
+            row
+            for row in rows
+            if math.isclose(
+                float(row["processed_kimg"]), expected_kimg, rel_tol=0.0, abs_tol=5e-7
+            )
+        ]
+        if len(matches) != 1:
+            errors.append(
+                f"train summary has {len(matches)} rows for state {state_id} "
+                f"at {expected_kimg} kimg"
+            )
+            continue
+        row = matches[0]
+        actual_steps = int(row["successful_optimizer_steps"])
+        expected_steps = int(expected["successful_optimizer_steps"])
+        if actual_steps != expected_steps:
+            errors.append(
+                f"train summary state {state_id} successful steps "
+                f"{actual_steps} != receipt {expected_steps}"
+            )
+        if row["schedule"] != "global_sigmoid":
+            errors.append(
+                f"train summary state {state_id} schedule {row['schedule']!r} "
+                "!= 'global_sigmoid'"
+            )
+        checkpoint_rows[state_id] = {
+            "attempted_iteration": int(row["attempted_iteration"]),
+            "successful_optimizer_steps": actual_steps,
+            "processed_kimg": float(row["processed_kimg"]),
+            "schedule": row["schedule"],
+        }
+    return {
+        "row_count": len(rows),
+        "checkpoint_rows": checkpoint_rows,
+        "final_processed_kimg": float(rows[-1]["processed_kimg"]),
+        "final_successful_optimizer_steps": int(
+            rows[-1]["successful_optimizer_steps"]
+        ),
+    }, errors
+
+
+def inspect_training_options(
+    path: Path, run_dir: Path, arm_receipt: dict[str, Any]
+) -> tuple[dict[str, Any], list[str]]:
+    errors: list[str] = []
+    options = json.loads(path.read_text(encoding="utf-8"))
+    recorded_run_dir = Path(str(options.get("run_dir", "")))
+    if (
+        not recorded_run_dir.is_absolute()
+        or recorded_run_dir.resolve() != run_dir.resolve()
+    ):
+        errors.append(
+            "training_options.run_dir does not identify the selected formal Arm A run"
+        )
+    loss_kwargs = options.get("loss_kwargs", {})
+    if loss_kwargs.get("adj") != "global_sigmoid":
+        errors.append("training_options loss_kwargs.adj is not global_sigmoid")
+    gap = float(loss_kwargs.get("global_gap_scale", math.nan))
+    expected_gap = float(arm_receipt["gap_scale"])
+    if not math.isclose(gap, expected_gap, rel_tol=0.0, abs_tol=1e-12):
+        errors.append(
+            f"training_options global_gap_scale {gap} != receipt {expected_gap}"
+        )
+    optimizer_kwargs = options.get("optimizer_kwargs", {})
+    lr = float(optimizer_kwargs.get("lr", math.nan))
+    expected_lr = float(arm_receipt["learning_rate"])
+    if not math.isclose(lr, expected_lr, rel_tol=0.0, abs_tol=1e-15):
+        errors.append(f"training_options lr {lr} != receipt {expected_lr}")
+    return {
+        "run_dir": str(recorded_run_dir),
+        "schedule": loss_kwargs.get("adj"),
+        "global_gap_scale": gap,
+        "learning_rate": lr,
+        "seed": options.get("seed"),
+        "total_kimg": options.get("total_kimg"),
+        "batch_size": options.get("batch_size"),
+        "batch_gpu": options.get("batch_gpu"),
+        "enable_amp": options.get("enable_amp"),
+    }, errors
+
+
+def build_role_d_provenance(
+    args: argparse.Namespace, arm_receipt: dict[str, Any]
+) -> tuple[dict[str, Any], list[str]]:
+    errors: list[str] = []
+    run_dir = args.experiment_root / arm_receipt["run_id"]
+    paths = {
+        "train_summary": run_dir / ROLE_D_RUN_PROVENANCE[0],
+        "training_options": run_dir / ROLE_D_RUN_PROVENANCE[1],
+        "run_log": args.experiment_root / ROLE_D_RUN_LOG,
+        "launch_provenance": args.experiment_root / ROLE_D_LAUNCH_PROVENANCE,
+    }
+    if args.launcher_log is None:
+        errors.append("--launcher-log is required for Role D provenance")
+    else:
+        paths["launcher_log"] = args.launcher_log
+
+    files = {}
+    for label, path in paths.items():
+        record, file_errors = index_file(path)
+        files[label] = record
+        errors.extend(file_errors)
+
+    summary_inspection = None
+    if files["train_summary"]["status"] == "passed":
+        summary_inspection, summary_errors = inspect_train_summary(
+            paths["train_summary"], arm_receipt["states"]
+        )
+        errors.extend(summary_errors)
+
+    options_inspection = None
+    if files["training_options"]["status"] == "passed":
+        options_inspection, options_errors = inspect_training_options(
+            paths["training_options"], run_dir, arm_receipt
+        )
+        errors.extend(options_errors)
+
+    if files["run_log"]["status"] == "passed":
+        log_text = paths["run_log"].read_text(encoding="utf-8", errors="replace")
+        fatal_markers = [
+            marker
+            for marker in ("Traceback (most recent call last)", "OutOfMemoryError")
+            if marker in log_text
+        ]
+        files["run_log"]["fatal_markers"] = fatal_markers
+        if fatal_markers:
+            errors.append(f"Arm A run log contains fatal markers: {fatal_markers}")
+
+    if "launcher_log" in files and files["launcher_log"]["status"] == "passed":
+        launcher_text = paths["launcher_log"].read_text(
+            encoding="utf-8", errors="replace"
+        )
+        completed = "ALL FORMAL ARMS COMPLETE" in launcher_text
+        files["launcher_log"]["completion_marker_present"] = completed
+        if not completed:
+            errors.append("launcher log lacks ALL FORMAL ARMS COMPLETE")
+
+    return {
+        "owner": "Collaborator",
+        "consumer": "Role D",
+        "trajectory_id": arm_receipt["run_id"],
+        "run_dir": str(run_dir.resolve()),
+        "single_uninterrupted_run": True,
+        "reference_arm": ROLE_D_ARM,
+        "gap_scale": float(arm_receipt["gap_scale"]),
+        "state_ids": list(STATE_IDS),
+        "actual_kimg": [
+            float(arm_receipt["states"][state_id]["actual_kimg"])
+            for state_id in STATE_IDS
+        ],
+        "files": files,
+        "train_summary_inspection": summary_inspection,
+        "training_options_inspection": options_inspection,
+        "role_d_may_substitute_or_mix_runs": False,
+        "status": "passed" if not errors else "failed",
+    }, errors
 
 
 def build_manifest(args: argparse.Namespace) -> tuple[dict[str, Any], list[str]]:
@@ -236,6 +461,12 @@ def build_manifest(args: argparse.Namespace) -> tuple[dict[str, Any], list[str]]
         [row for row in artifact_rows if row["state_id"] == FINAL_STATE_ID]
         if args.scope in {"role-e", "all"} else []
     )
+    role_d_provenance = None
+    if args.scope in {"role-d", "all"}:
+        role_d_provenance, provenance_errors = build_role_d_provenance(
+            args, arms[ROLE_D_ARM]
+        )
+        errors.extend(f"Role D provenance: {error}" for error in provenance_errors)
     manifest = {
         "schema_version": 1,
         "experiment_id": EXPERIMENT_ID,
@@ -246,6 +477,7 @@ def build_manifest(args: argparse.Namespace) -> tuple[dict[str, Any], list[str]]
         "assets": assets,
         "artifacts": artifact_rows,
         "role_d_inputs": role_d,
+        "role_d_provenance": role_d_provenance,
         "role_d_contract": {
             "reference_arm": "A",
             "state_ids": list(STATE_IDS),
@@ -271,6 +503,11 @@ def parse_args(argv=None) -> argparse.Namespace:
     parser.add_argument("--experiment-root", required=True, type=Path)
     parser.add_argument("--data", required=True, type=Path)
     parser.add_argument("--transfer", required=True, type=Path)
+    parser.add_argument(
+        "--launcher-log",
+        type=Path,
+        help="detached formal launcher log; required by the Role D launcher",
+    )
     parser.add_argument("--receipt", type=Path, default=DEFAULT_RECEIPT)
     parser.add_argument("--scope", choices=("role-d", "role-e", "all"), default="all")
     parser.add_argument(

@@ -24,11 +24,51 @@ def digest(payload: bytes) -> str:
 
 
 class GapLRDownstreamHandoffTests(unittest.TestCase):
+    @staticmethod
+    def saved_state(*, optimizer_step=243, scaler_scale=256.0):
+        return {
+            "attempted_iteration": 251,
+            "cur_nimg": 32128,
+            "cur_tick": 1,
+            "elapsed_sec": 1.0,
+            "gradscaler_state": {"scale": scaler_scale},
+            "loss_fn_state": {},
+            "net": {},
+            "optimizer_state": {
+                "state": {
+                    index: {
+                        "step": optimizer_step,
+                        "exp_avg": 0,
+                        "exp_avg_sq": 0,
+                    }
+                    for index in range(416)
+                }
+            },
+            "successful_optimizer_steps": 243,
+            "tick_start_nimg": 0,
+        }
+
+    @staticmethod
+    def expected_state():
+        return {
+            "actual_kimg": 32.128,
+            "successful_optimizer_steps": 243,
+            "gradscaler_scale": 256.0,
+        }
+
     def make_fixture(self, root: Path):
         data = root / "cifar10.zip"
         transfer = root / "edm.pkl"
         data.write_bytes(b"dataset")
         transfer.write_bytes(b"transfer")
+        experiment = root / "experiment"
+        (experiment / "logs").mkdir(parents=True)
+        (experiment / "logs/A.log").write_text("Training complete\nExiting...\n")
+        (experiment / "launch_provenance.txt").write_text(
+            "experiment_id=gap_lr_matched_q128_s3_v1\n"
+        )
+        launcher_log = root / "experiment.launcher.log"
+        launcher_log.write_text("ALL FORMAL ARMS COMPLETE\n")
         arms = {}
         for arm, run_id, gap, lr in (
             ("A", "arm_a_g1_0_lr_fixed_s3", 1.0, 1e-4),
@@ -49,6 +89,31 @@ class GapLRDownstreamHandoffTests(unittest.TestCase):
                     "successful_optimizer_steps": (243, 493, 993, 1991)[index],
                     "sha256": digest(state_payload),
                 }
+            (run_dir / "training_options.json").write_text(json.dumps({
+                "run_dir": str(run_dir.resolve()),
+                "loss_kwargs": {
+                    "adj": "global_sigmoid",
+                    "global_gap_scale": gap,
+                },
+                "optimizer_kwargs": {"lr": lr},
+                "seed": 3,
+                "total_kimg": 256,
+                "batch_size": 128,
+                "batch_gpu": 16,
+                "enable_amp": True,
+            }))
+            summary_lines = [
+                "attempted_iteration,successful_optimizer_steps,processed_kimg,schedule"
+            ]
+            for index, state_id in enumerate(MODULE.STATE_IDS):
+                summary_lines.append(
+                    f"{(251, 501, 1001, 2000)[index]},"
+                    f"{states[state_id]['successful_optimizer_steps']},"
+                    f"{states[state_id]['actual_kimg']:.3f},global_sigmoid"
+                )
+            (run_dir / "train_summary.csv").write_text(
+                "\n".join(summary_lines) + "\n"
+            )
             arms[arm] = {
                 "gap_scale": gap,
                 "learning_rate": lr,
@@ -65,13 +130,22 @@ class GapLRDownstreamHandoffTests(unittest.TestCase):
             },
             "arms": arms,
         }))
-        return data, transfer, receipt
+        return data, transfer, receipt, launcher_log
 
-    def args(self, root: Path, scope: str, data: Path, transfer: Path, receipt: Path):
+    def args(
+        self,
+        root: Path,
+        scope: str,
+        data: Path,
+        transfer: Path,
+        receipt: Path,
+        launcher_log: Path,
+    ):
         return Namespace(
             experiment_root=root / "experiment",
             data=data,
             transfer=transfer,
+            launcher_log=launcher_log,
             receipt=receipt,
             scope=scope,
             deserialize=False,
@@ -81,9 +155,9 @@ class GapLRDownstreamHandoffTests(unittest.TestCase):
     def test_role_d_scope_uses_only_arm_a_four_point_trajectory(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            data, transfer, receipt = self.make_fixture(root)
+            data, transfer, receipt, launcher_log = self.make_fixture(root)
             manifest, errors = MODULE.build_manifest(
-                self.args(root, "role-d", data, transfer, receipt)
+                self.args(root, "role-d", data, transfer, receipt, launcher_log)
             )
         self.assertEqual(errors, [])
         self.assertEqual(manifest["status"], "passed")
@@ -93,13 +167,35 @@ class GapLRDownstreamHandoffTests(unittest.TestCase):
             list(MODULE.STATE_IDS),
         )
         self.assertFalse(manifest["role_d_contract"]["mix_arms_across_k"])
+        provenance = manifest["role_d_provenance"]
+        self.assertEqual(provenance["status"], "passed")
+        self.assertTrue(provenance["single_uninterrupted_run"])
+        self.assertEqual(provenance["trajectory_id"], "arm_a_g1_0_lr_fixed_s3")
+        self.assertFalse(provenance["role_d_may_substitute_or_mix_runs"])
+        self.assertEqual(
+            set(provenance["files"]),
+            {
+                "train_summary",
+                "training_options",
+                "run_log",
+                "launch_provenance",
+                "launcher_log",
+            },
+        )
+        self.assertTrue(
+            all(record["sha256"] for record in provenance["files"].values())
+        )
+        self.assertEqual(
+            set(provenance["train_summary_inspection"]["checkpoint_rows"]),
+            set(MODULE.STATE_IDS),
+        )
 
     def test_role_e_scope_freezes_three_final_numbered_ema_snapshots(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            data, transfer, receipt = self.make_fixture(root)
+            data, transfer, receipt, launcher_log = self.make_fixture(root)
             manifest, errors = MODULE.build_manifest(
-                self.args(root, "role-e", data, transfer, receipt)
+                self.args(root, "role-e", data, transfer, receipt, launcher_log)
             )
         self.assertEqual(errors, [])
         self.assertEqual(len(manifest["artifacts"]), 3)
@@ -112,16 +208,90 @@ class GapLRDownstreamHandoffTests(unittest.TestCase):
     def test_hash_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            data, transfer, receipt = self.make_fixture(root)
+            data, transfer, receipt, launcher_log = self.make_fixture(root)
             broken = (
                 root / "experiment/arm_a_g1_0_lr_fixed_s3/training-state-000008.pt"
             )
             broken.write_bytes(b"corrupted")
             manifest, errors = MODULE.build_manifest(
-                self.args(root, "role-e", data, transfer, receipt)
+                self.args(root, "role-e", data, transfer, receipt, launcher_log)
             )
         self.assertEqual(manifest["status"], "failed")
         self.assertTrue(any("SHA256 mismatch" in error for error in errors))
+
+    def test_role_d_rejects_training_options_from_another_run(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data, transfer, receipt, launcher_log = self.make_fixture(root)
+            options_path = (
+                root
+                / "experiment/arm_a_g1_0_lr_fixed_s3/training_options.json"
+            )
+            options = json.loads(options_path.read_text())
+            options["run_dir"] = "/data/raw/ECT/ect_runs/g_screen/g1_0"
+            options_path.write_text(json.dumps(options))
+            manifest, errors = MODULE.build_manifest(
+                self.args(root, "role-d", data, transfer, receipt, launcher_log)
+            )
+        self.assertEqual(manifest["status"], "failed")
+        self.assertEqual(manifest["role_d_provenance"]["status"], "failed")
+        self.assertTrue(any("does not identify" in error for error in errors))
+
+    def test_role_d_requires_detached_launcher_log(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data, transfer, receipt, launcher_log = self.make_fixture(root)
+            args = self.args(
+                root, "role-d", data, transfer, receipt, launcher_log
+            )
+            args.launcher_log = None
+            manifest, errors = MODULE.build_manifest(args)
+        self.assertEqual(manifest["status"], "failed")
+        self.assertEqual(manifest["role_d_provenance"]["status"], "failed")
+        self.assertTrue(any("--launcher-log is required" in error for error in errors))
+
+    def test_training_state_binds_optimizer_steps_to_successful_updates(self):
+        original = MODULE._torch_load
+        try:
+            MODULE._torch_load = lambda _path: self.saved_state(optimizer_step=242)
+            with self.assertRaisesRegex(RuntimeError, "optimizer parameter steps"):
+                MODULE.inspect_training_state(Path("unused.pt"), self.expected_state())
+        finally:
+            MODULE._torch_load = original
+
+    def test_training_state_binds_gradscaler_to_receipt(self):
+        original = MODULE._torch_load
+        try:
+            MODULE._torch_load = lambda _path: self.saved_state(scaler_scale=128.0)
+            with self.assertRaisesRegex(RuntimeError, "GradScaler scale"):
+                MODULE.inspect_training_state(Path("unused.pt"), self.expected_state())
+        finally:
+            MODULE._torch_load = original
+
+    def test_committed_role_d_receipt_is_passed_and_path_sanitized(self):
+        path = (
+            REPO_ROOT
+            / "results/gap_lr_matched/role_d_formal_arm_a_handoff_receipt.json"
+        )
+        text = path.read_text(encoding="utf-8")
+        receipt = json.loads(text)
+        self.assertEqual(receipt["status"], "passed")
+        self.assertEqual(receipt["trajectory"]["run_id"], "arm_a_g1_0_lr_fixed_s3")
+        self.assertTrue(receipt["trajectory"]["single_uninterrupted_run"])
+        self.assertFalse(receipt["trajectory"]["role_d_may_substitute_or_mix_runs"])
+        self.assertEqual(
+            [row["actual_kimg"] for row in receipt["artifacts"]],
+            [32.128, 64.128, 128.128, 256.0],
+        )
+        self.assertTrue(
+            all(
+                row["state_restoration"]["optimizer_param_state_count"] == 416
+                and len(row["state_restoration"]["optimizer_parameter_steps"]) == 1
+                for row in receipt["artifacts"]
+            )
+        )
+        for forbidden in ("/data/", "172.16.", "ECT001@", "/Users/"):
+            self.assertNotIn(forbidden, text)
 
     def test_launchers_freeze_the_registered_inputs(self):
         role_d = (REPO_ROOT / "scripts/run_gap_lr_longitudinal_audit.sh").read_text()

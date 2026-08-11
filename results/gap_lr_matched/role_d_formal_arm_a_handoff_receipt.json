@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "experiment_id": "gap_lr_matched_q128_s3_v1",
+  "receipt_type": "role_d_same_trajectory_artifact_bundle",
+  "status": "passed",
+  "verified_date": "2026-08-11",
+  "owner": "Collaborator",
+  "consumer": "Role D",
+  "server_bundle": {
+    "handoff_id": "gap_lr_matched_q128_s3_v1_20260811",
+    "manifest_file": "artifact_manifest_strict.json",
+    "manifest_sha256": "8367a4d4ea8f1880f391868782e22eab1025301f3642d70ba0a47828aa615209",
+    "checksum_file": "SHA256SUMS",
+    "checksum_file_sha256": "5d07fd09766b04ea9c0d7d4d214b5e6e29db2187cc148ac5c8b3e81985549c1b"
+  },
+  "source_assets": {
+    "dataset": {
+      "file": "cifar10-32x32.zip",
+      "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1"
+    },
+    "transfer": {
+      "file": "edm-cifar10-32x32-uncond-vp.pkl",
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    }
+  },
+  "trajectory": {
+    "run_id": "arm_a_g1_0_lr_fixed_s3",
+    "reference_arm": "A",
+    "gap_scale": 1.0,
+    "schedule": "global_sigmoid",
+    "learning_rate": 0.0001,
+    "training_seed": 3,
+    "single_uninterrupted_run": true,
+    "requested_kimg": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "actual_kimg": [
+      32.128,
+      64.128,
+      128.128,
+      256.0
+    ],
+    "state_ids": [
+      "000001",
+      "000002",
+      "000004",
+      "000008"
+    ],
+    "role_d_may_substitute_or_mix_runs": false
+  },
+  "artifacts": [
+    {
+      "state_id": "000001",
+      "actual_kimg": 32.128,
+      "status": "passed",
+      "training_state": {
+        "file": "training-state-000001.pt",
+        "sha256": "dcda9f67e807daf4a769a06e9217880200cbe19c4802ca8f053fefd9361eb67a"
+      },
+      "network_snapshot": {
+        "file": "network-snapshot-000001.pkl",
+        "sha256": "70473352be6da19d6ab9e501acc7c04c7f5e40ad11c577569172b654e5315894"
+      },
+      "state_restoration": {
+        "deserialized": true,
+        "cur_nimg": 32128,
+        "successful_optimizer_steps": 243,
+        "optimizer_param_state_count": 416,
+        "optimizer_parameter_steps": [
+          243
+        ],
+        "gradscaler_scale": 256.0
+      },
+      "snapshot_inspection": {
+        "deserialized": true,
+        "ema_present": true,
+        "loss_fn_present": true,
+        "schedule_name": "global_sigmoid",
+        "global_gap_scale": 1.0
+      }
+    },
+    {
+      "state_id": "000002",
+      "actual_kimg": 64.128,
+      "status": "passed",
+      "training_state": {
+        "file": "training-state-000002.pt",
+        "sha256": "91763eea8b8523ceaec57017b83de47cb272ecb4389e56a5dad64cb5a073f4e2"
+      },
+      "network_snapshot": {
+        "file": "network-snapshot-000002.pkl",
+        "sha256": "962ecd9508dedaecfcc4fa160c00622fe2af9e530ac617115a9bdb6560608e5c"
+      },
+      "state_restoration": {
+        "deserialized": true,
+        "cur_nimg": 64128,
+        "successful_optimizer_steps": 493,
+        "optimizer_param_state_count": 416,
+        "optimizer_parameter_steps": [
+          493
+        ],
+        "gradscaler_scale": 256.0
+      },
+      "snapshot_inspection": {
+        "deserialized": true,
+        "ema_present": true,
+        "loss_fn_present": true,
+        "schedule_name": "global_sigmoid",
+        "global_gap_scale": 1.0
+      }
+    },
+    {
+      "state_id": "000004",
+      "actual_kimg": 128.128,
+      "status": "passed",
+      "training_state": {
+        "file": "training-state-000004.pt",
+        "sha256": "cd49080a4d000a549657ae196b4c267b85cfaa083058347b80e36e0486f7650d"
+      },
+      "network_snapshot": {
+        "file": "network-snapshot-000004.pkl",
+        "sha256": "107622af911a53dad8c17985cc73e9a35b295d9215b2a67aa738c3027eb9d0c2"
+      },
+      "state_restoration": {
+        "deserialized": true,
+        "cur_nimg": 128128,
+        "successful_optimizer_steps": 993,
+        "optimizer_param_state_count": 416,
+        "optimizer_parameter_steps": [
+          993
+        ],
+        "gradscaler_scale": 256.0
+      },
+      "snapshot_inspection": {
+        "deserialized": true,
+        "ema_present": true,
+        "loss_fn_present": true,
+        "schedule_name": "global_sigmoid",
+        "global_gap_scale": 1.0
+      }
+    },
+    {
+      "state_id": "000008",
+      "actual_kimg": 256.0,
+      "status": "passed",
+      "training_state": {
+        "file": "training-state-000008.pt",
+        "sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8"
+      },
+      "network_snapshot": {
+        "file": "network-snapshot-000008.pkl",
+        "sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b"
+      },
+      "state_restoration": {
+        "deserialized": true,
+        "cur_nimg": 256000,
+        "successful_optimizer_steps": 1991,
+        "optimizer_param_state_count": 416,
+        "optimizer_parameter_steps": [
+          1991
+        ],
+        "gradscaler_scale": 128.0
+      },
+      "snapshot_inspection": {
+        "deserialized": true,
+        "ema_present": true,
+        "loss_fn_present": true,
+        "schedule_name": "global_sigmoid",
+        "global_gap_scale": 1.0
+      }
+    }
+  ],
+  "provenance": {
+    "files": {
+      "train_summary": {
+        "file": "train_summary.csv",
+        "size_bytes": 263030,
+        "sha256": "6116da5ed089119e12a1e99db0a7166d65198296abecb151c378745172fa22a2",
+        "status": "passed"
+      },
+      "training_options": {
+        "file": "training_options.json",
+        "size_bytes": 2207,
+        "sha256": "e985d02721b97a880faa07a94a976403a787f825de76b38ff0b93ab3b232afbd",
+        "status": "passed"
+      },
+      "run_log": {
+        "file": "A.log",
+        "size_bytes": 9428,
+        "sha256": "0b7b63f966d5c02a6abc5d2e72e24311859c4111cbe61359f1a55471c7a2bce8",
+        "status": "passed",
+        "fatal_markers": []
+      },
+      "launch_provenance": {
+        "file": "launch_provenance.txt",
+        "size_bytes": 733,
+        "sha256": "44cc6317861c313f9acb77996637ab98f666fa7e21d9f5414e5733c5ca1cbbed",
+        "status": "passed"
+      },
+      "launcher_log": {
+        "file": "gap_lr_matched_q128_s3_v1.launcher.log",
+        "size_bytes": 235,
+        "sha256": "0e367ef495cf3b8181e37c4ae0e82aa09eefa3f432e0ce6ca40f6c72c6c77e18",
+        "status": "passed",
+        "completion_marker_present": true
+      }
+    },
+    "train_summary_inspection": {
+      "row_count": 2000,
+      "checkpoint_rows": {
+        "000001": {
+          "attempted_iteration": 251,
+          "successful_optimizer_steps": 243,
+          "processed_kimg": 32.128,
+          "schedule": "global_sigmoid"
+        },
+        "000002": {
+          "attempted_iteration": 501,
+          "successful_optimizer_steps": 493,
+          "processed_kimg": 64.128,
+          "schedule": "global_sigmoid"
+        },
+        "000004": {
+          "attempted_iteration": 1001,
+          "successful_optimizer_steps": 993,
+          "processed_kimg": 128.128,
+          "schedule": "global_sigmoid"
+        },
+        "000008": {
+          "attempted_iteration": 2000,
+          "successful_optimizer_steps": 1991,
+          "processed_kimg": 256.0,
+          "schedule": "global_sigmoid"
+        }
+      },
+      "final_processed_kimg": 256.0,
+      "final_successful_optimizer_steps": 1991
+    },
+    "training_options_inspection": {
+      "schedule": "global_sigmoid",
+      "global_gap_scale": 1.0,
+      "learning_rate": 0.0001,
+      "seed": 3,
+      "total_kimg": 256,
+      "batch_size": 128,
+      "batch_gpu": 16,
+      "enable_amp": true
+    }
+  },
+  "role_d_contract": {
+    "reference_arm": "A",
+    "state_ids": [
+      "000001",
+      "000002",
+      "000004",
+      "000008"
+    ],
+    "same_minibatch_t_noise_dropout_seed": 20260810,
+    "mix_arms_across_k": false
+  },
+  "checks": {
+    "read_only_verification": true,
+    "all_artifacts_passed": true,
+    "provenance_passed": true,
+    "source_assets_passed": true,
+    "errors": []
+  }
+}

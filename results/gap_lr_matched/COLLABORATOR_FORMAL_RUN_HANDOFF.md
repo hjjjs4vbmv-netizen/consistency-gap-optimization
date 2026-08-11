@@ -101,7 +101,13 @@ training implementation remain unchanged.
 Run the artifact verifier in the ECT PyTorch environment before either GPU
 job. It recomputes the canonical dataset/transfer hashes, verifies the
 receipt-bound state hashes, records the previously unindexed EMA snapshot
-hashes, and deserializes the exact files selected for the role.
+hashes, and deserializes the exact files selected for the role. For Role D it
+also hashes and validates `train_summary.csv`, `training_options.json`, the
+Arm A run log, `launch_provenance.txt`, and the detached launcher log. The
+manifest fails closed if `training_options.json` points to another run, if any
+of the four `processed_kimg` rows is absent, or if a provenance file is
+missing. This is the Collaborator-owned provenance bundle; Role D must not
+replace files or assemble a trajectory from another run.
 
 Role D uses only Arm A and the four numbered state/snapshot pairs:
 
@@ -109,6 +115,7 @@ Role D uses only Arm A and the four numbered state/snapshot pairs:
 ECT_EXPERIMENT_ROOT=/path/to/gap_lr_matched_q128_s3_v1 \
 ECT_DATA=/path/to/cifar10-32x32.zip \
 ECT_TRANSFER=/path/to/edm-cifar10-32x32-uncond-vp.pkl \
+ECT_LAUNCHER_LOG=/path/to/gap_lr_matched_q128_s3_v1.launcher.log \
 ROLE_D_OUT=/new/path/role_d_longitudinal \
 ROLE_D_GPU=0 \
 bash scripts/run_gap_lr_longitudinal_audit.sh
@@ -147,9 +154,24 @@ resume, mutate, or otherwise touch the completed training runs.
   receipt validation both passed.
 - The machine-readable post-run receipt is the authoritative hash/state index.
 
+The Role D server-side strict verifier was run read-only on 2026-08-11 and
+passed with zero errors. It bound all four Arm A state/snapshot pairs to the
+same run, rehashed every artifact and provenance file, deserialized all eight
+model/state files, and additionally confirmed that all 416 RAdam parameter
+steps equal the receipt-bound successful update count at every K. Its manifest
+SHA256 is
+`8367a4d4ea8f1880f391868782e22eab1025301f3642d70ba0a47828aa615209`.
+The handoff `SHA256SUMS` file hashes to
+`5d07fd09766b04ea9c0d7d4d214b5e6e29db2187cc148ac5c8b3e81985549c1b`.
+The public, path-sanitized receipt hashes to
+`69cbf573739df551c10d51cfd8d2bd90a30422a7d58504f6fd63e1aa18c769b1`.
+
 ## Artifacts in this delivery
 
 - `final_gap_lr_audit_receipt.json`: Role E launch authorization.
 - `collaborator_training_state_receipt.json`: post-run state/provenance receipt.
+- `role_d_formal_arm_a_handoff_receipt.json`: verified four-point Role D
+  bundle receipt with state, snapshot, provenance, and restoration-state
+  SHA256 values; contains no server paths.
 - `run_status.csv`: current three-arm training status.
 - `job_manifest.json`: updated runtime provenance and downstream status.
