@@ -1,8 +1,14 @@
 # Scalar-History Predictor — Mechanism Attribution Result (Role C)
 
-Date: 2026-08-11. Branch: `role-c/g13-vs-g10-fid-0809`.
+Date: 2026-08-11. Branch: `role-c/moment-memory-real-history` (PR #47).
 Answers: **how much of the real non-gauge RAdam update residual is explained by
 a scalar gradient-scale history through optimizer moment memory?**
+
+**Experiment scope (explicit):** this is a **20-step prospective fork** from a
+real K=256 kimg state (arm_a, g=1.0) replaying the paired g=1.0 vs g=1.3
+gradient history. It is NOT a formal same-state K=256 attribution (that would
+require Role D's stateful audit over the full training horizon); the K=32/64/
+128/256 attribution is the follow-up.
 
 ## Method (the scientific mechanism test)
 
@@ -30,9 +36,10 @@ which is only an algebra/implementation sanity check.
 | **h^actual mean** | **0.8374** |
 | **wRMSE(ĥ^scalar, h^actual)** | **0.0295** |
 | **Corr(ĥ^scalar, h^actual)** | **0.8582** |
+| **Weighted R²(ĥ^scalar vs h^actual)** | **0.735** |
 | Disp(ĥ^scalar) | 0.0507 |
 | R_opt | 0.1167 |
-| **ρ_scalar = Disp(ĥ^scalar)/R_opt** | **0.434** |
+| ρ_scalar = Disp(ĥ^scalar)/R_opt | 0.434 (dispersion RATIO, NOT an explained fraction) |
 
 ## Interpretation
 
@@ -44,16 +51,20 @@ which is only an algebra/implementation sanity check.
 2. **Corr = 0.858**: the scalar history, propagated through RAdam moment memory
    from the real state, predicts the coordinate-level update-ratio variation
    with high correlation.
-3. **ρ_scalar = 0.434**: scalar moment-memory explains **~43%** of the real
-   structured optimizer residual R_opt.
+3. **Weighted R² = 0.735**: the scalar-history predictor explains **73.5% of
+   the weighted variance of the real update ratio** h^actual. This is the
+   statistically meaningful "explained" quantity. (The ρ_scalar = 0.434 is only
+   a dispersion RATIO, Disp(ĥ)/R_opt — it is NOT an explained fraction and is
+   not the headline.)
 
 ## What this means (vs the task's decision criteria)
 
 - **Case B (medium-strong)**: scalar gradient-scale history through RAdam
-  moment memory explains a substantial fraction (43%) of the non-gauge update
-  residual, with high correlation (0.86). This is **mechanism evidence** that
-  optimizer memory is a real source of the residual left after LR calibration.
-- The remaining ~57% of R_opt is not explained by the scalar history — it is
+  moment memory explains the majority (R² = 0.735, Corr = 0.86) of the
+  coordinate-level variation of the real update ratio. This is **mechanism
+  evidence** that optimizer memory is a real source of the residual left after
+  LR calibration.
+- The component of R_opt **not captured** by the scalar-history predictor is
   the non-scalar gradient content (the 3.2% per-step residual E_j) acting
   through the optimizer.
 

@@ -18,7 +18,8 @@ Protocol (per step j, from the stored paired gradient history):
 Outputs:
   wRMSE(ĥ^scalar, h^actual)
   Corr(ĥ^scalar, h^actual)
-  ρ_scalar = Disp(ĥ^scalar) / R_opt     (fraction of real residual explained)
+  Weighted R²(ĥ^scalar, h^actual)       -- the statistically meaningful "explained variance"
+  ρ_scalar = Disp(ĥ^scalar) / R_opt     -- dispersion RATIO only, NOT an explained fraction
 """
 from __future__ import annotations
 
@@ -112,6 +113,27 @@ def dispersion(h, w):
     return math.sqrt(float(np.sum(wp * (h[sup] - m) ** 2) / np.sum(wp)))
 
 
+def weighted_r2(h_pred, h_act, w):
+    """Weighted coefficient of determination of h_pred against h_actual.
+
+    R2 = 1 - Σ w (h_act - h_pred)² / Σ w (h_act - ĥ_act)²
+    where ĥ_act is the weighted mean of h_actual. Measures the fraction of the
+    WEIGHTED VARIANCE of h_actual explained by the predictor (this is the
+    statistically meaningful "explained" metric, not Disp(h_pred)/R_opt).
+    """
+    sup = w > 0
+    if not sup.any():
+        return math.nan
+    wp = w[sup]; x = h_pred[sup]; y = h_act[sup]
+    wsum = float(np.sum(wp))
+    ybar = float(np.sum(wp * y) / wsum)
+    ss_res = float(np.sum(wp * (y - x) ** 2))
+    ss_tot = float(np.sum(wp * (y - ybar) ** 2))
+    if ss_tot <= 0:
+        return math.nan
+    return 1.0 - ss_res / ss_tot
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--training-state", type=Path, required=True,
@@ -167,6 +189,7 @@ def main(argv=None):
     rmse = weighted_rmse(h_pred[eff], h_act[eff], w_eff)
     r = corr(h_pred[eff], h_act[eff], w_eff)
     disp = dispersion(h_pred[eff], w_eff)
+    r2 = weighted_r2(h_pred[eff], h_act[eff], w_eff)
     s_opt = float(np.sum(ug * u1) / max(np.sum(u1 * u1), 1e-30))
     R_opt = float(np.linalg.norm(ug - s_opt * u1) / max(np.linalg.norm(u1), 1e-30))
     rho = disp / R_opt if R_opt > 1e-12 else math.nan
@@ -179,9 +202,10 @@ def main(argv=None):
         "h_actual_mean": float(np.mean(h_act[eff])),
         "weighted_RMSE_scalar_vs_actual": rmse,
         "corr_scalar_vs_actual": r,
+        "weighted_R2_scalar_vs_actual": r2,
         "Disp_h_scalar": disp,
         "R_opt": R_opt,
-        "rho_scalar_explained_fraction": rho,
+        "disp_ratio_rho_scalar": rho,   # Disp(ĥ)/R_opt — dispersion RATIO, NOT explained fraction
         "effective_coords": int(eff.sum()),
     }
     a.out.parent.mkdir(parents=True, exist_ok=True)
@@ -193,8 +217,9 @@ def main(argv=None):
     print(f"ĥ^scalar mean={result['h_pred_scalar_mean']:.4f}, h^actual mean={result['h_actual_mean']:.4f}")
     print(f"wRMSE(ĥ^scalar, h^actual) = {rmse:.4f}")
     print(f"Corr(ĥ^scalar, h^actual) = {r:.4f}")
+    print(f"Weighted R²(ĥ^scalar vs h^actual) = {r2:.4f}   (fraction of h^actual weighted variance explained)")
     print(f"Disp(ĥ^scalar) = {disp:.4f}, R_opt = {R_opt:.4f}")
-    print(f"ρ_scalar = Disp/R_opt = {rho:.4f}  (fraction of real residual explained)")
+    print(f"ρ_scalar = Disp/R_opt = {rho:.4f}   (dispersion RATIO, NOT an explained fraction)")
     print(f"wrote {a.out}")
 
 
