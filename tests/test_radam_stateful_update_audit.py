@@ -1,7 +1,9 @@
 """Regression tests for the stateful non-zero RAdam update audit."""
 import importlib.util
 import math
+import pickle
 import sys
+import tempfile
 from pathlib import Path
 import unittest
 from unittest import mock
@@ -86,6 +88,17 @@ def _warmup_nonzero_state(step: int = 64):
 
 
 class StatefulRAdamAuditTests(unittest.TestCase):
+    def test_load_loss_accepts_global_sigmoid_reference_checkpoint(self):
+        loss = TinyLoss()
+        loss.schedule = get_schedule(
+            "global_sigmoid", q=loss.q, k=loss.k, b=loss.b, global_gap_scale=1.0,
+        )
+        with tempfile.NamedTemporaryFile(suffix=".pkl") as handle:
+            pickle.dump({"loss_fn": loss, "augment_pipe": None}, handle)
+            handle.flush()
+            loaded = MODULE.load_loss_from_checkpoint(Path(handle.name))
+        self.assertEqual(loaded.schedule.name, "global_sigmoid")
+
     def test_source_commit_uses_repository_working_directory(self):
         expected = "a" * 40
         with mock.patch.object(MODULE.subprocess, "check_output", return_value=expected + "\n") as output:
