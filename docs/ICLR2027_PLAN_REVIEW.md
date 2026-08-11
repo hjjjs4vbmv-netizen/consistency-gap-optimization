@@ -192,13 +192,17 @@ arm_b $g=1.3$,两者 `global_sigmoid`、lr 固定 1e-4、256 kimg)上,评估 FID
 (改善幅度 6-63 FID)。相关不可靠(n=4,符号翻转,+0.992 是 4 点偶然)。
 → 早期梯度残差不能 out-of-sample 预测未来 FID(见 `analysis/future_prediction_result.md`)。
 
-**三重证据一致指向:** 非标量梯度残差是真实但(梯度级)无后果的现象。
-优化器记忆机制仍真实(h_actual≠h_pred),但质量后果大部分平凡,早期梯度信号不预测未来。
+**未来预测(优化器级):** 重训存早期 training-state,在 32/64k 算早期 R_opt,
+leave-one-seed-out。结果:**同样阴性**——早期 R_opt 跨 seed 近恒定(0.0183-0.0207,
+std 0.0011),不预测未来 FID。R_opt 确实对 gap 敏感(机制存在),但不预测未来
+(见 `analysis/future_prediction_opt_result.md`)。
 
-**唯一剩余活口:** 优化器级未来预测(早期 R_opt → 未来 FID)未测——训练只存最终
-training-state。需重训存早期 optimizer state。但鉴于 Arm C,翻盘概率不高。
+**四重证据一致指向:** 非标量梯度/优化器残差是真实但无后果的现象。
+优化器记忆机制仍真实(h_actual≠h_pred),但质量后果大部分平凡(Arm C),早期残差
+(梯度级 + 优化器级)都不预测未来 FID。
 
-**Go/No-Go 交 leader 判断:** 是否花计算测优化器级未来预测,还是接受三重证据定 workshop。
+**Go/No-Go 定论:No-Go for ICLR 主会机制论题。** 你论题前 3 环成立,最后一环
+Performance 在梯度级与优化器级均不成立。诚实的 workshop 级结构刻画是最终可发表资产。
 
 ## 文件
 - 本审查:`docs/ICLR2027_PLAN_REVIEW.md`。

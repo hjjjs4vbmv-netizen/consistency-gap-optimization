@@ -107,11 +107,22 @@ optimizer-memory 确实制造了非标量更新失真,但这个失真的质量�
 "gap 对质量有实际影响,optimal g*≠1"。但"早期梯度残差能预测未来"这一环,
 梯度级上是阴性。
 
-### 关键 caveat(诚实)
-**这是梯度级测试(早期 R_grad),不是优化器级(早期 R_opt)。** 训练只存了
-最终 training-state,没存早期 optimizer state,所以早期 R_opt 算不了。
-**你说的优化器级未来预测(早期 R_opt → 未来 FID)仍未测。** 早期 R_opt 依赖
-optimizer state,可能比 R_grad 携带更多 seed 变化信息——这是唯一还可能翻盘的路径。
+### 关键 caveat(已解决——优化器级也已测)
+原先是梯度级测试。**你要求的优化器级未来预测(早期 R_opt → 未来 FID)现在也测了**
+(重训 4 seeds 存早期 training-state,在 32/64k 算早期 R_opt,leave-one-seed-out):
+
+| seed | R_opt_32k | R_opt_64k | FID_256k | 改善 |
+|---|---:|---:|---:|---:|
+| 0 | 0.0184 | 0.0233 | 222.7 | 35.0 |
+| 1 | 0.0183 | 0.0209 | 241.2 | 6.1 |
+| 2 | 0.0203 | 0.0192 | 250.9 | 63.0 |
+| 4 | 0.0207 | 0.0228 | 219.5 | 30.6 |
+
+**结果:同样阴性。** 早期 R_opt 跨 seed 近恒定(0.0183–0.0207,std 0.0011),相关
+不可靠(n=4,符号在 32k/64k 和 FID/改善之间翻转)。R_opt 确实对 gap 敏感
+(diff 1.3−1.0 全为正,机制存在),但**不预测未来 FID**。
+
+**至此,你论题的最后一环(优化器级未来预测)也已被实测阴性。**
 
 ---
 
@@ -157,56 +168,47 @@ optimizer state,可能比 R_grad 携带更多 seed 变化信息——这是唯�
 
 ---
 
-## 6. 当前真实状态(诚实)
+## 6. 当前真实状态(诚实,最终版)
 
-按 Leader 自己的两个判据(Arm C + 未来预测):
+按 Leader 自己的两个判据(Arm C + 未来预测),且**优化器级也已测完**:
 
 | Leader 的 Go 条件 | 状态 |
 |---|---|
-| Trajectory predictability (R_t → ΔFID) | **梯度级阴性**(R_opt 未测) |
+| Trajectory predictability (R_t → ΔFID) | **梯度级 + 优化器级均阴性** |
 | Intervention consequence (scale-match 不消除) | **部分阴性**(NFE2 完全消除,NFE1 消除 84%) |
-| Phase consistency (RAdam early/late) | **未测**(理论已有,实验未做) |
+| Phase consistency (RAdam early/late) | 未测(理论已有,实验未做) |
 | Generality (第二 q/optimizer/dataset) | optimizer 级有(AdamW),dataset 级无 |
 
-**结论:"ICLR-not-ready" 成立;但"不是 ICLR-dead" 仅剩一个活口——优化器级未来预测(早期 R_opt)。**
+**四重实测证据一致指向 No-Go:**
+1. Arm C:g=1.3 改善 84-100% 是平凡 LR 重缩放
+2. P1:残差附庸于标量 gap(偏相关 ≈ 0)
+3. 梯度级未来预测:早期 R_grad 不预测未来 FID
+4. **优化器级未来预测:早期 R_opt 不预测未来 FID**
+
+**结论:"ICLR-not-ready" 成立;"不是 ICLR-dead" 的最后一个活口(优化器级未来
+预测)已被实测阴性。Go/No-Go 定论:No-Go for ICLR 主会机制论题。**
 
 ---
 
-## 7. 唯一剩余的决定性实验 + Go/No-Go
+## 7. Go/No-Go(最终定论)
 
-### 唯一未测的路径
-**优化器级未来预测:** 重训 4 seeds × 2 gaps,这次存早期 training-state
-(`--dump=1`,即 state_dump_ticks),在 32/64k 算早期 **R_opt**(不是 R_grad),
-重复 leave-one-seed-out 预测 256k FID。
+**优化器级未来预测已跑完(§3),结果同样阴性。** 你论题(`Equivalence →
+Symmetry Breaking → Accumulation → Performance`)的前三环成立(机制真实、
+h_actual≠h_pred),但最后一环 **Performance 在梯度级和优化器级都不成立**:
+- 质量改善大部分是平凡重缩放(Arm C)
+- 早期残差(梯度级 + 优化器级)都不预测未来 FID
 
-**成本:** ~5-6 小时 GPU(同前)+ 早期 R_opt 审计(~30 分钟)。**可行,约 1 天。**
+**因此 No-Go for ICLR 主会机制论题。** 诚实可发表的贡献是 workshop 级结构刻画:
+非标量梯度/优化器内容存在、有结构、普遍、良性、不预测未来质量。
 
-### 为什么这能定生死
-- 如果早期 R_opt **跨 seed 变化大**且**预测未来 FID** → 你的 optimizer-memory
-  → Performance 链成立,ICLR 主线活,Go
-- 如果早期 R_opt 也**跨 seed 近恒定**或**不预测未来** → 连优化器级也阴性,
-  机制真实但无质量后果,定 workshop,No-Go
-
-### 我的预判(诚实)
-鉴于 Arm C(NFE2 改善 100% 是平凡重缩放),**优化器级未来预测翻盘概率不高**——
-如果质量改善大部分是平凡 LR 重缩放,那么早期 R_opt 很可能也预测不了未来 FID
-的非平凡部分。但这是把你的论题测到最后一环的唯一方式,值得跑。
-
-### 决策点交 Leader
-- **A. 跑优化器级未来预测(~1 天):** 把你的论题测到最后一环。若阳性,
-  ICLR 主线活;若阴性,三重证据闭环,定 workshop。
-- **B. 接受三重证据(Arm C + P1 + 梯度级未来预测),定 workshop:** 不再花
-  计算,把机制真实但无质量后果的诚实负结果写成 workshop 论文。
-
-**我建议 A**——因为它便宜(~1 天),且能把你关心的"optimizer-level"论题
-彻底测完,而不是靠梯度级阴性间接推断。但这是你的判断。
+**不再需要额外计算。** 你的论题已被你自己的判据测到最后一环,且阴性。
 
 ---
 
-## 8. 一句话总结
+## 8. 一句话总结(最终版)
 
 > 你是对的:机制真实(moment-memory 打破),我此前"workshop only"的措辞过强。
-> 但按你自己的两个判据(Arm C、未来预测),质量后果在梯度级上大部分平凡、
-> 早期信号不预测未来。唯一未测的是优化器级未来预测(早期 R_opt),~1 天可跑。
-> 跑它,把你的论题测到最后一环——这是把"ICLR-not-ready"变成"Go 或 No-Go"
-> 的唯一一步。
+> 但按你自己的两个判据(Arm C、未来预测),并且**优化器级也测完**——质量后果
+> 大部分是平凡重缩放,早期残差(梯度级 + 优化器级)都不预测未来 FID。
+> 四重证据闭环,定论:**No-Go for ICLR 主会机制论题**;诚实的 workshop 级
+> 结构刻画是最终可发表资产。

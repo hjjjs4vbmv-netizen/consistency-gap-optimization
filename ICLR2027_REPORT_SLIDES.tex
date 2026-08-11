@@ -78,11 +78,11 @@ $\mathrm{corr}(\text{残差},|g-1|)$ & $+0.938$ \\
 \textbf{证据链(已实测):} 存在(moment-memory)→ 有结构(E5)→ 无害(E6 + 干净 FID)
 → 状态条件(E7)→ 稳健(E11)→ 普遍(E3)。
 
-\textbf{边界(三重实测证据):} P1 附庸性(偏相关 $\approx 0$)+ Arm C scale-matched
-control($g{=}1.3$ 改善被消除 84--100\%)+ 未来预测梯度级阴性(早期 $R_{\mathrm{grad}}$
-不预测未来 FID)。残差是真实但无后果的现象。\textbf{不声称}诊断信号、\textbf{不声称}
-有害/可修正、\textbf{不投} ICLR 主会。唯一活口:优化器级未来预测(早期 $R_{\mathrm{opt}}$,
-需重训),但翻盘概率不高。Go/No-Go 交 leader 判断。
+\textbf{边界(四重实测证据):} P1 附庸性(偏相关 $\approx 0$)+ Arm C scale-matched
+control($g{=}1.3$ 改善被消除 84--100\%)+ 梯度级未来预测阴性(早期 $R_{\mathrm{grad}}$)+
+优化器级未来预测阴性(早期 $R_{\mathrm{opt}}$ 不预测未来 FID)。残差是真实但无后果的
+现象。\textbf{不声称}诊断信号、\textbf{不声称}有害/可修正、\textbf{不投} ICLR 主会。
+\textbf{Go/No-Go 定论:No-Go for ICLR 主会机制论题。} 诚实的 workshop 级结构刻画是最终可发表资产。
 
 \textbf{剩余规划:} 更新定位为 workshop 级诚实负结果;投 ``I Can't Believe It's
 Not Better'' workshop;可选补强第二数据集挣"普遍";不可行项降级 future work。
