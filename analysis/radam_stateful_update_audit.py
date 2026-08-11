@@ -794,8 +794,17 @@ def load_loss_from_checkpoint(path: Path):
     if payload.get("augment_pipe") is not None:
         raise SystemExit("augmentation-enabled checkpoint is unsupported: paired augmentation is not implemented")
     loss = payload["loss_fn"]
-    if loss.schedule.name != "sigmoid":
-        raise SystemExit(f"checkpoint schedule must be 'sigmoid', got {loss.schedule.name!r}")
+    schedule_name = getattr(getattr(loss, "schedule", None), "name", None)
+    # The formal A/B/C trajectories were trained with ``global_sigmoid``.
+    # At g=1.0 that schedule is bitwise identical to the official sigmoid, and
+    # this audit replaces only the disposable branch schedule below.  Accept
+    # both serialized identities without mutating the frozen training code or
+    # rewriting the checkpoint object.
+    if schedule_name not in {"sigmoid", "global_sigmoid"}:
+        raise SystemExit(
+            "checkpoint schedule must be 'sigmoid' or 'global_sigmoid', "
+            f"got {schedule_name!r}"
+        )
     return loss
 
 

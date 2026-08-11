@@ -86,6 +86,27 @@ def _warmup_nonzero_state(step: int = 64):
 
 
 class StatefulRAdamAuditTests(unittest.TestCase):
+    def test_checkpoint_loader_accepts_formal_global_sigmoid_identity(self):
+        payload = {"loss_fn": TinyLoss(), "augment_pipe": None}
+        payload["loss_fn"].schedule = get_schedule(
+            "global_sigmoid", q=128.0, k=8.0, b=1.0, global_gap_scale=1.0,
+        )
+        checkpoint = REPO_ROOT / "unused-test-checkpoint.pkl"
+        with mock.patch.object(MODULE.pickle, "load", return_value=payload):
+            with mock.patch.object(Path, "open", mock.mock_open(read_data=b"fixture")):
+                loaded = MODULE.load_loss_from_checkpoint(checkpoint)
+        self.assertEqual(loaded.schedule.name, "global_sigmoid")
+        self.assertEqual(loaded.schedule.global_gap_scale, 1.0)
+
+    def test_checkpoint_loader_still_rejects_unrelated_schedules(self):
+        payload = {"loss_fn": TinyLoss(), "augment_pipe": None}
+        payload["loss_fn"].schedule = get_schedule("const", q=128.0, k=8.0, b=1.0)
+        checkpoint = REPO_ROOT / "unused-test-checkpoint.pkl"
+        with mock.patch.object(MODULE.pickle, "load", return_value=payload):
+            with mock.patch.object(Path, "open", mock.mock_open(read_data=b"fixture")):
+                with self.assertRaisesRegex(SystemExit, "sigmoid.*global_sigmoid"):
+                    MODULE.load_loss_from_checkpoint(checkpoint)
+
     def test_source_commit_uses_repository_working_directory(self):
         expected = "a" * 40
         with mock.patch.object(MODULE.subprocess, "check_output", return_value=expected + "\n") as output:
