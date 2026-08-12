@@ -809,7 +809,11 @@ def main() -> None:
             "external_training_log_sha256": file_sha256(external_log),
         }
         verified = datetime.fromisoformat(internal["verified_at_utc"])
-        if not first_progress <= last_progress <= exit_marker <= verified:
+        historical_verified = datetime.fromisoformat(historical["verified_at_utc"])
+        if not (
+            first_progress <= last_progress <= exit_marker <= verified
+            and exit_marker <= historical_verified
+        ):
             fail(f"non-monotonic application chronology for {run_id}")
         mtime = datetime.fromtimestamp(internal_path.stat().st_mtime, timezone.utc)
         clock_offsets.append((mtime - verified).total_seconds())

@@ -612,7 +612,10 @@ def validate_runtime(
         historical_verified = _utc_datetime(
             historical.get("verified_at_utc"), f"{run_id} historical verified"
         )
-        if not first <= last <= exit_at <= strengthened_verified:
+        if not (
+            first <= last <= exit_at <= strengthened_verified
+            and exit_at <= historical_verified
+        ):
             raise ValueError(f"runtime timestamps are non-monotonic: {run_id}")
         parsed[run_id] = {
             "first": first,

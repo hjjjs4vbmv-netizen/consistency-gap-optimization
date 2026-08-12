@@ -806,6 +806,15 @@ class BlindAdjudicationPolicyTests(unittest.TestCase):
         historical["receipt_sha256"] = "c" * 64
         self.assert_rerun(evidence, initialization, public, "runtime")
 
+    def test_historical_verification_cannot_precede_run_exit(self):
+        evidence, initialization, public = self.fixture()
+        historical = evidence["runtime"]["runs"]["arm_b_g1_3_lr_fixed_s4"][
+            "historical_integrity_receipt"
+        ]
+        historical["verified_at_utc"] = "2026-08-12T11:20:00+00:00"
+        historical["receipt_sha256"] = "d" * 64
+        self.assert_rerun(evidence, initialization, public, "runtime")
+
     def test_nonfinite_preview_is_rejected(self):
         evidence, initialization, public = self.fixture()
         evidence["initialization"]["model_init_previews"]["5"][
