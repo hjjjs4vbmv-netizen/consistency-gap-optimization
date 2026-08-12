@@ -22,6 +22,8 @@ ARM_CONTRACT = {
     "C": (1.3, 0.00012963523762588692),
 }
 NUMBERED_IDS = [f"{index:06d}" for index in range(1, 9)]
+EXPECTED_ATTEMPTED_ITERATIONS = 2000
+MAX_AMP_SKIPS = 16
 
 
 def fail(message: str) -> None:
@@ -121,14 +123,53 @@ def validate_options(options: dict[str, Any], run_dir: Path, arm: str, seed: int
 def validate_summary(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
-    if not rows:
-        fail("train_summary.csv is empty")
-    for index, row in enumerate(rows):
+    if len(rows) != EXPECTED_ATTEMPTED_ITERATIONS:
+        fail(
+            f"train_summary.csv has {len(rows)} rows, expected "
+            f"{EXPECTED_ATTEMPTED_ITERATIONS}"
+        )
+    skipped_steps = 0
+    successful_steps = 0
+    final_grad_scale = None
+    for index, row in enumerate(rows, start=1):
         finite(row.get("loss"), f"summary loss row {index}")
+        attempted = int(finite(row.get("attempted_iteration"), f"attempted row {index}"))
+        successful = int(
+            finite(row.get("successful_optimizer_steps"), f"successful row {index}")
+        )
+        skipped = int(finite(row.get("step_skipped"), f"step_skipped row {index}"))
+        grad_scale = finite(row.get("grad_scale"), f"grad_scale row {index}")
+        if attempted != index:
+            fail(f"attempted_iteration row {index} is {attempted}, expected {index}")
+        if skipped not in (0, 1):
+            fail(f"step_skipped row {index} must be 0 or 1")
+        if grad_scale <= 0:
+            fail(f"grad_scale row {index} must be positive")
+        skipped_steps += skipped
+        successful_steps += 1 - skipped
+        if successful != successful_steps:
+            fail(
+                f"successful_optimizer_steps row {index} is {successful}, "
+                f"expected {successful_steps}"
+            )
+        if row.get("schedule") != "global_sigmoid":
+            fail(f"schedule row {index} is not global_sigmoid")
+        final_grad_scale = grad_scale
+    if skipped_steps > MAX_AMP_SKIPS:
+        fail(f"AMP skipped {skipped_steps} steps, maximum is {MAX_AMP_SKIPS}")
     final_kimg = finite(rows[-1].get("processed_kimg"), "final processed_kimg")
     if final_kimg != 256.0:
         fail(f"final processed_kimg={final_kimg}, expected 256.0")
-    return {"rows": len(rows), "final_processed_kimg": final_kimg}
+    return {
+        "rows": len(rows),
+        "final_processed_kimg": final_kimg,
+        "attempted_iterations": EXPECTED_ATTEMPTED_ITERATIONS,
+        "successful_optimizer_steps": successful_steps,
+        "amp_skipped_steps": skipped_steps,
+        "max_allowed_amp_skips": MAX_AMP_SKIPS,
+        "final_gradscaler_scale": final_grad_scale,
+        "amp_contract_passed": True,
+    }
 
 
 def validate_stats(path: Path) -> dict[str, Any]:
@@ -146,7 +187,7 @@ def validate_stats(path: Path) -> dict[str, Any]:
     return {"records": len(records), "final_kimg": final_kimg}
 
 
-def validate_state(path: Path) -> dict[str, Any]:
+def validate_state(path: Path, expected_summary: dict[str, Any] | None = None) -> dict[str, Any]:
     state = torch.load(path, map_location="cpu", weights_only=False)
     if not isinstance(state, dict):
         fail("final training state is not a dictionary")
@@ -176,7 +217,7 @@ def validate_state(path: Path) -> dict[str, Any]:
             return value.item()
         return value
 
-    return {
+    result = {
         "cur_nimg": state["cur_nimg"],
         "attempted_iteration": scalar(state.get("attempted_iteration")),
         "successful_optimizer_steps": scalar(state.get("successful_optimizer_steps")),
@@ -184,6 +225,21 @@ def validate_state(path: Path) -> dict[str, Any]:
         "optimizer_parameter_states": len(state["optimizer_state"].get("state", {})),
         "tensors_checked": tensors_checked,
     }
+    if expected_summary is not None:
+        expected_pairs = {
+            "attempted_iteration": expected_summary["attempted_iterations"],
+            "successful_optimizer_steps": expected_summary["successful_optimizer_steps"],
+            "gradscaler_scale": expected_summary["final_gradscaler_scale"],
+        }
+        for key, expected in expected_pairs.items():
+            if result[key] != expected:
+                fail(f"final state {key}={result[key]!r}, expected {expected!r}")
+        if result["optimizer_parameter_states"] != 416:
+            fail(
+                "final state optimizer parameter-state count is "
+                f"{result['optimizer_parameter_states']}, expected 416"
+            )
+    return result
 
 
 def validate_snapshot(path: Path, expected_gap: float) -> dict[str, Any]:
@@ -236,12 +292,12 @@ def main() -> None:
     gap, lr = ARM_CONTRACT[args.arm]
     summary = validate_summary(paths["train_summary"])
     stats = validate_stats(paths["stats"])
-    state = validate_state(paths["final_training_state"])
+    state = validate_state(paths["final_training_state"], summary)
     snapshot = validate_snapshot(paths["final_ema_snapshot"], gap)
     hashes = {name: sha256_file(path) for name, path in sorted(paths.items())}
     sizes = {name: path.stat().st_size for name, path in sorted(paths.items())}
     receipt = {
-        "schema_version": 1,
+        "schema_version": 2,
         "receipt_type": "gap_lr_seed_replication_run_integrity",
         "status": "passed",
         "experiment_id": "gap_lr_matched_q128_s45_replication_v1",
@@ -250,9 +306,14 @@ def main() -> None:
         "run_dir": str(run_dir),
         "gap_scale": gap,
         "learning_rate": lr,
+        "execution_protocol_commit": args.protocol_commit,
         "protocol_commit": args.protocol_commit,
         "training_code_commit": args.training_code_commit,
         "verified_at_utc": datetime.now(timezone.utc).isoformat(),
+        "verifier": {
+            "path": "scripts/verify_gap_lr_seed_replication_run.py",
+            "source_sha256": sha256_file(Path(__file__)),
+        },
         "completion": {"budget_kimg": 256, "summary": summary, "stats": stats},
         "final_training_state": state,
         "final_ema_snapshot": snapshot,
