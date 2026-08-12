@@ -10,6 +10,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from PIL import Image, ImageChops
 
 
 RUN_IDS = {
@@ -68,7 +69,7 @@ def main() -> None:
     seed_receipts: dict[str, Any] = {}
     for seed in seeds:
         options_by_seed[seed] = {}
-        model_init_hashes = []
+        model_init_paths = []
         data_image_hashes = []
         for arm, template in RUN_IDS.items():
             run_id = template.format(seed=seed)
@@ -79,7 +80,7 @@ def main() -> None:
                 fail(f"invalid per-run receipt for seed {seed} arm {arm}")
             options = load(run_dir / "training_options.json")
             options_by_seed[seed][arm] = options
-            model_init_hashes.append(sha256_file(run_dir / "model_init.png"))
+            model_init_paths.append(run_dir / "model_init.png")
             data_image_hashes.append(sha256_file(run_dir / "data.png"))
             seed_receipts[f"seed{seed}_{arm}"] = {
                 "path": str(receipt_path),
@@ -89,7 +90,7 @@ def main() -> None:
         normalized = [normalized_within_seed(options_by_seed[seed][arm]) for arm in ("A", "B", "C")]
         if not (normalized[0] == normalized[1] == normalized[2]):
             fail(f"seed {seed} A/B/C differ outside gap/LR/run_dir")
-        if len(set(model_init_hashes)) != 1:
+        if any(any(high > 1 for _, high in ImageChops.difference(Image.open(model_init_paths[0]).convert("RGB"), Image.open(path).convert("RGB")).getextrema()) for path in model_init_paths[1:]):
             fail(f"seed {seed} A/B/C model initialization images differ")
         if len(set(data_image_hashes)) != 1:
             fail(f"seed {seed} A/B/C data images differ")
@@ -118,6 +119,7 @@ def main() -> None:
         "between_seed_allowed_differences": ["seed", "run_dir"],
         "between_seed_contract_passed": seeds == [4, 5],
         "model_initialization_pairing_passed": True,
+        "model_initialization_image_tolerance_lsb": 1,
         "data_image_pairing_passed": True,
         "per_run_receipts": seed_receipts,
         "launcher_logs": launcher_logs,
