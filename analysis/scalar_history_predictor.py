@@ -156,6 +156,8 @@ def main(argv=None):
     ap.add_argument("--seed", type=int, default=20260809,
                     help="seed used to generate the paired gradient history (sweep)")
     ap.add_argument("--out", type=Path, default=Path("analysis/scalar_history_prediction.json"))
+    ap.add_argument("--zero-initial", action="store_true",
+                    help="zero-m0 control: replay from m0=0, v0=0, step=0 (control for R² source)")
     a = ap.parse_args(argv)
 
     # load real optimizer state, flatten m/v/step
@@ -163,6 +165,12 @@ def main(argv=None):
     opt_state = data["optimizer_state"]
     m0, v0, step0 = flatten_opt_state(opt_state)
     dim = m0.numel()
+
+    if a.zero_initial:
+        m0 = torch.zeros(dim)
+        v0 = torch.zeros(dim)
+        step0 = 0
+        print("[zero-initial control] m0=v0=0, step=0")
 
     G1 = np.load(a.grad_history_1)   # (T, d)
     Gg = np.load(a.grad_history_g)   # (T, d)
