@@ -1,0 +1,14 @@
+{
+  "evidence_class": "NFE1 FID/KID-5k cross-training-seed replication",
+  "new_training_seeds": [4, 5],
+  "existing_reference_seed": 3,
+  "seed4_fid_absorption_fraction": 0.13585,
+  "seed4_kid_absorption_fraction": 0.09047,
+  "seed5_fid_absorption_fraction": -0.82689,
+  "seed5_kid_absorption_fraction": -0.83650,
+  "gap_advantage_replicated_all_seeds": true,
+  "seed3_calibration_absorption_replicated": false,
+  "fid50k_status": "not_run_failed_5k_gate",
+  "claim": "Gap improvement replicated, but fixed fresh-state LR matching did not consistently absorb the gain across training seeds.",
+  "claim_boundary": "FID/KID-5k evidence; no attribution of cross-seed variation to optimizer history or non-gauge residuals."
+}
