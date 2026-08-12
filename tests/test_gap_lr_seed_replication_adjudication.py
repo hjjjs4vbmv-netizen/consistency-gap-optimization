@@ -977,6 +977,27 @@ class CanonicalInitializationTests(unittest.TestCase):
                 with self.assertRaisesRegex(SystemExit, "exact frozen"):
                     run_verifier.validate_options(candidate, run_dir, "A", 4)
 
+    def test_state_cur_nimg_float_is_validated_and_canonicalized(self):
+        state = {
+            "cur_nimg": 256000.0,
+            "net": {},
+            "optimizer_state": {"state": {}},
+            "gradscaler_state": {"scale": torch.tensor(256.0)},
+            "loss_fn_state": {},
+            "attempted_iteration": 2000,
+            "successful_optimizer_steps": 1992,
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "training-state-latest.pt"
+            torch.save(state, path)
+            result = run_verifier.validate_state(path)
+            self.assertEqual(type(result["cur_nimg"]), int)
+            self.assertEqual(result["cur_nimg"], 256000)
+            state["cur_nimg"] = 256000.5
+            torch.save(state, path)
+            with self.assertRaisesRegex(SystemExit, "integral 256000"):
+                run_verifier.validate_state(path)
+
     def test_launcher_segment_parser_is_an_exact_state_machine(self):
         valid = """nohup: ignored
 START seed=4 arm=B gap=1.3 lr=0.0001 gpu=0 port=29842

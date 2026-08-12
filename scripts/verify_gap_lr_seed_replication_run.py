@@ -257,8 +257,14 @@ def validate_state(path: Path, expected_summary: dict[str, Any] | None = None) -
     state = torch.load(path, map_location="cpu", weights_only=False)
     if not isinstance(state, dict):
         fail("final training state is not a dictionary")
-    if state.get("cur_nimg") != 256000:
-        fail(f"final state cur_nimg={state.get('cur_nimg')!r}, expected 256000")
+    cur_nimg = state.get("cur_nimg")
+    if (
+        type(cur_nimg) not in (int, float)
+        or not math.isfinite(cur_nimg)
+        or not float(cur_nimg).is_integer()
+        or int(cur_nimg) != 256000
+    ):
+        fail(f"final state cur_nimg={cur_nimg!r}, expected integral 256000")
     for key in ("net", "optimizer_state", "gradscaler_state", "loss_fn_state"):
         if key not in state:
             fail(f"final state lacks {key}")
@@ -284,7 +290,7 @@ def validate_state(path: Path, expected_summary: dict[str, Any] | None = None) -
         return value
 
     result = {
-        "cur_nimg": state["cur_nimg"],
+        "cur_nimg": int(cur_nimg),
         "attempted_iteration": scalar(state.get("attempted_iteration")),
         "successful_optimizer_steps": scalar(state.get("successful_optimizer_steps")),
         "gradscaler_scale": scalar(scaler.get("scale")),
