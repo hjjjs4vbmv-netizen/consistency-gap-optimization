@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import math
 import sys
@@ -134,6 +135,14 @@ def weighted_r2(h_pred, h_act, w):
     return 1.0 - ss_res / ss_tot
 
 
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--training-state", type=Path, required=True,
@@ -207,6 +216,16 @@ def main(argv=None):
         "R_opt": R_opt,
         "disp_ratio_rho_scalar": rho,   # Disp(ĥ)/R_opt — dispersion RATIO, NOT explained fraction
         "effective_coords": int(eff.sum()),
+        # provenance
+        "source_state_sha256": sha256_file(a.training_state),
+        "grad_history_1_sha256": sha256_file(a.grad_history_1),
+        "grad_history_g_sha256": sha256_file(a.grad_history_g),
+        "u1_sha256": sha256_file(a.u1),
+        "ug_sha256": sha256_file(a.ug),
+        "execution_command": " ".join(sys.argv),
+        "lr": a.lr,
+        "source_nimg": data.get("cur_nimg"),
+        "source_optimizer_steps": int(step0),
     }
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(result, indent=2))
