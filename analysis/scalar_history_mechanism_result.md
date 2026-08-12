@@ -7,8 +7,8 @@ a scalar gradient-scale history through optimizer moment memory?**
 **Experiment scope (explicit):** this is a **20-step prospective fork** from a
 real K=256 kimg state (arm_a, g=1.0) replaying the paired g=1.0 vs g=1.3
 gradient history. It is NOT a formal same-state K=256 attribution (that would
-require Role D's stateful audit over the full training horizon); the K=32/64/
-128/256 attribution is the follow-up.
+require Role D's stateful audit over the full training horizon). The K=32/64/
+128/256 generalization is reported below (§ K-horizon).
 
 ## Method (the scientific mechanism test)
 
