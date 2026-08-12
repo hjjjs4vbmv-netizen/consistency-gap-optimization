@@ -142,27 +142,41 @@ uninterrupted same-trajectory historical attribution.
 - `analysis/plot_k_curve.py` — the plotting script.
 - `analysis/moment_memory_prediction.py` — coordinate-wise algebraic sanity check (sanity).
 
-## RESOLVED: R² is driven by 20-step moment-memory accumulation, not the shared initial m0
+## RESOLVED (corrected): scalar predictor is near-perfect at 1 step and degrades to 0.735 at 20 steps
 
-A 1-step control (eval_step=0, only one gradient step replayed from the real
-state) gives R² = **-7.93**, Corr = **0.084**, ĥ ≈ **0.996** (scalar null).
-This is indistinguishable from the algebraic sanity check (ĥ ≈ 1, Corr ≈ 0).
+The first 1-step control was **buggy** (endpoint mismatch): `--eval-step 0`
+switched the predictor to step 0, but the actual `h_actual`, weights and R_opt
+still came from the FINAL-step `u1.npy`/`ug.npy` (step 19), so it compared a
+step-0 predictor against the step-19 actual. It also used a different training
+state (`latest` vs `000008`).
 
-The 20-step replay gives R² = **0.735**, Corr = **0.858**, ĥ ≈ **0.836**.
+**Fix (PR #47 review):** the sweep now persists the full per-step update history
+`u1_history.npy` / `ug_history.npy` (shape (T,d)); the predictor selects the
+update at the SAME step `t` via `--u1-history/--ug-history`. The existing K=256
+history was backfilled by an exact RAdam replay (float32-machine precision, max
+|Δ| = 2^-23 ≈ 1.2e-7; `analysis/backfill_update_history.py`), and a regression
+test guards the time-index alignment (`tests/test_scalar_history_predictor.py`).
 
-**Interpretation:** the predictive power comes from **accumulating 20 steps of
-scalar-gradient history into the first moment m** (88% of m at step 20 is from
-the gradient history, β1^20 = 0.12 for the initial). With 1 step there is
-essentially no accumulation (m ≈ initial m0, same for both arms → h ≈ 1).
-With 20 steps the scalar-gradient history builds up a coordinate-dependent m
-that the predictor captures → R² = 0.735.
+Corrected 1-step control (eval_step=0, same K=256 state 000008, g=1.0 vs 1.3):
 
-**Conclusion:** R² = 0.735 is **not** a trivial effect of the shared initial
-state. It is evidence that scalar gradient-scale history, accumulated through
-the RAdam first moment over 20 steps, produces the coordinate-dependent update
-distortion. The mechanism claim stands.
+| horizon t | Weighted R² | Corr | ĥ mean | h^actual mean | wRMSE | R_opt(t) |
+|---|---:|---:|---:|---:|---:|---:|
+| 1  | 0.993 | 0.996 | 0.9975 | 0.9975 | 0.0014 | 0.0212 |
+| 20 | 0.735 | 0.858 | 0.8362 | 0.8374 | 0.0295 | 0.1167 |
+
+**Revised interpretation (honest):** the scalar-history predictor is
+near-perfect at 1 step (R² = 0.993) and degrades to 0.735 at 20 steps. The
+scalar gradient-scale is trivially captured at short horizon; what accumulates
+over the 20 steps is the NON-SCALAR residual (the per-step ~3.2% E_j), whose
+unexplained share grows from ~0.7% (1 step) to ~26.5% (20 steps). The 20-step
+R² = 0.735 headline is unchanged; the mechanism evidence is that the scalar
+history still explains the majority at 20 steps, while the non-scalar content
+(and trajectory divergence / higher-order interactions) contributes a growing
+share with horizon through moment memory.
+
+The earlier "1-step R² = -7.93 proves accumulation builds R² from 0" claim was
+an artifact of the endpoint mismatch and is **withdrawn**.
 
 (Also attempted: zero-initial-m0 control, but m0=v0=0 makes the effective
 support empty because the RAdam update from zero moments is too small to pass
-the support threshold. The 1-step control is the cleaner isolation of the
-accumulation effect.)
+the support threshold.)

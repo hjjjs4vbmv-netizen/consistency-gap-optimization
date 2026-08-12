@@ -135,6 +135,28 @@ def weighted_r2(h_pred, h_act, w):
     return 1.0 - ss_res / ss_tot
 
 
+def select_eval_update(u1_history, ug_history, u1, ug, t, T):
+    """Return (u1_t, ug_t, u1_src, ug_src) at eval step t.
+
+    If a full per-step history is provided (u1_history/ug_history, shape (T,d)),
+    use the update at index t so the actual update and the predictor are
+    evaluated at the SAME step. Otherwise fall back to the single final-step
+    update and warn if t != T-1 (the endpoint mismatch this helper exists to
+    prevent).
+    """
+    if u1_history is not None and ug_history is not None:
+        u1_t = np.load(u1_history)[t]
+        ug_t = np.load(ug_history)[t]
+        return u1_t, ug_t, u1_history, ug_history
+    u1_t = np.load(u1)
+    ug_t = np.load(ug)
+    if t != T - 1:
+        print(f"[WARNING] eval_step={t} but no --u1-history/--ug-history: "
+              f"actual update is step {T-1}, predictor is step {t} "
+              f"(endpoint mismatch). Pass --u1-history/--ug-history to fix.")
+    return u1_t, ug_t, u1, ug
+
+
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -151,6 +173,10 @@ def main(argv=None):
     ap.add_argument("--grad-history-g", type=Path, required=True)
     ap.add_argument("--u1", type=Path, required=True)
     ap.add_argument("--ug", type=Path, required=True)
+    ap.add_argument("--u1-history", type=Path, default=None,
+                    help="(T,d) full per-step reference updates; overrides --u1/--ug at eval_step")
+    ap.add_argument("--ug-history", type=Path, default=None,
+                    help="(T,d) full per-step candidate updates; overrides --u1/--ug at eval_step")
     ap.add_argument("--eval-step", type=int, default=-1)
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--seed", type=int, default=20260809,
@@ -174,11 +200,13 @@ def main(argv=None):
 
     G1 = np.load(a.grad_history_1)   # (T, d)
     Gg = np.load(a.grad_history_g)   # (T, d)
-    u1 = np.load(a.u1)               # (d,)
-    ug = np.load(a.ug)               # (d,)
     T = G1.shape[0]
     t = T - 1 if a.eval_step < 0 else min(a.eval_step, T - 1)
     d = G1.shape[1]
+
+    # actual update at the SAME eval step t (per-step history when available)
+    u1, ug, u1_src, ug_src = select_eval_update(
+        a.u1_history, a.ug_history, a.u1, a.ug, t, T)
 
     # per-step global scalar
     a_star = [global_scalar(Gg[j], G1[j]) for j in range(t + 1)]
@@ -230,8 +258,9 @@ def main(argv=None):
         "source_state_sha256": sha256_file(a.training_state),
         "grad_history_1_sha256": sha256_file(a.grad_history_1),
         "grad_history_g_sha256": sha256_file(a.grad_history_g),
-        "u1_sha256": sha256_file(a.u1),
-        "ug_sha256": sha256_file(a.ug),
+        "u1_sha256": sha256_file(u1_src),
+        "ug_sha256": sha256_file(ug_src),
+        "update_source": "history" if a.u1_history is not None else "final-step",
         "execution_command": " ".join(sys.argv),
         "lr": a.lr,
         "source_nimg": data.get("cur_nimg"),

@@ -133,13 +133,18 @@ def main(argv=None):
         delta_hist.append(dj)
 
     G1_arr = np.stack(G1_hist); Gg_arr = np.stack(Gg_hist)
-    u1_final = u1_hist[-1]; ug_final = ug_hist[-1]
+    u1_arr = np.stack(u1_hist); ug_arr = np.stack(ug_hist)
+    u1_final = u1_arr[-1]; ug_final = ug_arr[-1]
 
     a.out.mkdir(parents=True, exist_ok=True)
     np.save(a.out / "grad_history_1.npy", G1_arr)
     np.save(a.out / "grad_history_g.npy", Gg_arr)
     np.save(a.out / "u1.npy", u1_final)
     np.save(a.out / "ug.npy", ug_final)
+    # Full per-step update history (T, d) so the predictor can evaluate h^t vs
+    # h^actual at the SAME step t (fixes the 1-step control endpoint mismatch).
+    np.save(a.out / "u1_history.npy", u1_arr)
+    np.save(a.out / "ug_history.npy", ug_arr)
     with (a.out / "sweep_meta.json").open("w") as f:
         json.dump({
             "training_state": str(a.training_state),
