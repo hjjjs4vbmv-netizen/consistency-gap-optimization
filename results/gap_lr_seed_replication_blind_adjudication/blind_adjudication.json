@@ -1,0 +1,95 @@
+{
+  "adjudicated_at_utc": "2026-08-12T15:06:07.330864+00:00",
+  "adjudicator": {
+    "independent_external_signature_present": false,
+    "machine_policy_evaluated": true,
+    "role": "Collaborator"
+  },
+  "bindings": {
+    "adjudication_tooling_commit": "d375b321c02935c8802f0bb18a8aa51f1e3abc3e",
+    "adjudicator_source_sha256": "726aff0622da5dc73d2c88b7e3b2070a0d7d663c90be992d0260d1b5eccba586",
+    "execution_protocol_commit": "583c2fe0f914fc1191903d747737fd54b4ba1eef",
+    "initialization_reconstruction_sha256": "b2e53f2ac865f8729ac7566c8c165c4bb773262399363da53085085b44a17d18",
+    "objective_evidence_sha256": "8a6ee20300056a4353851ba919134486313629749d541c892d3a7b8fc8c82c12",
+    "public_per_run_receipts": {
+      "seed4_A": {
+        "file": "seed4_A.integrity.public.json",
+        "sha256": "008cae2dd89879ea70dd4d817e72806aa2ef7feda9302124186486c16965c503"
+      },
+      "seed4_B": {
+        "file": "seed4_B.integrity.public.json",
+        "sha256": "a228e575daa73e4ab4310a55340a774e9dc15389ca245ed0d128eab16e99de6c"
+      },
+      "seed4_C": {
+        "file": "seed4_C.integrity.public.json",
+        "sha256": "6414701387b0fcb7a6a6ea895af10292fa997dd817ebf986923199f85132aa8c"
+      },
+      "seed5_A": {
+        "file": "seed5_A.integrity.public.json",
+        "sha256": "93b947e33bac6e8a72b5361b7b1f4c389c1897faaf9606364c8e64d53449f64f"
+      },
+      "seed5_B": {
+        "file": "seed5_B.integrity.public.json",
+        "sha256": "750572982b3bc0028cc6499dd02f067d1349affe45caac5fceab4e2be3ba711f"
+      },
+      "seed5_C": {
+        "file": "seed5_C.integrity.public.json",
+        "sha256": "4ccd5a5b5354b4aead4adeb335b6cb054c17ddcbfa261d127ef33f777b418060"
+      }
+    }
+  },
+  "claim_exclusions": [
+    "bitwise training equivalence across devices",
+    "historically observed bitwise pre-update parameter identity",
+    "protocol-exact execution",
+    "throughput, latency, or GPU performance comparisons"
+  ],
+  "decision": {
+    "failed_conditions": [],
+    "historical_bitwise_initialization_claim": false,
+    "performance_benchmark_use": false,
+    "protocol_exact": false,
+    "quality_evaluation_seed4_seed5_authorized": false,
+    "rerun_affected_runs": [],
+    "scientific_replication_use": false
+  },
+  "decision_policy": {
+    "accept_if": [
+      "all six runs pass strengthened integrity and artifact rehash",
+      "only preregistered option differences are present",
+      "all destination tensors are covered by the frozen transfer",
+      "all six reconstructed expected initialization hashes match",
+      "preview drift is no greater than one 8-bit level",
+      "overlapping runs use different logged indices whose one pre-launch sidecar entries are equivalent A100 devices",
+      "all deviations and claim exclusions are explicit"
+    ],
+    "rerun_if": [
+      "any integrity/configuration/hash binding fails",
+      "transfer coverage or reconstructed initialization equality fails",
+      "preview drift exceeds one 8-bit level",
+      "overlap occurs on the same logged GPU or non-equivalent devices"
+    ]
+  },
+  "documented_deviations": [
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5"
+  ],
+  "experiment_id": "gap_lr_matched_q128_s45_replication_v1",
+  "next_step": "obtain independent quality-blind review bound to this candidate receipt before issuing accepted_with_documented_deviation",
+  "publication": {
+    "raw_training_and_quality_artifacts_committed": false,
+    "sanitized_for_github": true
+  },
+  "quality_blind": {
+    "attestation_kind": "workflow-scope declaration; not cryptographic proof",
+    "decision_frozen_before_quality_evaluation": true,
+    "generation_quality_metrics_accessed": false
+  },
+  "receipt_type": "gap_lr_seed_replication_blind_adjudication",
+  "schema_version": 1,
+  "status": "machine_recommendation_ready",
+  "verdict": "machine_recommends_acceptance"
+}
