@@ -96,11 +96,17 @@ K = {32, 64, 128, 256} kimg (snapshots 000001/2/4/8):
   generalizes across training horizon, not just at K=256.
 - **Non-monotonic**: R² peaks at K=128 (0.918), then drops to 0.735 at K=256.
   The drop is NOT a small-denominator artifact (h_actual std is largest at
-  K=256); it is because **wRMSE doubles** (0.0157 → 0.0295) at K=256 — the
-  non-scalar gradient residual grows in the late phase, so the scalar predictor
-  captures slightly less. This is a real training-phase effect.
-- **R_opt grows monotonically** with K (0.090 → 0.117), consistent with the
-  moment-memory residual accumulating over training.
+  K=256); it coincides with **wRMSE doubling** (0.0157 → 0.0295) at K=256.
+  **The source of the K=256 drop is not yet uniquely attributed.** It could
+  involve (a) larger non-scalar current-gap content, (b) trajectory-state
+  divergence (the candidate parameters have drifted from the reference over the
+  20-step fork), and/or (c) higher-order optimizer interaction. We only state
+  that predictive accuracy decreases at K=256; we do not claim a single cause.
+- **R_opt (20-step prospective) grows with K** (0.090 → 0.117): the endpoint
+  residual of the 20-step prospective fork is larger when initialized from
+  later-K states. This is NOT evidence of full-history moment-memory
+  accumulation — the four experiments are not one uninterrupted history. It is
+  a statement about the prospective-fork endpoint residual vs the initial K.
 
 Figure: `figures/k_horizon_R2_Ropt.pdf` (K → {R_opt(K), R²_scalar(K)}).
 

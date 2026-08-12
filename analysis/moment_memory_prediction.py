@@ -28,6 +28,15 @@ Outputs per evaluation state t:
 The chain is self-contained: given the paired gradient history it predicts the
 optimizer distortion from the scale history alone (no access to the optimizer
 moments), which is the #45 theorem's content.
+
+SCOPE (per PR #47 review): this direct formula is a **controlled algebraic
+sanity check for a ZERO / controlled initial optimizer state only**. It sums
+the gauges over the provided gradient history but does NOT include the
+contribution of a nonzero initial moment state (m0, v0). For a real
+nonzero-initial-state prospective replay, the correct object is
+`scalar_history_predictor.py` (which replays RAdam from the actual m0/v0/step).
+Do not call this a "real-state oracle" — it is exact only when the initial
+moments are zero (or when the history fully determines the moments).
 """
 from __future__ import annotations
 
