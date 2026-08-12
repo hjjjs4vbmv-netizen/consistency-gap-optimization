@@ -42,4 +42,5 @@ legitimate `global_sigmoid` g=1.0 Arm A reference checkpoint.
 Role D reports these paired measurements and their provenance only.  It does
 not attribute the residuals to a mechanism, infer whether they persist or
 grow through training, or offer an optimizer-history explanation.  Such
-interpretation is outside this delivery.
+interpretation is outside this delivery.  It does not mix independent K≈1000
+states, old g-screen results, Arm B, or Arm C into this trajectory.
