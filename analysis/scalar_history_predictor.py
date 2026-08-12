@@ -1,7 +1,7 @@
 """Scalar-History Predictor: how much of the real optimizer residual is
 explained by a scalar gradient-scale history through RAdam moment memory?
 
-This is the SCIENTIFIC mechanism test (vs the coordinate-wise oracle, which is
+This is the SCIENTIFIC mechanism test (vs the coordinate-wise algebraic sanity check, which is
 only an algebra/implementation sanity check).
 
 Protocol (per step j, from the stored paired gradient history):

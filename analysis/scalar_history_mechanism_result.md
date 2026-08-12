@@ -24,7 +24,7 @@ Replay RAdam from the **real optimizer state** (flattened m/v/step) over two
 histories — reference `G^1.0` and scalar-predicted `Ĝ^1.3` — and take the
 predicted update ratio `ĥ^scalar_{t,i} = U^scalar/U^1` at the target step.
 
-This is distinct from the coordinate-wise oracle (direct formula, no replay),
+This is distinct from the coordinate-wise algebraic sanity check (direct formula, no replay),
 which is only an algebra/implementation sanity check.
 
 ## Result (gap_lr_matched arm_a g=1.0, 256 kimg; 20-step paired replay vs g=1.3)
@@ -45,7 +45,7 @@ which is only an algebra/implementation sanity check.
 
 1. **The scalar-history predictor reproduces the h ≈ 0.837 offset** (not the
    scalar-null 1): ĥ^scalar mean 0.8362 vs h^actual 0.8374. The earlier
-   coordinate-wise oracle gave ĥ ≈ 1.001, Corr ≈ 0 — it missed the offset
+   coordinate-wise algebraic sanity check gave ĥ ≈ 1.001, Corr ≈ 0 — it missed the offset
    because it did not replay the optimizer. **The replay is what captures the
    moment-memory accumulation.**
 2. **Corr = 0.858**: the scalar history, propagated through RAdam moment memory
@@ -64,21 +64,23 @@ which is only an algebra/implementation sanity check.
   coordinate-level variation of the real update ratio. This is **mechanism
   evidence** that optimizer memory is a real source of the residual left after
   LR calibration.
-- The component of R_opt **not captured** by the scalar-history predictor is
-  the non-scalar gradient content (the 3.2% per-step residual E_j) acting
-  through the optimizer.
+- The **remaining variation** of R_opt is **not captured** by the
+  scalar-history predictor; non-scalar gradient content (the 3.2% per-step
+  residual E_j) is one *plausible* contributor, along with trajectory-state
+  divergence and higher-order optimizer interactions (see below).
 
-## Comparison: scalar predictor vs coordinate-wise oracle
+## Comparison: scalar predictor vs coordinate-wise algebraic sanity check
 
-| | scalar-history predictor (replay) | coordinate-wise oracle (direct) |
+| | scalar-history predictor (replay) | coordinate-wise algebraic sanity check (direct) |
 |---|---:|---:|
 | ĥ mean | 0.8362 | ~1.001 |
 | Corr vs h^actual | 0.858 | ~0 |
 | role | **mechanism test** | algebra/impl sanity check |
 
-The two are deliberately different: the oracle confirms the exact identity is
-implemented correctly; the scalar predictor is the scientific test of whether
-scalar history explains the real residual.
+The two are deliberately different: the algebraic sanity check confirms the
+exact identity is implemented correctly (zero/controlled initial state only);
+the scalar predictor (real RAdam replay from the nonzero state) is the
+scientific test of whether scalar history explains the real residual.
 
 ## K-horizon generalization (Role D four-K sweep)
 
@@ -138,4 +140,4 @@ uninterrupted same-trajectory historical attribution.
 - `analysis/real_history/scalar_prediction.json` — the K=256 result.
 - `figures/k_horizon_R2_Ropt.pdf` — the K curve.
 - `analysis/plot_k_curve.py` — the plotting script.
-- `analysis/moment_memory_prediction.py` — coordinate-wise oracle (sanity).
+- `analysis/moment_memory_prediction.py` — coordinate-wise algebraic sanity check (sanity).
