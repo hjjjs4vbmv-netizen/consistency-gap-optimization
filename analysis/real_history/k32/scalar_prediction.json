@@ -1,6 +1,8 @@
 {
   "T_steps": 20,
+  "n_steps": 20,
   "eval_step": 19,
+  "seed": 20260809,
   "a_star_mean": 0.7701840458310533,
   "a_star_std": 0.009437068904260932,
   "h_pred_scalar_mean": 0.8585874640437097,
@@ -17,7 +19,7 @@
   "grad_history_g_sha256": "5c5da123db79196232b87f9c7611eb89404805d01491dadbb2775c5c71aea71f",
   "u1_sha256": "e349e796e2a9e7432fe78d825033670954d40ae2a6563c9997ea7f28093a3377",
   "ug_sha256": "9464b05e1239b9a49325f738e4b455c5e66fe874ad51065fe8ecaf1a19b19e0f",
-  "execution_command": "analysis/scalar_history_predictor.py --training-state /data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3/training-state-000001.pt --grad-history-1 analysis/real_history/k32/grad_history_1.npy --grad-history-g analysis/real_history/k32/grad_history_g.npy --u1 analysis/real_history/k32/u1.npy --ug analysis/real_history/k32/ug.npy --out analysis/real_history/k32/scalar_prediction.json",
+  "execution_command": "analysis/scalar_history_predictor.py --training-state /data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3/training-state-000001.pt --grad-history-1 analysis/real_history/k32/grad_history_1.npy --grad-history-g analysis/real_history/k32/grad_history_g.npy --u1 analysis/real_history/k32/u1.npy --ug analysis/real_history/k32/ug.npy --seed 20260809 --out analysis/real_history/k32/scalar_prediction.json",
   "lr": 0.0001,
   "source_nimg": 32128.0,
   "source_optimizer_steps": 243

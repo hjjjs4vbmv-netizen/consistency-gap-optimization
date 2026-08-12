@@ -153,6 +153,8 @@ def main(argv=None):
     ap.add_argument("--ug", type=Path, required=True)
     ap.add_argument("--eval-step", type=int, default=-1)
     ap.add_argument("--lr", type=float, default=1e-4)
+    ap.add_argument("--seed", type=int, default=20260809,
+                    help="seed used to generate the paired gradient history (sweep)")
     ap.add_argument("--out", type=Path, default=Path("analysis/scalar_history_prediction.json"))
     a = ap.parse_args(argv)
 
@@ -204,7 +206,7 @@ def main(argv=None):
     rho = disp / R_opt if R_opt > 1e-12 else math.nan
 
     result = {
-        "T_steps": T, "eval_step": t,
+        "T_steps": T, "n_steps": T, "eval_step": t, "seed": a.seed,
         "a_star_mean": float(np.mean(a_star)),
         "a_star_std": float(np.std(a_star)),
         "h_pred_scalar_mean": float(np.mean(h_pred[eff])),
