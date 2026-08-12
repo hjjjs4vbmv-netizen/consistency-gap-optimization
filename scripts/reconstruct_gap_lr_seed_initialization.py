@@ -26,12 +26,17 @@ import numpy as np
 import torch
 
 import dnnlib
+from scripts import gap_lr_seed_replication_contract as audit_contract
 from torch_utils import misc
 
 
 EXPERIMENT_ID = "gap_lr_matched_q128_s45_replication_v1"
 EXECUTION_PROTOCOL_COMMIT = "583c2fe0f914fc1191903d747737fd54b4ba1eef"
 TRAINING_CODE_COMMIT = "2357bb1d2531a343bdb4397f5a08f4d42a2d135b"
+SOURCE_AUDIT_RECEIPT_SHA256 = (
+    "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa"
+)
+MATRIX_SHA256 = "113a4676916e045f95a1928dd6fa163552515ce589a3721b8873bb72f389ad77"
 DATA_SHA256 = "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1"
 TRANSFER_SHA256 = "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
 MAGIC = b"ECT_CANONICAL_TORCH_MODULE_V1\x00"
@@ -58,10 +63,10 @@ def file_sha256(path: Path) -> str:
 
 
 def load_json(path: Path) -> dict[str, Any]:
-    value = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(value, dict):
-        fail(f"expected JSON object: {path}")
-    return value
+    try:
+        return audit_contract.load_json_object(path)
+    except ValueError as exc:
+        fail(str(exc))
 
 
 def _field(digest: Any, value: bytes) -> None:
@@ -217,9 +222,19 @@ def build_target(options: dict[str, Any]) -> tuple[torch.nn.Module, dict[str, in
 
 
 def validate_repo(repo: Path, adjudication_tooling_commit: str) -> None:
-    expected_script = (repo / "scripts/reconstruct_gap_lr_seed_initialization.py").resolve()
-    if Path(__file__).resolve() != expected_script:
-        fail("executed reconstruction script is not the --repo committed path")
+    try:
+        audit_contract.validate_tooling_checkout(
+            repo,
+            adjudication_tooling_commit,
+            executed_file=Path(__file__),
+            expected_relative="scripts/reconstruct_gap_lr_seed_initialization.py",
+            imported_files={
+                "dnnlib/__init__.py": Path(dnnlib.__file__),
+                "torch_utils/misc.py": Path(misc.__file__),
+            },
+        )
+    except (OSError, subprocess.CalledProcessError, ValueError) as exc:
+        fail(str(exc))
     head = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=str(repo), text=True
     ).strip()
@@ -261,24 +276,6 @@ def validate_repo(repo: Path, adjudication_tooling_commit: str) -> None:
     ).strip()
     if status:
         fail("tracked or untracked reconstruction modules are dirty")
-    protected_scripts = (
-        "scripts/reconstruct_gap_lr_seed_initialization.py",
-        "scripts/verify_gap_lr_seed_replication_run.py",
-        "scripts/build_gap_lr_seed_replication_blind_evidence.py",
-        "scripts/adjudicate_gap_lr_seed_replication.py",
-    )
-    for relative in protected_scripts:
-        working = repo / relative
-        committed = subprocess.check_output(
-            ["git", "show", f"{adjudication_tooling_commit}:{relative}"],
-            cwd=str(repo),
-        )
-        if not working.is_file() or working.read_bytes() != committed:
-            fail(f"working adjudication tool differs from committed blob: {relative}")
-    repo_root = repo.resolve()
-    for origin in (Path(dnnlib.__file__).resolve(), Path(misc.__file__).resolve()):
-        if repo_root not in origin.parents:
-            fail("imported reconstruction modules did not originate in --repo")
 
 
 def main() -> None:
@@ -337,6 +334,8 @@ def main() -> None:
             "execution_protocol_commit": EXECUTION_PROTOCOL_COMMIT,
             "adjudication_tooling_commit": args.adjudication_tooling_commit,
             "training_code_commit": TRAINING_CODE_COMMIT,
+            "source_audit_receipt_sha256": SOURCE_AUDIT_RECEIPT_SHA256,
+            "matrix_sha256": MATRIX_SHA256,
             "dataset_sha256": DATA_SHA256,
             "transfer_checkpoint_sha256": transfer_sha,
             "tool_source_sha256": file_sha256(Path(__file__)),
@@ -373,13 +372,16 @@ def main() -> None:
         options = load_json(options_path)
         receipt = load_json(receipt_path)
         if (
-            receipt.get("schema_version") != 2
+            not audit_contract.is_exact_int(receipt.get("schema_version"))
+            or receipt.get("schema_version") != 2
             or receipt.get("receipt_type")
             != "gap_lr_seed_replication_run_integrity"
             or receipt.get("experiment_id") != EXPERIMENT_ID
             or receipt.get("status") != "passed"
+            or not audit_contract.is_exact_int(receipt.get("seed"))
             or receipt.get("seed") != seed
             or receipt.get("arm") != arm
+            or not audit_contract.is_exact_int(options.get("seed"))
             or options.get("seed") != seed
             or receipt.get("execution_protocol_commit") != EXECUTION_PROTOCOL_COMMIT
             or receipt.get("training_code_commit") != TRAINING_CODE_COMMIT
@@ -406,13 +408,16 @@ def main() -> None:
         import training.dataset as training_dataset
         import training.networks as training_networks
 
-        repo_root = args.repo.resolve()
-        for origin in (
-            Path(training_dataset.__file__).resolve(),
-            Path(training_networks.__file__).resolve(),
-        ):
-            if repo_root not in origin.parents:
-                fail("imported training modules did not originate in --repo")
+        expected_training_origins = {
+            (args.repo / "training/dataset.py").resolve(): Path(
+                training_dataset.__file__
+            ).resolve(),
+            (args.repo / "training/networks.py").resolve(): Path(
+                training_networks.__file__
+            ).resolve(),
+        }
+        if any(expected != observed for expected, observed in expected_training_origins.items()):
+            fail("imported training module is not the fixed --repo path")
         if interface != source_interface:
             fail(f"dataset/transfer interface mismatch for {run_id}")
         net = net.train().requires_grad_(True)
@@ -474,9 +479,10 @@ def main() -> None:
         fail("six-run reconstruction contract is not identical")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
-        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
     )
-    print(json.dumps(report, indent=2, sort_keys=True))
+    print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
 
 
 if __name__ == "__main__":

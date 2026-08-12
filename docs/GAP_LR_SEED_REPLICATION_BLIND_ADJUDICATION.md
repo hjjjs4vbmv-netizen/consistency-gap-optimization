@@ -24,7 +24,7 @@ logs. Quality outputs are excluded inputs.
 
 ## Observed deviations
 
-Four facts require adjudication rather than a claim of protocol-exact
+Five facts require adjudication rather than a claim of protocol-exact
 execution:
 
 1. The original fail-stop launcher ended after seed 4 arm A. Two manual
@@ -32,9 +32,11 @@ execution:
    trained state.
 2. Seed 4 B/C and seed 5 ran concurrently on two logged GPU indices, although
    the execution policy specified one fully serial seed group at a time.
-3. Seed 4 B/C used logged GPU index 0 instead of the planned index 1. Both
-   devices are the same A100 model, memory capacity, and driver; the public
-   evidence hashes rather than publishes their full UUIDs.
+3. Seed 4 B/C used logged GPU index 0 instead of the planned index 1. In the
+   single pre-original-launch hardware sidecar, indices 0 and 1 map to the same
+   A100 model, memory capacity, and driver. Per-run CUDA UUIDs were not captured;
+   the public package uses ephemeral device aliases and publishes neither UUIDs
+   nor stable UUID hashes.
 4. Seed 5 arm A's generated `model_init.png` differs from B/C by at most one
    8-bit level. The observed pattern is compatible with an FP16/cuDNN forward
    followed by PNG quantization; this preview is not a parameter hash.
@@ -81,8 +83,8 @@ The machine adjudicator returns `machine_recommends_acceptance` only if:
   dtype mismatch, and all six reconstructed expected initialization hashes are
   equal;
 - preview drift is no greater than one 8-bit level;
-- concurrent intervals occur on distinct logged indices whose devices have
-  the same model, memory, and driver;
+- concurrent intervals occur on distinct logged indices whose entries in the
+  single pre-original-launch sidecar have the same model, memory, and driver;
 - all deviations, evidence limitations, and excluded claims remain explicit.
 
 Any failure of those gates returns `rerun_required`. A machine recommendation
@@ -100,15 +102,25 @@ The Git-tracked package contains:
 - six path-sanitized public per-run integrity receipts;
 - one initialization reconstruction receipt;
 - one objective runtime/configuration/deviation evidence receipt;
-- one final blind-adjudication receipt.
+- one machine blind-adjudication candidate receipt.
 
 Large checkpoints, states, raw logs, datasets, transfer archives, full GPU
 UUIDs, host/account/IP identifiers, and absolute server paths remain external
 to Git. Public receipts bind retained artifacts by SHA256 and byte size.
 
+The original schema-v1 receipts remain immutable under the experiment root and
+serve only as historical timestamps for the launcher state machine. The
+strengthened schema-v2 receipts are generated into a separate audit directory,
+rehash the same artifacts, and are used for all present-day integrity gates.
+The evidence builder requires the v1 and v2 artifact manifests to agree; it
+refuses to run if the strengthened-receipt directory would overwrite the
+historical receipts.
+
 ## Reproduction commands
 
-Run the strengthened per-run verifier for all six runs first, then:
+Run the strengthened per-run verifier for all six runs into a fresh audit
+directory (never the experiment root's historical `integrity_receipts`
+directory), then:
 
 ```bash
 PYTHONPATH=. python scripts/reconstruct_gap_lr_seed_initialization.py \
@@ -126,13 +138,15 @@ PYTHONPATH=. python scripts/build_gap_lr_seed_replication_blind_evidence.py \
   --initialization-reconstruction "$AUDIT_DIR/initialization_reconstruction.json" \
   --original-launcher-log "$ORIGINAL_LAUNCHER_LOG" \
   --adjudication-tooling-commit "$ADJUDICATION_TOOLING_COMMIT" \
+  --repo "$REPO" \
   --public-receipt-dir "$AUDIT_DIR/public_receipts" \
   --output "$AUDIT_DIR/blind_evidence.json"
 
-python scripts/adjudicate_gap_lr_seed_replication.py \
+PYTHONPATH=. python scripts/adjudicate_gap_lr_seed_replication.py \
   --evidence "$AUDIT_DIR/blind_evidence.json" \
   --initialization-reconstruction "$AUDIT_DIR/initialization_reconstruction.json" \
   --public-receipt-dir "$AUDIT_DIR/public_receipts" \
   --adjudication-tooling-commit "$ADJUDICATION_TOOLING_COMMIT" \
+  --repo "$REPO" \
   --output "$AUDIT_DIR/blind_adjudication.json"
 ```

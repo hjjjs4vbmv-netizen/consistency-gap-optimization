@@ -15,6 +15,8 @@ from typing import Any
 
 import torch
 
+from scripts import gap_lr_seed_replication_contract as audit_contract
+
 
 ARM_CONTRACT = {
     "A": (1.0, 0.0001),
@@ -77,47 +79,98 @@ def require_files(run_dir: Path) -> dict[str, Path]:
     return paths
 
 
-def validate_options(options: dict[str, Any], run_dir: Path, arm: str, seed: int) -> None:
-    expected_top = {
+def expected_options(run_dir: Path, arm: str, seed: int) -> dict[str, Any]:
+    gap, lr = ARM_CONTRACT[arm]
+    return {
+        "adaptive_update_kimg": 0.5,
         "batch_gpu": 16,
         "batch_size": 128,
+        "ckpt_ticks": 1,
+        "cudnn_benchmark": True,
+        "data_loader_kwargs": {
+            "num_workers": 1,
+            "pin_memory": True,
+            "prefetch_factor": 2,
+        },
+        "dataset_kwargs": {
+            "cache": True,
+            "class_name": "training.dataset.ImageFolderDataset",
+            "max_size": 50000,
+            "path": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+            "resolution": 32,
+            "use_labels": False,
+            "xflip": False,
+        },
         "double_ticks": 10000,
         "ema_beta": 0.9993,
+        "ema_halflife_kimg": None,
+        "ema_rampup_ratio": None,
         "enable_amp": True,
         "enable_tf32": False,
+        "eval_ticks": 50,
+        "kimg_per_tick": 32.0,
+        "loss_kwargs": {
+            "P_mean": -1.1,
+            "P_std": 2.0,
+            "adaptive_loss_ema_beta": 0.9,
+            "adaptive_max_adjust": 0.05,
+            "adaptive_min_gap": 0.001,
+            "adaptive_warmup_updates": 2,
+            "adj": "global_sigmoid",
+            "b": 1.0,
+            "c": 0.0,
+            "class_name": "training.loss.ECMLoss",
+            "global_gap_scale": gap,
+            "k": 8.0,
+            "local_tbin_deadband": 0.02,
+            "local_tbin_gain": 0.5,
+            "local_tbin_long_beta": 0.99,
+            "local_tbin_max_scale": 1.5,
+            "local_tbin_min_gap": 0.001,
+            "local_tbin_min_scale": 0.75,
+            "local_tbin_num_bins": 4,
+            "local_tbin_short_beta": 0.9,
+            "local_tbin_warmup_updates": 32,
+            "q": 128.0,
+        },
+        "loss_scaling": 1.0,
         "metrics": [],
+        "mid_t": [0.821],
+        "network_kwargs": {
+            "channel_mult": [2, 2, 2],
+            "channel_mult_noise": 1,
+            "class_name": "training.networks.ECMPrecond",
+            "decoder_type": "standard",
+            "dropout": 0.2,
+            "embedding_type": "positional",
+            "encoder_type": "standard",
+            "model_channels": 128,
+            "model_type": "SongUNet",
+            "resample_filter": [1, 1],
+            "use_fp16": True,
+        },
+        "optimizer_kwargs": {
+            "betas": [0.9, 0.999],
+            "class_name": "torch.optim.RAdam",
+            "eps": 1e-08,
+            "lr": lr,
+        },
+        "resume_pkl": (
+            "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl"
+        ),
+        "run_dir": str(run_dir),
         "sample_ticks": 9999,
         "seed": seed,
         "snapshot_ticks": 1,
         "state_dump_ticks": 1,
-        "ckpt_ticks": 1,
         "total_kimg": 256,
-        "run_dir": str(run_dir),
     }
-    for key, expected in expected_top.items():
-        if options.get(key) != expected:
-            fail(f"training_options.{key}={options.get(key)!r}, expected {expected!r}")
-    network = options.get("network_kwargs", {})
-    if network.get("use_fp16") is not True or network.get("dropout") != 0.2:
-        fail("network FP16/dropout contract changed")
-    loss = options.get("loss_kwargs", {})
-    expected_loss = {"adj": "global_sigmoid", "q": 128.0, "k": 8.0, "b": 1.0, "c": 0.0}
-    for key, expected in expected_loss.items():
-        if loss.get(key) != expected:
-            fail(f"loss_kwargs.{key} changed")
-    gap, lr = ARM_CONTRACT[arm]
-    close(loss.get("global_gap_scale"), gap, "global gap scale")
-    optimizer = options.get("optimizer_kwargs", {})
-    if optimizer.get("class_name") != "torch.optim.RAdam":
-        fail("optimizer is not RAdam")
-    close(optimizer.get("lr"), lr, "learning rate")
-    if optimizer.get("betas") != [0.9, 0.999] or optimizer.get("eps") != 1e-08:
-        fail("RAdam hyperparameters changed")
-    dataset = options.get("dataset_kwargs", {})
-    if dataset.get("path") != "/data/raw/ECT/datasets/cifar10-32x32.zip":
-        fail("dataset path changed")
-    if options.get("resume_pkl") != "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl":
-        fail("transfer checkpoint path changed")
+
+
+def validate_options(options: dict[str, Any], run_dir: Path, arm: str, seed: int) -> None:
+    expected = expected_options(run_dir, arm, seed)
+    if not audit_contract.exact_json_equal(options, expected):
+        fail("training_options differ from the exact frozen arm/seed contract")
 
 
 def validate_summary(path: Path) -> dict[str, Any]:
@@ -133,11 +186,21 @@ def validate_summary(path: Path) -> dict[str, Any]:
     final_grad_scale = None
     for index, row in enumerate(rows, start=1):
         finite(row.get("loss"), f"summary loss row {index}")
-        attempted = int(finite(row.get("attempted_iteration"), f"attempted row {index}"))
-        successful = int(
-            finite(row.get("successful_optimizer_steps"), f"successful row {index}")
+        attempted_value = finite(
+            row.get("attempted_iteration"), f"attempted row {index}"
         )
-        skipped = int(finite(row.get("step_skipped"), f"step_skipped row {index}"))
+        successful_value = finite(
+            row.get("successful_optimizer_steps"), f"successful row {index}"
+        )
+        skipped_value = finite(row.get("step_skipped"), f"step_skipped row {index}")
+        if not all(
+            value.is_integer()
+            for value in (attempted_value, successful_value, skipped_value)
+        ):
+            fail(f"summary counters row {index} must be exact integers")
+        attempted = int(attempted_value)
+        successful = int(successful_value)
+        skipped = int(skipped_value)
         grad_scale = finite(row.get("grad_scale"), f"grad_scale row {index}")
         if attempted != index:
             fail(f"attempted_iteration row {index} is {attempted}, expected {index}")
@@ -176,7 +239,10 @@ def validate_stats(path: Path) -> dict[str, Any]:
     records = []
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.strip():
-            records.append(json.loads(line))
+            value = audit_contract.loads_strict(line)
+            if not isinstance(value, dict):
+                fail("stats row is not a JSON object")
+            records.append(value)
     if not records:
         fail("stats.jsonl is empty")
     for index, row in enumerate(records):
@@ -277,7 +343,7 @@ def main() -> None:
 
     run_dir = args.run_dir.resolve()
     paths = require_files(run_dir)
-    options = json.loads(paths["training_options"].read_text(encoding="utf-8"))
+    options = audit_contract.load_json_object(paths["training_options"])
     validate_options(options, run_dir, args.arm, args.seed)
     if paths["protocol_commit"].read_text(encoding="utf-8").strip() != args.protocol_commit:
         fail("per-run protocol commit mismatch")
@@ -321,8 +387,11 @@ def main() -> None:
         "artifact_size_bytes": sizes,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps(receipt, indent=2, sort_keys=True))
+    args.output.write_text(
+        json.dumps(receipt, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(receipt, indent=2, sort_keys=True, allow_nan=False))
 
 
 if __name__ == "__main__":
