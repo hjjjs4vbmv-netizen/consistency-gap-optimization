@@ -104,6 +104,25 @@ K = {32, 64, 128, 256} kimg (snapshots 000001/2/4/8):
 
 Figure: `figures/k_horizon_R2_Ropt.pdf` (K → {R_opt(K), R²_scalar(K)}).
 
+## Methodological caveat (self-review)
+
+The replay initializes **both** arms from the SAME m/v/step (cloned from the
+g=1.0 arm_a state at each K). So R² measures precisely:
+
+> given the real g=1.0 moment history as the initial state at K, how much of
+> the 20-step 1.3-update variance is explained by using a *scalar-approximated*
+> 1.3 gradient history (Ĝ^1.3 = a* G^1.0) instead of the real G^1.3.
+
+This is a **20-step prospective scalar-approximation test**, NOT "if the whole
+training history were 1.3" and NOT a full-horizon moment-memory attribution.
+The initial moment history is real (g=1.0); only the 20 future steps differ
+between predictor and actual. High R² means the scalar approximation captures
+the 20-step update distortion well from the shared initial moment state.
+
+Also noted: (i) single seed (20260809) — multi-seed reproducibility not yet run;
+(ii) per-step non-scalar residual numbers use a top-5000 subsample (trend
+0.037→0.068 across K is robust, but magnitudes are subsample-based).
+
 Note: still a **prospective mechanism diagnostic** (20-step fork per K), not an
 uninterrupted same-trajectory historical attribution.
 
