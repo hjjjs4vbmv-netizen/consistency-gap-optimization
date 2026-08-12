@@ -80,7 +80,37 @@ The two are deliberately different: the oracle confirms the exact identity is
 implemented correctly; the scalar predictor is the scientific test of whether
 scalar history explains the real residual.
 
+## K-horizon generalization (Role D four-K sweep)
+
+Same 20-step prospective scalar-history replay run from the arm_a state at
+K = {32, 64, 128, 256} kimg (snapshots 000001/2/4/8):
+
+| K (kimg) | Weighted R² | R_opt | wRMSE | h_actual std | a* |
+|---|---:|---:|---:|---:|---:|
+| 32 | 0.860 | 0.090 | 0.0126 | 0.034 | 0.770 |
+| 64 | 0.910 | 0.108 | 0.0148 | 0.049 | 0.770 |
+| 128 | **0.918** | 0.114 | 0.0157 | 0.055 | 0.770 |
+| 256 | 0.735 | 0.117 | 0.0295 | 0.057 | 0.773 |
+
+- **All four K give high R² (0.735–0.918)**: the scalar-history mechanism
+  generalizes across training horizon, not just at K=256.
+- **Non-monotonic**: R² peaks at K=128 (0.918), then drops to 0.735 at K=256.
+  The drop is NOT a small-denominator artifact (h_actual std is largest at
+  K=256); it is because **wRMSE doubles** (0.0157 → 0.0295) at K=256 — the
+  non-scalar gradient residual grows in the late phase, so the scalar predictor
+  captures slightly less. This is a real training-phase effect.
+- **R_opt grows monotonically** with K (0.090 → 0.117), consistent with the
+  moment-memory residual accumulating over training.
+
+Figure: `figures/k_horizon_R2_Ropt.pdf` (K → {R_opt(K), R²_scalar(K)}).
+
+Note: still a **prospective mechanism diagnostic** (20-step fork per K), not an
+uninterrupted same-trajectory historical attribution.
+
 ## Files
 - `analysis/scalar_history_predictor.py` — the mechanism test.
-- `analysis/real_history/scalar_prediction.json` — the result.
+- `analysis/real_history/k{K}/` — per-K gradient histories + `scalar_prediction.json`.
+- `analysis/real_history/scalar_prediction.json` — the K=256 result.
+- `figures/k_horizon_R2_Ropt.pdf` — the K curve.
+- `analysis/plot_k_curve.py` — the plotting script.
 - `analysis/moment_memory_prediction.py` — coordinate-wise oracle (sanity).
