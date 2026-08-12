@@ -1,0 +1,740 @@
+{
+  "bindings": {
+    "adjudication_tooling_commit": "d375b321c02935c8802f0bb18a8aa51f1e3abc3e",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "evidence_builder_source_sha256": "31efab4ba053e9286cfd85858caed1080981f3b594619c34578aab32002f0bb7",
+    "execution_protocol_commit": "583c2fe0f914fc1191903d747737fd54b4ba1eef",
+    "initialization_reconstruction_sha256": "b2e53f2ac865f8729ac7566c8c165c4bb773262399363da53085085b44a17d18",
+    "matrix_sha256": "113a4676916e045f95a1928dd6fa163552515ce589a3721b8873bb72f389ad77",
+    "source_audit_receipt_sha256": "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa",
+    "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
+    "transfer_checkpoint_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+  },
+  "claim_exclusions": [
+    "bitwise training equivalence across devices",
+    "historically observed bitwise pre-update parameter identity",
+    "protocol-exact execution",
+    "throughput, latency, or GPU performance comparisons"
+  ],
+  "configuration_contract": {
+    "between_seed_allowed_differences": [
+      "seed",
+      "run_dir"
+    ],
+    "between_seed_passed": {
+      "A": true,
+      "B": true,
+      "C": true
+    },
+    "within_seed_allowed_differences": [
+      "loss_kwargs.global_gap_scale",
+      "optimizer_kwargs.lr",
+      "run_dir"
+    ],
+    "within_seed_passed": {
+      "4": true,
+      "5": true
+    }
+  },
+  "deviations": [
+    {
+      "acceptance_rationale": "all recovery runs were fresh starts and passed artifact integrity",
+      "confidence": "direct launcher-log evidence",
+      "evidence_refs": [
+        "runtime.launcher_segments",
+        "runtime.runs",
+        "evidence_manifest.original_launcher_log",
+        "evidence_manifest.seed4_recovery_launcher_log",
+        "evidence_manifest.seed5_recovery_launcher_log"
+      ],
+      "field": "launcher_continuity",
+      "id": "D1",
+      "materiality": "runtime provenance",
+      "observed": "original launcher plus two manual recovery launchers",
+      "planned": "single fail-stop launcher"
+    },
+    {
+      "acceptance_rationale": "the different indices map to equivalent A100 entries in one pre-launch sidecar; per-run UUID is not attested and performance claims are excluded",
+      "confidence": "direct application timestamp overlap; GPU index is launcher assertion",
+      "evidence_refs": [
+        "runtime.directly_observed_overlaps",
+        "runtime.hardware"
+      ],
+      "field": "execution_mode",
+      "id": "D2",
+      "materiality": "runtime/performance; no training-definition change observed",
+      "observed": "two training-phase overlap intervals with different logged GPU indices",
+      "planned": "fully serial"
+    },
+    {
+      "acceptance_rationale": "same GPU model, memory, driver, code, inputs, and training definition",
+      "confidence": "direct index assertion; UUID mapping inferred from one sidecar",
+      "evidence_refs": [
+        "runtime.runs",
+        "runtime.hardware"
+      ],
+      "field": "gpu_assignment",
+      "id": "D3",
+      "materiality": "possible low-order numerical environment effect",
+      "observed": "seed 4 B/C logged on GPU index 0",
+      "planned": "all runs on logged GPU index 1"
+    },
+    {
+      "acceptance_rationale": "all six expected tensor-state hashes match and preview drift is only one LSB",
+      "confidence": "direct PNG comparison plus deterministic reconstruction of expected tensor state",
+      "evidence_refs": [
+        "initialization.model_init_previews",
+        "initialization.reconstructed_expected_initialization"
+      ],
+      "field": "initialization_evidence",
+      "id": "D4",
+      "materiality": "diagnostic preview only; historical parameter hash absent",
+      "observed": "seed 5 A versus B/C differs by at most one 8-bit level",
+      "planned": "identical model-init preview files"
+    },
+    {
+      "acceptance_rationale": "all seed4 A artifacts were recomputed and passed strengthened verification; exact original failure not claimed",
+      "confidence": "training completion and post-hoc receipt direct; original failure mechanism unknown",
+      "evidence_refs": [
+        "runtime.launcher_segments",
+        "per_run_integrity.public_receipts.seed4_A",
+        "missing_evidence"
+      ],
+      "field": "inline_verification_continuity",
+      "id": "D5",
+      "materiality": "verification provenance",
+      "observed": "original verifier output/exit status lost; same artifact set passed post-hoc re-verification",
+      "planned": "seed4 A verified inline before launcher continuation"
+    }
+  ],
+  "evidence_manifest": {
+    "hardware": {
+      "file": "hardware.txt",
+      "retained_external_to_git": true,
+      "sha256": "be7efb7b4f06c8131038b226f9dc8fe626a2fda4d405f8162ca529fb2ba73fbc",
+      "size_bytes": 178
+    },
+    "initialization_reconstruction": {
+      "file": "initialization_reconstruction.json",
+      "retained_external_to_git": false,
+      "sha256": "b2e53f2ac865f8729ac7566c8c165c4bb773262399363da53085085b44a17d18",
+      "size_bytes": 14090
+    },
+    "launch_provenance": {
+      "file": "launch_provenance.txt",
+      "retained_external_to_git": true,
+      "sha256": "f05240bbc113e6fdf15189d29424219b89492570d6c93a1b0ecc00099b830013",
+      "size_bytes": 1089
+    },
+    "original_launcher_log": {
+      "file": "gap_lr_matched_q128_s45_replication_v1.launcher.log",
+      "retained_external_to_git": true,
+      "sha256": "6f227f85df3ae73bace22bb85b35879e50b0782aded43e6919e735a5705018ec",
+      "size_bytes": 119
+    },
+    "seed4_recovery_launcher_log": {
+      "file": "seed4_resume.launcher.log",
+      "retained_external_to_git": true,
+      "sha256": "e0a2fb20f924f5694559a605afc3a5362d055c9f41814fe3bcd6b06c294d4317",
+      "size_bytes": 244
+    },
+    "seed5_recovery_launcher_log": {
+      "file": "seed5_resume.launcher.log",
+      "retained_external_to_git": true,
+      "sha256": "ef7aa4e907735fa92ad9cd06e371c4642778ed3806736ca492396c219a1d36a4",
+      "size_bytes": 327
+    },
+    "software": {
+      "file": "software.txt",
+      "retained_external_to_git": true,
+      "sha256": "2a27bb7b7531b51dfb349d26d0b1090a9c560a6d2074738ec62a417ea710a6b1",
+      "size_bytes": 55
+    }
+  },
+  "experiment_id": "gap_lr_matched_q128_s45_replication_v1",
+  "initialization": {
+    "data_images": {
+      "all_six_sha256_equal": true,
+      "sha256": "38e1c721cfbc101b94a5289c3096a756ad9505b6484c561d3d2483b6cc3517cb"
+    },
+    "historical_observed_preupdate_parameter_hash": "not_captured",
+    "model_init_previews": {
+      "4": {
+        "exact_file_hashes_equal": true,
+        "max_abs_channel_delta_lsb": 0,
+        "pairwise_against_A": [
+          {
+            "differing_channel_values": 0,
+            "differing_pixels": 0,
+            "exact_pixel_values_equal": true,
+            "first": "arm_a_g1_0_lr_fixed_s4",
+            "greater_than_one_lsb": 0,
+            "max_abs_channel_delta_lsb": 0,
+            "negative_one_lsb": 0,
+            "positive_one_lsb": 0,
+            "second": "arm_b_g1_3_lr_fixed_s4",
+            "shape_hwc": [
+              512,
+              512,
+              3
+            ]
+          },
+          {
+            "differing_channel_values": 0,
+            "differing_pixels": 0,
+            "exact_pixel_values_equal": true,
+            "first": "arm_a_g1_0_lr_fixed_s4",
+            "greater_than_one_lsb": 0,
+            "max_abs_channel_delta_lsb": 0,
+            "negative_one_lsb": 0,
+            "positive_one_lsb": 0,
+            "second": "arm_c_g1_3_lr_matched_s4",
+            "shape_hwc": [
+              512,
+              512,
+              3
+            ]
+          }
+        ],
+        "role": "generated FP16 diagnostic preview; not a parameter hash",
+        "sha256": {
+          "A": "e4cf16b2a99d380953d4b335b189cae9f3b0931f8eddfffa4c238f745a6f503f",
+          "B": "e4cf16b2a99d380953d4b335b189cae9f3b0931f8eddfffa4c238f745a6f503f",
+          "C": "e4cf16b2a99d380953d4b335b189cae9f3b0931f8eddfffa4c238f745a6f503f"
+        }
+      },
+      "5": {
+        "exact_file_hashes_equal": false,
+        "max_abs_channel_delta_lsb": 1,
+        "pairwise_against_A": [
+          {
+            "differing_channel_values": 6424,
+            "differing_pixels": 6352,
+            "exact_pixel_values_equal": false,
+            "first": "arm_a_g1_0_lr_fixed_s5",
+            "greater_than_one_lsb": 0,
+            "max_abs_channel_delta_lsb": 1,
+            "negative_one_lsb": 3268,
+            "positive_one_lsb": 3156,
+            "second": "arm_b_g1_3_lr_fixed_s5",
+            "shape_hwc": [
+              512,
+              512,
+              3
+            ]
+          },
+          {
+            "differing_channel_values": 6424,
+            "differing_pixels": 6352,
+            "exact_pixel_values_equal": false,
+            "first": "arm_a_g1_0_lr_fixed_s5",
+            "greater_than_one_lsb": 0,
+            "max_abs_channel_delta_lsb": 1,
+            "negative_one_lsb": 3268,
+            "positive_one_lsb": 3156,
+            "second": "arm_c_g1_3_lr_matched_s5",
+            "shape_hwc": [
+              512,
+              512,
+              3
+            ]
+          }
+        ],
+        "role": "generated FP16 diagnostic preview; not a parameter hash",
+        "sha256": {
+          "A": "887309198cf1eec908210575f6c768d914b33b3008281003b0cc6492d8172c2c",
+          "B": "2434512309201ef12256ce41dbd55b5f23328d9ff6444655f4e4444c87229a46",
+          "C": "2434512309201ef12256ce41dbd55b5f23328d9ff6444655f4e4444c87229a46"
+        }
+      }
+    },
+    "reconstructed_expected_initialization": {
+      "all_six_equal": true,
+      "distinct_hashes": [
+        "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19"
+      ],
+      "hash_kind": "reconstructed_expected_initialization_hash",
+      "historical_process_attestation": false,
+      "report_sha256": "b2e53f2ac865f8729ac7566c8c165c4bb773262399363da53085085b44a17d18",
+      "status": "passed"
+    }
+  },
+  "missing_evidence": [
+    "historical post-transfer/pre-forward parameter hash",
+    "per-run CUDA UUID attestation",
+    "per-run recovery software snapshot",
+    "complete recovery command lines and process environments",
+    "original seed4-A verifier failure output and exit status"
+  ],
+  "per_run_integrity": {
+    "all_artifact_hashes_recomputed": true,
+    "passed_runs": 6,
+    "public_receipts": {
+      "seed4_A": {
+        "file": "seed4_A.integrity.public.json",
+        "internal_receipt_sha256": "79f466ed90c85f1511d07e78d2f7a96d41fca8b12fb0a5e830b345af1cabb5ec",
+        "run_id": "arm_a_g1_0_lr_fixed_s4",
+        "sha256": "008cae2dd89879ea70dd4d817e72806aa2ef7feda9302124186486c16965c503"
+      },
+      "seed4_B": {
+        "file": "seed4_B.integrity.public.json",
+        "internal_receipt_sha256": "978bfc9de33ee21978ad7eaa61ab33b46c3ef8678aadaa39962c66f357b4c29e",
+        "run_id": "arm_b_g1_3_lr_fixed_s4",
+        "sha256": "a228e575daa73e4ab4310a55340a774e9dc15389ca245ed0d128eab16e99de6c"
+      },
+      "seed4_C": {
+        "file": "seed4_C.integrity.public.json",
+        "internal_receipt_sha256": "2d639938d0fad770d0f7c2fe0e37792c69fe37a9aba95f18189d8da7e6ca30ff",
+        "run_id": "arm_c_g1_3_lr_matched_s4",
+        "sha256": "6414701387b0fcb7a6a6ea895af10292fa997dd817ebf986923199f85132aa8c"
+      },
+      "seed5_A": {
+        "file": "seed5_A.integrity.public.json",
+        "internal_receipt_sha256": "decc87841f9ed80a1a2849243f90d92b52c99c657572bfdd7ffa306768f92fe8",
+        "run_id": "arm_a_g1_0_lr_fixed_s5",
+        "sha256": "93b947e33bac6e8a72b5361b7b1f4c389c1897faaf9606364c8e64d53449f64f"
+      },
+      "seed5_B": {
+        "file": "seed5_B.integrity.public.json",
+        "internal_receipt_sha256": "64f8e02414c7c425448e3a98faacf83f839add463bb9f15d9c8b1f159c8cef0a",
+        "run_id": "arm_b_g1_3_lr_fixed_s5",
+        "sha256": "750572982b3bc0028cc6499dd02f067d1349affe45caac5fceab4e2be3ba711f"
+      },
+      "seed5_C": {
+        "file": "seed5_C.integrity.public.json",
+        "internal_receipt_sha256": "e405cd3c856933685015f0598d846e653ea2684393eb9e473ca477eeb502e5f0",
+        "run_id": "arm_c_g1_3_lr_matched_s5",
+        "sha256": "4ccd5a5b5354b4aead4adeb335b6cb054c17ddcbfa261d127ef33f777b418060"
+      }
+    },
+    "required_runs": 6
+  },
+  "publication": {
+    "absolute_paths_hostnames_accounts_ips_and_full_gpu_uuids_removed": true,
+    "sanitized_for_github": true
+  },
+  "quality_blind": {
+    "attestation_kind": "workflow-scope declaration; not cryptographic proof",
+    "decision_frozen_before_quality_evaluation": true,
+    "excluded_inputs": [
+      "FID",
+      "KID",
+      "quality-evaluation outputs"
+    ],
+    "generation_quality_metrics_accessed": false
+  },
+  "receipt_type": "gap_lr_seed_replication_quality_blind_evidence",
+  "runtime": {
+    "clock_model": {
+      "acceptance_gate": "diagnostic only; no exact process-start claim",
+      "application_clock_sources": [
+        "stats.jsonl epoch timestamps",
+        "timestamped process-exit warning",
+        "historical and strengthened receipt verified_at_utc"
+      ],
+      "filesystem_clock_not_used_as_application_time": true,
+      "observed_filesystem_minus_application_offset_seconds": {
+        "maximum": 65.766924,
+        "minimum": 65.708001
+      }
+    },
+    "directly_observed_overlaps": [
+      {
+        "different_logged_gpu_indices": true,
+        "directly_observed_overlap_end_utc": "2026-08-12T09:55:02.533827+00:00",
+        "directly_observed_overlap_start_utc": "2026-08-12T09:15:54.347557+00:00",
+        "duration_seconds": 2348.18627,
+        "logged_gpu_indices": [
+          0,
+          1
+        ],
+        "runs": [
+          "arm_b_g1_3_lr_fixed_s4",
+          "arm_a_g1_0_lr_fixed_s5"
+        ]
+      },
+      {
+        "different_logged_gpu_indices": true,
+        "directly_observed_overlap_end_utc": "2026-08-12T10:35:26.321193+00:00",
+        "directly_observed_overlap_start_utc": "2026-08-12T09:56:10.512278+00:00",
+        "duration_seconds": 2355.808915,
+        "logged_gpu_indices": [
+          0,
+          1
+        ],
+        "runs": [
+          "arm_c_g1_3_lr_matched_s4",
+          "arm_b_g1_3_lr_fixed_s5"
+        ]
+      }
+    ],
+    "hardware": {
+      "devices": [
+        {
+          "device_alias": "device_0",
+          "driver_version": "535.54.03",
+          "logged_gpu_index": 0,
+          "memory_total": "81920 MiB",
+          "name": "NVIDIA A100 80GB PCIe"
+        },
+        {
+          "device_alias": "device_1",
+          "driver_version": "535.54.03",
+          "logged_gpu_index": 1,
+          "memory_total": "81920 MiB",
+          "name": "NVIDIA A100 80GB PCIe"
+        }
+      ],
+      "full_gpu_uuids_retained_only_in_internal_sidecar": true,
+      "per_run_cuda_uuid_attested": false,
+      "prelaunch_sidecar_entries_equivalent": true,
+      "snapshot_scope": "single pre-original-launch sidecar; not per-run attestation"
+    },
+    "launcher_segments": [
+      {
+        "committed_launcher_reconstructible": true,
+        "events": [
+          {
+            "arm": "A",
+            "event": "START",
+            "gap_scale": 1.0,
+            "learning_rate": 0.0001,
+            "logged_gpu_index": 1,
+            "port": 29841,
+            "seed": 4
+          }
+        ],
+        "exact_command_preserved": false,
+        "kind": "original",
+        "launcher_log_sha256": "6f227f85df3ae73bace22bb85b35879e50b0782aded43e6919e735a5705018ec",
+        "launcher_log_size_bytes": 119,
+        "segment_id": "original"
+      },
+      {
+        "committed_launcher_reconstructible": false,
+        "events": [
+          {
+            "arm": "B",
+            "event": "START",
+            "gap_scale": 1.3,
+            "learning_rate": 0.0001,
+            "logged_gpu_index": 0,
+            "port": 29842,
+            "seed": 4
+          },
+          {
+            "arm": "B",
+            "event": "DONE",
+            "integrity": "passed",
+            "seed": 4
+          },
+          {
+            "arm": "C",
+            "event": "START",
+            "gap_scale": 1.3,
+            "learning_rate": 0.00012963523762588692,
+            "logged_gpu_index": 0,
+            "port": 29843,
+            "seed": 4
+          },
+          {
+            "arm": "C",
+            "event": "DONE",
+            "integrity": "passed",
+            "seed": 4
+          },
+          {
+            "event": "COMPLETE",
+            "marker": "SEED4_REMAINING_ARMS_COMPLETE"
+          }
+        ],
+        "exact_command_preserved": false,
+        "kind": "manual_recovery",
+        "launcher_log_sha256": "e0a2fb20f924f5694559a605afc3a5362d055c9f41814fe3bcd6b06c294d4317",
+        "launcher_log_size_bytes": 244,
+        "pid": 19610,
+        "pid_file_mtime_filesystem_clock_utc": "2026-08-12T09:16:40.615418+00:00",
+        "pid_file_sha256": "a57e59f2490637b830200e7da21b5612e5c70b590e500fb82ac4729b3313cdda",
+        "segment_id": "seed4_recovery"
+      },
+      {
+        "committed_launcher_reconstructible": false,
+        "events": [
+          {
+            "arm": "A",
+            "event": "START",
+            "gap_scale": 1.0,
+            "learning_rate": 0.0001,
+            "logged_gpu_index": 1,
+            "port": 29851,
+            "seed": 5
+          },
+          {
+            "arm": "A",
+            "event": "DONE",
+            "integrity": "passed",
+            "seed": 5
+          },
+          {
+            "arm": "B",
+            "event": "START",
+            "gap_scale": 1.3,
+            "learning_rate": 0.0001,
+            "logged_gpu_index": 1,
+            "port": 29852,
+            "seed": 5
+          },
+          {
+            "arm": "B",
+            "event": "DONE",
+            "integrity": "passed",
+            "seed": 5
+          },
+          {
+            "arm": "C",
+            "event": "START",
+            "gap_scale": 1.3,
+            "learning_rate": 0.00012963523762588692,
+            "logged_gpu_index": 1,
+            "port": 29853,
+            "seed": 5
+          },
+          {
+            "arm": "C",
+            "event": "DONE",
+            "integrity": "passed",
+            "seed": 5
+          },
+          {
+            "event": "COMPLETE",
+            "marker": "SEED5_ALL_ARMS_COMPLETE"
+          }
+        ],
+        "exact_command_preserved": false,
+        "kind": "manual_recovery",
+        "launcher_log_sha256": "ef7aa4e907735fa92ad9cd06e371c4642778ed3806736ca492396c219a1d36a4",
+        "launcher_log_size_bytes": 327,
+        "pid": 19994,
+        "pid_file_mtime_filesystem_clock_utc": "2026-08-12T09:16:48.541171+00:00",
+        "pid_file_sha256": "2c1de6a0d0382c3ac4ea2042d2c394b1eef05ddeb29508172a777d40248ecd00",
+        "segment_id": "seed5_recovery"
+      }
+    ],
+    "planned": {
+      "arm_order": [
+        "A",
+        "B",
+        "C"
+      ],
+      "automatic_retry": false,
+      "execution_mode": "fully_serial",
+      "gpu_index": 1,
+      "seed_order": [
+        4,
+        5
+      ]
+    },
+    "runs": {
+      "arm_a_g1_0_lr_fixed_s4": {
+        "arm": "A",
+        "device_alias": "device_1",
+        "exit_marker_at_utc": "2026-08-12T05:18:37.786482+00:00",
+        "exit_timestamp_source": "destroy_process_group warning immediately after clean Exiting marker",
+        "exit_timestamp_timezone_assumption": "Asia/Shanghai (UTC+08:00)",
+        "external_training_log_sha256": "1ffc0b41f2ca57541978348d497fcbe15634dad2e6ad4b27e4a6b73f8a3bacba",
+        "first_progress_at_utc": "2026-08-12T04:38:51.600314+00:00",
+        "gpu_evidence": {
+          "logged_index": "direct launcher assertion",
+          "uuid_mapping": "inference from one pre-launch hardware sidecar; index stability and per-run UUID were not attested"
+        },
+        "historical_integrity_receipt": {
+          "artifact_manifest_equal_to_strengthened_receipt": true,
+          "receipt_sha256": "7f6d615a91ff5d7dcbffa9600ffa4384be2c3680eefcbb2fce05415ace0107fa",
+          "receipt_size_bytes": 4679,
+          "retained_external_to_git": true,
+          "role": "posthoc_reverification_after_original_launcher_exit",
+          "schema_version": 1,
+          "verified_at_utc": "2026-08-12T09:09:07.078469+00:00"
+        },
+        "interval_definition": "first stats record through timestamped exit marker",
+        "interval_scope": "observed training-phase lower bound, not exact process lifetime",
+        "last_progress_at_utc": "2026-08-12T05:18:35.704376+00:00",
+        "logged_gpu_index": 1,
+        "port": 29841,
+        "public_receipt": "seed4_A.integrity.public.json",
+        "public_receipt_sha256": "008cae2dd89879ea70dd4d817e72806aa2ef7feda9302124186486c16965c503",
+        "seed": 4,
+        "segment_id": "original",
+        "strengthened_integrity_verified_at_utc": "2026-08-12T15:01:07.436347+00:00"
+      },
+      "arm_a_g1_0_lr_fixed_s5": {
+        "arm": "A",
+        "device_alias": "device_1",
+        "exit_marker_at_utc": "2026-08-12T09:55:28.179643+00:00",
+        "exit_timestamp_source": "destroy_process_group warning immediately after clean Exiting marker",
+        "exit_timestamp_timezone_assumption": "Asia/Shanghai (UTC+08:00)",
+        "external_training_log_sha256": "4b08bd5af118e8854528a93da8afda0ad0271d2c9bbc6aea1f7c30f0906e0681",
+        "first_progress_at_utc": "2026-08-12T09:15:54.347557+00:00",
+        "gpu_evidence": {
+          "logged_index": "direct launcher assertion",
+          "uuid_mapping": "inference from one pre-launch hardware sidecar; index stability and per-run UUID were not attested"
+        },
+        "historical_integrity_receipt": {
+          "artifact_manifest_equal_to_strengthened_receipt": true,
+          "receipt_sha256": "7a3d97ef76755e0c6761b4a291eff695abf06341ad66a611b7dac8fe3c1fceae",
+          "receipt_size_bytes": 4679,
+          "retained_external_to_git": true,
+          "role": "inline_before_launcher_done",
+          "schema_version": 1,
+          "verified_at_utc": "2026-08-12T09:55:57.235090+00:00"
+        },
+        "interval_definition": "first stats record through timestamped exit marker",
+        "interval_scope": "observed training-phase lower bound, not exact process lifetime",
+        "last_progress_at_utc": "2026-08-12T09:55:27.025697+00:00",
+        "logged_gpu_index": 1,
+        "port": 29851,
+        "public_receipt": "seed5_A.integrity.public.json",
+        "public_receipt_sha256": "93b947e33bac6e8a72b5361b7b1f4c389c1897faaf9606364c8e64d53449f64f",
+        "seed": 5,
+        "segment_id": "seed5_recovery",
+        "strengthened_integrity_verified_at_utc": "2026-08-12T15:02:27.370306+00:00"
+      },
+      "arm_b_g1_3_lr_fixed_s4": {
+        "arm": "B",
+        "device_alias": "device_0",
+        "exit_marker_at_utc": "2026-08-12T09:55:02.533827+00:00",
+        "exit_timestamp_source": "destroy_process_group warning immediately after clean Exiting marker",
+        "exit_timestamp_timezone_assumption": "Asia/Shanghai (UTC+08:00)",
+        "external_training_log_sha256": "645888f09a665eec6ceca60fdb4f2cc96b3596882bac6fab8a04a118e121e778",
+        "first_progress_at_utc": "2026-08-12T09:15:47.708811+00:00",
+        "gpu_evidence": {
+          "logged_index": "direct launcher assertion",
+          "uuid_mapping": "inference from one pre-launch hardware sidecar; index stability and per-run UUID were not attested"
+        },
+        "historical_integrity_receipt": {
+          "artifact_manifest_equal_to_strengthened_receipt": true,
+          "receipt_sha256": "a3fb97049514c8bc67bbe676c9546f295c7c73af635af61aa1f37010f6b38a4a",
+          "receipt_size_bytes": 4679,
+          "retained_external_to_git": true,
+          "role": "inline_before_launcher_done",
+          "schema_version": 1,
+          "verified_at_utc": "2026-08-12T09:55:32.195085+00:00"
+        },
+        "interval_definition": "first stats record through timestamped exit marker",
+        "interval_scope": "observed training-phase lower bound, not exact process lifetime",
+        "last_progress_at_utc": "2026-08-12T09:55:00.286662+00:00",
+        "logged_gpu_index": 0,
+        "port": 29842,
+        "public_receipt": "seed4_B.integrity.public.json",
+        "public_receipt_sha256": "a228e575daa73e4ab4310a55340a774e9dc15389ca245ed0d128eab16e99de6c",
+        "seed": 4,
+        "segment_id": "seed4_recovery",
+        "strengthened_integrity_verified_at_utc": "2026-08-12T15:01:34.119464+00:00"
+      },
+      "arm_b_g1_3_lr_fixed_s5": {
+        "arm": "B",
+        "device_alias": "device_1",
+        "exit_marker_at_utc": "2026-08-12T10:35:40.639313+00:00",
+        "exit_timestamp_source": "destroy_process_group warning immediately after clean Exiting marker",
+        "exit_timestamp_timezone_assumption": "Asia/Shanghai (UTC+08:00)",
+        "external_training_log_sha256": "00bad6b907928724111f89eaa974f001fcd4a0b782d2d6ad040fd8e8d217643b",
+        "first_progress_at_utc": "2026-08-12T09:56:10.512278+00:00",
+        "gpu_evidence": {
+          "logged_index": "direct launcher assertion",
+          "uuid_mapping": "inference from one pre-launch hardware sidecar; index stability and per-run UUID were not attested"
+        },
+        "historical_integrity_receipt": {
+          "artifact_manifest_equal_to_strengthened_receipt": true,
+          "receipt_sha256": "4b1de127535e7cc2bc614b57a0c6c5fc8192228b590a3acb535b0f15651867b6",
+          "receipt_size_bytes": 4679,
+          "retained_external_to_git": true,
+          "role": "inline_before_launcher_done",
+          "schema_version": 1,
+          "verified_at_utc": "2026-08-12T10:36:08.609812+00:00"
+        },
+        "interval_definition": "first stats record through timestamped exit marker",
+        "interval_scope": "observed training-phase lower bound, not exact process lifetime",
+        "last_progress_at_utc": "2026-08-12T10:35:38.356986+00:00",
+        "logged_gpu_index": 1,
+        "port": 29852,
+        "public_receipt": "seed5_B.integrity.public.json",
+        "public_receipt_sha256": "750572982b3bc0028cc6499dd02f067d1349affe45caac5fceab4e2be3ba711f",
+        "seed": 5,
+        "segment_id": "seed5_recovery",
+        "strengthened_integrity_verified_at_utc": "2026-08-12T15:02:53.728799+00:00"
+      },
+      "arm_c_g1_3_lr_matched_s4": {
+        "arm": "C",
+        "device_alias": "device_0",
+        "exit_marker_at_utc": "2026-08-12T10:35:26.321193+00:00",
+        "exit_timestamp_source": "destroy_process_group warning immediately after clean Exiting marker",
+        "exit_timestamp_timezone_assumption": "Asia/Shanghai (UTC+08:00)",
+        "external_training_log_sha256": "3415f494fd40c59327bb93f04a0c62cdec088e1d122a6e2e81352e3f9362101a",
+        "first_progress_at_utc": "2026-08-12T09:55:46.017411+00:00",
+        "gpu_evidence": {
+          "logged_index": "direct launcher assertion",
+          "uuid_mapping": "inference from one pre-launch hardware sidecar; index stability and per-run UUID were not attested"
+        },
+        "historical_integrity_receipt": {
+          "artifact_manifest_equal_to_strengthened_receipt": true,
+          "receipt_sha256": "89b3a1fa7b3ddff634d25d8a41eb50e3582f3b72fd7a40a2d4f54cd4941659a7",
+          "receipt_size_bytes": 4697,
+          "retained_external_to_git": true,
+          "role": "inline_before_launcher_done",
+          "schema_version": 1,
+          "verified_at_utc": "2026-08-12T10:35:54.207981+00:00"
+        },
+        "interval_definition": "first stats record through timestamped exit marker",
+        "interval_scope": "observed training-phase lower bound, not exact process lifetime",
+        "last_progress_at_utc": "2026-08-12T10:35:24.241613+00:00",
+        "logged_gpu_index": 0,
+        "port": 29843,
+        "public_receipt": "seed4_C.integrity.public.json",
+        "public_receipt_sha256": "6414701387b0fcb7a6a6ea895af10292fa997dd817ebf986923199f85132aa8c",
+        "seed": 4,
+        "segment_id": "seed4_recovery",
+        "strengthened_integrity_verified_at_utc": "2026-08-12T15:02:00.769726+00:00"
+      },
+      "arm_c_g1_3_lr_matched_s5": {
+        "arm": "C",
+        "device_alias": "device_1",
+        "exit_marker_at_utc": "2026-08-12T11:15:55.436647+00:00",
+        "exit_timestamp_source": "destroy_process_group warning immediately after clean Exiting marker",
+        "exit_timestamp_timezone_assumption": "Asia/Shanghai (UTC+08:00)",
+        "external_training_log_sha256": "0b20c39677ec918bef137eac5a813abf7b03b42f2ddce7f7f49fe06cd9c839e2",
+        "first_progress_at_utc": "2026-08-12T10:36:22.311463+00:00",
+        "gpu_evidence": {
+          "logged_index": "direct launcher assertion",
+          "uuid_mapping": "inference from one pre-launch hardware sidecar; index stability and per-run UUID were not attested"
+        },
+        "historical_integrity_receipt": {
+          "artifact_manifest_equal_to_strengthened_receipt": true,
+          "receipt_sha256": "6b633ebdb19552137702638e1f24df3200b2870329a7df82d1a18e3cf526056f",
+          "receipt_size_bytes": 4697,
+          "retained_external_to_git": true,
+          "role": "inline_before_launcher_done",
+          "schema_version": 1,
+          "verified_at_utc": "2026-08-12T11:16:22.620527+00:00"
+        },
+        "interval_definition": "first stats record through timestamped exit marker",
+        "interval_scope": "observed training-phase lower bound, not exact process lifetime",
+        "last_progress_at_utc": "2026-08-12T11:15:53.138932+00:00",
+        "logged_gpu_index": 1,
+        "port": 29853,
+        "public_receipt": "seed5_C.integrity.public.json",
+        "public_receipt_sha256": "4ccd5a5b5354b4aead4adeb335b6cb054c17ddcbfa261d127ef33f777b418060",
+        "seed": 5,
+        "segment_id": "seed5_recovery",
+        "strengthened_integrity_verified_at_utc": "2026-08-12T15:03:20.109737+00:00"
+      }
+    },
+    "software": {
+      "cuda": "12.4",
+      "cudnn": "90100",
+      "python": "3.12.12",
+      "torch": "2.6.0+cu124"
+    }
+  },
+  "schema_version": 1,
+  "status": "adjudication_ready"
+}
