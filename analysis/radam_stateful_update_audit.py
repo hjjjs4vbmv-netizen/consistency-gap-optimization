@@ -792,21 +792,17 @@ def load_loss_from_checkpoint(path: Path):
     if "loss_fn" not in payload:
         raise SystemExit("checkpoint must contain loss_fn")
     if payload.get("augment_pipe") is not None:
-        raise SystemExit("augmentation-enabled checkpoint is unsupported: paired augmentation is not implemented")
+        raise SystemExit(
+            "augmentation-enabled checkpoint is unsupported: paired augmentation "
+            "is not implemented"
+        )
     loss = payload["loss_fn"]
-    schedule_name = getattr(getattr(loss, "schedule", None), "name", None)
-    # The formal A/B/C trajectories were trained with ``global_sigmoid``.
-    # At g=1.0 that schedule is bitwise identical to the official sigmoid, and
-    # this audit replaces only the disposable branch schedule below.  Accept
-    # both serialized identities without mutating the frozen training code or
-    # rewriting the checkpoint object.
-    if schedule_name not in {"sigmoid", "global_sigmoid"}:
+    if loss.schedule.name not in {"sigmoid", "global_sigmoid"}:
         raise SystemExit(
             "checkpoint schedule must be 'sigmoid' or 'global_sigmoid', "
-            f"got {schedule_name!r}"
+            f"got {loss.schedule.name!r}"
         )
     return loss
-
 
 def load_training_state(path: Path, device: torch.device, *, lr: float, betas: tuple[float, float],
                         eps_opt: float):
