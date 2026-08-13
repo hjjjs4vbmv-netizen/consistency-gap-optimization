@@ -166,13 +166,15 @@ Corrected 1-step control (eval_step=0, same K=256 state 000008, g=1.0 vs 1.3):
 
 **Revised interpretation (honest):** the scalar-history predictor is
 near-perfect at 1 step (R² = 0.993) and degrades to 0.735 at 20 steps. The
-scalar gradient-scale is trivially captured at short horizon; what accumulates
-over the 20 steps is the NON-SCALAR residual (the per-step ~3.2% E_j), whose
-unexplained share grows from ~0.7% (1 step) to ~26.5% (20 steps). The 20-step
-R² = 0.735 headline is unchanged; the mechanism evidence is that the scalar
-history still explains the majority at 20 steps, while the non-scalar content
-(and trajectory divergence / higher-order interactions) contributes a growing
-share with horizon through moment memory.
+scalar gradient-scale is captured almost perfectly at short horizon. Over the
+20-step horizon, the mismatch not captured by the scalar-history approximation
+grows: unexplained weighted variance increases from ~0.7% (1 step) to ~26.5%
+(20 steps). This growth is not uniquely attributable to the non-scalar per-step
+residual E_j; plausible contributors include non-scalar gradient content,
+trajectory-state divergence, and higher-order optimizer interactions. The
+20-step R² = 0.735 headline is unchanged: scalar history still explains the
+majority of the prospective update-ratio variation, while the residual share
+increases with horizon.
 
 The earlier "1-step R² = -7.93 proves accumulation builds R² from 0" claim was
 an artifact of the endpoint mismatch and is **withdrawn**.
