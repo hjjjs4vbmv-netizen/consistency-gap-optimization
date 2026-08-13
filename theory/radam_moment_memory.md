@@ -62,6 +62,18 @@ S_t := { i : m_{t,i} ≠ 0  AND  v_{t,i} > 0 }.
 
 All statements below are **on `S_t`** unless noted.
 
+**Expansion validity (self-review finding).** `m_{t,i} ≠ 0` makes `A^(1)`
+*defined*, but not *bounded*: the signed denominator `Σ_j p_j G_{j,i}` can be
+arbitrarily close to zero, so `A^(1)` (and hence `h`) is unbounded there, and
+the perturbative statements (`h - 1 = A^(1) - A^(2) + O(δ²)`, and the
+second-order formula) **fail on those coordinates even for small δ**. Measured:
+with `δ ∈ [-0.05, 0.05]`, coordinates where `|ΣpG|` is not small give `A^(1)`
+values up to ~6 (std ~0.9), far above `O(δ)`. The expansion is valid only on a
+**refined effective support** with a lower bound on `|m_{t,i}|` (equivalently
+`|Σ_j p_j G_{j,i}|`); off that set the exact identity still holds but the
+first/second-order corollaries do not. This is a *boundary condition on the
+corollaries*, not a defect of the exact identity.
+
 Define the **first-moment history gauge**, **second-moment history gauge**, and
 **second-moment quadratic gauge** (for `i ∈ S_t`):
 
