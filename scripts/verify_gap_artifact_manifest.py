@@ -324,6 +324,9 @@ def check_disjoint(
     from rebuild_disjoint_5k_summary import verify_committed_tables
 
     verify_committed_tables(repo, commit)
+    aggregation = bundle["aggregation_script"]
+    ensure_commit(repo, aggregation["commit"])
+    git_bytes(repo, aggregation["commit"], aggregation["path"])
     return len(checksums), len(cell_keys)
 
 

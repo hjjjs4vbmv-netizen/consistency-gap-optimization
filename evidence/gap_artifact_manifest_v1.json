@@ -347,7 +347,7 @@
       "blockwise_csv": {"path": "results/gap_lr_matched/disjoint_5k_0813/blockwise_results.csv", "sha256": "d748a4dcb33589276b82d7c1825b1fce8cfbf2c7a14e0bbe857de150bc960189"},
       "summary_csv": {"path": "results/gap_lr_matched/disjoint_5k_0813/disjoint_block_summary.csv", "sha256": "e83838b0514583ec69867a7fb140b57739e4b3c964a719d4f4869ed68179f18e"},
       "decision": {"path": "results/gap_lr_matched/disjoint_5k_0813/quality_decision.json", "sha256": "c8eeb489565019b45fb2c93b5f5462b626a6382447cc1cb463568b9472b3e50e"},
-      "aggregation_script": null,
+      "aggregation_script": {"commit": "cec703e", "path": "scripts/rebuild_disjoint_5k_summary.py", "reproduces": ["blockwise_results.csv", "disjoint_block_summary.csv"], "verification": "byte_exact"},
       "plotting_script": null
     }
   },
@@ -397,7 +397,6 @@
     {"id": "B001", "severity": "HIGH", "scope": "PR47", "detail": "A mutable-latest duplicate K=256 result remains versioned; it is excluded from canonical plotting but remains a claim-selection footgun."},
     {"id": "B002", "severity": "HIGH", "scope": "PR47", "detail": "The NPY gradient/update histories needed to recompute weighted R2 are external and identified only by SHA256, without a durable artifact locator."},
     {"id": "B003", "severity": "HIGH", "scope": "PR53", "detail": "FID/KID generated samples or feature NPZs are not retained or hash-bound, so the metric JSONL values cannot be recomputed from sample-level artifacts."},
-    {"id": "B004", "severity": "HIGH", "scope": "PR53", "detail": "No versioned aggregation script maps the 54 JSONL files to blockwise_results.csv and disjoint_block_summary.csv."},
     {"id": "B005", "severity": "HIGH", "scope": "PR53 seed3 B/C", "detail": "Committed public evidence does not record SHA256 for the exact numbered network snapshots evaluated for seed-3 Arms B and C."},
     {"id": "B006", "severity": "MEDIUM", "scope": "PR53", "detail": "Each metric JSONL omits checkpoint SHA256 and sample-seed range; binding relies on directory names plus the separate handoff."}
   ]
