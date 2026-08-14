@@ -137,7 +137,8 @@ uninterrupted same-trajectory historical attribution.
 ## Files
 - `analysis/scalar_history_predictor.py` — the mechanism test.
 - `analysis/real_history/k{K}/` — per-K gradient histories + `scalar_prediction.json`.
-- `analysis/real_history/scalar_prediction.json` — the K=256 result.
+- `analysis/real_history/k256/scalar_prediction.json` — the only canonical K=256 result.
+- `analysis/real_history/scalar_prediction.json` — a noncanonical tombstone; forbidden for claims.
 - `figures/k_horizon_R2_Ropt.pdf` — the K curve.
 - `analysis/plot_k_curve.py` — the plotting script.
 - `analysis/moment_memory_prediction.py` — coordinate-wise algebraic sanity check (sanity).

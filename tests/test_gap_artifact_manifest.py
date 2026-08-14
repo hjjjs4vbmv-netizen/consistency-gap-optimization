@@ -51,6 +51,17 @@ class GapArtifactManifestTests(unittest.TestCase):
         self.assertNotIn(forbidden, bundle["canonical_result_paths"])
         self.assertNotIn(forbidden, bundle["plotting_script"]["reads_only"])
 
+    def test_mutable_latest_path_is_a_fail_closed_tombstone(self):
+        tombstone = json.loads(
+            (ROOT / "analysis" / "real_history" / "scalar_prediction.json").read_text()
+        )
+        self.assertEqual(tombstone["status"], "NON_CANONICAL_TOMBSTONE")
+        self.assertEqual(tombstone["claim_use"], "FORBIDDEN")
+        self.assertEqual(
+            tombstone["canonical_result"],
+            "analysis/real_history/k256/scalar_prediction.json",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
