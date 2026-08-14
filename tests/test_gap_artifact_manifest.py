@@ -18,13 +18,29 @@ class GapArtifactManifestTests(unittest.TestCase):
 
     def test_full_structural_audit_passes_with_explicit_blockers(self):
         self.assertEqual(self.report["structural_checks"], "PASS")
-        self.assertEqual(self.report["pull_requests_checked"], 6)
+        self.assertEqual(self.report["pull_requests_checked"], 7)
         self.assertEqual(self.report["checkpoint_records_checked"], 12)
+        self.assertEqual(self.report["crossk_h20_raw_arrays_checked"], 16)
+        self.assertEqual(self.report["crossk_external_records_checked"], 30)
         self.assertEqual(self.report["disjoint_evaluation_cells_checked"], 27)
         self.assertFalse(self.report["publication_ready"])
         self.assertEqual(
             {item["id"] for item in self.report["blocking_findings"]},
             {"B002", "B003", "B005", "B006"},
+        )
+
+    def test_b002_is_closed_only_for_git_self_contained_h20(self):
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        resolved = {item["id"]: item for item in manifest["resolved_findings"]}
+        blockers = {item["id"]: item for item in manifest["blocking_findings"]}
+        self.assertIn("B002-H20", resolved)
+        self.assertIn("B002", blockers)
+        self.assertIn("full R2(K,h)", blockers["B002"]["scope"])
+        self.assertIn("h=20 headline is closed separately", blockers["B002"]["detail"])
+        bundle = manifest["evidence_bundles"]["crossk_h20_scalar_history"]
+        self.assertEqual(bundle["status"], "canonical_git_self_contained_headline")
+        self.assertIsNone(
+            bundle["full_matrix_external_raw"]["durable_external_locator"]
         )
 
     def test_pr53_csvs_rebuild_exactly(self):

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "manifest_id": "gap-evidence-assets-2026-08-14-v1",
-  "generated_at": "2026-08-14T00:00:00+08:00",
+  "manifest_id": "gap-evidence-assets-2026-08-15-v2",
+  "generated_at": "2026-08-15T00:00:00+08:00",
   "repository": "hjjjs4vbmv-netizen/recurrence_of_ect",
   "material_passport": {
     "origin_skill": "academic-research-suite/experiment-agent",
@@ -52,6 +52,13 @@
       "head_commit": "fbdcb13ed7dab8a5fb179382e4453df9c1a0f7d2",
       "merge_commit": "6b0a110b28c86a19755b9535db4231d3441e68a7",
       "base": "role-e/gap-lr-matched"
+    },
+    "58": {
+      "title": "Cross-K moment-memory: R^2(K,h) matrix across training stages",
+      "head_commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91",
+      "integration_commit": "2d539b1d92658334de4f52796980fea91036d381",
+      "base": "main",
+      "state_at_audit": "open"
     }
   },
   "checkpoint_records": [
@@ -331,6 +338,44 @@
       "plotting_script": {"commit": "6bb913dab61b643a0629ecee187c1cb2d962f71f", "path": "analysis/plot_k_curve.py", "sha256": "913307095df6c7c66d62fd886a51a6e17c4ca939d202eca9112d68af816d8191", "reads_only": ["analysis/real_history/k32/scalar_prediction.json", "analysis/real_history/k64/scalar_prediction.json", "analysis/real_history/k128/scalar_prediction.json", "analysis/real_history/k256/scalar_prediction.json"]},
       "figure": {"commit": "6bb913dab61b643a0629ecee187c1cb2d962f71f", "path": "figures/k_horizon_R2_Ropt.pdf", "sha256": "5bbee7a7b64e0a47ce0e2edca6efe51413db8bec8672f78dc1ab4a48071fef6d"}
     },
+    "crossk_h20_scalar_history": {
+      "status": "canonical_git_self_contained_headline",
+      "pr": 58,
+      "artifact_commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91",
+      "checkpoint_record_ids": ["s3-A-k032128", "s3-A-k064128", "s3-A-k128128", "s3-A-k256000"],
+      "summary": {"path": "analysis/crossk_scalar_history/summary.json", "sha256": "cb701cc03279df1d7d67bcec613dbc39b5469e7760d79092f46b7d9275fe3250"},
+      "raw_prediction_sha256": {
+        "analysis/crossk_scalar_history/k32/raw_predictions/a_star_series.npy": "894f895eb62b59c09a5c5c4272dbe4aa6c47198f1c568e718d91acfb91877433",
+        "analysis/crossk_scalar_history/k32/raw_predictions/h_actual_h20.npy": "c4cdb4aa696e161c0ca8875a61e687865b8088ef3b43379fbc2950e27205eda4",
+        "analysis/crossk_scalar_history/k32/raw_predictions/h_pred_scalar_h20.npy": "740cb26074ee3a141fa90d795e76f3f06d2382d0ca9b7b9f737c5defcdd9b690",
+        "analysis/crossk_scalar_history/k32/raw_predictions/weights_h20.npy": "8ff41584830577104a48c2cdc0387ab685ef399174fc61652786f9908ec4aa47",
+        "analysis/crossk_scalar_history/k64/raw_predictions/a_star_series.npy": "4372d61e2248616dee50b5226c1eac529d934bec9dcf460ac23d0cfce89a1ee3",
+        "analysis/crossk_scalar_history/k64/raw_predictions/h_actual_h20.npy": "b2086d20f49908a3ed74081e571e3cad49172f27a1078890d4081405c1d23841",
+        "analysis/crossk_scalar_history/k64/raw_predictions/h_pred_scalar_h20.npy": "3e10649b34480f93158d65afb48c50a63a31fe16d7b3cfa417932ecb4c4305d4",
+        "analysis/crossk_scalar_history/k64/raw_predictions/weights_h20.npy": "c2b5b974e9632fad7355e098cd4a24a5d2cc82349829b31b72bd73f9c56a8c6c",
+        "analysis/crossk_scalar_history/k128/raw_predictions/a_star_series.npy": "a4cdce1f388ae366fdb8eb73a2c6716b3dd306313bd2bc9cb51ad35a486a8866",
+        "analysis/crossk_scalar_history/k128/raw_predictions/h_actual_h20.npy": "b17ea8dc7daac8da5a39b7c90d8fe291b71795865e0b328fa5d69bed59c35d77",
+        "analysis/crossk_scalar_history/k128/raw_predictions/h_pred_scalar_h20.npy": "30f738babbcecc8071d6884411523bde5af333a8fe117c33372cd961b5d36aef",
+        "analysis/crossk_scalar_history/k128/raw_predictions/weights_h20.npy": "3b025493ec01d2753a8baf8c99dcfe5184b3793a04280874695a51d3425392f9",
+        "analysis/crossk_scalar_history/k256/raw_predictions/a_star_series.npy": "ae2169e27ebb4c0c6fc4c7b31ccd307288bba1495ff44c2a00b74d3106f1831f",
+        "analysis/crossk_scalar_history/k256/raw_predictions/h_actual_h20.npy": "c3e74170d51e597c4c8bcd9c496a8556ca868871550b9819aaa29f53563811e6",
+        "analysis/crossk_scalar_history/k256/raw_predictions/h_pred_scalar_h20.npy": "e89d9c1a2206d7a7d7e9d10f3cfbb3384dc19ab96fec2a36d529223fffa5fa4c",
+        "analysis/crossk_scalar_history/k256/raw_predictions/weights_h20.npy": "8a8de85225f4d22755915ffa4a0e10ecc4ce58ec2355e43ff0e2baa8e27e45a2"
+      },
+      "recompute_test": {"path": "tests/test_crossk_h20_recompute.py", "sha256": "bd59c00b9ee5f137fa46901b1327ee227c37744adb5d6b34820e11979173af33", "verification": "2_passed_8_subtests"},
+      "plotting_script": {"path": "analysis/plot_crossk.py", "sha256": "2598c695fd1326325607dee1e7ea3aec520fd34507a7f77bf736f281b7020d41", "h20_inputs": ["summary.json", "{k}/raw_predictions/h_pred_scalar_h20.npy", "{k}/raw_predictions/h_actual_h20.npy", "{k}/raw_predictions/weights_h20.npy"]},
+      "h20_figures": [
+        {"path": "figures/cross_k_scalar_history/fig1_R2_vs_training_stage.pdf", "sha256": "f31c09d995e8c8919844522be2d04e87dc1c6c62546022fa3e35413a7b1890a7"},
+        {"path": "figures/cross_k_scalar_history/fig3_scatter_h20.pdf", "sha256": "2d86c3d8a7bb29894b8aed400e90207578f4d33eb9503222201acafef7554dad"}
+      ],
+      "headline_weighted_r2": {"k32": 0.8607555336375079, "k64": 0.9108881763622554, "k128": 0.918233823711323, "k256": 0.7354752144112958},
+      "full_matrix_external_raw": {
+        "manifest": {"path": "analysis/crossk_scalar_history/raw_manifest.json", "sha256": "45ac63767d24f7fe84178e2bb21cfad2397302a80e3e519b77c852a47fa5185b"},
+        "availability": "node_local_absolute_paths_with_sha256_and_size",
+        "durable_external_locator": null,
+        "scope": "full R2(K,h) re-derivation outside the Git-committed h=20 headline"
+      }
+    },
     "disjoint_fid_kid_5k": {
       "status": "blocked_for_publication_recomputation",
       "pr": 53,
@@ -364,7 +409,8 @@
   ],
   "resolved_findings": [
     {"id": "B001", "resolved_commit": "9307a76", "detail": "The mutable-latest duplicate is now a machine-readable NON_CANONICAL_TOMBSTONE and the mechanism document names only the numbered K=256 receipt as canonical."},
-    {"id": "B004", "resolved_commit": "cec703e", "detail": "A deterministic aggregation script reproduces both PR #53 CSVs byte-for-byte from all 54 SHA-bound JSONLs."}
+    {"id": "B004", "resolved_commit": "cec703e", "detail": "A deterministic aggregation script reproduces both PR #53 CSVs byte-for-byte from all 54 SHA-bound JSONLs."},
+    {"id": "B002-H20", "resolved_commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91", "detail": "PR #58 commits per-coordinate predictions, targets, weights, and a* series for all four K values; the h=20 weighted R2/Corr headline recomputes from Git alone in 2 tests with 8 subtests."}
   ],
   "claim_registry": [
     {
@@ -379,13 +425,24 @@
     },
     {
       "claim_id": "prospective-scalar-history-r2",
-      "status": "TRACEABLE_NOT_SELF_CONTAINED",
-      "values": "weighted R2 and R_opt at K={32,64,128,256}",
-      "commit": "6bb913dab61b643a0629ecee187c1cb2d962f71f",
+      "status": "TRACEABLE_SELF_CONTAINED_AT_H20",
+      "values": "weighted R2 and Corr at h=20, K={32,64,128,256}",
+      "commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91",
       "run_id": "arm_a_g1_0_lr_fixed_s3",
       "checkpoint_record_ids": ["s3-A-k032128", "s3-A-k064128", "s3-A-k128128", "s3-A-k256000"],
-      "raw": "analysis/real_history/k{32,64,128,256}/scalar_prediction.json plus external hash-only NPY arrays",
-      "plotting_script": "analysis/plot_k_curve.py"
+      "raw": "analysis/crossk_scalar_history/k{32,64,128,256}/raw_predictions/{h_pred_scalar_h20,h_actual_h20,weights_h20,a_star_series}.npy",
+      "plotting_script": "analysis/plot_crossk.py",
+      "recompute_test": "tests/test_crossk_h20_recompute.py"
+    },
+    {
+      "claim_id": "prospective-scalar-history-full-r2-k-h-matrix",
+      "status": "TRACEABLE_NOT_DURABLY_LOCATED",
+      "values": "weighted R2(K,h), h=1..20",
+      "commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91",
+      "run_id": "arm_a_g1_0_lr_fixed_s3",
+      "checkpoint_record_ids": ["s3-A-k032128", "s3-A-k064128", "s3-A-k128128", "s3-A-k256000"],
+      "raw": "analysis/crossk_scalar_history/raw_manifest.json: hash+size-bound node-local paths; no durable external URI",
+      "plotting_script": "analysis/plot_crossk.py"
     },
     {
       "claim_id": "disjoint-5k-delta-ctrl",
@@ -399,7 +456,7 @@
     }
   ],
   "blocking_findings": [
-    {"id": "B002", "severity": "HIGH", "scope": "PR47", "detail": "The NPY gradient/update histories needed to recompute weighted R2 are external and identified only by SHA256, without a durable artifact locator."},
+    {"id": "B002", "severity": "HIGH", "scope": "PR58 full R2(K,h) matrix excluding the Git-self-contained h=20 headline", "detail": "PR #58 records node-local absolute paths, SHA256, and sizes for the gradient/update/moment histories, but no durable externally resolvable artifact URI or object version. Full-matrix re-derivation remains unavailable off that node; the h=20 headline is closed separately as B002-H20."},
     {"id": "B003", "severity": "HIGH", "scope": "PR53", "detail": "FID/KID generated samples or feature NPZs are not retained or hash-bound, so the metric JSONL values cannot be recomputed from sample-level artifacts."},
     {"id": "B005", "severity": "HIGH", "scope": "PR53 seed3 B/C", "detail": "Committed public evidence does not record SHA256 for the exact numbered network snapshots evaluated for seed-3 Arms B and C."},
     {"id": "B006", "severity": "MEDIUM", "scope": "PR53", "detail": "Each metric JSONL omits checkpoint SHA256 and sample-seed range; binding relies on directory names plus the separate handoff."}

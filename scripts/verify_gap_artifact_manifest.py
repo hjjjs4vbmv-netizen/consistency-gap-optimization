@@ -265,6 +265,99 @@ def check_mechanism(
     return len(paths)
 
 
+def check_crossk_h20(
+    repo: Path, manifest: dict[str, Any], checkpoints: dict[str, dict[str, Any]]
+) -> tuple[int, int]:
+    bundle = manifest["evidence_bundles"]["crossk_h20_scalar_history"]
+    commit = bundle["artifact_commit"]
+    ensure_commit(repo, commit)
+
+    raw_hashes = bundle["raw_prediction_sha256"]
+    if len(raw_hashes) != 16:
+        raise AuditFailure("PR #58 h20 bundle must contain exactly 16 raw NPY arrays")
+    expected_paths = {
+        f"analysis/crossk_scalar_history/{label}/raw_predictions/{name}.npy"
+        for label in ("k32", "k64", "k128", "k256")
+        for name in (
+            "a_star_series",
+            "h_actual_h20",
+            "h_pred_scalar_h20",
+            "weights_h20",
+        )
+    }
+    if set(raw_hashes) != expected_paths:
+        raise AuditFailure("PR #58 h20 raw-array path set is incomplete or unexpected")
+    for path, expected in raw_hashes.items():
+        require_sha(expected, f"PR #58 raw array {path}")
+        observed = sha256(git_bytes(repo, commit, path))
+        if observed != expected:
+            raise AuditFailure(f"PR #58 raw-array hash mismatch: {path}")
+
+    summary_ref = {"commit": commit, **bundle["summary"]}
+    summary = json.loads(check_ref(repo, summary_ref, "PR #58 cross-K summary"))
+    for label, expected in bundle["headline_weighted_r2"].items():
+        rows = [
+            row
+            for row in summary[label]["horizons"]
+            if row["horizon_steps"] == 20
+        ]
+        if len(rows) != 1:
+            raise AuditFailure(f"PR #58 summary has no unique h20 row for {label}")
+        near(rows[0]["weighted_R2"], expected, f"PR #58 h20 R2 {label}")
+
+    for field, label in (
+        ("recompute_test", "PR #58 h20 recompute test"),
+        ("plotting_script", "PR #58 cross-K plotting script"),
+    ):
+        check_ref(repo, {"commit": commit, **bundle[field]}, label)
+    for index, figure in enumerate(bundle["h20_figures"]):
+        check_ref(repo, {"commit": commit, **figure}, f"PR #58 h20 figure {index}")
+
+    external = bundle["full_matrix_external_raw"]
+    external_manifest = json.loads(
+        check_ref(
+            repo,
+            {"commit": commit, **external["manifest"]},
+            "PR #58 full-matrix external manifest",
+        )
+    )
+    label_to_record = dict(
+        zip(
+            ("k32", "k64", "k128", "k256"),
+            (checkpoints[item] for item in bundle["checkpoint_record_ids"]),
+        )
+    )
+    external_records = 0
+    for label, record in label_to_record.items():
+        checkpoint = external_manifest["checkpoints"][label]
+        if checkpoint["sha256"] != record["training_state"]["sha256"]:
+            raise AuditFailure(f"PR #58 checkpoint hash mismatch: {label}")
+        for field in ("path", "sha256", "size_bytes"):
+            if field not in checkpoint:
+                raise AuditFailure(f"PR #58 checkpoint locator missing {field}: {label}")
+        require_sha(checkpoint["sha256"], f"PR #58 checkpoint {label}")
+        if not checkpoint["path"].startswith("/") or checkpoint["size_bytes"] <= 0:
+            raise AuditFailure(f"PR #58 checkpoint locator malformed: {label}")
+        external_records += 1
+        for name, item in external_manifest["raw_inputs"][label].items():
+            if not isinstance(item, dict) or "kind" not in item:
+                continue
+            for field in ("path", "sha256", "size_bytes"):
+                if field not in item:
+                    raise AuditFailure(f"PR #58 raw locator missing {field}: {label}/{name}")
+            require_sha(item["sha256"], f"PR #58 external raw {label}/{name}")
+            if not item["path"].startswith("/") or item["size_bytes"] <= 0:
+                raise AuditFailure(f"PR #58 raw locator malformed: {label}/{name}")
+            external_records += 1
+    if external_records != 30:
+        raise AuditFailure(
+            f"PR #58 external manifest expected 30 hash-bound records, found {external_records}"
+        )
+    if external.get("durable_external_locator") is not None:
+        raise AuditFailure("B002 scope changed; re-audit the claimed durable locator")
+    return len(raw_hashes), external_records
+
+
 def parse_checksum_manifest(data: bytes) -> dict[str, str]:
     checksums: dict[str, str] = {}
     for line_number, line in enumerate(data.decode().splitlines(), start=1):
@@ -348,22 +441,30 @@ def run_audit(repo: Path, manifest_path: Path) -> dict[str, Any]:
         raise AuditFailure("manifest does not freeze new hypothesis exploration")
     for number, pr in manifest["pull_requests"].items():
         ensure_commit(repo, pr["head_commit"])
-        ensure_commit(repo, pr["merge_commit"])
-        if int(number) not in (47, 49, 50, 51, 52, 53):
+        if "merge_commit" in pr:
+            ensure_commit(repo, pr["merge_commit"])
+        if "integration_commit" in pr:
+            ensure_commit(repo, pr["integration_commit"])
+        if int(number) not in (47, 49, 50, 51, 52, 53, 58):
             raise AuditFailure(f"unexpected PR in target set: {number}")
     checkpoints = checkpoint_index(manifest)
     longitudinal_artifacts = check_longitudinal(repo, manifest, checkpoints)
     mechanism_points = check_mechanism(repo, manifest, checkpoints)
+    crossk_h20_arrays, crossk_external_records = check_crossk_h20(
+        repo, manifest, checkpoints
+    )
     disjoint_artifacts, disjoint_cells = check_disjoint(repo, manifest, checkpoints)
     blockers = manifest.get("blocking_findings", [])
     return {
         "manifest_id": manifest["manifest_id"],
         "verification_status": "ANALYZED",
         "structural_checks": "PASS",
-        "pull_requests_checked": 6,
+        "pull_requests_checked": len(manifest["pull_requests"]),
         "checkpoint_records_checked": len(checkpoints),
         "longitudinal_bundle_artifacts_checked": longitudinal_artifacts,
         "mechanism_points_checked": mechanism_points,
+        "crossk_h20_raw_arrays_checked": crossk_h20_arrays,
+        "crossk_external_records_checked": crossk_external_records,
         "disjoint_bundle_artifacts_checked": disjoint_artifacts,
         "disjoint_evaluation_cells_checked": disjoint_cells,
         "blocking_findings": blockers,
@@ -398,6 +499,7 @@ def main() -> int:
         print("PASS: structural lineage and committed hashes are internally consistent")
         print(
             f"checked {report['checkpoint_records_checked']} checkpoint records, "
+            f"{report['crossk_h20_raw_arrays_checked']} PR #58 h20 arrays, "
             f"{report['disjoint_bundle_artifacts_checked']} PR #53 artifacts, and "
             f"{report['disjoint_evaluation_cells_checked']} evaluation cells"
         )
