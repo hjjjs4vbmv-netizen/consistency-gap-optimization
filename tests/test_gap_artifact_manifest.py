@@ -24,7 +24,7 @@ class GapArtifactManifestTests(unittest.TestCase):
         self.assertFalse(self.report["publication_ready"])
         self.assertEqual(
             {item["id"] for item in self.report["blocking_findings"]},
-            {"B001", "B002", "B003", "B005", "B006"},
+            {"B002", "B003", "B005", "B006"},
         )
 
     def test_pr53_csvs_rebuild_exactly(self):

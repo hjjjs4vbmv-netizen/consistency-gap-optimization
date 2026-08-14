@@ -358,8 +358,13 @@
       "path": "analysis/real_history/scalar_prediction.json",
       "sha256": "e4d0ec8951e797b5abde69a085b9fa801452f0cac70f8d0d543b4b7c259ddfc0",
       "reason": "Binds training-state-latest.pt, has a different source-state SHA256 from numbered state 000008, and omits seed.",
-      "claim_use": "FORBIDDEN"
+      "claim_use": "FORBIDDEN",
+      "resolved_by": {"commit": "9307a76", "action": "replaced payload with fail-closed tombstone pointing to the numbered K=256 result"}
     }
+  ],
+  "resolved_findings": [
+    {"id": "B001", "resolved_commit": "9307a76", "detail": "The mutable-latest duplicate is now a machine-readable NON_CANONICAL_TOMBSTONE and the mechanism document names only the numbered K=256 receipt as canonical."},
+    {"id": "B004", "resolved_commit": "cec703e", "detail": "A deterministic aggregation script reproduces both PR #53 CSVs byte-for-byte from all 54 SHA-bound JSONLs."}
   ],
   "claim_registry": [
     {
@@ -394,7 +399,6 @@
     }
   ],
   "blocking_findings": [
-    {"id": "B001", "severity": "HIGH", "scope": "PR47", "detail": "A mutable-latest duplicate K=256 result remains versioned; it is excluded from canonical plotting but remains a claim-selection footgun."},
     {"id": "B002", "severity": "HIGH", "scope": "PR47", "detail": "The NPY gradient/update histories needed to recompute weighted R2 are external and identified only by SHA256, without a durable artifact locator."},
     {"id": "B003", "severity": "HIGH", "scope": "PR53", "detail": "FID/KID generated samples or feature NPZs are not retained or hash-bound, so the metric JSONL values cannot be recomputed from sample-level artifacts."},
     {"id": "B005", "severity": "HIGH", "scope": "PR53 seed3 B/C", "detail": "Committed public evidence does not record SHA256 for the exact numbered network snapshots evaluated for seed-3 Arms B and C."},

@@ -252,6 +252,16 @@ def check_mechanism(
         raise AuditFailure("expected mutable-latest duplicate to have a distinct state hash")
     if "training-state-latest.pt" not in duplicate["execution_command"]:
         raise AuditFailure("noncanonical duplicate no longer documents its latest alias")
+    resolution = forbidden["resolved_by"]
+    tombstone = json.loads(
+        git_bytes(repo, resolution["commit"], forbidden["path"])
+    )
+    if tombstone.get("status") != "NON_CANONICAL_TOMBSTONE":
+        raise AuditFailure("mutable-latest duplicate was not replaced by a tombstone")
+    if tombstone.get("canonical_result") != paths[-1]:
+        raise AuditFailure("mechanism tombstone points to the wrong canonical result")
+    if tombstone.get("superseded_payload_sha256") != forbidden["sha256"]:
+        raise AuditFailure("mechanism tombstone does not bind the superseded payload")
     return len(paths)
 
 

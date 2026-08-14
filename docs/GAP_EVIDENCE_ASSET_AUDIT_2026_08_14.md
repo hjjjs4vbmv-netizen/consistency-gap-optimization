@@ -17,8 +17,8 @@ training-state hashes.  It does not read the stale mutable-`latest` duplicate.
 
 The evidence estate is not yet publication-ready under the requested
 commit -> run -> checkpoint -> raw artifact -> plotting-script standard.
-Five unresolved blockers remain after this audit branch adds a deterministic
-PR #53 aggregation reproducer.
+Four unresolved blockers remain after this audit branch adds a deterministic
+PR #53 aggregation reproducer and quarantines the mutable-`latest` duplicate.
 
 ## Audited PR boundary
 
@@ -77,14 +77,19 @@ The canonical K=256 mechanism receipt is
 
 | ID | Severity | Required closure |
 |---|---|---|
-| B001 | High | Remove the mutable-latest duplicate or replace it with a machine-readable tombstone pointing to the numbered K=256 receipt. |
 | B002 | High | Put PR #47's hash-bound NPY histories in a durable artifact store and record immutable locators, sizes, and hashes. |
 | B003 | High | Retain or regenerate hash-bound sample/feature artifacts for each PR #53 FID/KID cell. |
 | B005 | High | Publish the exact `network-snapshot-000008.pkl` SHA256 values for seed-3 Arms B and C and bind them to the metric cells. |
 | B006 | Medium | Add checkpoint SHA256 and explicit ordered sample-seed range to every metric receipt, or add a signed cell manifest carrying those fields. |
 
-The former aggregation blocker is closed locally: the new reproducer rebuilds
-both PR #53 CSVs byte-for-byte from all 54 SHA-bound JSONLs.
+The former mutable-latest and aggregation blockers are closed locally: commit
+`9307a76` replaces the duplicate payload with a tombstone, and the new
+reproducer rebuilds both PR #53 CSVs byte-for-byte from all 54 SHA-bound
+JSONLs.
+
+The source-host rehash for B005 was attempted twice read-only on 2026-08-14;
+the SSH endpoint closed both connections before the two files could be read.
+No checkpoint hash was inferred from a path, alias, or unrelated receipt.
 
 ## Reproduction commands
 
