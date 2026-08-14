@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "experiment_id": "cross_seed_optimizer_geometry_v1",
+  "purpose": "Compare one same-state paired current-gap RAdam diagnostic at the 256-kimg Arm-A endpoint for training seeds 3, 4, and 5.",
+  "design": {
+    "reference_arm": "A",
+    "reference_gap_scale": 1.0,
+    "candidate_gap_scale": 1.3,
+    "state_kimg": 256.0,
+    "audit_random_seed": 20260814,
+    "batch_size": 128,
+    "batch_gpu": 16,
+    "amp": true,
+    "learning_rate": 0.0001,
+    "betas": [0.9, 0.999],
+    "eps": 1e-08,
+    "support_atol": 0.0
+  },
+  "data": "REPLACE_WITH_CANONICAL_CIFAR10_ARCHIVE",
+  "endpoint_cells": [
+    {
+      "training_seed": 3,
+      "run_id": "arm_a_g1_0_lr_fixed_s3",
+      "training_state": "REPLACE_WITH_SEED3_ARM_A/training-state-000008.pt",
+      "checkpoint": "REPLACE_WITH_SEED3_ARM_A/network-snapshot-000008.pkl",
+      "expected_training_state_sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8",
+      "expected_checkpoint_sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b",
+      "quality_control": {
+        "fid5k_delta_C_minus_B": 90.494417313,
+        "kid5k_delta_C_minus_B": 0.10176017,
+        "source": "PR #53 disjoint 5k block mean"
+      }
+    },
+    {
+      "training_seed": 4,
+      "run_id": "arm_a_g1_0_lr_fixed_s4",
+      "training_state": "REPLACE_WITH_SEED4_ARM_A/training-state-000008.pt",
+      "checkpoint": "REPLACE_WITH_SEED4_ARM_A/network-snapshot-000008.pkl",
+      "expected_training_state_sha256": "REPLACE_WITH_SEED4_ARM_A_TRAINING_STATE_SHA256",
+      "expected_checkpoint_sha256": "ec724a4705cab6a789f05404a2fc82b362d5e3ef3aa5ed24735b82583059b684",
+      "quality_control": {
+        "fid5k_delta_C_minus_B": 4.945933983,
+        "kid5k_delta_C_minus_B": 0.003913724,
+        "source": "PR #53 disjoint 5k block mean"
+      }
+    },
+    {
+      "training_seed": 5,
+      "run_id": "arm_a_g1_0_lr_fixed_s5",
+      "training_state": "REPLACE_WITH_SEED5_ARM_A/training-state-000008.pt",
+      "checkpoint": "REPLACE_WITH_SEED5_ARM_A/network-snapshot-000008.pkl",
+      "expected_training_state_sha256": "REPLACE_WITH_SEED5_ARM_A_TRAINING_STATE_SHA256",
+      "expected_checkpoint_sha256": "97837ecba0f11d5b7d25c1eada17adf8ce5d5671ceae6553291f1405c5c16455",
+      "quality_control": {
+        "fid5k_delta_C_minus_B": -14.516957145,
+        "kid5k_delta_C_minus_B": -0.017868804,
+        "source": "PR #53 disjoint 5k block mean"
+      }
+    }
+  ],
+  "claim_boundary": "The paired audit measures current-state optimizer geometry. It may reveal seed dependence or numerical similarity, but it does not by itself establish a causal explanation for endpoint quality behavior."
+}
