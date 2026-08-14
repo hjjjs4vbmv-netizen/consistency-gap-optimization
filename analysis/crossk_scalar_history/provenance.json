@@ -22,7 +22,9 @@
   },
   "frozen_states": {
     "provenance": "All four K use #49-frozen canonical Arm-A states from the SAME seed-3 trajectory (arm_a_g1_0_lr_fixed_s3). No retraining, no new trajectory, no new seed, no optimizer/gap/LR/predictor change, no tuning for higher R^2. This is controlled replication across training stage only.",
-    "seed": 3,
+    "training_seed": 3,
+    "predictor_rng_seed": 20260809,
+    "seed_note": "training_seed=3 is the frozen Arm-A trajectory seed (per configs/q128_confirmatory_matrix.frozen.json, checkpoint_id q128-fresh-256k-seed3-fixed); predictor_rng_seed=20260809 is the --seed recorded in each canonical #47 receipt analysis/real_history/{k}/scalar_prediction.json (scalar_history_predictor.py). Both are recorded because they name different things.",
     "arm": "Arm-A (arm_a_g1_0_lr_fixed_s3)",
     "base_dir_server": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3",
     "mapping": {
@@ -57,6 +59,8 @@
   "artifacts": {
     "summary": "analysis/crossk_scalar_history/summary.json",
     "raw_predictions": "analysis/crossk_scalar_history/{k32,k64,k128,k256}/raw_predictions/{h_pred_scalar_h20,h_actual_h20,weights_h20,a_star_series}.npy",
+    "raw_manifest": "analysis/crossk_scalar_history/raw_manifest.json",
+    "recompute_test": "tests/test_crossk_h20_recompute.py",
     "figures": "figures/cross_k_scalar_history/{fig1_R2_vs_training_stage,fig2_R2_vs_horizon,fig3_scatter_h20}.pdf|png",
     "table": "figures/summary_table.csv"
   }

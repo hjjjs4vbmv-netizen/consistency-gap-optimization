@@ -43,10 +43,19 @@ Weighted R² (explained variance, primary metric):
 
 | K (kimg) | Weighted R² | Corr | wRMSE | R_opt | a* (mean±std) | eff. coords |
 |----------|-------------|------|-------|-------|---------------|-------------|
-| 32  | 0.861 | 0.937 | 1.25e-2 | 0.090 | 0.7726±0.0229 | 492,062 |
-| 64  | 0.911 | 0.957 | 1.47e-2 | 0.108 | 0.7726±0.0229 | 144,981 |
-| 128 | 0.918 | 0.966 | 1.56e-2 | 0.114 | 0.7726±0.0229 | 322,204 |
+| 32  | 0.861 | 0.937 | 1.25e-2 | 0.090 | 0.7702±0.0094 | 492,062 |
+| 64  | 0.911 | 0.957 | 1.47e-2 | 0.108 | 0.7697±0.0094 | 144,981 |
+| 128 | 0.918 | 0.966 | 1.56e-2 | 0.114 | 0.7700±0.0147 | 322,204 |
 | 256 | 0.736 | 0.858 | 2.95e-2 | 0.117 | 0.7726±0.0229 | 989,959 |
+
+> **Agreement with the canonical #47 receipts (`analysis/real_history/{k}/scalar_prediction.json`):**
+> the a* mean±std above reproduce the receipts exactly (e.g. K=32: 0.770184±0.009437). The
+> weighted R²/Corr here agree with the receipts to ~1e-3 (e.g. K=256: 0.7355/0.8585 here vs
+> 0.7350/0.8582 in the receipt). The residual is implementation-level: the #47 receipts
+> replayed RAdam through *torch* on a dummy parameter, while this experiment uses the
+> pure-numpy float32 replay (`analysis/numpy_radam.py`), which is validated against the
+> stored torch-generated histories to ~1 ulp (see `verify_u1_final`). Both paths reproduce
+> the k256 anchor (0.735/0.8582) within the documented float32 tolerance.
 
 ---
 
@@ -63,10 +72,13 @@ intermediate stages (32→0.861, 64→0.911, 128→0.918) then *drops* at the fi
 **lowest** long-horizon R², not the highest. The maximum h=20 explanatory power occurs at an
 intermediate stage (128 kimg), not at the final state.
 
-**F3 — a* is essentially constant across all four stages** (0.7726±0.0229 everywhere),
-i.e. the *scalar geometry* of the 1.0→1.3 optimizer discrepancy is stage-invariant; what
-varies with K is how well a fixed scalar predictor *predicts* the multi-step accumulated
-update, which degrades most sharply at the final checkpoint.
+**F3 — a* is approximately stable around 0.77 across all four stages.** Per-K mean±std
+over the 20-step window: 0.7702±0.0094 (K=32), 0.7697±0.0094 (K=64), 0.7700±0.0147
+(K=128), 0.7726±0.0229 (K=256). The *mean* is tightly clustered (0.770–0.773, ≈0.77),
+but the per-step *dispersion* grows with training stage (σ ≈ 0.009 at K=32/64 → 0.015 at
+K=128 → 0.023 at K=256). So the scalar geometry is **approximately stable, not exactly
+stage-invariant**; what varies with K is how well a fixed scalar predictor *predicts*
+the multi-step accumulated update, which degrades most sharply at the final checkpoint.
 
 **F4 — Precision caveat (benign):** the replay-vs-stored float32 exactness check is
 `False` for all K (max_abs_diff up to ~9.3e-7 on rare near-zero-reference coords). This is
@@ -83,9 +95,10 @@ is documented here for full auditability, not swept under the rug.
   ≥ 0.97 at h≤10 for every stage K ∈ {32,64,128,256}.
 - **Q2. Is moment-history explanatory power restricted to the final 256-kimg checkpoint?**
   No. It is present and generally *higher* at earlier stages (F2).
-- **Q3. Does a* (the scalar geometry) change across training?** No; it is stage-invariant
-  at 0.7726±0.0229 (F3). The stage dependence lives in the *prediction fidelity* of the
-  scalar, not in the scalar itself.
+- **Q3. Does a* (the scalar geometry) change across training?** Approximately stable: the
+  mean is 0.770–0.773 (≈0.77) at every stage, but the per-step dispersion grows with
+  training stage (σ ≈ 0.009 at K=32/64 → 0.015 at K=128 → 0.023 at K=256). The stage
+  dependence lives in the *prediction fidelity* of the scalar, not in its mean.
 - **Q4. Which stage has the strongest long-horizon explanatory power?** The intermediate
   128-kimg stage (R²=0.918 at h=20); the final 256-kimg stage is the weakest (0.736).
 
@@ -98,7 +111,8 @@ is documented here for full auditability, not swept under the rug.
   discrepancy across multiple training stages (R² ≥ 0.73 at h=20, ≥ 0.97 at h≤10)."
 - "Moment-history explanatory power is not restricted to the final 256-kimg checkpoint; it
   is present, and for long horizons strongest, at intermediate stages."
-- "The scalar geometry a*≈0.77 is stage-invariant."
+- "The scalar geometry a* is approximately stable around 0.77 across stages (mean
+  0.770–0.773; per-step dispersion grows from σ≈0.009 at K=32/64 to σ≈0.023 at K=256)."
 
 **We CANNOT say:**
 - "Moment memory causes the FID improvement."
