@@ -1,0 +1,216 @@
+{
+  "experiment": "Cross-K moment-memory: external raw inputs",
+  "description": "Immutable locators for the raw inputs the R^2(K,h) matrix depends on (gradient histories, stored final updates, extracted RAdam moments, and the frozen numbered checkpoints). These are too large to commit to Git. The h=20 headline does NOT need them: it is independently recomputable from the Git-committed raw_predictions (tests/test_crossk_h20_recompute.py).",
+  "generated_utc": "2026-08-14",
+  "trajectory": {
+    "training_seed": 3,
+    "predictor_rng_seed": 20260809,
+    "arm": "arm_a_g1_0_lr_fixed_s3",
+    "run_dir": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1"
+  },
+  "checkpoints": {
+    "k32": {
+      "kimg": 32,
+      "checkpoint": "training-state-000001.pt",
+      "sha256": "dcda9f67e807daf4a769a06e9217880200cbe19c4802ca8f053fefd9361eb67a",
+      "size_bytes": 669421866,
+      "path": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3/training-state-000001.pt"
+    },
+    "k64": {
+      "kimg": 64,
+      "checkpoint": "training-state-000002.pt",
+      "sha256": "91763eea8b8523ceaec57017b83de47cb272ecb4389e56a5dad64cb5a073f4e2",
+      "size_bytes": 669421866,
+      "path": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3/training-state-000002.pt"
+    },
+    "k128": {
+      "kimg": 128,
+      "checkpoint": "training-state-000004.pt",
+      "sha256": "cd49080a4d000a549657ae196b4c267b85cfaa083058347b80e36e0486f7650d",
+      "size_bytes": 669421866,
+      "path": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3/training-state-000004.pt"
+    },
+    "k256": {
+      "kimg": 256,
+      "checkpoint": "training-state-000008.pt",
+      "sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8",
+      "size_bytes": 669421866,
+      "path": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3/training-state-000008.pt"
+    }
+  },
+  "raw_inputs": {
+    "k32": {
+      "grad_history_1": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k32/grad_history_1.npy",
+        "sha256": "91d30ba39017e1358ca18fbc3cfb95ab9cf75e2036b7f9e4ac6eaaa9d7682185",
+        "size_bytes": 8917238368
+      },
+      "grad_history_g": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k32/grad_history_g.npy",
+        "sha256": "5c5da123db79196232b87f9c7611eb89404805d01491dadbb2775c5c71aea71f",
+        "size_bytes": 8917238368
+      },
+      "u1": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k32/u1.npy",
+        "sha256": "e349e796e2a9e7432fe78d825033670954d40ae2a6563c9997ea7f28093a3377",
+        "size_bytes": 445862040
+      },
+      "ug": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k32/ug.npy",
+        "sha256": "9464b05e1239b9a49325f738e4b455c5e66fe874ad51065fe8ecaf1a19b19e0f",
+        "size_bytes": 445862040
+      },
+      "m0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k32_m0.npy",
+        "sha256": "3912a27e1a09cd20a13d81716414de379e12bf0becbb0b4681ecc43c4a73bee0",
+        "size_bytes": 222931084
+      },
+      "v0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k32_v0.npy",
+        "sha256": "0ad6f28177ce9a8807b21f8f085db93212431c20f29124846ff802e1e14ec351",
+        "size_bytes": 222931084
+      },
+      "step0": 243,
+      "receipt": "analysis/real_history/k32/scalar_prediction.json"
+    },
+    "k64": {
+      "grad_history_1": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k64/grad_history_1.npy",
+        "sha256": "c03c885cb20a23b25dd25ca6686c07b898d5c82ea73ec9e90b2348bdf8123c10",
+        "size_bytes": 8917238368
+      },
+      "grad_history_g": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k64/grad_history_g.npy",
+        "sha256": "3df3331d07f0d8fbe9c0682b2b5a84b5dc29ddd986aadaeba527561ed0d24456",
+        "size_bytes": 8917238368
+      },
+      "u1": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k64/u1.npy",
+        "sha256": "319999a0b23442e73ae1649adc36ed5f043fbf57e34681aff26002fac100ab72",
+        "size_bytes": 445862040
+      },
+      "ug": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k64/ug.npy",
+        "sha256": "1bda5735e29398045ca632f1a24f35d51efc428f83fb48789da21f2faa240bb9",
+        "size_bytes": 445862040
+      },
+      "m0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k64_m0.npy",
+        "sha256": "7fecf2b251a4ee4a89ab5795dea2b1d230d08e23b113feaa6f520bef8ee9ed94",
+        "size_bytes": 222931084
+      },
+      "v0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k64_v0.npy",
+        "sha256": "d21f8459bcadad9cd556959d574147f8969bf0ae532d9bc82cb92ef55412bffc",
+        "size_bytes": 222931084
+      },
+      "step0": 493,
+      "receipt": "analysis/real_history/k64/scalar_prediction.json"
+    },
+    "k128": {
+      "grad_history_1": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k128/grad_history_1.npy",
+        "sha256": "e3b092dd9785ac7dc18b6e38e0fb1bd1e9575c065c42760edcbda4691195608f",
+        "size_bytes": 8917238368
+      },
+      "grad_history_g": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k128/grad_history_g.npy",
+        "sha256": "d5ceb8ac6115f9f43ac9d2c122fa525e7d57af7292b566a4d034145d174d7287",
+        "size_bytes": 8917238368
+      },
+      "u1": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k128/u1.npy",
+        "sha256": "594d94f9de96b525432a0b579b1ad29311da637363c2b36f56b2c13c23429d42",
+        "size_bytes": 445862040
+      },
+      "ug": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k128/ug.npy",
+        "sha256": "66fb783f2e870b44d8d351ecda07c8d8fbf936f83eb64e53d2001e449f6eca16",
+        "size_bytes": 445862040
+      },
+      "m0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k128_m0.npy",
+        "sha256": "1f876520630c090adc6a8fb172881790c9b4790f5c1a22bf4e3725828361f335",
+        "size_bytes": 222931084
+      },
+      "v0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k128_v0.npy",
+        "sha256": "d8b0525beddb03169606acdb0b5cc871053b0b933c196cb9ac0fc697b03d9b3c",
+        "size_bytes": 222931084
+      },
+      "step0": 993,
+      "receipt": "analysis/real_history/k128/scalar_prediction.json"
+    },
+    "k256": {
+      "grad_history_1": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k256/grad_history_1.npy",
+        "sha256": "d447af51f1c0067be48eaab028fcd6b780fd7b58a37c4f722d8bc0c6c6cb7a59",
+        "size_bytes": 8917238368
+      },
+      "grad_history_g": {
+        "kind": "grad_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k256/grad_history_g.npy",
+        "sha256": "b13ed8639a7295e588aef5721f755faf91f9226bc85acfce0d4dd1b23596fe89",
+        "size_bytes": 8917238368
+      },
+      "u1": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k256/u1.npy",
+        "sha256": "0beb7333a05374f5384be47273135ab141a02fa24c22be5ffb95765aaaafa280",
+        "size_bytes": 445862040
+      },
+      "ug": {
+        "kind": "final_update",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k256/ug.npy",
+        "sha256": "18eb1198361f2e7f958484ba325b6f34f64b98ec19a46a1d11d6735f9da52981",
+        "size_bytes": 445862040
+      },
+      "m0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k256_m0.npy",
+        "sha256": "a37da5d5f41819c623edfee87d415fd9d590aa6bd43c2f312ed305cf62666e96",
+        "size_bytes": 222931084
+      },
+      "v0": {
+        "kind": "extracted_moment",
+        "path": "/data/raw/ECT/crossk/moments/k256_v0.npy",
+        "sha256": "5dede848c112ff308dc3ab4b1708f964468f346ab998f9d826c0076f760fb7ef",
+        "size_bytes": 222931084
+      },
+      "step0": 1991,
+      "receipt": "analysis/real_history/k256/scalar_prediction.json",
+      "u1_history": {
+        "kind": "torch_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k256/u1_history.npy",
+        "sha256": "0f7f2cd67c0994290f997f27346e442d57ce91b5f915952cbfbc6018e34ccdc6",
+        "size_bytes": 8917238368
+      },
+      "ug_history": {
+        "kind": "torch_history",
+        "path": "/data/raw/ECT/recurrence_of_ect/analysis/real_history/k256/ug_history.npy",
+        "sha256": "11e2c6afab9e1bd26e84362d4934ea7f7546baace0ad5f789e16809690055cd8",
+        "size_bytes": 8917238368
+      }
+    }
+  },
+  "immutability_note": "Files are write-once artifacts of the #49-frozen same-trajectory Arm-A run and the backfill scripts; sha256 recorded at generation time on the matpool node."
+}
