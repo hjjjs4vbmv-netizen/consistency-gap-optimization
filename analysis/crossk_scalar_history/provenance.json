@@ -1,0 +1,67 @@
+{
+  "experiment": "Cross-K Moment-Memory Mechanism Experiment",
+  "task": "P0: R^2(K,h) matrix for the scalar-history predictor at K in {32,64,128,256} kimg",
+  "date_utc": "2026-08-14",
+  "git": {
+    "commit": "487d5ef9315d122120d25a8f709af64c821f7e0e",
+    "commit_subject": "analysis: fix 1-step control endpoint mismatch, revise interpretation honestly",
+    "repo_root": "recurrence_of_ect",
+    "branch": "crossk-scalar-history"
+  },
+  "sanity_anchor": {
+    "k256_must_match_prior_47": {
+      "target": "Corr ~= 0.8582, Weighted R^2 ~= 0.735, a* = 0.7726 +- 0.0229",
+      "observed_k256": {
+        "corr_h20": 0.8585,
+        "weighted_R2_h20": 0.7355,
+        "a_star_mean": 0.7726,
+        "a_star_std": 0.0229
+      },
+      "verdict": "REPRODUCED (within float32 tolerance). Interpretation may proceed."
+    }
+  },
+  "frozen_states": {
+    "provenance": "All four K use #49-frozen canonical Arm-A states from the SAME seed-3 trajectory (arm_a_g1_0_lr_fixed_s3). No retraining, no new trajectory, no new seed, no optimizer/gap/LR/predictor change, no tuning for higher R^2. This is controlled replication across training stage only.",
+    "training_seed": 3,
+    "predictor_rng_seed": 20260809,
+    "seed_note": "training_seed=3 is the frozen Arm-A trajectory seed (per configs/q128_confirmatory_matrix.frozen.json, checkpoint_id q128-fresh-256k-seed3-fixed); predictor_rng_seed=20260809 is the --seed recorded in each canonical #47 receipt analysis/real_history/{k}/scalar_prediction.json (scalar_history_predictor.py). Both are recorded because they name different things.",
+    "arm": "Arm-A (arm_a_g1_0_lr_fixed_s3)",
+    "base_dir_server": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3",
+    "mapping": {
+      "k32":  {"checkpoint": "training-state-000001.pt", "kimg": 32,  "step0": 243},
+      "k64":  {"checkpoint": "training-state-000002.pt", "kimg": 64,  "step0": 493},
+      "k128": {"checkpoint": "training-state-000004.pt", "kimg": 128, "step0": 993},
+      "k256": {"checkpoint": "training-state-000008.pt", "kimg": 256, "step0": 1991}
+    },
+    "step0_identity_proof": "Distinct step counters (243/493/993/1991) confirm the four states are different snapshots of one frozen trajectory; moments extracted server-side by pure_torch_zip (python3.6, no torch) from the exact .pt paths above.",
+    "checkpoint_hash_note": "The .pt files are the #49-frozen canonical states on the server (1.78GB upload cap made local re-download infeasible; hashes available server-side at the paths above). Bit-exactness of the extraction was validated for k32 (step0=243, m0/v0[:4] identical to torch extraction).",
+    "moments_extraction_script": "extract_moments_server.py",
+    "state_map": "/data/raw/ECT/crossk/state_np.json"
+  },
+  "method": {
+    "predictor_def": "per-step global scalar a_j* = <G_j^1.3, G_j^1.0> / ||G_j^1.0||^2; scalar-predicted gradient Ghat_j^1.3 = a_j* * G_j^1.0 (identical to PR #47)",
+    "replay": "RAdam replayed from the REAL extracted state (m0/v0/step0) over the full 20-step history, reading the update at every index t to obtain h_scalar_t and h_actual_t for all horizons t=1..20. Pure-numpy float32 RAdam (update independent of parameter value).",
+    "weighting": "w = u1_t^2 (squared reference-update magnitude) on the effective support |u1_t| > 1e-5",
+    "metrics": ["Weighted R^2 (primary)", "Corr", "wRMSE", "R_opt (normalized residual)", "cosine(u1,ug)", "a_star mean/std"],
+    "horizon_sweep": "h = 1..20",
+    "lr": 1e-4,
+    "script": "analysis/crossk_horizon_sweep.py",
+    "plot_script": "analysis/plot_crossk.py"
+  },
+  "validation": {
+    "u1_vs_stored": "per-K replay-vs-stored-final-update diff: max_abs_diff ~1e-8 median (float32-exact flag False at 9.3e-7 on rare near-zero-ref coords) — characterized as benign precision, not a logic error",
+    "k256_full_history": "full-history numpy-RAdam vs torch-generated history compared (see verify_u1_full_torch/verify_ug_full_torch in summary.json)"
+  },
+  "environment": {
+    "server": {"host": "172.16.30.17", "user": "ECT002", "os": "Linux glibc 2.17", "python_extraction": "python3.6.8 + numpy 1.19.5 + pure_torch_zip (no torch; glibc of the node lacks a torch-capable toolchain)", "numpy_replay": "python3.6.8 + numpy 1.19.5"},
+    "local": {"os": "Windows 11 Pro", "python": "CPython (matplotlib/numpy) for figures"}
+  },
+  "artifacts": {
+    "summary": "analysis/crossk_scalar_history/summary.json",
+    "raw_predictions": "analysis/crossk_scalar_history/{k32,k64,k128,k256}/raw_predictions/{h_pred_scalar_h20,h_actual_h20,weights_h20,a_star_series}.npy",
+    "raw_manifest": "analysis/crossk_scalar_history/raw_manifest.json",
+    "recompute_test": "tests/test_crossk_h20_recompute.py",
+    "figures": "figures/cross_k_scalar_history/{fig1_R2_vs_training_stage,fig2_R2_vs_horizon,fig3_scatter_h20}.pdf|png",
+    "table": "figures/summary_table.csv"
+  }
+}
