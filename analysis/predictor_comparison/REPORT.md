@@ -52,12 +52,16 @@ first-order predictors are worse than predicting the mean h (negative R²) and h
 essentially zero correlation with the actual h. Only the exact discrete replay captures
 the update discrepancy.
 
-**F2 — Why: gradient-scale-invariance.** In the fresh-start regime, the actual update
-ratio is near-constant (h ≈ 1.01, from the balanced-β finding): RAdam's sqrt(v)
-normalization absorbs the constant gradient scale (a\* ≈ 0.77). The scalar predictor
-predicts h ≈ a\* ≈ 0.77 (systematically wrong — the scale is already absorbed), and the
-first-order predictor predicts a wide coordinate distribution (from the A^(1)−A^(2)
-G-weighting) that does not materialize. Neither captures the near-constant actual h.
+**F2 — Why: the real gap is NON-scalar, and the first-order theory only sees the scalar
+part.** The first-order formula is verified correct for an *exact-scalar* time-varying gap
+(G^g = (1+δ_j)G): on a synthetic exact-scalar pair it correlates ~0.9998 with the actual h
+(from t≥5, once the rectification transient settles). It fails on the real data (Corr≈0)
+because the real gap is **not** exactly scalar — the actual h's (small) variation is driven
+by the non-scalar residual of the gap, which the scalar scale-lag theory (using δ_j =
+a\*_j−1) cannot see. The finite-history replay, which replays the full G^1.3, captures the
+entire non-scalar structure (R²=1.0). The scalar predictor fails for the same reason plus
+gradient-scale-invariance: it predicts h ≈ a\* ≈ 0.77, but RAdam's sqrt(v) normalization
+absorbs the constant scale, so the actual h mean is ≈1.01.
 
 **F3 — The scalar predictor's cross-K success (R²=0.86) is regime-specific.** It works in
 the real-state regime (moments converged, update ratio tracks the gradient scale) but
@@ -68,8 +72,10 @@ three-way comparison.
 
 **F4 — The finite-history characterization is not a "better approximation" of the
 first-order theory; it is a different object.** The exact replay is the mechanism itself
-(R²=1.0); the first-order theory is a perturbative approximation that fails outside its
-validity regime (constant-ish scale, where the spurious coordinate variation dominates).
+(R²=1.0); the first-order theory is a perturbative approximation that is valid only for
+exact-scalar gaps (verified: Corr~0.9998) and fails on the real non-scalar gap. The
+finite-history replay captures the full non-scalar structure that the scalar scale-lag
+theory cannot.
 
 ---
 
@@ -90,13 +96,15 @@ predictor of the update discrepancy.
 - "In the fresh-start regime, the exact finite-history replay explains the update
   discrepancy (R²=1.0), while both the scalar and first-order scale-lag predictors fail
   (negative R², near-zero Corr)."
-- "The failure is due to gradient-scale-invariance: the actual update ratio is
-  near-constant, which neither the scalar nor the first-order theory captures."
+- "The failure is because the real gap is non-scalar: the actual update ratio's variation
+  is driven by the non-scalar residual, which the scalar scale-lag theory cannot see; the
+  scalar predictor additionally fails because RAdam's normalization absorbs the constant
+  gradient scale."
 - "The scalar predictor's cross-K success is regime-specific (real-state)."
 
 **We CANNOT say:**
-- "The first-order theory is always wrong" — it is validated in its own regime (the theory
-  doc's T2 test, exact-scalar time-varying δ).
+- "The first-order theory is always wrong" — it is validated for exact-scalar gaps (the
+  theory doc's T2 test and our synthetic verification, Corr~0.9998).
 - "Balancing β or any predictor causes the FID improvement" — no FID is measured here.
 - "The finite-history replay is a novel predictor" — it is the exact mechanism, not a
   predictor.
