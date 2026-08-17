@@ -1,0 +1,48 @@
+{
+  "experiment": "Three-predictor comparison (P1)",
+  "task": "How much more explanatory power does the discrete finite-history replay provide over the generic continuous first-order theory?",
+  "date_utc": "2026-08-17",
+  "git": {
+    "commit": "TBD (filled at commit time)",
+    "branch": "role-c/balanced-beta",
+    "repo_root": "recurrence_of_ect"
+  },
+  "protocol": {
+    "gradient_sequence": "Same real paired {G_t^1.0, G_t^1.3}_{t=1..20} from the frozen #49 Arm-A checkpoints (k32/k64/k128/k256, same seed-3 trajectory)",
+    "starting_point": "UNIFORM fresh start (m0=0, v0=0, step0=0) for all three predictors, so the first-order formula is complete (the full history is the 20-step gradient history; the real extracted state would encode pre-checkpoint history the first-order formula cannot see)",
+    "predictors": {
+      "scalar": "a*_j = <G^g_j,G_j>/||G_j||^2; Ghat_j = a*_j G_j; replay RAdam -> h^scalar = replay(Ghat)/u1",
+      "firstorder": "delta_j = a*_j - 1; A^(1) = (sum beta1^{t-j} delta_j G_j)/(sum beta1^{t-j} G_j); A^(2) = (sum beta2^{t-j} delta_j G_j^2)/(sum beta2^{t-j} G_j^2); h^firstorder = 1 + A^(1) - A^(2)",
+      "replay": "h^replay = replay(G^g)/u1 (exact moment recursion, the reference)"
+    },
+    "metrics": ["weighted R^2", "Corr", "wRMSE"],
+    "effective_support": "top 1% of coords by |u1| (np.partition quantile mask)",
+    "lr": 1e-4,
+    "script": "analysis/predictor_comparison.py",
+    "plot_script": "analysis/plot_predictor_comparison.py"
+  },
+  "trajectory": {
+    "training_seed": 3,
+    "arm": "arm_a_g1_0_lr_fixed_s3",
+    "checkpoints": {
+      "k32": "training-state-000001.pt",
+      "k64": "training-state-000002.pt",
+      "k128": "training-state-000004.pt",
+      "k256": "training-state-000008.pt"
+    },
+    "raw_inputs": "analysis/real_history/{k}/grad_history_1.npy, grad_history_g.npy (SHA256 in analysis/crossk_scalar_history/raw_manifest.json)"
+  },
+  "validation": {
+    "replay": "pure-numpy float32 RAdam (analysis/numpy_radam.py), validated against stored torch histories to ~1 ulp (cross-K verify_u1_final)",
+    "synthetic_smoke": "local synthetic near-scalar test passed before server run",
+    "firstorder_formula": "incremental exponential-sum recurrence verified against the closed form"
+  },
+  "environment": {
+    "server": {"host": "172.16.30.17", "user": "ECT002", "python": "python3.6.8 + numpy 1.19.5"},
+    "local": {"os": "Windows 11 Pro", "python": "CPython (matplotlib/numpy) for figures"}
+  },
+  "artifacts": {
+    "summary": "analysis/predictor_comparison/summary.json",
+    "figures": "figures/predictor_comparison/{fig1_R2_vs_stage,fig2_R2_vs_horizon,fig3_corr_vs_stage}.pdf|png"
+  }
+}
