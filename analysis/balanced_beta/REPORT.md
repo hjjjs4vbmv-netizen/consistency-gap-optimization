@@ -20,9 +20,19 @@ g=1.3 and g=1.0 RAdam updates — shrink when β1 = β2?
 > **Note on the effective support.** Fresh-start updates span many orders of magnitude
 > across β configs (the β2=0.999 rectification transient damps updates to ~1e-7), so an
 > absolute threshold would empty the support. R_opt is scale-invariant (the rect factor
-> is a global scalar that cancels in u1/ug), so it is computed over the full vector; the
-> top-1% quantile mask (via np.partition) is used only for the h_i/Disp statistics, and
-> matches the cross-K effective support (~1% of coords).
+> is a global scalar that cancels in u1/ug — verified numerically: exact-scalar gradients
+> give R_opt~1e-7 for both standard and balanced configs), so it is computed over the full
+> vector; the top-1% quantile mask (via np.partition) is used only for the h_i/Disp
+> statistics, and matches the cross-K effective support (~1% of coords).
+>
+> **Regime note.** This experiment replays from a *fresh* start (m0=0, v0=0, step0=0), so
+> its R_opt values (0.04–0.07) are **not directly comparable** to the cross-K R_opt
+> (0.09–0.12), which replayed from the real converged state. The two answer different
+> questions: cross-K measured the divergence in the real accumulated history; this
+> experiment measures the divergence under a controlled β intervention. The replay uses the
+> same pure-numpy float32 RAdam validated against stored torch histories to ~1 ulp in the
+> cross-K experiment (verify_u1_final); the fresh-start case is the same radam_step with
+> step0=0.
 
 ---
 
@@ -62,6 +72,15 @@ theory (arXiv:2601.21739): the scale-history effect needs a long enough v memory
 
 **F4 — Corr(u1,ug) is high (≥0.997) for all configs** — the updates are near-scalar in
 direction; R_opt captures the residual that β-balancing can shrink.
+
+**F5 — The updates are near-scale-invariant: h_mean ≈ 1.01, not the gradient scalar
+a\* ≈ 0.77.** RAdam's sqrt(v) normalization cancels a *constant* gradient scale: for an
+exact-scalar pair G^1.3 = 0.77·G^1.0, the replayed updates are near-equal (h_mean=1.00000,
+R_opt~1e-7, verified numerically). The real data show h_mean ≈ 1.00–1.01 across stages —
+so the gap-induced R_opt (0.04–0.07) arises from the **non-constant** part of the scale
+history (the per-step δ_j variation), not from the constant 0.77 scale. This is exactly the
+gradient-scale-invariance regime of the "Why Adam Works Better with beta1=beta2" theory
+(arXiv:2601.21739), and it is why β-balancing can shrink the residual.
 
 ---
 
