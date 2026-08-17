@@ -433,6 +433,161 @@ def check_disjoint(
     return len(checksums), len(cell_keys)
 
 
+def check_disjoint_cell_bindings(
+    repo: Path,
+    manifest: dict[str, Any],
+    checkpoints: dict[str, dict[str, Any]],
+) -> dict[str, int]:
+    bundle = manifest["evidence_bundles"]["disjoint_fid_kid_5k"]
+    binding_ref = bundle["cell_binding_manifest"]
+    binding_path = repo / binding_ref["path"]
+    payload = binding_path.read_bytes()
+    if sha256(payload) != binding_ref["sha256"]:
+        raise AuditFailure("PR #53 cell-binding manifest hash mismatch")
+
+    checksum_path = repo / binding_ref["detached_checksum_path"]
+    expected_checksum_line = f"{sha256(payload)}  {binding_path.name}\n"
+    if checksum_path.read_text(encoding="utf-8") != expected_checksum_line:
+        raise AuditFailure("PR #53 detached cell-manifest checksum mismatch")
+
+    scripts_dir = Path(__file__).resolve().parent
+    if str(scripts_dir) not in sys.path:
+        sys.path.insert(0, str(scripts_dir))
+    from build_disjoint_5k_cell_manifest import build
+
+    rebuilt = (json.dumps(build(repo), indent=2, sort_keys=False) + "\n").encode()
+    if rebuilt != payload:
+        raise AuditFailure("PR #53 cell-binding manifest is not deterministic")
+
+    cell_manifest = json.loads(payload)
+    if cell_manifest.get("schema_version") != 1:
+        raise AuditFailure("unsupported PR #53 cell-binding schema")
+    cells = cell_manifest.get("cells", [])
+    if len(cells) != 27:
+        raise AuditFailure("PR #53 cell-binding manifest must contain 27 cells")
+
+    metric_manifest = git_bytes(
+        repo, bundle["artifact_commit"], bundle["raw_metric_manifest"]["path"]
+    )
+    metric_checksums = parse_checksum_manifest(metric_manifest)
+    checkpoint_ids = set(bundle["checkpoint_record_ids"])
+    seen_cells: set[str] = set()
+    seen_receipts: set[str] = set()
+    hash_bound_receipts = 0
+    unbound_receipts = 0
+
+    for cell in cells:
+        cell_id = cell["cell_id"]
+        if cell_id in seen_cells:
+            raise AuditFailure(f"duplicate PR #53 cell binding: {cell_id}")
+        seen_cells.add(cell_id)
+        sample = cell["sample_binding"]
+        start = int(sample["first_seed"])
+        end = int(sample["last_seed"])
+        if sample["ordered_sample_seed_range"] != f"{start}-{end}":
+            raise AuditFailure(f"sample-range string mismatch: {cell_id}")
+        if sample["count"] != end - start + 1 or sample["count"] != 5000:
+            raise AuditFailure(f"sample-range count mismatch: {cell_id}")
+        if sample["ordering"] != "ascending_inclusive":
+            raise AuditFailure(f"sample ordering is not explicit: {cell_id}")
+
+        binding = cell["checkpoint_binding"]
+        checkpoint_id = binding["checkpoint_record_id"]
+        if checkpoint_id not in checkpoint_ids:
+            raise AuditFailure(f"unexpected checkpoint binding: {checkpoint_id}")
+        checkpoint = checkpoints[checkpoint_id]
+        if cell["training_seed"] != checkpoint["training_seed"]:
+            raise AuditFailure(f"checkpoint seed mismatch: {cell_id}")
+        if cell["arm"] != checkpoint["arm"]:
+            raise AuditFailure(f"checkpoint arm mismatch: {cell_id}")
+        expected_binding = {
+            "checkpoint_record_id": checkpoint_id,
+            "run_id": checkpoint["run_id"],
+            "state_id": checkpoint["state_id"],
+            "network_snapshot_filename": checkpoint["network_snapshot"]["path"],
+            "network_snapshot_sha256": checkpoint["network_snapshot"]["sha256"],
+            "training_state_sha256": checkpoint["training_state"]["sha256"],
+            "status": (
+                "HASH_BOUND"
+                if checkpoint["network_snapshot"]["sha256"] is not None
+                else "BLOCKED_BY_B005"
+            ),
+        }
+        if binding != expected_binding:
+            raise AuditFailure(f"checkpoint binding mismatch: {cell_id}")
+
+        receipts = cell["metric_receipts"]
+        if len(receipts) != 2:
+            raise AuditFailure(f"cell must bind two metric receipts: {cell_id}")
+        for receipt in receipts:
+            path = receipt["receipt_path"]
+            prefix = f"{bundle['raw_metric_root']}/"
+            if not path.startswith(prefix):
+                raise AuditFailure(f"metric receipt root mismatch: {path}")
+            relative = path[len(prefix) :]
+            if relative in seen_receipts:
+                raise AuditFailure(f"duplicate metric receipt binding: {relative}")
+            seen_receipts.add(relative)
+            if metric_checksums.get(relative) != receipt["receipt_sha256"]:
+                raise AuditFailure(f"metric receipt checksum mismatch: {relative}")
+            raw = json.loads(git_bytes(repo, bundle["artifact_commit"], path))
+            metric = receipt["metric"]
+            if raw["metric"] != metric:
+                raise AuditFailure(f"metric receipt name mismatch: {relative}")
+            near(raw["results"][metric], receipt["reported_value"], relative)
+            if binding["status"] == "HASH_BOUND":
+                hash_bound_receipts += 1
+            else:
+                unbound_receipts += 1
+
+    if len(seen_receipts) != 54:
+        raise AuditFailure("PR #53 cell manifest must bind 54 unique receipts")
+    if (hash_bound_receipts, unbound_receipts) != (42, 12):
+        raise AuditFailure("unexpected PR #53 checkpoint-binding coverage")
+    summary = cell_manifest["summary"]
+    expected_summary = {
+        "cells": 27,
+        "metric_receipts": 54,
+        "sample_range_bound_receipts": 54,
+        "checkpoint_hash_bound_receipts": 42,
+        "checkpoint_hash_unbound_receipts": 12,
+        "checkpoint_records_blocked_by_b005": [
+            "s3-B-k256000",
+            "s3-C-k256000",
+        ],
+        "b006_status": "PARTIAL_BLOCKED_ONLY_BY_B005",
+    }
+    if summary != expected_summary:
+        raise AuditFailure("PR #53 cell-binding summary mismatch")
+
+    attempt_ref = bundle["b005_retrieval_attempt"]
+    attempt_bytes = (repo / attempt_ref["path"]).read_bytes()
+    if sha256(attempt_bytes) != attempt_ref["sha256"]:
+        raise AuditFailure("B005 retrieval-attempt receipt hash mismatch")
+    attempt = json.loads(attempt_bytes)
+    if attempt["result"] != "BLOCKED_NO_SOURCE_BYTES":
+        raise AuditFailure("B005 retrieval attempt must fail closed")
+    if attempt["hashes_recovered"] != 0 or not attempt["inference_prohibited"]:
+        raise AuditFailure("B005 receipt permits an inferred checkpoint hash")
+
+    recovery_ref = bundle["b003_recovery_assessment"]
+    recovery_bytes = (repo / recovery_ref["path"]).read_bytes()
+    if sha256(recovery_bytes) != recovery_ref["sha256"]:
+        raise AuditFailure("B003 recovery-assessment receipt hash mismatch")
+    recovery = json.loads(recovery_bytes)
+    if recovery["result"] != "REGENERATION_OR_EXTERNAL_RECOVERY_REQUIRED":
+        raise AuditFailure("B003 recovery assessment does not fail closed")
+    if recovery["metric_values_recomputed"]:
+        raise AuditFailure("B003 assessment falsely claims metric recomputation")
+
+    return {
+        "cells": len(cells),
+        "sample_range_bound_receipts": len(seen_receipts),
+        "checkpoint_hash_bound_receipts": hash_bound_receipts,
+        "checkpoint_hash_unbound_receipts": unbound_receipts,
+    }
+
+
 def run_audit(repo: Path, manifest_path: Path) -> dict[str, Any]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("schema_version") != 1:
@@ -454,6 +609,7 @@ def run_audit(repo: Path, manifest_path: Path) -> dict[str, Any]:
         repo, manifest, checkpoints
     )
     disjoint_artifacts, disjoint_cells = check_disjoint(repo, manifest, checkpoints)
+    cell_bindings = check_disjoint_cell_bindings(repo, manifest, checkpoints)
     blockers = manifest.get("blocking_findings", [])
     return {
         "manifest_id": manifest["manifest_id"],
@@ -467,6 +623,17 @@ def run_audit(repo: Path, manifest_path: Path) -> dict[str, Any]:
         "crossk_external_records_checked": crossk_external_records,
         "disjoint_bundle_artifacts_checked": disjoint_artifacts,
         "disjoint_evaluation_cells_checked": disjoint_cells,
+        "disjoint_cell_bindings_checked": cell_bindings["cells"],
+        "sample_range_bound_receipts_checked": cell_bindings[
+            "sample_range_bound_receipts"
+        ],
+        "checkpoint_hash_bound_receipts_checked": cell_bindings[
+            "checkpoint_hash_bound_receipts"
+        ],
+        "checkpoint_hash_unbound_receipts": cell_bindings[
+            "checkpoint_hash_unbound_receipts"
+        ],
+        "publication_limitations": manifest.get("publication_limitations", []),
         "blocking_findings": blockers,
         "publication_ready": not blockers,
     }
@@ -502,6 +669,11 @@ def main() -> int:
             f"{report['crossk_h20_raw_arrays_checked']} PR #58 h20 arrays, "
             f"{report['disjoint_bundle_artifacts_checked']} PR #53 artifacts, and "
             f"{report['disjoint_evaluation_cells_checked']} evaluation cells"
+        )
+        print(
+            f"cell bindings: {report['sample_range_bound_receipts_checked']}/54 "
+            "sample ranges, "
+            f"{report['checkpoint_hash_bound_receipts_checked']}/54 checkpoint hashes"
         )
         print(f"publication_ready={str(report['publication_ready']).lower()}")
         for finding in report["blocking_findings"]:

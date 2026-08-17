@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "manifest_id": "gap-evidence-assets-2026-08-15-v2",
-  "generated_at": "2026-08-15T00:00:00+08:00",
-  "repository": "hjjjs4vbmv-netizen/recurrence_of_ect",
+  "manifest_id": "gap-evidence-assets-2026-08-17-v3",
+  "generated_at": "2026-08-17T00:00:00+08:00",
+  "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
   "material_passport": {
     "origin_skill": "academic-research-suite/experiment-agent",
     "origin_mode": "validate",
@@ -384,6 +384,28 @@
       "handoff": {"pr": 51, "commit": "e954a722cfb63620880499ce42fa205e973c8a6d", "path": "results/gap_lr_seed_replication_role_e_handoff/role_e_disjoint_5k_handoff.json", "sha256": "cd0c90828d2c0903d1eba21e4764feeedc3f89dee907380cf946f3572756a9be"},
       "raw_metric_root": "results/gap_lr_matched/disjoint_5k_0813",
       "raw_metric_manifest": {"path": "results/gap_lr_matched/disjoint_5k_0813/RESULT_SHA256SUMS.txt", "sha256": "578a9ee78146688e9362e4d0988723b8aeb2a42d6e9ff789eb99f8a41efe1b8d"},
+      "cell_binding_manifest": {
+        "path": "evidence/disjoint_5k_cell_manifest_v1.json",
+        "sha256": "ddb7f867e0328f4f04cbc4e813446521ea4f6bf76cfe391d4412f61317b71eaf",
+        "detached_checksum_path": "evidence/disjoint_5k_cell_manifest_v1.sha256",
+        "builder": "scripts/build_disjoint_5k_cell_manifest.py",
+        "cells": 27,
+        "metric_receipts": 54,
+        "sample_range_bound_receipts": 54,
+        "checkpoint_hash_bound_receipts": 42,
+        "checkpoint_hash_unbound_receipts": 12,
+        "status": "PARTIAL_BLOCKED_ONLY_BY_B005"
+      },
+      "b005_retrieval_attempt": {
+        "path": "evidence/b005_retrieval_attempt_2026_08_17.json",
+        "sha256": "de92c5f4fbff977c25115801050457d41a0f5005942fef822979c367b9558712",
+        "result": "BLOCKED_NO_SOURCE_BYTES"
+      },
+      "b003_recovery_assessment": {
+        "path": "evidence/b003_recovery_assessment_2026_08_17.json",
+        "sha256": "eb7cd745eaa622cd4e701b3e989dc0eb9bcaa85a96449802d0febf115c538c52",
+        "result": "REGENERATION_OR_EXTERNAL_RECOVERY_REQUIRED"
+      },
       "raw_metric_files": 54,
       "evaluation_cells": 27,
       "sample_blocks": ["5000-9999", "10000-14999", "15000-19999"],
@@ -410,7 +432,8 @@
   "resolved_findings": [
     {"id": "B001", "resolved_commit": "9307a76", "detail": "The mutable-latest duplicate is now a machine-readable NON_CANONICAL_TOMBSTONE and the mechanism document names only the numbered K=256 receipt as canonical."},
     {"id": "B004", "resolved_commit": "cec703e", "detail": "A deterministic aggregation script reproduces both PR #53 CSVs byte-for-byte from all 54 SHA-bound JSONLs."},
-    {"id": "B002-H20", "resolved_commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91", "detail": "PR #58 commits per-coordinate predictions, targets, weights, and a* series for all four K values; the h=20 weighted R2/Corr headline recomputes from Git alone in 2 tests with 8 subtests."}
+    {"id": "B002-H20", "resolved_commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91", "detail": "PR #58 commits per-coordinate predictions, targets, weights, and a* series for all four K values; the h=20 weighted R2/Corr headline recomputes from Git alone in 2 tests with 8 subtests."},
+    {"id": "B006-SAMPLE-RANGE", "resolved_commit": null, "detail": "The PR #53 cell-binding manifest binds all 54 metric receipts to explicit ordered inclusive sample-seed ranges. Checkpoint SHA binding is complete for 42/54 receipts; the remaining 12 receipts are exactly the seed-3 B/C records blocked by B005."}
   ],
   "claim_registry": [
     {
@@ -455,10 +478,12 @@
       "plotting_script": null
     }
   ],
+  "publication_limitations": [
+    {"id": "B002", "severity": "APPENDIX_REPRODUCIBILITY_LIMITATION", "scope": "PR58 full R2(K,h) matrix excluding the Git-self-contained h=20 headline", "detail": "The manuscript headline is restricted to h=20, which is Git-self-contained. The exploratory full R2(K,h) matrix remains hash/size identified but lacks a durable external locator and must be disclosed as an appendix reproducibility limitation, not used as a headline claim."}
+  ],
   "blocking_findings": [
-    {"id": "B002", "severity": "HIGH", "scope": "PR58 full R2(K,h) matrix excluding the Git-self-contained h=20 headline", "detail": "PR #58 records node-local absolute paths, SHA256, and sizes for the gradient/update/moment histories, but no durable externally resolvable artifact URI or object version. Full-matrix re-derivation remains unavailable off that node; the h=20 headline is closed separately as B002-H20."},
-    {"id": "B003", "severity": "HIGH", "scope": "PR53", "detail": "FID/KID generated samples or feature NPZs are not retained or hash-bound, so the metric JSONL values cannot be recomputed from sample-level artifacts."},
-    {"id": "B005", "severity": "HIGH", "scope": "PR53 seed3 B/C", "detail": "Committed public evidence does not record SHA256 for the exact numbered network snapshots evaluated for seed-3 Arms B and C."},
-    {"id": "B006", "severity": "MEDIUM", "scope": "PR53", "detail": "Each metric JSONL omits checkpoint SHA256 and sample-seed range; binding relies on directory names plus the separate handoff."}
+    {"id": "B003", "severity": "HIGH", "scope": "PR53", "detail": "FID/KID generated samples or feature NPZs are not retained or hash-bound, so the metric JSONL values cannot be recomputed from sample-level artifacts. The 2026-08-17 recovery assessment found none in the committed tree or local archives and records the exact regeneration closure contract."},
+    {"id": "B005", "severity": "HIGH", "scope": "PR53 seed3 B/C", "detail": "Committed public evidence does not record SHA256 for the exact numbered network snapshots evaluated for seed-3 Arms B and C. The 2026-08-17 read-only retrieval receipt records three unavailable source/transfer endpoints and no recovered bytes; no hash is inferred."},
+    {"id": "B006", "severity": "MEDIUM", "scope": "PR53 seed3 B/C only", "detail": "The new cell manifest explicitly binds ordered sample ranges for all 54 receipts and checkpoint SHA256 for 42/54. The remaining 12 receipts are the three blocks x two metrics x seed-3 Arms B/C and cannot be checkpoint-hash-bound until B005 is closed."}
   ]
 }

@@ -20,10 +20,15 @@ Git-committed per-coordinate predictions, targets, and weights.  It does not
 close full-matrix provenance: horizons outside h=20 still depend on node-local
 paths with hashes and sizes but no durable externally resolvable locator.
 
+The 2026-08-17 follow-up narrows the paper claim to that Git-self-contained h20
+headline. The full matrix is therefore tracked as an appendix reproducibility
+limitation rather than a headline publication blocker.
+
 The evidence estate is not yet publication-ready under the requested
 commit -> run -> checkpoint -> raw artifact -> plotting-script standard.
-Four unresolved blockers remain after this audit branch adds a deterministic
-PR #53 aggregation reproducer and quarantines the mutable-`latest` duplicate.
+Three unresolved blockers remain after this audit branch adds a deterministic
+PR #53 aggregation reproducer, quarantines the mutable-`latest` duplicate, and
+adds a 27-cell binding manifest for all 54 metric receipts.
 
 ## Audited PR boundary
 
@@ -81,14 +86,14 @@ does not read this file.
 The canonical K=256 mechanism receipt is
 `analysis/real_history/k256/scalar_prediction.json`.
 
-## Remaining blockers
+## Remaining blockers and limitation
 
 | ID | Severity | Required closure |
 |---|---|---|
-| B002 | High | For the full R2(K,h) matrix outside the Git-self-contained h20 headline, publish the hash-bound histories at a durable externally resolvable URI/object version. |
 | B003 | High | Retain or regenerate hash-bound sample/feature artifacts for each PR #53 FID/KID cell. |
 | B005 | High | Publish the exact `network-snapshot-000008.pkl` SHA256 values for seed-3 Arms B and C and bind them to the metric cells. |
-| B006 | Medium | Add checkpoint SHA256 and explicit ordered sample-seed range to every metric receipt, or add a signed cell manifest carrying those fields. |
+| B006 | Medium | The new cell manifest binds ordered sample ranges for 54/54 receipts and checkpoint hashes for 42/54. The remaining 12 receipts are exactly seed-3 Arms B/C and inherit B005. |
+| B002 | Appendix reproducibility limitation | The full R2(K,h) matrix outside h20 lacks a durable external locator and must not be used as a headline claim. |
 
 The h20 subfinding `B002-H20` is closed at PR #58 head `ff7a49b`: four sets of
 Git-committed NPY predictions/targets/weights reproduce weighted R2 and Corr.
@@ -100,14 +105,34 @@ The former mutable-latest and aggregation blockers are closed locally: commit
 reproducer rebuilds both PR #53 CSVs byte-for-byte from all 54 SHA-bound
 JSONLs.
 
-The source-host rehash for B005 was attempted twice read-only on 2026-08-14;
-the SSH endpoint closed both connections before the two files could be read.
-No checkpoint hash was inferred from a path, alias, or unrelated receipt.
+The source-host rehash for B005 was attempted twice read-only on 2026-08-14.
+On 2026-08-17 it was retried against the original private host, the previous
+transfer host, and the current evaluation host; the results were respectively
+DNS-unresolvable, connection-refused, and connection-refused. Local checkpoint
+archives were also inspected and contain a different fixed/global experiment,
+not the target A/B/C runs. The publication-safe attempt receipt is
+`evidence/b005_retrieval_attempt_2026_08_17.json`. No checkpoint hash was
+inferred from a training-state hash, path, alias, metric value, or unrelated
+receipt.
+
+`evidence/disjoint_5k_cell_manifest_v1.json` now provides the missing explicit
+ordered sample-range binding for all 27 cells / 54 receipts. It also binds the
+exact numbered network snapshot SHA256 for 42 receipts. Its 12 explicit
+`BLOCKED_BY_B005` entries prevent the partial repair from being mistaken for a
+complete checkpoint -> receipt chain.
+
+B003 was also re-inventoried on 2026-08-17. No matching generated-sample or
+feature NPZ artifact exists in the committed PR #53 tree or the local result
+archives, and the source/transfer hosts were unavailable for read-only
+recovery. `evidence/b003_recovery_assessment_2026_08_17.json` therefore records
+`REGENERATION_OR_EXTERNAL_RECOVERY_REQUIRED` plus the per-cell closure
+contract; it does not claim metric recomputation.
 
 ## Reproduction commands
 
 ```bash
 python3 scripts/verify_gap_artifact_manifest.py
+python3 scripts/build_disjoint_5k_cell_manifest.py
 python3 scripts/rebuild_disjoint_5k_summary.py --verify
 python3 -m pytest tests/test_crossk_h20_recompute.py tests/test_gap_artifact_manifest.py
 ```
