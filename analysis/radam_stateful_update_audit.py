@@ -33,6 +33,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
+import numpy as np
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
@@ -146,8 +148,26 @@ def _flat_by_layer(values: dict[str, torch.Tensor], names: list[str]) -> torch.T
     return torch.cat([values[name].detach().double().reshape(-1) for name in names])
 
 
+def _quantiles(values: torch.Tensor, quantiles: tuple[float, ...]) -> tuple[float, ...]:
+    """Exact linear quantiles without PyTorch 2.2's tensor-size ceiling."""
+    if not values.numel():
+        return tuple(math.nan for _ in quantiles)
+    if any(not math.isfinite(q) or q < 0 or q > 1 for q in quantiles):
+        raise ValueError("quantiles must be finite and in [0, 1]")
+    flat = values.detach().double().cpu().contiguous().numpy().reshape(-1)
+    positions = [q * (flat.size - 1) for q in quantiles]
+    lower = [int(math.floor(position)) for position in positions]
+    upper = [int(math.ceil(position)) for position in positions]
+    work = flat.copy()
+    work.partition(sorted(set(lower + upper)))
+    return tuple(
+        float(work[lo] + (work[hi] - work[lo]) * (position - lo))
+        for position, lo, hi in zip(positions, lower, upper)
+    )
+
+
 def _quantile(values: torch.Tensor, q: float) -> float:
-    return float(torch.quantile(values, q).cpu()) if values.numel() else math.nan
+    return _quantiles(values, (q,))[0]
 
 
 def _weighted_mean_std(values: torch.Tensor, weights: torch.Tensor) -> tuple[float, float]:
@@ -220,6 +240,7 @@ def support_aware_gauge_summary(
         all_h_update.append(h_update)
         all_h_weights.append(h_weights)
         h_mean, h_std = _weighted_mean_std(h_update, h_weights)
+        h_p05, h_p50, h_p95 = _quantiles(h_update, (0.05, 0.50, 0.95))
         moment_mask = torch.zeros_like(support_mask)
         h_moment = torch.empty(0, dtype=torch.float64)
         h_moment_eps = torch.empty(0, dtype=torch.float64)
@@ -268,9 +289,9 @@ def support_aware_gauge_summary(
                                         if ref_l2_sq else math.nan),
             "h_update_weighted_mean": h_mean,
             "h_update_weighted_std": h_std,
-            "h_update_p05": _quantile(h_update, 0.05),
-            "h_update_p50": _quantile(h_update, 0.50),
-            "h_update_p95": _quantile(h_update, 0.95),
+            "h_update_p05": h_p05,
+            "h_update_p50": h_p50,
+            "h_update_p95": h_p95,
             "h_moment_coordinate_count": int(moment_mask.sum()),
             "h_moment_weighted_mean": _weighted_mean_std(h_moment, weights[moment_mask])[0],
             "h_moment_weighted_std": _weighted_mean_std(h_moment, weights[moment_mask])[1],
@@ -284,6 +305,7 @@ def support_aware_gauge_summary(
     h_weights_all = (torch.cat(all_h_weights) if all_h_weights
                      else torch.empty(0, dtype=torch.float64))
     h_mean, h_std = _weighted_mean_std(h_all, h_weights_all)
+    h_p05, h_p50, h_p95 = _quantiles(h_all, (0.05, 0.50, 0.95))
     whole = {
         "support_atol": support_atol,
         "exact_support_coordinate_count": sum(int((_flat_by_layer(reference, names) != 0).sum())
@@ -294,9 +316,9 @@ def support_aware_gauge_summary(
         "effective_support_energy_coverage": total_effective_ref_energy / ref_sq,
         "h_i_weighted_mean": h_mean,
         "h_i_weighted_std": h_std,
-        "h_i_p05": _quantile(h_all, 0.05),
-        "h_i_p50": _quantile(h_all, 0.50),
-        "h_i_p95": _quantile(h_all, 0.95),
+        "h_i_p05": h_p05,
+        "h_i_p50": h_p50,
+        "h_i_p95": h_p95,
         "on_support_gauge_dispersion_energy": total_exact_on_dispersion / ref_sq,
         "off_support_candidate_energy_exact": total_exact_off_energy / ref_sq,
         "history_gauge_dispersion_H_K": math.sqrt(max(exact_residual_energy, 0.0)),
