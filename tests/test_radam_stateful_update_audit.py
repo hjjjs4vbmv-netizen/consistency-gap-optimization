@@ -10,6 +10,7 @@ from pathlib import Path
 import unittest
 from unittest import mock
 
+import numpy as np
 import torch
 
 from training.schedules import get_schedule
@@ -107,6 +108,25 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         with mock.patch("builtins.__import__", side_effect=reject_numpy2_core):
             scalar = loader.find_class("numpy._core.multiarray", "scalar")
         self.assertEqual(scalar.__name__, "scalar")
+
+    def test_torch_load_uses_numpy_pickle_compatibility(self):
+        real_import = builtins.__import__
+
+        def reject_numpy2_core(name, *args, **kwargs):
+            if name.startswith("numpy._core"):
+                error = ModuleNotFoundError("No module named 'numpy._core'")
+                error.name = "numpy._core"
+                raise error
+            return real_import(name, *args, **kwargs)
+
+        with tempfile.NamedTemporaryFile(suffix=".pt") as handle:
+            torch.save({"value": np.float64(1.25)}, handle.name)
+            with mock.patch("builtins.__import__", side_effect=reject_numpy2_core):
+                loaded = torch.load(
+                    handle.name, map_location="cpu", weights_only=False,
+                    pickle_module=MODULE._NumpyCompatPickleModule,
+                )
+        self.assertEqual(float(loaded["value"]), 1.25)
 
     def test_load_loss_accepts_global_sigmoid_reference_checkpoint(self):
         loss = TinyLoss()
