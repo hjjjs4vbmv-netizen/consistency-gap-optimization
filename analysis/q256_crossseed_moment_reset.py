@@ -267,7 +267,7 @@ def run(args) -> int:
             layer_path.parent.mkdir(parents=True, exist_ok=True)
             with layer_path.open("w", newline="", encoding="utf-8") as handle:
                 writer = csv.DictWriter(
-                    handle, fieldnames=audit_lib.LAYERWISE_FIELDS,
+                    handle, fieldnames=audit_lib.GENERIC_LAYERWISE_FIELDS,
                     lineterminator="\n",
                 )
                 writer.writeheader()

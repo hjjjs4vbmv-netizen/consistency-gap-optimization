@@ -48,10 +48,46 @@ class TinyEDM(torch.nn.Module):
         return self.decoder(self.dropout(y).reshape(-1, 1)).reshape_as(x)
 
 
+class _CPUGradScalerForTest:
+    """Minimal deterministic scaler for the PyTorch-2.2 CPU unit-test path."""
+
+    def __init__(self, *, enabled: bool, init_scale: float):
+        self._enabled = enabled
+        self._scale_value = float(init_scale) if enabled else 1.0
+
+    def scale(self, loss):
+        return loss * self._scale_value if self._enabled else loss
+
+    def unscale_(self, optimizer):
+        if self._enabled:
+            for group in optimizer.param_groups:
+                for parameter in group["params"]:
+                    if parameter.grad is not None:
+                        parameter.grad.div_(self._scale_value)
+        return optimizer
+
+    def step(self, optimizer):
+        return optimizer.step()
+
+    def update(self):
+        return None
+
+    def get_scale(self):
+        return self._scale_value
+
+    def state_dict(self):
+        return {"enabled": self._enabled, "scale": self._scale_value}
+
+    def load_state_dict(self, state):
+        self._enabled = bool(state["enabled"])
+        self._scale_value = float(state["scale"])
+
+
 class RAdamUpdateGaugeTests(unittest.TestCase):
     def test_scaler_falls_back_to_cuda_amp_on_torch22(self):
         sentinel = object()
-        with mock.patch.object(MODULE.torch.amp, "GradScaler", None), \
+        with mock.patch.object(
+                MODULE.torch.amp, "GradScaler", None, create=True), \
                 mock.patch.object(
                     MODULE.torch.cuda.amp, "GradScaler", return_value=sentinel,
                 ) as legacy_scaler:
@@ -88,7 +124,12 @@ class RAdamUpdateGaugeTests(unittest.TestCase):
         self.assertEqual(net.training, True)
 
     def test_amp_path_unscales_and_preserves_source_scaler(self):
-        _, (audit, _) = self._run(amp=True)
+        with mock.patch.object(
+                MODULE, "_new_scaler",
+                side_effect=lambda _device, enabled, initial_scale: (
+                    _CPUGradScalerForTest(
+                        enabled=enabled, init_scale=initial_scale))):
+            _, (audit, _) = self._run(amp=True)
         self.assertTrue(all(branch["amp_unscale_called"] for branch in audit["branches"]))
         self.assertTrue(all(branch["amp_enabled"] for branch in audit["branches"]))
         self.assertTrue(audit["source_state_non_committing"]["preserved"])

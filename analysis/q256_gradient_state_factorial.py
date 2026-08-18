@@ -325,7 +325,7 @@ def run(args) -> int:
             _strict_dump(receipt_path, cell_receipt)
             layer_path.parent.mkdir(parents=True, exist_ok=True)
             with layer_path.open("w", newline="", encoding="utf-8") as handle:
-                writer = csv.DictWriter(handle, fieldnames=audit_lib.LAYERWISE_FIELDS,
+                writer = csv.DictWriter(handle, fieldnames=audit_lib.GENERIC_LAYERWISE_FIELDS,
                                         lineterminator="\n")
                 writer.writeheader()
                 writer.writerows(audit_lib._json_safe(layers_by_cell[key]))

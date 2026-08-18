@@ -163,14 +163,15 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         images = torch.linspace(-0.8, 0.8, 4).reshape(4, 1, 1, 1)
         labels = torch.empty((4, 0))
         with self.assertRaisesRegex(RuntimeError, "moments are still zero"):
-            MODULE.run_stateful_pair(net, optimizer, TinyLoss(), images, labels, amp=False)
+            MODULE.run_stateful_pair_generic(
+                net, optimizer, TinyLoss(), images, labels, amp=False)
 
     def test_refuses_partial_or_divergent_optimizer_state(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
         first_parameter = next(net.parameters())
         del optimizer.state[first_parameter]
         with self.assertRaisesRegex(RuntimeError, "missing optimizer state"):
-            MODULE.run_stateful_pair(
+            MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=False, random_seed=1234,
             )
 
@@ -178,7 +179,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         first_parameter = next(net.parameters())
         optimizer.state[first_parameter]["step"] = torch.tensor(63.0)
         with self.assertRaisesRegex(RuntimeError, "n_K is not uniform"):
-            MODULE.run_stateful_pair(
+            MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=False, random_seed=1234,
             )
 
@@ -187,7 +188,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         source_opt = MODULE.gauge.state_sha256(optimizer.state_dict())
         source_params = MODULE.gauge.module_state_hashes(net)
         # Seed 1234 keeps the tiny ECT geometry finite (same seed as the fresh gauge).
-        audit, layers = MODULE.run_stateful_pair(
+        audit, layers = MODULE.run_stateful_pair_generic(
             net, optimizer, loss, images, labels, amp=False, random_seed=1234,
         )
         self.assertTrue(audit["source_state_non_committing"]["preserved"])
@@ -222,11 +223,11 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         self.assertIn("h_update_weighted_mean", layers[0])
         self.assertIn("h_moment_weighted_mean", layers[0])
         self.assertIn("layer_residual_with_global_c_star", layers[0])
-        self.assertEqual(set(layers[0]), set(MODULE.LAYERWISE_FIELDS))
+        self.assertEqual(set(layers[0]), set(MODULE.GENERIC_LAYERWISE_FIELDS))
 
     def test_idealized_predictor_matches_actual_update(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
-        audit, _ = MODULE.run_stateful_pair(
+        audit, _ = MODULE.run_stateful_pair_generic(
             net, optimizer, loss, images, labels, amp=False, random_seed=1234,
         )
         rel = audit["whole_model"]["predicted_vs_actual_relative_l2"]
@@ -301,7 +302,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
             with self.subTest(seed=seed):
                 net, optimizer, images, labels, loss = _warmup_nonzero_state()
                 rng_before = torch.get_rng_state().clone()
-                audit, _ = MODULE.run_stateful_pair(
+                audit, _ = MODULE.run_stateful_pair_generic(
                     net, optimizer, loss, images, labels, amp=False,
                     random_seed=seed, microbatch_size=4,
                 )
@@ -316,7 +317,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
     def test_amp_without_gradscaler_state_fails_closed(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
         with self.assertRaisesRegex(RuntimeError, "GradScaler_K"):
-            MODULE.run_stateful_pair(
+            MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=True, scaler_state=None,
                 random_seed=1234,
             )
@@ -334,7 +335,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
             return grads, predicted, actual, moments, detail
 
         with mock.patch.object(MODULE, "virtual_stateful_step", side_effect=skip_one):
-            audit, layers = MODULE.run_stateful_pair(
+            audit, layers = MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=False, random_seed=1234,
             )
         self.assertFalse(audit["whole_model"]["gauge_defined"])
@@ -403,9 +404,40 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         self.assertTrue(real["source_state_non_committing"]["preserved"])
         self.assertEqual(source_optimizer, MODULE.gauge.state_sha256(optimizer.state_dict()))
 
-    def test_generic_schema_has_no_legacy_probe_name(self):
+    def test_generic_and_legacy_schema_boundaries_are_compatible(self):
+        net, optimizer, images, labels, loss = _warmup_nonzero_state()
+        generic, generic_layers = MODULE.run_stateful_pair_generic(
+            net, optimizer, loss, images, labels, amp=False, random_seed=1234,
+            reference_gap_scale=1.0, probe_gap_scale=1.3,
+        )
+        legacy, legacy_layers = MODULE.run_stateful_pair(
+            net, optimizer, loss, images, labels, amp=False, random_seed=1234,
+        )
+        self.assertEqual(legacy["gains"], [1.0, 1.3])
+        key_pairs = {
+            "a_star": "a_K_star",
+            "s_star": "s_K_star",
+            "c_star": "c_K_star",
+            "update_reference_l2": "update_1_l2",
+            "update_probe_l2": "update_1p3_l2",
+            "grad_reference_l2": "grad_1_l2",
+            "grad_probe_l2": "grad_1p3_l2",
+        }
+        for generic_key, legacy_key in key_pairs.items():
+            self.assertEqual(
+                generic["whole_model"][generic_key],
+                legacy["whole_model"][legacy_key],
+            )
+            self.assertNotIn(legacy_key, generic["whole_model"])
+        self.assertEqual(
+            generic["whole_model"]["predicted_vs_actual_relative_l2"]["reference"],
+            legacy["whole_model"]["predicted_vs_actual_relative_l2"]["1.0"],
+        )
+        self.assertEqual(set(generic_layers[0]), set(MODULE.GENERIC_LAYERWISE_FIELDS))
+        self.assertEqual(set(legacy_layers[0]), set(MODULE.LEGACY_LAYERWISE_FIELDS))
+        self.assertNotIn("update_1p3_l2", generic_layers[0])
+        self.assertIn("update_1p3_l2", legacy_layers[0])
         source = Path(SCRIPT).read_text(encoding="utf-8")
-        self.assertNotIn("1p3", source)
         self.assertIn("--reference-gap-scale", source)
         self.assertIn("--probe-gap-scale", source)
 

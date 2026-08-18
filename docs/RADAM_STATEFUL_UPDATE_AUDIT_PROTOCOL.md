@@ -38,7 +38,9 @@ It creates two disposable branches that share:
 - the exact same restored `θ_K`, `m_K`, `v_K`, `n_K`, and GradScaler state;
 - the same one-time minibatch, `t`, noise, and dropout RNG state.
 
-The sole branch difference is `global_gap_scale`: `1.0` versus `1.3`.
+The sole branch difference is `global_gap_scale`, supplied through
+`--reference-gap-scale` and `--probe-gap-scale` (the parameterized CLI defaults
+to `1.0` versus `1.1`).
 Augmentation-enabled checkpoints fail closed.  The update follows the training
 loop order exactly: `scale → backward → unscale → sanitize → step → update`.
 The tool does **not** enter `torch.autocast`.
@@ -50,12 +52,29 @@ If AMP skips `optimizer.step` on either branch, the gauge is undefined: actual
 `Δθ` is zero while the candidate moment map is not a comparable completed
 update. The receipt records the skip status rather than emitting a gauge.
 
+## Schema compatibility
+
+The parameterized API is `run_stateful_pair_generic` and reports explicit
+`reference`/`probe` field names.  Historical callers of
+`run_stateful_pair(gains=(1.0, 1.3))` remain supported through a fixed-pair
+legacy wrapper.  That wrapper restores the established `gains`, `a_K_star`,
+`s_K_star`, `c_K_star`, `update_1_l2`, `update_1p3_l2`, `grad_1_l2`,
+`grad_1p3_l2`, and legacy layerwise names.  It refuses any pair other than
+`(1.0, 1.3)`, so a g=1.1 result can never be mislabeled as `1p3`.
+
+New q256 factorial and moment-reset receipts use only the generic schema and
+`GENERIC_LAYERWISE_FIELDS`.  `LAYERWISE_FIELDS` remains the historical public
+constant for old consumers.  This migration is an output-boundary adapter; it
+does not alter virtual updates or formal numerical receipts.
+
 ## Metrics
 
 ### Scalar conventions
 
 The measurement follows #43/#45 exactly.  The two directions are both
-reported and never relabelled:
+reported and never relabelled.  Here `U_1` denotes the reference branch and
+`U_g` the caller-selected probe; historical fixed-pair artifacts use
+`g=1.3`:
 
 ```text
 s_K^* = <U_g, U_1> / ||U_1||²       # U_g ≈ s_K^* U_1, update scale
@@ -141,6 +160,7 @@ python analysis/radam_stateful_update_audit.py \
   --checkpoint /path/to/network-snapshot.pkl \
   --data /path/to/cifar10-32x32.zip \
   --state-kimg 128 --batch-size 128 --batch-gpu 16 --support-atol 0 \
+  --reference-gap-scale 1.0 --probe-gap-scale 1.1 \
   --seed 20260808 --device cuda
 ```
 

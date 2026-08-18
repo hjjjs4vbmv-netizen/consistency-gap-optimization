@@ -46,7 +46,7 @@ import torch
 import radam_update_gauge as gauge
 from training.schedules import get_schedule
 
-LAYERWISE_FIELDS = (
+GENERIC_LAYERWISE_FIELDS = (
     "layer",
     "update_reference_l2",
     "update_probe_l2",
@@ -80,6 +80,21 @@ LAYERWISE_FIELDS = (
     "predicted_layer_residual_with_global_c_star",
     "predicted_off_support_candidate_energy_exact",
 )
+
+# Historical fixed-g=1.0/1.3 consumers imported LAYERWISE_FIELDS directly.
+# Keep that boundary stable while new parameterized runners opt in to the
+# explicitly named generic constant.
+_GENERIC_TO_LEGACY_LAYER_FIELDS = {
+    "update_reference_l2": "update_1_l2",
+    "update_probe_l2": "update_1p3_l2",
+    "predicted_reference_l2": "predicted_1_l2",
+    "predicted_probe_l2": "predicted_1p3_l2",
+}
+LAYERWISE_FIELDS = tuple(
+    _GENERIC_TO_LEGACY_LAYER_FIELDS.get(field, field)
+    for field in GENERIC_LAYERWISE_FIELDS
+)
+LEGACY_LAYERWISE_FIELDS = LAYERWISE_FIELDS
 
 
 def _norm_sq(values: Iterable[torch.Tensor]) -> float:
@@ -1469,14 +1484,15 @@ def summarize_pair(grads_reference, grads_probe, pred_reference, pred_probe,
     return whole, layer_rows
 
 
-def run_stateful_pair(common_net, common_optimizer, loss_template, images, labels, *,
-                      reference_gap_scale=1.0, probe_gap_scale=1.1,
-                      amp=True, initial_scale=65536.0,
-                      scaler_state: dict[str, Any] | None = None,
-                      random_seed: int | None = None,
-                      microbatch_size: int | None = None, support_atol: float = 0.0
-                      ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Fork ``z_K``, run a paired reference/probe step, leave source untouched."""
+def run_stateful_pair_generic(common_net, common_optimizer, loss_template, images, labels, *,
+                              reference_gap_scale=1.0, probe_gap_scale=1.1,
+                              amp=True, initial_scale=65536.0,
+                              scaler_state: dict[str, Any] | None = None,
+                              random_seed: int | None = None,
+                              microbatch_size: int | None = None,
+                              support_atol: float = 0.0
+                              ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Run the parameterized generic reference/probe schema non-committingly."""
     gains = (float(reference_gap_scale), float(probe_gap_scale))
     if (not all(math.isfinite(gain) and gain > 0 for gain in gains)
             or gains[0] == gains[1]):
@@ -1612,6 +1628,67 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
         "whole_model": whole,
     }
     return audit, layers
+
+
+_GENERIC_TO_LEGACY_WHOLE_FIELDS = {
+    "a_star": "a_K_star",
+    "s_star": "s_K_star",
+    "c_star": "c_K_star",
+    "update_reference_l2": "update_1_l2",
+    "update_probe_l2": "update_1p3_l2",
+    "grad_reference_l2": "grad_1_l2",
+    "grad_probe_l2": "grad_1p3_l2",
+}
+
+
+def _legacy_1p3_schema(generic_audit: dict[str, Any],
+                       generic_layers: list[dict[str, Any]]
+                       ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Translate only the historical fixed-g=1.0/1.3 public boundary."""
+    scales = (
+        float(generic_audit.get("reference_gap_scale", math.nan)),
+        float(generic_audit.get("probe_gap_scale", math.nan)),
+    )
+    if scales != (1.0, 1.3):
+        raise ValueError("legacy schema aliases are valid only for gains (1.0, 1.3)")
+    audit = copy.deepcopy(generic_audit)
+    audit.pop("reference_gap_scale", None)
+    audit.pop("probe_gap_scale", None)
+    audit["gains"] = [1.0, 1.3]
+    whole = {}
+    for key, value in audit["whole_model"].items():
+        legacy_key = _GENERIC_TO_LEGACY_WHOLE_FIELDS.get(key, key)
+        if key == "predicted_vs_actual_relative_l2" and isinstance(value, dict):
+            value = {"1.0": value.get("reference"), "1.3": value.get("probe")}
+        whole[legacy_key] = value
+    audit["whole_model"] = whole
+    layers = [
+        {
+            _GENERIC_TO_LEGACY_LAYER_FIELDS.get(key, key): copy.deepcopy(value)
+            for key, value in row.items()
+        }
+        for row in generic_layers
+    ]
+    return audit, layers
+
+
+def run_stateful_pair(common_net, common_optimizer, loss_template, images, labels, *,
+                      gains=(1.0, 1.3), amp=True, initial_scale=65536.0,
+                      scaler_state: dict[str, Any] | None = None,
+                      random_seed: int | None = None,
+                      microbatch_size: int | None = None, support_atol: float = 0.0
+                      ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Backward-compatible fixed-g=1.0/1.3 stateful audit wrapper."""
+    if tuple(gains) != (1.0, 1.3):
+        raise ValueError("legacy run_stateful_pair is defined for gains (1.0, 1.3)")
+    generic = run_stateful_pair_generic(
+        common_net, common_optimizer, loss_template, images, labels,
+        reference_gap_scale=1.0, probe_gap_scale=1.3,
+        amp=amp, initial_scale=initial_scale, scaler_state=scaler_state,
+        random_seed=random_seed, microbatch_size=microbatch_size,
+        support_atol=support_atol,
+    )
+    return _legacy_1p3_schema(*generic)
 
 
 class _NumpyCompatUnpickler(pickle.Unpickler):
@@ -1794,7 +1871,7 @@ def main(argv=None) -> int:
     images, labels = next(iter(loader))
     images = images.to(device).to(torch.float32) / 127.5 - 1
     labels = labels.to(device)
-    audit, layers = run_stateful_pair(
+    audit, layers = run_stateful_pair_generic(
         net, optimizer, loss, images, labels,
         amp=args.amp, initial_scale=args.initial_scale, scaler_state=scaler_state,
         random_seed=args.seed, microbatch_size=args.batch_gpu,
@@ -1830,7 +1907,7 @@ def main(argv=None) -> int:
         json.dump(_json_safe(audit), handle, indent=2, allow_nan=False)
         handle.write("\n")
     with layer_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=LAYERWISE_FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=GENERIC_LAYERWISE_FIELDS)
         writer.writeheader()
         writer.writerows(layers)
     print(json.dumps(_json_safe(audit["whole_model"]), indent=2))

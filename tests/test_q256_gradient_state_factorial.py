@@ -240,6 +240,31 @@ class GradientStateFactorialTests(unittest.TestCase):
             summary_json = json.loads((out1 / "summary.json").read_text(encoding="utf-8"))
             self.assertFalse(summary_json["audit_batches_are_independent_replicates"])
             self.assertFalse(summary_json["four_cell_is_additive_causal_decomposition"])
+            self.assertEqual(summary_json["schema_version"], 1)
+            self.assertEqual(summary_json["schema_revision"], 2)
+            self.assertTrue(summary_json["schema_compatibility"][
+                "revision_1_fields_preserved"])
+            seed_contrasts = summary_json["contrasts_of_seed_cell_medians"]
+            self.assertEqual(
+                seed_contrasts["estimand"],
+                "contrast_of_within_seed_cell_median_R_opt_across_8_paired_batches")
+            for row in seed_contrasts["per_training_seed"]:
+                self.assertAlmostEqual(row["B_minus_D_R_opt"], 0.23)
+                self.assertAlmostEqual(row["C_minus_D_R_opt"], 0.03)
+                self.assertAlmostEqual(row["A_minus_C_R_opt"], 0.08)
+                self.assertAlmostEqual(row["A_minus_B_R_opt"], -0.12)
+                self.assertAlmostEqual(
+                    row["A_minus_B_minus_C_plus_D_R_opt"], -0.15)
+                self.assertLessEqual(row["interaction_identity_residual"], 1e-15)
+            self.assertAlmostEqual(
+                first["contrasts"][0]["A_minus_B_minus_C_plus_D_R_opt"], -0.15)
+            report = (out1 / "report.md").read_text(encoding="utf-8")
+            self.assertIn("I = (A-C) - (B-D) = A-B-C+D", report)
+            self.assertIn("not a memory-neutral intervention", report)
+            self.assertIn("cross-seed median of 0.2300", report)
+            self.assertIn("(C-D=0.0300)", report)
+            self.assertIn("(A-B-C+D=-0.1500)", report)
+            self.assertNotIn("cross-seed median of 0.4753", report)
 
     def test_preregistration_and_runner_have_frozen_generic_schema(self):
         prereg = json.loads((ANALYSIS_DIR / "q256_gradient_state_factorial_preregistration.json")
