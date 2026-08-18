@@ -83,6 +83,12 @@ class Q256MomentResetTests(unittest.TestCase):
             self.assertEqual(len(rows), 3)
             self.assertEqual(set(provenance), {"3", "4", "5"})
             self.assertIn("not a full-training intervention", report)
+            self.assertIn("Cross-seed R_grad vs R_opt_real", report)
+            self.assertIn("moment zeroing as a valid memory-neutralization intervention", report)
+            for row in rows:
+                self.assertEqual(row["median_R_grad"], 0.1)
+                self.assertAlmostEqual(row["median_R_opt_real_minus_R_grad"], 0.3)
+                self.assertEqual(row["R_opt_real_lt_R_grad_count"], 0)
 
     def test_formal_runner_freezes_eight_audit_seeds_and_generic_schema(self):
         source = RUNNER_SCRIPT.read_text(encoding="utf-8")

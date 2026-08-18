@@ -201,7 +201,8 @@ class StatefulRAdamAuditTests(unittest.TestCase):
                          state_validation["parameter_count"])
         whole = audit["whole_model"]
         self.assertTrue(whole["gauge_defined"])
-        for key in ("a_star", "R_grad", "s_star", "c_star", "R_opt",
+        self.assertEqual(audit["schema_version"], MODULE.LEGACY_SCHEMA_VERSION)
+        for key in ("a_K_star", "R_grad", "s_K_star", "c_K_star", "R_opt",
                     "H_K", "R_opt_minus_R_grad", "R_pred",
                     "on_support_gauge_dispersion_energy",
                     "off_support_candidate_energy_exact",
@@ -209,6 +210,8 @@ class StatefulRAdamAuditTests(unittest.TestCase):
             self.assertIn(key, whole)
             self.assertIsInstance(whole[key], float)
             self.assertTrue(math.isfinite(whole[key]))
+        for generic_key in ("a_star", "s_star", "c_star"):
+            self.assertNotIn(generic_key, whole)
         self.assertEqual(whole["residual_convention"],
                          "reference_normalized_candidate_minus_s_star_reference")
         self.assertTrue(whole["H_K_equals_R_opt_identity"])
@@ -386,8 +389,14 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         self.assertEqual(set(audits), {"real", "reset_moments"})
         self.assertEqual(set(layers), {"real", "reset_moments"})
         real, reset = audits["real"], audits["reset_moments"]
+        self.assertEqual(real["schema_version"], MODULE.GENERIC_SCHEMA_VERSION)
+        self.assertEqual(reset["schema_version"], MODULE.GENERIC_SCHEMA_VERSION)
         self.assertEqual(real["reference_gap_scale"], 1.0)
         self.assertEqual(real["probe_gap_scale"], 1.1)
+        for key in ("a_star", "s_star", "c_star"):
+            self.assertIn(key, real["whole_model"])
+        for legacy_key in ("a_K_star", "s_K_star", "c_K_star"):
+            self.assertNotIn(legacy_key, real["whole_model"])
         self.assertEqual(real["whole_model"]["R_grad"], reset["whole_model"]["R_grad"])
         for label in ("reference", "probe"):
             self.assertEqual(
@@ -402,6 +411,15 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         self.assertTrue(reset["whole_model"]["H_K_equals_R_opt_identity"])
         self.assertTrue(real["source_state_non_committing"]["preserved"])
         self.assertEqual(source_optimizer, MODULE.gauge.state_sha256(optimizer.state_dict()))
+
+    def test_metric_schema_migration_round_trips_without_aliases(self):
+        generic = {"a_star": 0.8, "s_star": 0.9, "c_star": 1.1, "R_opt": 0.2}
+        legacy = MODULE.migrate_whole_model_schema(
+            generic, target_schema_version=MODULE.LEGACY_SCHEMA_VERSION)
+        self.assertEqual(legacy, {
+            "a_K_star": 0.8, "s_K_star": 0.9, "c_K_star": 1.1, "R_opt": 0.2})
+        self.assertEqual(MODULE.migrate_whole_model_schema(
+            legacy, target_schema_version=MODULE.GENERIC_SCHEMA_VERSION), generic)
 
     def test_generic_schema_has_no_legacy_probe_name(self):
         source = Path(SCRIPT).read_text(encoding="utf-8")

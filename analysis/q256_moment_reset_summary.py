@@ -114,7 +114,12 @@ def build(receipts_root: Path) -> tuple[dict, list[dict], str, dict]:
             "median_suppression": statistics.median(values),
             "min_suppression": min(values),
             "max_suppression": max(values),
+            "median_R_grad": statistics.median(item["R_grad"] for item in by_seed[seed]),
             "median_R_opt_real": statistics.median(item["R_opt_real"] for item in by_seed[seed]),
+            "median_R_opt_real_minus_R_grad": statistics.median(
+                item["R_opt_real"] - item["R_grad"] for item in by_seed[seed]),
+            "R_opt_real_lt_R_grad_count": sum(
+                item["R_opt_real"] < item["R_grad"] for item in by_seed[seed]),
             "median_R_opt_reset": statistics.median(item["R_opt_reset"] for item in by_seed[seed]),
             "all_pair_gates_pass": all(item["pair_gate_pass"] for item in by_seed[seed]),
         })
@@ -178,6 +183,43 @@ def build(receipts_root: Path) -> tuple[dict, list[dict], str, dict]:
         "",
         "Suppression is defined as `1 - R_opt_reset / R_opt_real`.",
         "",
+        "## Cross-seed R_grad vs R_opt_real",
+        "",
+        "| Training seed | Median R_grad | Median R_opt_real | Paired median (R_opt_real - R_grad) | R_opt_real < R_grad |",
+        "|---:|---:|---:|---:|---:|",
+    ])
+    for row in rows:
+        report_lines.append(
+            f"| {row['training_seed']} | {row['median_R_grad']:.6f} | "
+            f"{row['median_R_opt_real']:.6f} | "
+            f"{row['median_R_opt_real_minus_R_grad']:.6f} | "
+            f"{row['R_opt_real_lt_R_grad_count']}/{row['audit_count']} |")
+    lower_count = sum(row["R_opt_real_lt_R_grad_count"] for row in rows)
+    audit_count = sum(row["audit_count"] for row in rows)
+    if audit_count and lower_count == audit_count:
+        direction_result = (
+            "Thus the stateful optimizer history consistently attenuated, rather "
+            "than amplified, the instantaneous gradient directional residual in "
+            "this audit."
+        )
+    elif audit_count and lower_count == 0:
+        direction_result = (
+            "Thus the stateful optimizer history consistently amplified, rather "
+            "than attenuated, the instantaneous gradient directional residual in "
+            "this audit."
+        )
+    else:
+        direction_result = (
+            "The direction was mixed across paired audit minibatches, so no "
+            "uniform attenuation or amplification claim is supported."
+        )
+    report_lines.extend([
+        "",
+        f"Across the frozen real optimizer states, `R_opt_real < R_grad` in "
+        f"{lower_count}/{audit_count} paired audit minibatches. {direction_result}",
+        "",
+        "The result falsifies moment zeroing as a valid memory-neutralization intervention; it does not falsify state-dependent optimizer-history effects.",
+        "",
         "## Interpretation boundary",
         "",
         "This audit can determine whether clearing accumulated RAdam moments lowers optimizer-update divergence for the formal g=1.10 treatment at the frozen q256 source states. It does not establish that optimizer memory caused an FID improvement. Audit minibatches are not independent training replicates, and this is not a full-training intervention.",
@@ -197,8 +239,9 @@ def main(argv=None) -> int:
     _write_json(args.out / "summary.json", summary)
     with (args.out / "summary.csv").open("w", newline="", encoding="utf-8") as handle:
         fields = ("training_seed", "audit_count", "median_suppression", "min_suppression",
-                  "max_suppression", "median_R_opt_real", "median_R_opt_reset",
-                  "all_pair_gates_pass")
+                  "max_suppression", "median_R_grad", "median_R_opt_real",
+                  "median_R_opt_real_minus_R_grad", "R_opt_real_lt_R_grad_count",
+                  "median_R_opt_reset", "all_pair_gates_pass")
         writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)

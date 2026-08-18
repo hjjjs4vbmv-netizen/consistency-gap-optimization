@@ -46,6 +46,14 @@ import torch
 import radam_update_gauge as gauge
 from training.schedules import get_schedule
 
+LEGACY_SCHEMA_VERSION = "1.0"
+GENERIC_SCHEMA_VERSION = "1.1"
+_GENERIC_TO_LEGACY_METRIC_KEYS = {
+    "a_star": "a_K_star",
+    "s_star": "s_K_star",
+    "c_star": "c_K_star",
+}
+
 LAYERWISE_FIELDS = (
     "layer",
     "update_reference_l2",
@@ -80,6 +88,35 @@ LAYERWISE_FIELDS = (
     "predicted_layer_residual_with_global_c_star",
     "predicted_off_support_candidate_energy_exact",
 )
+
+
+def migrate_whole_model_schema(metrics: dict[str, Any], *,
+                               target_schema_version: str) -> dict[str, Any]:
+    """Return a copy using the requested whole-model metric-key schema.
+
+    Version 1.0 is the canonical historical contract used by the original
+    stateful-audit consumers.  Version 1.1 is the generic reference/probe
+    contract used by parameterized runners such as the q256 g=1.00/1.10
+    moment-reset audit.
+    """
+    if target_schema_version == LEGACY_SCHEMA_VERSION:
+        renames = _GENERIC_TO_LEGACY_METRIC_KEYS
+    elif target_schema_version == GENERIC_SCHEMA_VERSION:
+        renames = {legacy: generic for generic, legacy
+                   in _GENERIC_TO_LEGACY_METRIC_KEYS.items()}
+    else:
+        raise ValueError(
+            f"unsupported metric schema {target_schema_version!r}; expected "
+            f"{LEGACY_SCHEMA_VERSION!r} or {GENERIC_SCHEMA_VERSION!r}"
+        )
+    migrated = copy.deepcopy(metrics)
+    for source, target in renames.items():
+        if source not in migrated:
+            continue
+        if target in migrated and migrated[target] != migrated[source]:
+            raise ValueError(f"conflicting metric aliases {source!r} and {target!r}")
+        migrated[target] = migrated.pop(source)
+    return migrated
 
 
 def _norm_sq(values: Iterable[torch.Tensor]) -> float:
@@ -853,7 +890,7 @@ def run_moment_reset_manipulation(common_net, common_optimizer, loss_template,
             whole["source_preserved"] = None
             whole["step_skipped"] = False
             audits[condition] = {
-                "schema_version": 1,
+                "schema_version": GENERIC_SCHEMA_VERSION,
                 "condition": condition,
                 "reference_gap_scale": scales[0],
                 "probe_gap_scale": scales[1],
@@ -1008,9 +1045,17 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
                       amp=True, initial_scale=65536.0,
                       scaler_state: dict[str, Any] | None = None,
                       random_seed: int | None = None,
-                      microbatch_size: int | None = None, support_atol: float = 0.0
+                      microbatch_size: int | None = None, support_atol: float = 0.0,
+                      metric_schema_version: str = LEGACY_SCHEMA_VERSION,
                       ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Fork ``z_K``, run a paired reference/probe step, leave source untouched."""
+    """Fork ``z_K``, run a paired reference/probe step, leave source untouched.
+
+    The default preserves the canonical 1.0 whole-model keys for historical
+    consumers.  Parameterized callers that require generic keys must request
+    ``metric_schema_version=GENERIC_SCHEMA_VERSION`` explicitly.
+    """
+    if metric_schema_version not in (LEGACY_SCHEMA_VERSION, GENERIC_SCHEMA_VERSION):
+        raise ValueError(f"unsupported metric schema {metric_schema_version!r}")
     gains = (float(reference_gap_scale), float(probe_gap_scale))
     if (not all(math.isfinite(gain) and gain > 0 for gain in gains)
             or gains[0] == gains[1]):
@@ -1107,7 +1152,10 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
         torch.set_rng_state(cpu_rng_before)
         if cuda_rng_before is not None:
             torch.cuda.set_rng_state(cuda_rng_before, device=device)
+    whole = migrate_whole_model_schema(
+        whole, target_schema_version=metric_schema_version)
     audit = {
+        "schema_version": metric_schema_version,
         "reference_gap_scale": gains[0],
         "probe_gap_scale": gains[1],
         "stateful_radam": {
