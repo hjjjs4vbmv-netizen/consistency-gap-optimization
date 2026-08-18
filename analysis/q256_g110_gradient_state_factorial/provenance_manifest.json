@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "branch": "analysis/g110-gradient-state-factorial",
+  "base_commit": "dd9618809751a61170ede4aa75935c089c92c2cc",
+  "formal_execution_code_commit": "0033dbb3b4a64cd587fb5bd4c5881ae3ea99e1c4",
+  "reference_gap_scale": 1.0,
+  "probe_gap_scale": 1.1,
+  "training_seeds": [
+    3,
+    4,
+    5
+  ],
+  "audit_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "formal_receipt_counts": {
+    "paired_batches": 24,
+    "cell_receipts": 96,
+    "layerwise_csvs": 96
+  },
+  "source_states": {
+    "3": {
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "4": {
+      "sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "checkpoint_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9"
+    },
+    "5": {
+      "sha256": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "checkpoint_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a"
+    }
+  },
+  "dataset": {
+    "path": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "mount_mode": "read_only"
+  },
+  "formal_environment": {
+    "container": "/data/temp/ect001-pytorch2401-sandbox",
+    "torch_version": "2.2.0a0+81ea7a4",
+    "cuda_version": "12.3",
+    "numpy_version": "1.24.4",
+    "requested_24_04_sif_conformance": false,
+    "note": "The internal paired audit correctness gates pass, but this run must not be labeled a PyTorch 2.3/CUDA 12.4 environment replication."
+  },
+  "preflight": {
+    "clean_dry_run_seed3": "PASS",
+    "clean_dry_run_seed4": "PASS",
+    "clean_dry_run_seed5": "PASS",
+    "seed3_smoke": "PASS"
+  },
+  "correctness": {
+    "formal_status": "PASS",
+    "all_numerics_finite": true,
+    "source_preservation": true,
+    "branch_order_invariance": true,
+    "same_batch_rerun_hash": true,
+    "exact_scalar_R_grad_within_1e_minus_12": true,
+    "D_H_equals_R_opt_identity": true,
+    "deterministic_summary_rebuild": true
+  },
+  "tests": {
+    "targeted_factorial_tests": {
+      "passed": 31,
+      "failed": 0
+    },
+    "full_suite": {
+      "total": 267,
+      "passed": 262,
+      "skipped": 3,
+      "failed": 2,
+      "errors": 0,
+      "environment_limited_failures": [
+        "tests.test_radam_update_gauge.RAdamUpdateGaugeTests.test_amp_path_unscales_and_preserves_source_scaler",
+        "tests.test_radam_update_gauge.RAdamUpdateGaugeTests.test_scaler_falls_back_to_cuda_amp_on_torch22"
+      ]
+    }
+  },
+  "artifact_sha256": {
+    "raw_results.csv": "b77f590436741ce991bd8c10feb0986459c8ffd2c14c20ef15f6476c99e26f7e",
+    "batch_contrasts.csv": "01f2e60f81df8f2f3a6969ce78cdf44e962ca0410f79b6d3a940a3f9a0bb1dbd",
+    "seed_summary.csv": "43b188e990a48941b4c6fe061745f0c09ff227dad358ecdab0d0eedfd6f83679",
+    "summary.json": "4077fb3133811c0f77c4e049ae233a755cd453ad3528245dbbb977763b0f4ee6",
+    "report.md": "c3b2f86421e821059fc723741be14050bc2b91b8d4ed1f260fb5cd406fa0ea9c",
+    "test_results.xml": "5ae1584d04a0ac303d234f2068f0ef51ef7b123b0c6e5ea9d9dea24617f308bc"
+  },
+  "operations_excluded": [
+    "training",
+    "sample_generation",
+    "FID",
+    "KID",
+    "continuation_training"
+  ]
+}
