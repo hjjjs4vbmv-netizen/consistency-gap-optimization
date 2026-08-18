@@ -1,0 +1,39 @@
+{
+  "audit_rng_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "conditions": [
+    "real",
+    "reset_moments"
+  ],
+  "formal_source": {
+    "q": 256,
+    "source_gap_scale": 1.0,
+    "state_kimg": 256,
+    "training_seeds": [
+      3,
+      4,
+      5
+    ]
+  },
+  "gap_pair": {
+    "probe_gap_scale": 1.1,
+    "reference_gap_scale": 1.0
+  },
+  "go_gate": {
+    "all_numerics_finite": true,
+    "at_least_two_of_three_seed_median_suppression_ge": 0.25,
+    "gradient_identity_tolerance": 0.0,
+    "no_seed_median_suppression_lt": -0.05,
+    "source_state_preserved": true,
+    "virtual_branches_skip": false
+  },
+  "suppression_definition": "1 - R_opt_reset / R_opt_real"
+}

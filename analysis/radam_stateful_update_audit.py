@@ -7,7 +7,8 @@ state
     z_K = (θ_K, m_K, v_K, n_K, GradScaler_K)
 
 forks two disposable branches that share one minibatch / ``t`` / noise /
-dropout RNG, and differs only by ``global_gap_scale`` ``g ∈ {1.0, 1.3}``.
+dropout RNG, and differs only by a caller-specified reference/probe pair of
+``global_gap_scale`` values.
 
 Each branch reports gradient scalars ``a_K^*``, ``R_grad(K)`` and the distinct
 optimizer scalars ``s_K^*`` (update scale), ``c_K^*`` (candidate LR
@@ -45,8 +46,8 @@ from training.schedules import get_schedule
 
 LAYERWISE_FIELDS = (
     "layer",
-    "update_1_l2",
-    "update_1p3_l2",
+    "update_reference_l2",
+    "update_probe_l2",
     "update_cosine",
     "s_K_star_layer",
     "c_K_star_layer",
@@ -69,8 +70,8 @@ LAYERWISE_FIELDS = (
     "h_update_minus_moment_weighted_rmse",
     "h_update_minus_moment_eps_weighted_rmse",
     "off_support_candidate_energy_exact",
-    "predicted_1_l2",
-    "predicted_1p3_l2",
+    "predicted_reference_l2",
+    "predicted_probe_l2",
     "s_K_star_predicted_layer",
     "c_K_star_predicted_layer",
     "R_pred_layer",
@@ -188,6 +189,8 @@ def support_aware_gauge_summary(
     total_moment_weight = 0.0
     total_moment_diff_sq = 0.0
     total_moment_eps_diff_sq = 0.0
+    all_h_update: list[torch.Tensor] = []
+    all_h_weights: list[torch.Tensor] = []
     layer_rows: list[dict[str, Any]] = []
     for layer, names in sorted(by_layer.items()):
         ref = _flat_by_layer(reference, names)
@@ -214,6 +217,8 @@ def support_aware_gauge_summary(
 
         h_update = cand[support_mask] / ref[support_mask]
         h_weights = weights[support_mask]
+        all_h_update.append(h_update)
+        all_h_weights.append(h_weights)
         h_mean, h_std = _weighted_mean_std(h_update, h_weights)
         moment_mask = torch.zeros_like(support_mask)
         h_moment = torch.empty(0, dtype=torch.float64)
@@ -247,8 +252,8 @@ def support_aware_gauge_summary(
                     ((update_on_moment - h_moment_eps).square() * moment_weights).sum())
         layer_rows.append({
             "layer": layer,
-            "update_1_l2": math.sqrt(ref_l2_sq),
-            "update_1p3_l2": math.sqrt(cand_l2_sq),
+            "update_reference_l2": math.sqrt(ref_l2_sq),
+            "update_probe_l2": math.sqrt(cand_l2_sq),
             "update_cosine": dot / math.sqrt(ref_l2_sq * cand_l2_sq) if ref_l2_sq and cand_l2_sq else math.nan,
             "s_K_star_layer": layer_s,
             "c_K_star_layer": layer_c,
@@ -275,6 +280,10 @@ def support_aware_gauge_summary(
             "off_support_candidate_energy_exact": exact_off_energy / ref_sq,
         })
     exact_residual_energy = (total_exact_on_dispersion + total_exact_off_energy) / ref_sq
+    h_all = torch.cat(all_h_update) if all_h_update else torch.empty(0, dtype=torch.float64)
+    h_weights_all = (torch.cat(all_h_weights) if all_h_weights
+                     else torch.empty(0, dtype=torch.float64))
+    h_mean, h_std = _weighted_mean_std(h_all, h_weights_all)
     whole = {
         "support_atol": support_atol,
         "exact_support_coordinate_count": sum(int((_flat_by_layer(reference, names) != 0).sum())
@@ -283,6 +292,11 @@ def support_aware_gauge_summary(
         "coordinate_count": total_coordinates,
         "effective_support_coordinate_coverage": total_effective_coordinates / total_coordinates,
         "effective_support_energy_coverage": total_effective_ref_energy / ref_sq,
+        "h_i_weighted_mean": h_mean,
+        "h_i_weighted_std": h_std,
+        "h_i_p05": _quantile(h_all, 0.05),
+        "h_i_p50": _quantile(h_all, 0.50),
+        "h_i_p95": _quantile(h_all, 0.95),
         "on_support_gauge_dispersion_energy": total_exact_on_dispersion / ref_sq,
         "off_support_candidate_energy_exact": total_exact_off_energy / ref_sq,
         "history_gauge_dispersion_H_K": math.sqrt(max(exact_residual_energy, 0.0)),
@@ -564,22 +578,335 @@ def virtual_stateful_step(common_net, common_optimizer, loss_template, microbatc
     return grads, predicted, actual, moments_after, detail
 
 
-def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13, *,
-                   moments_1, moments_13, eps: float, support_atol: float
+def _optimizer_hyperparameter_contract(optimizer: torch.optim.Optimizer) -> list[dict[str, Any]]:
+    """Return every param-group setting except parameter object identities."""
+    return [copy.deepcopy({key: value for key, value in group.items() if key != "params"})
+            for group in optimizer.param_groups]
+
+
+def _optimizer_steps_by_name(net: torch.nn.Module,
+                             optimizer: torch.optim.Optimizer) -> dict[str, Any]:
+    return {
+        name: copy.deepcopy(optimizer.state[parameter]["step"])
+        for name, parameter in net.named_parameters()
+        if parameter in optimizer.state and "step" in optimizer.state[parameter]
+    }
+
+
+def reset_radam_moments_(net: torch.nn.Module,
+                         optimizer: torch.optim.Optimizer) -> dict[str, Any]:
+    """Zero only RAdam exp_avg/exp_avg_sq and prove the rest was preserved."""
+    hyperparameters_before = _optimizer_hyperparameter_contract(optimizer)
+    steps_before = _optimizer_steps_by_name(net, optimizer)
+    reset_parameter_count = 0
+    for name, parameter in net.named_parameters():
+        state = optimizer.state.get(parameter)
+        if not state:
+            raise RuntimeError(f"{name}: missing optimizer state during moment reset")
+        missing = [key for key in ("step", "exp_avg", "exp_avg_sq") if key not in state]
+        if missing:
+            raise RuntimeError(f"{name}: missing {', '.join(missing)} during moment reset")
+        state["exp_avg"].zero_()
+        state["exp_avg_sq"].zero_()
+        reset_parameter_count += 1
+    steps_after = _optimizer_steps_by_name(net, optimizer)
+    hyperparameters_after = _optimizer_hyperparameter_contract(optimizer)
+    moments_zero = all(
+        bool((optimizer.state[parameter]["exp_avg"] == 0).all())
+        and bool((optimizer.state[parameter]["exp_avg_sq"] == 0).all())
+        for parameter in net.parameters()
+    )
+    return {
+        "reset_parameter_count": reset_parameter_count,
+        "exp_avg_all_zero": moments_zero,
+        "exp_avg_sq_all_zero": moments_zero,
+        "step_state_before_sha256": gauge.state_sha256(steps_before),
+        "step_state_after_sha256": gauge.state_sha256(steps_after),
+        "per_parameter_step_preserved": gauge.state_sha256(steps_before) == gauge.state_sha256(steps_after),
+        "param_groups_before_sha256": gauge.state_sha256(hyperparameters_before),
+        "param_groups_after_sha256": gauge.state_sha256(hyperparameters_after),
+        "param_groups_preserved": hyperparameters_before == hyperparameters_after,
+        "modified_state_fields": ["exp_avg", "exp_avg_sq"],
+    }
+
+
+def compute_unscaled_gradient(common_net, common_optimizer, loss_template, microbatches, *,
+                              gap_scale: float, scaler_template, amp: bool
+                              ) -> tuple[dict[str, torch.Tensor], dict[str, Any]]:
+    """Compute one disposable, unscaled gradient map without an optimizer step."""
+    net = copy.deepcopy(common_net).train().requires_grad_(True)
+    optimizer = torch.optim.RAdam(
+        net.parameters(), lr=common_optimizer.defaults["lr"],
+        betas=common_optimizer.defaults["betas"], eps=common_optimizer.defaults["eps"],
+        weight_decay=common_optimizer.defaults.get("weight_decay", 0.0),
+    )
+    optimizer.load_state_dict(copy.deepcopy(common_optimizer.state_dict()))
+    scaler = copy.deepcopy(scaler_template)
+    schedule = get_schedule(
+        "global_sigmoid", q=float(loss_template.q), k=float(loss_template.k),
+        b=float(loss_template.b), global_gap_scale=float(gap_scale),
+    )
+    optimizer.zero_grad(set_to_none=True)
+    loss_sum, loss_count = 0.0, 0
+    for images, labels, t, eps, dropout_rng_state in microbatches:
+        loss = gauge.fixed_ect_loss(net, loss_template, schedule, images, labels, t, eps,
+                                    dropout_rng_state)
+        loss_mean = loss.mean()
+        scaler.scale(loss_mean).backward() if amp else loss_mean.backward()
+        loss_sum += float(loss.detach().double().sum().cpu())
+        loss_count += loss.numel()
+    if amp:
+        scaler.unscale_(optimizer)
+    nonfinite = any(
+        parameter.grad is not None and not bool(torch.isfinite(parameter.grad).all())
+        for parameter in net.parameters()
+    )
+    if nonfinite:
+        raise RuntimeError(f"non-finite unscaled gradients at gap scale {gap_scale}")
+    grads = _grad_by_name(net)
+    return grads, {
+        "gap_scale": float(gap_scale),
+        "loss_mean": loss_sum / loss_count,
+        "unscaled": True,
+        "finite": True,
+        "gradient_sha256": gauge.state_sha256(grads),
+        "accumulation_rounds": len(microbatches),
+        "gradscaler_restored": amp,
+    }
+
+
+def virtual_step_from_unscaled_grads(common_net, common_optimizer, grads, *,
+                                     condition: str, scaler_template
+                                     ) -> tuple[dict[str, torch.Tensor],
+                                                dict[str, torch.Tensor],
+                                                dict[str, tuple[torch.Tensor, torch.Tensor]],
+                                                dict[str, Any]]:
+    """Apply cached unscaled gradients to one disposable RAdam branch."""
+    if condition not in {"real", "reset_moments"}:
+        raise ValueError(f"unknown optimizer condition: {condition}")
+    net = copy.deepcopy(common_net).train().requires_grad_(True)
+    optimizer = torch.optim.RAdam(
+        net.parameters(), lr=common_optimizer.defaults["lr"],
+        betas=common_optimizer.defaults["betas"], eps=common_optimizer.defaults["eps"],
+        weight_decay=common_optimizer.defaults.get("weight_decay", 0.0),
+    )
+    optimizer.load_state_dict(copy.deepcopy(common_optimizer.state_dict()))
+    source_steps = _optimizer_steps_by_name(net, optimizer)
+    source_hyperparameters = _optimizer_hyperparameter_contract(optimizer)
+    reset_receipt = None
+    if condition == "reset_moments":
+        reset_receipt = reset_radam_moments_(net, optimizer)
+        if not (reset_receipt["exp_avg_all_zero"]
+                and reset_receipt["exp_avg_sq_all_zero"]
+                and reset_receipt["per_parameter_step_preserved"]
+                and reset_receipt["param_groups_preserved"]):
+            raise RuntimeError("moment-reset contract failed")
+    steps_before = _optimizer_steps_by_name(net, optimizer)
+    hyperparameters_before = _optimizer_hyperparameter_contract(optimizer)
+    for name, parameter in net.named_parameters():
+        parameter.grad = grads[name].to(device=parameter.device, dtype=parameter.dtype).clone()
+    injected_grads = _grad_by_name(net)
+    gradient_injection_max_abs_error = max(
+        float((injected_grads[name] - grads[name]).abs().max()) for name in grads)
+    predicted = idealized_radam_update(net, optimizer)
+    before_params = {
+        name: parameter.detach().double().cpu().clone()
+        for name, parameter in net.named_parameters()
+    }
+    scaler_before = gauge.state_sha256(scaler_template.state_dict())
+    optimizer.step()
+    scaler_after = gauge.state_sha256(scaler_template.state_dict())
+    actual = {
+        name: parameter.detach().double().cpu() - before_params[name]
+        for name, parameter in net.named_parameters()
+    }
+    steps_after = _optimizer_steps_by_name(net, optimizer)
+    step_advanced = (
+        set(steps_before) == set(steps_after)
+        and all(_scalar_step(steps_after[name]) == _scalar_step(steps_before[name]) + 1
+                for name in steps_before)
+    )
+    moments_after = {
+        name: (
+            optimizer.state[parameter]["exp_avg"].detach().double().cpu().clone(),
+            optimizer.state[parameter]["exp_avg_sq"].detach().double().cpu().clone(),
+        )
+        for name, parameter in net.named_parameters()
+    }
+    detail = {
+        "condition": condition,
+        "cached_unscaled_gradient_sha256": gauge.state_sha256(grads),
+        "injected_unscaled_gradient_sha256": gauge.state_sha256(injected_grads),
+        "gradient_injection_max_abs_error": gradient_injection_max_abs_error,
+        "gradient_injection_tolerance": 0.0,
+        "gradient_injection_identical": gradient_injection_max_abs_error == 0.0,
+        "step_state_source_sha256": gauge.state_sha256(source_steps),
+        "step_state_before_sha256": gauge.state_sha256(steps_before),
+        "step_preserved_before_virtual_step": (
+            gauge.state_sha256(source_steps) == gauge.state_sha256(steps_before)),
+        "param_groups_source_sha256": gauge.state_sha256(source_hyperparameters),
+        "param_groups_before_sha256": gauge.state_sha256(hyperparameters_before),
+        "param_groups_preserved_before_virtual_step": source_hyperparameters == hyperparameters_before,
+        "step_skipped": not step_advanced,
+        "optimizer_step_advanced_exactly_once": step_advanced,
+        "gradscaler_hash_before": scaler_before,
+        "gradscaler_hash_after": scaler_after,
+        "gradscaler_preserved": scaler_before == scaler_after,
+        "reset_contract": reset_receipt,
+    }
+    return predicted, actual, moments_after, detail
+
+
+def run_moment_reset_manipulation(common_net, common_optimizer, loss_template,
+                                  images, labels, *, reference_gap_scale=1.0,
+                                  probe_gap_scale=1.1, amp=True,
+                                  initial_scale=65536.0,
+                                  scaler_state: dict[str, Any] | None = None,
+                                  random_seed: int | None = None,
+                                  microbatch_size: int | None = None,
+                                  support_atol: float = 0.0
+                                  ) -> tuple[dict[str, dict[str, Any]],
+                                             dict[str, list[dict[str, Any]]]]:
+    """Run real/reset branches from one cached reference/probe gradient pair."""
+    scales = (float(reference_gap_scale), float(probe_gap_scale))
+    if (not all(math.isfinite(value) and value > 0 for value in scales)
+            or scales[0] == scales[1]):
+        raise ValueError("reference/probe gap scales must be distinct, finite, and > 0")
+    state_summary = stateful_radam_state_summary(common_net, common_optimizer)
+    if not state_summary["valid"]:
+        raise RuntimeError("invalid stateful RAdam state:\n  - " + "\n  - ".join(state_summary["errors"]))
+    if amp and scaler_state is None:
+        raise RuntimeError("AMP manipulation audit requires restored GradScaler_K")
+    if not math.isfinite(support_atol) or support_atol < 0:
+        raise ValueError("support_atol must be finite and >= 0")
+    device = images.device
+    microbatch_size = images.shape[0] if microbatch_size is None else microbatch_size
+    if microbatch_size < 1 or images.shape[0] % microbatch_size:
+        raise ValueError("microbatch_size must be a positive divisor of batch size")
+    cpu_rng_before = torch.get_rng_state().clone()
+    cuda_rng_before = torch.cuda.get_rng_state(device=device).clone() if device.type == "cuda" else None
+    try:
+        if random_seed is not None:
+            torch.manual_seed(random_seed)
+            if device.type == "cuda":
+                torch.cuda.manual_seed_all(random_seed)
+        source_parameter_before = gauge.module_state_hashes(common_net)
+        source_optimizer_before = gauge.state_sha256(common_optimizer.state_dict())
+        scaler_template = gauge._new_scaler(device, amp, initial_scale)
+        if scaler_state is not None:
+            scaler_template.load_state_dict(copy.deepcopy(scaler_state))
+        source_scaler_before = gauge.state_sha256(scaler_template.state_dict())
+        microbatches = []
+        for start in range(0, images.shape[0], microbatch_size):
+            image_micro = images[start:start + microbatch_size]
+            label_micro = labels[start:start + microbatch_size]
+            t = (torch.randn(image_micro.shape[0], 1, 1, 1, device=device)
+                 * loss_template.P_std + loss_template.P_mean).exp()
+            eps = torch.randn_like(image_micro)
+            microbatches.append((image_micro, label_micro, t, eps,
+                                 gauge.get_rng_state(device).clone()))
+        gradients, gradient_details = {}, {}
+        for label, scale in zip(("reference", "probe"), scales):
+            gradients[label], gradient_details[label] = compute_unscaled_gradient(
+                common_net, common_optimizer, loss_template, microbatches,
+                gap_scale=scale, scaler_template=scaler_template, amp=amp)
+        audits: dict[str, dict[str, Any]] = {}
+        layerwise: dict[str, list[dict[str, Any]]] = {}
+        for condition in ("real", "reset_moments"):
+            predicted, actual, moments, branches = {}, {}, {}, {}
+            for label in ("reference", "probe"):
+                predicted[label], actual[label], moments[label], branches[label] = (
+                    virtual_step_from_unscaled_grads(
+                        common_net, common_optimizer, gradients[label],
+                        condition=condition, scaler_template=scaler_template))
+            skipped = [label for label, detail in branches.items() if detail["step_skipped"]]
+            if skipped:
+                raise RuntimeError(f"virtual optimizer branch skipped: {condition} {skipped}")
+            whole, layers = summarize_pair(
+                gradients["reference"], gradients["probe"],
+                predicted["reference"], predicted["probe"],
+                actual["reference"], actual["probe"],
+                moments_reference=moments["reference"], moments_probe=moments["probe"],
+                eps=float(common_optimizer.param_groups[0]["eps"]), support_atol=support_atol)
+            whole["source_preserved"] = None
+            whole["step_skipped"] = False
+            audits[condition] = {
+                "schema_version": 1,
+                "condition": condition,
+                "reference_gap_scale": scales[0],
+                "probe_gap_scale": scales[1],
+                "stateful_radam": {
+                    "state_validation": state_summary,
+                    "gradscaler_restored": scaler_state is not None,
+                    "support_atol": support_atol,
+                },
+                "randomness_contract": {
+                    "same_minibatch": True, "same_t": True, "same_noise": True,
+                    "same_dropout_rng_state": True,
+                    "minibatch_images_sha256": gauge.tensor_sha256(images),
+                    "minibatch_labels_sha256": gauge.tensor_sha256(labels),
+                    "microbatch_size": microbatch_size,
+                    "accumulation_rounds": len(microbatches),
+                    "t_sha256": gauge.state_sha256([item[2] for item in microbatches]),
+                    "noise_sha256": gauge.state_sha256([item[3] for item in microbatches]),
+                    "dropout_rng_state_sha256": gauge.state_sha256([item[4] for item in microbatches]),
+                },
+                "gradient_contract": {
+                    "computed_once_per_gap_pair": True,
+                    "reused_across_optimizer_conditions": True,
+                    "reference": gradient_details["reference"],
+                    "probe": gradient_details["probe"],
+                },
+                "branches": branches,
+                "whole_model": whole,
+            }
+            layerwise[condition] = layers
+        source_parameter_after = gauge.module_state_hashes(common_net)
+        source_optimizer_after = gauge.state_sha256(common_optimizer.state_dict())
+        source_scaler_after = gauge.state_sha256(scaler_template.state_dict())
+        preservation = {
+            "parameter_hash_before": source_parameter_before,
+            "parameter_hash_after": source_parameter_after,
+            "optimizer_state_hash_before": source_optimizer_before,
+            "optimizer_state_hash_after": source_optimizer_after,
+            "gradscaler_hash_before": source_scaler_before,
+            "gradscaler_hash_after": source_scaler_after,
+            "preserved": (source_parameter_before == source_parameter_after
+                          and source_optimizer_before == source_optimizer_after
+                          and source_scaler_before == source_scaler_after),
+        }
+        for audit in audits.values():
+            audit["source_state_non_committing"] = preservation
+            audit["whole_model"]["source_preserved"] = preservation["preserved"]
+        return audits, layerwise
+    finally:
+        torch.set_rng_state(cpu_rng_before)
+        if cuda_rng_before is not None:
+            torch.cuda.set_rng_state(cuda_rng_before, device=device)
+
+
+def summarize_pair(grads_reference, grads_probe, pred_reference, pred_probe,
+                   act_reference, act_probe, *, moments_reference,
+                   moments_probe, eps: float, support_atol: float
                    ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Implement the #43/#45 paired measurement, not a new theory layer."""
-    a_star, c_grad_star, r_grad, grad_cosine, _ = _update_scale_and_residual(grads_1, grads_13)
-    s_pred, c_pred, r_pred, pred_cosine, _ = _update_scale_and_residual(pred_1, pred_13)
-    s_star, c_star, r_opt, opt_cosine, _ = _update_scale_and_residual(act_1, act_13)
+    a_star, c_grad_star, r_grad, grad_cosine, _ = _update_scale_and_residual(
+        grads_reference, grads_probe)
+    s_pred, c_pred, r_pred, pred_cosine, _ = _update_scale_and_residual(
+        pred_reference, pred_probe)
+    s_star, c_star, r_opt, opt_cosine, _ = _update_scale_and_residual(
+        act_reference, act_probe)
     actual_gauge, layers_actual = support_aware_gauge_summary(
-        act_1, act_13, s_star=s_star, c_star=c_star, support_atol=support_atol,
-        moments_reference=moments_1, moments_candidate=moments_13, eps=eps,
+        act_reference, act_probe, s_star=s_star, c_star=c_star,
+        support_atol=support_atol, moments_reference=moments_reference,
+        moments_candidate=moments_probe, eps=eps,
     )
     predicted_gauge, layers_predicted = support_aware_gauge_summary(
-        pred_1, pred_13, s_star=s_pred, c_star=c_pred, support_atol=support_atol,
+        pred_reference, pred_probe, s_star=s_pred, c_star=c_pred,
+        support_atol=support_atol,
     )
-    identity_H_equals_R_opt = abs(actual_gauge["history_gauge_dispersion_H_K"] - r_opt) <= (
-        1e-12 * max(1.0, abs(r_opt)))
+    identity_residual = abs(actual_gauge["history_gauge_dispersion_H_K"] - r_opt)
+    identity_H_equals_R_opt = identity_residual <= (1e-12 * max(1.0, abs(r_opt)))
     identity_energy_gap = abs(actual_gauge["history_gauge_identity_residual_energy"] - r_opt ** 2)
 
     pred_by_layer = {row["layer"]: row for row in layers_predicted}
@@ -588,8 +915,8 @@ def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13, *,
         pred_row = pred_by_layer[row["layer"]]
         layer_rows.append({
             **row,
-            "predicted_1_l2": pred_row["update_1_l2"],
-            "predicted_1p3_l2": pred_row["update_1p3_l2"],
+            "predicted_reference_l2": pred_row["update_reference_l2"],
+            "predicted_probe_l2": pred_row["update_probe_l2"],
             "s_K_star_predicted_layer": pred_row["s_K_star_layer"],
             "c_K_star_predicted_layer": pred_row["c_K_star_layer"],
             "R_pred_layer": pred_row["R_opt_layer"],
@@ -602,24 +929,26 @@ def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13, *,
     # Analytical RAdam prediction is retained as a step-implementation check;
     # the moment-memory gauge above is the mechanism diagnostic.
     pred_vs_actual = {}
-    for gain, predicted, actual in ((1.0, pred_1, act_1), (1.3, pred_13, act_13)):
+    for branch, predicted, actual in (
+            ("reference", pred_reference, act_reference),
+            ("probe", pred_probe, act_probe)):
         denom = math.sqrt(_norm_sq(actual.values()))
         if denom == 0:
-            pred_vs_actual[str(gain)] = None
+            pred_vs_actual[branch] = None
         else:
             err = math.sqrt(max(_norm_sq(predicted[name] - actual[name] for name in actual), 0.0))
-            pred_vs_actual[str(gain)] = err / denom
+            pred_vs_actual[branch] = err / denom
 
     whole = {
         "gauge_defined": True,
         "gauge_error": None,
         "residual_convention": "reference_normalized_candidate_minus_s_star_reference",
-        "a_K_star": a_star,
+        "a_star": a_star,
         "c_grad_star": c_grad_star,
         "R_grad": r_grad,
         "grad_cosine": grad_cosine,
-        "s_K_star": s_star,
-        "c_K_star": c_star,
+        "s_star": s_star,
+        "c_star": c_star,
         "R_opt": r_opt,
         "update_cosine": opt_cosine,
         "s_K_star_predicted": s_pred,
@@ -630,13 +959,16 @@ def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13, *,
         "H_K": actual_gauge["history_gauge_dispersion_H_K"],
         "H_K_is_identity_check": True,
         "H_K_equals_R_opt_identity": identity_H_equals_R_opt,
+        "H_equals_R_opt_identity_residual": identity_residual,
         "H_K_squared_minus_R_opt_squared_energy_gap": identity_energy_gap,
         "predicted_H_K": predicted_gauge["history_gauge_dispersion_H_K"],
         "predicted_H_K_is_identity_check": True,
-        "update_1_l2": math.sqrt(_norm_sq(act_1.values())),
-        "update_1p3_l2": math.sqrt(_norm_sq(act_13.values())),
-        "grad_1_l2": math.sqrt(_norm_sq(grads_1.values())),
-        "grad_1p3_l2": math.sqrt(_norm_sq(grads_13.values())),
+        "update_reference_l2": math.sqrt(_norm_sq(act_reference.values())),
+        "update_probe_l2": math.sqrt(_norm_sq(act_probe.values())),
+        "update_norm_ratio": math.sqrt(
+            _norm_sq(act_probe.values()) / _norm_sq(act_reference.values())),
+        "grad_reference_l2": math.sqrt(_norm_sq(grads_reference.values())),
+        "grad_probe_l2": math.sqrt(_norm_sq(grads_probe.values())),
         "predicted_vs_actual_relative_l2": pred_vs_actual,
         **actual_gauge,
         "predicted_on_support_gauge_dispersion_energy": predicted_gauge[
@@ -644,18 +976,23 @@ def summarize_pair(grads_1, grads_13, pred_1, pred_13, act_1, act_13, *,
         "predicted_off_support_candidate_energy_exact": predicted_gauge[
             "off_support_candidate_energy_exact"],
     }
+    whole["support_coverage"] = whole["effective_support_coordinate_coverage"]
+    whole["off_support_energy"] = whole["off_support_candidate_energy_exact"]
     return whole, layer_rows
 
 
 def run_stateful_pair(common_net, common_optimizer, loss_template, images, labels, *,
-                      gains=(1.0, 1.3), amp=True, initial_scale=65536.0,
+                      reference_gap_scale=1.0, probe_gap_scale=1.1,
+                      amp=True, initial_scale=65536.0,
                       scaler_state: dict[str, Any] | None = None,
                       random_seed: int | None = None,
                       microbatch_size: int | None = None, support_atol: float = 0.0
                       ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Fork ``z_K``, run the paired g=1.0/1.3 step, leave the source untouched."""
-    if tuple(gains) != (1.0, 1.3):
-        raise ValueError("this audit is defined for exactly gains (1.0, 1.3)")
+    """Fork ``z_K``, run a paired reference/probe step, leave source untouched."""
+    gains = (float(reference_gap_scale), float(probe_gap_scale))
+    if (not all(math.isfinite(gain) and gain > 0 for gain in gains)
+            or gains[0] == gains[1]):
+        raise ValueError("reference/probe gap scales must be distinct, finite, and > 0")
     if not math.isfinite(support_atol) or support_atol < 0:
         raise ValueError("support_atol must be finite and >= 0")
     state_summary = stateful_radam_state_summary(common_net, common_optimizer)
@@ -718,16 +1055,18 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
                     "(actual Δθ is zero while moment-predicted updates are not)"
                 ),
                 "residual_convention": "reference_normalized_candidate_minus_s_star_reference",
-                "a_K_star": None, "R_grad": None, "s_K_star": None,
-                "c_K_star": None, "R_opt": None, "H_K": None,
+                "a_star": None, "R_grad": None, "s_star": None,
+                "c_star": None, "R_opt": None, "H_K": None,
                 "R_opt_minus_R_grad": None,
             }, []
         else:
             try:
                 whole, layers = summarize_pair(
-                    grads[1.0], grads[1.3], predicted[1.0], predicted[1.3],
-                    actual[1.0], actual[1.3], moments_1=moments[1.0],
-                    moments_13=moments[1.3], eps=float(group0["eps"]),
+                    grads[gains[0]], grads[gains[1]],
+                    predicted[gains[0]], predicted[gains[1]],
+                    actual[gains[0]], actual[gains[1]],
+                    moments_reference=moments[gains[0]],
+                    moments_probe=moments[gains[1]], eps=float(group0["eps"]),
                     support_atol=support_atol,
                 )
             except RuntimeError as exc:
@@ -735,8 +1074,8 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
                     "gauge_defined": False,
                     "gauge_error": str(exc),
                     "residual_convention": "reference_normalized_candidate_minus_s_star_reference",
-                    "a_K_star": None, "R_grad": None, "s_K_star": None,
-                    "c_K_star": None, "R_opt": None, "H_K": None,
+                    "a_star": None, "R_grad": None, "s_star": None,
+                    "c_star": None, "R_opt": None, "H_K": None,
                     "R_opt_minus_R_grad": None,
                 }, []
         source_after = gauge.module_state_hashes(common_net)
@@ -747,7 +1086,8 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
         if cuda_rng_before is not None:
             torch.cuda.set_rng_state(cuda_rng_before, device=device)
     audit = {
-        "gains": list(gains),
+        "reference_gap_scale": gains[0],
+        "probe_gap_scale": gains[1],
         "stateful_radam": {
             "lr": group0["lr"],
             "betas": list(group0["betas"]),
@@ -866,6 +1206,8 @@ def parse_args(argv=None):
                         help="used only for --no-amp runs; AMP requires restored gradscaler_state")
     parser.add_argument("--support-atol", type=float, default=0.0,
                         help="absolute near-zero threshold for effective h summaries; exact support is also recorded")
+    parser.add_argument("--reference-gap-scale", type=float, default=1.0)
+    parser.add_argument("--probe-gap-scale", type=float, default=1.1)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--betas", default="0.9,0.999")
     parser.add_argument("--eps", dest="eps_opt", type=float, default=1e-8)
@@ -881,6 +1223,11 @@ def parse_args(argv=None):
             or not math.isfinite(args.support_atol) or args.support_atol < 0
             or (args.batch_gpu is not None and args.batch_gpu < 1)):
         raise SystemExit("batch size, lr, initial scale, and support atol must be valid")
+    if (not math.isfinite(args.reference_gap_scale)
+            or not math.isfinite(args.probe_gap_scale)
+            or args.reference_gap_scale <= 0 or args.probe_gap_scale <= 0
+            or args.reference_gap_scale == args.probe_gap_scale):
+        raise SystemExit("reference/probe gap scales must be distinct, finite, and > 0")
     if args.batch_gpu is not None and args.batch_size % args.batch_gpu:
         raise SystemExit("--batch-size must be divisible by --batch-gpu")
     return args
@@ -936,6 +1283,8 @@ def main(argv=None) -> int:
         amp=args.amp, initial_scale=args.initial_scale, scaler_state=scaler_state,
         random_seed=args.seed, microbatch_size=args.batch_gpu,
         support_atol=args.support_atol,
+        reference_gap_scale=args.reference_gap_scale,
+        probe_gap_scale=args.probe_gap_scale,
     )
     data_sha256, dataset_hash_algorithm = gauge.dataset_sha256(Path(args.data))
     audit["provenance"] = {
@@ -949,6 +1298,8 @@ def main(argv=None) -> int:
         "dataset_hash_algorithm": dataset_hash_algorithm,
         "state_kimg": args.state_kimg, "batch_size": args.batch_size, "batch_gpu": args.batch_gpu,
         "support_atol": args.support_atol,
+        "reference_gap_scale": args.reference_gap_scale,
+        "probe_gap_scale": args.probe_gap_scale,
         "seed": args.seed, "device": str(device),
         "torch_version": torch.__version__, "cuda_version": torch.version.cuda,
         "schedule": loss.schedule.name, "q": float(loss.q), "k": float(loss.k), "b": float(loss.b),
