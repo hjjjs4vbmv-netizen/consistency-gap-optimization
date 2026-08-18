@@ -160,7 +160,11 @@ def build(root: Path = ROOT) -> dict[str, Any]:
             "checkpoint_hash_bound_receipts": hash_bound_receipts,
             "checkpoint_hash_unbound_receipts": receipt_count - hash_bound_receipts,
             "checkpoint_records_blocked_by_b005": blocked_records,
-            "b006_status": "PARTIAL_BLOCKED_ONLY_BY_B005",
+            "b006_status": (
+                "HASH_BOUND_54_OF_54"
+                if receipt_count == hash_bound_receipts
+                else "PARTIAL_BLOCKED_ONLY_BY_B005"
+            ),
         },
         "cells": cells,
     }

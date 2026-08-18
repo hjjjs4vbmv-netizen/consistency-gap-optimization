@@ -13,13 +13,10 @@
     "cells": 27,
     "metric_receipts": 54,
     "sample_range_bound_receipts": 54,
-    "checkpoint_hash_bound_receipts": 42,
-    "checkpoint_hash_unbound_receipts": 12,
-    "checkpoint_records_blocked_by_b005": [
-      "s3-B-k256000",
-      "s3-C-k256000"
-    ],
-    "b006_status": "PARTIAL_BLOCKED_ONLY_BY_B005"
+    "checkpoint_hash_bound_receipts": 54,
+    "checkpoint_hash_unbound_receipts": 0,
+    "checkpoint_records_blocked_by_b005": [],
+    "b006_status": "HASH_BOUND_54_OF_54"
   },
   "cells": [
     {
@@ -73,9 +70,9 @@
         "run_id": "arm_b_g1_3_lr_fixed_s3",
         "state_id": "000008",
         "network_snapshot_filename": "network-snapshot-000008.pkl",
-        "network_snapshot_sha256": null,
+        "network_snapshot_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
         "training_state_sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96",
-        "status": "BLOCKED_BY_B005"
+        "status": "HASH_BOUND"
       },
       "metric_receipts": [
         {
@@ -108,9 +105,9 @@
         "run_id": "arm_c_g1_3_lr_matched_s3",
         "state_id": "000008",
         "network_snapshot_filename": "network-snapshot-000008.pkl",
-        "network_snapshot_sha256": null,
+        "network_snapshot_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
         "training_state_sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c",
-        "status": "BLOCKED_BY_B005"
+        "status": "HASH_BOUND"
       },
       "metric_receipts": [
         {
@@ -388,9 +385,9 @@
         "run_id": "arm_b_g1_3_lr_fixed_s3",
         "state_id": "000008",
         "network_snapshot_filename": "network-snapshot-000008.pkl",
-        "network_snapshot_sha256": null,
+        "network_snapshot_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
         "training_state_sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96",
-        "status": "BLOCKED_BY_B005"
+        "status": "HASH_BOUND"
       },
       "metric_receipts": [
         {
@@ -423,9 +420,9 @@
         "run_id": "arm_c_g1_3_lr_matched_s3",
         "state_id": "000008",
         "network_snapshot_filename": "network-snapshot-000008.pkl",
-        "network_snapshot_sha256": null,
+        "network_snapshot_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
         "training_state_sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c",
-        "status": "BLOCKED_BY_B005"
+        "status": "HASH_BOUND"
       },
       "metric_receipts": [
         {
@@ -703,9 +700,9 @@
         "run_id": "arm_b_g1_3_lr_fixed_s3",
         "state_id": "000008",
         "network_snapshot_filename": "network-snapshot-000008.pkl",
-        "network_snapshot_sha256": null,
+        "network_snapshot_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
         "training_state_sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96",
-        "status": "BLOCKED_BY_B005"
+        "status": "HASH_BOUND"
       },
       "metric_receipts": [
         {
@@ -738,9 +735,9 @@
         "run_id": "arm_c_g1_3_lr_matched_s3",
         "state_id": "000008",
         "network_snapshot_filename": "network-snapshot-000008.pkl",
-        "network_snapshot_sha256": null,
+        "network_snapshot_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
         "training_state_sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c",
-        "status": "BLOCKED_BY_B005"
+        "status": "HASH_BOUND"
       },
       "metric_receipts": [
         {

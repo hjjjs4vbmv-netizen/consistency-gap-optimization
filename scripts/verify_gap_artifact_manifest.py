@@ -542,20 +542,17 @@ def check_disjoint_cell_bindings(
 
     if len(seen_receipts) != 54:
         raise AuditFailure("PR #53 cell manifest must bind 54 unique receipts")
-    if (hash_bound_receipts, unbound_receipts) != (42, 12):
+    if (hash_bound_receipts, unbound_receipts) != (54, 0):
         raise AuditFailure("unexpected PR #53 checkpoint-binding coverage")
     summary = cell_manifest["summary"]
     expected_summary = {
         "cells": 27,
         "metric_receipts": 54,
         "sample_range_bound_receipts": 54,
-        "checkpoint_hash_bound_receipts": 42,
-        "checkpoint_hash_unbound_receipts": 12,
-        "checkpoint_records_blocked_by_b005": [
-            "s3-B-k256000",
-            "s3-C-k256000",
-        ],
-        "b006_status": "PARTIAL_BLOCKED_ONLY_BY_B005",
+        "checkpoint_hash_bound_receipts": 54,
+        "checkpoint_hash_unbound_receipts": 0,
+        "checkpoint_records_blocked_by_b005": [],
+        "b006_status": "HASH_BOUND_54_OF_54",
     }
     if summary != expected_summary:
         raise AuditFailure("PR #53 cell-binding summary mismatch")
@@ -569,6 +566,27 @@ def check_disjoint_cell_bindings(
         raise AuditFailure("B005 retrieval attempt must fail closed")
     if attempt["hashes_recovered"] != 0 or not attempt["inference_prohibited"]:
         raise AuditFailure("B005 receipt permits an inferred checkpoint hash")
+
+    recovered_ref = bundle["b005_recovery"]
+    recovered_bytes = (repo / recovered_ref["path"]).read_bytes()
+    if sha256(recovered_bytes) != recovered_ref["sha256"]:
+        raise AuditFailure("B005 recovery receipt hash mismatch")
+    recovered = json.loads(recovered_bytes)
+    if recovered["result"] != "RECOVERED_ORIGINAL_BYTES":
+        raise AuditFailure("B005 recovery receipt does not close recovery")
+    recovered_by_id = {
+        item["checkpoint_record_id"]: item
+        for item in recovered["recovered_checkpoints"]
+    }
+    for checkpoint_id in ("s3-B-k256000", "s3-C-k256000"):
+        item = recovered_by_id.get(checkpoint_id)
+        checkpoint = checkpoints[checkpoint_id]
+        if item is None:
+            raise AuditFailure(f"B005 recovery omits {checkpoint_id}")
+        if item["network_snapshot_sha256"] != checkpoint["network_snapshot"]["sha256"]:
+            raise AuditFailure(f"B005 recovered snapshot hash mismatch: {checkpoint_id}")
+        if item["training_state_sha256"] != checkpoint["training_state"]["sha256"]:
+            raise AuditFailure(f"B005 recovered state hash mismatch: {checkpoint_id}")
 
     recovery_ref = bundle["b003_recovery_assessment"]
     recovery_bytes = (repo / recovery_ref["path"]).read_bytes()
@@ -585,6 +603,94 @@ def check_disjoint_cell_bindings(
         "sample_range_bound_receipts": len(seen_receipts),
         "checkpoint_hash_bound_receipts": hash_bound_receipts,
         "checkpoint_hash_unbound_receipts": unbound_receipts,
+    }
+
+
+def check_regenerated_publication_v2(
+    repo: Path,
+    manifest: dict[str, Any],
+    checkpoints: dict[str, dict[str, Any]],
+) -> dict[str, int]:
+    bundle = manifest["evidence_bundles"]["disjoint_fid_kid_5k"][
+        "regenerated_publication_v2"
+    ]
+    if bundle.get("status") != "PASS":
+        raise AuditFailure("publication-v2 bundle is not PASS")
+
+    def local_ref(ref: dict[str, str], label: str) -> bytes:
+        path = repo / ref["path"]
+        data = path.read_bytes()
+        if sha256(data) != ref["sha256"]:
+            raise AuditFailure(f"publication-v2 hash mismatch: {label}")
+        return data
+
+    manifest_bytes = local_ref(bundle["cell_manifest"], "cell manifest")
+    local_ref(bundle["blockwise_csv"], "blockwise CSV")
+    local_ref(bundle["summary_csv"], "summary CSV")
+    local_ref(bundle["comparison_to_pr53"], "PR53 comparison")
+    checksum_bytes = local_ref(bundle["detached_checksums"], "detached checksums")
+    local_ref(bundle["builder"], "builder")
+
+    checksum_root = (repo / bundle["detached_checksums"]["path"]).parent
+    for relative, expected in parse_checksum_manifest(checksum_bytes).items():
+        path = checksum_root / relative
+        if sha256(path.read_bytes()) != expected:
+            raise AuditFailure(f"publication-v2 detached checksum mismatch: {relative}")
+
+    payload = json.loads(manifest_bytes)
+    if payload.get("status") != "PASS":
+        raise AuditFailure("publication-v2 cell manifest is not PASS")
+    matrix = payload.get("matrix", {})
+    expected_matrix = {
+        "cells": 27,
+        "metric_receipts": 54,
+        "checkpoint_hash_bound_receipts": 54,
+        "sample_range_bound_receipts": 54,
+        "retained_sample_arrays": 27,
+        "retained_feature_arrays": 54,
+        "retry_count": 0,
+    }
+    if matrix != expected_matrix:
+        raise AuditFailure("publication-v2 matrix accounting mismatch")
+    if payload.get("contract_sha256") != bundle["contract_sha256"]:
+        raise AuditFailure("publication-v2 contract hash mismatch")
+    if payload.get("dataset_sha256") != "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1":
+        raise AuditFailure("publication-v2 dataset hash mismatch")
+    if payload.get("b003_status") != "RESOLVED_BY_REGENERATED_PROVENANCE":
+        raise AuditFailure("B003 is not resolved by publication-v2")
+    if payload.get("b005_status") != "RESOLVED_BY_RECOVERED_ORIGINAL_BYTES":
+        raise AuditFailure("B005 is not resolved by publication-v2")
+    if payload.get("b006_status") != "RESOLVED_54_OF_54_CHECKPOINT_HASH_BOUND":
+        raise AuditFailure("B006 is not resolved by publication-v2")
+
+    cells = payload.get("cells", [])
+    if len(cells) != 27:
+        raise AuditFailure("publication-v2 must contain 27 cells")
+    seen: set[str] = set()
+    for cell in cells:
+        cell_id = cell["cell_id"]
+        if cell_id in seen:
+            raise AuditFailure(f"duplicate publication-v2 cell: {cell_id}")
+        seen.add(cell_id)
+        checkpoint_id = f"s{cell['training_seed']}-{cell['arm']}-k256000"
+        expected_checkpoint = checkpoints[checkpoint_id]["network_snapshot"]["sha256"]
+        if cell["checkpoint_sha256"] != expected_checkpoint:
+            raise AuditFailure(f"publication-v2 checkpoint mismatch: {cell_id}")
+        for path in (
+            cell["artifacts"]["samples"]["path"],
+            cell["artifacts"]["features"]["fid5k_full"]["path"],
+            cell["artifacts"]["features"]["kid5k_full"]["path"],
+            cell["artifacts"]["metric_receipts"]["fid5k_full"]["path"],
+            cell["artifacts"]["metric_receipts"]["kid5k_full"]["path"],
+        ):
+            if Path(path).is_absolute() or ".." in Path(path).parts:
+                raise AuditFailure(f"publication-v2 path is not export-relative: {path}")
+    return {
+        "cells": len(cells),
+        "metric_receipts": matrix["metric_receipts"],
+        "retained_arrays": (
+            matrix["retained_sample_arrays"] + matrix["retained_feature_arrays"]
+        ),
     }
 
 
@@ -610,6 +716,7 @@ def run_audit(repo: Path, manifest_path: Path) -> dict[str, Any]:
     )
     disjoint_artifacts, disjoint_cells = check_disjoint(repo, manifest, checkpoints)
     cell_bindings = check_disjoint_cell_bindings(repo, manifest, checkpoints)
+    publication_v2 = check_regenerated_publication_v2(repo, manifest, checkpoints)
     blockers = manifest.get("blocking_findings", [])
     return {
         "manifest_id": manifest["manifest_id"],
@@ -633,6 +740,9 @@ def run_audit(repo: Path, manifest_path: Path) -> dict[str, Any]:
         "checkpoint_hash_unbound_receipts": cell_bindings[
             "checkpoint_hash_unbound_receipts"
         ],
+        "publication_v2_cells_checked": publication_v2["cells"],
+        "publication_v2_metric_receipts_checked": publication_v2["metric_receipts"],
+        "publication_v2_retained_arrays_checked": publication_v2["retained_arrays"],
         "publication_limitations": manifest.get("publication_limitations", []),
         "blocking_findings": blockers,
         "publication_ready": not blockers,

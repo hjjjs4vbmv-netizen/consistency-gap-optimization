@@ -16,7 +16,7 @@ class GapArtifactManifestTests(unittest.TestCase):
     def setUpClass(cls):
         cls.report = verify_gap_artifact_manifest.run_audit(ROOT, MANIFEST)
 
-    def test_full_structural_audit_passes_with_explicit_blockers(self):
+    def test_full_structural_audit_passes_publication_gate(self):
         self.assertEqual(self.report["structural_checks"], "PASS")
         self.assertEqual(self.report["pull_requests_checked"], 7)
         self.assertEqual(self.report["checkpoint_records_checked"], 12)
@@ -25,13 +25,13 @@ class GapArtifactManifestTests(unittest.TestCase):
         self.assertEqual(self.report["disjoint_evaluation_cells_checked"], 27)
         self.assertEqual(self.report["disjoint_cell_bindings_checked"], 27)
         self.assertEqual(self.report["sample_range_bound_receipts_checked"], 54)
-        self.assertEqual(self.report["checkpoint_hash_bound_receipts_checked"], 42)
-        self.assertEqual(self.report["checkpoint_hash_unbound_receipts"], 12)
-        self.assertFalse(self.report["publication_ready"])
-        self.assertEqual(
-            {item["id"] for item in self.report["blocking_findings"]},
-            {"B003", "B005", "B006"},
-        )
+        self.assertEqual(self.report["checkpoint_hash_bound_receipts_checked"], 54)
+        self.assertEqual(self.report["checkpoint_hash_unbound_receipts"], 0)
+        self.assertEqual(self.report["publication_v2_cells_checked"], 27)
+        self.assertEqual(self.report["publication_v2_metric_receipts_checked"], 54)
+        self.assertEqual(self.report["publication_v2_retained_arrays_checked"], 81)
+        self.assertTrue(self.report["publication_ready"])
+        self.assertEqual(self.report["blocking_findings"], [])
 
     def test_b002_is_downgraded_to_appendix_limitation(self):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -51,14 +51,24 @@ class GapArtifactManifestTests(unittest.TestCase):
             bundle["full_matrix_external_raw"]["durable_external_locator"]
         )
 
-    def test_b006_is_sample_bound_and_fails_closed_on_b005(self):
+    def test_b003_b005_b006_are_resolved_and_hash_bound(self):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         resolved = {item["id"]: item for item in manifest["resolved_findings"]}
         blockers = {item["id"]: item for item in manifest["blocking_findings"]}
         self.assertIn("B006-SAMPLE-RANGE", resolved)
-        self.assertIn("B006", blockers)
-        self.assertEqual(blockers["B006"]["scope"], "PR53 seed3 B/C only")
-        self.assertIn("42/54", blockers["B006"]["detail"])
+        self.assertIn("B003", resolved)
+        self.assertIn("B005", resolved)
+        self.assertIn("B006", resolved)
+        self.assertNotIn("B003", blockers)
+        self.assertNotIn("B005", blockers)
+        self.assertNotIn("B006", blockers)
+        bundle = manifest["evidence_bundles"]["disjoint_fid_kid_5k"]
+        self.assertEqual(
+            bundle["cell_binding_manifest"]["checkpoint_hash_bound_receipts"], 54
+        )
+        self.assertEqual(
+            bundle["regenerated_publication_v2"]["retained_feature_arrays"], 54
+        )
 
     def test_pr53_csvs_rebuild_exactly(self):
         rebuild_disjoint_5k_summary.verify_committed_tables(

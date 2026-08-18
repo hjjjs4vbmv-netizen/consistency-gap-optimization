@@ -160,7 +160,7 @@
       "pr": 46,
       "training_state": {"path": "training-state-000008.pt", "sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96", "availability": "external_hash_bound"},
       "optimizer_state": {"container": "training-state-000008.pt", "representation": "embedded_radam_state", "parameter_state_count": 416},
-      "network_snapshot": {"path": "network-snapshot-000008.pkl", "sha256": null, "availability": "external_unbound"}
+      "network_snapshot": {"path": "network-snapshot-000008.pkl", "sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db", "availability": "external_hash_bound"}
     },
     {
       "id": "s3-C-k256000",
@@ -180,7 +180,7 @@
       "pr": 46,
       "training_state": {"path": "training-state-000008.pt", "sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c", "availability": "external_hash_bound"},
       "optimizer_state": {"container": "training-state-000008.pt", "representation": "embedded_radam_state", "parameter_state_count": 416},
-      "network_snapshot": {"path": "network-snapshot-000008.pkl", "sha256": null, "availability": "external_unbound"}
+      "network_snapshot": {"path": "network-snapshot-000008.pkl", "sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639", "availability": "external_hash_bound"}
     },
     {
       "id": "s4-A-k256000",
@@ -377,7 +377,7 @@
       }
     },
     "disjoint_fid_kid_5k": {
-      "status": "blocked_for_publication_recomputation",
+      "status": "archival_superseded_by_publication_v2",
       "pr": 53,
       "artifact_commit": "fbdcb13ed7dab8a5fb179382e4453df9c1a0f7d2",
       "checkpoint_record_ids": ["s3-A-k256000", "s3-B-k256000", "s3-C-k256000", "s4-A-k256000", "s4-B-k256000", "s4-C-k256000", "s5-A-k256000", "s5-B-k256000", "s5-C-k256000"],
@@ -386,20 +386,25 @@
       "raw_metric_manifest": {"path": "results/gap_lr_matched/disjoint_5k_0813/RESULT_SHA256SUMS.txt", "sha256": "578a9ee78146688e9362e4d0988723b8aeb2a42d6e9ff789eb99f8a41efe1b8d"},
       "cell_binding_manifest": {
         "path": "evidence/disjoint_5k_cell_manifest_v1.json",
-        "sha256": "ddb7f867e0328f4f04cbc4e813446521ea4f6bf76cfe391d4412f61317b71eaf",
+        "sha256": "3ed2f9bc84496bfbdaca6ecabff216d971bb061a393fecf03918e86203e92489",
         "detached_checksum_path": "evidence/disjoint_5k_cell_manifest_v1.sha256",
         "builder": "scripts/build_disjoint_5k_cell_manifest.py",
         "cells": 27,
         "metric_receipts": 54,
         "sample_range_bound_receipts": 54,
-        "checkpoint_hash_bound_receipts": 42,
-        "checkpoint_hash_unbound_receipts": 12,
-        "status": "PARTIAL_BLOCKED_ONLY_BY_B005"
+        "checkpoint_hash_bound_receipts": 54,
+        "checkpoint_hash_unbound_receipts": 0,
+        "status": "HASH_BOUND_54_OF_54"
       },
       "b005_retrieval_attempt": {
         "path": "evidence/b005_retrieval_attempt_2026_08_17.json",
         "sha256": "de92c5f4fbff977c25115801050457d41a0f5005942fef822979c367b9558712",
         "result": "BLOCKED_NO_SOURCE_BYTES"
+      },
+      "b005_recovery": {
+        "path": "evidence/b005_recovery_receipt_2026_08_18.json",
+        "sha256": "591933e298a2649a6483993cfb27a74802e721a06ffd5a4b007e373bbf269fea",
+        "result": "RECOVERED_ORIGINAL_BYTES"
       },
       "b003_recovery_assessment": {
         "path": "evidence/b003_recovery_assessment_2026_08_17.json",
@@ -415,7 +420,25 @@
       "summary_csv": {"path": "results/gap_lr_matched/disjoint_5k_0813/disjoint_block_summary.csv", "sha256": "e83838b0514583ec69867a7fb140b57739e4b3c964a719d4f4869ed68179f18e"},
       "decision": {"path": "results/gap_lr_matched/disjoint_5k_0813/quality_decision.json", "sha256": "c8eeb489565019b45fb2c93b5f5462b626a6382447cc1cb463568b9472b3e50e"},
       "aggregation_script": {"commit": "cec703e", "path": "scripts/rebuild_disjoint_5k_summary.py", "reproduces": ["blockwise_results.csv", "disjoint_block_summary.csv"], "verification": "byte_exact"},
-      "plotting_script": null
+      "plotting_script": null,
+      "regenerated_publication_v2": {
+        "status": "PASS",
+        "evidence_class": "regenerated evaluation provenance",
+        "contract_sha256": "1528a2bb69f6768f445604e86db652e27a6c818bff3804a7572079b3f5e2c66f",
+        "cell_manifest": {"path": "results/publication_v2_regenerated/publication_v2_cell_manifest.json", "sha256": "deb846e36ac01104ae91de6744a64675a51e5f5a2b89b2c455d0f5c2db6c6ce8"},
+        "blockwise_csv": {"path": "results/publication_v2_regenerated/blockwise_results.csv", "sha256": "04a1116f8918527f47ff71884d0f9c65862bd73acd2766cca8e7b68a3e684895"},
+        "summary_csv": {"path": "results/publication_v2_regenerated/disjoint_block_summary.csv", "sha256": "c37c13992046c9d90ca06ef7b87df57a46a77a0325fcf7d1c9bd81749da36209"},
+        "comparison_to_pr53": {"path": "results/publication_v2_regenerated/comparison_to_pr53.csv", "sha256": "9eaa666ea27bd3cb9cfc92992ce1cb9cbc950f7044d978e15106bde3ce50e47d"},
+        "detached_checksums": {"path": "results/publication_v2_regenerated/SHA256SUMS", "sha256": "6fe64544730f181f2e7a46528ca1f3381b2d326ebc3d3a68f4c423d74190b853"},
+        "builder": {"path": "scripts/build_publication_v2_artifacts.py", "sha256": "4edd30c2b97340a1e252c57bec36f9c9dfcc46fb3f9016f571f3a2cdb55c9873"},
+        "cells": 27,
+        "metric_receipts": 54,
+        "retained_sample_arrays": 27,
+        "retained_feature_arrays": 54,
+        "checkpoint_hash_bound_receipts": 54,
+        "sample_range_bound_receipts": 54,
+        "retry_count": 0
+      }
     }
   },
   "noncanonical_artifacts": [
@@ -433,7 +456,10 @@
     {"id": "B001", "resolved_commit": "9307a76", "detail": "The mutable-latest duplicate is now a machine-readable NON_CANONICAL_TOMBSTONE and the mechanism document names only the numbered K=256 receipt as canonical."},
     {"id": "B004", "resolved_commit": "cec703e", "detail": "A deterministic aggregation script reproduces both PR #53 CSVs byte-for-byte from all 54 SHA-bound JSONLs."},
     {"id": "B002-H20", "resolved_commit": "ff7a49bfaa730297ad7a8b30bf1de043bc5dca91", "detail": "PR #58 commits per-coordinate predictions, targets, weights, and a* series for all four K values; the h=20 weighted R2/Corr headline recomputes from Git alone in 2 tests with 8 subtests."},
-    {"id": "B006-SAMPLE-RANGE", "resolved_commit": null, "detail": "The PR #53 cell-binding manifest binds all 54 metric receipts to explicit ordered inclusive sample-seed ranges. Checkpoint SHA binding is complete for 42/54 receipts; the remaining 12 receipts are exactly the seed-3 B/C records blocked by B005."}
+    {"id": "B006-SAMPLE-RANGE", "resolved_commit": null, "detail": "The PR #53 cell-binding manifest binds all 54 metric receipts to explicit ordered inclusive sample-seed ranges."},
+    {"id": "B005", "resolved_commit": null, "detail": "The exact seed-3 Arm B/C numbered EMA bytes were recovered from external research storage, copied into immutable release storage, independently rehashed, and bound to their matching training-state receipts."},
+    {"id": "B006", "resolved_commit": null, "detail": "All 54 historical metric receipts and all 54 regenerated-v2 receipts are checkpoint-hash-bound; no seed-3 B/C cells remain unbound."},
+    {"id": "B003", "resolved_commit": null, "detail": "Publication-v2 regenerated all 27 cells and retained 27 exact sample arrays plus 54 exact feature arrays. The independent verifier passed all 81 arrays and 54 metric receipts."}
   ],
   "claim_registry": [
     {
@@ -469,21 +495,17 @@
     },
     {
       "claim_id": "disjoint-5k-delta-ctrl",
-      "status": "CANNOT_VERIFY_END_TO_END",
+      "status": "TRACEABLE_REGENERATED_PROVENANCE",
       "values": "seedwise delta_ctrl mean, sample SD, and sign consistency",
-      "commit": "fbdcb13ed7dab8a5fb179382e4453df9c1a0f7d2",
+      "commit": "1c8971e78637a31f044a5e05e262c08adf15c5d2",
       "run_id": "nine seed/arm trajectories",
       "checkpoint_record_ids": ["s3-A-k256000", "s3-B-k256000", "s3-C-k256000", "s4-A-k256000", "s4-B-k256000", "s4-C-k256000", "s5-A-k256000", "s5-B-k256000", "s5-C-k256000"],
-      "raw": "54 SHA-bound metric JSONL files; generated samples absent",
+      "raw": "results/publication_v2_regenerated/publication_v2_cell_manifest.json: 54 metric receipts, 27 retained sample arrays, and 54 retained feature arrays",
       "plotting_script": null
     }
   ],
   "publication_limitations": [
     {"id": "B002", "severity": "APPENDIX_REPRODUCIBILITY_LIMITATION", "scope": "PR58 full R2(K,h) matrix excluding the Git-self-contained h=20 headline", "detail": "The manuscript headline is restricted to h=20, which is Git-self-contained. The exploratory full R2(K,h) matrix remains hash/size identified but lacks a durable external locator and must be disclosed as an appendix reproducibility limitation, not used as a headline claim."}
   ],
-  "blocking_findings": [
-    {"id": "B003", "severity": "HIGH", "scope": "PR53", "detail": "FID/KID generated samples or feature NPZs are not retained or hash-bound, so the metric JSONL values cannot be recomputed from sample-level artifacts. The 2026-08-17 recovery assessment found none in the committed tree or local archives and records the exact regeneration closure contract."},
-    {"id": "B005", "severity": "HIGH", "scope": "PR53 seed3 B/C", "detail": "Committed public evidence does not record SHA256 for the exact numbered network snapshots evaluated for seed-3 Arms B and C. The 2026-08-17 read-only retrieval receipt records three unavailable source/transfer endpoints and no recovered bytes; no hash is inferred."},
-    {"id": "B006", "severity": "MEDIUM", "scope": "PR53 seed3 B/C only", "detail": "The new cell manifest explicitly binds ordered sample ranges for all 54 receipts and checkpoint SHA256 for 42/54. The remaining 12 receipts are the three blocks x two metrics x seed-3 Arms B/C and cannot be checkpoint-hash-bound until B005 is closed."}
-  ]
+  "blocking_findings": []
 }
