@@ -1,5 +1,7 @@
 # This directory is the local pointer for one isolated audit operation.
-# Receipts and logs belong in the externally managed server run directory.
+# Large raw arrays and logs belong in the externally managed server run directory.
 *
 !.gitignore
 !README.md
+!receipts_20260819/
+!receipts_20260819/**

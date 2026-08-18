@@ -1,0 +1,94 @@
+{
+  "audit_manifest_sha256": "cd50a2f4a11e0cdc80b8c6d97bdded4942ba27539b2ecaddce7a38376e4bfa1b",
+  "protocol": "cross-seed-gap-induced-optimizer-divergence-v1",
+  "replication_accounting": {
+    "all_kimg_equal": true,
+    "all_schedule_q_equal": false,
+    "all_training_trajectory_ids_distinct": true,
+    "batch_replication_is_not_training_seed_replication": true,
+    "existing_reference_training_seed": 3,
+    "new_execution_training_seeds": [
+      4,
+      5
+    ],
+    "schedule_q_by_seed": {
+      "3": 128,
+      "4": 256,
+      "5": 256
+    },
+    "training_seeds": [
+      3,
+      4,
+      5
+    ]
+  },
+  "rows": [
+    {
+      "H_K_identity_check": 0.09895615462477855,
+      "R_grad": 0.115157088181599,
+      "R_opt": 0.09895615462477861,
+      "a_K_star": 0.7489278589383676,
+      "c_K_star": 1.0332704356489475,
+      "h_i_dispersion_on_support": 0.09892150987484527,
+      "h_i_off_support_candidate_energy": 6.855422203971357e-06,
+      "layer_a_receipt": "/data/raw/ECT/recurrence_of_ect_cross_seed_20260818/analysis/same_trajectory_longitudinal/radam_update_audit_stateful_k256000.json",
+      "layer_b_receipt": "/data/raw/ECT/recurrence_of_ect_cross_seed_20260818/analysis/real_history/k256/scalar_prediction.json",
+      "row_kind": "existing_artifact",
+      "s_K_star": 0.9575746752062235,
+      "scalar_history_R2": 0.7350111557928056,
+      "scalar_history_a_star_mean": 0.772624367957829,
+      "scalar_history_a_star_std": 0.022881105280223045,
+      "scalar_history_corr": 0.8582011322457552,
+      "scalar_history_wRMSE": 0.029541921876891072,
+      "schedule_q": 128,
+      "seed": 3,
+      "state_kimg": 256,
+      "training_trajectory_id": "gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3"
+    },
+    {
+      "H_K_identity_check": 0.11519763478564284,
+      "R_grad": 0.27552869138225294,
+      "R_opt": 0.11519763478564284,
+      "a_K_star": 0.614877927507085,
+      "c_K_star": 1.0490870106744463,
+      "h_i_dispersion_on_support": 0.1151633597004595,
+      "h_i_off_support_candidate_energy": 7.895642708928114e-06,
+      "layer_a_receipt": "/data/raw/ECT/ect_runs/cross_seed_optimizer_geometry_20260818/seed4/layer_a/radam_update_audit_stateful.json",
+      "layer_b_receipt": "/data/raw/ECT/ect_runs/cross_seed_optimizer_geometry_20260818/seed4/layer_b/scalar_history_prediction.json",
+      "row_kind": "new_independent_training_trajectory",
+      "s_K_star": 0.9390783782389021,
+      "scalar_history_R2": 0.6386443949643812,
+      "scalar_history_a_star_mean": 0.7674265716309419,
+      "scalar_history_a_star_std": 0.07163508381062864,
+      "scalar_history_corr": 0.809086359615058,
+      "scalar_history_wRMSE": 0.04122266100212078,
+      "schedule_q": 256,
+      "seed": 4,
+      "state_kimg": 256,
+      "training_trajectory_id": "confirmatory-256k-seed4-fixed"
+    },
+    {
+      "H_K_identity_check": 0.09242233600617779,
+      "R_grad": 0.14858439329537357,
+      "R_opt": 0.0924223360061778,
+      "a_K_star": 0.8403510447983317,
+      "c_K_star": 1.0294004001255816,
+      "h_i_dispersion_on_support": 0.09239191252604019,
+      "h_i_off_support_candidate_energy": 5.622692619365048e-06,
+      "layer_a_receipt": "/data/raw/ECT/ect_runs/cross_seed_optimizer_geometry_20260818/seed5/layer_a/radam_update_audit_stateful.json",
+      "layer_b_receipt": "/data/raw/ECT/ect_runs/cross_seed_optimizer_geometry_20260818/seed5/layer_b/scalar_history_prediction.json",
+      "row_kind": "new_independent_training_trajectory",
+      "s_K_star": 0.9625652081767716,
+      "scalar_history_R2": 0.0816771541335175,
+      "scalar_history_a_star_mean": 0.8289706363528125,
+      "scalar_history_a_star_std": 0.11628476858585542,
+      "scalar_history_corr": 0.41987339846373445,
+      "scalar_history_wRMSE": 0.07146659416232619,
+      "schedule_q": 256,
+      "seed": 5,
+      "state_kimg": 256,
+      "training_trajectory_id": "confirmatory-256k-seed5-fixed"
+    }
+  ],
+  "schema_version": 1
+}

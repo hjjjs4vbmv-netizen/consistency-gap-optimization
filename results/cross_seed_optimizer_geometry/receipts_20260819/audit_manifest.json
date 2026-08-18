@@ -1,0 +1,198 @@
+{
+  "bound_manifest": {
+    "path": "/data/raw/ECT/ect_runs/cross_seed_optimizer_geometry_bind_20260818/bound_matrix.json",
+    "sha256": "e97f0ebd1641052c24fbe0c0d8e667768f2891c626570467fd800f2b3c8a2753"
+  },
+  "canonical": {
+    "arm": {
+      "gap_scale": 1.0,
+      "method": "fixed",
+      "name": "arm_a"
+    },
+    "budget_kimg": 256,
+    "layer_a": {
+      "amp": true,
+      "batch_gpu": 16,
+      "batch_size": 128,
+      "candidate_gain": 1.3,
+      "lr": 0.0001,
+      "probe_rng_seed": 20260810,
+      "reference_gain": 1.0,
+      "state_contract": "Restore theta, RAdam m/v/step, and GradScaler; share minibatch, t, noise, and dropout RNG; do not commit either virtual step.",
+      "support_atol": 0.0
+    },
+    "layer_b": {
+      "batch_size": 128,
+      "candidate_gain": 1.3,
+      "eval_step": 19,
+      "lr": 0.0001,
+      "n_steps": 20,
+      "probe_rng_seed": 20260809,
+      "protocol_source": "Canonical #47/#58 prospective scalar-history replay with full per-step update histories.",
+      "reference_gain": 1.0
+    }
+  },
+  "created_utc": "2026-08-18T17:34:47+00:00",
+  "dataset": {
+    "path": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1"
+  },
+  "partial_root_recovery": true,
+  "protocol": "cross-seed-gap-induced-optimizer-divergence-v1",
+  "replication_accounting": {
+    "all_kimg_equal": true,
+    "all_schedule_q_equal": false,
+    "all_training_trajectory_ids_distinct": true,
+    "batch_replication_is_not_training_seed_replication": true,
+    "existing_reference_training_seed": 3,
+    "new_execution_training_seeds": [
+      4,
+      5
+    ],
+    "schedule_q_by_seed": {
+      "3": 128,
+      "4": 256,
+      "5": 256
+    },
+    "training_seeds": [
+      3,
+      4,
+      5
+    ]
+  },
+  "runner_script_sha256": "a2972b5b31f29cde4206d421774e6cc60743f8bd36734ffa112404f7dd71d397",
+  "schema_version": 1,
+  "seed_results": [
+    {
+      "checkpoint": {
+        "sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b"
+      },
+      "layer_a": {
+        "executed": false,
+        "receipt_path": "analysis/same_trajectory_longitudinal/radam_update_audit_stateful_k256000.json",
+        "receipt_sha256": "4f9b0f3b7bffbad544779f649a2e90e04ef0f6c2ecd0c1ef1e911e2a9ff38060",
+        "storage": "repository"
+      },
+      "layer_b": {
+        "executed": false,
+        "raw_predictions": {
+          "a_star_series": {
+            "path": "analysis/crossk_scalar_history/k256/raw_predictions/a_star_series.npy",
+            "sha256": "ae2169e27ebb4c0c6fc4c7b31ccd307288bba1495ff44c2a00b74d3106f1831f"
+          },
+          "h_actual": {
+            "path": "analysis/crossk_scalar_history/k256/raw_predictions/h_actual_h20.npy",
+            "sha256": "c3e74170d51e597c4c8bcd9c496a8556ca868871550b9819aaa29f53563811e6"
+          },
+          "h_pred_scalar": {
+            "path": "analysis/crossk_scalar_history/k256/raw_predictions/h_pred_scalar_h20.npy",
+            "sha256": "e89d9c1a2206d7a7d7e9d10f3cfbb3384dc19ab96fec2a36d529223fffa5fa4c"
+          },
+          "weights": {
+            "path": "analysis/crossk_scalar_history/k256/raw_predictions/weights_h20.npy",
+            "sha256": "8a8de85225f4d22755915ffa4a0e10ecc4ce58ec2355e43ff0e2baa8e27e45a2"
+          }
+        },
+        "receipt_path": "analysis/real_history/k256/scalar_prediction.json",
+        "receipt_sha256": "eac071acdc72048449bfd99439024ea0e6a985558c28c67df2a72276a643c3b5",
+        "storage": "repository"
+      },
+      "row_kind": "existing_artifact",
+      "schedule_q": 128,
+      "state_kimg": 256,
+      "training_seed": 3,
+      "training_state": {
+        "sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8"
+      },
+      "training_trajectory_id": "gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3"
+    },
+    {
+      "checkpoint": {
+        "path": "/data/raw/ECT/checkpoints/confirmatory_256k/seed4/network-snapshot-000008.pkl",
+        "sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9"
+      },
+      "executed_training_source_commit": "ab03f9e03b7b82425282abc3bf661067ca45875a",
+      "layer_a": {
+        "executed": true,
+        "path": "seed4/layer_a/radam_update_audit_stateful.json",
+        "receipt_path": "seed4/layer_a/radam_update_audit_stateful.json",
+        "sha256": "be208e8cb0161f246d71b9ad82990173fe561bebddb602cb28828169e5711bba",
+        "size_bytes": 8260,
+        "storage": "operation"
+      },
+      "layer_b": {
+        "executed": true,
+        "path": "seed4/layer_b/scalar_history_prediction.json",
+        "raw_artifact_manifest": {
+          "path": "seed4/layer_b/raw_artifact_manifest.json",
+          "sha256": "cbee803bd900a35c6c589b15d173070e4a7072e01a96ec63bc84b7bf7a1de176",
+          "size_bytes": 2393,
+          "storage": "operation"
+        },
+        "receipt_path": "seed4/layer_b/scalar_history_prediction.json",
+        "sha256": "c27451979e02bf7dd83347c40fb9d61d6a6058738bce41fb2ec95c3d803ad155",
+        "size_bytes": 2270,
+        "storage": "operation"
+      },
+      "partial_root_recovery": {
+        "layer_a_reused": true,
+        "layer_b_raw_reused": true,
+        "layer_b_scalar_reused": false
+      },
+      "row_kind": "new_independent_training_trajectory",
+      "schedule_q": 256,
+      "state_kimg": 256,
+      "training_seed": 4,
+      "training_state": {
+        "path": "/data/raw/ECT/checkpoints/confirmatory_256k/seed4/training-state-000008.pt",
+        "sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a"
+      },
+      "training_trajectory_id": "confirmatory-256k-seed4-fixed"
+    },
+    {
+      "checkpoint": {
+        "path": "/data/raw/ECT/checkpoints/confirmatory_256k/seed5/network-snapshot-000008.pkl",
+        "sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a"
+      },
+      "executed_training_source_commit": "ab03f9e03b7b82425282abc3bf661067ca45875a",
+      "layer_a": {
+        "executed": true,
+        "path": "seed5/layer_a/radam_update_audit_stateful.json",
+        "receipt_path": "seed5/layer_a/radam_update_audit_stateful.json",
+        "sha256": "35104b289a8bb890c8ccbe73d576ed5fd75e17cae333b26a0a8164decb8a6b4d",
+        "size_bytes": 8254,
+        "storage": "operation"
+      },
+      "layer_b": {
+        "executed": true,
+        "path": "seed5/layer_b/scalar_history_prediction.json",
+        "raw_artifact_manifest": {
+          "path": "seed5/layer_b/raw_artifact_manifest.json",
+          "sha256": "6a725197f15237f7101e3b0f65e4379d5d5db981c5fd3729b7ef531e665e4409",
+          "size_bytes": 2393,
+          "storage": "operation"
+        },
+        "receipt_path": "seed5/layer_b/scalar_history_prediction.json",
+        "sha256": "3d8bcc3bf88a86c7456a5904faf69dab42d7e73097852f91e696f508f453bfdc",
+        "size_bytes": 2272,
+        "storage": "operation"
+      },
+      "partial_root_recovery": {
+        "layer_a_reused": false,
+        "layer_b_raw_reused": false,
+        "layer_b_scalar_reused": false
+      },
+      "row_kind": "new_independent_training_trajectory",
+      "schedule_q": 256,
+      "state_kimg": 256,
+      "training_seed": 5,
+      "training_state": {
+        "path": "/data/raw/ECT/checkpoints/confirmatory_256k/seed5/training-state-000008.pt",
+        "sha256": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033"
+      },
+      "training_trajectory_id": "confirmatory-256k-seed5-fixed"
+    }
+  ],
+  "source_commit": null,
+  "status": "passed"
+}

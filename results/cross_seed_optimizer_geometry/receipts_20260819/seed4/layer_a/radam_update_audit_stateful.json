@@ -1,0 +1,192 @@
+{
+  "gains": [
+    1.0,
+    1.3
+  ],
+  "stateful_radam": {
+    "lr": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "n_K": 1990,
+    "moments_nontrivial": true,
+    "state_validation": {
+      "valid": true,
+      "errors": [],
+      "parameter_count": 416,
+      "initialized_parameter_count": 416,
+      "n_K": 1990.0,
+      "n_K_min": 1990.0,
+      "n_K_max": 1990.0,
+      "m_l2": 437.97470728189535,
+      "v_l2": 129877.67006870145
+    },
+    "gradscaler_restored": true,
+    "support_atol": 0.0
+  },
+  "randomness_contract": {
+    "same_minibatch": true,
+    "same_t": true,
+    "same_noise": true,
+    "same_dropout_rng_state": true,
+    "minibatch_images_sha256": "1b43058b08dd59be0d6f9d2b5631dee3c9cc61c5e37b6389bbf229d07e4274a2",
+    "minibatch_labels_sha256": "533ff43f408469d48a8f1fadef00eef835b3586982db4bbc0b263461b5f85ed7",
+    "microbatch_size": 16,
+    "accumulation_rounds": 8,
+    "t_sha256": "8a870574c1ba3473c7bdc801aa8c8ccd83f3c2a3ff795e384766d292aa83f62d",
+    "noise_sha256": "247f6e448e292ae20f8454d6518f5a3b81398af8fe0d7a1e0f6e5a5067ff0e45",
+    "dropout_rng_state_sha256": "a2d963c9929202a2c85d50bc82fc5132bd34079868b861a907929aa2ccd030f7"
+  },
+  "source_state_non_committing": {
+    "parameter_hash_before": {
+      "parameter_sha256": "01a9f38666c940432333ac25d69311f600653edaea86a6852dd9a1b9e0230ade",
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+    },
+    "parameter_hash_after": {
+      "parameter_sha256": "01a9f38666c940432333ac25d69311f600653edaea86a6852dd9a1b9e0230ade",
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+    },
+    "optimizer_state_hash_before": "3a71071acba996a96a14d8717f9c1c4aef1ed16a5d5cefbe7cac0bd571bbc038",
+    "optimizer_state_hash_after": "3a71071acba996a96a14d8717f9c1c4aef1ed16a5d5cefbe7cac0bd571bbc038",
+    "gradscaler_hash_before": "4511e7a556b20fe17cc0dabdddac4a41c8fca94647d201798e24c1bec2aedcba",
+    "gradscaler_hash_after": "4511e7a556b20fe17cc0dabdddac4a41c8fca94647d201798e24c1bec2aedcba",
+    "preserved": true
+  },
+  "branches": [
+    {
+      "gain": 1.0,
+      "loss_mean": 16.784248193260282,
+      "accumulation_rounds": 8,
+      "amp_enabled": true,
+      "amp_unscale_called": true,
+      "nonfinite_before_sanitize": false,
+      "step_skipped": false,
+      "grad_scale_before": 64.0,
+      "grad_scale_after": 64.0,
+      "parameter_hash_before": {
+        "parameter_sha256": "01a9f38666c940432333ac25d69311f600653edaea86a6852dd9a1b9e0230ade",
+        "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+      },
+      "parameter_hash_after_virtual_step": {
+        "parameter_sha256": "365d0e7764736a3a73584146c3e8a681c348c12ecdf30942e782a8903be7c9fd",
+        "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+      },
+      "optimizer_state_hash_before": "3a71071acba996a96a14d8717f9c1c4aef1ed16a5d5cefbe7cac0bd571bbc038",
+      "optimizer_state_hash_after_virtual_step": "297106d01e681ed5fb3f67eb0cb82628a90dd33de13472ee56054eb78a03c38b",
+      "gradscaler_hash_before": "4511e7a556b20fe17cc0dabdddac4a41c8fca94647d201798e24c1bec2aedcba",
+      "gradscaler_hash_after_virtual_step": "42dce0aa9b0054ad66b42841fbb40c1d1ba7053bef3bdf00bfdc7cfa8398d45b",
+      "optimizer_step_before": 1990,
+      "optimizer_step_after": 1991,
+      "moments_nontrivial_before": true
+    },
+    {
+      "gain": 1.3,
+      "loss_mean": 16.526025308063254,
+      "accumulation_rounds": 8,
+      "amp_enabled": true,
+      "amp_unscale_called": true,
+      "nonfinite_before_sanitize": false,
+      "step_skipped": false,
+      "grad_scale_before": 64.0,
+      "grad_scale_after": 64.0,
+      "parameter_hash_before": {
+        "parameter_sha256": "01a9f38666c940432333ac25d69311f600653edaea86a6852dd9a1b9e0230ade",
+        "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+      },
+      "parameter_hash_after_virtual_step": {
+        "parameter_sha256": "a2ac5ab34ee424f1520e9f26a74fb262a64b6d1b89d7d026ba978808f3cb0451",
+        "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+      },
+      "optimizer_state_hash_before": "3a71071acba996a96a14d8717f9c1c4aef1ed16a5d5cefbe7cac0bd571bbc038",
+      "optimizer_state_hash_after_virtual_step": "aab3d8ba9ccc35a15509ca8f577230983228d4b3703c1315ca9cb85ac9232e8b",
+      "gradscaler_hash_before": "4511e7a556b20fe17cc0dabdddac4a41c8fca94647d201798e24c1bec2aedcba",
+      "gradscaler_hash_after_virtual_step": "42dce0aa9b0054ad66b42841fbb40c1d1ba7053bef3bdf00bfdc7cfa8398d45b",
+      "optimizer_step_before": 1990,
+      "optimizer_step_after": 1991,
+      "moments_nontrivial_before": true
+    }
+  ],
+  "whole_model": {
+    "gauge_defined": true,
+    "gauge_error": null,
+    "residual_convention": "reference_normalized_candidate_minus_s_star_reference",
+    "a_K_star": 0.614877927507085,
+    "c_grad_star": 1.3543837397543648,
+    "R_grad": 0.27552869138225294,
+    "grad_cosine": 0.9125681711244695,
+    "s_K_star": 0.9390783782389021,
+    "c_K_star": 1.0490870106744463,
+    "R_opt": 0.11519763478564284,
+    "update_cosine": 0.9925597859150133,
+    "s_K_star_predicted": 0.9390787784680982,
+    "c_K_star_predicted": 1.0490876223228047,
+    "R_pred": 0.11519376275368451,
+    "predicted_update_cosine": 0.9925602867719929,
+    "R_opt_minus_R_grad": -0.16033105659661012,
+    "H_K": 0.11519763478564284,
+    "H_K_is_identity_check": true,
+    "H_K_equals_R_opt_identity": true,
+    "H_K_squared_minus_R_opt_squared_energy_gap": 1.734723475976807e-18,
+    "predicted_H_K": 0.11519376275368454,
+    "predicted_H_K_is_identity_check": true,
+    "update_1_l2": 0.14954379403833076,
+    "update_1p3_l2": 0.14148602993395148,
+    "grad_1_l2": 2007.1361037349818,
+    "grad_1p3_l2": 1352.385198980253,
+    "predicted_vs_actual_relative_l2": {
+      "1.0": 0.0006706224464997429,
+      "1.3": 0.0007089420507075351
+    },
+    "support_atol": 0.0,
+    "exact_support_coordinate_count": 55684461,
+    "effective_support_coordinate_count": 55684461,
+    "coordinate_count": 55732739,
+    "effective_support_coordinate_coverage": 0.9991337587050944,
+    "effective_support_energy_coverage": 0.9999999999999992,
+    "on_support_gauge_dispersion_energy": 0.013262599417497418,
+    "off_support_candidate_energy_exact": 7.895642708928114e-06,
+    "history_gauge_dispersion_H_K": 0.11519763478564284,
+    "history_gauge_identity_residual_energy": 0.013270495060206347,
+    "moment_effective_support_coordinate_count": 55684461,
+    "moment_effective_support_energy_coverage": 0.9999999999999992,
+    "h_update_minus_moment_weighted_rmse": 0.0019644824872460313,
+    "h_update_minus_moment_eps_weighted_rmse": 0.0019644824824445076,
+    "predicted_on_support_gauge_dispersion_energy": 0.013269602977352158,
+    "predicted_off_support_candidate_energy_exact": 0.0
+  },
+  "provenance": {
+    "source_commit": null,
+    "analysis_script_sha256": "8bd8f11c70a9784f3e2bae2b8dba1d1b16c682fc01cc2e70a4815ba2f574e566",
+    "training_state": "/data/raw/ECT/checkpoints/confirmatory_256k/seed4/training-state-000008.pt",
+    "training_state_sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+    "checkpoint": "/data/raw/ECT/checkpoints/confirmatory_256k/seed4/network-snapshot-000008.pkl",
+    "checkpoint_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+    "data": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "dataset_hash_algorithm": "sha256_file",
+    "state_kimg": 256.0,
+    "batch_size": 128,
+    "batch_gpu": 16,
+    "support_atol": 0.0,
+    "seed": 20260810,
+    "device": "cuda",
+    "torch_version": "2.3.0a0+6ddf5cf85e.nv24.04",
+    "cuda_version": "12.4",
+    "schedule": "sigmoid",
+    "q": 256.0,
+    "k": 8.0,
+    "b": 1.0,
+    "stage": 0,
+    "amp_training_order": "scale, backward, unscale, sanitize, step, update",
+    "training_state_meta": {
+      "cur_nimg": 256000.0,
+      "cur_tick": 27,
+      "successful_optimizer_steps": 1990,
+      "attempted_iteration": 2000,
+      "has_gradscaler_state": true,
+      "has_loss_fn_state": true
+    }
+  }
+}
