@@ -70,7 +70,7 @@
     },
     "base_identical_after_normalizing_checkout_prefix": true,
     "classification": "target-base sys.path leak exposed by full-suite collection order",
-    "remediation": "Restore sys.path after the two temporary standalone-script imports and add a regression assertion that the structural audit preserves the import path.",
+    "remediation": "Restore sys.path after the two temporary standalone-script imports, make the training-integrity checker enforce its documented repository-root-first import contract even when the root already exists later in sys.path, and add a regression assertion that the structural audit preserves the import path.",
     "remediation_status": "implemented_pending_final_validation"
   }
 }

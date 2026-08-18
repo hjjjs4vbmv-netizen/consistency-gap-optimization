@@ -30,5 +30,7 @@ before that exact node reproduces the same assertion on both the target-base
 checkout and the merged branch (checkout prefixes aside). The target-base
 manifest verifier temporarily prepended `scripts/` to `sys.path` and did not
 restore it. The narrow fix restores the prior import path after each temporary
-standalone-script import and adds a regression assertion. The comparison logs
-are in `path_order_comparison/`.
+standalone-script import, makes the integrity checker enforce its existing
+repository-root-first contract even when the root was already present later in
+`sys.path`, and adds a regression assertion. The comparison logs are in
+`path_order_comparison/`.
