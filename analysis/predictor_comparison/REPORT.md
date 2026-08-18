@@ -51,14 +51,16 @@ Corr at h=20, real regime: global 0.93–0.83, discrete 0.94–0.85, local ≈0.
 
 ## 2. Findings (honest)
 
-**F1 — In the real-history regime, both the global scalar and the discrete replay
-explain most of the update-divergence variance (R² 0.69–0.92); the discrete replay
-is consistently slightly better.** At k32/64/128/256: discrete−global = +0.014,
-+0.006, −0.005, +0.031. The per-step scale history adds a small but consistent
-edge over a single causal mean, except at k128 (tie). So the answer to the core
-question is: **the discrete finite-history replay and the global scalar both beat
-the continuous first-order theory, and the discrete replay is marginally the best
-in three of four stages.**
+**F1 — In the real-history regime, the global scalar and the discrete replay are
+STATISTICALLY TIED; both explain most of the divergence (R² 0.69–0.92).** The
+per-step scale history adds at most ΔR² ≤ 0.03 over a single causal mean, and the
+ordering is NOT robust: discrete wins on R² at k32/64/256 but **loses at k128**
+(0.918 vs 0.923), while Corr has discrete marginally higher at all four (but by
+≤0.02, and contradicting the R² ranking at k128). So under the (near-constant)
+scale history of this gap, the discrete per-step history provides **no robust
+additional explanatory power** over a single causal scalar. The two are equivalent
+for practical purposes; the discrete replay's only robust advantage is not
+blowing up under incomplete history (F2).
 
 **F2 — The local/continuous first-order predictor CATASTROPHICALLY fails in the
 real-history regime (R² = −18 to −94).** This is not "slightly worse" — it is
@@ -76,11 +78,12 @@ This is exactly why Var_w(h) is reported: it shows the fresh-start R² values ar
 an artifact of a near-constant target, not a predictor failure. **The real-history
 regime is the regime that matters.**
 
-**F4 — The discrete replay's advantage over the global scalar is small because
-a\* is approximately stable (std ≈ 0.009–0.023, from the cross-K experiment).
-When the scale history is nearly constant, a single causal mean captures almost
-as much as the full per-step history. The discrete replay would gain more if the
-scale history varied more (e.g. under a stronger gap).**
+**F4 — The discrete replay and global scalar are tied because a\* is approximately
+stable (std ≈ 0.009–0.023, from the cross-K experiment). When the scale history is
+nearly constant, a single causal mean captures almost as much as the full per-step
+history — so the per-step scale history carries little independent information
+beyond its mean. The discrete replay would gain a robust edge only under a more
+time-varying scale history (e.g. a stronger gap); for this gap it does not.
 
 ---
 
@@ -88,12 +91,15 @@ scale history varied more (e.g. under a stronger gap).**
 
 **Under a uniform information budget, does the discrete scalar-history replay
 explain more of the optimizer-response variation than simpler scalar
-approximations?** Yes, but **marginally**: in the real-history regime it is the
-best predictor in 3/4 stages (R² 0.72–0.91), narrowly beating the global scalar
-(ΔR² ≤ 0.03), and both substantially beat the local/continuous first-order
-theory (which fails catastrophically, R² ≪ 0). The marginal edge reflects that
-a\* is nearly constant; the discrete replay's value is in robustness (it does
-not blow up when the history is incomplete, unlike the first-order formula).
+approximations?** **No robust advantage for this gap.** In the real-history regime
+the discrete replay and the global scalar are statistically tied (both R² 0.69–0.92;
+the per-step history's ΔR² ≤ 0.03 and the R² ordering is not robust — it flips at
+k128). Both substantially beat the local/continuous first-order theory (which
+fails catastrophically, R² ≪ 0). The discrete replay's only robust advantage over
+the alternatives is **robustness**: unlike the first-order formula, it does not
+diverge when the gradient history is truncated relative to the optimizer's memory.
+For this near-constant scale history, the per-step scale history carries no
+independent information beyond its mean.
 
 ---
 
@@ -102,8 +108,9 @@ not blow up when the history is incomplete, unlike the first-order formula).
 **We CAN say:**
 - "Under a uniform information budget (G^1 + a\*), the discrete scalar-history
   replay and the global scalar both explain most of the update-divergence
-  variance in the real-history regime (R² 0.69–0.92); the discrete replay is
-  consistently slightly better."
+  variance in the real-history regime (R² 0.69–0.92); they are statistically
+  tied (the per-step history's ΔR² ≤ 0.03 is not robust — the R² ordering flips
+  at k128)."
 - "The continuous first-order theory fails in the real-history regime (truncated
   history + converged state); the discrete replay is robust to this."
 - "The fresh-start regime is uninformative (target near-constant); this is shown
