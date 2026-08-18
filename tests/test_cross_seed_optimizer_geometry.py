@@ -121,6 +121,18 @@ class CrossSeedOptimizerGeometryTests(unittest.TestCase):
                     layer_b=payload["canonical"]["layer_b"], label="seed4",
                 )
 
+    def test_summary_verifies_legacy_operation_sha256_field(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            receipt = root / "receipt.json"
+            receipt.write_text("{}", encoding="utf-8")
+            resolved = SUMMARY.resolve_receipt(root, {
+                "storage": "operation",
+                "receipt_path": "receipt.json",
+                "sha256": sha256(receipt),
+            }, "legacy receipt")
+            self.assertEqual(resolved, receipt)
+
     def test_summary_writes_three_seed_table_and_preserves_q_accounting(self):
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "operation"

@@ -52,7 +52,9 @@ def finite(value: Any, label: str) -> float:
 def resolve_receipt(root: Path, record: dict[str, Any], label: str) -> Path:
     storage = record.get("storage")
     path_text = record.get("receipt_path")
-    expected = record.get("receipt_sha256")
+    # Early operation roots recorded the generic artifact field ``sha256``;
+    # completed roots remain valid when that value matches the receipt bytes.
+    expected = record.get("receipt_sha256", record.get("sha256"))
     if storage == "repository":
         path = REPO_ROOT / str(path_text)
     elif storage == "operation":

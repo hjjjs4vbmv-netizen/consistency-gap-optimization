@@ -493,6 +493,8 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
             fail(f"seed{seed} existing raw artifact manifest cannot be safely resumed")
     else:
         write_json(raw_manifest_path, raw_manifest)
+    layer_a_record = artifact_record(root, layer_a_receipt)
+    layer_b_record = artifact_record(root, scalar_receipt)
     return {
         "training_seed": seed,
         "row_kind": row["row_kind"],
@@ -500,10 +502,11 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
         "state_kimg": row["state_kimg"], "schedule_q": row["schedule_q"],
         "training_state": row["training_state"], "checkpoint": row["checkpoint"],
         "executed_training_source_commit": row["executed_training_source_commit"],
-        "layer_a": {**artifact_record(root, layer_a_receipt), "receipt_path": "seed%d/layer_a/radam_update_audit_stateful.json" % seed,
-                    "executed": True},
-        "layer_b": {**artifact_record(root, scalar_receipt), "receipt_path": "seed%d/layer_b/scalar_history_prediction.json" % seed,
-                    "executed": True, "raw_artifact_manifest": artifact_record(root, layer_b_dir / "raw_artifact_manifest.json")},
+        "layer_a": {**layer_a_record, "receipt_path": "seed%d/layer_a/radam_update_audit_stateful.json" % seed,
+                    "receipt_sha256": layer_a_record["sha256"], "executed": True},
+        "layer_b": {**layer_b_record, "receipt_path": "seed%d/layer_b/scalar_history_prediction.json" % seed,
+                    "receipt_sha256": layer_b_record["sha256"], "executed": True,
+                    "raw_artifact_manifest": artifact_record(root, layer_b_dir / "raw_artifact_manifest.json")},
         "partial_root_recovery": {
             "layer_a_reused": layer_a_reused,
             "layer_b_raw_reused": raw_reused,
