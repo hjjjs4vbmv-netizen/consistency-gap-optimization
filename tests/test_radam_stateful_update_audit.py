@@ -14,7 +14,8 @@ from training.schedules import get_schedule
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ANALYSIS_DIR = REPO_ROOT / "analysis"
-if str(ANALYSIS_DIR) not in sys.path:
+ADDED_ANALYSIS_PATH = str(ANALYSIS_DIR) not in sys.path
+if ADDED_ANALYSIS_PATH:
     sys.path.insert(0, str(ANALYSIS_DIR))
 
 import radam_update_gauge as gauge  # noqa: E402
@@ -24,6 +25,8 @@ SPEC = importlib.util.spec_from_file_location("radam_stateful_update_audit", SCR
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 SPEC.loader.exec_module(MODULE)
+if ADDED_ANALYSIS_PATH:
+    sys.path.remove(str(ANALYSIS_DIR))
 
 
 class TinyLoss:
