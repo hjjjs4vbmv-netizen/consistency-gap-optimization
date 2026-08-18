@@ -11,6 +11,7 @@ import copy
 import csv
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -48,6 +49,11 @@ def parse_args(argv=None):
     parser.add_argument("--training-state", type=Path, required=True)
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--data", type=Path, required=True)
+    parser.add_argument("--expected-training-state-sha256", required=True)
+    parser.add_argument("--expected-checkpoint-sha256", required=True)
+    parser.add_argument("--expected-data-sha256", required=True)
+    parser.add_argument("--code-commit", default=None,
+                        help="explicit 40-hex commit for exported worktrees without .git")
     parser.add_argument("--reference-gap-scale", type=float, default=1.0)
     parser.add_argument("--probe-gap-scale", type=float, default=1.1)
     parser.add_argument("--audit-seeds", type=_parse_audit_seeds,
@@ -82,6 +88,12 @@ def parse_args(argv=None):
             or args.batch_size % args.batch_gpu or args.initial_scale <= 0
             or not math.isfinite(args.support_atol) or args.support_atol < 0):
         parser.error("batch sizes, initial scale, and support atol must be valid")
+    for label in ("expected_training_state_sha256", "expected_checkpoint_sha256",
+                  "expected_data_sha256"):
+        if not re.fullmatch(r"[0-9a-f]{64}", getattr(args, label)):
+            parser.error(f"--{label.replace('_', '-')} must be a lowercase SHA256")
+    if args.code_commit is not None and not re.fullmatch(r"[0-9a-f]{40}", args.code_commit):
+        parser.error("--code-commit must be a 40-hex Git commit")
     return args
 
 
@@ -93,22 +105,28 @@ def _strict_dump(path: Path, payload) -> None:
         handle.write("\n")
 
 
-def _asset_record(path: Path) -> dict:
-    return {
+def _asset_record(path: Path, expected_sha256: str) -> dict:
+    record = {
         "path": str(path.resolve()),
         "exists": path.is_file(),
         "size_bytes": path.stat().st_size if path.is_file() else None,
+        "expected_sha256": expected_sha256,
     }
+    record["actual_sha256"] = gauge.sha256_file(path) if path.is_file() else None
+    record["sha256_matches"] = record["actual_sha256"] == expected_sha256
+    return record
 
 
 def dry_run_receipt(args) -> dict:
     assets = {
-        "training_state": _asset_record(args.training_state),
-        "checkpoint": _asset_record(args.checkpoint),
-        "data": _asset_record(args.data),
+        "training_state": _asset_record(
+            args.training_state, args.expected_training_state_sha256),
+        "checkpoint": _asset_record(args.checkpoint, args.expected_checkpoint_sha256),
+        "data": _asset_record(args.data, args.expected_data_sha256),
     }
     return {
-        "status": "PASS" if all(item["exists"] for item in assets.values()) else "FAIL_CLOSED",
+        "status": ("PASS" if all(item["exists"] and item["sha256_matches"]
+                                  for item in assets.values()) else "FAIL_CLOSED"),
         "mode": "dry_run",
         "training_seed": args.training_seed,
         "reference_gap_scale": args.reference_gap_scale,
@@ -133,7 +151,7 @@ def _provenance(args, loss, state_meta, *, training_state_sha256: str,
                 checkpoint_sha256: str, dataset_sha256: str,
                 dataset_hash_algorithm: str) -> dict:
     return {
-        "code_commit": audit_lib._source_commit(),
+        "code_commit": args.code_commit or audit_lib._source_commit(),
         "runner_sha256": gauge.sha256_file(Path(__file__)),
         "audit_library_sha256": gauge.sha256_file(Path(audit_lib.__file__)),
         "training_seed": args.training_seed,
@@ -196,6 +214,8 @@ def run(args) -> int:
         args, loss, state_meta, training_state_sha256=training_state_sha256,
         checkpoint_sha256=checkpoint_sha256, dataset_sha256=dataset_sha256,
         dataset_hash_algorithm=dataset_hash_algorithm)
+    if provenance["code_commit"] is None:
+        raise SystemExit("code commit is unavailable; pass --code-commit for exported worktrees")
     audit_seeds = args.audit_seeds[:1] if args.smoke else args.audit_seeds
     manifest = {
         "status": "RUNNING",
