@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-08-18
 
-**Audited collaboration head:** `1c8971e78637a31f044a5e05e262c08adf15c5d2`
+**Audited collaboration head:** `7f21043b5cbf599e9817e5142015297f771e59fe`
 
 **Scope:** publication engineering only; no new theory
 
@@ -16,6 +16,10 @@ appendix limitation. B003, B005, and B006 are no longer open or ambiguous.
 
 The publication gate is closed successfully at the artifact level:
 
+- the audited combined head contains main through PR #60 merge commit
+  `f2cac51355252aff62016a27c6ca2ad40e5220fd`;
+- the balanced-beta result files and claim boundary are byte-identical to main;
+  PR #61 is not an ancestor of this release candidate and is excluded;
 - an allowlisted, history-free anonymous code artifact was built without
   rewriting the private research repository or its evidence history;
 - a separate 2.5 GB anonymous data payload was built on NFS with relative
@@ -66,14 +70,16 @@ Status: `RESOLVED_54_OF_54_CHECKPOINT_HASH_BOUND`.
 
 ### Anonymous code artifact
 
-- local directory: `/Users/wpb/Desktop/SRT/anonymous_submission_export_v4`
-- archive: `/Users/wpb/Desktop/SRT/anonymous_submission_export_v4.tar.gz`
+- local directory: `/Users/wpb/Desktop/SRT/anonymous_submission_export_v5`
+- archive: `/Users/wpb/Desktop/SRT/anonymous_submission_export_v5.tar.gz`
 - archive SHA256:
-  `ab24dc4b087a660d670914bdcc9a0c9a39a6dc18a74450e7b2d493998479f80c`
+  `980d6f3c3f17672585ccbc132144bc9eb25ff85a1c8c941bdee4a8c970fe750f`
 - release-manifest SHA256:
-  `f7c0d87e5241a70dfded94bd335f9e313c760d80ff0fe115c3d2708d7c6183ca`
-- unpacked size: 48 MB; 84 manifest-listed files
+  `abd6548416d49b24222af9716f19ba9e9604849ab43074a6655316d967c0b35e`
+- unpacked size: 117 MB; 117 manifest-listed files
 - contains no `.git/` or `.agents/` tree
+- includes PR #60's 16 committed balanced-beta h=20 arrays, summary, report,
+  analysis/plot code, figures, and regression test
 
 ### Anonymous data artifact
 
@@ -95,14 +101,16 @@ archive must dereference these files normally.
 
 | Gate | Result | Evidence |
 | --- | --- | --- |
+| Main integration freshness | **PASS** | Combined head `7f21043b...` has `f2cac513...` as an ancestor. PR #60 balanced-beta paths have no diff from main. PR #61 is excluded. |
 | Clean collaboration clone | **PASS** | Anonymous remote read and exact PR head checkout succeeded. Scientific checks used the declared commit rather than an existing development worktree. |
-| Core scientific tests | **PASS** | 14 tests passed locally, including the strict evidence manifest and anonymity scanner tests. The GPU-compatible Python 3.10 environment also passed the two retained-artifact unit tests. |
+| Core scientific tests | **PASS** | 19 tests passed on the combined head, covering the strict evidence manifest, Cross-K h=20, balanced-beta h=20, same-trajectory evidence, robustness table, and anonymity scanner. The GPU-compatible Python 3.10 environment also passed the two retained-artifact unit tests. |
 | Canonical manifest | **PASS** | `publication_ready=true`; `blocking_findings=[]`; 54/54 checkpoint bindings; 27 publication-v2 cells; 54 receipts; 81 retained arrays. |
 | Data-plane verification | **PASS** | An independent verifier reread every array and receipt from the anonymous data package and checked SHA256, shape, dtype, metric field, and matrix accounting: 81/81 arrays and 54/54 receipts. |
 | Headline table reconstruction | **PASS** | `blockwise_results.csv` and `disjoint_block_summary.csv` reconstruct byte-exactly with LF line endings from the anonymous publication-v2 manifest. The older PR #53 table is archival only. |
 | Same-trajectory figures | **PASS** | PDF, SVG, and PNG reconstruct byte-exactly from the bundled CSV/receipts under Matplotlib 3.10.6. |
 | Cross-K figures | **PASS under declared normalized rule** | All six PDF/PNG files render. The bundled h=20 raw arrays independently recompute `R2={0.8608, 0.9109, 0.9182, 0.7355}` for `K={32,64,128,256}`. The older figure masters were produced by Matplotlib 3.11.1, so cross-version PDF/PNG bytes are not an acceptance criterion. |
-| History-free clean-copy tests | **PASS** | A new temporary copy outside both repositories passed the self-contained verifier, all 7 non-Torch export tests, table reconstruction, and both figure reconstruction commands. The two Torch retention tests passed separately on the Python 3.10 GPU runtime. |
+| Balanced-beta integration | **PASS / CLAIM BOUNDARY PRESERVED** | All 16 committed h=20 arrays recompute their effective-support statistics and all six figures render. The report remains a controlled replay result: it does not claim FID/KID causality, scalar-history-only causality, uniformly better balanced beta, or Git-self-contained full-vector R_opt. |
+| History-free clean-copy tests | **PASS** | A new temporary copy outside both repositories passed the self-contained verifier, all 9 non-Torch export tests, table reconstruction, Cross-K rendering, balanced-beta rendering, and same-trajectory byte comparison. The two Torch retention tests passed separately on the Python 3.10 GPU runtime. |
 | Anonymous code scan | **PASS** | 0 findings across 13 text rules plus explicit `.git/` and `.agents/` structural rejection. |
 | Anonymous data scan | **PASS** | 0 findings; metric receipts contain relative checkpoint paths only. |
 | Environment declaration | **PASS WITH RECORDED RUNTIME SPLIT** | `environment-publication.yml` now requires Python 3.10.18 and pins pytest, NumPy, SciPy, pandas, Matplotlib 3.10.6, PyTorch 2.4.1, torchvision 0.19.1, and CUDA 11.8. GPU/data tests ran in the compatible Python 3.10/PyTorch runtime; visual checks ran in the pinned Matplotlib 3.10.6 audit runtime. A fresh network solve was not repeated during this audit. |
@@ -126,6 +134,8 @@ conda run -n anonymous-publication-audit \
   pytest -q -p no:cacheprovider \
   tests/test_crossk_h20_recompute.py \
   tests/test_same_trajectory_figure.py \
+  tests/test_balanced_beta_h20.py \
+  tests/test_build_robustness_table.py \
   tests/test_metric_artifact_retention.py \
   tests/test_submission_export.py
 
@@ -138,6 +148,7 @@ python scripts/plot_same_trajectory_longitudinal.py \
   --outdir rebuilt/same_trajectory
 
 python analysis/plot_crossk.py --out rebuilt/cross_k
+python analysis/plot_balanced_beta.py --out rebuilt/balanced_beta
 ```
 
 The internal release builder and external scanner are intentionally retained
