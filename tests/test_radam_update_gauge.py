@@ -49,6 +49,16 @@ class TinyEDM(torch.nn.Module):
 
 
 class RAdamUpdateGaugeTests(unittest.TestCase):
+    def test_scaler_falls_back_to_cuda_amp_on_torch22(self):
+        sentinel = object()
+        with mock.patch.object(MODULE.torch.amp, "GradScaler", None), \
+                mock.patch.object(
+                    MODULE.torch.cuda.amp, "GradScaler", return_value=sentinel,
+                ) as legacy_scaler:
+            actual = MODULE._new_scaler(torch.device("cuda"), True, 128.0)
+        self.assertIs(actual, sentinel)
+        legacy_scaler.assert_called_once_with(enabled=True, init_scale=128.0)
+
     def _run(self, amp=False):
         net = TinyEDM().train()
         images = torch.linspace(-0.8, 0.8, 8).reshape(8, 1, 1, 1)
