@@ -1139,6 +1139,18 @@ class _NumpyCompatUnpickler(pickle.Unpickler):
             raise
 
 
+class _NumpyCompatPickleModule:
+    """Module-shaped adapter used by ``torch.load`` for the same fallback."""
+
+    __name__ = "pickle"
+    Unpickler = _NumpyCompatUnpickler
+    Pickler = pickle.Pickler
+    load = staticmethod(pickle.load)
+    loads = staticmethod(pickle.loads)
+    dump = staticmethod(pickle.dump)
+    dumps = staticmethod(pickle.dumps)
+
+
 def load_loss_from_checkpoint(path: Path):
     with path.open("rb") as handle:
         payload = _NumpyCompatUnpickler(handle).load()
@@ -1159,7 +1171,10 @@ def load_loss_from_checkpoint(path: Path):
 
 def load_training_state(path: Path, device: torch.device, *, lr: float, betas: tuple[float, float],
                         eps_opt: float):
-    data = torch.load(path, map_location="cpu", weights_only=False)
+    data = torch.load(
+        path, map_location="cpu", weights_only=False,
+        pickle_module=_NumpyCompatPickleModule,
+    )
     if "net" not in data or "optimizer_state" not in data:
         raise SystemExit("training-state must contain net and optimizer_state")
     net = data["net"].to(device).train().requires_grad_(True)
