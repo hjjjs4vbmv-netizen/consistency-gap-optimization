@@ -71,6 +71,56 @@ class CrossSeedOptimizerGeometryTests(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "latest alias"):
             RUNNER.validate_manifest(payload)
 
+    def test_default_run_refuses_existing_root_and_resume_requires_one(self):
+        with TemporaryDirectory() as temp_dir:
+            existing = Path(temp_dir) / "existing"
+            existing.mkdir()
+            with self.assertRaisesRegex(SystemExit, "refusing to reuse"):
+                RUNNER.main(["--manifest", "/not/read.json", "--out", str(existing)])
+            with self.assertRaisesRegex(SystemExit, "requires an existing forensic"):
+                RUNNER.main([
+                    "--manifest", "/not/read.json", "--out", str(Path(temp_dir) / "missing"),
+                    "--resume-partial",
+                ])
+
+    def test_resume_reuses_only_hash_bound_complete_raw_history(self):
+        payload = self.executable_logical_manifest()
+        row = next(row for row in payload["seed_rows"] if row["training_seed"] == 4)
+        raw_names = RUNNER.RAW_HISTORY_NAMES[:-1]
+        with TemporaryDirectory() as temp_dir:
+            raw_root = Path(temp_dir) / "raw"
+            raw_root.mkdir()
+            records = {}
+            for name in raw_names:
+                path = raw_root / name
+                path.write_bytes(name.encode("ascii"))
+                records[name] = {"sha256": sha256(path), "size_bytes": path.stat().st_size}
+            (raw_root / "sweep_meta.json").write_text(json.dumps({
+                "protocol": "canonical-pr47-pr58-prospective-scalar-history-v1",
+                "training_state_sha256": row["training_state"]["sha256"],
+                "checkpoint_sha256": row["checkpoint"]["sha256"],
+                "dataset_sha256": payload["dataset"]["sha256"],
+                "n_steps": 20,
+                "batch_size": 128,
+                "probe_rng_seed": 20260809,
+                "reference_gain": 1.0,
+                "g_candidate": 1.3,
+                "lr": 1e-4,
+                "source_state_non_committing": {"preserved": True},
+                "training_state_meta": {"cur_nimg": 256000},
+                "raw_artifacts": records,
+            }), encoding="utf-8")
+            RUNNER.verify_existing_raw_history(
+                raw_root, row=row, dataset=payload["dataset"],
+                layer_b=payload["canonical"]["layer_b"], label="seed4",
+            )
+            (raw_root / raw_names[0]).write_bytes(b"x" * records[raw_names[0]]["size_bytes"])
+            with self.assertRaisesRegex(SystemExit, "SHA-256 mismatch"):
+                RUNNER.verify_existing_raw_history(
+                    raw_root, row=row, dataset=payload["dataset"],
+                    layer_b=payload["canonical"]["layer_b"], label="seed4",
+                )
+
     def test_summary_writes_three_seed_table_and_preserves_q_accounting(self):
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "operation"

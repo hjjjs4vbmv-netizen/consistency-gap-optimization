@@ -39,6 +39,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from analysis.pickle_compat import NUMPY2_COMPAT_PICKLE_MODULE
+
 BETA1, BETA2 = 0.9, 0.999
 
 
@@ -165,6 +167,16 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def load_training_state_payload(path: Path) -> dict:
+    """Load the trusted optimizer-state checkpoint under pinned NumPy 1.24."""
+    return torch.load(
+        path,
+        map_location="cpu",
+        pickle_module=NUMPY2_COMPAT_PICKLE_MODULE,
+        weights_only=False,
+    )
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--training-state", type=Path, required=True,
@@ -187,7 +199,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     # load real optimizer state, flatten m/v/step
-    data = torch.load(a.training_state, map_location="cpu", weights_only=False)
+    data = load_training_state_payload(a.training_state)
     opt_state = data["optimizer_state"]
     m0, v0, step0 = flatten_opt_state(opt_state)
     dim = m0.numel()

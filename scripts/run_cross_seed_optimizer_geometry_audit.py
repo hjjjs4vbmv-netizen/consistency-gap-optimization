@@ -327,8 +327,66 @@ def artifact_record(root: Path, path: Path) -> dict[str, Any]:
     }
 
 
+RAW_HISTORY_NAMES = (
+    "grad_history_1.npy", "grad_history_g.npy", "u1.npy", "ug.npy",
+    "u1_history.npy", "ug_history.npy", "sweep_meta.json",
+)
+PREDICTION_RAW_NAMES = ("h_pred_scalar.npy", "h_actual.npy", "weights.npy")
+
+
+def layer_b_request(row: dict[str, Any], dataset: dict[str, Any], layer_b: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "protocol": PROTOCOL_ID,
+        "seed": row["training_seed"],
+        "training_trajectory_id": row["training_trajectory_id"],
+        "training_state": row["training_state"],
+        "checkpoint": row["checkpoint"],
+        "dataset": dataset,
+        "n_steps": layer_b["n_steps"], "eval_step": layer_b["eval_step"],
+        "reference_gain": layer_b["reference_gain"], "candidate_gain": layer_b["candidate_gain"],
+        "batch_size": layer_b["batch_size"], "lr": layer_b["lr"],
+        "probe_rng_seed": layer_b["probe_rng_seed"],
+        "replay_note": "Canonical #47/#58 prospective replay from the real fixed Arm-A RAdam state.",
+    }
+
+
+def verify_existing_raw_history(raw_root: Path, *, row: dict[str, Any], dataset: dict[str, Any],
+                                layer_b: dict[str, Any], label: str) -> None:
+    """Prove a partial-root raw replay is complete and bound before reuse."""
+    meta = load_json(raw_root / "sweep_meta.json", f"{label} raw sweep metadata")
+    if meta.get("protocol") != "canonical-pr47-pr58-prospective-scalar-history-v1":
+        fail(f"{label} raw sweep has a different protocol")
+    for key, expected in (
+        ("training_state_sha256", row["training_state"]["sha256"]),
+        ("checkpoint_sha256", row["checkpoint"]["sha256"]),
+        ("dataset_sha256", dataset["sha256"]),
+        ("n_steps", layer_b["n_steps"]),
+        ("batch_size", layer_b["batch_size"]),
+        ("probe_rng_seed", layer_b["probe_rng_seed"]),
+        ("reference_gain", layer_b["reference_gain"]),
+        ("g_candidate", layer_b["candidate_gain"]),
+        ("lr", layer_b["lr"]),
+    ):
+        if meta.get(key) != expected:
+            fail(f"{label} raw sweep {key} does not match the bound protocol")
+    source = require_mapping(meta.get("source_state_non_committing"), f"{label} raw source state")
+    if source.get("preserved") is not True:
+        fail(f"{label} raw sweep did not preserve its source state")
+    source_meta = require_mapping(meta.get("training_state_meta"), f"{label} raw training-state metadata")
+    if require_number(source_meta.get("cur_nimg"), f"{label} raw cur_nimg") != 256000.0:
+        fail(f"{label} raw sweep is not bound to an exact 256-kimg state")
+    recorded = require_mapping(meta.get("raw_artifacts"), f"{label} raw artifact records")
+    for name in RAW_HISTORY_NAMES[:-1]:
+        path = raw_root / name
+        item = require_mapping(recorded.get(name), f"{label} raw artifact {name}")
+        if not path.is_file() or item.get("size_bytes") != path.stat().st_size:
+            fail(f"{label} raw artifact {name} is missing or has a size mismatch")
+        if item.get("sha256") != sha256_file(path):
+            fail(f"{label} raw artifact {name} SHA-256 mismatch")
+
+
 def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: dict[str, Any],
-                     root: Path, python: str, device: str) -> dict[str, Any]:
+                     root: Path, python: str, device: str, *, resume_partial: bool) -> dict[str, Any]:
     seed = row["training_seed"]
     state = Path(row["training_state"]["path"])
     checkpoint = Path(row["checkpoint"]["path"])
@@ -345,15 +403,22 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
     layer_b = canonical["layer_b"]
     state_text, checkpoint_text, data_text = str(state), str(checkpoint), str(data)
 
-    run_command([
-        python, str(REPO_ROOT / "analysis" / "radam_stateful_update_audit.py"),
-        "--training-state", state_text, "--checkpoint", checkpoint_text, "--data", data_text,
-        "--state-kimg", "256", "--batch-size", str(layer_a["batch_size"]),
-        "--batch-gpu", str(layer_a["batch_gpu"]), "--seed", str(layer_a["probe_rng_seed"]),
-        "--support-atol", str(layer_a["support_atol"]), "--lr", str(layer_a["lr"]), "--amp",
-        "--device", device, "--out", str(layer_a_dir),
-    ], label=f"seed{seed} Layer A same-state virtual fork")
     layer_a_receipt = layer_a_dir / "radam_update_audit_stateful.json"
+    layer_a_reused = layer_a_receipt.exists()
+    if layer_a_reused:
+        if not resume_partial:
+            fail(f"seed{seed} Layer A receipt exists outside an explicit partial-root resume")
+    else:
+        if layer_a_dir.exists():
+            fail(f"seed{seed} Layer A directory is incomplete; it cannot be safely resumed")
+        run_command([
+            python, str(REPO_ROOT / "analysis" / "radam_stateful_update_audit.py"),
+            "--training-state", state_text, "--checkpoint", checkpoint_text, "--data", data_text,
+            "--state-kimg", "256", "--batch-size", str(layer_a["batch_size"]),
+            "--batch-gpu", str(layer_a["batch_gpu"]), "--seed", str(layer_a["probe_rng_seed"]),
+            "--support-atol", str(layer_a["support_atol"]), "--lr", str(layer_a["lr"]), "--amp",
+            "--device", device, "--out", str(layer_a_dir),
+        ], label=f"seed{seed} Layer A same-state virtual fork")
     layer_a_payload = load_json(layer_a_receipt, f"seed{seed} Layer A receipt")
     verify_layer_a_receipt(layer_a_payload, canonical, label=f"seed{seed} Layer A")
     provenance = require_mapping(layer_a_payload.get("provenance"), f"seed{seed} Layer A provenance")
@@ -363,40 +428,51 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
         if provenance.get(key) != expected:
             fail(f"seed{seed} Layer A {key} does not match the bound manifest")
 
-    request = {
-        "protocol": PROTOCOL_ID,
-        "seed": seed,
-        "training_trajectory_id": row["training_trajectory_id"],
-        "training_state": row["training_state"],
-        "checkpoint": row["checkpoint"],
-        "dataset": dataset,
-        "n_steps": layer_b["n_steps"], "eval_step": layer_b["eval_step"],
-        "reference_gain": layer_b["reference_gain"], "candidate_gain": layer_b["candidate_gain"],
-        "batch_size": layer_b["batch_size"], "lr": layer_b["lr"],
-        "probe_rng_seed": layer_b["probe_rng_seed"],
-        "replay_note": "Canonical #47/#58 prospective replay from the real fixed Arm-A RAdam state.",
-    }
-    write_json(layer_b_dir / "request.json", request)
-    run_command([
-        python, str(REPO_ROOT / "analysis" / "real_history_sweep.py"),
-        "--training-state", state_text, "--checkpoint", checkpoint_text, "--data", data_text,
-        "--batch-size", str(layer_b["batch_size"]), "--n-steps", str(layer_b["n_steps"]),
-        "--seed", str(layer_b["probe_rng_seed"]), "--g-candidate", str(layer_b["candidate_gain"]),
-        "--lr", str(layer_b["lr"]), "--device", device, "--out", str(layer_b_raw),
-    ], label=f"seed{seed} Layer B paired raw-history fork")
+    request = layer_b_request(row, dataset, layer_b)
+    request_path = layer_b_dir / "request.json"
+    if request_path.exists():
+        if not resume_partial or load_json(request_path, f"seed{seed} Layer B request") != request:
+            fail(f"seed{seed} existing Layer B request cannot be safely resumed")
+    else:
+        write_json(request_path, request)
+
+    raw_reused = layer_b_raw.exists()
+    if raw_reused:
+        if not resume_partial:
+            fail(f"seed{seed} Layer B raw history exists outside an explicit partial-root resume")
+        verify_existing_raw_history(
+            layer_b_raw, row=row, dataset=dataset, layer_b=layer_b,
+            label=f"seed{seed} Layer B",
+        )
+    else:
+        run_command([
+            python, str(REPO_ROOT / "analysis" / "real_history_sweep.py"),
+            "--training-state", state_text, "--checkpoint", checkpoint_text, "--data", data_text,
+            "--batch-size", str(layer_b["batch_size"]), "--n-steps", str(layer_b["n_steps"]),
+            "--seed", str(layer_b["probe_rng_seed"]), "--g-candidate", str(layer_b["candidate_gain"]),
+            "--lr", str(layer_b["lr"]), "--device", device, "--out", str(layer_b_raw),
+        ], label=f"seed{seed} Layer B paired raw-history fork")
     scalar_receipt = layer_b_dir / "scalar_history_prediction.json"
-    run_command([
-        python, str(REPO_ROOT / "analysis" / "scalar_history_predictor.py"),
-        "--training-state", state_text,
-        "--grad-history-1", str(layer_b_raw / "grad_history_1.npy"),
-        "--grad-history-g", str(layer_b_raw / "grad_history_g.npy"),
-        "--u1", str(layer_b_raw / "u1.npy"), "--ug", str(layer_b_raw / "ug.npy"),
-        "--u1-history", str(layer_b_raw / "u1_history.npy"),
-        "--ug-history", str(layer_b_raw / "ug_history.npy"),
-        "--eval-step", str(layer_b["eval_step"]), "--lr", str(layer_b["lr"]),
-        "--seed", str(layer_b["probe_rng_seed"]),
-        "--out", str(scalar_receipt),
-    ], label=f"seed{seed} Layer B scalar-history predictor")
+    scalar_reused = scalar_receipt.exists()
+    if scalar_reused:
+        if not resume_partial:
+            fail(f"seed{seed} Layer B receipt exists outside an explicit partial-root resume")
+    else:
+        stale_prediction = [name for name in PREDICTION_RAW_NAMES if (layer_b_dir / name).exists()]
+        if stale_prediction:
+            fail(f"seed{seed} Layer B predictor is incomplete ({', '.join(stale_prediction)}); cannot overwrite it")
+        run_command([
+            python, str(REPO_ROOT / "analysis" / "scalar_history_predictor.py"),
+            "--training-state", state_text,
+            "--grad-history-1", str(layer_b_raw / "grad_history_1.npy"),
+            "--grad-history-g", str(layer_b_raw / "grad_history_g.npy"),
+            "--u1", str(layer_b_raw / "u1.npy"), "--ug", str(layer_b_raw / "ug.npy"),
+            "--u1-history", str(layer_b_raw / "u1_history.npy"),
+            "--ug-history", str(layer_b_raw / "ug_history.npy"),
+            "--eval-step", str(layer_b["eval_step"]), "--lr", str(layer_b["lr"]),
+            "--seed", str(layer_b["probe_rng_seed"]),
+            "--out", str(scalar_receipt),
+        ], label=f"seed{seed} Layer B scalar-history predictor")
     scalar_payload = load_json(scalar_receipt, f"seed{seed} Layer B receipt")
     verify_layer_b_receipt(scalar_payload, canonical, label=f"seed{seed} Layer B")
     if scalar_payload.get("source_state_sha256") != row["training_state"]["sha256"]:
@@ -404,17 +480,19 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
     if scalar_payload.get("update_source") != "history":
         fail(f"seed{seed} Layer B must use full per-step update histories")
 
-    raw_names = (
-        "grad_history_1.npy", "grad_history_g.npy", "u1.npy", "ug.npy",
-        "u1_history.npy", "ug_history.npy", "sweep_meta.json",
-    )
-    raw_artifacts = {name: artifact_record(root, layer_b_raw / name) for name in raw_names}
-    for name in ("h_pred_scalar.npy", "h_actual.npy", "weights.npy"):
+    raw_artifacts = {name: artifact_record(root, layer_b_raw / name) for name in RAW_HISTORY_NAMES}
+    for name in PREDICTION_RAW_NAMES:
         raw_artifacts[name] = artifact_record(root, layer_b_dir / name)
-    write_json(layer_b_dir / "raw_artifact_manifest.json", {
+    raw_manifest = {
         "protocol": PROTOCOL_ID, "request_sha256": sha256_file(layer_b_dir / "request.json"),
         "raw_artifacts": raw_artifacts,
-    })
+    }
+    raw_manifest_path = layer_b_dir / "raw_artifact_manifest.json"
+    if raw_manifest_path.exists():
+        if not resume_partial or load_json(raw_manifest_path, f"seed{seed} raw artifact manifest") != raw_manifest:
+            fail(f"seed{seed} existing raw artifact manifest cannot be safely resumed")
+    else:
+        write_json(raw_manifest_path, raw_manifest)
     return {
         "training_seed": seed,
         "row_kind": row["row_kind"],
@@ -426,6 +504,11 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
                     "executed": True},
         "layer_b": {**artifact_record(root, scalar_receipt), "receipt_path": "seed%d/layer_b/scalar_history_prediction.json" % seed,
                     "executed": True, "raw_artifact_manifest": artifact_record(root, layer_b_dir / "raw_artifact_manifest.json")},
+        "partial_root_recovery": {
+            "layer_a_reused": layer_a_reused,
+            "layer_b_raw_reused": raw_reused,
+            "layer_b_scalar_reused": scalar_reused,
+        },
     }
 
 
@@ -433,6 +516,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, required=True, help="filled, hash-bound runtime binding JSON")
     parser.add_argument("--out", type=Path, required=True, help="new server operation root; must not exist")
+    parser.add_argument(
+        "--resume-partial",
+        action="store_true",
+        help="resume one failed forensic root only after hash-validating completed components",
+    )
     parser.add_argument("--python", default=sys.executable, help="Python interpreter for child analysis commands")
     parser.add_argument("--device", default="cuda")
     return parser.parse_args()
@@ -440,8 +528,13 @@ def parse_args() -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args() if argv is None else parse_args_from(argv)
-    if args.out.exists():
+    operation_exists = args.out.exists()
+    if operation_exists and not args.resume_partial:
         fail(f"refusing to reuse existing operation root: {args.out}")
+    if args.resume_partial and not operation_exists:
+        fail(f"--resume-partial requires an existing forensic operation root: {args.out}")
+    if operation_exists and (args.out / "audit_manifest.json").exists():
+        fail(f"operation root already has a completed audit manifest: {args.out}")
     manifest = load_json(args.manifest, "bound manifest")
     rows = validate_manifest(manifest)
     canonical = manifest["canonical"]
@@ -449,16 +542,21 @@ def main(argv: list[str] | None = None) -> int:
     # Validate the immutable anchor before creating any server output.
     seed_results = [read_existing_seed3(rows[3], canonical)]
 
-    args.out.mkdir(parents=True, exist_ok=False)
+    if not operation_exists:
+        args.out.mkdir(parents=True, exist_ok=False)
     try:
         for seed in NEW_SEEDS:
-            seed_results.append(execute_new_seed(rows[seed], canonical, dataset, args.out, args.python, args.device))
+            seed_results.append(execute_new_seed(
+                rows[seed], canonical, dataset, args.out, args.python, args.device,
+                resume_partial=args.resume_partial,
+            ))
         schedule_q_values = [result["schedule_q"] for result in seed_results]
         audit = {
             "schema_version": 1, "protocol": PROTOCOL_ID, "status": "passed",
             "created_utc": dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat(),
             "source_commit": source_commit(), "runner_script_sha256": sha256_file(Path(__file__)),
             "bound_manifest": {"path": str(args.manifest), "sha256": sha256_file(args.manifest)},
+            "partial_root_recovery": args.resume_partial,
             "canonical": canonical, "dataset": dataset,
             "seed_results": seed_results,
             "replication_accounting": {
