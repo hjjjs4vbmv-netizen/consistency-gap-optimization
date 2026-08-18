@@ -199,7 +199,7 @@ def main(argv=None) -> int:
         fields = ("training_seed", "audit_count", "median_suppression", "min_suppression",
                   "max_suppression", "median_R_opt_real", "median_R_opt_reset",
                   "all_pair_gates_pass")
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     (args.out / "REPORT.md").write_text(report, encoding="utf-8")
