@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-08-18
 
-**Audited collaboration head:** `7f21043b5cbf599e9817e5142015297f771e59fe`
+**Audited collaboration head:** `2eaaf5ec2cad1fb69c169bf4e8a9d52df788b076`
 
 **Scope:** publication engineering only; no new theory
 
@@ -101,7 +101,7 @@ archive must dereference these files normally.
 
 | Gate | Result | Evidence |
 | --- | --- | --- |
-| Main integration freshness | **PASS** | Combined head `7f21043b...` has `f2cac513...` as an ancestor. PR #60 balanced-beta paths have no diff from main. PR #61 is excluded. |
+| Main integration freshness | **PASS** | Combined head `2eaaf5ec...` has `f2cac513...` as an ancestor. PR #60 balanced-beta paths have no diff from main. PR #61 is excluded. |
 | Clean collaboration clone | **PASS** | Anonymous remote read and exact PR head checkout succeeded. Scientific checks used the declared commit rather than an existing development worktree. |
 | Core scientific tests | **PASS** | 19 tests passed on the combined head, covering the strict evidence manifest, Cross-K h=20, balanced-beta h=20, same-trajectory evidence, robustness table, and anonymity scanner. The GPU-compatible Python 3.10 environment also passed the two retained-artifact unit tests. |
 | Canonical manifest | **PASS** | `publication_ready=true`; `blocking_findings=[]`; 54/54 checkpoint bindings; 27 publication-v2 cells; 54 receipts; 81 retained arrays. |
