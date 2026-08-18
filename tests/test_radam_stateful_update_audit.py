@@ -152,7 +152,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
                          state_validation["parameter_count"])
         whole = audit["whole_model"]
         self.assertTrue(whole["gauge_defined"])
-        for key in ("a_K_star", "R_grad", "s_K_star", "c_K_star", "R_opt",
+        for key in ("a_star", "R_grad", "s_star", "c_star", "R_opt",
                     "H_K", "R_opt_minus_R_grad", "R_pred",
                     "on_support_gauge_dispersion_energy",
                     "off_support_candidate_energy_exact",
@@ -182,8 +182,8 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         )
         rel = audit["whole_model"]["predicted_vs_actual_relative_l2"]
         # Float32 RAdam vs double predictor: agree to better than 1e-3 relative.
-        self.assertLess(rel["1.0"], 1e-3)
-        self.assertLess(rel["1.3"], 1e-3)
+        self.assertLess(rel["reference"], 1e-3)
+        self.assertLess(rel["probe"], 1e-3)
         self.assertTrue(math.isfinite(
             audit["whole_model"]["h_update_minus_moment_weighted_rmse"]
         ))
@@ -278,7 +278,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
 
         def skip_one(*args, **kwargs):
             grads, predicted, actual, moments, detail = real_step(*args, **kwargs)
-            if kwargs.get("gain") == 1.3:
+            if kwargs.get("gain") == 1.1:
                 detail = dict(detail)
                 detail["step_skipped"] = True
                 actual = {name: torch.zeros_like(value) for name, value in actual.items()}
@@ -311,6 +311,54 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         predicted = MODULE.idealized_radam_update(net, optimizer)
         self.assertIn("unused.weight", predicted)
         self.assertEqual(float(predicted["unused.weight"].abs().sum()), 0.0)
+
+    def test_reset_zeros_only_moments_and_preserves_every_step(self):
+        net, optimizer, _, _, _ = _warmup_nonzero_state()
+        before_steps = MODULE._optimizer_steps_by_name(net, optimizer)
+        before_groups = MODULE._optimizer_hyperparameter_contract(optimizer)
+        receipt = MODULE.reset_radam_moments_(net, optimizer)
+        self.assertTrue(receipt["exp_avg_all_zero"])
+        self.assertTrue(receipt["exp_avg_sq_all_zero"])
+        self.assertTrue(receipt["per_parameter_step_preserved"])
+        self.assertTrue(receipt["param_groups_preserved"])
+        self.assertEqual(before_groups, MODULE._optimizer_hyperparameter_contract(optimizer))
+        after_steps = MODULE._optimizer_steps_by_name(net, optimizer)
+        self.assertEqual(set(before_steps), set(after_steps))
+        for name in before_steps:
+            self.assertTrue(torch.equal(before_steps[name], after_steps[name]))
+
+    def test_moment_manipulation_reuses_gradient_pair_and_preserves_source(self):
+        net, optimizer, images, labels, loss = _warmup_nonzero_state()
+        source_optimizer = MODULE.gauge.state_sha256(optimizer.state_dict())
+        audits, layers = MODULE.run_moment_reset_manipulation(
+            net, optimizer, loss, images, labels, amp=False, random_seed=1234,
+            reference_gap_scale=1.0, probe_gap_scale=1.1,
+        )
+        self.assertEqual(set(audits), {"real", "reset_moments"})
+        self.assertEqual(set(layers), {"real", "reset_moments"})
+        real, reset = audits["real"], audits["reset_moments"]
+        self.assertEqual(real["reference_gap_scale"], 1.0)
+        self.assertEqual(real["probe_gap_scale"], 1.1)
+        self.assertEqual(real["whole_model"]["R_grad"], reset["whole_model"]["R_grad"])
+        for label in ("reference", "probe"):
+            self.assertEqual(
+                real["gradient_contract"][label]["gradient_sha256"],
+                reset["gradient_contract"][label]["gradient_sha256"],
+            )
+            self.assertFalse(real["branches"][label]["step_skipped"])
+            self.assertFalse(reset["branches"][label]["step_skipped"])
+            self.assertTrue(reset["branches"][label]["reset_contract"]["exp_avg_all_zero"])
+            self.assertTrue(reset["branches"][label]["reset_contract"]["per_parameter_step_preserved"])
+        self.assertTrue(real["whole_model"]["H_K_equals_R_opt_identity"])
+        self.assertTrue(reset["whole_model"]["H_K_equals_R_opt_identity"])
+        self.assertTrue(real["source_state_non_committing"]["preserved"])
+        self.assertEqual(source_optimizer, MODULE.gauge.state_sha256(optimizer.state_dict()))
+
+    def test_generic_schema_has_no_legacy_probe_name(self):
+        source = Path(SCRIPT).read_text(encoding="utf-8")
+        self.assertNotIn("1p3", source)
+        self.assertIn("--reference-gap-scale", source)
+        self.assertIn("--probe-gap-scale", source)
 
 
 if __name__ == "__main__":
