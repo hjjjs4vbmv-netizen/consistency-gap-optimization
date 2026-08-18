@@ -4,7 +4,7 @@
 
 ## Seed-level four-cell medians
 
-| Training seed | A observed/real | B observed/reset | C exact/real | D exact/reset |
+| Training seed | A observed/real | B observed/reset | C exact-scalar/real | D exact-scalar/reset |
 |---:|---:|---:|---:|---:|
 | 3 | 0.0830280345 | 0.4770031330 | 0.0703500848 | 0.00170813566 |
 | 4 | 0.0877620050 | 0.4907355270 | 0.0771869548 | 0.00163518257 |
@@ -49,7 +49,7 @@ Across all three training seeds, the observed-gradient/reset contrast (B-D) was 
 ## Gates and test suite
 
 D identity: PASS. Control-control identity, source preservation, branch-order invariance, same-batch rerun hashes, finite-number checks, and all 96 receipt contracts are included in the overall verdict.
-Full test suite: 262 passed, 3 skipped, 2 failed, 0 errors (267 total).
+Full test suite: 277 passed, 1 skipped, 0 failed, 0 errors (278 total).
 
 ## Environment and schema compatibility
 

@@ -69,30 +69,71 @@
     "D_H_equals_R_opt_identity": true,
     "deterministic_summary_rebuild": true
   },
+  "merge_readiness": {
+    "original_branch_head": "1fd9d5afeafa83de79d3e74926c72ac5abe54afd",
+    "target_base_head": "c01a61d767793ac52b427e4064f1f71583a17e1c",
+    "merge_base": "f2cac51355252aff62016a27c6ca2ad40e5220fd",
+    "tested_code_commit": "383ada40db688a9f34b8613db1b783e5a51777fd",
+    "failure_comparison": "analysis/q256_g110_gradient_state_factorial/merge_readiness/classification.json",
+    "formal_execution_reexecuted": false,
+    "formal_receipts_or_layerwise_outputs_changed": false,
+    "derived_summary_schema_changed": true,
+    "derived_summary_files_changed": [
+      "batch_contrasts.csv",
+      "summary.json",
+      "report.md",
+      "test_results.xml"
+    ]
+  },
   "tests": {
     "targeted_factorial_tests": {
-      "passed": 31,
-      "failed": 0
+      "command": "python -m pytest -q tests/test_q256_gradient_state_factorial.py tests/test_q256_moment_reset.py tests/test_radam_stateful_update_audit.py tests/test_radam_update_gauge.py",
+      "junit": "analysis/q256_g110_gradient_state_factorial/merge_readiness/final_validation/audit_specific_final2.xml",
+      "total": 40,
+      "passed": 40,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0
+    },
+    "merge_readiness_regression_tests": {
+      "original_two_failures": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "evidence": "analysis/q256_g110_gradient_state_factorial/merge_readiness/final_fixed"
+      },
+      "import_path_order": {
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "junit": "analysis/q256_g110_gradient_state_factorial/merge_readiness/final_validation/path_order_isolated_fix.xml"
+      }
     },
     "full_suite": {
-      "total": 267,
-      "passed": 262,
-      "skipped": 3,
-      "failed": 2,
+      "command": "python -m pytest -q",
+      "junit": "analysis/q256_g110_gradient_state_factorial/test_results.xml",
+      "total": 278,
+      "passed": 277,
+      "skipped": 1,
+      "failed": 0,
       "errors": 0,
-      "environment_limited_failures": [
-        "tests.test_radam_update_gauge.RAdamUpdateGaugeTests.test_amp_path_unscales_and_preserves_source_scaler",
-        "tests.test_radam_update_gauge.RAdamUpdateGaugeTests.test_scaler_falls_back_to_cuda_amp_on_torch22"
+      "environment_limited_failures": [],
+      "skips": [
+        {
+          "node_id": "tests.test_q256_paper_artifacts.Q256PaperArtifactsTest::test_q256_latex_tables_compile",
+          "reason": "pdflatex is not available"
+        }
       ]
     }
   },
   "artifact_sha256": {
     "raw_results.csv": "b77f590436741ce991bd8c10feb0986459c8ffd2c14c20ef15f6476c99e26f7e",
-    "batch_contrasts.csv": "01f2e60f81df8f2f3a6969ce78cdf44e962ca0410f79b6d3a940a3f9a0bb1dbd",
+    "batch_contrasts.csv": "acc54b2a96b13091b9b54d249794242cde05fde762a43ca8e3764793cc4af021",
     "seed_summary.csv": "43b188e990a48941b4c6fe061745f0c09ff227dad358ecdab0d0eedfd6f83679",
-    "summary.json": "4077fb3133811c0f77c4e049ae233a755cd453ad3528245dbbb977763b0f4ee6",
-    "report.md": "c3b2f86421e821059fc723741be14050bc2b91b8d4ed1f260fb5cd406fa0ea9c",
-    "test_results.xml": "5ae1584d04a0ac303d234f2068f0ef51ef7b123b0c6e5ea9d9dea24617f308bc"
+    "summary.json": "f7a03aa6385ab49f2ea6be45df7cdebbd9a93ee162a2292ac20b3206ad2de196",
+    "report.md": "bf59f2e39ceeee3d6efe24002ab41fa56c724367c9a4091acae74ae6158127c9",
+    "test_results.xml": "b9d7456ef3115eed728851efa03731e0fe47ae8b84e7493e799d08311246c9ee",
+    "merge_readiness/classification.json": "e1a1d4a45da87a62949471306acdef96aed1d973dbb50c0026f852c15369e26e"
   },
   "operations_excluded": [
     "training",
