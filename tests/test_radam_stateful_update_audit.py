@@ -1,5 +1,7 @@
 """Regression tests for the stateful non-zero RAdam update audit."""
+import builtins
 import importlib.util
+import io
 import math
 import pickle
 import sys
@@ -91,6 +93,21 @@ def _warmup_nonzero_state(step: int = 64):
 
 
 class StatefulRAdamAuditTests(unittest.TestCase):
+    def test_numpy2_checkpoint_symbol_falls_back_under_numpy1(self):
+        real_import = builtins.__import__
+
+        def reject_numpy2_core(name, *args, **kwargs):
+            if name == "numpy._core.multiarray":
+                error = ModuleNotFoundError("No module named 'numpy._core'")
+                error.name = "numpy._core"
+                raise error
+            return real_import(name, *args, **kwargs)
+
+        loader = MODULE._NumpyCompatUnpickler(io.BytesIO())
+        with mock.patch("builtins.__import__", side_effect=reject_numpy2_core):
+            scalar = loader.find_class("numpy._core.multiarray", "scalar")
+        self.assertEqual(scalar.__name__, "scalar")
+
     def test_load_loss_accepts_global_sigmoid_reference_checkpoint(self):
         loss = TinyLoss()
         loss.schedule = get_schedule(
