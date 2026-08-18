@@ -54,5 +54,23 @@
       "remediation": "Patch the missing torch.amp.GradScaler attribute with create=True so the test reaches the production CUDA fallback.",
       "remediation_status": "implemented_pending_final_validation"
     }
-  ]
+  ],
+  "additional_full_suite_failure": {
+    "node_id": "tests/test_training_integrity.py::TrainingIntegrityTest::test_checker_adds_repository_root_to_import_path",
+    "triggering_order": "tests/test_gap_artifact_manifest.py followed by the exact node ID",
+    "target_base": {
+      "outcome": "FAIL",
+      "exit_code": 1,
+      "signature": "AssertionError: sys.path[0] is the scripts directory instead of the repository root"
+    },
+    "merged_branch_before_fix": {
+      "outcome": "FAIL",
+      "exit_code": 1,
+      "signature": "AssertionError: sys.path[0] is the scripts directory instead of the repository root"
+    },
+    "base_identical_after_normalizing_checkout_prefix": true,
+    "classification": "target-base sys.path leak exposed by full-suite collection order",
+    "remediation": "Restore sys.path after the two temporary standalone-script imports and add a regression assertion that the structural audit preserves the import path.",
+    "remediation_status": "implemented_pending_final_validation"
+  }
 }

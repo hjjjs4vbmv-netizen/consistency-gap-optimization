@@ -1,0 +1,16 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-7.4.4, pluggy-1.3.0 -- /usr/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('/home/ECT001/q256-finalize-final-ebafb68/.hypothesis/examples')
+rootdir: /home/ECT001/q256-finalize-final-ebafb68
+plugins: hypothesis-5.35.1, flakefinder-1.1.0, rerunfailures-13.0, shard-0.1.2, xdist-3.5.0, xdoctest-1.0.2
+collecting ... collected 1 item
+Running 1 items in this shard: tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_scaler_falls_back_to_cuda_amp_on_torch22
+
+tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_scaler_falls_back_to_cuda_amp_on_torch22 PASSED [100%]
+
+==================================== PASSES ====================================
+- generated xml file: /home/ECT001/q256-merge-readiness-pre-fix/final_fixed/torch22_fallback/junit.xml -
+=========================== short test summary info ============================
+PASSED tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_scaler_falls_back_to_cuda_amp_on_torch22
+============================== 1 passed in 1.31s ===============================

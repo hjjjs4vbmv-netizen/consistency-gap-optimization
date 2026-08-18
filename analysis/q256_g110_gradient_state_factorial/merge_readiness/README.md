@@ -21,3 +21,14 @@ environment records are preserved below `branch_original/` and `target_base/`.
 
 Neither test was hidden, deselected, renamed, or skipped. Final post-merge test
 results are recorded separately in the canonical aggregate provenance manifest.
+
+## Additional post-merge full-suite finding
+
+After merging the target base, the full suite exposed an order-dependent
+`test_training_integrity` failure. Running `test_gap_artifact_manifest.py`
+before that exact node reproduces the same assertion on both the target-base
+checkout and the merged branch (checkout prefixes aside). The target-base
+manifest verifier temporarily prepended `scripts/` to `sys.path` and did not
+restore it. The narrow fix restores the prior import path after each temporary
+standalone-script import and adds a regression assertion. The comparison logs
+are in `path_order_comparison/`.
