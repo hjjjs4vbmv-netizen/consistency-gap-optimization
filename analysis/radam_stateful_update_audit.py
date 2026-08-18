@@ -615,11 +615,79 @@ def _optimizer_steps_by_name(net: torch.nn.Module,
     }
 
 
+def _optimizer_other_state_by_name(net: torch.nn.Module,
+                                   optimizer: torch.optim.Optimizer) -> dict[str, Any]:
+    """Return every per-parameter state field except the two reset moments."""
+    return {
+        name: {
+            key: copy.deepcopy(value)
+            for key, value in optimizer.state[parameter].items()
+            if key not in {"exp_avg", "exp_avg_sq"}
+        }
+        for name, parameter in net.named_parameters()
+        if parameter in optimizer.state
+    }
+
+
+def _clone_radam_branch(common_net: torch.nn.Module,
+                        common_optimizer: torch.optim.RAdam
+                        ) -> tuple[torch.nn.Module, torch.optim.RAdam, dict[str, Any]]:
+    """Deep-clone one disposable model/optimizer branch and prove isolation."""
+    # Clone the pair in one deepcopy operation so the optimizer's cloned
+    # parameter objects are exactly the cloned module parameters, including
+    # repositories that use more than one parameter group.
+    net, optimizer = copy.deepcopy((common_net, common_optimizer))
+    net = net.train().requires_grad_(True)
+    source_named = dict(common_net.named_parameters())
+    clone_named = dict(net.named_parameters())
+    parameter_storage_independent = (
+        set(source_named) == set(clone_named)
+        and all(source_named[name].data_ptr() != clone_named[name].data_ptr()
+                for name in source_named)
+    )
+    optimizer_storage_independent = True
+    for name in source_named:
+        source_state = common_optimizer.state.get(source_named[name], {})
+        clone_state = optimizer.state.get(clone_named[name], {})
+        if set(source_state) != set(clone_state):
+            optimizer_storage_independent = False
+            break
+        for key in source_state:
+            source_value, clone_value = source_state[key], clone_state[key]
+            if (isinstance(source_value, torch.Tensor)
+                    and isinstance(clone_value, torch.Tensor)
+                    and source_value.data_ptr() == clone_value.data_ptr()):
+                optimizer_storage_independent = False
+                break
+        if not optimizer_storage_independent:
+            break
+    contract = {
+        "parameter_values_match_source": (
+            gauge.module_state_hashes(common_net) == gauge.module_state_hashes(net)),
+        "optimizer_values_match_source": (
+            gauge.state_sha256(common_optimizer.state_dict())
+            == gauge.state_sha256(optimizer.state_dict())),
+        "parameter_storage_independent": parameter_storage_independent,
+        "optimizer_storage_independent": optimizer_storage_independent,
+    }
+    contract["independent"] = all(contract.values())
+    if not contract["independent"]:
+        raise RuntimeError("disposable model/optimizer branch is not an independent deep clone")
+    return net, optimizer, contract
+
+
 def reset_radam_moments_(net: torch.nn.Module,
                          optimizer: torch.optim.Optimizer) -> dict[str, Any]:
     """Zero only RAdam exp_avg/exp_avg_sq and prove the rest was preserved."""
     hyperparameters_before = _optimizer_hyperparameter_contract(optimizer)
     steps_before = _optimizer_steps_by_name(net, optimizer)
+    other_state_before = _optimizer_other_state_by_name(net, optimizer)
+    other_state_fields = sorted({
+        key
+        for parameter in net.parameters()
+        for key in optimizer.state.get(parameter, {})
+        if key not in {"step", "exp_avg", "exp_avg_sq"}
+    })
     reset_parameter_count = 0
     for name, parameter in net.named_parameters():
         state = optimizer.state.get(parameter)
@@ -632,6 +700,7 @@ def reset_radam_moments_(net: torch.nn.Module,
         state["exp_avg_sq"].zero_()
         reset_parameter_count += 1
     steps_after = _optimizer_steps_by_name(net, optimizer)
+    other_state_after = _optimizer_other_state_by_name(net, optimizer)
     hyperparameters_after = _optimizer_hyperparameter_contract(optimizer)
     moments_zero = all(
         bool((optimizer.state[parameter]["exp_avg"] == 0).all())
@@ -645,6 +714,11 @@ def reset_radam_moments_(net: torch.nn.Module,
         "step_state_before_sha256": gauge.state_sha256(steps_before),
         "step_state_after_sha256": gauge.state_sha256(steps_after),
         "per_parameter_step_preserved": gauge.state_sha256(steps_before) == gauge.state_sha256(steps_after),
+        "other_state_fields": other_state_fields,
+        "other_state_before_sha256": gauge.state_sha256(other_state_before),
+        "other_state_after_sha256": gauge.state_sha256(other_state_after),
+        "other_state_preserved": (
+            gauge.state_sha256(other_state_before) == gauge.state_sha256(other_state_after)),
         "param_groups_before_sha256": gauge.state_sha256(hyperparameters_before),
         "param_groups_after_sha256": gauge.state_sha256(hyperparameters_after),
         "param_groups_preserved": hyperparameters_before == hyperparameters_after,
@@ -706,13 +780,7 @@ def virtual_step_from_unscaled_grads(common_net, common_optimizer, grads, *,
     """Apply cached unscaled gradients to one disposable RAdam branch."""
     if condition not in {"real", "reset_moments"}:
         raise ValueError(f"unknown optimizer condition: {condition}")
-    net = copy.deepcopy(common_net).train().requires_grad_(True)
-    optimizer = torch.optim.RAdam(
-        net.parameters(), lr=common_optimizer.defaults["lr"],
-        betas=common_optimizer.defaults["betas"], eps=common_optimizer.defaults["eps"],
-        weight_decay=common_optimizer.defaults.get("weight_decay", 0.0),
-    )
-    optimizer.load_state_dict(copy.deepcopy(common_optimizer.state_dict()))
+    net, optimizer, clone_contract = _clone_radam_branch(common_net, common_optimizer)
     source_steps = _optimizer_steps_by_name(net, optimizer)
     source_hyperparameters = _optimizer_hyperparameter_contract(optimizer)
     reset_receipt = None
@@ -721,6 +789,7 @@ def virtual_step_from_unscaled_grads(common_net, common_optimizer, grads, *,
         if not (reset_receipt["exp_avg_all_zero"]
                 and reset_receipt["exp_avg_sq_all_zero"]
                 and reset_receipt["per_parameter_step_preserved"]
+                and reset_receipt["other_state_preserved"]
                 and reset_receipt["param_groups_preserved"]):
             raise RuntimeError("moment-reset contract failed")
     steps_before = _optimizer_steps_by_name(net, optimizer)
@@ -757,6 +826,7 @@ def virtual_step_from_unscaled_grads(common_net, common_optimizer, grads, *,
     }
     detail = {
         "condition": condition,
+        "clone_contract": clone_contract,
         "cached_unscaled_gradient_sha256": gauge.state_sha256(grads),
         "injected_unscaled_gradient_sha256": gauge.state_sha256(injected_grads),
         "gradient_injection_max_abs_error": gradient_injection_max_abs_error,
@@ -774,6 +844,9 @@ def virtual_step_from_unscaled_grads(common_net, common_optimizer, grads, *,
         "gradscaler_hash_before": scaler_before,
         "gradscaler_hash_after": scaler_after,
         "gradscaler_preserved": scaler_before == scaler_after,
+        "predicted_update_sha256": gauge.state_sha256(predicted),
+        "actual_update_sha256": gauge.state_sha256(actual),
+        "moments_after_sha256": gauge.state_sha256(moments_after),
         "reset_contract": reset_receipt,
     }
     return predicted, actual, moments_after, detail
@@ -907,6 +980,397 @@ def run_moment_reset_manipulation(common_net, common_optimizer, loss_template,
             torch.cuda.set_rng_state(cuda_rng_before, device=device)
 
 
+FACTORIAL_CELL_ORDER = (
+    ("observed", "real"),
+    ("observed", "reset"),
+    ("exact_scalar", "real"),
+    ("exact_scalar", "reset"),
+)
+
+FACTORIAL_REQUIRED_WHOLE_METRICS = (
+    "a_star", "R_grad", "R_opt", "update_reference_l2", "update_probe_l2",
+    "update_norm_ratio", "update_cosine",
+    "absolute_non_scalar_update_residual_l2",
+    "residual_norm_over_control_update_norm", "R_pred",
+    "H_equals_R_opt_identity_residual",
+)
+
+
+def global_a_star(reference: dict[str, torch.Tensor],
+                  treatment: dict[str, torch.Tensor], *,
+                  denominator_atol: float = 1e-30
+                  ) -> tuple[float, float, float]:
+    """Fit one unclamped global scalar with explicit float64 accumulation."""
+    if (not math.isfinite(denominator_atol)) or denominator_atol < 0:
+        raise ValueError("denominator_atol must be finite and >= 0")
+    if set(reference) != set(treatment) or not reference:
+        raise RuntimeError("gradient maps must have the same non-empty parameter keys")
+    denominator = 0.0
+    numerator = 0.0
+    for name in sorted(reference):
+        left = reference[name].detach().double()
+        right = treatment[name].detach().double()
+        if left.shape != right.shape:
+            raise RuntimeError(f"{name}: gradient shape mismatch")
+        if not bool(torch.isfinite(left).all()) or not bool(torch.isfinite(right).all()):
+            raise RuntimeError(f"{name}: non-finite gradient in global a_star fit")
+        denominator += float((left * left).sum(dtype=torch.float64))
+        numerator += float((left * right).sum(dtype=torch.float64))
+    if (not math.isfinite(denominator) or denominator <= denominator_atol
+            or not math.isfinite(numerator)):
+        raise RuntimeError(
+            "global a_star denominator/numerator is non-finite or denominator is near zero")
+    a_star = numerator / denominator
+    if not math.isfinite(a_star) or a_star == 0:
+        raise RuntimeError("global a_star must be finite and non-zero for exact-scalar audit")
+    return a_star, numerator, denominator
+
+
+def construct_exact_scalar_gradient(reference: dict[str, torch.Tensor],
+                                    a_star: float) -> dict[str, torch.Tensor]:
+    """Construct the treatment directly from the saved control gradient map."""
+    if not math.isfinite(a_star):
+        raise RuntimeError("cannot construct exact-scalar gradient from non-finite a_star")
+    exact = {
+        name: reference[name].detach().double().mul(a_star).clone()
+        for name in sorted(reference)
+    }
+    if not exact or any(not bool(torch.isfinite(value).all()) for value in exact.values()):
+        raise RuntimeError("constructed exact-scalar gradient is empty or non-finite")
+    return exact
+
+
+def _source_gradient_buffers_hash(net: torch.nn.Module) -> str:
+    return gauge.state_sha256({
+        name: None if parameter.grad is None else parameter.grad.detach().clone()
+        for name, parameter in net.named_parameters()
+    })
+
+
+def _factorial_result_hash(cell: dict[str, Any]) -> str:
+    branch_contract = {
+        label: {
+            key: detail.get(key)
+            for key in (
+                "cached_unscaled_gradient_sha256",
+                "injected_unscaled_gradient_sha256",
+                "actual_update_sha256",
+                "predicted_update_sha256",
+                "moments_after_sha256",
+                "step_skipped",
+                "optimizer_step_advanced_exactly_once",
+                "clone_contract",
+                "reset_contract",
+            )
+        }
+        for label, detail in cell["branches"].items()
+    }
+    return gauge.state_sha256({
+        "gradient_mode": cell["gradient_mode"],
+        "state_mode": cell["state_mode"],
+        "a_star": cell["a_star"],
+        "control_gradient_sha256": cell["control_gradient_sha256"],
+        "treatment_gradient_sha256": cell["treatment_gradient_sha256"],
+        "whole_model": cell["whole_model"],
+        "branches": branch_contract,
+    })
+
+
+def _execute_factorial_cells(common_net, common_optimizer, gradient_pairs, *,
+                             a_star: float, scaler_template,
+                             support_atol: float,
+                             cell_order=FACTORIAL_CELL_ORDER,
+                             branch_order=("control", "treatment")
+                             ) -> tuple[dict[str, dict[str, Any]],
+                                        dict[str, list[dict[str, Any]]]]:
+    cells: dict[str, dict[str, Any]] = {}
+    layerwise: dict[str, list[dict[str, Any]]] = {}
+    for gradient_mode, state_mode in cell_order:
+        condition = "real" if state_mode == "real" else "reset_moments"
+        gradients = gradient_pairs[gradient_mode]
+        predicted, actual, moments, branches = {}, {}, {}, {}
+        for label in branch_order:
+            predicted[label], actual[label], moments[label], branches[label] = (
+                virtual_step_from_unscaled_grads(
+                    common_net, common_optimizer, gradients[label],
+                    condition=condition, scaler_template=scaler_template))
+        skipped = [label for label, detail in branches.items() if detail["step_skipped"]]
+        if skipped:
+            raise RuntimeError(
+                f"virtual optimizer branch skipped: {gradient_mode}/{state_mode} {skipped}")
+        whole, layers = summarize_pair(
+            gradients["control"], gradients["treatment"],
+            predicted["control"], predicted["treatment"],
+            actual["control"], actual["treatment"],
+            moments_reference=moments["control"], moments_probe=moments["treatment"],
+            eps=float(common_optimizer.param_groups[0]["eps"]), support_atol=support_atol)
+        key = f"{gradient_mode}_{state_mode}"
+        cell = {
+            "schema_version": 1,
+            "gradient_mode": gradient_mode,
+            "state_mode": state_mode,
+            "optimizer_condition": condition,
+            "a_star": a_star,
+            "pair_fitted_a_star": whole["a_star"],
+            "control_gradient_sha256": gauge.state_sha256(gradients["control"]),
+            "treatment_gradient_sha256": gauge.state_sha256(gradients["treatment"]),
+            "branches": branches,
+            "whole_model": whole,
+        }
+        cell["result_hash"] = _factorial_result_hash(cell)
+        cells[key] = cell
+        layerwise[key] = layers
+    return cells, layerwise
+
+
+def run_gradient_state_factorial(common_net, common_optimizer, loss_template,
+                                 images, labels, *, reference_gap_scale=1.0,
+                                 probe_gap_scale=1.1, amp=True,
+                                 initial_scale=65536.0,
+                                 scaler_state: dict[str, Any] | None = None,
+                                 random_seed: int | None = None,
+                                 microbatch_size: int | None = None,
+                                 support_atol: float = 0.0,
+                                 a_star_denominator_atol: float = 1e-30,
+                                 exact_scalar_r_grad_tolerance: float = 1e-12,
+                                 exact_scale_identity_tolerance: float = 1e-3,
+                                 order_numeric_tolerance: float = 1e-12,
+                                 verify_reverse_order: bool = True,
+                                 ) -> tuple[dict[str, Any],
+                                            dict[str, list[dict[str, Any]]]]:
+    """Run observed/exact-scalar × real/reset from one cached gradient pair."""
+    scales = (float(reference_gap_scale), float(probe_gap_scale))
+    tolerances = (
+        a_star_denominator_atol, exact_scalar_r_grad_tolerance,
+        exact_scale_identity_tolerance, order_numeric_tolerance,
+    )
+    if (not all(math.isfinite(value) and value > 0 for value in scales)
+            or scales[0] == scales[1]):
+        raise ValueError("reference/probe gap scales must be distinct, finite, and > 0")
+    if any(not math.isfinite(value) or value < 0 for value in tolerances):
+        raise ValueError("factorial tolerances must be finite and >= 0")
+    state_summary = stateful_radam_state_summary(common_net, common_optimizer)
+    if not state_summary["valid"]:
+        raise RuntimeError("invalid stateful RAdam state:\n  - " + "\n  - ".join(state_summary["errors"]))
+    if amp and scaler_state is None:
+        raise RuntimeError("AMP factorial audit requires restored GradScaler_K")
+    device = images.device
+    microbatch_size = images.shape[0] if microbatch_size is None else microbatch_size
+    if microbatch_size < 1 or images.shape[0] % microbatch_size:
+        raise ValueError("microbatch_size must be a positive divisor of batch size")
+    cpu_rng_before = torch.get_rng_state().clone()
+    cuda_rng_before = torch.cuda.get_rng_state(device=device).clone() if device.type == "cuda" else None
+    try:
+        if random_seed is not None:
+            torch.manual_seed(random_seed)
+            if device.type == "cuda":
+                torch.cuda.manual_seed_all(random_seed)
+        source_parameter_before = gauge.module_state_hashes(common_net)
+        source_optimizer_before = gauge.state_sha256(common_optimizer.state_dict())
+        source_gradient_buffers_before = _source_gradient_buffers_hash(common_net)
+        source_state_hash = gauge.state_sha256({
+            "parameters": source_parameter_before,
+            "optimizer": source_optimizer_before,
+        })
+        scaler_template = gauge._new_scaler(device, amp, initial_scale)
+        if scaler_state is not None:
+            scaler_template.load_state_dict(copy.deepcopy(scaler_state))
+        source_scaler_before = gauge.state_sha256(scaler_template.state_dict())
+        microbatches = []
+        for start in range(0, images.shape[0], microbatch_size):
+            image_micro = images[start:start + microbatch_size]
+            label_micro = labels[start:start + microbatch_size]
+            t = (torch.randn(image_micro.shape[0], 1, 1, 1, device=device)
+                 * loss_template.P_std + loss_template.P_mean).exp()
+            eps = torch.randn_like(image_micro)
+            microbatches.append((image_micro, label_micro, t, eps,
+                                 gauge.get_rng_state(device).clone()))
+        observed, gradient_details = {}, {}
+        for label, scale in zip(("control", "treatment"), scales):
+            observed[label], gradient_details[label] = compute_unscaled_gradient(
+                common_net, common_optimizer, loss_template, microbatches,
+                gap_scale=scale, scaler_template=scaler_template, amp=amp)
+        observed_hash_before = gauge.state_sha256(observed)
+        a_star, a_star_numerator, a_star_denominator = global_a_star(
+            observed["control"], observed["treatment"],
+            denominator_atol=a_star_denominator_atol)
+        exact_treatment = construct_exact_scalar_gradient(observed["control"], a_star)
+        exact = {"control": observed["control"], "treatment": exact_treatment}
+        exact_reconstruction_error = max(
+            float((exact_treatment[name]
+                   - observed["control"][name].detach().double() * a_star).abs().max())
+            for name in exact_treatment)
+        if exact_reconstruction_error != 0.0:
+            raise RuntimeError("exact-scalar treatment construction is not byte-exact")
+        gradient_pairs = {"observed": observed, "exact_scalar": exact}
+        primary_cells, layerwise = _execute_factorial_cells(
+            common_net, common_optimizer, gradient_pairs, a_star=a_star,
+            scaler_template=scaler_template, support_atol=support_atol)
+        if verify_reverse_order:
+            reverse_cells, _ = _execute_factorial_cells(
+                common_net, common_optimizer, gradient_pairs, a_star=a_star,
+                scaler_template=scaler_template, support_atol=support_atol,
+                cell_order=tuple(reversed(FACTORIAL_CELL_ORDER)),
+                branch_order=("treatment", "control"))
+        else:
+            reverse_cells = copy.deepcopy(primary_cells)
+        order_errors = {}
+        for key in sorted(primary_cells):
+            left, right = primary_cells[key], reverse_cells[key]
+            numeric_errors = {
+                metric: abs(float(left["whole_model"][metric])
+                            - float(right["whole_model"][metric]))
+                for metric in FACTORIAL_REQUIRED_WHOLE_METRICS
+            }
+            order_errors[key] = {
+                "primary_result_hash": left["result_hash"],
+                "reverse_result_hash": right["result_hash"],
+                "result_hash_identical": left["result_hash"] == right["result_hash"],
+                "max_required_metric_abs_error": max(numeric_errors.values()),
+                "numeric_tolerance": order_numeric_tolerance,
+                "numerically_invariant": max(numeric_errors.values()) <= order_numeric_tolerance,
+            }
+        control_identity = {}
+        for state_mode in ("real", "reset"):
+            observed_hash = primary_cells[f"observed_{state_mode}"]["branches"][
+                "control"]["actual_update_sha256"]
+            exact_hash = primary_cells[f"exact_scalar_{state_mode}"]["branches"][
+                "control"]["actual_update_sha256"]
+            control_identity[state_mode] = {
+                "observed_control_update_sha256": observed_hash,
+                "exact_scalar_control_update_sha256": exact_hash,
+                "identical": observed_hash == exact_hash,
+            }
+        source_parameter_after = gauge.module_state_hashes(common_net)
+        source_optimizer_after = gauge.state_sha256(common_optimizer.state_dict())
+        source_gradient_buffers_after = _source_gradient_buffers_hash(common_net)
+        source_scaler_after = gauge.state_sha256(scaler_template.state_dict())
+        observed_hash_after = gauge.state_sha256(observed)
+        source_preserved = (
+            source_parameter_before == source_parameter_after
+            and source_optimizer_before == source_optimizer_after
+            and source_gradient_buffers_before == source_gradient_buffers_after
+            and source_scaler_before == source_scaler_after
+            and observed_hash_before == observed_hash_after
+        )
+        for cell in primary_cells.values():
+            cell["source_state_hash"] = source_state_hash
+            cell["whole_model"]["source_preserved"] = source_preserved
+            cell["finite_gate"] = all(
+                isinstance(cell["whole_model"].get(metric), (int, float))
+                and math.isfinite(float(cell["whole_model"][metric]))
+                for metric in FACTORIAL_REQUIRED_WHOLE_METRICS)
+            cell["branch_skipped_flag"] = any(
+                detail["step_skipped"] for detail in cell["branches"].values())
+        exact_cells = [primary_cells["exact_scalar_real"],
+                       primary_cells["exact_scalar_reset"]]
+        exact_reset = primary_cells["exact_scalar_reset"]["whole_model"]
+        exact_scale_identity_residual = abs(exact_reset["R_opt"] - exact_reset["R_pred"])
+        correctness_gate = {
+            "four_units_complete": set(primary_cells) == {
+                "observed_real", "observed_reset",
+                "exact_scalar_real", "exact_scalar_reset"},
+            "all_required_metrics_finite": all(
+                cell["finite_gate"] for cell in primary_cells.values()),
+            "exact_scalar_R_grad_within_tolerance": all(
+                cell["whole_model"]["R_grad"] <= exact_scalar_r_grad_tolerance
+                for cell in exact_cells),
+            "exact_scalar_R_grad_tolerance": exact_scalar_r_grad_tolerance,
+            "exact_scalar_reset_H_equals_R_opt_identity": exact_reset[
+                "H_K_equals_R_opt_identity"],
+            "exact_scalar_reset_exact_scale_identity_residual": exact_scale_identity_residual,
+            "exact_scale_identity_tolerance": exact_scale_identity_tolerance,
+            "exact_scalar_reset_identity_pass": (
+                exact_reset["H_K_equals_R_opt_identity"]
+                and exact_scale_identity_residual <= exact_scale_identity_tolerance
+                and all(value is not None and value <= exact_scale_identity_tolerance
+                        for value in exact_reset["predicted_vs_actual_relative_l2"].values())),
+            "control_control_identity_pass": all(
+                item["identical"] for item in control_identity.values()),
+            "source_state_and_gradient_buffers_preserved": source_preserved,
+            "branch_order_invariance_pass": all(
+                item["numerically_invariant"] for item in order_errors.values()),
+            "rerun_result_hash_identity_pass": all(
+                item["result_hash_identical"] for item in order_errors.values()),
+            "no_silent_skip": not any(
+                cell["branch_skipped_flag"] for cell in primary_cells.values()),
+            "all_clones_independent": all(
+                detail["clone_contract"]["independent"]
+                for cell in primary_cells.values()
+                for detail in cell["branches"].values()),
+            "gradient_buffers_byte_unchanged": observed_hash_before == observed_hash_after,
+        }
+        boolean_gates = [
+            value for key, value in correctness_gate.items()
+            if isinstance(value, bool) and not key.endswith("_tolerance")
+        ]
+        correctness_gate["valid"] = all(boolean_gates)
+        receipt = {
+            "schema_version": 1,
+            "reference_gap_scale": scales[0],
+            "probe_gap_scale": scales[1],
+            "a_star": a_star,
+            "a_star_fit": {
+                "definition": "dot(G_1.00,G_1.10)/dot(G_1.00,G_1.00)",
+                "float_accumulation": "float64",
+                "numerator": a_star_numerator,
+                "denominator": a_star_denominator,
+                "denominator_atol": a_star_denominator_atol,
+                "unclamped": True,
+            },
+            "gradient_contract": {
+                "observed_computed_once": True,
+                "observed_control": gradient_details["control"],
+                "observed_treatment": gradient_details["treatment"],
+                "observed_pair_sha256_before": observed_hash_before,
+                "observed_pair_sha256_after": observed_hash_after,
+                "exact_scalar_treatment_sha256": gauge.state_sha256(exact_treatment),
+                "exact_scalar_constructed_from_saved_control": True,
+                "exact_scalar_reconstruction_max_abs_error": exact_reconstruction_error,
+            },
+            "randomness_contract": {
+                "same_minibatch": True,
+                "same_t": True,
+                "same_noise": True,
+                "same_dropout_rng_state": True,
+                "minibatch_images_sha256": gauge.tensor_sha256(images),
+                "minibatch_labels_sha256": gauge.tensor_sha256(labels),
+                "microbatch_size": microbatch_size,
+                "accumulation_rounds": len(microbatches),
+                "t_sha256": gauge.state_sha256([item[2] for item in microbatches]),
+                "noise_sha256": gauge.state_sha256([item[3] for item in microbatches]),
+                "dropout_rng_state_sha256": gauge.state_sha256(
+                    [item[4] for item in microbatches]),
+            },
+            "stateful_radam": {
+                "state_validation": state_summary,
+                "gradscaler_restored": scaler_state is not None,
+                "support_atol": support_atol,
+            },
+            "source_state_non_committing": {
+                "source_state_hash": source_state_hash,
+                "parameter_hash_before": source_parameter_before,
+                "parameter_hash_after": source_parameter_after,
+                "optimizer_state_hash_before": source_optimizer_before,
+                "optimizer_state_hash_after": source_optimizer_after,
+                "gradient_buffers_hash_before": source_gradient_buffers_before,
+                "gradient_buffers_hash_after": source_gradient_buffers_after,
+                "gradscaler_hash_before": source_scaler_before,
+                "gradscaler_hash_after": source_scaler_after,
+                "preserved": source_preserved,
+            },
+            "control_control_identity": control_identity,
+            "order_invariance_and_rerun": order_errors,
+            "correctness_gate": correctness_gate,
+            "cells": primary_cells,
+        }
+        return receipt, layerwise
+    finally:
+        torch.set_rng_state(cpu_rng_before)
+        if cuda_rng_before is not None:
+            torch.cuda.set_rng_state(cuda_rng_before, device=device)
+
+
 def summarize_pair(grads_reference, grads_probe, pred_reference, pred_probe,
                    act_reference, act_probe, *, moments_reference,
                    moments_probe, eps: float, support_atol: float
@@ -916,7 +1380,7 @@ def summarize_pair(grads_reference, grads_probe, pred_reference, pred_probe,
         grads_reference, grads_probe)
     s_pred, c_pred, r_pred, pred_cosine, _ = _update_scale_and_residual(
         pred_reference, pred_probe)
-    s_star, c_star, r_opt, opt_cosine, _ = _update_scale_and_residual(
+    s_star, c_star, r_opt, opt_cosine, residual_sq = _update_scale_and_residual(
         act_reference, act_probe)
     actual_gauge, layers_actual = support_aware_gauge_summary(
         act_reference, act_probe, s_star=s_star, c_star=c_star,
@@ -972,6 +1436,8 @@ def summarize_pair(grads_reference, grads_probe, pred_reference, pred_probe,
         "s_star": s_star,
         "c_star": c_star,
         "R_opt": r_opt,
+        "absolute_non_scalar_update_residual_l2": math.sqrt(residual_sq),
+        "residual_norm_over_control_update_norm": r_opt,
         "update_cosine": opt_cosine,
         "s_K_star_predicted": s_pred,
         "c_K_star_predicted": c_pred,
