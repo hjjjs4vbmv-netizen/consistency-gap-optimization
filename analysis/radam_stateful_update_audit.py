@@ -1126,9 +1126,22 @@ def run_stateful_pair(common_net, common_optimizer, loss_template, images, label
     return audit, layers
 
 
+class _NumpyCompatUnpickler(pickle.Unpickler):
+    """Read NumPy 2 pickles under NumPy 1 without rewriting the checkpoint."""
+
+    def find_class(self, module, name):
+        try:
+            return super().find_class(module, name)
+        except ModuleNotFoundError:
+            if module.startswith("numpy._core"):
+                legacy_module = module.replace("numpy._core", "numpy.core", 1)
+                return super().find_class(legacy_module, name)
+            raise
+
+
 def load_loss_from_checkpoint(path: Path):
     with path.open("rb") as handle:
-        payload = pickle.load(handle)
+        payload = _NumpyCompatUnpickler(handle).load()
     if "loss_fn" not in payload:
         raise SystemExit("checkpoint must contain loss_fn")
     if payload.get("augment_pipe") is not None:
