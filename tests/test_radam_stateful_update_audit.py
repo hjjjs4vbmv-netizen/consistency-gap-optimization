@@ -94,6 +94,15 @@ def _warmup_nonzero_state(step: int = 64):
 
 
 class StatefulRAdamAuditTests(unittest.TestCase):
+    def test_exact_quantiles_do_not_call_size_limited_torch_quantile(self):
+        values = torch.tensor([9.0, 1.0, 4.0, 7.0, 2.0, 8.0], dtype=torch.float64)
+        expected = tuple(float(value) for value in np.quantile(
+            values.numpy(), (0.05, 0.50, 0.95), method="linear"))
+        with mock.patch.object(torch, "quantile", side_effect=RuntimeError("too large")):
+            actual = MODULE._quantiles(values, (0.05, 0.50, 0.95))
+        for observed, target in zip(actual, expected):
+            self.assertAlmostEqual(observed, target, places=14)
+
     def test_numpy2_checkpoint_symbol_falls_back_under_numpy1(self):
         real_import = builtins.__import__
 
