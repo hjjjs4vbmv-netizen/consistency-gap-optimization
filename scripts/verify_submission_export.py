@@ -69,7 +69,31 @@ def verify_lightweight(root: Path) -> dict[str, int]:
     recovery = json.loads((root / "evidence" / "b005_recovery_receipt.json").read_text())
     if recovery.get("status") != "PASS" or len(recovery.get("recovered_checkpoints", [])) != 2:
         raise RuntimeError("B005 recovery receipt failed")
-    return {"release_files": release_files, "bundle_files": bundle_files}
+    balanced_root = root / "analysis" / "balanced_beta"
+    balanced = json.loads((balanced_root / "summary.json").read_text(encoding="utf-8"))
+    balanced_arrays = 0
+    for label in ("k32", "k64", "k128", "k256"):
+        configs = balanced.get(label, {}).get("configs", {})
+        for config in ("standard", "balanced_0.9", "balanced_0.99", "balanced_0.999"):
+            if config not in configs:
+                raise RuntimeError(f"missing balanced-beta cell: {label}/{config}")
+            path = balanced_root / label / "raw_h20" / f"{config}_h_actual.npy"
+            array = np.load(path, mmap_mode="r", allow_pickle=False)
+            row = next(
+                item for item in configs[config]["horizons"]
+                if item["horizon_steps"] == 20
+            )
+            if array.ndim != 1 or array.shape[0] != row["effective_coords"]:
+                raise RuntimeError(f"balanced-beta h20 shape mismatch: {label}/{config}")
+            balanced_arrays += 1
+    provenance = json.loads((balanced_root / "provenance.json").read_text(encoding="utf-8"))
+    if provenance.get("git", {}).get("repository") != "anonymous-submission-repository":
+        raise RuntimeError("balanced-beta anonymous provenance was not sanitized")
+    return {
+        "release_files": release_files,
+        "bundle_files": bundle_files,
+        "balanced_beta_arrays": balanced_arrays,
+    }
 
 
 def verify_data(root: Path, data_root: Path) -> dict[str, int]:

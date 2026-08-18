@@ -17,12 +17,17 @@ FILES = (
     "analysis/crossk_horizon_sweep.py",
     "analysis/numpy_radam.py",
     "analysis/plot_crossk.py",
+    "analysis/balanced_beta.py",
+    "analysis/plot_balanced_beta.py",
+    "scripts/build_robustness_table.py",
     "scripts/plot_same_trajectory_longitudinal.py",
     "scripts/reconstruct_headline_tables.py",
     "scripts/verify_submission_export.py",
     "tests/test_crossk_h20_recompute.py",
     "tests/test_same_trajectory_figure.py",
     "tests/test_metric_artifact_retention.py",
+    "tests/test_balanced_beta_h20.py",
+    "tests/test_build_robustness_table.py",
     "evidence/disjoint_5k_cell_manifest_v1.json",
     "evidence/disjoint_5k_cell_manifest_v1.sha256",
 )
@@ -33,7 +38,10 @@ TREES = (
     "training",
     "torch_utils",
     "analysis/same_trajectory_longitudinal",
+    "analysis/balanced_beta",
     "figures/cross_k_scalar_history",
+    "figures/balanced_beta",
+    "results/robustness",
     "results/publication_v2_regenerated",
 )
 
@@ -76,6 +84,7 @@ def write_release_docs(output: Path) -> None:
         "conda run -n anonymous-publication-audit python scripts/verify_submission_export.py --root .\n"
         "conda run -n anonymous-publication-audit pytest -q -p no:cacheprovider "
         "tests/test_crossk_h20_recompute.py tests/test_same_trajectory_figure.py "
+        "tests/test_balanced_beta_h20.py tests/test_build_robustness_table.py "
         "tests/test_metric_artifact_retention.py tests/test_submission_export.py\n"
         "```\n\n"
         "To verify the separately distributed data payload, add "
@@ -87,6 +96,8 @@ def write_release_docs(output: Path) -> None:
         "--outdir rebuilt/tables --verify-against results/publication_v2_regenerated\n"
         "python scripts/plot_same_trajectory_longitudinal.py --outdir rebuilt/same_trajectory\n"
         "python analysis/plot_crossk.py --out rebuilt/cross_k\n"
+        "python analysis/plot_balanced_beta.py --out rebuilt/balanced_beta\n"
+        "python scripts/build_robustness_table.py\n"
         "```\n\n"
         "The same-trajectory vector and raster artifacts are byte-locked. Cross-K "
         "acceptance is numerical (the committed raw h=20 arrays recompute all four "
@@ -100,7 +111,11 @@ def write_release_docs(output: Path) -> None:
         "h=20 Cross-K finding is eligible for headline use. The exploratory full "
         "R2(K,h) matrix outside h=20 is not included and must not support a "
         "headline claim. Generic Adam scale sensitivity and the beta1=beta2 "
-        "first-order invariance are outside the novelty claim.\n",
+        "first-order invariance are outside the novelty claim. The balanced-beta "
+        "result is a controlled replay, not a training intervention: it does not "
+        "establish FID/KID causality, scalar-history-only causality, or a uniformly "
+        "better balanced-beta configuration. Full-vector R_opt retains its declared "
+        "external-input reproducibility boundary.\n",
         encoding="utf-8",
     )
     (output / "PROVENANCE_DECISIONS.md").write_text(
@@ -158,6 +173,16 @@ def main() -> int:
         copy_file(source, output, relative)
     for relative in TREES:
         copy_tree(source, output, relative)
+    # Preserve the scientific protocol while removing the private repository mapping
+    # from the one-way anonymous export. The private source receipt is not rewritten.
+    balanced_provenance = output / "analysis" / "balanced_beta" / "provenance.json"
+    provenance = json.loads(balanced_provenance.read_text(encoding="utf-8"))
+    provenance["git"]["repository"] = "anonymous-submission-repository"
+    provenance["git"]["branch"] = "anonymous-release"
+    balanced_provenance.write_text(
+        json.dumps(provenance, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
     # Copy only the h=20 self-contained Cross-K evidence, not private raw locators.
     copy_file(source, output, "analysis/crossk_scalar_history/summary.json")
     for label in ("k32", "k64", "k128", "k256"):
