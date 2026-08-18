@@ -280,6 +280,51 @@ def build(receipts_root: Path, *, test_results: Path | None = None) -> dict:
     }
     gate["valid"] = all(value for value in gate.values() if isinstance(value, bool))
     tests = _test_counts(test_results)
+    seed_contrasts = []
+    for seed in (3, 4, 5):
+        rows = [row for row in contrasts if row["training_seed"] == seed]
+        if len(rows) != 8:
+            continue
+        seed_contrasts.append({
+            "training_seed": seed,
+            "median_B_minus_D_R_opt": statistics.median(
+                row["B_minus_D_R_opt"] for row in rows),
+            "median_A_minus_C_R_opt": statistics.median(
+                row["A_minus_C_R_opt"] for row in rows),
+            "median_A_minus_B_R_opt": statistics.median(
+                row["A_minus_B_R_opt"] for row in rows),
+            "median_C_minus_D_R_opt": statistics.median(
+                row["C_minus_D_R_opt"] for row in rows),
+            "median_B_over_D_R_opt": statistics.median(
+                row["B_over_D_R_opt"] for row in rows),
+        })
+    if len(seed_contrasts) == 3:
+        gradient_probe = statistics.median(
+            abs(row["median_B_minus_D_R_opt"]) for row in seed_contrasts)
+        history_probe = statistics.median(
+            abs(row["median_C_minus_D_R_opt"]) for row in seed_contrasts)
+        dominant_probe = ("observed_gradient_residual" if gradient_probe > history_probe
+                          else "real_optimizer_history")
+        mechanism = {
+            "status": "DESCRIPTIVE_THREE_SEED_PROBE",
+            "per_training_seed": seed_contrasts,
+            "median_across_seeds_abs_B_minus_D_R_opt": gradient_probe,
+            "median_across_seeds_abs_C_minus_D_R_opt": history_probe,
+            "larger_isolated_probe": dominant_probe,
+            "observed_reset_blowup_assessment": (
+                "The observed-gradient residual is the larger isolated probe"
+                if dominant_probe == "observed_gradient_residual"
+                else "The real-history exact-scalar contrast is the larger isolated probe"),
+            "causal_decomposition": False,
+        }
+    else:
+        mechanism = {
+            "status": "UNAVAILABLE_INCOMPLETE_SEEDS",
+            "per_training_seed": seed_contrasts,
+            "larger_isolated_probe": None,
+            "observed_reset_blowup_assessment": None,
+            "causal_decomposition": False,
+        }
     summary = {
         "schema_version": 1,
         "status": "PASS" if gate["valid"] else "INVALID",
@@ -295,6 +340,7 @@ def build(receipts_root: Path, *, test_results: Path | None = None) -> dict:
         "four_cell_is_additive_causal_decomposition": False,
         "correctness_gate": gate,
         "tests": tests,
+        "mechanism_summary": mechanism,
         "seed_summary": seed_summary,
         "batch_contrasts": contrasts,
         "errors": sorted(errors),
@@ -344,6 +390,11 @@ def _report(summary: dict) -> str:
         "5. A−B compares real against reset state for the observed gradient pair.",
         "",
         "These paired contrasts are diagnostic and are not an additive causal decomposition.",
+        "",
+        "## Mechanism readout",
+        "",
+        (summary["mechanism_summary"]["observed_reset_blowup_assessment"]
+         or "Mechanism readout is unavailable because the three-seed matrix is incomplete."),
         "",
         "## Gates and test suite",
         "",
