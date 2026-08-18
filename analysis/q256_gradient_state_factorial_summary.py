@@ -453,7 +453,7 @@ def _report(summary: dict) -> str:
         "",
         "## Seed-level four-cell medians",
         "",
-        "| Training seed | A observed/real | B observed/reset | C exact/real | D exact/reset |",
+        "| Training seed | A observed/real | B observed/reset | C exact-scalar/real | D exact-scalar/reset |",
         "|---:|---:|---:|---:|---:|",
     ]
     displayed_by_seed = {}
