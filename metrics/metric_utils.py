@@ -23,6 +23,8 @@ class MetricOptions:
         self, generator_fn=None, G=None, G_kwargs={}, dataset_kwargs={},
         num_gpus=1, rank=0, device=None, progress=None, cache=True,
         sample_seeds=None, metric_seed=None,
+        generated_features_path=None, generated_samples_path=None,
+        generator_batch_size=None,
     ):
         assert 0 <= rank < num_gpus
 
@@ -37,6 +39,9 @@ class MetricOptions:
         self.cache          = cache
         self.sample_seeds   = None if sample_seeds is None else list(sample_seeds)
         self.metric_seed    = metric_seed
+        self.generated_features_path = generated_features_path
+        self.generated_samples_path = generated_samples_path
+        self.generator_batch_size = generator_batch_size
 
 #----------------------------------------------------------------------------
 
@@ -247,8 +252,24 @@ def make_seeded_latents(sample_seeds, shape):
 
 #----------------------------------------------------------------------------
 
+def _atomic_save_npy(path, array):
+    """Save an array without pickle, then atomically publish the final path."""
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    temp_path = path + '.' + uuid.uuid4().hex + '.npy'
+    np.save(temp_path, array, allow_pickle=False)
+    os.replace(temp_path, path)
+
+#----------------------------------------------------------------------------
+
 def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel_lo=0, rel_hi=1, batch_size=128, batch_gen=128, jit=False, **stats_kwargs):
-    if batch_gen is None:
+    retain_artifacts = opts.generated_features_path is not None or opts.generated_samples_path is not None
+    if retain_artifacts and opts.num_gpus != 1:
+        raise ValueError('generated artifact retention currently requires num_gpus=1')
+    if opts.generated_features_path is not None:
+        stats_kwargs['capture_all'] = True
+    if opts.generator_batch_size is not None:
+        batch_gen = opts.generator_batch_size
+    elif batch_gen is None:
         batch_gen = min(batch_size, 4)
     assert batch_size % batch_gen == 0
 
@@ -290,6 +311,7 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
 
     # Main loop.
     seed_offset = 0
+    retained_images = [] if opts.generated_samples_path is not None else None
     while not stats.is_full():
         images = []
         for _i in range(batch_size // batch_gen):
@@ -317,9 +339,15 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
         images = torch.cat(images)
         if images.shape[1] == 1:
             images = images.repeat([1, 3, 1, 1])
+        if retained_images is not None:
+            retained_images.append(images.cpu().numpy())
         features = detector(images, **detector_kwargs)
         stats.append_torch(features, num_gpus=opts.num_gpus, rank=opts.rank)
         progress.update(stats.num_items)
+    if opts.rank == 0 and opts.generated_features_path is not None:
+        _atomic_save_npy(opts.generated_features_path, stats.get_all())
+    if opts.rank == 0 and opts.generated_samples_path is not None:
+        _atomic_save_npy(opts.generated_samples_path, np.concatenate(retained_images, axis=0))
     return stats
 
 #----------------------------------------------------------------------------
