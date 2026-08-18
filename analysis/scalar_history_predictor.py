@@ -200,9 +200,21 @@ def main(argv=None):
 
     G1 = np.load(a.grad_history_1)   # (T, d)
     Gg = np.load(a.grad_history_g)   # (T, d)
+    if G1.ndim != 2 or Gg.ndim != 2 or G1.shape != Gg.shape or G1.shape[0] < 1:
+        raise SystemExit("gradient histories must be non-empty, shape-matched (T, d) arrays")
     T = G1.shape[0]
     t = T - 1 if a.eval_step < 0 else min(a.eval_step, T - 1)
     d = G1.shape[1]
+    if d != dim:
+        raise SystemExit(f"gradient-history dimension {d} does not match source optimizer dimension {dim}")
+    if a.u1_history is None or a.ug_history is None:
+        history_mode = False
+    else:
+        u1_history = np.load(a.u1_history, mmap_mode="r")
+        ug_history = np.load(a.ug_history, mmap_mode="r")
+        if u1_history.shape != (T, d) or ug_history.shape != (T, d):
+            raise SystemExit("full update histories must both have shape (T, d) matching gradient histories")
+        history_mode = True
 
     # actual update at the SAME eval step t (per-step history when available)
     u1, ug, u1_src, ug_src = select_eval_update(
@@ -260,7 +272,9 @@ def main(argv=None):
         "grad_history_g_sha256": sha256_file(a.grad_history_g),
         "u1_sha256": sha256_file(u1_src),
         "ug_sha256": sha256_file(ug_src),
-        "update_source": "history" if a.u1_history is not None else "final-step",
+        "u1_history_sha256": sha256_file(a.u1_history) if history_mode else None,
+        "ug_history_sha256": sha256_file(a.ug_history) if history_mode else None,
+        "update_source": "history" if history_mode else "final-step",
         "execution_command": " ".join(sys.argv),
         "lr": a.lr,
         "source_nimg": data.get("cur_nimg"),
