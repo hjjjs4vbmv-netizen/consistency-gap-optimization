@@ -73,7 +73,8 @@
     "original_branch_head": "1fd9d5afeafa83de79d3e74926c72ac5abe54afd",
     "target_base_head": "c01a61d767793ac52b427e4064f1f71583a17e1c",
     "merge_base": "f2cac51355252aff62016a27c6ca2ad40e5220fd",
-    "tested_code_commit": "383ada40db688a9f34b8613db1b783e5a51777fd",
+    "remote_branch_head_integrated": "1dfa8874a4682822a572e59fe3fb41928a654155",
+    "tested_code_commit": "18c36a9d2143556f0203470a4dd8d3938c541e52",
     "failure_comparison": "analysis/q256_g110_gradient_state_factorial/merge_readiness/classification.json",
     "formal_execution_reexecuted": false,
     "formal_receipts_or_layerwise_outputs_changed": false,
@@ -87,10 +88,10 @@
   },
   "tests": {
     "targeted_factorial_tests": {
-      "command": "python -m pytest -q tests/test_q256_gradient_state_factorial.py tests/test_q256_moment_reset.py tests/test_radam_stateful_update_audit.py tests/test_radam_update_gauge.py",
-      "junit": "analysis/q256_g110_gradient_state_factorial/merge_readiness/final_validation/audit_specific_final2.xml",
-      "total": 40,
-      "passed": 40,
+      "command": "python -m pytest -q tests/test_q256_gradient_state_factorial.py tests/test_q256_moment_reset.py tests/test_radam_stateful_update_audit.py tests/test_radam_update_gauge.py tests/test_radam_stateful_schema_compat.py",
+      "junit": "analysis/q256_g110_gradient_state_factorial/merge_readiness/final_validation/audit_specific_remote_merged.xml",
+      "total": 44,
+      "passed": 44,
       "skipped": 0,
       "failed": 0,
       "errors": 0
@@ -112,8 +113,8 @@
     "full_suite": {
       "command": "python -m pytest -q",
       "junit": "analysis/q256_g110_gradient_state_factorial/test_results.xml",
-      "total": 278,
-      "passed": 277,
+      "total": 282,
+      "passed": 281,
       "skipped": 1,
       "failed": 0,
       "errors": 0,
@@ -130,10 +131,10 @@
     "raw_results.csv": "b77f590436741ce991bd8c10feb0986459c8ffd2c14c20ef15f6476c99e26f7e",
     "batch_contrasts.csv": "acc54b2a96b13091b9b54d249794242cde05fde762a43ca8e3764793cc4af021",
     "seed_summary.csv": "43b188e990a48941b4c6fe061745f0c09ff227dad358ecdab0d0eedfd6f83679",
-    "summary.json": "f7a03aa6385ab49f2ea6be45df7cdebbd9a93ee162a2292ac20b3206ad2de196",
-    "report.md": "bf59f2e39ceeee3d6efe24002ab41fa56c724367c9a4091acae74ae6158127c9",
-    "test_results.xml": "b9d7456ef3115eed728851efa03731e0fe47ae8b84e7493e799d08311246c9ee",
-    "merge_readiness/classification.json": "e1a1d4a45da87a62949471306acdef96aed1d973dbb50c0026f852c15369e26e"
+    "summary.json": "fbb7b8551987249341c51f3e156d4399f2292a6787fd3fb840441058ca497ab6",
+    "report.md": "f085bf2305c68ec14e83448c586e97cccc6e829d94a7a1da0d16d46cccf4167b",
+    "test_results.xml": "c1ec9d1a65e7e023eae9751d047fe137449d44600f0221b87ea95b01279c419d",
+    "merge_readiness/classification.json": "2fcfb758fa7bc9b893be8d4fcb6c736891ceace9654dd1667fda7e5e7345c6e2"
   },
   "operations_excluded": [
     "training",

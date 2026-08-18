@@ -49,7 +49,7 @@ Across all three training seeds, the observed-gradient/reset contrast (B-D) was 
 ## Gates and test suite
 
 D identity: PASS. Control-control identity, source preservation, branch-order invariance, same-batch rerun hashes, finite-number checks, and all 96 receipt contracts are included in the overall verdict.
-Full test suite: 277 passed, 1 skipped, 0 failed, 0 errors (278 total).
+Full test suite: 281 passed, 1 skipped, 0 failed, 0 errors (282 total).
 
 ## Environment and schema compatibility
 
