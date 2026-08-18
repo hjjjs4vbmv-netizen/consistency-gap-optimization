@@ -165,9 +165,15 @@ def fixed_ect_loss(net, loss_template, schedule, images, labels, t, eps, dropout
 
 
 def _new_scaler(device: torch.device, enabled: bool, initial_scale: float):
-    # torch.amp is available in supported PyTorch versions and also permits a
-    # CPU unit-test path; production runs use the CUDA branch.
-    return torch.amp.GradScaler(device.type, enabled=enabled, init_scale=initial_scale)
+    # PyTorch >=2.3 exposes the device-generic API.  NGC PyTorch 2.2 retains
+    # only torch.cuda.amp.GradScaler; use it for CUDA without changing state
+    # semantics.  The formal audit restores the saved scaler state afterward.
+    generic_scaler = getattr(getattr(torch, "amp", None), "GradScaler", None)
+    if generic_scaler is not None:
+        return generic_scaler(device.type, enabled=enabled, init_scale=initial_scale)
+    if device.type != "cuda" and enabled:
+        raise RuntimeError("this PyTorch version has no enabled non-CUDA GradScaler")
+    return torch.cuda.amp.GradScaler(enabled=enabled, init_scale=initial_scale)
 
 
 def _delta_by_name(before: torch.nn.Module, after: torch.nn.Module) -> dict[str, torch.Tensor]:
