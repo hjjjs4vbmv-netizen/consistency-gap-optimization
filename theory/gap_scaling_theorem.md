@@ -62,9 +62,11 @@ Then there exist a vector field $v(z)$ and an integer $\nu \ge 1$ such that
 
 $$\boxed{\; e_\delta \;=\; \delta^{\nu}\, v \;+\; O(\delta^{\nu+1}). \;}$$
 
-*Sketch.* Under A, $T(z,\delta) = T(z,0) + \partial_\delta T|_0\,\delta + \tfrac12 \partial_\delta^2 T|_0\,\delta^2 + \cdots$. With C, $\nabla_\theta e_\delta = J_\delta = \nabla_\theta F_\theta(z,\delta)$, and B gives $F_\theta(z,\delta) = F_\theta(z,0) + O(\delta)$. Subtracting, $e_\delta = [F_\theta(z,\delta)-F_\theta(z,0)] - [T(z,\delta)-T(z,0)]$; the leading non-vanishing term is $\delta^\nu v$. ∎
+*Sketch.* At zero gap ($\delta=0$, i.e. $t=r$) the student and target evaluate the **same network at the same point**, so $e_0 = F_\theta(z,0) - \mathrm{sg}[F_\theta(z,0)] = 0$ (the residual vanishes at zero gap — this is why the expansion starts at $O(\delta^\nu)$ rather than a constant). Under A, $T(z,\delta) = T(z,0) + \partial_\delta T|_0\,\delta + \tfrac12 \partial_\delta^2 T|_0\,\delta^2 + \cdots$. With C, $\nabla_\theta e_\delta = J_\delta = \nabla_\theta F_\theta(z,\delta)$, and B gives $F_\theta(z,\delta) = F_\theta(z,0) + O(\delta)$. Subtracting (and using $e_0=0$), $e_\delta = [F_\theta(z,\delta)-F_\theta(z,0)] - [T(z,\delta)-T(z,0)]$; the leading non-vanishing term is $\delta^\nu v$. ∎
 
 $\nu$ is the **residual growth order**: $\nu=1$ when the first-order term is non-zero (generic), $\nu=2$ if it cancels.
+
+> **Asymptotic-regime note (load-bearing for the validation).** The theorem is a $\delta\to0$ asymptotic. ECT's gap is NOT infinitesimal in absolute terms, but the *gap-to-noise ratio* $\Delta/t$ decays as $1/q^{s+1}$ (e.g. $q{=}256$: $\Delta/t\approx 1.7\%$ at stage 0, $\ll 1\%$ thereafter). So ECT training operates **inside** the small-gap regime — the $\delta\to0$ asymptotic is the operating regime, not an extrapolation. This is why the zero-parameter validation (§4, 0.18% error) is an in-regime check, not a far-asymptotic extrapolation.
 
 ### Assumption D (non-degeneracy)
 The leading term is non-vanishing: $v \neq 0$ and $J_0^\top v \neq 0$. Otherwise the gradient's leading order jumps to $\nu+1$.
@@ -157,6 +159,8 @@ $$\frac{\|G' - \bar a G\|}{\|G'\|} \;\lesssim\; \underbrace{\text{scaling hetero
 
 **Approximate gradient scalarity need not hold sample-wise; it can emerge after minibatch aggregation through cancellation of the heterogeneous residual.** If $g_i$ are weakly aligned across the batch (typical: high-dim gradients are near-orthogonal), then $\sum_i(a_i-\bar a)g_i$ partially cancels and $\|G'-\bar a G\|/|G'| < \mathbb{E}_i[\|g_i'-a_ig_i\|/\|g_i'\|]$.
 
+> **Heuristic-status note.** Proposition 3 is a high-dimensional concentration heuristic (near-orthogonality of per-sample gradients), not a deterministic theorem: the cancellation is in expectation / with high probability, and can fail if the batch is small or gradients are strongly aligned. It is stated as "can emerge" deliberately.
+
 *Why this matters:* it explains the empirical observation that **aggregate** $G',G$ have high cosine while **individual** $g_i',g_i$ look noisy — scalarity is an emergent batch property, not a per-sample one.
 
 ---
@@ -201,11 +205,11 @@ Factorize the gradient as
 
 $$g(r,\Delta) \;\approx\; s(\Delta)\,h(r) \;+\; \varepsilon(r,\Delta),$$
 
-where $s(\Delta)$ controls scalar magnitude (denominator effect, Theorem 1) and $h(r)$ is the target-geometry direction. Then $G_A=s_1 h_1$, $G_B=s_g h_g$, $G_C=s_1 h_g$, $G_D=s_g h_1$ (ignoring $\varepsilon$). The interaction
+where $s(\Delta)$ controls scalar magnitude (denominator effect, Theorem 1) and $h(r)$ is the target-geometry direction. Then $G_A=s_1 h_1$, $G_B=s_g h_g$, $G_C=s_1 h_g$, $G_D=s_g h_1$. The interaction
 
-$$\boxed{\; G_{\rm int} \;=\; G_B - G_C - G_D + G_A \;}$$
+$$\boxed{\; G_{\rm int} \;=\; G_B - G_C - G_D + G_A \;=\; (s_g - s_1)(h_g - h_1) \;+\; (\varepsilon_B - \varepsilon_C - \varepsilon_D + \varepsilon_A). \;}$$
 
-measures departure from factorization: $G_{\rm int} = \varepsilon_B - \varepsilon_C - \varepsilon_D + \varepsilon_A$, the **local target–denominator coupling term**. It is not an arbitrary metric — it is the leading non-factorized correction.
+So $G_{\rm int}$ has **two parts**: (i) the factorized coupling $(s_g-s_1)(h_g-h_1)$, which is **second-order** in the perturbation (product of a denominator change and a target change — each first-order), and (ii) the non-factorized residual $\varepsilon_B-\varepsilon_C-\varepsilon_D+\varepsilon_A$. When both perturbations are small, part (i) is $O(\delta^2)$ and part (ii) is the leading target–denominator coupling. $G_{\rm int}$ is therefore small (higher-order) *only when the factorization is a good approximation*; a large $G_{\rm int}$ signals factorization breakdown.
 
 **Prediction (denominator vs target):** the denominator-only move A→D changes only $s(\Delta)$ ⇒ **near-pure scalar rescaling** $\cos(G_D,G_A)\approx 1$. The target-only move A→C changes $h(r)$ ⇒ **directional residual** $\cos(G_C,G_A) < \cos(G_D,G_A)$. The gradient geometry is *not* symmetric in the two factors.
 
@@ -238,7 +242,7 @@ Adam/RAdam transforms the gradient through $m_t, v_t$: a scalar gradient relatio
 | 2 | denominator scalarity | $\cos(G_D, G_A)$ | high (near-pure rescale) |
 | 3 | target directional effect | $\cos(G_C, G_A)$ | $< \cos(G_D, G_A)$ |
 | 4 | emergent batch scalarity | sample vs batch residual | batch $\epsilon_{\rm ns}$ < sample $\epsilon_{\rm ns}$ |
-| 5 | interaction higher-order | $\|G_{\rm int}\| / \|G_B\|$ | small (higher-order coupling) |
+| 5 | factorization coupling | $\|G_{\rm int}\| / \|G_B\|$ | small iff factorization $g\approx s(\Delta)h(r)$ holds; large $G_{\rm int}$ ⇒ factorization breakdown |
 | 6 | stage invariance | $a^\star$ across $K$ | flat (global_sigmoid ⇒ $g^\kappa$ is $t$-independent) |
 | 7 | regime change (if $c>0$) | $a^\star$ small vs large residual | different $\kappa$ |
 
