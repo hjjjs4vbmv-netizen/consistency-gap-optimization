@@ -54,6 +54,22 @@ MODES = {
 
 DATASET_SHA256 = "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
 TRANSFER_SHA256 = "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+TRANSFER_SOURCE_POLICY = {
+    "schema": "ect.q256.authoritative-transfer-source-policy/v1",
+    "required_target_coverage": "all_parameters_and_buffers",
+    "allowed_source_extras": {
+        "model.map_augment.weight": {
+            "shape": [128, 9],
+            "dtype": "torch.float32",
+            "tensor_bytes_sha256": (
+                "4500f8ac1eb5cc8dd4096595a798c8ea4793d42f8433014ab67e41d5ceb70de0"
+            ),
+            "reason": (
+                "authoritative checkpoint augmentation map unused by augment=0 target"
+            ),
+        }
+    },
+}
 
 # This tuple deliberately duplicates the writer's public v1 contract. A
 # missing, reordered, or additional column is a version mismatch, not a
@@ -594,6 +610,11 @@ def validate_initial_receipt(
     )
     exact_value(
         trajectory.get("batch_gpu"), 16, "trajectory_config.batch_gpu"
+    )
+    exact_value(
+        trajectory.get("authoritative_transfer_source_policy"),
+        TRANSFER_SOURCE_POLICY,
+        "trajectory_config.authoritative_transfer_source_policy",
     )
     loss_kwargs = require_dict(
         trajectory.get("loss_kwargs"), "trajectory_config.loss_kwargs"

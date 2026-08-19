@@ -164,6 +164,9 @@ class RunFixture:
             "batch_size": 128,
             "batch_gpu": 16,
             "loss_kwargs": copy.deepcopy(self.options()["loss_kwargs"]),
+            "authoritative_transfer_source_policy": copy.deepcopy(
+                verifier.TRANSFER_SOURCE_POLICY
+            ),
         }
 
     def telemetry_rows(self):

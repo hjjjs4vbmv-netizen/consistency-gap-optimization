@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import itertools
 import json
 import os
@@ -50,6 +51,42 @@ class ExactModuleTransferTest(unittest.TestCase):
                 source=source.state_dict(), destination=destination.state_dict()
             ), self.assertRaises(RuntimeError):
                 copy_module_state_exact(source, destination, label='test')
+
+    def test_only_an_explicit_content_bound_source_extra_is_allowed(self):
+        source = TinyStateModule(extra=True)
+        destination = TinyStateModule()
+        with torch.no_grad():
+            source.weight.add_(10)
+            source.running.mul_(7)
+        extra = source.extra.detach().cpu().contiguous()
+        policy = {
+            'extra': {
+                'shape': list(extra.shape),
+                'dtype': str(extra.dtype),
+                'tensor_bytes_sha256': hashlib.sha256(
+                    extra.numpy().tobytes()
+                ).hexdigest(),
+                'reason': 'unit-test-only unused source tensor',
+            }
+        }
+        copy_module_state_exact(
+            source,
+            destination,
+            label='test',
+            allowed_source_extras=policy,
+        )
+        self.assertTrue(torch.equal(source.weight, destination.weight))
+        self.assertTrue(torch.equal(source.running, destination.running))
+
+        invalid = copy.deepcopy(policy)
+        invalid['extra']['tensor_bytes_sha256'] = '0' * 64
+        with self.assertRaisesRegex(RuntimeError, 'source-extra identity mismatch'):
+            copy_module_state_exact(
+                source,
+                TinyStateModule(),
+                label='test',
+                allowed_source_extras=invalid,
+            )
 
 
 class InfiniteSamplerReplayTest(unittest.TestCase):

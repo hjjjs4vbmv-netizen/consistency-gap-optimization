@@ -10,6 +10,7 @@ import random
 import psutil
 import shutil
 import functools
+import hashlib
 import PIL.Image
 import numpy as np
 import torch
@@ -22,6 +23,20 @@ from training import reproducibility
 from metrics import metric_main
 
 _STRICT_FACTORIAL_PROTOCOL = 'q256_target_weight_v1'
+_AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
+    'schema': 'ect.q256.authoritative-transfer-source-policy/v1',
+    'required_target_coverage': 'all_parameters_and_buffers',
+    'allowed_source_extras': {
+        'model.map_augment.weight': {
+            'shape': [128, 9],
+            'dtype': 'torch.float32',
+            'tensor_bytes_sha256': (
+                '4500f8ac1eb5cc8dd4096595a798c8ea4793d42f8433014ab67e41d5ceb70de0'
+            ),
+            'reason': 'authoritative checkpoint augmentation map unused by augment=0 target',
+        },
+    },
+}
 
 # Per-attempted-iteration CSV for paired fixed/adaptive comparisons.
 # Schedule telemetry comes exclusively from loss_fn.schedule_runtime_metrics().
@@ -529,8 +544,10 @@ def select_local_reproducibility_state(states):
 
 
 @torch.no_grad()
-def copy_module_state_exact(src_module, dst_module, *, label):
-    """Copy a module only after exact parameter/buffer identity validation."""
+def copy_module_state_exact(
+    src_module, dst_module, *, label, allowed_source_extras=None
+):
+    """Copy every destination tensor after fail-closed source validation."""
     if not isinstance(src_module, torch.nn.Module):
         raise RuntimeError(f'{label} source is not a torch module')
     if not isinstance(dst_module, torch.nn.Module):
@@ -543,11 +560,37 @@ def copy_module_state_exact(src_module, dst_module, *, label):
         raise RuntimeError(f'{label} has duplicate parameter/buffer names')
     missing = sorted(set(dst) - set(src))
     extra = sorted(set(src) - set(dst))
-    if missing or extra:
+    allowed_source_extras = (
+        {} if allowed_source_extras is None else dict(allowed_source_extras)
+    )
+    if missing or set(extra) != set(allowed_source_extras):
         raise RuntimeError(
             f'{label} parameter/buffer key mismatch: '
-            f'missing={missing}, extra={extra}'
+            f'missing={missing}, extra={extra}, '
+            f'allowed_source_extras={sorted(allowed_source_extras)}'
         )
+    for name in extra:
+        record = allowed_source_extras[name]
+        if not isinstance(record, dict) or set(record) != {
+            'shape', 'dtype', 'tensor_bytes_sha256', 'reason'
+        }:
+            raise RuntimeError(
+                f'{label} invalid source-extra policy for {name}'
+            )
+        source = src[name].detach().cpu().contiguous()
+        actual = {
+            'shape': list(source.shape),
+            'dtype': str(source.dtype),
+            'tensor_bytes_sha256': hashlib.sha256(
+                source.numpy().tobytes()
+            ).hexdigest(),
+            'reason': record['reason'],
+        }
+        if actual != record:
+            raise RuntimeError(
+                f'{label} source-extra identity mismatch for {name}: '
+                f'{actual} != {record}'
+            )
     for name in sorted(dst):
         source = src[name]
         target = dst[name]
@@ -561,11 +604,7 @@ def copy_module_state_exact(src_module, dst_module, *, label):
                 f'{label} tensor dtype mismatch for {name}: '
                 f'{source.dtype} != {target.dtype}'
             )
-    misc.copy_params_and_buffers(
-        src_module=src_module,
-        dst_module=dst_module,
-        require_all=True,
-    )
+        target.copy_(source.detach())
 
 
 @torch.no_grad()
@@ -851,6 +890,9 @@ def training_loop(
             'augment_kwargs': (
                 None if augment_kwargs is None else dict(augment_kwargs)
             ),
+            'authoritative_transfer_source_policy': copy.deepcopy(
+                _AUTHORITATIVE_TRANSFER_SOURCE_POLICY
+            ),
         })
         strict_trajectory_config_sha256 = reproducibility.state_sha256(
             strict_trajectory_config
@@ -918,10 +960,20 @@ def training_loop(
             torch.distributed.barrier() # other ranks follow
         if strict_reproducibility:
             copy_module_state_exact(
-                data.get('ema'), net, label='authoritative transfer -> net'
+                data.get('ema'), net, label='authoritative transfer -> net',
+                allowed_source_extras=(
+                    _AUTHORITATIVE_TRANSFER_SOURCE_POLICY[
+                        'allowed_source_extras'
+                    ]
+                ),
             )
             copy_module_state_exact(
-                data.get('ema'), ema, label='authoritative transfer -> EMA'
+                data.get('ema'), ema, label='authoritative transfer -> EMA',
+                allowed_source_extras=(
+                    _AUTHORITATIVE_TRANSFER_SOURCE_POLICY[
+                        'allowed_source_extras'
+                    ]
+                ),
             )
         else:
             misc.copy_params_and_buffers(
