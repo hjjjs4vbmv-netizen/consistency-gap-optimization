@@ -42,7 +42,7 @@ ECT's actual objective (`training/loss.py`, `CONFIRMATORY_COMMANDS.sh`):
 | $\rho(r)$ | $r$ (L1, since `-c 0`) | outer loss → **$p = 1$** |
 | $\rho_c(r)$ | $\sqrt{r^2+c^2}-c$ | Pseudo-Huber (only if $c>0$; **not used** in the gap runs) |
 | $\Delta_g(t)$ | $g\,\Delta_1(t)$ | global_sigmoid gap, **exact** (schedules.py `_apply_global_gap_scale`) |
-| schedule | $r/t = 1{-}\frac{1+8\sigma(-t)}{q^{s+1}}$, $q{=}256$ | |
+| schedule | $r/t = 1{-}\frac{1+8\sigma(-t)}{q^{s+1}}$ | $q$ is the budget ($q{=}128$ for the cross-K validation runs; $q{=}256$ in `CONFIRMATORY_COMMANDS.sh`) |
 
 The exponent symbol below is $\nu$ (residual growth order), **not** $q$ (budget).
 
@@ -106,7 +106,7 @@ If $\rho$ is exactly homogeneous of degree $p$ and $w(\delta)\propto\delta^{-\al
 
 ## 4. Pseudo-Huber specialization (regime change)
 
-ECT's Pseudo-Huber $\rho_c(r) = c^2(\sqrt{1+(r/c)^2}-1)$ has two regimes:
+ECT's Pseudo-Huber $\rho_c(r) = \sqrt{r^2+c^2}-c$ (matching `loss.py`; equivalent to $c^2(\sqrt{1+(r/c)^2}-1)$, differing only by an overall $c$ scale that does not affect the homogeneity degree $p$) has two regimes:
 
 | regime | condition | effective $p$ | $\kappa$ |
 |--------|-----------|---------------|----------|
@@ -115,14 +115,24 @@ ECT's Pseudo-Huber $\rho_c(r) = c^2(\sqrt{1+(r/c)^2}-1)$ has two regimes:
 
 $$\boxed{\;\kappa_{\rm small} = \nu - \alpha, \qquad \kappa_{\rm large} = -\alpha.\;}$$
 
+(Here and below, $\rho_c(r) = \sqrt{r^2+c^2}-c$ matches `loss.py` exactly. The two regimes follow from its asymptotics: $\rho_c(r)\approx\tfrac12 r^2$ for $r\ll c$ and $\rho_c(r)\approx r$ for $r\gg c$ — the leading $c$ in the code's $\sqrt{r^2+c^2}-c$ cancels in the homogeneity degree, which is all Theorem 1 needs.)
+
 ### Corollary 2 (inverse-gap regime)
 For ECT's actual config ($c=0 \Rightarrow p=1$, $\alpha=1$):
 
 $$\kappa_{\rm ECT} = \nu(1-1) - 1 = -\alpha = \boxed{-1} \;\;\Rightarrow\;\; g_\delta \propto \delta^{-1} \propto 1/g.$$
 
-**The $1/g$ law is not an ECT empirical accident — it is the $p=1,\alpha=1$ point of the general scaling law, and it holds for any $\nu$.** Note: with $c=0$ the small/large distinction collapses (pure L1 everywhere), so there is no regime change for the gap experiments; the regime change is a *prediction* for a c>0 run (§9).
+With $c=0$ the small/large distinction collapses (pure L1 everywhere), so there is no regime change for the gap experiments; the regime change is a *prediction* for a c>0 run (§9).
 
-**Zero-parameter validation:** $a_{\rm pred} = g^{-1} = 1/1.3 = 0.769 \approx$ observed $a^\star \approx 0.77$ (cross-K, all four stages). The theorem predicts the scalar with no fit parameter.
+### Validation status (honest, post-review)
+
+**What is actually validated.** The parameter-free prediction $a_{\rm pred}=g^{-1}=1/1.3=0.769$ matches the observed raw-gradient scalar $a^\star=\langle G_g,G_1\rangle/\|G_1\|^2\approx 0.77$ to mean relative error 0.18% across four training stages. Crucially, $a^\star$ is a **raw-gradient** quantity (the per-step network gradients `grad_history_1/g.npy`), so this *is* a direct test of the theory's gradient-scaling prediction — not an optimizer-update proxy.
+
+**What this does and does not establish.** For $p=1$ the exponent $\kappa=-1$ is **independent of $\nu$** (since $\nu(p-1)=0$). So the $1/g$ match is a real but **weak** test: it confirms (i) the gap-to-gap ratio is the weight ratio $1/g$, and (ii) Jacobian drift is small (a generic smoothness property). It does **not** constrain $\nu$, $v$, or $J_0$ — the theory's residual-expansion machinery (Proposition 1) is idle in the $p=1$ configuration. The genuinely $\nu$-dependent content ($\kappa=\nu(p-1)-\alpha$ with $p\neq 1$) lives in the **untested** Pseudo-Huber ($c>0$) and factorial regimes. The $1/g$ law is the $p=1,\alpha=1$ point of the general scaling law, valid for any $\nu$; that this holds is consistent with the theorem but not a strong confirmation of its non-trivial content.
+
+**Stage-invariance is a schedule-construction fact, not a discovery.** global_sigmoid makes $\Delta_g=g\Delta_1$ exact, so $a_{\rm pred}=g^\kappa$ is $t$-independent by construction; the observed flatness of $a^\star$ across $K$ confirms the schedule is well-implemented, not a novel theoretical prediction.
+
+**Gradient scaling vs optimizer-update scaling.** The theorem predicts **raw-gradient** scaling $G_B\approx aG_A$. The cross-K/balanced-β experiments measured **two distinct objects**: (a) $a^\star$ — raw-gradient, directly tests the theory (above); (b) the $R^2$/`R_opt` explanatory power — the *optimizer-update* ratio $h=U_g/U_1$. Object (b) is governed by RAdam moment memory, **not** by this theorem; the §9 caveat means a mismatch in (b) cannot falsify the gradient theory. The two must not be conflated.
 
 ---
 
@@ -238,15 +248,15 @@ Adam/RAdam transforms the gradient through $m_t, v_t$: a scalar gradient relatio
 
 | # | Prediction | Observable | Expected |
 |---|-----------|-----------|----------|
-| 1 | gap scaling | $a^\star / a_{\rm pred}$ | $\approx 1$ (ECT: $a_{\rm pred}=0.769$, $a^\star\approx0.77$) |
+| 1 | gap scaling | $a^\star / a_{\rm pred}$ | $\approx 1$ — **weakly tested** (raw-gradient; $\nu$ drops out at $p=1$, so only checks weight ratio + Jacobian smoothness) |
 | 2 | denominator scalarity | $\cos(G_D, G_A)$ | high (near-pure rescale) |
 | 3 | target directional effect | $\cos(G_C, G_A)$ | $< \cos(G_D, G_A)$ |
 | 4 | emergent batch scalarity | sample vs batch residual | batch $\epsilon_{\rm ns}$ < sample $\epsilon_{\rm ns}$ |
 | 5 | factorization coupling | $\|G_{\rm int}\| / \|G_B\|$ | small iff factorization $g\approx s(\Delta)h(r)$ holds; large $G_{\rm int}$ ⇒ factorization breakdown |
-| 6 | stage invariance | $a^\star$ across $K$ | flat (global_sigmoid ⇒ $g^\kappa$ is $t$-independent) |
-| 7 | regime change (if $c>0$) | $a^\star$ small vs large residual | different $\kappa$ |
+| 6 | stage invariance | $a^\star$ across $K$ | flat — **schedule-construction fact** (global_sigmoid ⇒ $g^\kappa$ is $t$-independent), not a novel prediction |
+| 7 | regime change (if $c>0$) | $a^\star$ small vs large residual | different $\kappa$ (the $\nu$-dependent content lives here) |
 
-Predictions 1 and 6 are already supported by the cross-K experiment (#58): $a^\star\approx0.77$ across all four stages, matching $a_{\rm pred}=g^{-1}$. Predictions 2–5 require the four-cell factorial (Role D / w10800). Prediction 7 requires a $c>0$ run (not yet done).
+Prediction 1 is weakly tested by the cross-K experiment (#58): $a^\star\approx0.77$ matches $a_{\rm pred}=g^{-1}$ (0.18% error), but because $\nu$ drops out at $p=1$ this is a weak test (weight ratio + Jacobian smoothness), not a confirmation of the residual-expansion content. Prediction 6 confirms the schedule is well-implemented. The genuinely $\nu$-dependent, theory-specific predictions are 2–5 (factorial, untested) and 7 ($c>0$ regime change, untested) — these are what would falsify the non-trivial content.
 
 ---
 
@@ -254,13 +264,14 @@ Predictions 1 and 6 are already supported by the cross-K experiment (#58): $a^\s
 
 **CAN say:**
 - "Under a homogeneous outer loss of degree $p$ and power-law weighting $\delta^{-\alpha}$, the per-sample gradient scales as $g_\delta \sim \delta^{\nu(p-1)-\alpha}$ to leading order; the gap-to-gap scalar $a_{\rm pred} = (\delta_2/\delta_1)^\kappa$ is parameter-free."
-- "ECT's $1/g$ law is the $p=1,\alpha=1$ point of this theorem; it predicts $a_{\rm pred}=g^{-1}=0.769$, matching the observed $a^\star\approx0.77$ with no fit parameter, across training stages."
-- "Approximate scalarity can emerge at the batch level through cancellation of heterogeneous per-sample scalars."
+- "ECT's $1/g$ law is the $p=1,\alpha=1$ point of this theorem. The raw-gradient scalar $a^\star\approx0.77$ matches $a_{\rm pred}=g^{-1}=0.769$ (0.18%), which is a **direct** test of the gradient-scaling prediction — but a **weak** one, because at $p=1$ the exponent is independent of $\nu$, so it confirms the weight ratio and Jacobian smoothness, not the residual-expansion content."
+- "Approximate scalarity may emerge at the batch level through cancellation of heterogeneous per-sample scalars (Proposition 3 — a high-dimensional concentration heuristic, not a theorem)."
 
 **CANNOT say:**
+- "The $0.18\%$ match validates the residual-expansion theorem / its non-trivial content" — at $p=1$ the $\nu$-dependent machinery is idle; the genuinely theory-specific predictions (2–5, 7) are untested.
 - "The gradient scaling theorem implies identical optimization trajectories" — the optimizer breaks scalarity (§9 caveat).
 - "Scale-drift dynamics don't matter" — the cross-K/predictor-comparison experiments had a near-constant $a^\star$ (std 1–2%), so they *cannot distinguish* scalar-mean from per-step-history; this theorem makes no claim about time-varying-scale regimes.
-- "The theorem is proven for ECT" — it is a leading-order prediction validated by one parameter-free match; the non-scalar residual $R$ and failure regimes are falsifiable, not established.
+- "The theorem is proven for ECT" — it is a leading-order prediction weakly consistent with one raw-gradient match; the non-scalar residual $R$, the optimizer-update gap, and the failure regimes are falsifiable, not established.
 - "Gradient scaling causes the FID improvement" — **no FID-causality claim.** This is a characterization of the gradient geometry, not a causal identification of ECT's quality outcomes.
 
 ---
