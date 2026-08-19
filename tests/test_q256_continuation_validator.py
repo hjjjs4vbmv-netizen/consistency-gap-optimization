@@ -327,8 +327,8 @@ class Q256ContinuationValidatorTests(unittest.TestCase):
     def test_legacy_radam_group_may_omit_safe_runtime_flags(self) -> None:
         state = torch.load(self.state_path, map_location="cpu", weights_only=False)
         for group in state["optimizer_state"]["param_groups"]:
-            group.pop("maximize")
-            group.pop("capturable")
+            group.pop("maximize", None)
+            group.pop("capturable", None)
         torch.save(state, self.state_path)
         code, output = self._run()
         self.assertEqual(code, 0)
