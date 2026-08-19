@@ -612,6 +612,7 @@ class TargetWeightLauncherTest(unittest.TestCase):
             )
             apptainer.chmod(0o755)
             environment = dict(os.environ)
+            environment.pop(launcher.IN_SANDBOX_ENV, None)
             environment.update(
                 {
                     "PATH": f"{root}:{environment['PATH']}",
