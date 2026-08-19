@@ -589,6 +589,7 @@ class TargetWeightLauncherTest(unittest.TestCase):
             self.assertEqual(command, [launcher.sys.executable])
             self.assertEqual(record["invocation_mode"], "already_inside_runtime_sandbox")
             self.assertTrue(record["already_inside_runtime_sandbox"])
+            self.assertEqual(record["bind_specs"], list(launcher.RUNTIME_BIND_SPECS))
             with mock.patch.dict(
                 os.environ, {launcher.IN_SANDBOX_ENV: "1"}, clear=False
             ), mock.patch.object(launcher.sys, "version_info", (3, 9, 18)):
@@ -634,10 +635,14 @@ class TargetWeightLauncherTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             argv = capture.read_text(encoding="utf-8").splitlines()
             self.assertEqual(
-                argv[:6],
+                argv[:10],
                 [
                     "exec",
                     "--nv",
+                    "--bind",
+                    "/data/raw:/data/raw",
+                    "--bind",
+                    "/data/temp:/data/temp",
                     str(sandbox),
                     "env",
                     f"{launcher.IN_SANDBOX_ENV}=1",
@@ -645,9 +650,9 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 ],
             )
             self.assertEqual(
-                argv[6], str(launcher.REPO_ROOT / "scripts" / "run_q256_target_weight_matrix.py")
+                argv[10], str(launcher.REPO_ROOT / "scripts" / "run_q256_target_weight_matrix.py")
             )
-            self.assertEqual(argv[7:], ["arm", "--phase", "smoke"])
+            self.assertEqual(argv[11:], ["arm", "--phase", "smoke"])
 
     def test_planned_pause_is_deeply_checked_and_immutably_bound(self):
         with tempfile.TemporaryDirectory() as tmp:

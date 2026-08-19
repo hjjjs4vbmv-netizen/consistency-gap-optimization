@@ -72,6 +72,10 @@ DEFAULT_RUNS_ROOT = Path(
     "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819"
 )
 DEFAULT_RUNTIME_SANDBOX = Path("/data/temp/ect001-pytorch2401-sandbox")
+RUNTIME_BIND_SPECS = (
+    "/data/raw:/data/raw",
+    "/data/temp:/data/temp",
+)
 DEFAULT_TRAINING_PYTHON = "python"
 EXPECTED_PYTHON_VERSION = "3.10.12"
 EXPECTED_TORCH_VERSION = "2.2.0a0+81ea7a4"
@@ -1293,6 +1297,7 @@ def runtime_prefix(runtime_sandbox: Path, python_bin: str) -> tuple[list[str], d
             fail("already-inside launcher sys.executable is not a regular file")
         return [sys.executable], {
             "sandbox_path": str(sandbox),
+            "bind_specs": list(RUNTIME_BIND_SPECS),
             "invocation_mode": "already_inside_runtime_sandbox",
             "already_inside_runtime_sandbox": True,
             "outer_apptainer_executable": None,
@@ -1305,8 +1310,13 @@ def runtime_prefix(runtime_sandbox: Path, python_bin: str) -> tuple[list[str], d
         fail("apptainer executable not found on the host")
     apptainer = Path(apptainer_raw).resolve(strict=True)
     version = checked_output([str(apptainer), "--version"])
-    return [str(apptainer), "exec", "--nv", str(sandbox), python_bin], {
+    command = [str(apptainer), "exec", "--nv"]
+    for bind_spec in RUNTIME_BIND_SPECS:
+        command.extend(("--bind", bind_spec))
+    command.extend((str(sandbox), python_bin))
+    return command, {
         "sandbox_path": str(sandbox),
+        "bind_specs": list(RUNTIME_BIND_SPECS),
         "invocation_mode": "host_apptainer_exec",
         "already_inside_runtime_sandbox": False,
         "apptainer_executable": str(apptainer),
@@ -1990,6 +2000,7 @@ def validate_resume(
         "runtime_sandbox.already_inside_runtime_sandbox": runtime_sandbox[
             "already_inside_runtime_sandbox"
         ],
+        "runtime_sandbox.bind_specs": runtime_sandbox["bind_specs"],
         "runtime.software_sha256": runtime["software_sha256"],
         "runtime.already_inside_runtime_sandbox": runtime[
             "already_inside_runtime_sandbox"

@@ -33,6 +33,9 @@ command -v apptainer >/dev/null 2>&1 || {
     exit 1
 }
 
-exec apptainer exec --nv "${RUNTIME_SANDBOX}" \
+exec apptainer exec --nv \
+    --bind /data/raw:/data/raw \
+    --bind /data/temp:/data/temp \
+    "${RUNTIME_SANDBOX}" \
     env ECT_Q256_LAUNCHER_IN_SANDBOX=1 \
     python "${ROOT_DIR}/scripts/run_q256_target_weight_matrix.py" arm "$@"
