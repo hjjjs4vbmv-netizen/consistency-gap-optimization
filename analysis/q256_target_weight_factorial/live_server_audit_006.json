@@ -1,0 +1,25 @@
+{
+  "schema": "ect.q256.target-weight-factorial-live-server-audit/v1",
+  "audit_id": "live_server_audit_006",
+  "observed_utc": "2026-08-19T09:05:32Z",
+  "status": "HOLD_RESOLVED_IN_SOURCE_PENDING_REGATE",
+  "event": "nested_launcher_python_path_identity_mismatch",
+  "source_commit_attempted": "cfc667cf6a431e7be0fda41f3131a31eab7a5603",
+  "matrix_id": "smoke-uninterrupted-cfc667c",
+  "matrix_status": "STOPPED_FOR_AUDIT",
+  "completed_cells": [],
+  "failed_before_training": [
+    "seed3-armA"
+  ],
+  "not_started": [
+    "seed3-armB",
+    "seed3-armC",
+    "seed3-armD"
+  ],
+  "gpu_compute_processes_after_stop": 0,
+  "arm_run_directories_created": 0,
+  "root_cause": "The outer sandbox used canonical /usr/bin/python, but the inherited inner shell bootstrap selected /usr/bin/python3. The files were content-identical, yet their recorded paths and therefore runtime software identities differed.",
+  "fail_closed_behavior": "The arm launcher rejected the authorization before creating an arm run directory or starting ct_train.py.",
+  "corrective_action": "When ECT_Q256_LAUNCHER_IN_SANDBOX=1, require and exec canonical python explicitly; retain python3 only as the old-host bootstrap. Add a regression test, recommit, and regenerate Role E and authorization evidence.",
+  "reuse_policy": "The stopped matrix and its smoke authorization are audit evidence only and cannot authorize a later source commit."
+}

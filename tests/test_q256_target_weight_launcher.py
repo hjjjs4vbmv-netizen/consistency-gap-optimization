@@ -654,6 +654,50 @@ class TargetWeightLauncherTest(unittest.TestCase):
             )
             self.assertEqual(argv[11:], ["arm", "--phase", "smoke"])
 
+    def test_arm_shell_uses_canonical_python_when_already_inside_sandbox(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            capture = root / "python-argv.txt"
+            canonical_python = root / "python"
+            canonical_python.write_text(
+                "#!/bin/sh\n"
+                "if [ \"${1-}\" = '-c' ]; then exit 0; fi\n"
+                "printf '%s\\n' \"$@\" > \"$CAPTURE_PATH\"\n",
+                encoding="utf-8",
+            )
+            canonical_python.chmod(0o755)
+            wrong_python = root / "python3"
+            wrong_python.write_text("#!/bin/sh\nexit 97\n", encoding="utf-8")
+            wrong_python.chmod(0o755)
+            environment = dict(os.environ)
+            environment.update(
+                {
+                    "PATH": f"{root}:{environment['PATH']}",
+                    launcher.IN_SANDBOX_ENV: "1",
+                    "ECT_BOOTSTRAP_PYTHON": str(wrong_python),
+                    "CAPTURE_PATH": str(capture),
+                }
+            )
+            result = subprocess.run(
+                [
+                    "/bin/bash",
+                    str(launcher.ARM_SCRIPT),
+                    "--phase",
+                    "smoke",
+                ],
+                env=environment,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            argv = capture.read_text(encoding="utf-8").splitlines()
+            self.assertEqual(
+                argv[0],
+                str(launcher.REPO_ROOT / "scripts" / "run_q256_target_weight_matrix.py"),
+            )
+            self.assertEqual(argv[1:], ["arm", "--phase", "smoke"])
+
     def test_planned_pause_is_deeply_checked_and_immutably_bound(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = Path(tmp)
