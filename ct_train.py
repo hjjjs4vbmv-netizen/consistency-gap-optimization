@@ -6,6 +6,10 @@ import torch
 import dnnlib
 from torch_utils import distributed as dist
 from training import ct_training_loop as training_loop
+from training.loss import (
+    TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+    resolve_target_weight_factorial,
+)
 
 import warnings
 warnings.filterwarnings('ignore', 'Grad strides do not match bucket view strides') # False warning printed by PyTorch 1.12.
@@ -50,7 +54,7 @@ def normalize_schedule_name(_ctx, _param, value):
 
 def make_loss_kwargs(opts):
     """Build the persisted loss/schedule config without renaming legacy keys."""
-    return dnnlib.EasyDict(
+    kwargs = dnnlib.EasyDict(
         P_mean=opts.mean,
         P_std=opts.std,
         q=opts.q,
@@ -73,6 +77,22 @@ def make_loss_kwargs(opts):
         local_tbin_min_gap=opts.local_tbin_min_gap,
         global_gap_scale=opts.global_gap_scale,
     )
+    factorial = resolve_target_weight_factorial(
+        getattr(opts, 'factorial_protocol', 'none'),
+        getattr(opts, 'target_gap_scale', None),
+        getattr(opts, 'denominator_gap_scale', None),
+        adj=opts.mapping,
+        global_gap_scale=opts.global_gap_scale,
+        q=opts.q,
+        c=opts.c,
+    )
+    if factorial['enabled']:
+        kwargs.update(
+            factorial_protocol=factorial['protocol'],
+            target_gap_scale=factorial['target_gap_scale'],
+            denominator_gap_scale=factorial['denominator_gap_scale'],
+        )
+    return kwargs
 
 #----------------------------------------------------------------------------
 
@@ -113,6 +133,27 @@ def make_loss_kwargs(opts):
               callback=normalize_schedule_name, default='sigmoid', show_default=True)
 @click.option('--global-gap-scale', help='Fixed multiplier on the official or local sigmoid gap', metavar='FLOAT',
               type=click.FloatRange(min=0, min_open=True), default=1.0, show_default=True)
+@click.option(
+    '--factorial-protocol',
+    type=click.Choice(['none', TARGET_WEIGHT_FACTORIAL_PROTOCOL]),
+    default='none',
+    show_default=True,
+    help='Enable the frozen q256 target-geometry x denominator protocol',
+)
+@click.option(
+    '--target-gap-scale',
+    type=float,
+    default=None,
+    metavar='FLOAT',
+    help='Explicit realized target gap scale for the factorial protocol',
+)
+@click.option(
+    '--denominator-gap-scale',
+    type=float,
+    default=None,
+    metavar='FLOAT',
+    help='Explicit realized denominator gap scale for the factorial protocol',
+)
 @click.option('--adaptive-loss-ema-beta', help='EMA beta for adaptive_v1 loss signal', metavar='FLOAT',
               type=click.FloatRange(min=0, max=1, max_open=True), default=0.9, show_default=True)
 @click.option('--adaptive-update-kimg', help='Aggregate adaptive_v1 loss signal every KIMG, independent of ticks', metavar='KIMG',
@@ -171,6 +212,7 @@ def make_loss_kwargs(opts):
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
 @click.option('--resume-tick',   help='Number of tick from previous training state', metavar='INT', type=int)
+@click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
 
 # Evaluation
@@ -247,7 +289,8 @@ def main(**kwargs):
              snapshot_ticks=None if opts.snap == 0 else opts.snap,
              state_dump_ticks=None if opts.dump == 0 else opts.dump,
              ckpt_ticks=opts.ckpt,
-             double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg)
+             double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
+             stop_after_attempts=opts.stop_after_attempts)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
 
     # Random seed.
@@ -268,7 +311,17 @@ def main(**kwargs):
         match = re.fullmatch(r'training-state-(\d+|latest).pt', os.path.basename(opts.resume))
         if not match or not os.path.isfile(opts.resume):
             raise click.ClickException('--resume must point to training-state-*.pt from a previous training run')
-        c.resume_pkl = os.path.join(os.path.dirname(opts.resume), f'network-snapshot-{match.group(1)}.pkl')
+        if opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+            # The versioned factorial training-state is self-contained (net +
+            # EMA + optimizer + scaler + RNG + sampler). Depending on a
+            # separately replaced `latest` snapshot creates a crash window in
+            # which the two files may represent different attempts.
+            c.resume_pkl = None
+        else:
+            c.resume_pkl = os.path.join(
+                os.path.dirname(opts.resume),
+                f'network-snapshot-{match.group(1)}.pkl',
+            )
         # Prefer explicit --resume-tick; otherwise parse numeric tick from the filename.
         # training-state-latest.pt cannot be converted with int(); the training loop
         # restores the authoritative cur_tick / cur_nimg from the serialized state.
@@ -326,8 +379,26 @@ def main(**kwargs):
     dist.print0('Creating output directory...')
     if dist.get_rank() == 0:
         os.makedirs(c.run_dir, exist_ok=True)
-        with open(os.path.join(c.run_dir, 'training_options.json'), 'wt') as f:
-            json.dump(c, f, indent=2)
+        options_path = os.path.join(c.run_dir, 'training_options.json')
+        strict_factorial_resume = (
+            opts.resume is not None
+            and opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL
+        )
+        if strict_factorial_resume:
+            if not os.path.isfile(options_path):
+                raise click.ClickException(
+                    'strict factorial resume requires the immutable original '
+                    'training_options.json in the same run directory'
+                )
+        else:
+            mode = 'xt' if (
+                opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL
+            ) else 'wt'
+            with open(options_path, mode) as f:
+                json.dump(c, f, indent=2)
+                f.write('\n')
+                f.flush()
+                os.fsync(f.fileno())
         dnnlib.util.Logger(file_name=os.path.join(c.run_dir, 'log.txt'), file_mode='a', should_flush=True)
 
     # Train.

@@ -108,7 +108,10 @@ def profiled_function(fn):
 # indefinitely, shuffling items as it goes.
 
 class InfiniteSampler(torch.utils.data.Sampler):
-    def __init__(self, dataset, rank=0, num_replicas=1, shuffle=True, seed=0, window_size=0.5):
+    _STATE_SCHEMA = 'ect.infinite-sampler/v1'
+
+    def __init__(self, dataset, rank=0, num_replicas=1, shuffle=True, seed=0,
+                 window_size=0.5, start_sample=0):
         assert len(dataset) > 0
         assert num_replicas > 0
         assert 0 <= rank < num_replicas
@@ -120,6 +123,63 @@ class InfiniteSampler(torch.utils.data.Sampler):
         self.shuffle = shuffle
         self.seed = seed
         self.window_size = window_size
+        self.start_sample = self._validate_start_sample(start_sample)
+
+    @staticmethod
+    def _validate_start_sample(value):
+        try:
+            converted = int(value)
+        except (TypeError, ValueError, OverflowError) as error:
+            raise ValueError(
+                f'InfiniteSampler start_sample must be a non-negative integer, got {value}'
+            ) from error
+        if isinstance(value, bool) or converted != value or converted < 0:
+            raise ValueError(
+                f'InfiniteSampler start_sample must be a non-negative integer, got {value}'
+            )
+        return converted
+
+    def state_dict(self, consumed_samples=None):
+        """Describe a logical replay point, independent of DataLoader prefetch.
+
+        ``consumed_samples`` is supplied by the training loop from committed
+        progress. Tracking iterator requests directly would checkpoint
+        prefetched, not trained-on, examples when DataLoader workers are used.
+        """
+        if consumed_samples is None:
+            consumed_samples = self.start_sample
+        consumed_samples = self._validate_start_sample(consumed_samples)
+        return {
+            'schema': self._STATE_SCHEMA,
+            'dataset_size': len(self.dataset),
+            'rank': self.rank,
+            'num_replicas': self.num_replicas,
+            'shuffle': self.shuffle,
+            'seed': self.seed,
+            'window_size': self.window_size,
+            'consumed_samples': consumed_samples,
+        }
+
+    def load_state_dict(self, state):
+        if not isinstance(state, dict) or state.get('schema') != self._STATE_SCHEMA:
+            raise ValueError('unsupported or missing InfiniteSampler state schema')
+        expected = {
+            'dataset_size': len(self.dataset),
+            'rank': self.rank,
+            'num_replicas': self.num_replicas,
+            'shuffle': self.shuffle,
+            'seed': self.seed,
+            'window_size': self.window_size,
+        }
+        for key, value in expected.items():
+            if state.get(key) != value:
+                raise ValueError(
+                    f'InfiniteSampler state {key} mismatch: '
+                    f'checkpoint={state.get(key)!r}, current={value!r}'
+                )
+        self.start_sample = self._validate_start_sample(
+            state.get('consumed_samples')
+        )
 
     def __iter__(self):
         order = np.arange(len(self.dataset))
@@ -131,10 +191,14 @@ class InfiniteSampler(torch.utils.data.Sampler):
             window = int(np.rint(order.size * self.window_size))
 
         idx = 0
+        skipped = 0
         while True:
             i = idx % order.size
             if idx % self.num_replicas == self.rank:
-                yield order[i]
+                if skipped < self.start_sample:
+                    skipped += 1
+                else:
+                    yield order[i]
             if window >= 2:
                 j = (i - rnd.randint(window)) % order.size
                 order[i], order[j] = order[j], order[i]
