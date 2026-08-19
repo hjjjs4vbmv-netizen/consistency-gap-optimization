@@ -1,0 +1,14 @@
+{
+  "schema": "ect.q256.engineering-attempt/v1",
+  "attempt": "heldout-attempt-001",
+  "execution_commit": "250bd759a561718a502ab9577c140dd609c27031",
+  "finished_utc": "2026-08-19T04:24:15Z",
+  "status": "ENGINEERING_FAILURE",
+  "formal_training_authorized": false,
+  "error": "The inline tmux 1.8 command returned exit status 1 before creating logs or starting a preflight process.",
+  "root_cause": "the long inline tmux command and post-launch option sequence was not a reliable launcher on host tmux 1.8",
+  "correction": "use a separately SHA256-bound launcher script and pass only /bin/bash plus its absolute path to tmux",
+  "scientific_gate_evaluated": false,
+  "continuation_training_started": false,
+  "process_exit_code": 1
+}

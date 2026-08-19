@@ -1,0 +1,27 @@
+{
+  "schema": "ect.q256.g110-moment-transport-source-postcheck/v1",
+  "verified_utc": "2026-08-19T05:00:27Z",
+  "execution_commit": "250bd759a561718a502ab9577c140dd609c27031",
+  "remote_worktree_clean": true,
+  "continuation_training_process_found": false,
+  "formal_run_root_created": false,
+  "preflight_gpu": {
+    "physical_index": 1,
+    "uuid_at_postcheck": "GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10",
+    "model": "NVIDIA A100 80GB PCIe"
+  },
+  "sources": {
+    "3": {
+      "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "snapshot_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "4": {
+      "training_state_sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "snapshot_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9"
+    },
+    "5": {
+      "training_state_sha256": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "snapshot_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "ect.q256.engineering-attempt/v1",
+  "attempt": "compatibility-attempt-001",
+  "execution_commit": "250bd759a561718a502ab9577c140dd609c27031",
+  "finished_utc": "2026-08-19T04:16:23Z",
+  "status": "ENGINEERING_FAILURE",
+  "formal_training_authorized": false,
+  "error": "The dedicated output directory could not be created because its preflight parent did not yet exist; the shell lacked -e and continued into hashing, so the process was interrupted before any compatibility report could be written.",
+  "root_cause": "launcher used single-level mkdir before creating the preflight parent",
+  "correction": "create and verify the dedicated parent, use mkdir -p only for that explicit parent, then run a new attempt under set -eu",
+  "scientific_gate_evaluated": false,
+  "continuation_training_started": false,
+  "process_exit_code": 255
+}

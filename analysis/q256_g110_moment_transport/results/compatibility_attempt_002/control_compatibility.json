@@ -1,0 +1,4781 @@
+{
+  "artifact_errors": [],
+  "blockers": [
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": "9f8736ecbf0d9265bd2603f1998b68d47edb7e4dc8cdf9b1f98b08c5cb13263a",
+      "field": "protocol_config_sha256",
+      "observed": "f4f8ff920aeb9e9c752b889b43e4975f6f7db7200535c6fde27864eb9c520459",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "field": "full_state_sha256",
+      "observed": "f3d77d3bd995ed44df074fc0e6e903389b9a46e85cde2c9a0d8db8cf108e1171",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "field": "checkpoint_sha256",
+      "observed": "24875430eea4679a416ae921c3e9ae16142f6416d2a0edf970764384ef964bed",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "a79efe8d212cf25dcf45efcca3cac64b93a1554ad937967f340b700cf11b0bc3",
+      "field": "model_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "db17e98df7e66eb1fb14b10cd594662980add85886fe7c7a63dfdb8e171de6b7",
+      "field": "ema_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "40f3de14381b8fe91fbb5bc714a06dac121467f036e75c51d33a44b16acb785d",
+      "field": "optimizer_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "0f776340d8078b8de6b93b198c43176086f1052b07c8c99e9f615a8860d6114d",
+      "field": "gradscaler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "b7ee74c1957073c0eff2dc3d48a00ae835f031eabcc8637b885fbe1117ffe306",
+      "field": "config_sha256",
+      "observed": "185034c9784437b7f1b5501b4add24d0399667a55b9b5ac8f6b2551987a4e990",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "8aaf409304acf5742aea959ff5c5bc2e152976f76896be8a7b6ec0f26ee2dad7",
+      "field": "config_canonical_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d126eaadd1b6bb83b2cdff95ed31da2f487e939f67480ee4da8468b506292936",
+      "field": "protocol_config_sha256",
+      "observed": "3886cbc80c4ce58f4ac8710e2db0971d863c2e463eaaf485dfb3a1db3e3d63f0",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": "9f8736ecbf0d9265bd2603f1998b68d47edb7e4dc8cdf9b1f98b08c5cb13263a",
+      "field": "protocol_config_sha256",
+      "observed": "f4f8ff920aeb9e9c752b889b43e4975f6f7db7200535c6fde27864eb9c520459",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "field": "full_state_sha256",
+      "observed": "dee1446bce01c7ad1cd7f867bc5bf4c21d706f74ad64ad307dbf02f01c8a8310",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "field": "checkpoint_sha256",
+      "observed": "62a6122a7be523aeb12875d96e96312e9c90efde9eafb75d730c75ceea0e8862",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "565741ca34f629d69b2065e273ca4d7915d597e4d50f0a21f4d52d42c19eb3bb",
+      "field": "model_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "7c7c501028d2eea8753c58e6be3c9105e48fe01544cb506eab07bb44fe34c50d",
+      "field": "ema_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "bbfbcb52289f82fb05f31eec007d08496453ac9261f8fe86133e080c660f28b0",
+      "field": "optimizer_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "9f7bf32d72fb59e293848b5063fede2985edb0cfc7f5cefc03dcf15f3292834c",
+      "field": "gradscaler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "993d58a8f61b5b676bc7c2c1003f4c30cf2a5a5016f9a1977834bc751c8bb66c",
+      "field": "config_sha256",
+      "observed": "3d0846d17da391292a22de914498a9abee9b06bc23fb2a220b5db6e4ae61e076",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "dd22ee3f810e54e359bcba0d762de30904c1234ecd8eb9783169937b1d19da28",
+      "field": "config_canonical_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d126eaadd1b6bb83b2cdff95ed31da2f487e939f67480ee4da8468b506292936",
+      "field": "protocol_config_sha256",
+      "observed": "3886cbc80c4ce58f4ac8710e2db0971d863c2e463eaaf485dfb3a1db3e3d63f0",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": "9f8736ecbf0d9265bd2603f1998b68d47edb7e4dc8cdf9b1f98b08c5cb13263a",
+      "field": "protocol_config_sha256",
+      "observed": "f4f8ff920aeb9e9c752b889b43e4975f6f7db7200535c6fde27864eb9c520459",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "field": "full_state_sha256",
+      "observed": "421fcb35f52b6a0194c0cf1a748410a3456258a4848cf255a781f63e8087c0ed",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+      "field": "checkpoint_sha256",
+      "observed": "491dc887990e6d9f6fde70b5d12775aaf4bfc6155b731682926b02061c253e9b",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "fd6e83bfed9d2444b9af31b32cd36001969ef6f99e59746c9b7091915208f5f9",
+      "field": "model_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "1a82499be7b85715879e2212a895feba9cb039c8177e0f42f9a5debadfa21473",
+      "field": "ema_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "799ef3a7318ec719d847bb6e6bb168d74ee5a1f8b40240a9b488b4ec921b7abc",
+      "field": "optimizer_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "c0cd9a95db42e60952818e5de8866045fad708625d90d342211bd9909cf76eff",
+      "field": "gradscaler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "e9eddfa51bec51e7c3760610c916ce26673fe35372703d57f7532d32b2700c21",
+      "field": "config_sha256",
+      "observed": "b39b1d3c2ccf948b221a521a34b0ae442dfbf37b9d01eb97f27ce9cb41128442",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d8b3166f3fa7b705c7d8b201601137c765231dd14b39b5aa677778ecc17724e6",
+      "field": "config_canonical_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d126eaadd1b6bb83b2cdff95ed31da2f487e939f67480ee4da8468b506292936",
+      "field": "protocol_config_sha256",
+      "observed": "3886cbc80c4ce58f4ac8710e2db0971d863c2e463eaaf485dfb3a1db3e3d63f0",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 5,
+      "status": "mismatch"
+    }
+  ],
+  "missing_nonserialized_fields": [
+    {
+      "arm": "T",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "T",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "T",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "T",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "T",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "T",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3
+    },
+    {
+      "arm": "T",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3
+    },
+    {
+      "arm": "F",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "F",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "F",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "F",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "F",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "F",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3
+    },
+    {
+      "arm": "F",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "model_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "ema_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "optimizer_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "gradscaler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "config_canonical_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3
+    },
+    {
+      "arm": "G",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3
+    },
+    {
+      "arm": "T",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "T",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "T",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "T",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "T",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "T",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4
+    },
+    {
+      "arm": "T",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4
+    },
+    {
+      "arm": "F",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "F",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "F",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "F",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "F",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "F",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4
+    },
+    {
+      "arm": "F",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "model_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "ema_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "optimizer_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "gradscaler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "config_canonical_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4
+    },
+    {
+      "arm": "G",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4
+    },
+    {
+      "arm": "T",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "T",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "T",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "T",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "T",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "T",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5
+    },
+    {
+      "arm": "T",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5
+    },
+    {
+      "arm": "F",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "F",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "F",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "F",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "F",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "F",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5
+    },
+    {
+      "arm": "F",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "model_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "ema_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "optimizer_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "gradscaler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "rng.python.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "rng.numpy.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "rng.torch_cpu.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "rng.torch_cuda.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "sampler.sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "config_canonical_sha256",
+      "reason": "missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5
+    },
+    {
+      "arm": "G",
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "reason": "missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5
+    }
+  ],
+  "reusable_controls": false,
+  "rows": [
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": "global_sigmoid",
+      "field": "schedule",
+      "observed": "global_sigmoid",
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 1.1,
+      "field": "gap_scale",
+      "observed": 1.1,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "field": "full_state_sha256",
+      "observed": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "field": "checkpoint_sha256",
+      "observed": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "a79efe8d212cf25dcf45efcca3cac64b93a1554ad937967f340b700cf11b0bc3",
+      "field": "model_sha256",
+      "observed": "a79efe8d212cf25dcf45efcca3cac64b93a1554ad937967f340b700cf11b0bc3",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "db17e98df7e66eb1fb14b10cd594662980add85886fe7c7a63dfdb8e171de6b7",
+      "field": "ema_sha256",
+      "observed": "db17e98df7e66eb1fb14b10cd594662980add85886fe7c7a63dfdb8e171de6b7",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "40f3de14381b8fe91fbb5bc714a06dac121467f036e75c51d33a44b16acb785d",
+      "field": "optimizer_sha256",
+      "observed": "40f3de14381b8fe91fbb5bc714a06dac121467f036e75c51d33a44b16acb785d",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1990.0,
+      "field": "optimizer_step",
+      "observed": 1990.0,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "gradscaler.present",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "0f776340d8078b8de6b93b198c43176086f1052b07c8c99e9f615a8860d6114d",
+      "field": "gradscaler.sha256",
+      "observed": "0f776340d8078b8de6b93b198c43176086f1052b07c8c99e9f615a8860d6114d",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.python.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.numpy.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cpu.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cuda.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "sampler.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "b7ee74c1957073c0eff2dc3d48a00ae835f031eabcc8637b885fbe1117ffe306",
+      "field": "config_sha256",
+      "observed": "b7ee74c1957073c0eff2dc3d48a00ae835f031eabcc8637b885fbe1117ffe306",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "8aaf409304acf5742aea959ff5c5bc2e152976f76896be8a7b6ec0f26ee2dad7",
+      "field": "config_canonical_sha256",
+      "observed": "8aaf409304acf5742aea959ff5c5bc2e152976f76896be8a7b6ec0f26ee2dad7",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256.0,
+      "field": "start_kimg",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 128,
+      "field": "batch.batch_size",
+      "observed": 128,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 16,
+      "field": "batch.batch_gpu",
+      "observed": 16,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "field": "augmentation",
+      "observed": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.use_fp16",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.enable_amp",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "precision.enable_tf32",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "precision.loss_scaling",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 10.0,
+      "field": "checkpoint_cadence.kimg_per_tick",
+      "observed": 10.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 10,
+      "field": "checkpoint_cadence.ckpt_ticks",
+      "observed": 10,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 26,
+      "field": "checkpoint_cadence.sample_ticks",
+      "observed": 26,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 50,
+      "field": "checkpoint_cadence.eval_ticks",
+      "observed": 50,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "field": "data.byte_sha256",
+      "observed": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "field": "data.semantic_sha256",
+      "observed": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "field": "execution_core_sha256",
+      "observed": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "sigmoid",
+      "field": "schedule",
+      "observed": "sigmoid",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "gap_scale",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "field": "execution_commit",
+      "observed": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": "9f8736ecbf0d9265bd2603f1998b68d47edb7e4dc8cdf9b1f98b08c5cb13263a",
+      "field": "protocol_config_sha256",
+      "observed": "f4f8ff920aeb9e9c752b889b43e4975f6f7db7200535c6fde27864eb9c520459",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": null,
+      "field": "config_sha256",
+      "observed": "d422c01681940f9b8d95f68ed897e2a8135dcd81910410659a1eb2ddd1770196",
+      "reason": "raw_config_hash_evidence",
+      "scope": "run",
+      "seed": 3,
+      "status": "reported"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "field": "full_state_sha256",
+      "observed": "f3d77d3bd995ed44df074fc0e6e903389b9a46e85cde2c9a0d8db8cf108e1171",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "field": "checkpoint_sha256",
+      "observed": "24875430eea4679a416ae921c3e9ae16142f6416d2a0edf970764384ef964bed",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "a79efe8d212cf25dcf45efcca3cac64b93a1554ad937967f340b700cf11b0bc3",
+      "field": "model_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "db17e98df7e66eb1fb14b10cd594662980add85886fe7c7a63dfdb8e171de6b7",
+      "field": "ema_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "40f3de14381b8fe91fbb5bc714a06dac121467f036e75c51d33a44b16acb785d",
+      "field": "optimizer_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1990.0,
+      "field": "optimizer_step",
+      "observed": 1990,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "gradscaler.present",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "0f776340d8078b8de6b93b198c43176086f1052b07c8c99e9f615a8860d6114d",
+      "field": "gradscaler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.python.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.numpy.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cpu.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cuda.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "sampler.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "b7ee74c1957073c0eff2dc3d48a00ae835f031eabcc8637b885fbe1117ffe306",
+      "field": "config_sha256",
+      "observed": "185034c9784437b7f1b5501b4add24d0399667a55b9b5ac8f6b2551987a4e990",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "8aaf409304acf5742aea959ff5c5bc2e152976f76896be8a7b6ec0f26ee2dad7",
+      "field": "config_canonical_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256.0,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 128,
+      "field": "batch.batch_size",
+      "observed": 128,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 16,
+      "field": "batch.batch_gpu",
+      "observed": 16,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "field": "augmentation",
+      "observed": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.use_fp16",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.enable_amp",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "precision.enable_tf32",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "precision.loss_scaling",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 10.0,
+      "field": "checkpoint_cadence.kimg_per_tick",
+      "observed": 10.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 3,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 10,
+      "field": "checkpoint_cadence.ckpt_ticks",
+      "observed": 10,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 26,
+      "field": "checkpoint_cadence.sample_ticks",
+      "observed": 26,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 50,
+      "field": "checkpoint_cadence.eval_ticks",
+      "observed": 50,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "field": "data.byte_sha256",
+      "observed": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "field": "data.semantic_sha256",
+      "observed": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "field": "execution_core_sha256",
+      "observed": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "global_sigmoid",
+      "field": "schedule",
+      "observed": "global_sigmoid",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1.1,
+      "field": "gap_scale",
+      "observed": 1.1,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "field": "execution_commit",
+      "observed": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 3,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d126eaadd1b6bb83b2cdff95ed31da2f487e939f67480ee4da8468b506292936",
+      "field": "protocol_config_sha256",
+      "observed": "3886cbc80c4ce58f4ac8710e2db0971d863c2e463eaaf485dfb3a1db3e3d63f0",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": null,
+      "field": "config_sha256",
+      "observed": "5874643723d7212dbb79391b05f152fa1eca73f2faa2e426e64763b9aa837132",
+      "reason": "raw_config_hash_evidence",
+      "scope": "run",
+      "seed": 3,
+      "status": "reported"
+    },
+    {
+      "arm": "F/G",
+      "blocking": false,
+      "expected": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "field": "legacy_shared_256k_source",
+      "observed": "f3d77d3bd995ed44df074fc0e6e903389b9a46e85cde2c9a0d8db8cf108e1171",
+      "reason": "legacy_F_G_controls_use_different_256k_source",
+      "scope": "source",
+      "seed": 3,
+      "status": "mismatch"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": "global_sigmoid",
+      "field": "schedule",
+      "observed": "global_sigmoid",
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 1.1,
+      "field": "gap_scale",
+      "observed": 1.1,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "field": "full_state_sha256",
+      "observed": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "field": "checkpoint_sha256",
+      "observed": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "565741ca34f629d69b2065e273ca4d7915d597e4d50f0a21f4d52d42c19eb3bb",
+      "field": "model_sha256",
+      "observed": "565741ca34f629d69b2065e273ca4d7915d597e4d50f0a21f4d52d42c19eb3bb",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "7c7c501028d2eea8753c58e6be3c9105e48fe01544cb506eab07bb44fe34c50d",
+      "field": "ema_sha256",
+      "observed": "7c7c501028d2eea8753c58e6be3c9105e48fe01544cb506eab07bb44fe34c50d",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "bbfbcb52289f82fb05f31eec007d08496453ac9261f8fe86133e080c660f28b0",
+      "field": "optimizer_sha256",
+      "observed": "bbfbcb52289f82fb05f31eec007d08496453ac9261f8fe86133e080c660f28b0",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1990.0,
+      "field": "optimizer_step",
+      "observed": 1990.0,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "gradscaler.present",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "9f7bf32d72fb59e293848b5063fede2985edb0cfc7f5cefc03dcf15f3292834c",
+      "field": "gradscaler.sha256",
+      "observed": "9f7bf32d72fb59e293848b5063fede2985edb0cfc7f5cefc03dcf15f3292834c",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.python.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.numpy.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cpu.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cuda.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "sampler.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "993d58a8f61b5b676bc7c2c1003f4c30cf2a5a5016f9a1977834bc751c8bb66c",
+      "field": "config_sha256",
+      "observed": "993d58a8f61b5b676bc7c2c1003f4c30cf2a5a5016f9a1977834bc751c8bb66c",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "dd22ee3f810e54e359bcba0d762de30904c1234ecd8eb9783169937b1d19da28",
+      "field": "config_canonical_sha256",
+      "observed": "dd22ee3f810e54e359bcba0d762de30904c1234ecd8eb9783169937b1d19da28",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256.0,
+      "field": "start_kimg",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 128,
+      "field": "batch.batch_size",
+      "observed": 128,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 16,
+      "field": "batch.batch_gpu",
+      "observed": 16,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "field": "augmentation",
+      "observed": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.use_fp16",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.enable_amp",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "precision.enable_tf32",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "precision.loss_scaling",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 10.0,
+      "field": "checkpoint_cadence.kimg_per_tick",
+      "observed": 10.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 10,
+      "field": "checkpoint_cadence.ckpt_ticks",
+      "observed": 10,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 26,
+      "field": "checkpoint_cadence.sample_ticks",
+      "observed": 26,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 50,
+      "field": "checkpoint_cadence.eval_ticks",
+      "observed": 50,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "field": "data.byte_sha256",
+      "observed": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "field": "data.semantic_sha256",
+      "observed": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "field": "execution_core_sha256",
+      "observed": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "sigmoid",
+      "field": "schedule",
+      "observed": "sigmoid",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "gap_scale",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "field": "execution_commit",
+      "observed": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": "9f8736ecbf0d9265bd2603f1998b68d47edb7e4dc8cdf9b1f98b08c5cb13263a",
+      "field": "protocol_config_sha256",
+      "observed": "f4f8ff920aeb9e9c752b889b43e4975f6f7db7200535c6fde27864eb9c520459",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": null,
+      "field": "config_sha256",
+      "observed": "fc4dd9a91e2cc2b644a46ee0ef26c191110b1353196f581f022e58a1130b1bd8",
+      "reason": "raw_config_hash_evidence",
+      "scope": "run",
+      "seed": 4,
+      "status": "reported"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "field": "full_state_sha256",
+      "observed": "dee1446bce01c7ad1cd7f867bc5bf4c21d706f74ad64ad307dbf02f01c8a8310",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "field": "checkpoint_sha256",
+      "observed": "62a6122a7be523aeb12875d96e96312e9c90efde9eafb75d730c75ceea0e8862",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "565741ca34f629d69b2065e273ca4d7915d597e4d50f0a21f4d52d42c19eb3bb",
+      "field": "model_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "7c7c501028d2eea8753c58e6be3c9105e48fe01544cb506eab07bb44fe34c50d",
+      "field": "ema_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "bbfbcb52289f82fb05f31eec007d08496453ac9261f8fe86133e080c660f28b0",
+      "field": "optimizer_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1990.0,
+      "field": "optimizer_step",
+      "observed": 1990,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "gradscaler.present",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "9f7bf32d72fb59e293848b5063fede2985edb0cfc7f5cefc03dcf15f3292834c",
+      "field": "gradscaler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.python.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.numpy.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cpu.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cuda.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "sampler.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "993d58a8f61b5b676bc7c2c1003f4c30cf2a5a5016f9a1977834bc751c8bb66c",
+      "field": "config_sha256",
+      "observed": "3d0846d17da391292a22de914498a9abee9b06bc23fb2a220b5db6e4ae61e076",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "dd22ee3f810e54e359bcba0d762de30904c1234ecd8eb9783169937b1d19da28",
+      "field": "config_canonical_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256.0,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 128,
+      "field": "batch.batch_size",
+      "observed": 128,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 16,
+      "field": "batch.batch_gpu",
+      "observed": 16,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "field": "augmentation",
+      "observed": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.use_fp16",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.enable_amp",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "precision.enable_tf32",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "precision.loss_scaling",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 10.0,
+      "field": "checkpoint_cadence.kimg_per_tick",
+      "observed": 10.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 4,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 10,
+      "field": "checkpoint_cadence.ckpt_ticks",
+      "observed": 10,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 26,
+      "field": "checkpoint_cadence.sample_ticks",
+      "observed": 26,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 50,
+      "field": "checkpoint_cadence.eval_ticks",
+      "observed": 50,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "field": "data.byte_sha256",
+      "observed": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "field": "data.semantic_sha256",
+      "observed": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "field": "execution_core_sha256",
+      "observed": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "global_sigmoid",
+      "field": "schedule",
+      "observed": "global_sigmoid",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1.1,
+      "field": "gap_scale",
+      "observed": 1.1,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "field": "execution_commit",
+      "observed": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 4,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d126eaadd1b6bb83b2cdff95ed31da2f487e939f67480ee4da8468b506292936",
+      "field": "protocol_config_sha256",
+      "observed": "3886cbc80c4ce58f4ac8710e2db0971d863c2e463eaaf485dfb3a1db3e3d63f0",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": null,
+      "field": "config_sha256",
+      "observed": "044d14cf0f9879eadf3ab06dc3193f23c0d107d362ee500dba06846187bed1b1",
+      "reason": "raw_config_hash_evidence",
+      "scope": "run",
+      "seed": 4,
+      "status": "reported"
+    },
+    {
+      "arm": "F/G",
+      "blocking": false,
+      "expected": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "field": "legacy_shared_256k_source",
+      "observed": "dee1446bce01c7ad1cd7f867bc5bf4c21d706f74ad64ad307dbf02f01c8a8310",
+      "reason": "legacy_F_G_controls_use_different_256k_source",
+      "scope": "source",
+      "seed": 4,
+      "status": "mismatch"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": "global_sigmoid",
+      "field": "schedule",
+      "observed": "global_sigmoid",
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 1.1,
+      "field": "gap_scale",
+      "observed": 1.1,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "T",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "reference",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "field": "full_state_sha256",
+      "observed": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+      "field": "checkpoint_sha256",
+      "observed": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "fd6e83bfed9d2444b9af31b32cd36001969ef6f99e59746c9b7091915208f5f9",
+      "field": "model_sha256",
+      "observed": "fd6e83bfed9d2444b9af31b32cd36001969ef6f99e59746c9b7091915208f5f9",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "1a82499be7b85715879e2212a895feba9cb039c8177e0f42f9a5debadfa21473",
+      "field": "ema_sha256",
+      "observed": "1a82499be7b85715879e2212a895feba9cb039c8177e0f42f9a5debadfa21473",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "799ef3a7318ec719d847bb6e6bb168d74ee5a1f8b40240a9b488b4ec921b7abc",
+      "field": "optimizer_sha256",
+      "observed": "799ef3a7318ec719d847bb6e6bb168d74ee5a1f8b40240a9b488b4ec921b7abc",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1990.0,
+      "field": "optimizer_step",
+      "observed": 1990.0,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "gradscaler.present",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "c0cd9a95db42e60952818e5de8866045fad708625d90d342211bd9909cf76eff",
+      "field": "gradscaler.sha256",
+      "observed": "c0cd9a95db42e60952818e5de8866045fad708625d90d342211bd9909cf76eff",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.python.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.numpy.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cpu.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cuda.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "sampler.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "e9eddfa51bec51e7c3760610c916ce26673fe35372703d57f7532d32b2700c21",
+      "field": "config_sha256",
+      "observed": "e9eddfa51bec51e7c3760610c916ce26673fe35372703d57f7532d32b2700c21",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "d8b3166f3fa7b705c7d8b201601137c765231dd14b39b5aa677778ecc17724e6",
+      "field": "config_canonical_sha256",
+      "observed": "d8b3166f3fa7b705c7d8b201601137c765231dd14b39b5aa677778ecc17724e6",
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256.0,
+      "field": "start_kimg",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 128,
+      "field": "batch.batch_size",
+      "observed": 128,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 16,
+      "field": "batch.batch_gpu",
+      "observed": 16,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "field": "augmentation",
+      "observed": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.use_fp16",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.enable_amp",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": false,
+      "field": "precision.enable_tf32",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "precision.loss_scaling",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 10.0,
+      "field": "checkpoint_cadence.kimg_per_tick",
+      "observed": 10.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 10,
+      "field": "checkpoint_cadence.ckpt_ticks",
+      "observed": 10,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 26,
+      "field": "checkpoint_cadence.sample_ticks",
+      "observed": 26,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 50,
+      "field": "checkpoint_cadence.eval_ticks",
+      "observed": 50,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "field": "data.byte_sha256",
+      "observed": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "field": "data.semantic_sha256",
+      "observed": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "field": "execution_core_sha256",
+      "observed": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "sigmoid",
+      "field": "schedule",
+      "observed": "sigmoid",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "gap_scale",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "field": "execution_commit",
+      "observed": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "F",
+      "blocking": true,
+      "expected": "9f8736ecbf0d9265bd2603f1998b68d47edb7e4dc8cdf9b1f98b08c5cb13263a",
+      "field": "protocol_config_sha256",
+      "observed": "f4f8ff920aeb9e9c752b889b43e4975f6f7db7200535c6fde27864eb9c520459",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "F",
+      "blocking": false,
+      "expected": null,
+      "field": "config_sha256",
+      "observed": "af1ab410d0ec71b380d34698b886918e589104a7ea6c223409410df540bf591a",
+      "reason": "raw_config_hash_evidence",
+      "scope": "run",
+      "seed": 5,
+      "status": "reported"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "field": "full_state_sha256",
+      "observed": "421fcb35f52b6a0194c0cf1a748410a3456258a4848cf255a781f63e8087c0ed",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+      "field": "checkpoint_sha256",
+      "observed": "491dc887990e6d9f6fde70b5d12775aaf4bfc6155b731682926b02061c253e9b",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "fd6e83bfed9d2444b9af31b32cd36001969ef6f99e59746c9b7091915208f5f9",
+      "field": "model_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "1a82499be7b85715879e2212a895feba9cb039c8177e0f42f9a5debadfa21473",
+      "field": "ema_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "799ef3a7318ec719d847bb6e6bb168d74ee5a1f8b40240a9b488b4ec921b7abc",
+      "field": "optimizer_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1990.0,
+      "field": "optimizer_step",
+      "observed": 1990,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "gradscaler.present",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "c0cd9a95db42e60952818e5de8866045fad708625d90d342211bd9909cf76eff",
+      "field": "gradscaler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.python.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.python.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.numpy.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.numpy.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cpu.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cpu.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "rng.torch_cuda.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "rng.torch_cuda.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "sampler.present",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "sampler.sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "e9eddfa51bec51e7c3760610c916ce26673fe35372703d57f7532d32b2700c21",
+      "field": "config_sha256",
+      "observed": "b39b1d3c2ccf948b221a521a34b0ae442dfbf37b9d01eb97f27ce9cb41128442",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "source",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d8b3166f3fa7b705c7d8b201601137c765231dd14b39b5aa677778ecc17724e6",
+      "field": "config_canonical_sha256",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "source",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256.0,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "source",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256,
+      "field": "q",
+      "observed": 256.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 128,
+      "field": "batch.batch_size",
+      "observed": 128,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 16,
+      "field": "batch.batch_gpu",
+      "observed": 16,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "field": "augmentation",
+      "observed": {
+        "augment_kwargs": null,
+        "dataset_xflip": false
+      },
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.use_fp16",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": true,
+      "field": "precision.enable_amp",
+      "observed": true,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": false,
+      "field": "precision.enable_tf32",
+      "observed": false,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1.0,
+      "field": "precision.loss_scaling",
+      "observed": 1.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 10.0,
+      "field": "checkpoint_cadence.kimg_per_tick",
+      "observed": 10.0,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.snapshot_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": null,
+      "field": "checkpoint_cadence.state_dump_ticks",
+      "observed": null,
+      "reason": "required_field_missing_or_not_serialized",
+      "scope": "run",
+      "seed": 5,
+      "status": "missing"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 10,
+      "field": "checkpoint_cadence.ckpt_ticks",
+      "observed": 10,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 26,
+      "field": "checkpoint_cadence.sample_ticks",
+      "observed": 26,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 50,
+      "field": "checkpoint_cadence.eval_ticks",
+      "observed": 50,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "field": "data.byte_sha256",
+      "observed": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "field": "data.semantic_sha256",
+      "observed": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "field": "execution_core_sha256",
+      "observed": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 256,
+      "field": "start_kimg",
+      "observed": 256,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": [
+        512,
+        768,
+        1024
+      ],
+      "field": "endpoints_kimg",
+      "observed": [
+        512,
+        768,
+        1024
+      ],
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "global_sigmoid",
+      "field": "schedule",
+      "observed": "global_sigmoid",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": 1.1,
+      "field": "gap_scale",
+      "observed": 1.1,
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "field": "execution_commit",
+      "observed": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+      "reason": "exact_match",
+      "scope": "run",
+      "seed": 5,
+      "status": "match"
+    },
+    {
+      "arm": "G",
+      "blocking": true,
+      "expected": "d126eaadd1b6bb83b2cdff95ed31da2f487e939f67480ee4da8468b506292936",
+      "field": "protocol_config_sha256",
+      "observed": "3886cbc80c4ce58f4ac8710e2db0971d863c2e463eaaf485dfb3a1db3e3d63f0",
+      "reason": "load_bearing_field_mismatch",
+      "scope": "run",
+      "seed": 5,
+      "status": "mismatch"
+    },
+    {
+      "arm": "G",
+      "blocking": false,
+      "expected": null,
+      "field": "config_sha256",
+      "observed": "66f4f67e86b3156bb85a4a2ed69354e1015baad009ad9486bd813d0305b8a317",
+      "reason": "raw_config_hash_evidence",
+      "scope": "run",
+      "seed": 5,
+      "status": "reported"
+    },
+    {
+      "arm": "F/G",
+      "blocking": false,
+      "expected": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "field": "legacy_shared_256k_source",
+      "observed": "421fcb35f52b6a0194c0cf1a748410a3456258a4848cf255a781f63e8087c0ed",
+      "reason": "legacy_F_G_controls_use_different_256k_source",
+      "scope": "source",
+      "seed": 5,
+      "status": "mismatch"
+    }
+  ],
+  "schema_version": 1,
+  "seeds": {
+    "3": {
+      "controls": {
+        "F": {
+          "action": "launch_fresh_paired_F_control",
+          "blocking_fields": [
+            "run.checkpoint_cadence.snapshot_ticks",
+            "run.checkpoint_cadence.state_dump_ticks",
+            "run.protocol_config_sha256",
+            "source.rng.numpy.sha256",
+            "source.rng.python.sha256",
+            "source.rng.torch_cpu.sha256",
+            "source.rng.torch_cuda.sha256",
+            "source.sampler.sha256"
+          ],
+          "reasons": [
+            "load_bearing_field_mismatch",
+            "required_field_missing_or_not_serialized"
+          ],
+          "reusable": false,
+          "reuse_decision": "fresh_required"
+        },
+        "G": {
+          "action": "launch_fresh_paired_G_control",
+          "blocking_fields": [
+            "run.checkpoint_cadence.snapshot_ticks",
+            "run.checkpoint_cadence.state_dump_ticks",
+            "run.protocol_config_sha256",
+            "source.checkpoint_sha256",
+            "source.config_canonical_sha256",
+            "source.config_sha256",
+            "source.ema_sha256",
+            "source.full_state_sha256",
+            "source.gradscaler.sha256",
+            "source.model_sha256",
+            "source.optimizer_sha256",
+            "source.rng.numpy.sha256",
+            "source.rng.python.sha256",
+            "source.rng.torch_cpu.sha256",
+            "source.rng.torch_cuda.sha256",
+            "source.sampler.sha256"
+          ],
+          "reasons": [
+            "load_bearing_field_mismatch",
+            "required_field_missing_or_not_serialized"
+          ],
+          "reusable": false,
+          "reuse_decision": "fresh_required"
+        }
+      },
+      "legacy_F_G_same_256k_source": false
+    },
+    "4": {
+      "controls": {
+        "F": {
+          "action": "launch_fresh_paired_F_control",
+          "blocking_fields": [
+            "run.checkpoint_cadence.snapshot_ticks",
+            "run.checkpoint_cadence.state_dump_ticks",
+            "run.protocol_config_sha256",
+            "source.rng.numpy.sha256",
+            "source.rng.python.sha256",
+            "source.rng.torch_cpu.sha256",
+            "source.rng.torch_cuda.sha256",
+            "source.sampler.sha256"
+          ],
+          "reasons": [
+            "load_bearing_field_mismatch",
+            "required_field_missing_or_not_serialized"
+          ],
+          "reusable": false,
+          "reuse_decision": "fresh_required"
+        },
+        "G": {
+          "action": "launch_fresh_paired_G_control",
+          "blocking_fields": [
+            "run.checkpoint_cadence.snapshot_ticks",
+            "run.checkpoint_cadence.state_dump_ticks",
+            "run.protocol_config_sha256",
+            "source.checkpoint_sha256",
+            "source.config_canonical_sha256",
+            "source.config_sha256",
+            "source.ema_sha256",
+            "source.full_state_sha256",
+            "source.gradscaler.sha256",
+            "source.model_sha256",
+            "source.optimizer_sha256",
+            "source.rng.numpy.sha256",
+            "source.rng.python.sha256",
+            "source.rng.torch_cpu.sha256",
+            "source.rng.torch_cuda.sha256",
+            "source.sampler.sha256"
+          ],
+          "reasons": [
+            "load_bearing_field_mismatch",
+            "required_field_missing_or_not_serialized"
+          ],
+          "reusable": false,
+          "reuse_decision": "fresh_required"
+        }
+      },
+      "legacy_F_G_same_256k_source": false
+    },
+    "5": {
+      "controls": {
+        "F": {
+          "action": "launch_fresh_paired_F_control",
+          "blocking_fields": [
+            "run.checkpoint_cadence.snapshot_ticks",
+            "run.checkpoint_cadence.state_dump_ticks",
+            "run.protocol_config_sha256",
+            "source.rng.numpy.sha256",
+            "source.rng.python.sha256",
+            "source.rng.torch_cpu.sha256",
+            "source.rng.torch_cuda.sha256",
+            "source.sampler.sha256"
+          ],
+          "reasons": [
+            "load_bearing_field_mismatch",
+            "required_field_missing_or_not_serialized"
+          ],
+          "reusable": false,
+          "reuse_decision": "fresh_required"
+        },
+        "G": {
+          "action": "launch_fresh_paired_G_control",
+          "blocking_fields": [
+            "run.checkpoint_cadence.snapshot_ticks",
+            "run.checkpoint_cadence.state_dump_ticks",
+            "run.protocol_config_sha256",
+            "source.checkpoint_sha256",
+            "source.config_canonical_sha256",
+            "source.config_sha256",
+            "source.ema_sha256",
+            "source.full_state_sha256",
+            "source.gradscaler.sha256",
+            "source.model_sha256",
+            "source.optimizer_sha256",
+            "source.rng.numpy.sha256",
+            "source.rng.python.sha256",
+            "source.rng.torch_cpu.sha256",
+            "source.rng.torch_cuda.sha256",
+            "source.sampler.sha256"
+          ],
+          "reasons": [
+            "load_bearing_field_mismatch",
+            "required_field_missing_or_not_serialized"
+          ],
+          "reusable": false,
+          "reuse_decision": "fresh_required"
+        }
+      },
+      "legacy_F_G_same_256k_source": false
+    }
+  },
+  "status": "FAIL"
+}
