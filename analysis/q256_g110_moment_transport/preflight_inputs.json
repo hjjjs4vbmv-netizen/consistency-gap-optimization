@@ -1,0 +1,41 @@
+{
+  "schema": "ect.q256.moment-transport-preflight-input/v1",
+  "seeds": [
+    {
+      "training_seed": 3,
+      "training_state": "/home/ECT001/q256-assets-43daa806/seeds3_package_full/seed3_fixed/training-state-latest.pt",
+      "checkpoint": "/home/ECT001/q256-assets-43daa806/seeds3_package_full/seed3_fixed/network-snapshot-latest.pkl",
+      "data": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+      "expected_training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "expected_checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "expected_data_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "lr": 0.0001,
+      "betas": [0.9, 0.999],
+      "eps_opt": 1e-8
+    },
+    {
+      "training_seed": 4,
+      "training_state": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed4_fixed/training-state-latest.pt",
+      "checkpoint": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed4_fixed/network-snapshot-latest.pkl",
+      "data": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+      "expected_training_state_sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "expected_checkpoint_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "expected_data_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "lr": 0.0001,
+      "betas": [0.9, 0.999],
+      "eps_opt": 1e-8
+    },
+    {
+      "training_seed": 5,
+      "training_state": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed/training-state-latest.pt",
+      "checkpoint": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed/network-snapshot-latest.pkl",
+      "data": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+      "expected_training_state_sha256": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+      "expected_checkpoint_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+      "expected_data_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "lr": 0.0001,
+      "betas": [0.9, 0.999],
+      "eps_opt": 1e-8
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "ect.q256.dataset-identity/v1",
+  "canonical_training_archive": {
+    "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+    "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "size_bytes": 166000134
+  },
+  "factorial_audit_archive": {
+    "path": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1"
+  },
+  "semantic_comparison": {
+    "member_count": 50001,
+    "member_order_sha256": "f323cc83c8c0f358d4e6a82486247f3c8a4a677533420d095520e49ba14857be",
+    "member_name_size_crc_sha256": "ff94643c2bc3b39e4cfe1fc009da7a29b02b2fe98f61c7ba115e0c1e851db98b",
+    "member_name_content_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f",
+    "names_match": true,
+    "order_matches": true,
+    "sizes_match": true,
+    "crc32_matches": true,
+    "content_matches": true
+  },
+  "policy": {
+    "heldout_factorial_replay": "use factorial_audit_archive to match committed receipt container SHA256",
+    "formal_continuation": "use canonical_training_archive to match existing q256 formal controls"
+  }
+}

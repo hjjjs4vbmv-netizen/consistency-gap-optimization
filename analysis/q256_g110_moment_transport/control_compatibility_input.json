@@ -1,0 +1,98 @@
+{
+  "schema": "ect.q256.control-compatibility-input/v1",
+  "reference": {
+    "3": {
+      "source": {
+        "run_dir": "/home/ECT001/q256-assets-43daa806/seeds3_package_full/seed3_fixed"
+      },
+      "run": {
+        "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+        "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+        "start_kimg": 256,
+        "endpoints_kimg": [512, 768, 1024],
+        "protocol": {
+          "q": 256,
+          "schedule": "global_sigmoid",
+          "gap_scale": 1.1,
+          "batch": {"batch_size": 128, "batch_gpu": 16},
+          "augmentation": {"augment_kwargs": null, "dataset_xflip": false},
+          "precision": {"use_fp16": true, "enable_amp": true, "enable_tf32": false, "loss_scaling": 1.0},
+          "checkpoint_cadence": {"kimg_per_tick": 10.0, "snapshot_ticks": null, "state_dump_ticks": null, "ckpt_ticks": 10, "sample_ticks": 26, "eval_ticks": 50},
+          "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}
+        }
+      }
+    },
+    "4": {
+      "source": {
+        "run_dir": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed4_fixed"
+      },
+      "run": {
+        "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+        "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+        "start_kimg": 256,
+        "endpoints_kimg": [512, 768, 1024],
+        "protocol": {
+          "q": 256,
+          "schedule": "global_sigmoid",
+          "gap_scale": 1.1,
+          "batch": {"batch_size": 128, "batch_gpu": 16},
+          "augmentation": {"augment_kwargs": null, "dataset_xflip": false},
+          "precision": {"use_fp16": true, "enable_amp": true, "enable_tf32": false, "loss_scaling": 1.0},
+          "checkpoint_cadence": {"kimg_per_tick": 10.0, "snapshot_ticks": null, "state_dump_ticks": null, "ckpt_ticks": 10, "sample_ticks": 26, "eval_ticks": 50},
+          "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}
+        }
+      }
+    },
+    "5": {
+      "source": {
+        "run_dir": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed"
+      },
+      "run": {
+        "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76",
+        "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95",
+        "start_kimg": 256,
+        "endpoints_kimg": [512, 768, 1024],
+        "protocol": {
+          "q": 256,
+          "schedule": "global_sigmoid",
+          "gap_scale": 1.1,
+          "batch": {"batch_size": 128, "batch_gpu": 16},
+          "augmentation": {"augment_kwargs": null, "dataset_xflip": false},
+          "precision": {"use_fp16": true, "enable_amp": true, "enable_tf32": false, "loss_scaling": 1.0},
+          "checkpoint_cadence": {"kimg_per_tick": 10.0, "snapshot_ticks": null, "state_dump_ticks": null, "ckpt_ticks": 10, "sample_ticks": 26, "eval_ticks": 50},
+          "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}
+        }
+      }
+    }
+  },
+  "controls": {
+    "F": {
+      "3": {
+        "source": {"run_dir": "/home/ECT001/q256-assets-43daa806/seeds3_package_full/seed3_fixed"},
+        "run": {"run_dir": "/data/raw/ECT/ect_runs/seed3_fixed_512k", "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76", "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95", "start_kimg": 256, "endpoints_kimg": [512, 768, 1024], "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}}
+      },
+      "4": {
+        "source": {"run_dir": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed4_fixed"},
+        "run": {"run_dir": "/data/raw/ECT/ect_runs/seed4_fixed_512k", "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76", "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95", "start_kimg": 256, "endpoints_kimg": [512, 768, 1024], "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}}
+      },
+      "5": {
+        "source": {"run_dir": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed"},
+        "run": {"run_dir": "/data/raw/ECT/ect_runs/seed5_fixed_512k", "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76", "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95", "start_kimg": 256, "endpoints_kimg": [512, 768, 1024], "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}}
+      }
+    },
+    "G": {
+      "3": {
+        "source": {"full_state_sha256": "f3d77d3bd995ed44df074fc0e6e903389b9a46e85cde2c9a0d8db8cf108e1171", "checkpoint_sha256": "24875430eea4679a416ae921c3e9ae16142f6416d2a0edf970764384ef964bed", "config_sha256": "185034c9784437b7f1b5501b4add24d0399667a55b9b5ac8f6b2551987a4e990", "optimizer_step": 1990, "gradscaler": {"present": true}, "rng": {"python": {"present": false}, "numpy": {"present": false}, "torch_cpu": {"present": false}, "torch_cuda": {"present": false}}, "sampler": {"present": false}, "start_kimg": 256},
+        "run": {"run_dir": "/data/raw/ECT/ect_runs/seed3_global110_512k", "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76", "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95", "start_kimg": 256, "endpoints_kimg": [512, 768, 1024], "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}}
+      },
+      "4": {
+        "source": {"full_state_sha256": "dee1446bce01c7ad1cd7f867bc5bf4c21d706f74ad64ad307dbf02f01c8a8310", "checkpoint_sha256": "62a6122a7be523aeb12875d96e96312e9c90efde9eafb75d730c75ceea0e8862", "config_sha256": "3d0846d17da391292a22de914498a9abee9b06bc23fb2a220b5db6e4ae61e076", "optimizer_step": 1990, "gradscaler": {"present": true}, "rng": {"python": {"present": false}, "numpy": {"present": false}, "torch_cpu": {"present": false}, "torch_cuda": {"present": false}}, "sampler": {"present": false}, "start_kimg": 256},
+        "run": {"run_dir": "/data/raw/ECT/ect_runs/seed4_global110_512k", "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76", "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95", "start_kimg": 256, "endpoints_kimg": [512, 768, 1024], "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}}
+      },
+      "5": {
+        "source": {"full_state_sha256": "421fcb35f52b6a0194c0cf1a748410a3456258a4848cf255a781f63e8087c0ed", "checkpoint_sha256": "491dc887990e6d9f6fde70b5d12775aaf4bfc6155b731682926b02061c253e9b", "config_sha256": "b39b1d3c2ccf948b221a521a34b0ae442dfbf37b9d01eb97f27ce9cb41128442", "optimizer_step": 1990, "gradscaler": {"present": true}, "rng": {"python": {"present": false}, "numpy": {"present": false}, "torch_cpu": {"present": false}, "torch_cuda": {"present": false}}, "sampler": {"present": false}, "start_kimg": 256},
+        "run": {"run_dir": "/data/raw/ECT/ect_runs/seed5_global110_512k", "execution_commit": "6b26c04d37789ee59a620df40a71f5eb76bd7d76", "execution_core_sha256": "da9fbf77a644de54fb98a0c1b1f4b49c337126fd38a390b97ca590aa82c20c95", "start_kimg": 256, "endpoints_kimg": [512, 768, 1024], "data": {"byte_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372", "semantic_sha256": "c96fdaa57f8bdb6b697664831085acc7fc42aa927b41e2bde0863ef26057f27f"}}
+      }
+    }
+  }
+}
