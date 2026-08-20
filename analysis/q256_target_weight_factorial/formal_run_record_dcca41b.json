@@ -1,9 +1,9 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T19:18:58Z",
+  "updated_utc": "2026-08-20T19:25:14Z",
   "experiment_id": "q256-target-weight-factorial",
-  "status_at_snapshot": "FORMAL_TRAINING_COMPLETE_EVAL_V1_STOPPED_FOR_AUDIT",
+  "status_at_snapshot": "FORMAL_EVALUATION_V2_RUNNING_PRIMARY_NFE1",
   "training_source": {
     "branch": "experiment/q256-target-weight-factorial",
     "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
@@ -743,7 +743,7 @@
     }
   },
   "post_seed5_frozen_evaluation_plan": {
-    "status": "V1_STOPPED_FOR_AUDIT_V2_PREPARED",
+    "status": "RUNNING_PRIMARY_NFE1",
     "scheduled_local": "2026-08-21T00:25:59+08:00",
     "automation_id": "q256-formal-runs",
     "plan_files": [
@@ -794,6 +794,29 @@
         "post_stop_gpu0_idle_check": "PASS; zero compute processes",
         "classification": "host GPU-audit probe timeout; not a metric, checkpoint, CUDA, OOM, nonfinite, or foreign-process failure",
         "preservation": "The STOPPED_FOR_AUDIT root and receipts remain immutable and are not reused."
+      },
+      {
+        "attempt": 2,
+        "started_utc": "2026-08-20T19:22:03Z",
+        "status": "RUNNING_PRIMARY_NFE1",
+        "tmux": "q256_formal_eval_dcca41b_v2",
+        "launcher_pid": 93209,
+        "adapter_pid": 93252,
+        "matrix_binding_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/matrix-binding-direct-dcca41b-v2",
+        "matrix_binding_sha256": "e654414286b78322d3785c8292b073ff53e3214a66f2387facac498660ec42e3",
+        "evaluation_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-dcca41b-primary-first-v2",
+        "evaluation_plan_sha256": "2cbfafa6cd0bb2b33b06b936659924d098be62df310076d74981a7d566cb24fc",
+        "adapter_sha256": "5cbd56c6998212c8914ee70a66bf25bacebfd7c86c5f6a305bfc8ec01fb076d6",
+        "launcher_sha256": "8483bfd83f534f7507f1c43c3fefd8f8bc19b8ef00972907d042bc15f856e9d6",
+        "first_job": "seed3-armA-nfe1",
+        "first_job_pid": 94028,
+        "job_order_verified": "all 12 NFE=1 jobs precede all 12 NFE=2 jobs",
+        "observed_local": "2026-08-21T03:25:14+08:00",
+        "observed_gpu0_utilization_percent": 98,
+        "observed_gpu0_memory_mib": 5247,
+        "observed_gpu0_compute_processes": 1,
+        "observed_errors": 0,
+        "later_jobs_started": false
       }
     ],
     "v2_monitor_correction": {

@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:18 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:25 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -147,6 +147,12 @@ The first adapter invocation stopped before binding because its metadata-only B/
 The corrected invocation created a PASS binding for all 12 immutable final checkpoints and an evaluation plan whose exact order is all seed3/4/5 A/B/C/D NFE=1 jobs followed by all corresponding NFE=2 jobs. The first NFE=1 job then stopped after 42 passing GPU-monitor polls because one host `nvidia-smi` compute-process query exceeded the monitor's 0.4-second subprocess timeout. The monitor fail-closed, sent SIGTERM only to its own evaluation process group, wrote `STOPPED_FOR_AUDIT`, and started no later job. The post-stop GPU0 audit passed with zero compute processes. No metric completed, and this was not a checkpoint, CUDA, OOM, non-finite, or foreign-process failure.
 
 The stopped v1 root and receipts are retained unchanged. Before any v2 launch, the event is durably recorded here. The minimal v2 correction keeps the one-second exclusivity cadence and every foreign-process check, but permits one recorded bounded 1.0-second retry per job only when the host `nvidia-smi` probe itself times out. A second timeout, any foreign process, or any other audit failure still stops the chain. Checkpoint selection and metric numerical semantics are unchanged.
+
+## Frozen-evaluation v2 running at 2026-08-21 03:25:14 CST
+
+The documented v2 chain started at 03:22:03 CST in tmux `q256_formal_eval_dcca41b_v2`. The new 12-cell matrix binding passed and the immutable plan again lists all 12 NFE=1 jobs before every NFE=2 job. Binding, plan, adapter, and launcher hashes are in the JSON record.
+
+The first primary job, `seed3-armA-nfe1`, is running on the required physical GPU0 only (evaluation PID 94028). At observation it had remained stable beyond the v1 timeout point, GPU0 was at 98% utilization with 5247 MiB allocated, and there was no traceback, OOM, bus error, non-finite event, audit stop, or foreign GPU0 process. GPU1 continues the independent seed6/7 extension and is not used by this formal evaluation.
 
 ## Post-seed5 frozen evaluation scheduled at 2026-08-21 00:25 CST
 
