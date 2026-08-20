@@ -1,9 +1,9 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T12:05:27Z",
+  "updated_utc": "2026-08-20T12:18:25Z",
   "experiment_id": "q256-target-weight-factorial",
-  "status_at_snapshot": "RUNNING_RECOVERY",
+  "status_at_snapshot": "RUNNING_POST_RECOVERY",
   "training_source": {
     "branch": "experiment/q256-target-weight-factorial",
     "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
@@ -161,7 +161,7 @@
     "processes_stopped": true
   },
   "formal_launch": {
-    "status": "RUNNING_RECOVERY",
+    "status": "RUNNING_POST_RECOVERY",
     "started_local": "2026-08-20T16:35:23+08:00",
     "source_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
     "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1",
@@ -392,7 +392,7 @@
       "not_started_cells": ["seed3/D", "seed4/D", "seed5/A", "seed5/B", "seed5/C", "seed5/D"]
     },
     "semantic_error_scope": "No loss/model/EMA/update/factor/denominator non-finite error, AMP inconsistency, CUDA error, or resume-state error was found. Only the two C-cell DataLoader bus errors were present in formal logs.",
-    "recovery_status": "RUNNING_FROM_CHECKPOINT",
+    "recovery_status": "COMPLETED_PASS",
     "action_at_detection": "Read-only diagnosis and durable recording only; no process, artifact, shared-memory object, or queue was modified."
   },
   "formal_recovery": {
@@ -467,6 +467,52 @@
         "pid_at_2026_08_20_20_05_27_cst": 112062,
         "first_observed_resumed_attempt": 1601,
         "first_observed_resumed_kimg": 204.928
+      }
+    },
+    "resume_completion": {
+      "observed_local": "2026-08-20T20:18:25+08:00",
+      "worker_pass_lines_present": true,
+      "cells": {
+        "seed3/C": {
+          "status": "COMPLETE",
+          "attempts": 2000,
+          "accepted_updates": 1990,
+          "processed_nimg": 256000,
+          "processed_kimg": 256.0,
+          "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 11, 1418],
+          "artifact_sha256": {
+            "training_state": "cd1620aab9a10a865058138e0540970fe2728ba459d0f81d2e4984914d6b2c78",
+            "network_snapshot": "ac5ee60feaa36eb9a6b1749ed01c929efdd7ec361291d173f937e4e6040d0b36",
+            "telemetry": "5404857483ef2cb2842dd1735fa17a8f5162d15c51c2a5571a1e816d224956f5",
+            "initial_state_receipt": "020fa6174f4cf14e5c491fbd821bdf2dd4330ffc4b5e8639f3203a185bcf4eae"
+          }
+        },
+        "seed4/C": {
+          "status": "COMPLETE",
+          "attempts": 2000,
+          "accepted_updates": 1990,
+          "processed_nimg": 256000,
+          "processed_kimg": 256.0,
+          "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 11, 956],
+          "artifact_sha256": {
+            "training_state": "5e3551c719a8a7ff6ba7a61e63b8f9da864ac7c057bd4fd9b97e3aad886d10a2",
+            "network_snapshot": "f4da24d2bc631048e770da1a4a6aaa2565d3bd9520fea0a3c481df91f5127d0b",
+            "telemetry": "a7b9b5bec1da751d03c63763878e35812fb2c18d879fad38ac2299b165c1a9d2",
+            "initial_state_receipt": "4c4f9651e112ff6c040bdba7d634190c925a9786717c75936c9934b502a6e416"
+          }
+        }
+      },
+      "next_cells_started": {
+        "seed3/D": {
+          "pid": 834,
+          "observed_attempt": 13,
+          "observed_kimg": 1.664
+        },
+        "seed4/D": {
+          "pid": 114544,
+          "observed_attempt": 17,
+          "observed_kimg": 2.176
+        }
       }
     },
     "tmux": {

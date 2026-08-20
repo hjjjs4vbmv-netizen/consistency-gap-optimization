@@ -89,3 +89,14 @@ Both C cells passed strict-resume configuration checks and produced new telemetr
 | seed4/C | 112062 | attempt 1581 / 202.368 kimg | attempt 1601 / 204.928 kimg |
 
 The remaining queues are seed3/C → seed3/D → seed5 A/B/C/D on GPU0 and seed4/C → seed4/D on GPU1. Recovery tmux sessions are `q256_dcca_recovery_gpu0` and `q256_dcca_recovery_gpu1`. A five-minute heartbeat monitor is active under automation ID `q256-formal-runs`; it checks processes, GPUs, cell progress, artifacts, errors, shared memory, and disk, and is authorized to apply only minimal experiment-scoped fixes.
+
+## Recovery completion observed at 2026-08-20 20:18:25 CST
+
+Both resumed C cells reached 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Their final state, network snapshot, telemetry, initial receipt, and final image are present; both recovery workers emitted explicit PASS lines. Final artifact hashes are recorded in the JSON record.
+
+| Cell | Final attempts | Accepted | kimg | AMP skips |
+|---|---:|---:|---:|---|
+| seed3/C | 2000 | 1990 | 256.000 | 1–8, 11, 1418 |
+| seed4/C | 2000 | 1990 | 256.000 | 1–8, 11, 956 |
+
+The queues automatically advanced without intervention. At this milestone, seed3/D was at attempt 13 (`1.664 kimg`, PID 834) and seed4/D was at attempt 17 (`2.176 kimg`, PID 114544). No new Traceback, bus error, OOM, CUDA error, or semantic non-finite event was present.
