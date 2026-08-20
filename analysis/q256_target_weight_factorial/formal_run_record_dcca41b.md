@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-20 20:05 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-20 22:40 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -113,3 +113,9 @@ Seed3/D and seed4/D both completed with 2000 attempts, 1990 accepted updates, an
 Eight of twelve formal cells are now complete. GPU0 automatically started seed5/A; at this milestone it was at attempt 10 (`1.280 kimg`, PID 9144). GPU1 is expectedly idle because its assigned seed4 queue is complete.
 
 Final seed4 accepted-update counts are A=1990, B=1991, C=1990, D=1990. The one-update B difference remains recorded only as an endpoint-analysis covariate; it did not trigger an AMP mechanism audit, interrupt the queue, or add replacement runs.
+
+## Seed5/A completion observed at 2026-08-20 22:40:50 CST
+
+Seed5/A completed with 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Its final state, network snapshot, telemetry, initial-state receipt, and final image are present, and the recovery worker emitted an explicit PASS line. The AMP skips were attempts 1–8, 13, and 14; no semantic non-finite event or raw-gradient/skip inconsistency was observed. Artifact hashes are recorded in the JSON record.
+
+Nine of twelve formal cells are now complete. The queue automatically advanced to seed5/B; at this milestone it was at attempt 642, accepted update 633, and `82.176 kimg` (PID 26095). GPU0 was active at 30% utilization with 3549 MiB allocated; GPU1 remained expectedly idle. No new Traceback, bus error, OOM, CUDA error, or semantic non-finite event was present. The private GPU0 shared-memory directory used 44 KiB, `/data/raw` had 33 TiB available, and `/data/temp` had 5.0 TiB available.

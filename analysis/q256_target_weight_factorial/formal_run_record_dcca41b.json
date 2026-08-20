@@ -1,7 +1,7 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T13:19:05Z",
+  "updated_utc": "2026-08-20T14:40:50Z",
   "experiment_id": "q256-target-weight-factorial",
   "status_at_snapshot": "RUNNING_POST_RECOVERY",
   "training_source": {
@@ -556,6 +556,46 @@
         "observed_attempt": 10,
         "observed_kimg": 1.28,
         "gpu": 0
+      }
+    },
+    "seed5_A_completion": {
+      "observed_local": "2026-08-20T22:40:50+08:00",
+      "status": "NINE_OF_TWELVE_COMPLETE",
+      "cell": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1990,
+        "processed_nimg": 256000,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 13, 14],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "worker_pass_line_present": true,
+        "artifact_sha256": {
+          "training_state": "7a7be048f735b31e4502e26047e4fd33cedce721da6227a599cd71db791e61d7",
+          "network_snapshot": "567a2f626159c661a53ff3bf8000fdc99f632f0cdc8cc436eeb713ef0afc0a59",
+          "telemetry": "d0c3e8d2d04aba185ade8dc3ec68d27a21adf7ca4355c88e590e483bae283e89",
+          "initial_state_receipt": "4b7bc5a25174b10d97c974b14c3ca38b279061a0568a3fa812d62dfa690c1217",
+          "final_image": "e170e7cb378471118dafdca5edb49d02d195d579e9e07a9a842fffc48ab0905d"
+        }
+      },
+      "next_cell_started": {
+        "cell": "seed5/B",
+        "pid": 26095,
+        "observed_attempt": 642,
+        "observed_accepted_updates": 633,
+        "observed_kimg": 82.176,
+        "gpu": 0
+      },
+      "health": {
+        "recovery_log_errors": 0,
+        "gpu0_utilization_percent": 30,
+        "gpu1_utilization_percent": 0,
+        "gpu0_memory_mib": 3549,
+        "gpu1_memory_mib": 4,
+        "gpu0_private_shm_used_kib": 44,
+        "data_raw_available_tib": 33,
+        "data_temp_available_tib": 5.0
       }
     },
     "tmux": {
