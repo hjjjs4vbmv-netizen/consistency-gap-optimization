@@ -1,0 +1,346 @@
+{
+  "schema": "ect.q256.target-weight-formal-run-record/v1",
+  "created_utc": "2026-08-20T11:16:13Z",
+  "experiment_id": "q256-target-weight-factorial",
+  "status_at_snapshot": "RUNNING",
+  "training_source": {
+    "branch": "experiment/q256-target-weight-factorial",
+    "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+    "remote_push_confirmed": true,
+    "execution_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+    "execution_repo_clean_at_launch": true,
+    "corrective_commits": [
+      {
+        "commit": "3f3d20404e06039a1509414774bd5a8f0d2850f7",
+        "classification": "validator-only",
+        "summary": "Accept NumPy integer grid dimensions in the planned-pause state probe."
+      },
+      {
+        "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+        "classification": "training replay correction",
+        "summary": "Use deterministic algorithms, deterministic cuDNN, CUBLAS_WORKSPACE_CONFIG=:4096:8, and cudnn_benchmark=False for q256 factorial runs."
+      }
+    ]
+  },
+  "resume_failure_diagnosis": {
+    "original_run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-resume-25c3d22-A-v1",
+    "original_completion_status": "FAILED_PLANNED_PAUSE_POSTCONDITION",
+    "original_completion_error": "planned-pause snapshot_grid_size is invalid",
+    "validator_only_root_cause": {
+      "value": [16, 16],
+      "container_type": "tuple",
+      "element_type": "numpy.int64",
+      "stale_probe_requirement": "Python int only",
+      "post_fix_read_only_revalidation": "PASS"
+    },
+    "pause_state_was_self_contained": true,
+    "pause_state_counters": {
+      "attempted_iteration": 16,
+      "successful_optimizer_steps": 7,
+      "cur_nimg": 2048,
+      "cur_tick": 1,
+      "tick_start_nimg": 128
+    },
+    "pause_state_component_sha256": {
+      "net": "0f290a4b733d1fee4316bfe867a8dec07f93cf75293e63d5c83002ed9badfb86",
+      "ema": "d9dff39b11c549fccd58433a940068d9a6c0b9b6044dab06bd733a7743407cd9",
+      "optimizer": "dbff4a970260339058332a76fb7d0c9d70b3a437ed9a98a2fd724ff5121bbf77",
+      "gradscaler": "e01cf27b844082d7bd64aba122cff481de0201ec58f54eea480dc5db925e84bd",
+      "rng": "568af8303e6bf41e84fc9aed92ba47c6f27b105d0aad5790f1ced5e4b0143531",
+      "sampler": "420b9f903dfc868c4de8bfcbee6b1c15441f7d0a5d5b6c974e1151a58714a1fa",
+      "loss": "6c334ad97cae696fbe00a3dbfc003d5f073476fc3941517858c2c6ef91f29052",
+      "trajectory": "8d1a846813b8520510b58a8a2caece9312d66cc893863082873d715ddcdcb89d",
+      "control_state": "76439d2bc7aa756b529d3783f576d1688a9fb86ff3f81cb3795ba67ad412f1cf"
+    },
+    "old_reference_comparison": {
+      "uninterrupted_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/smoke-25c3d22-v3/seed3/armA",
+      "diagnostic_resumed_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-resume-25c3d22-A-v1-diagnostic-resumed-3f3d204",
+      "first_computational_divergence_attempt": 4,
+      "divergence_preceded_resume": true,
+      "final_mismatch_components": [
+        "net",
+        "ema",
+        "optimizer"
+      ],
+      "final_match_components": [
+        "gradscaler",
+        "rank_rng",
+        "rank_sampler",
+        "loss",
+        "control_state",
+        "snapshot_grid_z",
+        "snapshot_grid_c",
+        "snapshot_grid_size"
+      ],
+      "classification": "fresh CUDA trajectory was not exactly replayable with cudnn_benchmark=True; this was not a missing checkpoint field"
+    }
+  },
+  "determinism_trials": [
+    {
+      "configuration": "cudnn.deterministic=True, cudnn_benchmark=True",
+      "result": "FAIL",
+      "first_divergence_attempt": 4,
+      "dirs": [
+        "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-determinism-cudnn-3f3d204-r1",
+        "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-determinism-cudnn-3f3d204-r2"
+      ]
+    },
+    {
+      "configuration": "torch.use_deterministic_algorithms(True), cudnn.deterministic=True, CUBLAS_WORKSPACE_CONFIG=:4096:8, cudnn_benchmark=True",
+      "result": "FAIL",
+      "first_divergence_attempt": 1,
+      "dirs": [
+        "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-determinism-strict-3f3d204-r1",
+        "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-determinism-strict-3f3d204-r2"
+      ]
+    },
+    {
+      "configuration": "torch.use_deterministic_algorithms(True), cudnn.deterministic=True, CUBLAS_WORKSPACE_CONFIG=:4096:8, cudnn_benchmark=False",
+      "result": "PASS",
+      "all_state_components_match": true,
+      "all_computational_telemetry_match": true,
+      "dirs": [
+        "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-determinism-strict-nobench-3f3d204-r1",
+        "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-determinism-strict-nobench-3f3d204-r2"
+      ]
+    }
+  ],
+  "exact_resume_gate": {
+    "status": "PASS",
+    "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+    "uninterrupted_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-resume-dcca41b-uninterrupted",
+    "resumed_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-resume-dcca41b-resumed",
+    "pause_state_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/smoke/exact-resume-dcca41b-resumed/training-state-000016.pt",
+    "pause_state_file_sha256": "bb49a42eed441fd62725a131404d240115f34d82208630e96bfff7f7c21bcbfe",
+    "uninterrupted_state_file_sha256": "bc430b331bf408121bdeaccf60cfed7b867ee2b23bb86276c34975692425521f",
+    "resumed_state_file_sha256": "0ed0b8cceaf88a49be78650c73e444e49f9c0f5cff514e1122877c62cba26304",
+    "uninterrupted_telemetry_file_sha256": "1ff5e41f1c94af0965cc7e8e23bf10149d62ca508c6d7befff99da338a0e439f",
+    "resumed_telemetry_file_sha256": "e2269ddfdc152eb9c1ed061b63b1fc2a67804193f44a13d747781d31408288a8",
+    "computational_telemetry_sha256": "6aa942ba61d57aaf7e0f893aab9f610768f95146cbdef16a465504cadfcb0397",
+    "computational_telemetry_rows": 32,
+    "component_sha256": {
+      "net": "eff3946b53838d2b0124e4265e8fb5f98d692e5fc60bf71234bd9170e018cb33",
+      "ema": "241277928daa1ef80e474527c1e189aced348d02683fd27567b3ac513c76d865",
+      "optimizer": "87a80efa08541e5e7cb340e396f61e3cb866f5695a6f69364cfb4b3c452ceb49",
+      "gradscaler": "5e82c93c13b3cc97861318c9142a1c6aafd081a0547c53d9ff155e28a7d40b2f",
+      "rank_rng": "a361967686715d820de5851ab342bc324d55b7a661f2a77e26b70951fa4eca6b",
+      "rank_sampler": "cd8089cde4e2c358fdc59117d28cabb39de3441755b2d0cb21d648e189507a18",
+      "loss": "6c334ad97cae696fbe00a3dbfc003d5f073476fc3941517858c2c6ef91f29052",
+      "control_state": "6bcab07810cc7510c9ada2c16088bab39f4cdce9c0563e58865a68a226fded10",
+      "snapshot_grid_z": "e40fd0a484aa01dfbfe674a4af0ffdb897d8e9719b5ea652626d7e0c0988583d",
+      "snapshot_grid_c": "ba00d60d9b3e118f52e2b3c2c775d122ece75e86848dd6cf5de8106943b1ccb6",
+      "snapshot_grid_size": "276424c15363262faa9d7ad3e0fa40f1db7245c67fd3c1d425253915933da2e5"
+    },
+    "final_counters": {
+      "attempted_iteration": 32,
+      "successful_optimizer_steps": 23,
+      "cur_nimg": 4096,
+      "cur_tick": 2,
+      "tick_start_nimg": 4096
+    }
+  },
+  "aborted_pre_gate_formal_runs": {
+    "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-25c3d22-resume-override-v1",
+    "reason": "Formal A cells were started before resume failure classification and were stopped when exact replay could not yet be proven.",
+    "cells": [
+      {
+        "cell": "seed3/A",
+        "historical_pid": 21868,
+        "last_attempt": 292,
+        "last_processed_kimg": 37.376
+      },
+      {
+        "cell": "seed4/A",
+        "historical_pid": 21853,
+        "last_attempt": 287,
+        "last_processed_kimg": 36.736
+      }
+    ],
+    "later_cells_started": false,
+    "processes_stopped": true
+  },
+  "formal_launch": {
+    "status": "RUNNING",
+    "started_local": "2026-08-20T16:35:23+08:00",
+    "source_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+    "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1",
+    "launcher_script": "/data/temp/ECT001/q256_formal_direct_dcca41b.sh",
+    "launcher_script_sha256": "41c0f96108d128d54164ce4c163eed985926bd857c36dccfbee25dc58230eda5",
+    "launch_mode": "direct two-GPU sequential queues",
+    "provenance_limitation": "The direct queue does not create canonical per-cell launch_manifest.json or runner_completion.json; source head is bound in worker logs and this record. Training directories contain training_options, initial state receipt, telemetry, checkpoints, and snapshots.",
+    "tmux": {
+      "gpu0": "q256_dcca_gpu0",
+      "gpu1": "q256_dcca_gpu1"
+    },
+    "logs": {
+      "gpu0": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal-dcca41b-gpu0.log",
+      "gpu1": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal-dcca41b-gpu1.log"
+    },
+    "queues": {
+      "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859": [
+        "seed3/A",
+        "seed3/B",
+        "seed3/C",
+        "seed3/D",
+        "seed5/A",
+        "seed5/B",
+        "seed5/C",
+        "seed5/D"
+      ],
+      "GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10": [
+        "seed4/A",
+        "seed4/B",
+        "seed4/C",
+        "seed4/D"
+      ]
+    },
+    "training_contract": {
+      "fresh": true,
+      "requested_kimg": 256,
+      "expected_attempts": 2000,
+      "batch": 128,
+      "batch_gpu": 16,
+      "optimizer": "RAdam",
+      "learning_rate": 0.0001,
+      "ema_beta": 0.9993,
+      "amp": true,
+      "fp16": true,
+      "tf32": false,
+      "cudnn_benchmark": false,
+      "cudnn_deterministic": true,
+      "deterministic_algorithms": true,
+      "cublas_workspace_config": ":4096:8"
+    }
+  },
+  "formal_snapshot": {
+    "snapshot_utc": "2026-08-20T11:13:38Z",
+    "gpu_processes": [
+      {
+        "cell": "seed3/C",
+        "pid": 58526,
+        "gpu_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859"
+      },
+      {
+        "cell": "seed4/C",
+        "pid": 59146,
+        "gpu_uuid": "GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10"
+      }
+    ],
+    "cells": {
+      "seed3/A": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1990,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 12, 1317],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "artifact_sha256": {
+          "training_state": "bea5514105a38209c2395e27e026aab8e1d7f59ac810c0f18f9937b9ac1f848b",
+          "network_snapshot": "ef133e3a214b4ef8c43aaa43900152bdf71f3e08c85c630f26cdac08768549c1",
+          "telemetry": "6b3fec1e04cb54d37bc6cdadd8a2cfdc92074b1082a4dcef6dddcd7e4ee7ab04",
+          "initial_state_receipt": "d42ee7b279c2806df82c0eb1f3557de482dd5cbcae5d43dee990b5e4517329e8"
+        }
+      },
+      "seed3/B": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1990,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 11, 1326],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "artifact_sha256": {
+          "training_state": "6a1ad0d0c9feaa7cbee0b67e727cdd0fe32e07781b0cacb9caa612721dc6f288",
+          "network_snapshot": "ae791fccaa38c4cce7259374bb6b23c23bbe08fca24c35d0f8b62efa24aee246",
+          "telemetry": "f27fbc3d0cdf648ad10118a42fba73ef70713c57dc3e39155ff10b34afe5bb70",
+          "initial_state_receipt": "c893d760cd2a6e650312f7c42c9971aa419107306b489b843f41021bb504cfa2"
+        }
+      },
+      "seed3/C": {
+        "status": "RUNNING",
+        "attempts": 1234,
+        "accepted_updates": 1225,
+        "processed_kimg": 157.952,
+        "amp_skip_attempts_so_far": [1, 2, 3, 4, 5, 6, 7, 8, 11],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0
+      },
+      "seed3/D": {
+        "status": "NOT_STARTED"
+      },
+      "seed4/A": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1990,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 11, 956],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "artifact_sha256": {
+          "training_state": "0b4b98636cbbe9bf9e15261f14639c79c3d2a417656d697b5f60c7c9f528e7ee",
+          "network_snapshot": "0f9f10f5850e6759c06e3f2c9a2fb7c1346e593ecb8ec1fcef17d3e1abcf0722",
+          "telemetry": "804b5365123202f3c9727b0cd6939333b6e3123a1c32f2a1e7af5e00aaf0fded",
+          "initial_state_receipt": "5ed951f7f3cdbd8d285f47a5ec60881a466956d07f9f223723e5fcf435bc5cbc"
+        }
+      },
+      "seed4/B": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1991,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 10],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "artifact_sha256": {
+          "training_state": "b87731facff25a970d73ebc431db98256a77a94f50ee8b8ec026d2dca2ed1131",
+          "network_snapshot": "d73e6115a01b81de5b71a042b68d735adb86193bb2b75c7fe7fdea0f526d1829",
+          "telemetry": "c4384b20e6ac401f049bf8e98033c674211b2c7c67f67c962668dc39aab7b472",
+          "initial_state_receipt": "7df3d3654faab0ecf933714729e523942165481d690bda53b442780a238ce58f"
+        }
+      },
+      "seed4/C": {
+        "status": "RUNNING",
+        "attempts": 1229,
+        "accepted_updates": 1219,
+        "processed_kimg": 157.312,
+        "amp_skip_attempts_so_far": [1, 2, 3, 4, 5, 6, 7, 8, 11, 956],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0
+      },
+      "seed4/D": {
+        "status": "NOT_STARTED"
+      },
+      "seed5/A": {
+        "status": "NOT_STARTED"
+      },
+      "seed5/B": {
+        "status": "NOT_STARTED"
+      },
+      "seed5/C": {
+        "status": "NOT_STARTED"
+      },
+      "seed5/D": {
+        "status": "NOT_STARTED"
+      }
+    }
+  },
+  "open_observations": [
+    {
+      "id": "AMP_ACCEPTED_UPDATE_COUNT_SEED4_A_VS_B",
+      "status": "OPEN_UNTIL_ALL_SEED4_ARMS_COMPLETE",
+      "observation": "seed4/A completed with 10 skips and 1990 accepted updates; seed4/B completed with 9 skips and 1991 accepted updates.",
+      "scientific_relevance": "One accepted-update difference may affect strict within-seed endpoint comparability even though processed_nimg and attempted iterations are equal.",
+      "safety_status": "No loss/model/EMA/update/factor/denominator non-finite counts and no raw-gradient/skip inconsistency were observed.",
+      "action_taken": "Recorded only; no AMP mechanism audit, no process interruption, and no new runs were added. Reassess after seed4 C/D complete."
+    }
+  ],
+  "targeted_test_record": {
+    "command_scope": [
+      "TargetWeightLauncherTest.test_exact_frozen_command_and_resume_exclusivity",
+      "TargetWeightLauncherTest.test_planned_pause_is_deeply_checked_and_immutably_bound"
+    ],
+    "result": "2 passed",
+    "full_162_item_suite_rerun": false
+  }
+}
