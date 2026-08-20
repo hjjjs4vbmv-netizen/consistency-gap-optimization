@@ -1,7 +1,7 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T15:34:56Z",
+  "updated_utc": "2026-08-20T16:29:04Z",
   "experiment_id": "q256-target-weight-factorial",
   "status_at_snapshot": "RUNNING_POST_RECOVERY",
   "training_source": {
@@ -657,6 +657,26 @@
       "gpu1_memory_mib": 3593,
       "private_shm_used_kib_each": 44
     }
+  },
+  "post_seed5_frozen_evaluation_plan": {
+    "status": "SCHEDULED_NOT_STARTED",
+    "scheduled_local": "2026-08-21T00:25:59+08:00",
+    "automation_id": "q256-formal-runs",
+    "plan_files": [
+      "analysis/q256_target_weight_factorial/post_seed5_frozen_evaluation_plan.md",
+      "analysis/q256_target_weight_factorial/post_seed5_frozen_evaluation_plan.json"
+    ],
+    "trigger": "12/12 cells at 2000 attempts and 256.000 kimg with final artifacts, worker PASS, no real training error, and no remaining ct_train.py process",
+    "gpu_physical_index": 0,
+    "gpu_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+    "gpu_role": "same GPU currently running seed5",
+    "forbid_switch_to_physical_gpu_1_without_user_instruction": true,
+    "phase_order": ["all_12_nfe1", "all_12_nfe2", "collection"],
+    "primary_endpoint": "FID-50k@NFE=1",
+    "secondary_endpoints": ["KID-50k@NFE=1", "FID-50k@NFE=2", "KID-50k@NFE=2"],
+    "selection_policy": "all_12_final_256kimg_checkpoints_no_intermediate_or_preview_selection",
+    "direct_queue_binding_policy": "minimal provenance/matrix binding only; no retraining or checkpoint mutation",
+    "silent_retry_allowed": false
   },
   "open_observations": [
     {

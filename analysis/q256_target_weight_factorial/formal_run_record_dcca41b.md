@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-20 23:34 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-21 00:29 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -125,3 +125,9 @@ Nine of twelve formal cells are now complete. The queue automatically advanced t
 Seed5/B completed with 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Its final state, network snapshot, telemetry, initial-state receipt, and final image are present, and the recovery worker emitted an explicit PASS line. The AMP skips were attempts 1–8, 13, and 1163; no semantic non-finite event or raw-gradient/skip inconsistency was observed. Artifact hashes are recorded in the JSON record.
 
 Ten of twelve formal cells are now complete. The queue automatically advanced to seed5/C; at this milestone it was at attempt 94, accepted update 84, and `12.032 kimg` (PID 1654). GPU0 was active at 35% utilization with 3549 MiB allocated; GPU1 remained expectedly idle. No new Traceback, bus error, OOM, CUDA error, or semantic non-finite event was present.
+
+## Post-seed5 frozen evaluation scheduled at 2026-08-21 00:25 CST
+
+Automation `q256-formal-runs` now has a second phase. After all 12 training cells reach 2000 attempts and 256.000 kimg with complete final artifacts, PASS markers, no real training error, and no remaining training process, it will automatically bind the complete 3-seed × 4-arm final-checkpoint matrix and start the frozen formal evaluation on the same GPU currently running seed5: physical GPU index 0, UUID `GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859`, after that GPU becomes idle. Physical GPU index 1 must not be substituted unless the user explicitly changes the instruction.
+
+The requested order is all 12 NFE=1 jobs first, with FID-50k@NFE=1 as the primary endpoint and KID from the same generated samples, followed by all 12 NFE=2 FID/KID jobs and the frozen contrasts/interaction collector. No B/D-only evaluation, preview selection, intermediate checkpoint, silent retry, or training rerun is permitted. The direct queue's missing canonical matrix receipts may be repaired only with a minimal provenance binding from immutable completed artifacts. Exact triggers, frozen settings, output paths, failure policy, and formulas are recorded in `post_seed5_frozen_evaluation_plan.md/.json`.
