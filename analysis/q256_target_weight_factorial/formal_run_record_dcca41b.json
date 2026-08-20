@@ -1,9 +1,9 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T19:07:04Z",
+  "updated_utc": "2026-08-20T19:18:58Z",
   "experiment_id": "q256-target-weight-factorial",
-  "status_at_snapshot": "FORMAL_TRAINING_COMPLETE_EVALUATION_BINDING",
+  "status_at_snapshot": "FORMAL_TRAINING_COMPLETE_EVAL_V1_STOPPED_FOR_AUDIT",
   "training_source": {
     "branch": "experiment/q256-target-weight-factorial",
     "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
@@ -743,7 +743,7 @@
     }
   },
   "post_seed5_frozen_evaluation_plan": {
-    "status": "TRIGGER_SATISFIED_BINDING_IN_PROGRESS",
+    "status": "V1_STOPPED_FOR_AUDIT_V2_PREPARED",
     "scheduled_local": "2026-08-21T00:25:59+08:00",
     "automation_id": "q256-formal-runs",
     "plan_files": [
@@ -762,10 +762,49 @@
     "direct_queue_binding_policy": "minimal provenance/matrix binding only; no retraining or checkpoint mutation",
     "silent_retry_allowed": false,
     "trigger_satisfied_local": "2026-08-21T03:07:04+08:00",
-    "matrix_binding_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/matrix-binding-direct-dcca41b-v1",
-    "evaluation_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-dcca41b-primary-first-v1",
+    "matrix_binding_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/matrix-binding-direct-dcca41b-v2",
+    "evaluation_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-dcca41b-primary-first-v2",
     "binding_adapter": "analysis/q256_target_weight_factorial/evaluation_support/run_q256_direct_frozen_evaluation.py",
-    "binding_adapter_scope": "read-only immutable-artifact provenance binding plus NFE-primary job ordering; no checkpoint or metric numerical change"
+    "binding_adapter_scope": "read-only immutable-artifact provenance binding plus NFE-primary job ordering and one bounded host nvidia-smi timeout retry; no checkpoint or metric numerical change",
+    "launch_attempts": [
+      {
+        "attempt": 0,
+        "started_utc": "2026-08-20T19:13:52Z",
+        "status": "FAILED_PRE_BINDING_ADAPTER_POSTCONDITION",
+        "error": "seed3/B factorial training options mismatch",
+        "root_cause": "The metadata-only adapter initially swapped the frozen B and C arm factor identities.",
+        "impact": "No matrix binding or evaluation root was created; no checkpoint or metric job was touched.",
+        "correction_commit": "d6c123c",
+        "classification": "adapter-only identity bug"
+      },
+      {
+        "attempt": 1,
+        "started_utc": "2026-08-20T19:15:22Z",
+        "finished_utc": "2026-08-20T19:18:21Z",
+        "status": "STOPPED_FOR_AUDIT",
+        "matrix_binding_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/matrix-binding-direct-dcca41b-v1",
+        "matrix_binding_sha256": "cf3dd46b2cf8a248c1bdb975dd14c004ef36277010216d2e38d04e236a13b3fc",
+        "evaluation_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-dcca41b-primary-first-v1",
+        "evaluation_plan_sha256": "c45bdbdea9e9fde30e2754111b1c53f21a9c4371804de3b0e5ff12331591ec35",
+        "failed_job": "seed3-armA-nfe1",
+        "completed_jobs": 0,
+        "error": "GPU_AUDIT_FAILED: nvidia-smi compute-process query timed out after 0.4 seconds",
+        "gpu_monitor_checks_before_stop": 42,
+        "monitor_action": "SIGTERM to its own evaluation process group; no later job started",
+        "post_stop_gpu0_idle_check": "PASS; zero compute processes",
+        "classification": "host GPU-audit probe timeout; not a metric, checkpoint, CUDA, OOM, nonfinite, or foreign-process failure",
+        "preservation": "The STOPPED_FOR_AUDIT root and receipts remain immutable and are not reused."
+      }
+    ],
+    "v2_monitor_correction": {
+      "scope": "audit-only",
+      "policy": "retain the one-second cadence and all exclusivity checks; allow at most one explicitly recorded 1.0-second retry per job when and only when the host nvidia-smi probe times out",
+      "second_timeout_or_any_foreign_process": "fail closed",
+      "metric_numerical_semantics_changed": false,
+      "checkpoint_selection_changed": false,
+      "silent_retry": false,
+      "durable_record_written_before_v2_launch": true
+    }
   },
   "open_observations": [
     {

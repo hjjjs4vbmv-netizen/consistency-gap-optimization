@@ -6,11 +6,11 @@ repo=/data/temp/ECT001/q256-factorial-clean-25c3d22
 expected_head=dcca41b19e7c45512b5fbe98776520396a1bf9ac
 formal_root=/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1
 evaluation_parent=/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation
-matrix_dir=${evaluation_parent}/matrix-binding-direct-dcca41b-v1
-outdir=${evaluation_parent}/frozen-eval-dcca41b-primary-first-v1
-log=${evaluation_parent}/formal-frozen-eval-dcca41b-primary-first-v1.log
+matrix_dir=${evaluation_parent}/matrix-binding-direct-dcca41b-v2
+outdir=${evaluation_parent}/frozen-eval-dcca41b-primary-first-v2
+log=${evaluation_parent}/formal-frozen-eval-dcca41b-primary-first-v2.log
 adapter=/data/temp/ECT001/run_q256_direct_frozen_evaluation.py
-adapter_sha=cfabda551fe7047ab19b339778a205fe5ba1e278745bf5cb41829050eed99f6b
+adapter_sha=5cbd56c6998212c8914ee70a66bf25bacebfd7c86c5f6a305bfc8ec01fb076d6
 sandbox=/data/temp/ect001-pytorch2401-sandbox
 private_shm=/tmp/ECT001-q256-dcca41b-shm-gpu0
 

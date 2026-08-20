@@ -444,6 +444,49 @@ def main(argv: Sequence[str] | None = None) -> int:
     evaluator.load_training_matrix = lambda matrix_dir: load_bound_matrix(matrix_dir, evaluator)
     evaluator.build_jobs = primary_first_jobs
     evaluator.training_launcher.deep_revalidate_existing_arm = direct_revalidation
+
+    # A single host-side nvidia-smi probe exceeded the frozen 0.4 s timeout in
+    # the first launch even though the immediately following idle audit passed
+    # and no foreign process existed.  Preserve the one-second monitor cadence
+    # and every exclusivity check, but allow one explicitly recorded bounded
+    # 1.0 s retry per job for that host-tool timeout only.  Foreign processes,
+    # process-tree audit failures, cadence failures, and a second timeout still
+    # stop the job for audit.
+    original_stream_process = evaluator.training_launcher.stream_process
+    original_gpu_query = evaluator.training_launcher.query_gpu_compute_processes
+
+    def stream_with_one_bounded_gpu_probe_retry(*stream_args: Any, **stream_kwargs: Any) -> int:
+        retries_used = 0
+
+        def bounded_gpu_query(gpu_uuid: str, *, timeout_seconds: float = 5.0) -> list[dict[str, object]]:
+            nonlocal retries_used
+            try:
+                return original_gpu_query(gpu_uuid, timeout_seconds=timeout_seconds)
+            except evaluator.training_launcher.LaunchError as exc:
+                if retries_used == 0 and "timed out after" in str(exc):
+                    retries_used = 1
+                    return original_gpu_query(gpu_uuid, timeout_seconds=1.0)
+                raise
+
+        evaluator.training_launcher.query_gpu_compute_processes = bounded_gpu_query
+        try:
+            return original_stream_process(*stream_args, **stream_kwargs)
+        finally:
+            monitor = stream_kwargs.get("gpu_monitor_record")
+            if isinstance(monitor, dict):
+                monitor["gpu_audit_probe_timeout_recovery"] = {
+                    "schema": "ect.q256.gpu-audit-probe-timeout-recovery/v1",
+                    "base_timeout_seconds": 0.4,
+                    "bounded_retry_timeout_seconds": 1.0,
+                    "maximum_retries_per_job": 1,
+                    "retries_used": retries_used,
+                    "trigger": "nvidia-smi timeout only",
+                    "foreign_process_tolerance_changed": False,
+                    "metric_numerical_semantics_changed": False,
+                }
+            evaluator.training_launcher.query_gpu_compute_processes = original_gpu_query
+
+    evaluator.training_launcher.stream_process = stream_with_one_bounded_gpu_probe_retry
     data = args.data or evaluator.DEFAULT_DATASET
     execute_args = argparse.Namespace(
         matrix_dir=args.matrix_dir,

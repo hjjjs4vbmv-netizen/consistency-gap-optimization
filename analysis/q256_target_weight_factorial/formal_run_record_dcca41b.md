@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:07 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:18 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -139,6 +139,14 @@ Seed5/D completed with 2000 attempts, 1990 accepted updates, and exactly 256.000
 The formal matrix is now 12/12 complete: 12 final images, 12 final training states, and 12 final network snapshots. No formal `ct_train.py` process remains. Physical GPU0 (`GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859`) is idle at 0% utilization and 4 MiB, with no compute process. GPU1 continues only the separately authorized seed6/7 extension. `/data/raw` has 32 TiB free, `/data/temp` has 5.0 TiB free, and `/dev/shm` has 224 GiB free.
 
 The frozen-evaluation trigger is therefore satisfied. The direct queue lacks canonical launcher receipts, so the evaluation uses a minimal adapter that read-only validates and hash-binds the existing immutable artifacts, supplies the missing matrix provenance, and reorders the unchanged evaluator jobs so all 12 NFE=1 jobs precede all 12 NFE=2 jobs. It does not retrain, mutate checkpoints, or alter metric numerical arguments.
+
+## Frozen-evaluation v1 stopped for audit at 2026-08-21 03:18:21 CST
+
+The first adapter invocation stopped before binding because its metadata-only B/C identity table was swapped. No binding directory or evaluation root existed at that point. Commit `d6c123c` corrected the adapter to the actual frozen arm identities: A=(1.0,1.0), B=(1.1,1.1), C=(1.1,1.0), D=(1.0,1.1).
+
+The corrected invocation created a PASS binding for all 12 immutable final checkpoints and an evaluation plan whose exact order is all seed3/4/5 A/B/C/D NFE=1 jobs followed by all corresponding NFE=2 jobs. The first NFE=1 job then stopped after 42 passing GPU-monitor polls because one host `nvidia-smi` compute-process query exceeded the monitor's 0.4-second subprocess timeout. The monitor fail-closed, sent SIGTERM only to its own evaluation process group, wrote `STOPPED_FOR_AUDIT`, and started no later job. The post-stop GPU0 audit passed with zero compute processes. No metric completed, and this was not a checkpoint, CUDA, OOM, non-finite, or foreign-process failure.
+
+The stopped v1 root and receipts are retained unchanged. Before any v2 launch, the event is durably recorded here. The minimal v2 correction keeps the one-second exclusivity cadence and every foreign-process check, but permits one recorded bounded 1.0-second retry per job only when the host `nvidia-smi` probe itself times out. A second timeout, any foreign process, or any other audit failure still stops the chain. Checkpoint selection and metric numerical semantics are unchanged.
 
 ## Post-seed5 frozen evaluation scheduled at 2026-08-21 00:25 CST
 
