@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:25 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:32 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -153,6 +153,8 @@ The stopped v1 root and receipts are retained unchanged. Before any v2 launch, t
 The documented v2 chain started at 03:22:03 CST in tmux `q256_formal_eval_dcca41b_v2`. The new 12-cell matrix binding passed and the immutable plan again lists all 12 NFE=1 jobs before every NFE=2 job. Binding, plan, adapter, and launcher hashes are in the JSON record.
 
 The first primary job, `seed3-armA-nfe1`, is running on the required physical GPU0 only (evaluation PID 94028). At observation it had remained stable beyond the v1 timeout point, GPU0 was at 98% utilization with 5247 MiB allocated, and there was no traceback, OOM, bus error, non-finite event, audit stop, or foreign GPU0 process. GPU1 continues the independent seed6/7 extension and is not used by this formal evaluation.
+
+At 03:32:04 CST, `seed3-armA-nfe1` had completed with a PASS receipt: FID-50k=331.8845547437531 and KID-50k=0.3535313746371371. The job completed in 408.015 seconds with 408 passing GPU-monitor checks and used zero bounded timeout retries. The chain advanced in the frozen order to `seed3-armB-nfe1`; no error or foreign GPU0 process was present. Exact result and receipt hashes are recorded in the JSON file.
 
 ## Post-seed5 frozen evaluation scheduled at 2026-08-21 00:25 CST
 

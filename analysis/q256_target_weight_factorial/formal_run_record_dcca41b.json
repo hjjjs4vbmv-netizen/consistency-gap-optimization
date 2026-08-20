@@ -1,7 +1,7 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T19:25:14Z",
+  "updated_utc": "2026-08-20T19:32:04Z",
   "experiment_id": "q256-target-weight-factorial",
   "status_at_snapshot": "FORMAL_EVALUATION_V2_RUNNING_PRIMARY_NFE1",
   "training_source": {
@@ -816,7 +816,21 @@
         "observed_gpu0_memory_mib": 5247,
         "observed_gpu0_compute_processes": 1,
         "observed_errors": 0,
-        "later_jobs_started": false
+        "later_jobs_started": true,
+        "first_job_completion": {
+          "finished_before_local": "2026-08-21T03:32:04+08:00",
+          "status": "PASS",
+          "fid50k_full": 331.8845547437531,
+          "kid50k_full": 0.3535313746371371,
+          "elapsed_seconds": 408.015,
+          "gpu_monitor_checks": 408,
+          "gpu_probe_timeout_retries_used": 0,
+          "max_gpu_probe_check_duration_seconds": 0.4444888401776552,
+          "receipt_sha256": "e7427dd5b4d37a4937fc9bdb60b8887473c277eb9d0a0825dbb2a392da5140fa",
+          "fid_receipt_sha256": "96478a5f218b67a21a446d91a45ae8b803c5fdfaf83bc8ceccb94dd8b850bf08",
+          "kid_receipt_sha256": "16af782d33b0e4979717ce7d096b2d4eb0b0d549baf743b92f2a4c6bde543729"
+        },
+        "current_job_at_2026_08_21_03_32_04_cst": "seed3-armB-nfe1"
       }
     ],
     "v2_monitor_correction": {
