@@ -459,7 +459,21 @@ class TargetWeightLauncherTest(unittest.TestCase):
         self.assertIn("--fp16=True", fresh)
         self.assertIn("--tf32=False", fresh)
         self.assertIn("--enable_amp=True", fresh)
+        self.assertIn("--bench=False", fresh)
         self.assertIn("--metrics=none", fresh)
+        contract = launcher.training_contract("formal", "C", 4)
+        self.assertFalse(contract["cudnn_benchmark"])
+        self.assertTrue(contract["cudnn_deterministic"])
+        self.assertTrue(contract["deterministic_algorithms"])
+        self.assertEqual(
+            contract["cublas_workspace_config"],
+            launcher.DETERMINISTIC_CUBLAS_WORKSPACE_CONFIG,
+        )
+        process_env = launcher.build_process_environment("GPU-test", 29500)
+        self.assertEqual(
+            process_env["CUBLAS_WORKSPACE_CONFIG"],
+            launcher.DETERMINISTIC_CUBLAS_WORKSPACE_CONFIG,
+        )
         self.assertEqual([arg for arg in fresh if arg.startswith("--transfer=")], ["--transfer=/assets/transfer.pkl"])
         self.assertFalse(any(arg.startswith("--resume=") for arg in fresh))
 

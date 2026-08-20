@@ -855,6 +855,19 @@ def training_loop(
     if strict_reproducibility:
         random.seed(rank_seed)
     torch.manual_seed(np.random.randint(1 << 31))
+    if strict_reproducibility:
+        if cudnn_benchmark:
+            raise ValueError(
+                'formal q256 target-weight arms require cudnn_benchmark=False '
+                'for exact replay'
+            )
+        if os.environ.get('CUBLAS_WORKSPACE_CONFIG') != ':4096:8':
+            raise ValueError(
+                'formal q256 target-weight arms require '
+                'CUBLAS_WORKSPACE_CONFIG=:4096:8 for exact replay'
+            )
+        torch.backends.cudnn.deterministic = True
+        torch.use_deterministic_algorithms(True)
     torch.backends.cudnn.benchmark = cudnn_benchmark
 
     # Enable these to speed up on A100 GPUs
@@ -897,6 +910,13 @@ def training_loop(
             'mid_t': mid_t,
             'metrics': metrics,
             'cudnn_benchmark': cudnn_benchmark,
+            'cudnn_deterministic': torch.backends.cudnn.deterministic,
+            'deterministic_algorithms': (
+                torch.are_deterministic_algorithms_enabled()
+            ),
+            'cublas_workspace_config': os.environ.get(
+                'CUBLAS_WORKSPACE_CONFIG'
+            ),
             'enable_tf32': enable_tf32,
             'enable_amp': enable_amp,
             'device': str(device),

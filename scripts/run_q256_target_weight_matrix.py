@@ -96,6 +96,7 @@ EXPECTED_PYTHON_VERSION = "3.10.12"
 EXPECTED_TORCH_VERSION = "2.2.0a0+81ea7a4"
 EXPECTED_TORCH_CUDA_VERSION = "12.3"
 IN_SANDBOX_ENV = "ECT_Q256_LAUNCHER_IN_SANDBOX"
+DETERMINISTIC_CUBLAS_WORKSPACE_CONFIG = ":4096:8"
 GPU_MONITOR_SCHEMA = "ect.q256.in-run-gpu-exclusivity-monitor/v2"
 GPU_MONITOR_CADENCE_GRACE_SECONDS = 0.25
 AMP_SKIP_WARMUP_PROCESSED_NIMG = 10_000
@@ -1466,7 +1467,7 @@ def build_training_command(
         "--tf32=False",
         "--ls=1.0",
         "--enable_amp=True",
-        "--bench=True",
+        "--bench=False",
         "--cache=True",
         "--workers=1",
         "--metrics=none",
@@ -1518,6 +1519,10 @@ def training_contract(phase: str, arm: str, seed: int) -> dict:
         "fp16": True,
         "amp": True,
         "tf32": False,
+        "cudnn_benchmark": False,
+        "cudnn_deterministic": True,
+        "deterministic_algorithms": True,
+        "cublas_workspace_config": DETERMINISTIC_CUBLAS_WORKSPACE_CONFIG,
         "ema_beta": 0.9993,
         "tick_kimg": 10,
         "numbered_snapshots": False,
@@ -2407,6 +2412,7 @@ def build_process_environment(gpu: str, master_port: int) -> dict[str, str]:
             "RANK": "0",
             "LOCAL_RANK": "0",
             "WORLD_SIZE": "1",
+            "CUBLAS_WORKSPACE_CONFIG": DETERMINISTIC_CUBLAS_WORKSPACE_CONFIG,
             "PYTHONUNBUFFERED": "1",
             "PYTHONDONTWRITEBYTECODE": "1",
         }
@@ -4825,6 +4831,7 @@ def run_arm(args: argparse.Namespace) -> int:
                     "RANK",
                     "LOCAL_RANK",
                     "WORLD_SIZE",
+                    "CUBLAS_WORKSPACE_CONFIG",
                     "PYTHONUNBUFFERED",
                     "PYTHONDONTWRITEBYTECODE",
                 )
