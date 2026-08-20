@@ -28,13 +28,15 @@ from training import reproducibility
 VERIFIER_VERSION = "2"
 VALIDATION_SCHEMA = "ect.q256.target-weight-smoke-matrix-validation/v2"
 AMP_SKIP_POLICY = {
-    "schema": "ect.q256.target-weight-amp-skip-policy/v1",
-    "kind": "observe_then_require_cross_arm_identity_within_seed",
+    "schema": "ect.q256.target-weight-amp-skip-policy/v2",
+    "kind": "observe_then_require_cross_arm_count_equivalence_within_seed",
     "allowed_region": "tick_0_amp_warmup_only",
     "warmup_processed_nimg_exclusive_upper_bound": 10_000,
     "require_finite_loss": True,
     "require_raw_nonfinite_exactly_on_skipped_attempts": True,
-    "require_cross_arm_identical_signature_within_seed": True,
+    "require_cross_arm_equal_skip_count_within_seed": True,
+    "require_cross_arm_equal_successful_update_count_within_seed": True,
+    "allow_objective_dependent_skip_locations": True,
 }
 VALIDATION_FILENAME = "q256_target_weight_smoke_matrix_validation_v2.json"
 
@@ -528,12 +530,25 @@ def verify_smoke_matrix(
         ],
         "source content digest",
     )
-    skip_attempts = _require_same(
+    skip_attempts_by_arm = {
+        arm: arms[arm]["immutable"]["report"]["amp_skip_attempts"]
+        for arm in ARMS
+    }
+    skip_count = _require_same(
+        [(arm, len(skip_attempts_by_arm[arm])) for arm in ARMS],
+        "AMP skip count",
+    )
+    successful_optimizer_steps = _require_same(
         [
-            (arm, arms[arm]["immutable"]["report"]["amp_skip_attempts"])
+            (
+                arm,
+                arms[arm]["immutable"]["report"][
+                    "successful_optimizer_steps"
+                ],
+            )
             for arm in ARMS
         ],
-        "AMP skip-attempt signature",
+        "successful optimizer-step count",
     )
     skip_enforcement = _require_same(
         [
@@ -617,7 +632,9 @@ def verify_smoke_matrix(
         "initial_component_hashes": initial_hashes,
         "final_rank_rng_sha256": final_rng,
         "final_sampler_sha256": final_sampler,
-        "amp_skip_attempts": skip_attempts,
+        "amp_skip_attempts_by_arm": skip_attempts_by_arm,
+        "amp_skip_count": skip_count,
+        "successful_optimizer_steps": successful_optimizer_steps,
         "amp_skip_signature_expected_value_enforced": skip_enforcement,
         "amp_skip_policy": AMP_SKIP_POLICY,
         "trajectory_checks": {

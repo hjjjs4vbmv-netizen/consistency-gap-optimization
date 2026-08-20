@@ -380,6 +380,16 @@ def validate_training_run(
         fail(f"training validation AMP enforcement mode mismatch: {run_dir}")
     if enforced and amp_skip_attempts != expected_skip_attempts:
         fail(f"training validation AMP signature differs from its launch: {run_dir}")
+    successful_optimizer_steps = validation.get("successful_optimizer_steps")
+    expected_successful_optimizer_steps = (
+        training_launcher.PHASES["formal"]["expected_attempts"]
+        - len(amp_skip_attempts)
+    )
+    if successful_optimizer_steps != expected_successful_optimizer_steps:
+        fail(
+            "training validation has an invalid successful optimizer-step "
+            f"count: {run_dir}"
+        )
     preregistration = launch.get("preregistration")
     if not isinstance(preregistration, dict):
         fail(f"training launch lacks preregistration binding: {run_dir}")
@@ -422,6 +432,7 @@ def validate_training_run(
             "training initial common-state SHA256",
         ),
         "amp_skip_attempts": amp_skip_attempts,
+        "successful_optimizer_steps": successful_optimizer_steps,
         "amp_skip_signature_expected_value_enforced": enforced,
         "production_verifier_receipts": immutable,
     }
@@ -522,10 +533,16 @@ def load_training_matrix(matrix_dir: Path) -> tuple[list[dict[str, Any]], dict[s
         fail("training completion does not account for the exact 12 cells")
 
     expected_enforced = plan["expected_amp_skip_attempts"] is not None
-    expected_identity = {}
+    expected_equivalence = {}
     for seed in SEEDS:
         seed_cells = [cell_by_key[(seed, arm)] for arm in ARMS]
-        signatures = {tuple(cell["amp_skip_attempts"]) for cell in seed_cells}
+        signatures_by_arm = {
+            cell["arm"]: cell["amp_skip_attempts"] for cell in seed_cells
+        }
+        skip_counts = {len(signature) for signature in signatures_by_arm.values()}
+        successful_step_counts = {
+            cell["successful_optimizer_steps"] for cell in seed_cells
+        }
         initial_states = {
             cell["initial_common_state_sha256"] for cell in seed_cells
         }
@@ -533,34 +550,41 @@ def load_training_matrix(matrix_dir: Path) -> tuple[list[dict[str, Any]], dict[s
             cell["amp_skip_signature_expected_value_enforced"]
             for cell in seed_cells
         }
-        if len(signatures) != 1:
-            fail(f"seed {seed} has arm-specific AMP skip signatures")
+        if len(skip_counts) != 1:
+            fail(f"seed {seed} has arm-specific AMP skip counts")
+        if len(successful_step_counts) != 1:
+            fail(f"seed {seed} has arm-specific successful optimizer-step counts")
         if len(initial_states) != 1:
             fail(f"seed {seed} has arm-specific initial common state")
         if enforcement_modes != {expected_enforced}:
             fail(f"seed {seed} has a mixed AMP skip enforcement mode")
-        signature = list(next(iter(signatures)))
-        if (
-            expected_enforced
-            and signature != plan["expected_amp_skip_attempts"]
+        if expected_enforced and any(
+            signature != plan["expected_amp_skip_attempts"]
+            for signature in signatures_by_arm.values()
         ):
             fail(f"seed {seed} AMP signature differs from the matrix plan")
-        expected_identity[str(seed)] = {
+        expected_equivalence[str(seed)] = {
             "arms": list(ARMS),
-            "skip_attempts": signature,
+            "skip_attempts_by_arm": signatures_by_arm,
+            "skip_count": next(iter(skip_counts)),
+            "successful_optimizer_steps": next(iter(successful_step_counts)),
             "initial_common_state_sha256": next(iter(initial_states)),
         }
-    if completion.get("amp_skip_identity") != expected_identity:
-        fail("training completion AMP/initial-state identity is stale")
+    if completion.get("amp_skip_equivalence") != expected_equivalence:
+        fail("training completion AMP/initial-state equivalence is stale")
     expected_live_identity = {
         seed: {
-            "amp_skip_attempts": record["skip_attempts"],
+            "amp_skip_attempts_by_arm": record["skip_attempts_by_arm"],
+            "amp_skip_count": record["skip_count"],
+            "successful_optimizer_steps": record[
+                "successful_optimizer_steps"
+            ],
             "initial_common_state_sha256": record[
                 "initial_common_state_sha256"
             ],
             "arms": record["arms"],
         }
-        for seed, record in expected_identity.items()
+        for seed, record in expected_equivalence.items()
     }
     if completion.get("live_seed_identity") != expected_live_identity:
         fail("training completion live cross-arm identity is stale")

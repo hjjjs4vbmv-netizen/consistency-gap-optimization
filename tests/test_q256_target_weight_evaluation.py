@@ -272,6 +272,7 @@ class Q256TargetWeightEvaluationTest(unittest.TestCase):
                 "source_git_head": source_head,
                 "source_content_sha256": source_content,
                 "initial_common_state_sha256": "3" * 64,
+                "successful_optimizer_steps": 1998,
                 "amp_skip_attempts": [1, 2],
                 "amp_skip_signature_expected_value_enforced": False,
                 "amp_skip_policy": evaluator.training_launcher.AMP_SKIP_POLICY,
@@ -426,10 +427,14 @@ class Q256TargetWeightEvaluationTest(unittest.TestCase):
                 "skipped_existing_pass": [],
                 "failures": [],
                 "received_signal": None,
-                "amp_skip_identity": {
+                "amp_skip_equivalence": {
                     str(seed): {
                         "arms": list(evaluator.ARMS),
-                        "skip_attempts": [1, 2],
+                        "skip_attempts_by_arm": {
+                            arm: [1, 2] for arm in evaluator.ARMS
+                        },
+                        "skip_count": 2,
+                        "successful_optimizer_steps": 1998,
                         "initial_common_state_sha256": "3" * 64,
                     }
                     for seed in evaluator.SEEDS
@@ -437,7 +442,11 @@ class Q256TargetWeightEvaluationTest(unittest.TestCase):
                 "live_seed_identity": {
                     str(seed): {
                         "arms": list(evaluator.ARMS),
-                        "amp_skip_attempts": [1, 2],
+                        "amp_skip_attempts_by_arm": {
+                            arm: [1, 2] for arm in evaluator.ARMS
+                        },
+                        "amp_skip_count": 2,
+                        "successful_optimizer_steps": 1998,
                         "initial_common_state_sha256": "3" * 64,
                     }
                     for seed in evaluator.SEEDS

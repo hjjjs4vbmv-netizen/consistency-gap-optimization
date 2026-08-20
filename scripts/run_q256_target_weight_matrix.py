@@ -100,13 +100,15 @@ GPU_MONITOR_SCHEMA = "ect.q256.in-run-gpu-exclusivity-monitor/v2"
 GPU_MONITOR_CADENCE_GRACE_SECONDS = 0.25
 AMP_SKIP_WARMUP_PROCESSED_NIMG = 10_000
 AMP_SKIP_POLICY = {
-    "schema": "ect.q256.target-weight-amp-skip-policy/v1",
-    "kind": "observe_then_require_cross_arm_identity_within_seed",
+    "schema": "ect.q256.target-weight-amp-skip-policy/v2",
+    "kind": "observe_then_require_cross_arm_count_equivalence_within_seed",
     "allowed_region": "tick_0_amp_warmup_only",
     "warmup_processed_nimg_exclusive_upper_bound": AMP_SKIP_WARMUP_PROCESSED_NIMG,
     "require_finite_loss": True,
     "require_raw_nonfinite_exactly_on_skipped_attempts": True,
-    "require_cross_arm_identical_signature_within_seed": True,
+    "require_cross_arm_equal_skip_count_within_seed": True,
+    "require_cross_arm_equal_successful_update_count_within_seed": True,
+    "allow_objective_dependent_skip_locations": True,
 }
 
 # Ordered deliberately: every seed sees the same arm order.
@@ -150,6 +152,7 @@ ROLE_E_AB_PARITY_SOURCE_FILES = (
     "training/reproducibility.py",
     "torch_utils/misc.py",
     "scripts/run_q256_target_weight_correctness_gate.py",
+    "scripts/run_q256_target_weight_evaluation.py",
     "scripts/run_q256_target_weight_matrix.py",
     "scripts/verify_q256_target_weight_arm.py",
     "scripts/verify_q256_target_weight_smoke_matrix.py",
@@ -162,6 +165,7 @@ ROLE_E_AB_PARITY_SOURCE_FILES = (
     "tests/test_q256_target_weight_smoke_matrix_verifier.py",
     "tests/test_q256_target_weight_evaluation.py",
     "tests/test_q256_target_weight_correctness_gate.py",
+    "analysis/q256_target_weight_factorial/preregistration_amendment_002.json",
 )
 ROLE_E_REQUIRED_TEST_CASES = (
     (
@@ -888,21 +892,45 @@ def validate_gate_receipt_payload(
             fail(f"{label} was produced from a stale Git commit")
         if payload.get("source_content_sha256") != source.get("content_sha256"):
             fail(f"{label} was produced from stale source content")
-        observed_skip_attempts = payload.get("amp_skip_attempts")
+        observed_skip_attempts_by_arm = payload.get("amp_skip_attempts_by_arm")
         if (
-            not isinstance(observed_skip_attempts, list)
+            not isinstance(observed_skip_attempts_by_arm, dict)
+            or set(observed_skip_attempts_by_arm) != set(ARMS)
+        ):
+            fail(f"{label} has malformed per-arm AMP skip signatures")
+        for arm, signature in observed_skip_attempts_by_arm.items():
+            if (
+                not isinstance(signature, list)
+                or any(
+                    isinstance(value, bool) or not isinstance(value, int)
+                    for value in signature
+                )
+                or signature != sorted(set(signature))
+            ):
+                fail(f"{label} arm {arm} has a malformed AMP skip signature")
+            if expected_skip_attempts is not None and signature != expected_skip_attempts:
+                fail(
+                    f"{label} arm {arm} AMP skip signature differs from the "
+                    "authorized value"
+                )
+        observed_skip_count = payload.get("amp_skip_count")
+        if (
+            isinstance(observed_skip_count, bool)
+            or not isinstance(observed_skip_count, int)
+            or observed_skip_count < 0
             or any(
-                isinstance(value, bool) or not isinstance(value, int)
-                for value in observed_skip_attempts
+                len(signature) != observed_skip_count
+                for signature in observed_skip_attempts_by_arm.values()
             )
-            or observed_skip_attempts != sorted(set(observed_skip_attempts))
         ):
-            fail(f"{label} has a malformed observed AMP skip signature")
+            fail(f"{label} has a malformed cross-arm AMP skip count")
+        observed_successful_steps = payload.get("successful_optimizer_steps")
         if (
-            expected_skip_attempts is not None
-            and observed_skip_attempts != expected_skip_attempts
+            isinstance(observed_successful_steps, bool)
+            or not isinstance(observed_successful_steps, int)
+            or observed_successful_steps < 0
         ):
-            fail(f"{label} AMP skip signature differs from the authorized value")
+            fail(f"{label} has a malformed successful optimizer-step count")
         if payload.get("amp_skip_policy") != AMP_SKIP_POLICY:
             fail(f"{label} AMP skip policy differs from the frozen policy")
         if payload.get("amp_skip_signature_expected_value_enforced") is not (
@@ -970,10 +998,21 @@ def validate_gate_receipt_payload(
                     runtime_command=revalidation_command,
                     process_env=revalidation_env,
                 )
-                if verified.get("amp_skip_attempts") != observed_skip_attempts:
+                if (
+                    verified.get("amp_skip_attempts")
+                    != observed_skip_attempts_by_arm[arm]
+                ):
                     fail(
                         f"{label} arm {arm} AMP skip signature differs from "
-                        "the cross-arm matrix signature"
+                        "its matrix binding"
+                    )
+                if (
+                    verified.get("successful_optimizer_steps")
+                    != observed_successful_steps
+                ):
+                    fail(
+                        f"{label} arm {arm} successful optimizer-step count "
+                        "differs from the matrix value"
                     )
                 runner_completions[arm] = validate_existing_runner_completion(
                     run_dir
@@ -1026,7 +1065,11 @@ def validate_gate_receipt_payload(
             arms=list(ARMS),
             source_git_head=source["git_head"],
             source_content_sha256=source["content_sha256"],
-            amp_skip_attempts=list(observed_skip_attempts),
+            amp_skip_attempts_by_arm={
+                arm: list(observed_skip_attempts_by_arm[arm]) for arm in ARMS
+            },
+            amp_skip_count=observed_skip_count,
+            successful_optimizer_steps=observed_successful_steps,
             amp_skip_policy=dict(AMP_SKIP_POLICY),
             arm_bindings=cached["arm_bindings"],
             runner_completions=cached["runner_completions"],
@@ -4324,6 +4367,15 @@ def validate_existing_verifier_receipts(
         fail("immutable verifier receipt AMP skip enforcement mode differs")
     if validation.get("amp_skip_policy") != AMP_SKIP_POLICY:
         fail("immutable verifier receipt AMP skip policy differs")
+    successful_optimizer_steps = validation.get("successful_optimizer_steps")
+    expected_successful_steps = (
+        PHASES[phase]["expected_attempts"] - len(observed_skip_attempts)
+    )
+    if successful_optimizer_steps != expected_successful_steps:
+        fail(
+            "immutable verifier receipt has an invalid successful "
+            "optimizer-step count"
+        )
     initial_common_state_sha256 = validation.get("initial_common_state_sha256")
     if (
         not isinstance(initial_common_state_sha256, str)
@@ -4368,6 +4420,7 @@ def validate_existing_verifier_receipts(
         "artifact_hash_receipt": hashes_path.name,
         "artifact_hash_receipt_sha256": sha256_file(hashes_path),
         "amp_skip_attempts": validation.get("amp_skip_attempts"),
+        "successful_optimizer_steps": successful_optimizer_steps,
         "initial_common_state_sha256": initial_common_state_sha256,
     }
 
@@ -5731,7 +5784,7 @@ def make_matrix_jobs(
     return jobs
 
 
-def verify_matrix_skip_identity(
+def verify_matrix_skip_equivalence(
     jobs: Sequence[MatrixJob],
     *,
     phase: str,
@@ -5743,10 +5796,10 @@ def verify_matrix_skip_identity(
     actual_cells = {(job.seed, job.arm) for job in jobs}
     if actual_cells != expected_cells or len(jobs) != len(expected_cells):
         fail(
-            "AMP skip identity requires the complete phase cell set: "
+            "AMP skip equivalence requires the complete phase cell set: "
             f"expected={sorted(expected_cells)}, actual={sorted(actual_cells)}"
         )
-    by_seed: dict[int, list[tuple[str, list[int], str]]] = defaultdict(list)
+    by_seed: dict[int, list[tuple[str, list[int], int, str]]] = defaultdict(list)
     for job in jobs:
         run_dir = job.resume.resolve(strict=True).parent if job.resume else job.outdir
         assert run_dir is not None
@@ -5779,20 +5832,38 @@ def verify_matrix_skip_identity(
                 f"verifier receipt for seed={job.seed} arm={job.arm}"
             )
         by_seed[job.seed].append(
-            (job.arm, skips, str(immutable["initial_common_state_sha256"]))
+            (
+                job.arm,
+                skips,
+                int(immutable["successful_optimizer_steps"]),
+                str(immutable["initial_common_state_sha256"]),
+            )
         )
     result = {}
     for seed, arm_values in sorted(by_seed.items()):
-        reference = arm_values[0][1]
-        reference_initial = arm_values[0][2]
-        mismatched = [
-            (arm, skips) for arm, skips, _initial in arm_values
-            if skips != reference
+        reference_skip_count = len(arm_values[0][1])
+        reference_successful_steps = arm_values[0][2]
+        reference_initial = arm_values[0][3]
+        skip_count_mismatched = [
+            (arm, len(skips))
+            for arm, skips, _successful, _initial in arm_values
+            if len(skips) != reference_skip_count
         ]
-        if mismatched:
-            fail(f"arm-specific AMP skip pattern for seed {seed}: {arm_values}")
+        if skip_count_mismatched:
+            fail(f"arm-specific AMP skip count for seed {seed}: {arm_values}")
+        successful_steps_mismatched = [
+            (arm, successful)
+            for arm, _skips, successful, _initial in arm_values
+            if successful != reference_successful_steps
+        ]
+        if successful_steps_mismatched:
+            fail(
+                f"arm-specific successful optimizer-step count for seed {seed}: "
+                f"{arm_values}"
+            )
         initial_mismatched = [
-            (arm, initial) for arm, _skips, initial in arm_values
+            (arm, initial)
+            for arm, _skips, _successful, initial in arm_values
             if initial != reference_initial
         ]
         if initial_mismatched:
@@ -5800,8 +5871,12 @@ def verify_matrix_skip_identity(
                 f"arm-specific initial common state for seed {seed}: {arm_values}"
             )
         result[str(seed)] = {
-            "arms": [arm for arm, _skips, _initial in arm_values],
-            "skip_attempts": reference,
+            "arms": [arm for arm, _skips, _successful, _initial in arm_values],
+            "skip_attempts_by_arm": {
+                arm: skips for arm, skips, _successful, _initial in arm_values
+            },
+            "skip_count": reference_skip_count,
+            "successful_optimizer_steps": reference_successful_steps,
             "initial_common_state_sha256": reference_initial,
         }
     return result
@@ -5965,20 +6040,33 @@ def run_matrix(args: argparse.Namespace) -> int:
         job: MatrixJob, immutable: Mapping[str, object]
     ) -> str | None:
         signature = immutable.get("amp_skip_attempts")
+        if not isinstance(signature, list):
+            return f"seed {job.seed} arm {job.arm} has malformed AMP skip attempts"
+        successful_steps = immutable.get("successful_optimizer_steps")
+        if isinstance(successful_steps, bool) or not isinstance(successful_steps, int):
+            return f"seed {job.seed} arm {job.arm} has malformed successful steps"
         initial_sha = immutable.get("initial_common_state_sha256")
         with mutex:
             existing = live_seed_identity.get(job.seed)
             if existing is None:
                 live_seed_identity[job.seed] = {
-                    "amp_skip_attempts": signature,
+                    "amp_skip_attempts_by_arm": {job.arm: signature},
+                    "amp_skip_count": len(signature),
+                    "successful_optimizer_steps": successful_steps,
                     "initial_common_state_sha256": initial_sha,
                     "arms": [job.arm],
                 }
                 return None
-            if existing["amp_skip_attempts"] != signature:
+            if existing["amp_skip_count"] != len(signature):
                 return (
-                    f"seed {job.seed} AMP skip signature changed at arm {job.arm}: "
-                    f"{existing['amp_skip_attempts']} != {signature}"
+                    f"seed {job.seed} AMP skip count changed at arm {job.arm}: "
+                    f"{existing['amp_skip_count']} != {len(signature)}"
+                )
+            if existing["successful_optimizer_steps"] != successful_steps:
+                return (
+                    f"seed {job.seed} successful optimizer-step count changed at "
+                    f"arm {job.arm}: {existing['successful_optimizer_steps']} != "
+                    f"{successful_steps}"
                 )
             if existing["initial_common_state_sha256"] != initial_sha:
                 return (
@@ -5990,6 +6078,9 @@ def run_matrix(args: argparse.Namespace) -> int:
             if job.arm in arms:
                 return f"seed {job.seed} arm {job.arm} was registered twice"
             arms.append(job.arm)
+            signatures = existing["amp_skip_attempts_by_arm"]
+            assert isinstance(signatures, dict)
+            signatures[job.arm] = signature
         return None
 
     def request_matrix_stop(
@@ -6563,7 +6654,7 @@ def run_matrix(args: argparse.Namespace) -> int:
         restore_matrix_signal_handlers()
         fail(f"matrix stopped after failure; receipt={matrix_dir / 'matrix_completion.json'}")
     try:
-        completion["amp_skip_identity"] = verify_matrix_skip_identity(
+        completion["amp_skip_equivalence"] = verify_matrix_skip_equivalence(
             jobs,
             phase=args.phase,
             expected_skip_attempts=expected_skip_values,
@@ -6642,7 +6733,8 @@ def make_parser() -> argparse.ArgumentParser:
         help=(
             "optional prospectively frozen AMP skip signature; when omitted, "
             "each arm records its observed tick-0 warm-up signature and the "
-            "matrix gate requires exact cross-arm identity within each seed"
+            "matrix gate requires equal skip and successful-update counts "
+            "within each seed"
         ),
     )
     arm.add_argument("--authorization-receipt", type=Path)
@@ -6682,7 +6774,8 @@ def make_parser() -> argparse.ArgumentParser:
         "--expected-skip-attempts",
         help=(
             "optional prospectively frozen AMP skip signature; when omitted, "
-            "the matrix records and compares observed tick-0 warm-up signatures"
+            "the matrix records per-arm tick-0 warm-up signatures and compares "
+            "skip and successful-update counts"
         ),
     )
     matrix.add_argument("--resume-cell", action="append", default=[], metavar="SEED:ARM=STATE")

@@ -433,7 +433,12 @@ class Q256TargetWeightSmokeMatrixVerifierTest(unittest.TestCase):
             run_dirs, receipt_path=receipt
         )
         self.assertEqual(report["status"], "passed")
-        self.assertEqual(report["amp_skip_attempts"], [2, 7])
+        self.assertEqual(
+            report["amp_skip_attempts_by_arm"],
+            {arm: [2, 7] for arm in matrix_verifier.ARMS},
+        )
+        self.assertEqual(report["amp_skip_count"], 2)
+        self.assertEqual(report["successful_optimizer_steps"], 30)
         self.assertEqual(
             report["amp_skip_policy"], matrix_verifier.AMP_SKIP_POLICY
         )
@@ -465,7 +470,7 @@ class Q256TargetWeightSmokeMatrixVerifierTest(unittest.TestCase):
         report = matrix_verifier.verify_smoke_matrix(
             fixtures, write_receipt=False
         )
-        self.assertEqual(report["amp_skip_attempts"], [2, 7])
+        self.assertEqual(report["amp_skip_count"], 2)
 
     def test_common_batch_and_factor_specific_trajectories_are_exact(self):
         def change_batch(fixture):
@@ -527,7 +532,7 @@ class Q256TargetWeightSmokeMatrixVerifierTest(unittest.TestCase):
         ):
             matrix_verifier.verify_smoke_matrix(run_dirs, write_receipt=False)
 
-    def test_initial_components_final_rank_state_and_skip_signature_match(self):
+    def test_initial_components_final_rank_state_and_skip_exposure_match(self):
         def change_initial(fixture):
             receipt = fixture.initial_receipt()
             receipt["hashes"]["optimizer"] = "9" * 64
@@ -563,9 +568,18 @@ class Q256TargetWeightSmokeMatrixVerifierTest(unittest.TestCase):
         self.root = self.root / "skips"
         self.root.mkdir()
         _, run_dirs = self.make_matrix(skip_by_arm={"B": (2, 8)})
+        report = matrix_verifier.verify_smoke_matrix(
+            run_dirs, write_receipt=False
+        )
+        self.assertEqual(report["amp_skip_attempts_by_arm"]["B"], [2, 8])
+        self.assertEqual(report["amp_skip_count"], 2)
+
+        self.root = self.root / "unequal-count"
+        self.root.mkdir()
+        _, run_dirs = self.make_matrix(skip_by_arm={"B": (2,)})
         with self.assertRaisesRegex(
             matrix_verifier.MatrixVerificationError,
-            "AMP skip-attempt signature mismatch",
+            "AMP skip count mismatch",
         ):
             matrix_verifier.verify_smoke_matrix(run_dirs, write_receipt=False)
 

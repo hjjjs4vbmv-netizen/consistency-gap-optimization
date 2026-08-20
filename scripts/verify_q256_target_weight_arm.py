@@ -39,13 +39,15 @@ VALIDATION_SCHEMA = "ect.q256.target-weight-arm-validation/v2"
 HASH_RECEIPT_SCHEMA = "ect.q256.target-weight-arm-artifact-hashes/v2"
 AMP_SKIP_WARMUP_PROCESSED_NIMG = 10_000
 AMP_SKIP_POLICY = {
-    "schema": "ect.q256.target-weight-amp-skip-policy/v1",
-    "kind": "observe_then_require_cross_arm_identity_within_seed",
+    "schema": "ect.q256.target-weight-amp-skip-policy/v2",
+    "kind": "observe_then_require_cross_arm_count_equivalence_within_seed",
     "allowed_region": "tick_0_amp_warmup_only",
     "warmup_processed_nimg_exclusive_upper_bound": AMP_SKIP_WARMUP_PROCESSED_NIMG,
     "require_finite_loss": True,
     "require_raw_nonfinite_exactly_on_skipped_attempts": True,
-    "require_cross_arm_identical_signature_within_seed": True,
+    "require_cross_arm_equal_skip_count_within_seed": True,
+    "require_cross_arm_equal_successful_update_count_within_seed": True,
+    "allow_objective_dependent_skip_locations": True,
 }
 
 VALIDATION_FILENAME = "q256_target_weight_arm_validation_v2.json"
