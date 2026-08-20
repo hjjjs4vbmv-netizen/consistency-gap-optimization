@@ -184,15 +184,17 @@ well-implemented, not a novel prediction.
 
 **Gradient scaling ≠ optimizer-update scaling.** The theorem predicts
 **sample-level raw-gradient** scaling $g_i'\approx a\,g_i$. The cross-K/balanced-β
-experiments measured two distinct objects: (a) $a^\star$ — raw-gradient (directly
-tests the theory, above); (b) $R^2$/`R_opt` — the **optimizer-update** ratio
-$h=U_g/U_1$. Finite-history, state-mismatched, time-varying, or non-scalar gradient
-transformations can become non-equivalent under adaptive optimization (Adam/RAdam):
-note that **ideal** rectified RAdam with a full constant-scale history and matched
-moment scaling has an *exact* null (the scale cancels), so the optimizer does not
-*inherently* break scalarity — it breaks it under the truncated/state-mismatched
-conditions of real training. Object (b) is governed by this optimizer dynamics, not
-by Theorem 1; an $R^2$ mismatch cannot falsify the gradient theory.
+experiments measured two distinct objects: (a) $a^\star$ — aggregate/minibatch
+raw-gradient scalar, which provides an aggregate consistency check of the implied
+scaling but is **not** a sample-level test of Theorem 1; (b) $R^2$/`R_opt` — the
+**optimizer-update** ratio $h=U_g/U_1$. Finite-history, state-mismatched,
+time-varying, or non-scalar gradient transformations can become non-equivalent under
+adaptive optimization (Adam/RAdam): note that **ideal** rectified RAdam with a full
+constant-scale history and matched moment scaling has an *exact* null (the scale
+cancels), so the optimizer does not *inherently* break scalarity — it breaks it under
+the truncated/state-mismatched conditions of real training. Object (b) is governed
+by this optimizer dynamics, not by Theorem 1; an $R^2$ mismatch cannot falsify the
+gradient theory.
 
 ---
 
@@ -321,7 +323,7 @@ that would hold under almost any model with the ECT loss schedule. A reviewer sh
 
 **CAN say:**
 - "Under a degree-$p$-homogeneous outer loss and power-law weighting $\delta^{-\alpha}$, the sample-level gradient scales as $g_\delta \sim \delta^{\nu(p-1)-\alpha}$ to leading order; $a_{\rm pred}=(\delta_2/\delta_1)^\kappa$ has no fitted coefficient once $(\nu,p,\alpha)$ are specified."
-- "ECT's $1/g$ law is the $p=1,\alpha=1$ point. The raw-gradient $a^\star\approx0.77$ matches $a_{\rm pred}=g^{-1}=0.769$ (0.18%) — a direct but **weak** test (at $p=1$, $\nu$ drops out; confirms weight ratio + Jacobian smoothness, not the residual-expansion content)."
+- "ECT's $1/g$ law is the $p=1,\alpha=1$ point. The aggregate/minibatch raw-gradient scalar $a_j^\star\approx0.77$ matches the implied $a_{\rm pred}=g^{-1}=0.769$ (0.18%) along one q=128 seed-3 trajectory. This is a **weak aggregate consistency check**, consistent with the weight-ratio prediction and small aggregate directional deviation; it is not a sample-level validation of the residual-order or Jacobian assumptions."
 - "The batch decomposition (Proposition 2) is exact; emergent scalarity (Heuristic 3) is a sufficient-condition sketch."
 
 **CANNOT say:**
