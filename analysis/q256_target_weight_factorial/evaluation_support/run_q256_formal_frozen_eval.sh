@@ -10,7 +10,7 @@ matrix_dir=${evaluation_parent}/matrix-binding-direct-dcca41b-v1
 outdir=${evaluation_parent}/frozen-eval-dcca41b-primary-first-v1
 log=${evaluation_parent}/formal-frozen-eval-dcca41b-primary-first-v1.log
 adapter=/data/temp/ECT001/run_q256_direct_frozen_evaluation.py
-adapter_sha=c10e20e779a6cf20895bce4ebb3fede5809f96a88faa6045747d0d57b3953ff8
+adapter_sha=cfabda551fe7047ab19b339778a205fe5ba1e278745bf5cb41829050eed99f6b
 sandbox=/data/temp/ect001-pytorch2401-sandbox
 private_shm=/tmp/ECT001-q256-dcca41b-shm-gpu0
 
