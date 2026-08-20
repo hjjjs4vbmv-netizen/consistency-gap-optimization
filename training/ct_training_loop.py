@@ -168,6 +168,24 @@ _FACTORIAL_TELEMETRY_FIELDS = (
 
 #----------------------------------------------------------------------------
 
+def canonical_processed_nimg(value):
+    """Return the exact non-negative integer used by strict CSV contracts."""
+    if isinstance(value, (bool, np.bool_)):
+        raise RuntimeError('processed_nimg must not be boolean')
+    try:
+        number = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise RuntimeError(
+            f'processed_nimg must be a finite non-negative integer: {value!r}'
+        ) from exc
+    if not math.isfinite(number) or number < 0 or not number.is_integer():
+        raise RuntimeError(
+            f'processed_nimg must be a finite non-negative integer: {value!r}'
+        )
+    return int(number)
+
+#----------------------------------------------------------------------------
+
 def load_and_migrate_train_summary(summary_path):
     """Load a resume CSV, upgrading only known historical schemas.
 
@@ -1168,9 +1186,11 @@ def training_loop(
     dist.print0()
     # Prefer exact progress from training-state; filename-derived resume_tick is only a fallback.
     if resumed_cur_nimg is not None:
-        cur_nimg = resumed_cur_nimg
+        cur_nimg = canonical_processed_nimg(resumed_cur_nimg)
     else:
-        cur_nimg = resume_tick * kimg_per_tick * 1000
+        cur_nimg = canonical_processed_nimg(
+            resume_tick * kimg_per_tick * 1000
+        )
     if resumed_cur_tick is not None:
         cur_tick = resumed_cur_tick
     else:

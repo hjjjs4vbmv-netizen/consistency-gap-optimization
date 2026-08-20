@@ -12,7 +12,10 @@ import torch
 
 from torch_utils.misc import InfiniteSampler
 from training import reproducibility
-from training.ct_training_loop import copy_module_state_exact
+from training.ct_training_loop import (
+    canonical_processed_nimg,
+    copy_module_state_exact,
+)
 
 
 def take(iterator, count):
@@ -87,6 +90,20 @@ class ExactModuleTransferTest(unittest.TestCase):
                 label='test',
                 allowed_source_extras=invalid,
             )
+
+
+class ProcessedNimgContractTest(unittest.TestCase):
+    def test_integral_float_is_canonicalized_for_csv_and_resume(self):
+        for value in (0, 4096, 4096.0, np.int64(4096)):
+            with self.subTest(value=value):
+                result = canonical_processed_nimg(value)
+                self.assertEqual(result, int(value))
+                self.assertIs(type(result), int)
+
+    def test_non_integral_or_nonfinite_progress_fails_closed(self):
+        for value in (True, -1, 0.5, float('nan'), float('inf'), 'invalid'):
+            with self.subTest(value=value), self.assertRaises(RuntimeError):
+                canonical_processed_nimg(value)
 
 
 class InfiniteSamplerReplayTest(unittest.TestCase):
