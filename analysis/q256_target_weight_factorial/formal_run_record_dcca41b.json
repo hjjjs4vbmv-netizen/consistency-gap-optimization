@@ -1,8 +1,9 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
+  "updated_utc": "2026-08-20T11:55:38Z",
   "experiment_id": "q256-target-weight-factorial",
-  "status_at_snapshot": "RUNNING",
+  "status_at_snapshot": "STOPPED_INFRASTRUCTURE_FAILURE",
   "training_source": {
     "branch": "experiment/q256-target-weight-factorial",
     "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
@@ -160,7 +161,7 @@
     "processes_stopped": true
   },
   "formal_launch": {
-    "status": "RUNNING",
+    "status": "STOPPED_INFRASTRUCTURE_FAILURE",
     "started_local": "2026-08-20T16:35:23+08:00",
     "source_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
     "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1",
@@ -324,6 +325,62 @@
         "status": "NOT_STARTED"
       }
     }
+  },
+  "formal_stop_incident": {
+    "detected_utc": "2026-08-20T11:55:38Z",
+    "failure_time_local_approx": "2026-08-20T19:37:32+08:00",
+    "classification": "INFRASTRUCTURE_SHARED_MEMORY_EXHAUSTION",
+    "root_cause_evidence": {
+      "seed3_error": "DataLoader worker (pid 58785) is killed by signal: Bus error. It is possible that dataloader's workers are out of shared memory.",
+      "seed4_error": "DataLoader worker (pid 59389) is killed by signal: Bus error. It is possible that dataloader's workers are out of shared memory.",
+      "dev_shm_size_gib": 252,
+      "dev_shm_used_gib": 252,
+      "dev_shm_available_mib": 8.1,
+      "dev_shm_use_percent": 100,
+      "dev_shm_inode_use_percent": 1,
+      "data_raw_available_tib": 33,
+      "data_temp_available_tib": 5.0
+    },
+    "affected_cells": {
+      "seed3/C": {
+        "status": "FAILED_INCOMPLETE",
+        "last_completed_attempt": 1984,
+        "accepted_updates": 1974,
+        "processed_nimg": 253952,
+        "processed_kimg": 253.952,
+        "remaining_attempts_to_2000": 16,
+        "remaining_kimg_to_256": 2.048,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 11, 1418],
+        "latest_persisted_checkpoint_tick": 20,
+        "latest_persisted_checkpoint_kimg_approx": 202.4,
+        "final_artifacts_present": false
+      },
+      "seed4/C": {
+        "status": "FAILED_INCOMPLETE",
+        "last_completed_attempt": 1984,
+        "accepted_updates": 1974,
+        "processed_nimg": 253952,
+        "processed_kimg": 253.952,
+        "remaining_attempts_to_2000": 16,
+        "remaining_kimg_to_256": 2.048,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 11, 956],
+        "latest_persisted_checkpoint_tick": 20,
+        "latest_persisted_checkpoint_kimg_approx": 202.4,
+        "final_artifacts_present": false
+      }
+    },
+    "queue_state_after_failure": {
+      "active_training_processes": 0,
+      "gpu0_utilization_percent": 0,
+      "gpu1_utilization_percent": 0,
+      "formal_tmux_sessions_present": false,
+      "complete_cells": ["seed3/A", "seed3/B", "seed4/A", "seed4/B"],
+      "incomplete_cells": ["seed3/C", "seed4/C"],
+      "not_started_cells": ["seed3/D", "seed4/D", "seed5/A", "seed5/B", "seed5/C", "seed5/D"]
+    },
+    "semantic_error_scope": "No loss/model/EMA/update/factor/denominator non-finite error, AMP inconsistency, CUDA error, or resume-state error was found. Only the two C-cell DataLoader bus errors were present in formal logs.",
+    "recovery_status": "NOT_STARTED",
+    "action_at_detection": "Read-only diagnosis and durable recording only; no process, artifact, shared-memory object, or queue was modified."
   },
   "open_observations": [
     {

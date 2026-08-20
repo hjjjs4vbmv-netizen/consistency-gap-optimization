@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-20 19:55 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -59,3 +59,16 @@ Two pre-gate A cells under the older nondeterministic source were stopped and re
 There were no loss, sanitized-gradient, update, model, EMA, factorial, or denominator non-finite counts, and every raw-gradient non-finite event matched an AMP skip.
 
 Open observation: seed4/A has 10 skips and 1990 accepted updates, while seed4/B has 9 skips and 1991 accepted updates. This one-update difference is recorded as a potential strict within-seed endpoint-comparability issue. It did not trigger an AMP mechanism audit or interrupt the running queue; it must be reassessed after seed4 C/D complete.
+
+## Infrastructure stop detected at 2026-08-20 19:55:38 CST
+
+Both formal workers stopped at approximately 19:37 CST while running their C cells. The only formal-log errors are DataLoader worker `Bus error` failures. At detection, `/dev/shm` was 100% full: 252 GiB used with only 8.1 MiB available; inode use was 1%. `/data/raw` still had 33 TiB available and `/data/temp` had 5.0 TiB available. Both GPUs were idle, no training PID remained, and the two formal tmux sessions were gone.
+
+| Cell | Current status | Last attempt | Accepted | kimg | Remaining | AMP skips |
+|---|---:|---:|---:|---:|---:|---|
+| seed3/C | failed/incomplete | 1984 | 1974 | 253.952 | 16 attempts / 2.048 kimg | 1–8, 11, 1418 |
+| seed4/C | failed/incomplete | 1984 | 1974 | 253.952 | 16 attempts / 2.048 kimg | 1–8, 11, 956 |
+
+The latest persisted C checkpoints are the tick-20 checkpoints at approximately 202.4 kimg; final artifacts are absent. Seed3/4 A and B remain complete. Seed3/4 D and all four seed5 cells never started. Current matrix count: 4 complete, 2 incomplete, 6 not started.
+
+This is classified as infrastructure shared-memory exhaustion, not an AMP, loss, CUDA, model-state, or resume-state failure. Detection was read-only: no process, artifact, shared-memory object, or queue was modified, and recovery has not been started.
