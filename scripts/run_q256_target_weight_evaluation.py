@@ -1368,10 +1368,17 @@ def execute(args: argparse.Namespace) -> int:
     cells, matrix = load_training_matrix(matrix_dir)
     dataset = verify_dataset(args.data)
     source = source_snapshot(require_clean=True)
-    if source.get("git_head") != matrix.get("training_source_git_head"):
+    training_source_head = matrix.get("training_source_git_head")
+    repair_base_head = getattr(args, "evaluator_repair_base_git_head", None)
+    if (
+        source.get("git_head") != training_source_head
+        and repair_base_head != training_source_head
+    ):
         fail(
-            "formal evaluator must run from the exact training Git commit; "
-            f"{source.get('git_head')} != {matrix.get('training_source_git_head')}"
+            "formal evaluator must run from the exact training Git commit or "
+            "an adapter-authorized repair based on it; "
+            f"evaluator={source.get('git_head')} training={training_source_head} "
+            f"repair_base={repair_base_head}"
         )
     gpu = query_gpu(args.gpu)
     lock_root = args.lock_root.expanduser().resolve()

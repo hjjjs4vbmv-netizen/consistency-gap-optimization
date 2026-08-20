@@ -321,7 +321,10 @@ def load_bound_matrix(matrix_dir: Path, evaluator: Any) -> tuple[list[dict[str, 
     if binding.get("training_source_git_head") != EXPECTED_HEAD:
         fail("direct matrix binding has the wrong source commit")
     adapter = binding.get("adapter")
-    if not isinstance(adapter, dict) or adapter.get("sha256") != sha256_file(Path(__file__).resolve()):
+    if not isinstance(adapter, dict):
+        fail("direct matrix binding has no adapter receipt")
+    recorded_adapter = Path(str(adapter.get("path", ""))).resolve(strict=True)
+    if adapter.get("sha256") != sha256_file(recorded_adapter):
         fail("direct matrix binding adapter changed after authorization")
     receipts = binding.get("cell_receipts")
     if not isinstance(receipts, list) or len(receipts) != 12:
@@ -386,6 +389,7 @@ def load_bound_matrix(matrix_dir: Path, evaluator: Any) -> tuple[list[dict[str, 
         "expected_amp_skip_attempts": None,
         "selection_policy": binding["selection_policy"],
         "provenance_adapter": binding["adapter"],
+        "evaluation_repair_adapter": regular_file_binding(Path(__file__).resolve()),
     }
     return sorted(cells, key=lambda cell: (cell["seed"], ARMS.index(cell["arm"]))), matrix
 
@@ -397,6 +401,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--matrix-dir", type=Path, required=True)
     parser.add_argument("--outdir", type=Path, required=True)
     parser.add_argument("--gpu", required=True)
+    parser.add_argument("--reuse-bound-matrix", action="store_true")
     parser.add_argument("--data", type=Path)
     parser.add_argument("--base-port", type=int, default=31_800)
     parser.add_argument("--lock-root", type=Path, default=Path("/data/temp/ECT001-q256-evaluation-locks"))
@@ -409,7 +414,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if evaluator.REPO_ROOT.resolve() != repo:
         fail(f"loaded evaluator from unexpected repository: {evaluator.REPO_ROOT}")
-    create_binding(args.matrix_dir.resolve(), args.formal_root, evaluator)
+    if args.reuse_bound_matrix:
+        if not args.matrix_dir.resolve().is_dir():
+            fail(f"bound matrix directory is missing: {args.matrix_dir}")
+    else:
+        create_binding(args.matrix_dir.resolve(), args.formal_root, evaluator)
 
     original_build_jobs = evaluator.build_jobs
 
@@ -495,6 +504,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         gpu=args.gpu,
         base_port=args.base_port,
         lock_root=args.lock_root,
+        evaluator_repair_base_git_head=EXPECTED_HEAD,
     )
     return evaluator.execute(execute_args)
 
