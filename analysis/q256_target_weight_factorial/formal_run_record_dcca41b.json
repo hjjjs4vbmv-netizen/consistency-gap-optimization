@@ -1,7 +1,7 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T12:18:25Z",
+  "updated_utc": "2026-08-20T13:19:05Z",
   "experiment_id": "q256-target-weight-factorial",
   "status_at_snapshot": "RUNNING_POST_RECOVERY",
   "training_source": {
@@ -515,6 +515,49 @@
         }
       }
     },
+    "seed3_seed4_matrix_completion": {
+      "observed_local": "2026-08-20T21:19:05+08:00",
+      "status": "EIGHT_OF_TWELVE_COMPLETE",
+      "cells": {
+        "seed3/D": {
+          "status": "COMPLETE",
+          "attempts": 2000,
+          "accepted_updates": 1990,
+          "processed_nimg": 256000,
+          "processed_kimg": 256.0,
+          "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 12, 1317],
+          "artifact_sha256": {
+            "training_state": "70e29b74ac2bfcd57bfb7064eb9ce8c0358b92af34ee55c835a653e8dfa521a3",
+            "network_snapshot": "635452d460d6d1ed2597f96a7628426ac62ed7becf8f3610ce7e03b4ed37d34e",
+            "telemetry": "e9e4a6b17415f99926a9dde1a233ffcf287080d2ee7a9bcf2b3a9d5fb660c843",
+            "initial_state_receipt": "451561cccdd29fbe7740b320e820615278a0b941479ed16f6d750f37569ee480"
+          }
+        },
+        "seed4/D": {
+          "status": "COMPLETE",
+          "attempts": 2000,
+          "accepted_updates": 1990,
+          "processed_nimg": 256000,
+          "processed_kimg": 256.0,
+          "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 10, 979],
+          "artifact_sha256": {
+            "training_state": "17978a63554836a66b552c251d0e9bb45a4d96d4e4a43375139524323bb386f4",
+            "network_snapshot": "a22b1836153457df066d79c4750d49d224398c69f13291be29d8a114732523c4",
+            "telemetry": "66ade0a6e3bdea32f3c0e77b68371ed5eb1a975e6b35834870a19a47afa1a8ce",
+            "initial_state_receipt": "526dddc6d94971967091fc16e3fb437cd45a53bbeb5bf7c007e357d2988046c6"
+          }
+        }
+      },
+      "gpu1_worker_status": "WORKER_PASS",
+      "gpu1_active_training_processes": 0,
+      "gpu1_utilization_percent": 0,
+      "seed5_A_start": {
+        "pid": 9144,
+        "observed_attempt": 10,
+        "observed_kimg": 1.28,
+        "gpu": 0
+      }
+    },
     "tmux": {
       "gpu0": "q256_dcca_recovery_gpu0",
       "gpu1": "q256_dcca_recovery_gpu1"
@@ -541,11 +584,17 @@
   "open_observations": [
     {
       "id": "AMP_ACCEPTED_UPDATE_COUNT_SEED4_A_VS_B",
-      "status": "OPEN_UNTIL_ALL_SEED4_ARMS_COMPLETE",
+      "status": "OPEN_ANALYSIS_COVARIATE",
       "observation": "seed4/A completed with 10 skips and 1990 accepted updates; seed4/B completed with 9 skips and 1991 accepted updates.",
       "scientific_relevance": "One accepted-update difference may affect strict within-seed endpoint comparability even though processed_nimg and attempted iterations are equal.",
       "safety_status": "No loss/model/EMA/update/factor/denominator non-finite counts and no raw-gradient/skip inconsistency were observed.",
-      "action_taken": "Recorded only; no AMP mechanism audit, no process interruption, and no new runs were added. Reassess after seed4 C/D complete."
+      "seed4_final_accepted_updates": {
+        "A": 1990,
+        "B": 1991,
+        "C": 1990,
+        "D": 1990
+      },
+      "action_taken": "Recorded as an endpoint-analysis covariate only; no AMP mechanism audit, no process interruption, and no replacement runs were added."
     }
   ],
   "targeted_test_record": {

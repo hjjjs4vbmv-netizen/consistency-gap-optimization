@@ -100,3 +100,16 @@ Both resumed C cells reached 2000 attempts, 1990 accepted updates, and exactly 2
 | seed4/C | 2000 | 1990 | 256.000 | 1–8, 11, 956 |
 
 The queues automatically advanced without intervention. At this milestone, seed3/D was at attempt 13 (`1.664 kimg`, PID 834) and seed4/D was at attempt 17 (`2.176 kimg`, PID 114544). No new Traceback, bus error, OOM, CUDA error, or semantic non-finite event was present.
+
+## Seed3/4 matrix completion observed at 2026-08-20 21:19:05 CST
+
+Seed3/D and seed4/D both completed with 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Their final artifacts are present, both workers emitted PASS, and GPU1 emitted `WORKER_PASS` before becoming idle. Artifact hashes are recorded in the JSON record.
+
+| Cell | Attempts | Accepted | kimg | AMP skips |
+|---|---:|---:|---:|---|
+| seed3/D | 2000 | 1990 | 256.000 | 1–8, 12, 1317 |
+| seed4/D | 2000 | 1990 | 256.000 | 1–8, 10, 979 |
+
+Eight of twelve formal cells are now complete. GPU0 automatically started seed5/A; at this milestone it was at attempt 10 (`1.280 kimg`, PID 9144). GPU1 is expectedly idle because its assigned seed4 queue is complete.
+
+Final seed4 accepted-update counts are A=1990, B=1991, C=1990, D=1990. The one-update B difference remains recorded only as an endpoint-analysis covariate; it did not trigger an AMP mechanism audit, interrupt the queue, or add replacement runs.
