@@ -1212,6 +1212,262 @@ class TargetWeightLauncherTest(unittest.TestCase):
             self.assertEqual(len(launched), 1)
             self.assertIsNotNone(launched[0].poll())
 
+    def test_unconfirmed_process_group_cleanup_never_falls_back_to_bare_pid(self):
+        process = mock.Mock()
+        process.poll.return_value = None
+        with mock.patch.object(
+            launcher,
+            "terminate_own_process_group",
+            side_effect=launcher.LaunchError("owned PG still exists"),
+        ), mock.patch.object(launcher, "kill_verified_process_tree") as unsafe_fallback:
+            with self.assertRaisesRegex(
+                launcher.ProcessCleanupError, "could not prove"
+            ):
+                launcher.stop_and_reap_process_group(
+                    process, label="unconfirmed-cleanup-test"
+                )
+        unsafe_fallback.assert_not_called()
+
+    def test_verified_force_drain_rejects_residual_descendant_group(self):
+        process = mock.Mock()
+        process.pid = 42420
+        process.poll.return_value = None
+        process.wait.return_value = 0
+        snapshot = {
+            process.pid: {
+                "pid": process.pid,
+                "ppid": 1,
+                "pgid": process.pid,
+                "sid": process.pid,
+                "starttime": 12345,
+            }
+        }
+        with mock.patch.object(
+            launcher, "linux_process_snapshot", side_effect=[snapshot, snapshot]
+        ), mock.patch.object(
+            launcher.os, "getpgrp", return_value=999
+        ), mock.patch.object(
+            launcher.os, "killpg"
+        ), mock.patch.object(
+            launcher,
+            "wait_for_process_groups_gone",
+            return_value=[process.pid],
+        ):
+            with self.assertRaisesRegex(
+                launcher.ProcessCleanupError, "descendant process groups remain"
+            ):
+                launcher.kill_verified_process_tree(process, seed=3, arm="A")
+
+    def test_managed_deep_check_keeps_registration_when_group_remains(self):
+        process = mock.Mock()
+        process.pid = 52520
+        process.poll.return_value = 0
+        process.returncode = 0
+        process.stdout = None
+        process.communicate.return_value = (b"{}\n", None)
+        register = mock.Mock()
+        unregister = mock.Mock()
+        with mock.patch.object(
+            launcher.subprocess, "Popen", return_value=process
+        ), mock.patch.object(
+            launcher, "process_group_exists", return_value=True
+        ):
+            with self.assertRaisesRegex(
+                launcher.ProcessCleanupError, "process group"
+            ):
+                launcher._run_deep_revalidation_command(
+                    ["python", "verify.py"],
+                    process_env={},
+                    timeout_seconds=1.0,
+                    label="deep-check-test",
+                    stop_event=threading.Event(),
+                    register_process=register,
+                    unregister_process=unregister,
+                )
+        register.assert_called_once_with(process)
+        unregister.assert_not_called()
+
+    def test_monitor_cleanup_error_is_raised_in_stream_caller(self):
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(
+            launcher,
+            "query_gpu_compute_processes",
+            side_effect=RuntimeError("monitor probe failed"),
+        ), mock.patch.object(
+            launcher,
+            "stop_and_reap_process_group",
+            side_effect=launcher.ProcessCleanupError("descendant remains"),
+        ):
+            record = {}
+            with self.assertRaisesRegex(
+                launcher.ProcessCleanupError, "descendant remains"
+            ):
+                launcher.stream_process(
+                    [sys.executable, "-c", "import time; time.sleep(0.2)"],
+                    cwd=launcher.REPO_ROOT,
+                    env=os.environ,
+                    log_path=Path(tmp) / "monitor-cleanup-error.log",
+                    monitored_gpu_uuid="GPU-test",
+                    gpu_monitor_record=record,
+                    gpu_monitor_interval_seconds=0.01,
+                )
+        self.assertEqual(record["status"], "STOPPED_FOR_AUDIT")
+
+    @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux process groups")
+    def test_stream_rejects_success_when_same_group_child_remains(self):
+        child_code = (
+            "import os,signal,time\n"
+            "pid=os.fork()\n"
+            "if pid==0:\n"
+            " os.close(1); os.close(2); signal.signal(signal.SIGTERM,signal.SIG_IGN); "
+            "time.sleep(0.4); os._exit(0)\n"
+            "os._exit(0)\n"
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(
+                launcher.ProcessCleanupError, "process group"
+            ):
+                launcher.stream_process(
+                    [sys.executable, "-c", child_code],
+                    cwd=launcher.REPO_ROOT,
+                    env=os.environ,
+                    log_path=Path(tmp) / "same-group-child.log",
+                )
+            time.sleep(0.5)
+
+    @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux PDEATHSIG audit")
+    def test_matrix_registry_drains_inner_session_after_outer_abrupt_exit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp) / "registry"
+            registry.mkdir()
+            inner_ready = Path(tmp) / "inner-ready"
+            inner_code = (
+                "import os,signal,time\n"
+                "pid=os.fork()\n"
+                "if pid==0:\n"
+                " os.close(1); os.close(2); signal.signal(signal.SIGTERM,signal.SIG_IGN); "
+                "time.sleep(3); os._exit(0)\n"
+                f"open({str(inner_ready)!r},'w').write(str(pid))\n"
+                "time.sleep(30)\n"
+            )
+            outer_code = (
+                "import json,os,subprocess,sys,time\n"
+                f"wrapper={launcher.MATRIX_CHILD_WRAPPER_CODE!r}\n"
+                f"registry={str(registry)!r}\n"
+                f"inner={inner_code!r}\n"
+                f"os.environ[{launcher.MATRIX_OUTER_PID_ENV!r}]=str(os.getpid())\n"
+                "subprocess.Popen([sys.executable,'-c',wrapper,registry,'training',"
+                "str(os.getpid()),sys.executable,'-c',inner],start_new_session=True)\n"
+                f"ready={str(inner_ready)!r}\n"
+                "deadline=time.time()+5\n"
+                "while time.time()<deadline and (not os.path.exists(ready) or not any(e.name.endswith('.json') for e in os.scandir(registry))): time.sleep(.01)\n"
+                "os._exit(7)\n"
+            )
+            outer = subprocess.Popen(
+                [sys.executable, "-c", outer_code], start_new_session=True
+            )
+            outer_pid = outer.pid
+            self.assertEqual(outer.wait(timeout=10), 7)
+            audit = launcher.drain_matrix_child_registry(
+                registry.resolve(), matrix_outer_pid=outer_pid
+            )
+            self.assertEqual(audit["token_count"], 1)
+            self.assertTrue(audit["cleanup_confirmed"])
+            self.assertEqual(len(audit["active_inner_sessions_drained"]), 1)
+
+    @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux PDEATHSIG audit")
+    def test_matrix_registry_records_two_normal_completed_streams(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = (root / "registry").resolve()
+            registry.mkdir()
+            env = dict(os.environ)
+            env[launcher.MATRIX_CHILD_REGISTRY_ENV] = str(registry)
+            env[launcher.MATRIX_OUTER_PID_ENV] = str(os.getpid())
+            for index in range(2):
+                self.assertEqual(
+                    launcher.stream_process(
+                        [sys.executable, "-c", "print('ok')"],
+                        cwd=launcher.REPO_ROOT,
+                        env=env,
+                        log_path=root / f"stream-{index}.log",
+                    ),
+                    0,
+                )
+            audit = launcher.drain_matrix_child_registry(
+                registry, matrix_outer_pid=os.getpid()
+            )
+            self.assertEqual(audit["token_count"], 2)
+            self.assertEqual(audit["active_inner_sessions_drained"], [])
+            self.assertTrue(audit["cleanup_confirmed"])
+
+    @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux nested topology")
+    def test_stable_matrix_outer_pid_survives_intermediate_launcher_process(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = (root / "registry").resolve()
+            registry.mkdir()
+            launcher_code = (
+                "import os,sys\nfrom pathlib import Path\n"
+                f"sys.path.insert(0,{str(launcher.REPO_ROOT)!r})\n"
+                "from scripts import run_q256_target_weight_matrix as m\n"
+                f"env=dict(os.environ); env[m.MATRIX_CHILD_REGISTRY_ENV]={str(registry)!r}\n"
+                f"raise SystemExit(m.stream_process([sys.executable,'-c','print(123)'],cwd=m.REPO_ROOT,env=env,log_path=Path({str(root / 'nested.log')!r})))\n"
+            )
+            middle_code = (
+                "import subprocess,sys\n"
+                f"raise SystemExit(subprocess.call([sys.executable,'-c',{launcher_code!r}]))\n"
+            )
+            outer = subprocess.Popen(
+                [
+                    sys.executable,
+                    "-c",
+                    launcher.MATRIX_OUTER_WRAPPER_CODE,
+                    sys.executable,
+                    "-c",
+                    middle_code,
+                ],
+                cwd=launcher.REPO_ROOT,
+                start_new_session=True,
+            )
+            outer_pid = outer.pid
+            self.assertEqual(outer.wait(timeout=15), 0)
+            audit = launcher.drain_matrix_child_registry(
+                registry, matrix_outer_pid=outer_pid
+            )
+            self.assertEqual(audit["token_count"], 1)
+            token = launcher.load_matrix_child_tokens(
+                registry, matrix_outer_pid=outer_pid
+            )[0]
+            self.assertEqual(token["matrix_outer_pid"], outer_pid)
+            self.assertNotEqual(token["launcher_parent_pid"], outer_pid)
+
+    def test_matrix_registry_rejects_malformed_token(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp).resolve()
+            (registry / "bad.json").write_text("{}\n", encoding="utf-8")
+            with self.assertRaisesRegex(
+                launcher.ProcessCleanupError, "wrong schema keys"
+            ):
+                launcher.load_matrix_child_tokens(
+                    registry, matrix_outer_pid=os.getpid()
+                )
+
+    def test_main_reserves_cleanup_unconfirmed_exit_code(self):
+        args = argparse.Namespace(
+            func=lambda _args: (_ for _ in ()).throw(
+                launcher.ProcessCleanupError("owned group remains")
+            )
+        )
+        parser = mock.Mock()
+        parser.parse_args.return_value = args
+        with mock.patch.object(launcher, "make_parser", return_value=parser):
+            with contextlib.redirect_stderr(io.StringIO()) as stderr:
+                returncode = launcher.main([])
+        self.assertEqual(
+            returncode, launcher.PROCESS_CLEANUP_UNCONFIRMED_EXIT_CODE
+        )
+        self.assertIn("CLEANUP_UNCONFIRMED", stderr.getvalue())
+
     @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux /proc process audit")
     def test_group_drain_kills_term_ignoring_stdout_descendant(self):
         code = (

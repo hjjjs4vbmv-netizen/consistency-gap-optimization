@@ -24,6 +24,25 @@ def binding(path: Path) -> dict:
 
 
 class Q256TargetWeightEvaluationTest(unittest.TestCase):
+    def test_evaluator_preserves_process_cleanup_error_subtype(self):
+        with TemporaryDirectory() as tmp, mock.patch.object(
+            evaluator.training_launcher,
+            "stream_process",
+            side_effect=evaluator.training_launcher.ProcessCleanupError(
+                "owned process group remains"
+            ),
+        ):
+            with self.assertRaises(
+                evaluator.training_launcher.ProcessCleanupError
+            ):
+                evaluator.stream_process(
+                    ["python", "eval.py"],
+                    env={},
+                    log_path=Path(tmp) / "eval.log",
+                    monitored_gpu_uuid="GPU-test",
+                    gpu_monitor_record={},
+                )
+
     def _minimal_durable_evaluation_plan(self, root: Path):
         output_root = root / "evaluation-lifecycle"
         for name in ("receipts", "manifests", "process_logs", "jobs"):

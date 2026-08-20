@@ -342,6 +342,82 @@ class LaunchError(RuntimeError):
     """A fail-closed preflight or execution error."""
 
 
+class ProcessCleanupError(LaunchError):
+    """The launcher cannot prove that its child process tree is fully gone."""
+
+
+PROCESS_CLEANUP_UNCONFIRMED_EXIT_CODE = 86
+MATRIX_CHILD_REGISTRY_ENV = "ECT_Q256_MATRIX_CHILD_REGISTRY"
+MATRIX_OUTER_PID_ENV = "ECT_Q256_MATRIX_OUTER_PID"
+MATRIX_CHILD_TOKEN_SCHEMA = "ect.q256.matrix-child-ownership/v1"
+MATRIX_OUTER_WRAPPER_CODE = r'''
+import os
+import sys
+
+command = sys.argv[1:]
+if not command:
+    raise SystemExit("matrix outer wrapper received no command")
+os.environ["ECT_Q256_MATRIX_OUTER_PID"] = str(os.getpid())
+os.execvpe(command[0], command, os.environ)
+'''
+MATRIX_CHILD_WRAPPER_CODE = r'''
+import ctypes
+import hashlib
+import json
+import os
+import signal
+import sys
+
+registry_dir, label, expected_parent_raw, *command = sys.argv[1:]
+expected_parent = int(expected_parent_raw)
+matrix_outer_pid = int(os.environ["ECT_Q256_MATRIX_OUTER_PID"])
+if not command:
+    raise SystemExit("matrix child wrapper received no command")
+if sys.platform != "linux":
+    raise SystemExit("matrix child ownership wrapper requires Linux")
+libc = ctypes.CDLL(None, use_errno=True)
+if libc.prctl(1, signal.SIGKILL, 0, 0, 0) != 0:  # PR_SET_PDEATHSIG
+    raise OSError(ctypes.get_errno(), "prctl(PR_SET_PDEATHSIG) failed")
+if os.getppid() != expected_parent:
+    os.kill(os.getpid(), signal.SIGKILL)
+raw = open("/proc/self/stat", "rb").read()
+close = raw.rfind(b")")
+fields = raw[close + 2:].split()
+payload = {
+    "schema": "ect.q256.matrix-child-ownership/v1",
+    "label": label,
+    "matrix_outer_pid": matrix_outer_pid,
+    "launcher_parent_pid": expected_parent,
+    "pid": os.getpid(),
+    "pgid": os.getpgrp(),
+    "sid": os.getsid(0),
+    "starttime": int(fields[19]),
+    "command_sha256": hashlib.sha256(
+        json.dumps(command, separators=(",", ":")).encode("utf-8")
+    ).hexdigest(),
+}
+if payload["pid"] != payload["pgid"] or payload["pid"] != payload["sid"]:
+    raise SystemExit("matrix child wrapper is not its own session leader")
+encoded = (json.dumps(payload, sort_keys=True) + "\n").encode("utf-8")
+name = f"{label}-{os.getpid()}.json"
+temporary = os.path.join(registry_dir, f".{name}.tmp")
+final = os.path.join(registry_dir, name)
+fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o440)
+with os.fdopen(fd, "wb") as handle:
+    handle.write(encoded)
+    handle.flush()
+    os.fsync(handle.fileno())
+os.link(temporary, final)
+os.unlink(temporary)
+directory_fd = os.open(registry_dir, os.O_RDONLY)
+try:
+    os.fsync(directory_fd)
+finally:
+    os.close(directory_fd)
+os.execvpe(command[0], command, os.environ)
+'''
+
+
 def fail(message: str) -> None:
     raise LaunchError(message)
 
@@ -1584,12 +1660,204 @@ def snapshot_descendants(
     return descendants
 
 
+def process_group_exists(pgid: int) -> bool:
+    try:
+        os.killpg(pgid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError as exc:
+        fail(f"cannot audit launcher-owned process group {pgid}: {exc}")
+
+
+def wait_for_process_groups_gone(
+    process_groups: Iterable[int], *, timeout_seconds: float
+) -> list[int]:
+    groups = sorted(set(int(value) for value in process_groups))
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        remaining = [pgid for pgid in groups if process_group_exists(pgid)]
+        if not remaining:
+            return []
+        time.sleep(0.05)
+    return [pgid for pgid in groups if process_group_exists(pgid)]
+
+
+def load_matrix_child_tokens(
+    registry_dir: Path, *, matrix_outer_pid: int
+) -> list[dict[str, object]]:
+    if (
+        registry_dir.is_symlink()
+        or not registry_dir.is_dir()
+        or not registry_dir.is_absolute()
+    ):
+        raise ProcessCleanupError(
+            f"matrix child registry is missing, relative, or a symlink: {registry_dir}"
+        )
+    tokens: list[dict[str, object]] = []
+    expected_keys = {
+        "schema",
+        "label",
+        "matrix_outer_pid",
+        "launcher_parent_pid",
+        "pid",
+        "pgid",
+        "sid",
+        "starttime",
+        "command_sha256",
+    }
+    try:
+        entries = sorted(registry_dir.iterdir())
+    except OSError as exc:
+        raise ProcessCleanupError(
+            f"cannot enumerate matrix child registry {registry_dir}: {exc}"
+        ) from exc
+    for path in entries:
+        if path.is_symlink() or not path.is_file() or path.suffix != ".json":
+            raise ProcessCleanupError(
+                f"matrix child registry contains an incomplete/unexpected entry: {path}"
+            )
+        try:
+            token = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ProcessCleanupError(
+                f"cannot validate matrix child ownership token {path}: {exc}"
+            ) from exc
+        if not isinstance(token, dict) or set(token) != expected_keys:
+            raise ProcessCleanupError(
+                f"matrix child ownership token has the wrong schema keys: {path}"
+            )
+        if token.get("schema") != MATRIX_CHILD_TOKEN_SCHEMA:
+            raise ProcessCleanupError(
+                f"matrix child ownership token has the wrong schema: {path}"
+            )
+        if token.get("matrix_outer_pid") != matrix_outer_pid:
+            raise ProcessCleanupError(
+                f"matrix child token is bound to another outer process: {path}"
+            )
+        integers = (
+            "matrix_outer_pid",
+            "launcher_parent_pid",
+            "pid",
+            "pgid",
+            "sid",
+            "starttime",
+        )
+        if any(
+            isinstance(token.get(key), bool)
+            or not isinstance(token.get(key), int)
+            or int(token[key]) <= 1
+            for key in integers
+        ):
+            raise ProcessCleanupError(
+                f"matrix child token has an invalid process identity: {path}"
+            )
+        if token["pid"] != token["pgid"] or token["pid"] != token["sid"]:
+            raise ProcessCleanupError(
+                f"matrix child token is not a private session leader: {path}"
+            )
+        if not isinstance(token.get("label"), str) or not token["label"]:
+            raise ProcessCleanupError(f"matrix child token label is invalid: {path}")
+        if not isinstance(token.get("command_sha256"), str) or not _SHA_RE.fullmatch(
+            str(token["command_sha256"])
+        ):
+            raise ProcessCleanupError(
+                f"matrix child token command hash is invalid: {path}"
+            )
+        tokens.append({**token, "token_path": str(path)})
+    pids = [int(token["pid"]) for token in tokens]
+    if len(pids) != len(set(pids)):
+        raise ProcessCleanupError("matrix child registry contains duplicate PIDs")
+    return tokens
+
+
+def drain_matrix_child_registry(
+    registry_dir: Path, *, matrix_outer_pid: int
+) -> dict[str, object]:
+    """Stop and prove absence of inner sessions registered by an arm wrapper."""
+
+    tokens = load_matrix_child_tokens(
+        registry_dir, matrix_outer_pid=matrix_outer_pid
+    )
+    actions: list[dict[str, object]] = []
+    for token in tokens:
+        sid = int(token["sid"])
+        snapshot = linux_process_snapshot()
+        members = {
+            pid: record
+            for pid, record in snapshot.items()
+            if int(record["sid"]) == sid
+        }
+        if not members:
+            continue
+        root = members.get(int(token["pid"]))
+        if root is not None and int(root["starttime"]) != int(token["starttime"]):
+            raise ProcessCleanupError(
+                "matrix child PID identity changed before inner-session drain"
+            )
+        groups = sorted({int(record["pgid"]) for record in members.values()})
+        if os.getpgrp() in groups or any(pgid < 2 for pgid in groups):
+            raise ProcessCleanupError(
+                "matrix child registry resolved an unsafe process group"
+            )
+        signals_sent: list[str] = []
+        for signum, name in ((signal.SIGTERM, "SIGTERM"), (signal.SIGKILL, "SIGKILL")):
+            sent = False
+            for pgid in groups:
+                try:
+                    os.killpg(pgid, signum)
+                    sent = True
+                except ProcessLookupError:
+                    continue
+            if sent:
+                signals_sent.append(name)
+            deadline = time.monotonic() + (0.5 if signum == signal.SIGTERM else 2.0)
+            while time.monotonic() < deadline:
+                current = linux_process_snapshot()
+                if not any(int(record["sid"]) == sid for record in current.values()):
+                    break
+                time.sleep(0.05)
+            current = linux_process_snapshot()
+            if not any(int(record["sid"]) == sid for record in current.values()):
+                break
+        remaining = {
+            pid: record
+            for pid, record in linux_process_snapshot().items()
+            if int(record["sid"]) == sid
+        }
+        if remaining:
+            raise ProcessCleanupError(
+                "matrix-owned inner session remains after SIGTERM/SIGKILL: "
+                f"sid={sid} pids={sorted(remaining)}"
+            )
+        actions.append(
+            {
+                "token_path": token["token_path"],
+                "pid": token["pid"],
+                "sid": sid,
+                "process_groups": groups,
+                "signals": signals_sent,
+            }
+        )
+    return {
+        "registry_directory": str(registry_dir),
+        "token_count": len(tokens),
+        "active_inner_sessions_drained": actions,
+        "cleanup_confirmed": True,
+    }
+
+
 def kill_verified_process_tree(
     process: subprocess.Popen[bytes], *, seed: int, arm: str
 ) -> dict[str, object]:
     """SIGKILL only stable process groups descended from our session leader."""
 
     if process.poll() is not None:
+        if process_group_exists(process.pid):
+            raise ProcessCleanupError(
+                "launcher leader exited but its process group still exists; "
+                "ownership can no longer be safely re-established"
+            )
         return {
             "seed": seed,
             "arm": arm,
@@ -1640,6 +1908,14 @@ def kill_verified_process_tree(
         process.wait(timeout=2.0)
     except subprocess.TimeoutExpired:
         fail("launcher-owned process survived verified SIGKILL drain")
+    remaining_groups = wait_for_process_groups_gone(
+        ordered_pgids, timeout_seconds=2.0
+    )
+    if remaining_groups:
+        raise ProcessCleanupError(
+            "launcher-owned descendant process groups remain after verified "
+            f"SIGKILL drain: {remaining_groups}"
+        )
     return {
         "seed": seed,
         "arm": arm,
@@ -1661,25 +1937,34 @@ def terminate_own_process_group(process: subprocess.Popen[bytes]) -> list[str]:
     still holds the stdout pipe or GPU context.
     """
 
+    if process.returncode is not None:
+        try:
+            os.killpg(process.pid, 0)
+        except ProcessLookupError:
+            return []
+        fail(
+            "refuse to signal a bare PID/PGID after the launcher-owned leader "
+            "was already reaped"
+        )
     snapshot = linux_process_snapshot() if Path("/proc").is_dir() else {}
     descendants = snapshot_descendants(snapshot, process.pid)
     root = descendants.get(process.pid)
     process_groups = {process.pid}
     if root is not None:
-        if int(root["pgid"]) != process.pid:
+        if int(root["pgid"]) != process.pid or int(root["sid"]) != process.pid:
             fail("launcher child is not the expected start_new_session leader")
         process_groups.update(int(item["pgid"]) for item in descendants.values())
+    elif Path("/proc").is_dir():
+        try:
+            os.killpg(process.pid, 0)
+        except ProcessLookupError:
+            return []
+        fail(
+            "refuse to signal an existing process group without the exact "
+            "launcher-owned /proc root identity"
+        )
     if os.getpgrp() in process_groups or any(pgid < 2 for pgid in process_groups):
         fail("launcher child drain resolved an unsafe process group")
-
-    def group_exists(pgid: int) -> bool:
-        try:
-            os.killpg(pgid, 0)
-            return True
-        except ProcessLookupError:
-            return False
-        except PermissionError as exc:
-            fail(f"cannot audit launcher-owned process group {pgid}: {exc}")
 
     ordered_groups = sorted(process_groups, key=lambda pgid: pgid == process.pid)
     signals_sent: list[str] = []
@@ -1699,12 +1984,12 @@ def terminate_own_process_group(process: subprocess.Popen[bytes]) -> list[str]:
             pass
     deadline = time.monotonic() + 10.0
     while time.monotonic() < deadline:
-        if not any(group_exists(pgid) for pgid in ordered_groups):
+        if not any(process_group_exists(pgid) for pgid in ordered_groups):
             break
         time.sleep(0.1)
     kill_sent = False
     for pgid in ordered_groups:
-        if not group_exists(pgid):
+        if not process_group_exists(pgid):
             continue
         try:
             os.killpg(pgid, signal.SIGKILL)
@@ -1720,10 +2005,12 @@ def terminate_own_process_group(process: subprocess.Popen[bytes]) -> list[str]:
             fail("launcher child leader survived SIGTERM/SIGKILL escalation")
     group_deadline = time.monotonic() + 2.0
     while time.monotonic() < group_deadline:
-        if not any(group_exists(pgid) for pgid in ordered_groups):
+        if not any(process_group_exists(pgid) for pgid in ordered_groups):
             break
         time.sleep(0.05)
-    remaining = [pgid for pgid in ordered_groups if group_exists(pgid)]
+    remaining = [
+        pgid for pgid in ordered_groups if process_group_exists(pgid)
+    ]
     if remaining:
         fail(f"launcher-owned process groups remain after SIGKILL: {remaining}")
     return signals_sent
@@ -1737,11 +2024,14 @@ def stop_and_reap_process_group(
     signals_sent: list[str] = []
     try:
         signals_sent = terminate_own_process_group(process)
-    except LaunchError:
-        kill_verified_process_tree(process, seed=-1, arm=label)
-        signals_sent = [*signals_sent, "SIGKILL_VERIFIED_TREE"]
+    except LaunchError as exc:
+        raise ProcessCleanupError(
+            f"{label} could not prove full process-tree cleanup: {exc}"
+        ) from exc
     if process.poll() is None:
-        fail(f"{label} child remains live after verified stop/reap")
+        raise ProcessCleanupError(
+            f"{label} child remains live after verified stop/reap"
+        )
     return signals_sent
 
 
@@ -2694,6 +2984,26 @@ def stream_process(
         fail("GPU monitoring requires a mutable evidence record")
     if gpu_monitor_interval_seconds <= 0:
         fail("GPU monitor interval must be positive")
+    launch_command = list(command)
+    registry_raw = env.get(MATRIX_CHILD_REGISTRY_ENV)
+    if registry_raw is not None:
+        registry_dir = Path(registry_raw)
+        if (
+            registry_dir.is_symlink()
+            or not registry_dir.is_dir()
+            or not registry_dir.is_absolute()
+        ):
+            fail("matrix child ownership registry is not a fixed absolute directory")
+        label = re.sub(r"[^A-Za-z0-9_.-]", "_", log_path.name)[:80]
+        launch_command = [
+            sys.executable,
+            "-c",
+            MATRIX_CHILD_WRAPPER_CODE,
+            str(registry_dir.resolve(strict=True)),
+            label,
+            str(os.getpid()),
+            *launch_command,
+        ]
     with log_path.open("xb") as raw_log:
         managed_signals = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
         is_main_thread = threading.current_thread() is threading.main_thread()
@@ -2710,7 +3020,8 @@ def stream_process(
                 if process is None:
                     pending_signals.append(signum)
                     return
-                stop_and_reap_process_group(process, label="stream-signal")
+                if process.returncode is None:
+                    stop_and_reap_process_group(process, label="stream-signal")
                 raise LaunchError(
                     f"launcher received signal {signal.Signals(signum).name}; "
                     "stopping its own child process group"
@@ -2721,7 +3032,7 @@ def stream_process(
                 signal.signal(signum, stop_launched_process)
         try:
             process = subprocess.Popen(
-                list(command),
+                launch_command,
                 cwd=cwd,
                 env=dict(env),
                 stdout=subprocess.PIPE,
@@ -2743,6 +3054,7 @@ def stream_process(
             )
         monitor_stop = threading.Event()
         monitor_thread = None
+        monitor_exceptions: list[BaseException] = []
         if monitored_gpu_uuid is not None:
             assert gpu_monitor_record is not None
             monitor_started_monotonic = time.monotonic()
@@ -2907,9 +3219,23 @@ def stream_process(
                         return
                     next_check_started += gpu_monitor_interval_seconds
 
+            def monitor_gpu_exclusivity_guarded() -> None:
+                try:
+                    monitor_gpu_exclusivity()
+                except BaseException as exc:
+                    monitor_exceptions.append(exc)
+                    assert gpu_monitor_record is not None
+                    gpu_monitor_record["status"] = "STOPPED_FOR_AUDIT"
+                    if gpu_monitor_record.get("foreign_process_incident") is None:
+                        gpu_monitor_record["foreign_process_incident"] = {
+                            "detected_utc": utc_now(),
+                            "kind": "GPU_MONITOR_UNCAUGHT_EXCEPTION",
+                            "error": f"{type(exc).__name__}: {exc}",
+                        }
+
             try:
                 monitor_thread = threading.Thread(
-                    target=monitor_gpu_exclusivity,
+                    target=monitor_gpu_exclusivity_guarded,
                     name=f"gpu-exclusivity-{monitored_gpu_uuid}",
                     daemon=True,
                 )
@@ -2932,6 +3258,13 @@ def stream_process(
                 sys.stdout.buffer.write(chunk)
                 sys.stdout.buffer.flush()
             returncode = process.wait()
+            if process_group_exists(process.pid):
+                raise ProcessCleanupError(
+                    "stream root exited while its launcher-owned process group "
+                    "still exists"
+                )
+        except ProcessCleanupError:
+            raise
         except BaseException:
             stop_and_reap_process_group(process, label="stream-read-failure")
             raise
@@ -2948,6 +3281,8 @@ def stream_process(
             process.stdout.close()
             for signum, handler in previous_signal_handlers.items():
                 signal.signal(signum, handler)
+        if monitor_exceptions:
+            raise monitor_exceptions[0]
         if gpu_monitor_record is not None:
             gpu_monitor_record["finished_utc"] = utc_now()
             gpu_monitor_record["monitor_duration_seconds"] = (
@@ -4198,6 +4533,7 @@ def _run_deep_revalidation_command(
         fail(f"{label} has an incomplete managed-process contract")
     process: subprocess.Popen[bytes] | None = None
     registered = False
+    cleanup_confirmed = False
     raw_output = b""
     try:
         if stop_event is not None and stop_event.is_set():
@@ -4216,13 +4552,15 @@ def _run_deep_revalidation_command(
         deadline = time.monotonic() + timeout_seconds
         while True:
             if stop_event is not None and stop_event.is_set():
-                terminate_own_process_group(process)
+                stop_and_reap_process_group(process, label=label)
+                cleanup_confirmed = True
                 raw_output, _ = process.communicate(timeout=1.0)
                 fail(f"{label} stopped because matrix audit stop was requested")
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 if managed:
-                    terminate_own_process_group(process)
+                    stop_and_reap_process_group(process, label=label)
+                    cleanup_confirmed = True
                     raw_output, _ = process.communicate()
                 else:
                     process.terminate()
@@ -4234,6 +4572,11 @@ def _run_deep_revalidation_command(
                 fail(f"{label} timed out after {timeout_seconds:.0f} seconds")
             try:
                 raw_output, _ = process.communicate(timeout=min(1.0, remaining))
+                if managed and process_group_exists(process.pid):
+                    raise ProcessCleanupError(
+                        f"{label} leader exited but its process group remains"
+                    )
+                cleanup_confirmed = True
                 break
             except subprocess.TimeoutExpired:
                 continue
@@ -4244,7 +4587,8 @@ def _run_deep_revalidation_command(
             try:
                 if process.poll() is None:
                     if managed:
-                        terminate_own_process_group(process)
+                        stop_and_reap_process_group(process, label=label)
+                        cleanup_confirmed = True
                     else:
                         process.terminate()
                         try:
@@ -4252,6 +4596,15 @@ def _run_deep_revalidation_command(
                         except subprocess.TimeoutExpired:
                             process.kill()
                             process.wait(timeout=2.0)
+                        cleanup_confirmed = True
+                elif managed and not cleanup_confirmed:
+                    if process_group_exists(process.pid):
+                        raise ProcessCleanupError(
+                            f"{label} exited without proving its process group gone"
+                        )
+                    cleanup_confirmed = True
+                elif not managed:
+                    cleanup_confirmed = True
                 if process.stdout is not None and not process.stdout.closed:
                     trailing_output, _ = process.communicate()
                     if not raw_output:
@@ -4260,7 +4613,7 @@ def _run_deep_revalidation_command(
                 if (
                     registered
                     and unregister_process is not None
-                    and process.poll() is not None
+                    and cleanup_confirmed
                 ):
                     unregister_process(process)
     output = (raw_output or b"").decode("utf-8", errors="replace")
@@ -5587,6 +5940,8 @@ def run_matrix(args: argparse.Namespace) -> int:
     except FileExistsError:
         fail(f"matrix directory already exists: {matrix_dir}")
     plan_path = matrix_dir / "matrix_plan.json"
+    process_registry_root = matrix_dir / "process_registry"
+    process_registry_root.mkdir(mode=0o750)
 
     queues: dict[str, list[MatrixJob]] = defaultdict(list)
     for job in jobs:
@@ -5598,6 +5953,7 @@ def run_matrix(args: argparse.Namespace) -> int:
     mutex = threading.RLock()
     active_processes: dict[tuple[int, str], subprocess.Popen[bytes]] = {}
     matrix_stop_actions: list[dict[str, object]] = []
+    cleanup_unconfirmed: list[dict[str, object]] = []
     received_signal: dict[str, object] | None = None
     live_seed_identity: dict[int, dict[str, object]] = {}
     stop_requested_monotonic: float | None = None
@@ -5828,12 +6184,21 @@ def run_matrix(args: argparse.Namespace) -> int:
                 else set()
             )
             process: subprocess.Popen[bytes] | None = None
+            outer_cleanup_confirmed = False
+            inner_registry_audit: dict[str, object] | None = None
+            registry_dir = process_registry_root / f"seed{job.seed}-arm{job.arm}"
             try:
                 if stop_event.is_set():
                     return
+                registry_dir.mkdir(mode=0o750)
+                outer_env = dict(os.environ)
+                outer_env[MATRIX_CHILD_REGISTRY_ENV] = str(
+                    registry_dir.resolve(strict=True)
+                )
                 process = subprocess.Popen(
-                    job.command,
+                    [sys.executable, "-c", MATRIX_OUTER_WRAPPER_CODE, *job.command],
                     cwd=REPO_ROOT,
+                    env=outer_env,
                     start_new_session=True,
                 )
                 register_worker_process(process)
@@ -5845,10 +6210,28 @@ def run_matrix(args: argparse.Namespace) -> int:
                     except ProcessLookupError:
                         pass
                 returncode = process.wait()
+                inner_registry_audit = drain_matrix_child_registry(
+                    registry_dir, matrix_outer_pid=process.pid
+                )
+                if returncode == 0 and inner_registry_audit["token_count"] != 2:
+                    raise ProcessCleanupError(
+                        "successful arm wrapper did not publish exactly two "
+                        "training/verifier ownership tokens"
+                    )
+                outer_cleanup_confirmed = True
+            except ProcessCleanupError:
+                raise
             except Exception as exc:
                 stop_signals = []
                 if process is not None and process.poll() is None:
-                    stop_signals = terminate_own_process_group(process)
+                    stop_signals = stop_and_reap_process_group(
+                        process, label="matrix-arm-wrapper"
+                    )
+                if process is not None:
+                    inner_registry_audit = drain_matrix_child_registry(
+                        registry_dir, matrix_outer_pid=process.pid
+                    )
+                outer_cleanup_confirmed = True
                 with mutex:
                     failures.append(
                         {
@@ -5858,6 +6241,7 @@ def run_matrix(args: argparse.Namespace) -> int:
                             "returncode": None,
                             "worker_exception": f"{type(exc).__name__}: {exc}",
                             "own_process_group_signals": stop_signals,
+                            "inner_registry_audit": inner_registry_audit,
                         }
                     )
                 request_matrix_stop(
@@ -5866,12 +6250,40 @@ def run_matrix(args: argparse.Namespace) -> int:
                 )
                 return
             finally:
-                if process is not None and process.poll() is not None:
+                if process is not None and outer_cleanup_confirmed:
                     unregister_worker_process(process)
+            if returncode == PROCESS_CLEANUP_UNCONFIRMED_EXIT_CODE:
+                detail = {
+                    "seed": job.seed,
+                    "arm": job.arm,
+                    "gpu": gpu,
+                    "returncode": returncode,
+                    "reason": (
+                        "arm runner could not prove that its child process tree "
+                        "was fully removed"
+                    ),
+                }
+                with mutex:
+                    cleanup_unconfirmed.append(detail)
+                    failures.append(dict(detail))
+                request_matrix_stop(
+                    f"unconfirmed child cleanup for seed={job.seed} arm={job.arm}",
+                    exclude=key,
+                )
+                return
             runner_completion = None
             immutable = None
-            completion_error = None
-            if returncode == 0:
+            drained_inner_sessions = (
+                inner_registry_audit.get("active_inner_sessions_drained", [])
+                if isinstance(inner_registry_audit, dict)
+                else []
+            )
+            completion_error = (
+                "arm wrapper exited while registered inner sessions were still active"
+                if drained_inner_sessions
+                else None
+            )
+            if returncode == 0 and completion_error is None:
                 try:
                     if job.resume is None:
                         completion_path = run_dir / "runner_completion.json"
@@ -5913,6 +6325,7 @@ def run_matrix(args: argparse.Namespace) -> int:
                     "arm": job.arm,
                     "gpu": gpu,
                     "returncode": returncode,
+                    "inner_registry_audit": inner_registry_audit,
                 }
                 if runner_completion is not None:
                     record["runner_completion"] = runner_completion
@@ -5935,6 +6348,19 @@ def run_matrix(args: argparse.Namespace) -> int:
     def worker(gpu: str, queue: Sequence[MatrixJob]) -> None:
         try:
             worker_impl(gpu, queue)
+        except ProcessCleanupError as exc:
+            with mutex:
+                cleanup_unconfirmed.append(
+                    {
+                        "seed": None,
+                        "arm": None,
+                        "gpu": gpu,
+                        "reason": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+            request_matrix_stop(
+                f"matrix worker could not prove child cleanup on GPU {gpu}"
+            )
         except BaseException as exc:
             with mutex:
                 failures.append(
@@ -5961,24 +6387,26 @@ def run_matrix(args: argparse.Namespace) -> int:
             targets = list(active_processes.items())
         actions = []
         for key, process in targets:
-            if process.poll() is None:
-                try:
-                    actions.append(
-                        kill_verified_process_tree(
-                            process, seed=key[0], arm=key[1]
-                        )
-                    )
-                except (OSError, LaunchError) as exc:
-                    actions.append(
-                        {
-                            "seed": key[0],
-                            "arm": key[1],
-                            "outer_process_group": process.pid,
-                            "signal": "SIGKILL_NOT_CONFIRMED",
-                            "audit_error": f"{type(exc).__name__}: {exc}",
-                        }
-                    )
-            if process.poll() is not None:
+            confirmed = False
+            try:
+                action = kill_verified_process_tree(
+                    process, seed=key[0], arm=key[1]
+                )
+                actions.append(action)
+                confirmed = True
+            except (OSError, LaunchError) as exc:
+                action = {
+                    "seed": key[0],
+                    "arm": key[1],
+                    "outer_process_group": process.pid,
+                    "signal": "SIGKILL_NOT_CONFIRMED",
+                    "audit_error": f"{type(exc).__name__}: {exc}",
+                }
+                actions.append(action)
+                with mutex:
+                    if action not in cleanup_unconfirmed:
+                        cleanup_unconfirmed.append(action)
+            if confirmed:
                 with mutex:
                     if active_processes.get(key) is process:
                         active_processes.pop(key, None)
@@ -5992,9 +6420,7 @@ def run_matrix(args: argparse.Namespace) -> int:
                     }
                 )
         with mutex:
-            return sum(
-                process.poll() is None for process in active_processes.values()
-            )
+            return len(active_processes)
 
     try:
         for thread in threads:
@@ -6062,17 +6488,41 @@ def run_matrix(args: argparse.Namespace) -> int:
         while force_drain_registered(
             "final registered-child drain before terminal receipt"
         ):
+            with mutex:
+                if cleanup_unconfirmed:
+                    break
             time.sleep(0.1)
-        with mutex:
-            if active_processes:
-                fail(
-                    "matrix refuses terminal completion with undrained active "
-                    f"processes: {sorted(active_processes)}"
-                )
 
     def restore_matrix_signal_handlers() -> None:
         for signum, handler in previous_matrix_signal_handlers.items():
             signal.signal(signum, handler)
+
+    with mutex:
+        unresolved_cleanup = list(cleanup_unconfirmed)
+        unresolved_active = sorted(active_processes)
+    if unresolved_cleanup or unresolved_active:
+        audit_path = matrix_dir / "matrix_cleanup_unconfirmed.json"
+        atomic_json_exclusive(
+            audit_path,
+            {
+                "schema": "ect.q256.target-weight-cleanup-unconfirmed/v1",
+                "experiment_id": EXPERIMENT_ID,
+                "status": "CLEANUP_UNCONFIRMED",
+                "created_utc": utc_now(),
+                "matrix_plan_sha256": plan_sha256,
+                "details": unresolved_cleanup,
+                "active_cell_keys": [
+                    {"seed": seed, "arm": arm}
+                    for seed, arm in unresolved_active
+                ],
+                "terminal_completion_forbidden": True,
+            },
+        )
+        restore_matrix_signal_handlers()
+        raise ProcessCleanupError(
+            "matrix terminal receipt is forbidden because child cleanup could "
+            f"not be proven; audit={audit_path}"
+        )
 
     completion = {
         "schema": "ect.q256.target-weight-factorial-matrix-completion/v2",
@@ -6308,6 +6758,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         return int(args.func(args))
+    except ProcessCleanupError as exc:
+        print(
+            "[run_q256_target_weight_matrix] CLEANUP_UNCONFIRMED: " f"{exc}",
+            file=sys.stderr,
+        )
+        return PROCESS_CLEANUP_UNCONFIRMED_EXIT_CODE
     except LaunchError as exc:
         print(f"[run_q256_target_weight_matrix] ERROR: {exc}", file=sys.stderr)
         return 1

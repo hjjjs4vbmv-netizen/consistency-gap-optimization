@@ -1000,6 +1000,8 @@ def stream_process(
             gpu_monitor_record=gpu_monitor_record,
             gpu_monitor_interval_seconds=1.0,
         )
+    except training_launcher.ProcessCleanupError:
+        raise
     except training_launcher.LaunchError as exc:
         fail(f"evaluator process stopped for audit: {exc}")
 
@@ -1194,6 +1196,8 @@ def run_authorized_plan_jobs(
                     label=f"evaluation job {job['job_id']}",
                     expected_gpu_uuid=str(gpu["uuid"]),
                 )
+            except training_launcher.ProcessCleanupError:
+                raise
             except (
                 EvaluationError,
                 OSError,
@@ -1322,6 +1326,8 @@ def run_authorized_plan_jobs(
         print(f"Formal evaluation PASS: {completion_path}")
         return 0
     except BaseException as exc:
+        if isinstance(exc, training_launcher.ProcessCleanupError):
+            raise
         write_stop_receipt(exc)
         raise
     finally:
@@ -1467,6 +1473,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = make_parser().parse_args(argv)
     try:
         return execute(args)
+    except training_launcher.ProcessCleanupError as exc:
+        print(
+            "[q256-target-weight-evaluation] CLEANUP_UNCONFIRMED: " f"{exc}",
+            file=sys.stderr,
+        )
+        return training_launcher.PROCESS_CLEANUP_UNCONFIRMED_EXIT_CODE
     except EvaluationError as exc:
         print(f"[q256-target-weight-evaluation] ERROR: {exc}", file=sys.stderr)
         return 1
