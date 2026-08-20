@@ -3685,6 +3685,7 @@ import math
 import sys
 from pathlib import Path
 
+import numpy as np
 import torch
 from scripts import verify_q256_target_weight_arm as v
 from training import reproducibility
@@ -3787,7 +3788,10 @@ v.validate_finite_tree(grid_z + grid_c, "preview state")
 grid_size = state["snapshot_grid_size"]
 if not (
     isinstance(grid_size, tuple) and len(grid_size) == 2
-    and all(isinstance(value, int) and value > 0 for value in grid_size)
+    and all(
+        isinstance(value, (int, np.integer)) and int(value) > 0
+        for value in grid_size
+    )
 ):
     v.fail("planned-pause snapshot_grid_size is invalid")
 state_info = {

@@ -849,6 +849,7 @@ class TargetWeightLauncherTest(unittest.TestCase):
             probe_argv = state_probe.call_args.args[0]
             probe_code = probe_argv[probe_argv.index("-c") + 1]
             self.assertIn("tick_start_nimg", probe_code)
+            self.assertIn("isinstance(value, (int, np.integer))", probe_code)
             completion = {
                 "schema": launcher.RUNNER_COMPLETION_SCHEMA,
                 "experiment_id": launcher.EXPERIMENT_ID,
