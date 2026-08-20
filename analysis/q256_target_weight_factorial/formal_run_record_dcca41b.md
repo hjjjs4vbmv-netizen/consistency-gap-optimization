@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-21 01:14 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:07 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -131,6 +131,14 @@ Ten of twelve formal cells are now complete. The queue automatically advanced to
 Seed5/C completed with 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Its final state, network snapshot, telemetry, initial-state receipt, and final image are present, and the recovery worker emitted an explicit PASS line. The AMP skips were attempts 1–8, 13, and 14; semantic non-finite, nonpositive-denominator, and raw-gradient/skip mismatch counts were all zero. Artifact hashes are recorded in the JSON record.
 
 Eleven of twelve formal cells are now complete. The queue automatically advanced to the final cell, seed5/D; at this milestone it was at attempt 12, accepted update 4, and `1.536 kimg` (PID 112271) on physical GPU0. The separate seed6/7 extension continued on GPU1 without sharing the formal GPU. No Traceback, bus error, OOM, CUDA error, or semantic non-finite event was present; the formal private shared-memory directory used 44 KiB, `/data/raw` had 33 TiB available, and `/data/temp` had 5.0 TiB available.
+
+## Formal training completion observed at 2026-08-21 03:07:04 CST
+
+Seed5/D completed with 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Its final state, network snapshot, telemetry, initial-state receipt, final image, summary, and training options are present and hash-bound in the JSON record. The AMP skips were attempts 1–8, 13, and 14; semantic non-finite, nonpositive-denominator, and raw-gradient/skip mismatch counts were all zero. The worker emitted explicit seed5/D PASS and GPU0 `WORKER_PASS` markers.
+
+The formal matrix is now 12/12 complete: 12 final images, 12 final training states, and 12 final network snapshots. No formal `ct_train.py` process remains. Physical GPU0 (`GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859`) is idle at 0% utilization and 4 MiB, with no compute process. GPU1 continues only the separately authorized seed6/7 extension. `/data/raw` has 32 TiB free, `/data/temp` has 5.0 TiB free, and `/dev/shm` has 224 GiB free.
+
+The frozen-evaluation trigger is therefore satisfied. The direct queue lacks canonical launcher receipts, so the evaluation uses a minimal adapter that read-only validates and hash-binds the existing immutable artifacts, supplies the missing matrix provenance, and reorders the unchanged evaluator jobs so all 12 NFE=1 jobs precede all 12 NFE=2 jobs. It does not retrain, mutate checkpoints, or alter metric numerical arguments.
 
 ## Post-seed5 frozen evaluation scheduled at 2026-08-21 00:25 CST
 

@@ -1,9 +1,9 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T17:14:35Z",
+  "updated_utc": "2026-08-20T19:07:04Z",
   "experiment_id": "q256-target-weight-factorial",
-  "status_at_snapshot": "RUNNING_POST_RECOVERY",
+  "status_at_snapshot": "FORMAL_TRAINING_COMPLETE_EVALUATION_BINDING",
   "training_source": {
     "branch": "experiment/q256-target-weight-factorial",
     "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
@@ -675,6 +675,50 @@
         "data_temp_available_tib": 5.0
       }
     },
+    "seed5_D_completion": {
+      "observed_local": "2026-08-21T03:07:04+08:00",
+      "status": "TWELVE_OF_TWELVE_COMPLETE",
+      "cell": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1990,
+        "processed_nimg": 256000,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 13, 14],
+        "semantic_nonfinite_count": 0,
+        "nonpositive_denominator_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "worker_pass_line_present": true,
+        "artifact_sha256": {
+          "training_state": "da04fbc6fe6f475e9eec88de12359600263e87be536168f1f78303bc72d2cd25",
+          "network_snapshot": "85a70d01b1034cc3a126eb567ba2e025ded258cdcaeaf61193b0c9e93d87bc01",
+          "telemetry": "4475cb4c92b69ce33aa107335b8dd39fb06ea2ad5df56e798a4fd237cc2a2133",
+          "initial_state_receipt": "49a30357c3f7b14bc39ac07046ad8f03e21d0ca968eddd20b2948e386acd99c5",
+          "final_image": "50d79455f5b7f1d3a7476653206bbfcbfbf0aa65f0fcadb3c9a0c198e367997d",
+          "train_summary": "f1ecc1c15541161cf8beec333a777d3b246f97aa7c03f17fe7d41c898209bdef",
+          "training_options": "a11d35d0ce39fe8691feafc731599138db3cb657de696cbdf63ca30faa1b741a"
+        }
+      },
+      "formal_matrix": {
+        "complete_cells": 12,
+        "final_images": 12,
+        "training_states": 12,
+        "network_snapshots": 12,
+        "gpu0_worker_status": "WORKER_PASS",
+        "remaining_formal_training_processes": 0
+      },
+      "health": {
+        "gpu0_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+        "gpu0_utilization_percent": 0,
+        "gpu0_memory_mib": 4,
+        "gpu0_compute_processes": 0,
+        "gpu1_activity": "separate authorized seed6/7 extension; not part of formal queue",
+        "formal_private_shm_used_kib": 0,
+        "data_raw_available_tib": 32,
+        "data_temp_available_tib": 5.0,
+        "dev_shm_available_gib": 224
+      }
+    },
     "tmux": {
       "gpu0": "q256_dcca_recovery_gpu0",
       "gpu1": "q256_dcca_recovery_gpu1"
@@ -699,7 +743,7 @@
     }
   },
   "post_seed5_frozen_evaluation_plan": {
-    "status": "SCHEDULED_NOT_STARTED",
+    "status": "TRIGGER_SATISFIED_BINDING_IN_PROGRESS",
     "scheduled_local": "2026-08-21T00:25:59+08:00",
     "automation_id": "q256-formal-runs",
     "plan_files": [
@@ -716,7 +760,12 @@
     "secondary_endpoints": ["KID-50k@NFE=1", "FID-50k@NFE=2", "KID-50k@NFE=2"],
     "selection_policy": "all_12_final_256kimg_checkpoints_no_intermediate_or_preview_selection",
     "direct_queue_binding_policy": "minimal provenance/matrix binding only; no retraining or checkpoint mutation",
-    "silent_retry_allowed": false
+    "silent_retry_allowed": false,
+    "trigger_satisfied_local": "2026-08-21T03:07:04+08:00",
+    "matrix_binding_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/matrix-binding-direct-dcca41b-v1",
+    "evaluation_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-dcca41b-primary-first-v1",
+    "binding_adapter": "analysis/q256_target_weight_factorial/evaluation_support/run_q256_direct_frozen_evaluation.py",
+    "binding_adapter_scope": "read-only immutable-artifact provenance binding plus NFE-primary job ordering; no checkpoint or metric numerical change"
   },
   "open_observations": [
     {
