@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import torch
 
 SCRIPT = Path(__file__).resolve().parents[1] / "analysis" / "scalar_history_predictor.py"
 SPEC = importlib.util.spec_from_file_location("scalar_history_predictor", SCRIPT)
@@ -61,6 +62,16 @@ def test_no_history_falls_back_to_final_step(tmp_path):
     u1_0, ug_0, _, _ = M.select_eval_update(None, None, tmp_path / "u1.npy", tmp_path / "ug.npy", t=0, T=T)
     assert np.array_equal(u1_0, u1[T - 1]), "legacy fallback uses the final-step update"
     assert np.array_equal(ug_0, ug[T - 1]), "legacy fallback uses the final-step update"
+
+
+def test_training_state_loads_numpy2_pickle_globals_with_pinned_runtime_compat(tmp_path):
+    """The predictor must use the same NumPy-2 pickle mapping as Layer A/B."""
+    path = tmp_path / "state.pt"
+    expected = np.asarray([2.0, 7.0])
+    torch.save({"optimizer_state": {}, "numpy_payload": expected}, path)
+
+    loaded = M.load_training_state_payload(path)
+    np.testing.assert_array_equal(loaded["numpy_payload"], expected)
 
 
 if __name__ == "__main__":

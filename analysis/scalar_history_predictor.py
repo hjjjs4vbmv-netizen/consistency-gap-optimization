@@ -1,8 +1,9 @@
 """Scalar-History Predictor: how much of the real optimizer residual is
 explained by a scalar gradient-scale history through RAdam moment memory?
 
-This is the SCIENTIFIC mechanism test (vs the coordinate-wise algebraic sanity check, which is
-only an algebra/implementation sanity check).
+This is appendix/supporting evidence for the optimizer-geometry analysis. It
+does not support a headline cross-seed predictor claim, because explanatory
+power can differ materially by training trajectory.
 
 Protocol (per step j, from the stored paired gradient history):
   1. global scalar  a_j* = <G_j^1.3, G_j^1.0> / ||G_j^1.0||^2   (ONE scalar)
@@ -38,6 +39,10 @@ from torch.optim import RAdam
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
+
+# Reuse #65's canonical compatibility path. This predictor is supporting
+# evidence only, so it must not grow a second checkpoint-unpickling layer.
+from analysis.radam_stateful_update_audit import _NumpyCompatPickleModule
 
 BETA1, BETA2 = 0.9, 0.999
 
@@ -165,6 +170,16 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def load_training_state_payload(path: Path) -> dict:
+    """Load the trusted optimizer-state checkpoint under pinned NumPy 1.24."""
+    return torch.load(
+        path,
+        map_location="cpu",
+        pickle_module=_NumpyCompatPickleModule,
+        weights_only=False,
+    )
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--training-state", type=Path, required=True,
@@ -187,7 +202,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     # load real optimizer state, flatten m/v/step
-    data = torch.load(a.training_state, map_location="cpu", weights_only=False)
+    data = load_training_state_payload(a.training_state)
     opt_state = data["optimizer_state"]
     m0, v0, step0 = flatten_opt_state(opt_state)
     dim = m0.numel()
@@ -200,9 +215,21 @@ def main(argv=None):
 
     G1 = np.load(a.grad_history_1)   # (T, d)
     Gg = np.load(a.grad_history_g)   # (T, d)
+    if G1.ndim != 2 or Gg.ndim != 2 or G1.shape != Gg.shape or G1.shape[0] < 1:
+        raise SystemExit("gradient histories must be non-empty, shape-matched (T, d) arrays")
     T = G1.shape[0]
     t = T - 1 if a.eval_step < 0 else min(a.eval_step, T - 1)
     d = G1.shape[1]
+    if d != dim:
+        raise SystemExit(f"gradient-history dimension {d} does not match source optimizer dimension {dim}")
+    if a.u1_history is None or a.ug_history is None:
+        history_mode = False
+    else:
+        u1_history = np.load(a.u1_history, mmap_mode="r")
+        ug_history = np.load(a.ug_history, mmap_mode="r")
+        if u1_history.shape != (T, d) or ug_history.shape != (T, d):
+            raise SystemExit("full update histories must both have shape (T, d) matching gradient histories")
+        history_mode = True
 
     # actual update at the SAME eval step t (per-step history when available)
     u1, ug, u1_src, ug_src = select_eval_update(
@@ -260,7 +287,9 @@ def main(argv=None):
         "grad_history_g_sha256": sha256_file(a.grad_history_g),
         "u1_sha256": sha256_file(u1_src),
         "ug_sha256": sha256_file(ug_src),
-        "update_source": "history" if a.u1_history is not None else "final-step",
+        "u1_history_sha256": sha256_file(a.u1_history) if history_mode else None,
+        "ug_history_sha256": sha256_file(a.ug_history) if history_mode else None,
+        "update_source": "history" if history_mode else "final-step",
         "execution_command": " ".join(sys.argv),
         "lr": a.lr,
         "source_nimg": data.get("cur_nimg"),
@@ -274,7 +303,7 @@ def main(argv=None):
     np.save(a.out.parent / "h_actual.npy", h_act[eff])
     np.save(a.out.parent / "weights.npy", w[eff])
 
-    print("=== Scalar-History Predictor (mechanism test) ===")
+    print("=== Scalar-History Predictor (appendix supporting evidence) ===")
     print(f"steps={T}, eval t={t}, effective coords={eff.sum()}")
     print(f"a_j*: mean={result['a_star_mean']:.4f}, std={result['a_star_std']:.4f}")
     print(f"ĥ^scalar mean={result['h_pred_scalar_mean']:.4f}, h^actual mean={result['h_actual_mean']:.4f}")

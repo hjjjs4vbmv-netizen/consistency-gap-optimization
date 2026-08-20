@@ -1,0 +1,92 @@
+{
+  "schema_version": 2,
+  "protocol": "canonical-pr47-pr58-prospective-scalar-history-v1",
+  "training_state": "/data/raw/ECT/checkpoints/confirmatory_256k/seed5/training-state-000008.pt",
+  "training_state_sha256": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+  "checkpoint": "/data/raw/ECT/checkpoints/confirmatory_256k/seed5/network-snapshot-000008.pkl",
+  "checkpoint_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+  "dataset": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+  "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+  "source_state_non_committing": {
+    "parameter_hash_before": {
+      "parameter_sha256": "4ff7539b74dd16c1d7b9eb4501cde974cd3d03be4a11b8770bb2445c5012e930",
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+    },
+    "parameter_hash_after": {
+      "parameter_sha256": "4ff7539b74dd16c1d7b9eb4501cde974cd3d03be4a11b8770bb2445c5012e930",
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee"
+    },
+    "optimizer_state_hash_before": "4b6edacdd9db4e936157167af8075d5bad2957b1075f55ff608bc9f86aa7b05b",
+    "optimizer_state_hash_after": "4b6edacdd9db4e936157167af8075d5bad2957b1075f55ff608bc9f86aa7b05b",
+    "preserved": true
+  },
+  "gradscaler_state_present": true,
+  "training_state_meta": {
+    "cur_nimg": 256000.0,
+    "cur_tick": 27,
+    "successful_optimizer_steps": 1990,
+    "attempted_iteration": 2000,
+    "has_gradscaler_state": true,
+    "has_loss_fn_state": true
+  },
+  "n_steps": 20,
+  "g_candidate": 1.3,
+  "reference_gain": 1.0,
+  "batch_size": 128,
+  "probe_rng_seed": 20260809,
+  "lr": 0.0001,
+  "q": 256.0,
+  "k": 8.0,
+  "b": 1.0,
+  "loss_c": 0.0,
+  "delta_hist": [
+    -0.26993370603755473,
+    -0.13543633185267223,
+    -0.29147783986545317,
+    -0.1975877192483797,
+    -0.2607372957787809,
+    -0.22341190326124427,
+    -0.1401483864394787,
+    -0.27150396237093954,
+    -0.23242220305521655,
+    -0.2560658244460644,
+    0.07720104469254507,
+    -0.2997077996334365,
+    -0.12036896166589162,
+    -0.24011638750570785,
+    -0.2065754984568493,
+    -0.258590614956523,
+    0.09794685365766687,
+    -0.019708176604582905,
+    -0.14587870221503474,
+    -0.026063857900150533
+  ],
+  "delta_mean": -0.17102936364718746,
+  "delta_std": 0.11628476858585542,
+  "raw_artifacts": {
+    "grad_history_1.npy": {
+      "sha256": "80f1b8b554a220f57f15157fa6889d7d1f4c1c074000efb2255cb6ee342335a5",
+      "size_bytes": 8917238368
+    },
+    "grad_history_g.npy": {
+      "sha256": "cda9d5e05db76c18226d2d6d2755a732c58d46fb25739fc111ea061dff292293",
+      "size_bytes": 8917238368
+    },
+    "u1.npy": {
+      "sha256": "fb2c88a6a76cfa62832441a0b7613fe810719239cd39253aea35d375e8698b15",
+      "size_bytes": 445862040
+    },
+    "ug.npy": {
+      "sha256": "0ffdcb180b94beec09edf53e14ab713e4d561a22193802668743e05338ef08b9",
+      "size_bytes": 445862040
+    },
+    "u1_history.npy": {
+      "sha256": "e76af1155f8075b9f63e3fe1623c355bea5879508ba89ccf738837c3ac32ea88",
+      "size_bytes": 8917238368
+    },
+    "ug_history.npy": {
+      "sha256": "19e857cced5d191ebe9d7167456c7161106a061fbd623f96f653371cc75237e4",
+      "size_bytes": 8917238368
+    }
+  }
+}

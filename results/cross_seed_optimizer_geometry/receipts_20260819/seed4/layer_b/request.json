@@ -1,0 +1,25 @@
+{
+  "batch_size": 128,
+  "candidate_gain": 1.3,
+  "checkpoint": {
+    "path": "/data/raw/ECT/checkpoints/confirmatory_256k/seed4/network-snapshot-000008.pkl",
+    "sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9"
+  },
+  "dataset": {
+    "path": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1"
+  },
+  "eval_step": 19,
+  "lr": 0.0001,
+  "n_steps": 20,
+  "probe_rng_seed": 20260809,
+  "protocol": "cross-seed-gap-induced-optimizer-divergence-v1",
+  "reference_gain": 1.0,
+  "replay_note": "Canonical #47/#58 prospective replay from the real fixed Arm-A RAdam state.",
+  "seed": 4,
+  "training_state": {
+    "path": "/data/raw/ECT/checkpoints/confirmatory_256k/seed4/training-state-000008.pt",
+    "sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a"
+  },
+  "training_trajectory_id": "confirmatory-256k-seed4-fixed"
+}
