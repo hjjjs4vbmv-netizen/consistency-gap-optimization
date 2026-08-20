@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:32 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-21 03:37 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -155,6 +155,12 @@ The documented v2 chain started at 03:22:03 CST in tmux `q256_formal_eval_dcca41
 The first primary job, `seed3-armA-nfe1`, is running on the required physical GPU0 only (evaluation PID 94028). At observation it had remained stable beyond the v1 timeout point, GPU0 was at 98% utilization with 5247 MiB allocated, and there was no traceback, OOM, bus error, non-finite event, audit stop, or foreign GPU0 process. GPU1 continues the independent seed6/7 extension and is not used by this formal evaluation.
 
 At 03:32:04 CST, `seed3-armA-nfe1` had completed with a PASS receipt: FID-50k=331.8845547437531 and KID-50k=0.3535313746371371. The job completed in 408.015 seconds with 408 passing GPU-monitor checks and used zero bounded timeout retries. The chain advanced in the frozen order to `seed3-armB-nfe1`; no error or foreign GPU0 process was present. Exact result and receipt hashes are recorded in the JSON file.
+
+## Frozen-evaluation v2 stopped on feature identity at 2026-08-21 03:36:15 CST
+
+`seed3-armB-nfe1` completed its process with return code 0 and produced numerical files, but the frozen postcondition rejected them: the retained FID and KID Inception feature matrices were not bit-identical. Both matrices are float32 with shape 50,000×2,048; 377,387 of 102,400,000 entries differed, with maximum absolute difference 0.0006378293 and mean absolute difference 4.51e-08. The GPU monitor itself passed all 303 checks, used no timeout retry, and GPU0 was idle after the stop.
+
+The current metric path independently regenerates the seeded samples and reruns Inception for KID and FID. The small feature discrepancy is consistent with numerical nondeterminism in those separate passes, but it means the required same-feature proof is absent. This is therefore not being waived as a validator-only mismatch. The observed B values (FID 310.5075488; KID 0.313636838) are preserved but not accepted as formal results. The v2 root is retained with `STOPPED_FOR_AUDIT`, no later job started, and no third chain is launched silently. Exact artifact hashes and comparison statistics are in the JSON record.
 
 ## Post-seed5 frozen evaluation scheduled at 2026-08-21 00:25 CST
 

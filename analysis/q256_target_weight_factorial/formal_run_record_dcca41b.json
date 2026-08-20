@@ -1,9 +1,9 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T19:32:04Z",
+  "updated_utc": "2026-08-20T19:37:04Z",
   "experiment_id": "q256-target-weight-factorial",
-  "status_at_snapshot": "FORMAL_EVALUATION_V2_RUNNING_PRIMARY_NFE1",
+  "status_at_snapshot": "FORMAL_EVALUATION_V2_STOPPED_FEATURE_IDENTITY_POSTCONDITION",
   "training_source": {
     "branch": "experiment/q256-target-weight-factorial",
     "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
@@ -743,7 +743,7 @@
     }
   },
   "post_seed5_frozen_evaluation_plan": {
-    "status": "RUNNING_PRIMARY_NFE1",
+    "status": "V2_STOPPED_FOR_AUDIT_FEATURE_IDENTITY",
     "scheduled_local": "2026-08-21T00:25:59+08:00",
     "automation_id": "q256-formal-runs",
     "plan_files": [
@@ -798,7 +798,7 @@
       {
         "attempt": 2,
         "started_utc": "2026-08-20T19:22:03Z",
-        "status": "RUNNING_PRIMARY_NFE1",
+        "status": "STOPPED_FOR_AUDIT",
         "tmux": "q256_formal_eval_dcca41b_v2",
         "launcher_pid": 93209,
         "adapter_pid": 93252,
@@ -830,7 +830,40 @@
           "fid_receipt_sha256": "96478a5f218b67a21a446d91a45ae8b803c5fdfaf83bc8ceccb94dd8b850bf08",
           "kid_receipt_sha256": "16af782d33b0e4979717ce7d096b2d4eb0b0d549baf743b92f2a4c6bde543729"
         },
-        "current_job_at_2026_08_21_03_32_04_cst": "seed3-armB-nfe1"
+        "current_job_at_2026_08_21_03_32_04_cst": "seed3-armB-nfe1",
+        "stop_at_2026_08_21_03_36_15_cst": {
+          "completed_jobs": ["seed3-armA-nfe1"],
+          "failed_job": "seed3-armB-nfe1",
+          "failed_job_returncode": 0,
+          "failed_postcondition": "FID and KID did not use bit-identical retained Inception features",
+          "fid50k_full_observed_but_not_accepted": 310.5075487746658,
+          "kid50k_full_observed_but_not_accepted": 0.3136368375725727,
+          "gpu_monitor_status": "PASS",
+          "gpu_monitor_checks": 303,
+          "gpu_probe_timeout_retries_used": 0,
+          "later_jobs_started": false,
+          "post_stop_gpu0_idle": true,
+          "feature_comparison": {
+            "shape_each": [50000, 2048],
+            "dtype_each": "float32",
+            "different_elements": 377387,
+            "total_elements": 102400000,
+            "maximum_absolute_difference": 0.0006378293037414551,
+            "mean_absolute_difference": 4.5133040515607686e-08,
+            "fid_features_sha256": "dba350fce8e9f4d1d6a8b0cb4e3b3789823cfa68ca819e1ff17108edb3599bf9",
+            "kid_features_sha256": "a4500e2b727c097b8c634514a2f7ca20a3b506701fff94b09d12abb5a4a69f14",
+            "generated_samples_sha256": "156b68135344cc2844c52cda002e3a2c2993631a431309777d4453dbbd06e0a0"
+          },
+          "artifact_sha256": {
+            "failed_job_receipt": "84ea6934d28ab7e1f7f5cd2eddf8b95a770a11233187447be18693ad30b86c05",
+            "evaluation_completion": "020e663ae1519cd113ba079aa49e0da4e910235041b67fb0ce5485775cfe3fd0",
+            "fid_metric_file": "04f69e8c82167505ab70410fda4e9cd9da0fc02e16e9190a58ff8af06ecede53",
+            "kid_metric_file": "7adb01e37222ec5b30730ac96630ea274ff17c3d83eccc3ea46dafb234a7d798"
+          },
+          "classification": "real frozen metric-path identity failure; not accepted as a validator-only mismatch",
+          "reason": "The current evaluator independently regenerates and re-runs Inception for KID and FID; the retained feature matrices were numerically close but not bit-identical, so the required same-feature proof is absent.",
+          "action": "fail closed; preserve v2 and its receipts; do not start a third evaluation chain or accept the B metrics without a metric-path repair and explicit documented relaunch"
+        }
       }
     ],
     "v2_monitor_correction": {
