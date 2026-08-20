@@ -20,31 +20,34 @@ import os
 import platform
 import re
 import shlex
+import signal
 import subprocess
 import sys
 import time
 from pathlib import Path
 from typing import Any, Iterator, Mapping, Sequence
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+from scripts import run_q256_target_weight_matrix as training_launcher  # noqa: E402
 PROTOCOL = "q256-target-weight-formal-evaluation-v1"
-PLAN_SCHEMA = "ect.q256.target-weight-evaluation-plan/v1"
-JOB_LAUNCH_SCHEMA = "ect.q256.target-weight-evaluation-job-launch/v1"
-JOB_RECEIPT_SCHEMA = "ect.q256.target-weight-evaluation-job-receipt/v1"
-COMPLETION_SCHEMA = "ect.q256.target-weight-evaluation-completion/v1"
+PLAN_SCHEMA = "ect.q256.target-weight-evaluation-plan/v2"
+JOB_LAUNCH_SCHEMA = "ect.q256.target-weight-evaluation-job-launch/v2"
+JOB_RECEIPT_SCHEMA = "ect.q256.target-weight-evaluation-job-receipt/v2"
+COMPLETION_SCHEMA = "ect.q256.target-weight-evaluation-completion/v2"
 BLOCK_SCHEMA = "ect.q256.target-weight-sampling-block-diagnostics/v1"
 
-TRAINING_MATRIX_SCHEMA = "ect.q256.target-weight-factorial-matrix/v1"
-TRAINING_COMPLETION_SCHEMA = "ect.q256.target-weight-factorial-matrix-completion/v1"
-TRAINING_VALIDATION_SCHEMA = "ect.q256.target-weight-arm-validation/v1"
-TRAINING_HASH_SCHEMA = "ect.q256.target-weight-arm-artifact-hashes/v1"
+TRAINING_MATRIX_SCHEMA = "ect.q256.target-weight-factorial-matrix/v2"
+TRAINING_COMPLETION_SCHEMA = "ect.q256.target-weight-factorial-matrix-completion/v2"
+TRAINING_VALIDATION_SCHEMA = "ect.q256.target-weight-arm-validation/v2"
+TRAINING_HASH_SCHEMA = "ect.q256.target-weight-arm-artifact-hashes/v2"
 TRAINING_PROTOCOL = "q256_target_weight_v1"
 EXPERIMENT_ID = "q256-target-weight-factorial"
 EXPECTED_BRANCH = "experiment/q256-target-weight-factorial"
 
-VALIDATION_FILENAME = "q256_target_weight_arm_validation_v1.json"
-HASH_RECEIPT_FILENAME = "q256_target_weight_arm_artifact_hashes_v1.json"
+VALIDATION_FILENAME = "q256_target_weight_arm_validation_v2.json"
+HASH_RECEIPT_FILENAME = "q256_target_weight_arm_artifact_hashes_v2.json"
 CHECKPOINT_FILENAME = "network-snapshot-latest.pkl"
 
 DATASET_SHA256 = "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
@@ -78,6 +81,7 @@ _SOURCE_EXACT = {
     "ct_eval.py",
     "scripts/collect_q256_target_weight_results.py",
     "scripts/evaluate_checkpoint.sh",
+    "scripts/run_q256_target_weight_matrix.py",
     "scripts/run_q256_target_weight_evaluation.py",
 }
 
@@ -147,19 +151,37 @@ def resolve_within(root: Path, raw: Any, label: str) -> Path:
 
 def write_json_exclusive(path: Path, value: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    encoded = (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    temporary = path.parent / (
+        f".{path.name}.tmp-{os.getpid()}-{time.time_ns()}"
+    )
+    flags = (
+        os.O_WRONLY
+        | os.O_CREAT
+        | os.O_EXCL
+        | getattr(os, "O_CLOEXEC", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
     try:
-        with path.open("x", encoding="utf-8") as handle:
-            json.dump(value, handle, indent=2, sort_keys=True)
-            handle.write("\n")
+        fd = os.open(temporary, flags, 0o640)
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(encoded)
             handle.flush()
             os.fsync(handle.fileno())
-    except FileExistsError:
-        fail(f"refuse to overwrite immutable artifact: {path}")
-    directory_fd = os.open(path.parent, os.O_RDONLY)
-    try:
-        os.fsync(directory_fd)
+        try:
+            os.link(temporary, path, follow_symlinks=False)
+        except FileExistsError:
+            fail(f"refuse to overwrite immutable artifact: {path}")
+        directory_fd = os.open(path.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
     finally:
-        os.close(directory_fd)
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def _checked_output(args: Sequence[str], *, cwd: Path = REPO_ROOT) -> str:
@@ -251,7 +273,13 @@ def validate_hash_receipt(run_dir: Path, receipt: dict[str, Any]) -> None:
             fail(f"PASS-bound training artifact changed: {path}")
 
 
-def validate_training_run(run_dir: Path, arm: str, seed: int) -> dict[str, Any]:
+def validate_training_run(
+    run_dir: Path,
+    arm: str,
+    seed: int,
+    *,
+    expected_skip_attempts: list[int] | None = None,
+) -> dict[str, Any]:
     run_dir = run_dir.expanduser().resolve(strict=True)
     if run_dir.is_symlink() or not run_dir.is_dir():
         fail(f"training run is not a regular directory: {run_dir}")
@@ -268,9 +296,21 @@ def validate_training_run(run_dir: Path, arm: str, seed: int) -> dict[str, Any]:
         if validation.get(field) != value or hashes.get(field) != value:
             fail(f"training PASS identity mismatch for {field}: {run_dir}")
     validate_hash_receipt(run_dir, hashes)
+    try:
+        immutable = training_launcher.validate_existing_verifier_receipts(
+            run_dir,
+            phase="formal",
+            arm=arm,
+            seed=seed,
+            expected_skip_attempts=expected_skip_attempts,
+        )
+    except training_launcher.LaunchError as exc:
+        fail(f"production arm verifier receipt failed for {run_dir}: {exc}")
+    if immutable is None:
+        fail(f"training run lacks production arm verifier receipts: {run_dir}")
 
     launch = load_json(run_dir / "launch_manifest.json", "training launch manifest")
-    if launch.get("schema") != "ect.q256.target-weight-factorial-launch/v1":
+    if launch.get("schema") != "ect.q256.target-weight-factorial-launch/v2":
         fail(f"wrong training launch schema: {run_dir}")
     if Path(str(launch.get("run_directory", ""))).resolve() != run_dir:
         fail(f"training launch run_directory mismatch: {run_dir}")
@@ -290,10 +330,19 @@ def validate_training_run(run_dir: Path, arm: str, seed: int) -> dict[str, Any]:
         if training.get(field) != value:
             fail(f"training contract {field} mismatch: {run_dir}")
     assets = launch.get("assets")
-    if not isinstance(assets, dict) or not isinstance(assets.get("dataset"), dict):
-        fail(f"training launch lacks dataset binding: {run_dir}")
+    if (
+        not isinstance(assets, dict)
+        or not isinstance(assets.get("dataset"), dict)
+        or not isinstance(assets.get("transfer"), dict)
+    ):
+        fail(f"training launch lacks dataset/transfer binding: {run_dir}")
     if assets["dataset"].get("sha256") != DATASET_SHA256:
         fail(f"training used a noncanonical dataset: {run_dir}")
+    if (
+        assets["transfer"].get("sha256")
+        != training_launcher.EXPECTED_TRANSFER_SHA256
+    ):
+        fail(f"training used a nonauthoritative transfer: {run_dir}")
     source = launch.get("source")
     if not isinstance(source, dict):
         fail(f"training launch lacks source binding: {run_dir}")
@@ -308,6 +357,29 @@ def validate_training_run(run_dir: Path, arm: str, seed: int) -> dict[str, Any]:
         fail(f"training validation/source Git OID mismatch: {run_dir}")
     if validation.get("source_content_sha256") != source_content:
         fail(f"training validation/source content mismatch: {run_dir}")
+    if validation.get("amp_skip_policy") != training_launcher.AMP_SKIP_POLICY:
+        fail(f"training validation uses the wrong AMP skip policy: {run_dir}")
+    raw_skip_attempts = validation.get("amp_skip_attempts")
+    try:
+        amp_skip_attempts = training_launcher.validate_amp_skip_signature(
+            raw_skip_attempts,
+            phase="formal",
+            label=f"evaluation training receipt seed={seed} arm={arm}",
+        )
+    except training_launcher.LaunchError as exc:
+        fail(str(exc))
+    verifier_contract = launch.get("post_training_verifier")
+    if (
+        not isinstance(verifier_contract, dict)
+        or "expected_skip_attempts" not in verifier_contract
+    ):
+        fail(f"training launch lacks the AMP verifier contract: {run_dir}")
+    expected_skip_attempts = verifier_contract["expected_skip_attempts"]
+    enforced = expected_skip_attempts is not None
+    if validation.get("amp_skip_signature_expected_value_enforced") is not enforced:
+        fail(f"training validation AMP enforcement mode mismatch: {run_dir}")
+    if enforced and amp_skip_attempts != expected_skip_attempts:
+        fail(f"training validation AMP signature differs from its launch: {run_dir}")
     preregistration = launch.get("preregistration")
     if not isinstance(preregistration, dict):
         fail(f"training launch lacks preregistration binding: {run_dir}")
@@ -316,6 +388,14 @@ def validate_training_run(run_dir: Path, arm: str, seed: int) -> dict[str, Any]:
     )
     if preregistration.get("path") != "analysis/q256_target_weight_factorial/preregistration.json":
         fail(f"training launch binds the wrong preregistration path: {run_dir}")
+    current_preregistration_sha = sha256_file(
+        REPO_ROOT
+        / "analysis"
+        / "q256_target_weight_factorial"
+        / "preregistration.json"
+    )
+    if preregistration_sha != current_preregistration_sha:
+        fail(f"training launch binds a stale preregistration: {run_dir}")
 
     checkpoint = run_dir / CHECKPOINT_FILENAME
     checkpoint_binding = hashes["artifacts"][CHECKPOINT_FILENAME]
@@ -341,7 +421,9 @@ def validate_training_run(run_dir: Path, arm: str, seed: int) -> dict[str, Any]:
             validation.get("initial_common_state_sha256"),
             "training initial common-state SHA256",
         ),
-        "amp_skip_attempts": validation.get("amp_skip_attempts"),
+        "amp_skip_attempts": amp_skip_attempts,
+        "amp_skip_signature_expected_value_enforced": enforced,
+        "production_verifier_receipts": immutable,
     }
 
 
@@ -359,12 +441,21 @@ def load_training_matrix(matrix_dir: Path) -> tuple[list[dict[str, Any]], dict[s
         fail("training matrix must predeclare exactly 12 cells")
     if plan.get("mode") not in ("fresh_exact_matrix", "resume_selected_cells"):
         fail(f"unsupported training matrix mode: {plan.get('mode')!r}")
+    if (
+        "expected_amp_skip_attempts" not in plan
+        or plan.get("amp_skip_policy") != training_launcher.AMP_SKIP_POLICY
+    ):
+        fail("training matrix plan lacks the frozen AMP skip contract")
     jobs = plan.get("jobs")
     if not isinstance(jobs, list) or len(jobs) != 12:
         fail("training matrix plan must contain exactly 12 jobs")
     if completion.get("schema") != TRAINING_COMPLETION_SCHEMA:
         fail(f"wrong training matrix completion schema: {completion_path}")
-    if completion.get("status") != "PASS" or completion.get("failures") != []:
+    if (
+        completion.get("status") != "PASS"
+        or completion.get("failures") != []
+        or completion.get("received_signal") is not None
+    ):
         fail("training matrix has not completed with an exact PASS")
     if completion.get("matrix_plan_sha256") != sha256_file(plan_path):
         fail("training matrix completion does not bind the current plan")
@@ -390,10 +481,18 @@ def load_training_matrix(matrix_dir: Path) -> tuple[list[dict[str, Any]], dict[s
             run_dir = Path(str(raw["resume"])).parent
         else:
             fail(f"training matrix cell has no resolved run: {key}")
-        cells.append(validate_training_run(run_dir, key[1], key[0]))
+        cells.append(
+            validate_training_run(
+                run_dir,
+                key[1],
+                key[0],
+                expected_skip_attempts=plan["expected_amp_skip_attempts"],
+            )
+        )
     if seen != expected_cells:
         fail(f"incomplete training matrix: missing={sorted(expected_cells - seen)}")
 
+    cell_by_key = {(cell["seed"], cell["arm"]): cell for cell in cells}
     completion_cells = []
     for field in ("completed", "skipped_existing_pass"):
         values = completion.get(field, [])
@@ -402,9 +501,69 @@ def load_training_matrix(matrix_dir: Path) -> tuple[list[dict[str, Any]], dict[s
         for raw in values:
             if not isinstance(raw, dict):
                 fail(f"training completion {field} contains a non-object")
-            completion_cells.append((int(raw["seed"]), str(raw["arm"])))
+            key = (int(raw["seed"]), str(raw["arm"]))
+            completion_cells.append(key)
+            if key not in cell_by_key:
+                fail(f"training completion binds an unexpected cell: {key}")
+            if field == "completed" and (
+                isinstance(raw.get("returncode"), bool)
+                or raw.get("returncode") != 0
+            ):
+                fail(f"training completion has a nonzero cell returncode: {key}")
+            try:
+                actual_runner = training_launcher.validate_existing_runner_completion(
+                    Path(cell_by_key[key]["run_dir"])
+                )
+            except training_launcher.LaunchError as exc:
+                fail(f"training cell runner evidence failed for {key}: {exc}")
+            if raw.get("runner_completion") != actual_runner:
+                fail(f"training matrix has a stale runner binding for cell {key}")
     if set(completion_cells) != expected_cells or len(completion_cells) != 12:
         fail("training completion does not account for the exact 12 cells")
+
+    expected_enforced = plan["expected_amp_skip_attempts"] is not None
+    expected_identity = {}
+    for seed in SEEDS:
+        seed_cells = [cell_by_key[(seed, arm)] for arm in ARMS]
+        signatures = {tuple(cell["amp_skip_attempts"]) for cell in seed_cells}
+        initial_states = {
+            cell["initial_common_state_sha256"] for cell in seed_cells
+        }
+        enforcement_modes = {
+            cell["amp_skip_signature_expected_value_enforced"]
+            for cell in seed_cells
+        }
+        if len(signatures) != 1:
+            fail(f"seed {seed} has arm-specific AMP skip signatures")
+        if len(initial_states) != 1:
+            fail(f"seed {seed} has arm-specific initial common state")
+        if enforcement_modes != {expected_enforced}:
+            fail(f"seed {seed} has a mixed AMP skip enforcement mode")
+        signature = list(next(iter(signatures)))
+        if (
+            expected_enforced
+            and signature != plan["expected_amp_skip_attempts"]
+        ):
+            fail(f"seed {seed} AMP signature differs from the matrix plan")
+        expected_identity[str(seed)] = {
+            "arms": list(ARMS),
+            "skip_attempts": signature,
+            "initial_common_state_sha256": next(iter(initial_states)),
+        }
+    if completion.get("amp_skip_identity") != expected_identity:
+        fail("training completion AMP/initial-state identity is stale")
+    expected_live_identity = {
+        seed: {
+            "amp_skip_attempts": record["skip_attempts"],
+            "initial_common_state_sha256": record[
+                "initial_common_state_sha256"
+            ],
+            "arms": record["arms"],
+        }
+        for seed, record in expected_identity.items()
+    }
+    if completion.get("live_seed_identity") != expected_live_identity:
+        fail("training completion live cross-arm identity is stale")
 
     heads = {cell["training_source_git_head"] for cell in cells}
     contents = {cell["training_source_content_sha256"] for cell in cells}
@@ -422,6 +581,7 @@ def load_training_matrix(matrix_dir: Path) -> tuple[list[dict[str, Any]], dict[s
         "preregistration_path": "analysis/q256_target_weight_factorial/preregistration.json",
         "preregistration_sha256": next(iter(preregistrations)),
         "cell_count": 12,
+        "expected_amp_skip_attempts": plan["expected_amp_skip_attempts"],
         "selection_policy": "all_exact_final_256kimg_cells_no_intermediate_selection",
     }
 
@@ -591,32 +751,9 @@ def query_gpu(selector: str) -> dict[str, Any]:
 
 def assert_gpu_idle(gpu: Mapping[str, Any]) -> dict[str, Any]:
     try:
-        output = subprocess.check_output(
-            [
-                "nvidia-smi",
-                "--query-compute-apps=gpu_uuid,pid,process_name",
-                "--format=csv,noheader,nounits",
-            ],
-            text=True,
-            stderr=subprocess.STDOUT,
-        ).strip()
-    except subprocess.CalledProcessError as exc:
-        # nvidia-smi returns a nonzero code on some drivers when no process is
-        # present.  Only the explicit no-process message is admissible.
-        output = str(exc.output).strip()
-        if "No running processes found" not in output:
-            fail(f"cannot audit GPU compute processes: {output or exc}")
-        output = ""
-    processes = []
-    for line in output.splitlines():
-        if not line.strip() or "No running processes found" in line:
-            continue
-        parts = [part.strip() for part in line.split(",", 2)]
-        if len(parts) == 3 and parts[0] == gpu["uuid"]:
-            processes.append({"gpu_uuid": parts[0], "pid": int(parts[1]), "name": parts[2]})
-    if processes:
-        fail(f"assigned GPU has compute processes; stop for audit: {processes}")
-    return {"checked_utc": utc_now(), "gpu_uuid": gpu["uuid"], "compute_processes": []}
+        return training_launcher.assert_gpu_idle(gpu)
+    except training_launcher.LaunchError as exc:
+        fail(str(exc))
 
 
 @contextlib.contextmanager
@@ -846,31 +983,25 @@ def validate_job_outputs(
 
 
 def stream_process(
-    command: Sequence[str], *, env: Mapping[str, str], log_path: Path
+    command: Sequence[str],
+    *,
+    env: Mapping[str, str],
+    log_path: Path,
+    monitored_gpu_uuid: str,
+    gpu_monitor_record: dict[str, Any],
 ) -> int:
     try:
-        log = log_path.open("x", encoding="utf-8")
-    except FileExistsError:
-        fail(f"refuse to overwrite evaluator process log: {log_path}")
-    with log:
-        process = subprocess.Popen(
-            list(command),
+        return training_launcher.stream_process(
+            command,
             cwd=REPO_ROOT,
-            env=dict(env),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
+            env=env,
+            log_path=log_path,
+            monitored_gpu_uuid=monitored_gpu_uuid,
+            gpu_monitor_record=gpu_monitor_record,
+            gpu_monitor_interval_seconds=1.0,
         )
-        assert process.stdout is not None
-        for line in process.stdout:
-            sys.stdout.write(line)
-            sys.stdout.flush()
-            log.write(line)
-            log.flush()
-        returncode = process.wait()
-        os.fsync(log.fileno())
-    return returncode
+    except training_launcher.LaunchError as exc:
+        fail(f"evaluator process stopped for audit: {exc}")
 
 
 def build_plan(
@@ -907,6 +1038,296 @@ def build_plan(
     }
 
 
+def run_authorized_plan_jobs(
+    *,
+    plan: Mapping[str, Any],
+    plan_path: Path,
+    dataset: Mapping[str, Any],
+    source: Mapping[str, Any],
+    gpu: Mapping[str, Any],
+    process_env: Mapping[str, str],
+    output_root: Path,
+    data_argument: Path,
+    plan_sha256: str,
+    inherited_signal_mask: set[signal.Signals] | None = None,
+) -> int:
+    """Execute all jobs with one durable terminal PASS/STOP receipt.
+
+    Once the immutable plan exists, every exception or managed signal is part
+    of the experiment record.  No later job starts after the first failed
+    precondition, process audit, or postcondition.
+    """
+
+    plan_sha = plan_sha256
+    completion_path = output_root / "evaluation_completion.json"
+    completed: list[str] = []
+    cache_sha: str | None = None
+    active_job_id: str | None = None
+    failed_receipt: str | None = None
+    received_signal: dict[str, Any] | None = None
+    terminal_written = False
+    managed_signals = {signal.SIGINT, signal.SIGTERM, signal.SIGHUP}
+    previous_handlers: dict[int, Any] = {}
+
+    def handle_signal(signum: int, _frame: object) -> None:
+        nonlocal received_signal
+        if received_signal is None:
+            received_signal = {
+                "received_utc": utc_now(),
+                "signal": signal.Signals(signum).name,
+            }
+        fail(f"formal evaluator received {signal.Signals(signum).name}")
+
+    def restore_handlers() -> None:
+        for signum, handler in previous_handlers.items():
+            signal.signal(signum, handler)
+
+    def write_stop_receipt(exc: BaseException) -> None:
+        nonlocal terminal_written
+        if terminal_written:
+            return
+        if completion_path.exists():
+            existing = load_json(completion_path, "pre-existing terminal completion")
+            if (
+                existing.get("schema") not in {COMPLETION_SCHEMA}
+                or existing.get("status") not in {"PASS", "STOPPED_FOR_AUDIT"}
+                or existing.get("evaluation_plan_sha256") != plan_sha
+            ):
+                fail("pre-existing evaluation completion is not a valid terminal receipt")
+            terminal_written = True
+            return
+        stop_payload = {
+            "schema": COMPLETION_SCHEMA,
+            "protocol": PROTOCOL,
+            "experiment_id": EXPERIMENT_ID,
+            "status": "STOPPED_FOR_AUDIT",
+            "finished_utc": utc_now(),
+            "evaluation_plan": str(plan_path),
+            "evaluation_plan_sha256": plan_sha,
+            "completed_job_ids": list(completed),
+            "failed_job_id": active_job_id,
+            "failed_receipt": failed_receipt,
+            "received_signal": received_signal,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+        if not hasattr(signal, "pthread_sigmask"):
+            write_json_exclusive(completion_path, stop_payload)
+            terminal_written = True
+            return
+        previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, managed_signals)
+        try:
+            pending = signal.sigpending().intersection(managed_signals)
+            if pending and stop_payload["received_signal"] is None:
+                stop_payload["received_signal"] = {
+                    "received_utc": utc_now(),
+                    "signal": "+".join(
+                        sorted(signal.Signals(item).name for item in pending)
+                    ),
+                    "observed_while_signals_blocked_for_stop_commit": True,
+                }
+            write_json_exclusive(completion_path, stop_payload)
+            terminal_written = True
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+
+    try:
+        for signum in managed_signals:
+            previous_handlers[signum] = signal.getsignal(signum)
+            signal.signal(signum, handle_signal)
+        if inherited_signal_mask is not None:
+            signal.pthread_sigmask(signal.SIG_SETMASK, inherited_signal_mask)
+        for ordinal, job in enumerate(plan["jobs"], start=1):
+            active_job_id = str(job["job_id"])
+            target = Path(job["output_directory"])
+            if target.exists():
+                fail(f"refuse to append to evaluation job output: {target}")
+            if source_snapshot(require_clean=True)["content_sha256"] != source["content_sha256"]:
+                fail("evaluator source changed after plan authorization")
+            if verify_dataset(data_argument)["sha256"] != dataset["sha256"]:
+                fail("dataset changed after plan authorization")
+            if sha256_file(Path(job["checkpoint"])) != job["checkpoint_sha256"]:
+                fail(f"checkpoint changed before job {job['job_id']}")
+            idle = assert_gpu_idle(gpu)
+            command = materialize_command(job, Path(dataset["path"]))
+            launch = {
+                "schema": JOB_LAUNCH_SCHEMA,
+                "protocol": PROTOCOL,
+                "status": "authorized_to_start",
+                "created_utc": utc_now(),
+                "ordinal": ordinal,
+                "job": job,
+                "evaluation_plan": plan_path.name,
+                "evaluation_plan_sha256": plan_sha,
+                "dataset": dataset,
+                "evaluator_source_git_head": source["git_head"],
+                "evaluator_source_content_sha256": source["content_sha256"],
+                "gpu": gpu,
+                "gpu_idle_check": idle,
+                "gpu_exclusivity_monitor_contract": {
+                    "schema": training_launcher.GPU_MONITOR_SCHEMA,
+                    "gpu_uuid": gpu["uuid"],
+                    "poll_interval_seconds": 1.0,
+                    "fail_closed": True,
+                },
+                "exact_command_argv": command,
+                "exact_command_shell": shlex.join(command),
+            }
+            launch_path = output_root / "manifests" / f"{job['job_id']}.json"
+            write_json_exclusive(launch_path, launch)
+            log_path = output_root / "process_logs" / f"{job['job_id']}.log"
+            print(f"[{ordinal}/24] {job['job_id']}", flush=True)
+            started = time.time()
+            gpu_monitor: dict[str, Any] = {}
+            returncode: int | None = None
+            execution_error: str | None = None
+            post_job_idle: dict[str, Any] | None = None
+            try:
+                returncode = stream_process(
+                    command,
+                    env=process_env,
+                    log_path=log_path,
+                    monitored_gpu_uuid=str(gpu["uuid"]),
+                    gpu_monitor_record=gpu_monitor,
+                )
+                training_launcher.validate_gpu_monitor_record(
+                    gpu_monitor,
+                    label=f"evaluation job {job['job_id']}",
+                    expected_gpu_uuid=str(gpu["uuid"]),
+                )
+            except (
+                EvaluationError,
+                OSError,
+                training_launcher.LaunchError,
+            ) as exc:
+                execution_error = f"{type(exc).__name__}: {exc}"
+            child_signal = gpu_monitor.get("received_signal")
+            if received_signal is None and isinstance(child_signal, dict):
+                received_signal = dict(child_signal)
+            try:
+                post_job_idle = assert_gpu_idle(gpu)
+            except EvaluationError as exc:
+                detail = f"{type(exc).__name__}: {exc}"
+                execution_error = (
+                    detail
+                    if execution_error is None
+                    else f"{execution_error}; post-job audit: {detail}"
+                )
+            base_receipt: dict[str, Any] = {
+                "schema": JOB_RECEIPT_SCHEMA,
+                "protocol": PROTOCOL,
+                "job_id": job["job_id"],
+                "seed": job["seed"],
+                "arm": job["arm"],
+                "nfe": job["nfe"],
+                "mid_t": job["mid_t"],
+                "checkpoint": job["checkpoint"],
+                "checkpoint_sha256": job["checkpoint_sha256"],
+                "dataset_sha256": dataset["sha256"],
+                "evaluator_source_git_head": source["git_head"],
+                "evaluator_source_content_sha256": source["content_sha256"],
+                "sample_count": SAMPLE_COUNT,
+                "sample_seed_range": SAMPLE_SEEDS,
+                "metric_seed": METRIC_SEED,
+                "precision": "fp32",
+                "launch_manifest": str(launch_path),
+                "launch_manifest_sha256": sha256_file(launch_path),
+                "process_log": str(log_path),
+                "process_log_sha256": (
+                    sha256_file(log_path)
+                    if log_path.is_file() and not log_path.is_symlink()
+                    else None
+                ),
+                "returncode": returncode,
+                "gpu_exclusivity_monitor": gpu_monitor,
+                "post_job_gpu_idle_check": post_job_idle,
+                "execution_error": execution_error,
+                "elapsed_seconds": round(time.time() - started, 3),
+                "finished_utc": utc_now(),
+            }
+            receipt_path = output_root / "receipts" / f"{job['job_id']}.json"
+            failed_receipt = str(receipt_path)
+            if (
+                execution_error is not None
+                or returncode != 0
+                or gpu_monitor.get("status") != "PASS"
+                or post_job_idle is None
+            ):
+                base_receipt["status"] = "STOPPED_FOR_AUDIT"
+                write_json_exclusive(receipt_path, base_receipt)
+                fail(f"evaluation process failed for {job['job_id']}; no later job started")
+            try:
+                outputs = validate_job_outputs(
+                    job, dataset=Path(dataset["path"]), output_root=output_root
+                )
+                if cache_sha is None:
+                    next_cache_sha = outputs["cache"]["tree_sha256"]
+                elif outputs["cache"]["tree_sha256"] != cache_sha:
+                    fail("canonical evaluator cache changed after the first complete job")
+                else:
+                    next_cache_sha = cache_sha
+            except EvaluationError as exc:
+                base_receipt.update({"status": "failed_postcondition", "error": str(exc)})
+                write_json_exclusive(receipt_path, base_receipt)
+                raise
+            cache_sha = next_cache_sha
+            base_receipt.update({"status": "passed", **outputs})
+            write_json_exclusive(receipt_path, base_receipt)
+            completed.append(job["job_id"])
+            failed_receipt = None
+            active_job_id = None
+
+        completion = {
+            "schema": COMPLETION_SCHEMA,
+            "protocol": PROTOCOL,
+            "experiment_id": EXPERIMENT_ID,
+            "finished_utc": utc_now(),
+            "evaluation_plan": str(plan_path),
+            "evaluation_plan_sha256": plan_sha,
+            "job_count": 24,
+            "completed_job_ids": completed,
+            "failed_job_id": None,
+            "failed_receipt": None,
+            "received_signal": received_signal,
+            "cache_tree_sha256": cache_sha,
+            "selection_policy": "all_12_final_256kimg_checkpoints_no_intermediate_selection",
+            "independent_training_seed_n": 3,
+        }
+        if not hasattr(signal, "pthread_sigmask"):
+            fail("platform cannot linearize the final evaluation receipt commit")
+        previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, managed_signals)
+        stopped_at_commit = False
+        try:
+            completion["final_signal_commit_boundary_utc"] = utc_now()
+            pending = signal.sigpending().intersection(managed_signals)
+            if pending and received_signal is None:
+                received_signal = {
+                    "received_utc": utc_now(),
+                    "signal": "+".join(
+                        sorted(signal.Signals(item).name for item in pending)
+                    ),
+                    "observed_while_signals_blocked_for_final_commit": True,
+                }
+            completion["received_signal"] = received_signal
+            completion["status"] = (
+                "STOPPED_FOR_AUDIT" if received_signal is not None else "PASS"
+            )
+            stopped_at_commit = received_signal is not None
+            write_json_exclusive(completion_path, completion)
+            terminal_written = True
+            restore_handlers()
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+        if stopped_at_commit:
+            fail("formal evaluation stopped by signal before final receipt commit")
+        print(f"Formal evaluation PASS: {completion_path}")
+        return 0
+    except BaseException as exc:
+        write_stop_receipt(exc)
+        raise
+    finally:
+        restore_handlers()
+
+
 def execute(args: argparse.Namespace) -> int:
     matrix_dir = args.matrix_dir.expanduser().resolve(strict=True)
     output_root = args.outdir.expanduser().resolve()
@@ -917,6 +1338,11 @@ def execute(args: argparse.Namespace) -> int:
     cells, matrix = load_training_matrix(matrix_dir)
     dataset = verify_dataset(args.data)
     source = source_snapshot(require_clean=True)
+    if source.get("git_head") != matrix.get("training_source_git_head"):
+        fail(
+            "formal evaluator must run from the exact training Git commit; "
+            f"{source.get('git_head')} != {matrix.get('training_source_git_head')}"
+        )
     gpu = query_gpu(args.gpu)
     lock_root = args.lock_root.expanduser().resolve()
     output_lock_path = lock_root / f"output-{hashlib.sha256(str(output_root).encode()).hexdigest()}.lock"
@@ -955,6 +1381,32 @@ def execute(args: argparse.Namespace) -> int:
             os.environ[key] = process_env[key]
         runtime = capture_runtime()
         validate_runtime(runtime)
+        training_arm_revalidation = []
+        for cell in cells:
+            try:
+                report = training_launcher.deep_revalidate_existing_arm(
+                    Path(cell["run_dir"]),
+                    phase="formal",
+                    arm=str(cell["arm"]),
+                    seed=int(cell["seed"]),
+                    expected_skip_attempts=matrix[
+                        "expected_amp_skip_attempts"
+                    ],
+                    runtime_command=[runtime["python_executable"]],
+                    process_env=process_env,
+                )
+            except training_launcher.LaunchError as exc:
+                fail(
+                    "fresh production arm revalidation failed before evaluation: "
+                    f"seed={cell['seed']} arm={cell['arm']}: {exc}"
+                )
+            training_arm_revalidation.append(
+                {
+                    "seed": cell["seed"],
+                    "arm": cell["arm"],
+                    **report,
+                }
+            )
         locks = [output_lock, gpu_lock]
         output_root.mkdir(mode=0o750)
         for name in ("manifests", "receipts", "process_logs", "jobs"):
@@ -971,136 +1423,31 @@ def execute(args: argparse.Namespace) -> int:
             locks=locks,
         )
         plan["initial_gpu_idle_check"] = initial_idle
+        plan["training_arm_revalidation"] = training_arm_revalidation
         plan_path = output_root / "evaluation_plan.json"
-        write_json_exclusive(plan_path, plan)
-        plan_sha = sha256_file(plan_path)
-        completed = []
-        cache_sha: str | None = None
-
-        for ordinal, job in enumerate(plan["jobs"], start=1):
-            target = Path(job["output_directory"])
-            if target.exists():
-                fail(f"refuse to append to evaluation job output: {target}")
-            if source_snapshot(require_clean=True)["content_sha256"] != source["content_sha256"]:
-                fail("evaluator source changed after plan authorization")
-            if verify_dataset(args.data)["sha256"] != dataset["sha256"]:
-                fail("dataset changed after plan authorization")
-            if sha256_file(Path(job["checkpoint"])) != job["checkpoint_sha256"]:
-                fail(f"checkpoint changed before job {job['job_id']}")
-            idle = assert_gpu_idle(gpu)
-            command = materialize_command(job, Path(dataset["path"]))
-            launch = {
-                "schema": JOB_LAUNCH_SCHEMA,
-                "protocol": PROTOCOL,
-                "status": "authorized_to_start",
-                "created_utc": utc_now(),
-                "ordinal": ordinal,
-                "job": job,
-                "evaluation_plan": plan_path.name,
-                "evaluation_plan_sha256": plan_sha,
-                "dataset": dataset,
-                "evaluator_source_git_head": source["git_head"],
-                "evaluator_source_content_sha256": source["content_sha256"],
-                "gpu": gpu,
-                "gpu_idle_check": idle,
-                "exact_command_argv": command,
-                "exact_command_shell": shlex.join(command),
-            }
-            launch_path = output_root / "manifests" / f"{job['job_id']}.json"
-            write_json_exclusive(launch_path, launch)
-            log_path = output_root / "process_logs" / f"{job['job_id']}.log"
-            print(f"[{ordinal}/24] {job['job_id']}", flush=True)
-            started = time.time()
-            returncode = stream_process(command, env=process_env, log_path=log_path)
-            base_receipt: dict[str, Any] = {
-                "schema": JOB_RECEIPT_SCHEMA,
-                "protocol": PROTOCOL,
-                "job_id": job["job_id"],
-                "seed": job["seed"],
-                "arm": job["arm"],
-                "nfe": job["nfe"],
-                "mid_t": job["mid_t"],
-                "checkpoint": job["checkpoint"],
-                "checkpoint_sha256": job["checkpoint_sha256"],
-                "dataset_sha256": dataset["sha256"],
-                "evaluator_source_git_head": source["git_head"],
-                "evaluator_source_content_sha256": source["content_sha256"],
-                "sample_count": SAMPLE_COUNT,
-                "sample_seed_range": SAMPLE_SEEDS,
-                "metric_seed": METRIC_SEED,
-                "precision": "fp32",
-                "launch_manifest": str(launch_path),
-                "launch_manifest_sha256": sha256_file(launch_path),
-                "process_log": str(log_path),
-                "process_log_sha256": sha256_file(log_path),
-                "returncode": returncode,
-                "elapsed_seconds": round(time.time() - started, 3),
-                "finished_utc": utc_now(),
-            }
-            receipt_path = output_root / "receipts" / f"{job['job_id']}.json"
-            if returncode != 0:
-                base_receipt["status"] = "failed_process"
-                write_json_exclusive(receipt_path, base_receipt)
-                write_json_exclusive(
-                    output_root / "evaluation_completion.json",
-                    {
-                        "schema": COMPLETION_SCHEMA,
-                        "protocol": PROTOCOL,
-                        "status": "STOPPED_FOR_AUDIT",
-                        "evaluation_plan_sha256": plan_sha,
-                        "completed_job_ids": completed,
-                        "failed_job_id": job["job_id"],
-                        "failed_receipt": str(receipt_path),
-                    },
-                )
-                fail(f"evaluation process failed for {job['job_id']}; no later job started")
-            try:
-                outputs = validate_job_outputs(
-                    job, dataset=Path(dataset["path"]), output_root=output_root
-                )
-            except EvaluationError as exc:
-                base_receipt.update({"status": "failed_postcondition", "error": str(exc)})
-                write_json_exclusive(receipt_path, base_receipt)
-                write_json_exclusive(
-                    output_root / "evaluation_completion.json",
-                    {
-                        "schema": COMPLETION_SCHEMA,
-                        "protocol": PROTOCOL,
-                        "status": "STOPPED_FOR_AUDIT",
-                        "evaluation_plan_sha256": plan_sha,
-                        "completed_job_ids": completed,
-                        "failed_job_id": job["job_id"],
-                        "failed_receipt": str(receipt_path),
-                        "error": str(exc),
-                    },
-                )
-                raise
-            if cache_sha is None:
-                cache_sha = outputs["cache"]["tree_sha256"]
-            elif outputs["cache"]["tree_sha256"] != cache_sha:
-                fail("canonical evaluator cache changed after the first complete job")
-            base_receipt.update({"status": "passed", **outputs})
-            write_json_exclusive(receipt_path, base_receipt)
-            completed.append(job["job_id"])
-
-        completion = {
-            "schema": COMPLETION_SCHEMA,
-            "protocol": PROTOCOL,
-            "experiment_id": EXPERIMENT_ID,
-            "status": "PASS",
-            "finished_utc": utc_now(),
-            "evaluation_plan": str(plan_path),
-            "evaluation_plan_sha256": plan_sha,
-            "job_count": 24,
-            "completed_job_ids": completed,
-            "failed_job_id": None,
-            "cache_tree_sha256": cache_sha,
-            "selection_policy": "all_12_final_256kimg_checkpoints_no_intermediate_selection",
-            "independent_training_seed_n": 3,
-        }
-        write_json_exclusive(output_root / "evaluation_completion.json", completion)
-        print(f"Formal evaluation PASS: {output_root / 'evaluation_completion.json'}")
-        return 0
+        managed_signals = {signal.SIGINT, signal.SIGTERM, signal.SIGHUP}
+        if not hasattr(signal, "pthread_sigmask"):
+            fail("platform cannot protect plan-to-runner signal handoff")
+        previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, managed_signals)
+        try:
+            plan_sha = hashlib.sha256(
+                (json.dumps(plan, indent=2, sort_keys=True) + "\n").encode("utf-8")
+            ).hexdigest()
+            write_json_exclusive(plan_path, plan)
+            return run_authorized_plan_jobs(
+                plan=plan,
+                plan_path=plan_path,
+                dataset=dataset,
+                source=source,
+                gpu=gpu,
+                process_env=process_env,
+                output_root=output_root,
+                data_argument=args.data,
+                plan_sha256=plan_sha,
+                inherited_signal_mask=previous_mask,
+            )
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
 
 
 def make_parser() -> argparse.ArgumentParser:

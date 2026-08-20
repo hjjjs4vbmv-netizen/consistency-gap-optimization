@@ -20,13 +20,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from scripts import run_q256_target_weight_matrix as launcher
 from scripts import verify_q256_target_weight_arm as arm_verifier
 from training import reproducibility
 
 
-VERIFIER_VERSION = "1"
-VALIDATION_SCHEMA = "ect.q256.target-weight-smoke-matrix-validation/v1"
-VALIDATION_FILENAME = "q256_target_weight_smoke_matrix_validation_v1.json"
+VERIFIER_VERSION = "2"
+VALIDATION_SCHEMA = "ect.q256.target-weight-smoke-matrix-validation/v2"
+AMP_SKIP_POLICY = {
+    "schema": "ect.q256.target-weight-amp-skip-policy/v1",
+    "kind": "observe_then_require_cross_arm_identity_within_seed",
+    "allowed_region": "tick_0_amp_warmup_only",
+    "warmup_processed_nimg_exclusive_upper_bound": 10_000,
+    "require_finite_loss": True,
+    "require_raw_nonfinite_exactly_on_skipped_attempts": True,
+    "require_cross_arm_identical_signature_within_seed": True,
+}
+VALIDATION_FILENAME = "q256_target_weight_smoke_matrix_validation_v2.json"
 
 ARMS = tuple(arm_verifier.ARMS)
 COMMON_TRAJECTORY_FIELDS = (
@@ -143,6 +153,21 @@ def _validate_immutable_arm_pass(
         fail(f"arm {arm} validation receipt is bound to another run directory")
     if hashes.get("run_dir") != str(run_dir):
         fail(f"arm {arm} artifact-hash receipt is bound to another run directory")
+    if validation.get("amp_skip_policy") != AMP_SKIP_POLICY:
+        fail(f"arm {arm} immutable PASS uses another AMP skip policy")
+    enforcement = validation.get("amp_skip_signature_expected_value_enforced")
+    if not isinstance(enforcement, bool):
+        fail(f"arm {arm} immutable PASS has an invalid AMP enforcement mode")
+    observed_skip_attempts = validation.get("amp_skip_attempts")
+    if (
+        not isinstance(observed_skip_attempts, list)
+        or any(
+            isinstance(value, bool) or not isinstance(value, int)
+            for value in observed_skip_attempts
+        )
+        or observed_skip_attempts != sorted(set(observed_skip_attempts))
+    ):
+        fail(f"arm {arm} immutable PASS has a malformed AMP skip signature")
 
     artifacts = hashes.get("artifacts")
     if not isinstance(artifacts, dict) or not artifacts:
@@ -181,6 +206,9 @@ def _validate_immutable_arm_pass(
             arm=arm,
             seed=seed,
             mode="smoke",
+            expected_skip_attempts=(
+                observed_skip_attempts if enforcement else None
+            ),
             write_receipts=False,
         )
     except arm_verifier.VerificationError as exc:
@@ -203,6 +231,10 @@ def _load_state(run_dir: Path) -> dict[str, Any]:
 
 def _load_arm_inputs(run_dir: Path, *, arm: str, seed: int) -> dict[str, Any]:
     immutable = _validate_immutable_arm_pass(run_dir, arm=arm, seed=seed)
+    try:
+        runner_completion = launcher.validate_existing_runner_completion(run_dir)
+    except launcher.LaunchError as exc:
+        fail(f"arm {arm} lacks a monitor-bound runner PASS: {exc}")
     initial = _load_json(
         run_dir / "initial_state_receipt_v1.json", f"arm {arm} initial receipt"
     )
@@ -219,6 +251,7 @@ def _load_arm_inputs(run_dir: Path, *, arm: str, seed: int) -> dict[str, Any]:
     return {
         "run_dir": run_dir,
         "immutable": immutable,
+        "runner_completion": runner_completion,
         "initial": initial,
         "rows": rows,
         "state": state,
@@ -335,6 +368,17 @@ def _verify_resume_pair(
     resumed_dir = resumed_dir.expanduser().resolve()
     if uninterrupted_dir == resumed_dir:
         fail("uninterrupted and resumed run directories must be distinct")
+    try:
+        provenance = launcher.validate_exact_resume_provenance(
+            uninterrupted_dir,
+            resumed_dir,
+            arm=arm,
+            seed=seed,
+            runtime_command=[sys.executable],
+            process_env=os.environ,
+        )
+    except launcher.LaunchError as exc:
+        fail(f"exact-resume provenance failed: {exc}")
     uninterrupted = _load_arm_inputs(
         uninterrupted_dir, arm=arm, seed=seed
     )
@@ -418,6 +462,14 @@ def _verify_resume_pair(
         "resumed_artifact_hash_receipt_sha256": resumed["immutable"][
             "artifact_hash_receipt_sha256"
         ],
+        "uninterrupted_runner_completion_sha256": uninterrupted[
+            "runner_completion"
+        ]["sha256"],
+        "resumed_runner_completion_sha256": resumed["runner_completion"][
+            "sha256"
+        ],
+        "provenance": provenance,
+        "provenance_sha256": provenance["provenance_sha256"],
     }
 
 
@@ -483,6 +535,18 @@ def verify_smoke_matrix(
         ],
         "AMP skip-attempt signature",
     )
+    skip_enforcement = _require_same(
+        [
+            (
+                arm,
+                arms[arm]["immutable"]["report"][
+                    "amp_skip_signature_expected_value_enforced"
+                ],
+            )
+            for arm in ARMS
+        ],
+        "AMP skip-signature enforcement mode",
+    )
     final_rng = _require_same(
         [(arm, arms[arm]["final_rng_sha256"]) for arm in ARMS],
         "final rank RNG state",
@@ -540,6 +604,10 @@ def verify_smoke_matrix(
                 "artifact_hash_receipt_sha256": arms[arm]["immutable"][
                     "artifact_hash_receipt_sha256"
                 ],
+                "runner_completion_path": arms[arm]["runner_completion"]["path"],
+                "runner_completion_sha256": arms[arm]["runner_completion"][
+                    "sha256"
+                ],
             }
             for arm in ARMS
         },
@@ -550,6 +618,8 @@ def verify_smoke_matrix(
         "final_rank_rng_sha256": final_rng,
         "final_sampler_sha256": final_sampler,
         "amp_skip_attempts": skip_attempts,
+        "amp_skip_signature_expected_value_enforced": skip_enforcement,
+        "amp_skip_policy": AMP_SKIP_POLICY,
         "trajectory_checks": {
             "all_arms_common": common_trajectories,
             "target_A_equals_D": target_scale_1,
@@ -572,7 +642,7 @@ def verify_smoke_matrix(
             fail(f"immutable matrix PASS receipt already exists: {target}")
         try:
             reproducibility.atomic_json_dump(report, target, overwrite=False)
-        except FileExistsError as exc:
+        except FileExistsError:
             fail(f"immutable matrix PASS receipt already exists: {target}")
         report["validation_receipt"] = str(target)
         report["validation_receipt_sha256"] = arm_verifier.sha256_file(target)
@@ -590,6 +660,11 @@ def main() -> None:
     parser.add_argument("--uninterrupted-run-dir", type=Path)
     parser.add_argument("--resumed-run-dir", type=Path)
     parser.add_argument("--resume-arm", choices=ARMS)
+    parser.add_argument(
+        "--check-only",
+        action="store_true",
+        help="re-run all cross-arm/exact-resume checks without writing a receipt",
+    )
     args = parser.parse_args()
     pair_values = (
         args.uninterrupted_run_dir,
@@ -612,6 +687,7 @@ def main() -> None:
             seed=args.seed,
             receipt_path=args.receipt_path,
             resume_pair=resume_pair,
+            write_receipt=not args.check_only,
         )
     except MatrixVerificationError as exc:
         raise SystemExit(

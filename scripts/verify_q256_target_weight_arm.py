@@ -29,16 +29,27 @@ if str(REPO_ROOT) not in sys.path:
 from training import reproducibility
 
 
-VERIFIER_VERSION = "1"
+VERIFIER_VERSION = "2"
 PROTOCOL = "q256_target_weight_v1"
 EXPERIMENT_ID = "q256-target-weight-factorial"
-LAUNCH_SCHEMA = "ect.q256.target-weight-factorial-launch/v1"
+LAUNCH_SCHEMA = "ect.q256.target-weight-factorial-launch/v2"
+AUTHORIZATION_SCHEMA = "ect.q256.target-weight-factorial-launch-authorization/v2"
 TELEMETRY_SCHEMA = "ect.q256.target-weight-training-telemetry/v1"
-VALIDATION_SCHEMA = "ect.q256.target-weight-arm-validation/v1"
-HASH_RECEIPT_SCHEMA = "ect.q256.target-weight-arm-artifact-hashes/v1"
+VALIDATION_SCHEMA = "ect.q256.target-weight-arm-validation/v2"
+HASH_RECEIPT_SCHEMA = "ect.q256.target-weight-arm-artifact-hashes/v2"
+AMP_SKIP_WARMUP_PROCESSED_NIMG = 10_000
+AMP_SKIP_POLICY = {
+    "schema": "ect.q256.target-weight-amp-skip-policy/v1",
+    "kind": "observe_then_require_cross_arm_identity_within_seed",
+    "allowed_region": "tick_0_amp_warmup_only",
+    "warmup_processed_nimg_exclusive_upper_bound": AMP_SKIP_WARMUP_PROCESSED_NIMG,
+    "require_finite_loss": True,
+    "require_raw_nonfinite_exactly_on_skipped_attempts": True,
+    "require_cross_arm_identical_signature_within_seed": True,
+}
 
-VALIDATION_FILENAME = "q256_target_weight_arm_validation_v1.json"
-HASH_RECEIPT_FILENAME = "q256_target_weight_arm_artifact_hashes_v1.json"
+VALIDATION_FILENAME = "q256_target_weight_arm_validation_v2.json"
+HASH_RECEIPT_FILENAME = "q256_target_weight_arm_artifact_hashes_v2.json"
 
 ARMS = {
     "A": (1.0, 1.0),
@@ -496,6 +507,48 @@ def validate_launch_manifest(
     )
     if sha256_file(receipt_path) != recorded_receipt_sha:
         fail("run-contained authorization receipt hash mismatch")
+    authorization_payload = load_json(receipt_path, "authorization receipt")
+    exact_value(
+        authorization_payload.get("schema"),
+        AUTHORIZATION_SCHEMA,
+        "authorization receipt schema",
+    )
+    exact_value(
+        authorization_payload.get("amp_skip_policy"),
+        AMP_SKIP_POLICY,
+        "authorization AMP skip policy",
+    )
+    verifier_contract = require_dict(
+        manifest.get("post_training_verifier"),
+        "launch manifest.post_training_verifier",
+    )
+    if "expected_amp_skip_attempts" not in authorization_payload:
+        fail(
+            "authorization must explicitly record expected_amp_skip_attempts, "
+            "including null in observe mode"
+        )
+    if "expected_skip_attempts" not in verifier_contract:
+        fail(
+            "launch manifest must explicitly record expected_skip_attempts, "
+            "including null in observe mode"
+        )
+    authorized_skip_attempts = authorization_payload.get(
+        "expected_amp_skip_attempts"
+    )
+    if authorized_skip_attempts is not None and (
+        not isinstance(authorized_skip_attempts, list)
+        or any(
+            isinstance(value, bool) or not isinstance(value, int)
+            for value in authorized_skip_attempts
+        )
+        or authorized_skip_attempts != sorted(set(authorized_skip_attempts))
+    ):
+        fail("authorization has a malformed expected AMP skip signature")
+    exact_value(
+        verifier_contract.get("expected_skip_attempts"),
+        authorized_skip_attempts,
+        "launch/authorization expected AMP skip signature",
+    )
     gate_records = require_list(
         authorization.get("gate_receipts"), "launch manifest authorization gates"
     )
@@ -525,6 +578,7 @@ def validate_launch_manifest(
         "source_git_head": source["git_head"],
         "source_content_sha256": source["content_sha256"],
         "bound_artifacts": bound_paths,
+        "expected_skip_attempts": authorized_skip_attempts,
     }
 
 
@@ -789,6 +843,11 @@ def validate_telemetry(
         if step_skipped:
             skips.append(attempt)
             cumulative_skips += 1
+            if processed_nimg >= AMP_SKIP_WARMUP_PROCESSED_NIMG:
+                fail(
+                    f"{label} AMP skip occurred after the frozen tick-0 "
+                    "warm-up region"
+                )
         expected_successes = attempt - cumulative_skips
         successes = strict_int(
             row["successful_optimizer_steps"],
@@ -1169,6 +1228,11 @@ def verify_run(
             for value in expected_skip_attempts
         ):
             fail("expected skip attempts are outside the selected mode")
+        if any(
+            value * 128 >= AMP_SKIP_WARMUP_PROCESSED_NIMG
+            for value in expected_skip_attempts
+        ):
+            fail("expected skip attempts extend beyond the tick-0 warm-up region")
 
     if not run_dir.is_dir():
         fail(f"run directory does not exist: {run_dir}")
@@ -1199,6 +1263,11 @@ def verify_run(
     launch_manifest = load_json(paths["launch_manifest.json"], "launch manifest")
     launch_info = validate_launch_manifest(
         launch_manifest, run_dir, arm, seed, mode, options_info
+    )
+    exact_value(
+        expected_skip_attempts,
+        launch_info["expected_skip_attempts"],
+        "verifier/authorization expected AMP skip signature",
     )
     initial = load_json(paths["initial_state_receipt_v1.json"], "initial receipt")
     initial_info = validate_initial_receipt(initial, arm, seed, options_info)
@@ -1232,6 +1301,7 @@ def verify_run(
         "processed_nimg": telemetry_info["processed_nimg"],
         "amp_skip_attempts": telemetry_info["amp_skip_attempts"],
         "amp_skip_signature_expected_value_enforced": expected_skip_attempts is not None,
+        "amp_skip_policy": AMP_SKIP_POLICY,
         "initial_common_state_sha256": initial_info["common_initial_state_sha256"],
         "trajectory_config_sha256": initial_info["trajectory_config_sha256"],
         "snapshot_ema_sha256": snapshot_info["ema_sha256"],
@@ -1297,6 +1367,14 @@ def main() -> None:
             "when omitted the observed signature is extracted but not guessed"
         ),
     )
+    parser.add_argument(
+        "--check-only",
+        action="store_true",
+        help=(
+            "re-run every production validation against existing immutable "
+            "artifacts without writing or replacing receipts"
+        ),
+    )
     args = parser.parse_args()
     try:
         report = verify_run(
@@ -1305,6 +1383,7 @@ def main() -> None:
             seed=args.seed,
             mode=args.mode,
             expected_skip_attempts=args.expected_skip_attempts,
+            write_receipts=not args.check_only,
         )
     except VerificationError as exc:
         raise SystemExit(f"[verify_q256_target_weight_arm] ERROR: {exc}") from exc

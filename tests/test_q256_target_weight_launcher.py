@@ -7,7 +7,10 @@ import io
 import json
 import os
 import subprocess
+import sys
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -24,6 +27,7 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 "scientific_training_contract_unchanged": True,
             },
             "training": launcher.training_contract("smoke", "A", 3),
+            "gpu": {"uuid": "GPU-test"},
         }
         (run_dir / "launch_manifest.json").write_text(
             json.dumps(launch_manifest), encoding="utf-8"
@@ -240,7 +244,8 @@ class TargetWeightLauncherTest(unittest.TestCase):
             "preregistration_sha256": launcher.preregistration_record()["sha256"],
             "dataset_sha256": dataset["sha256"],
             "transfer_sha256": transfer["sha256"],
-            "expected_amp_skip_attempts": [],
+            "expected_amp_skip_attempts": None,
+            "amp_skip_policy": launcher.AMP_SKIP_POLICY,
             "role_e_gate_runtime": launcher.role_e_gate_runtime_scope(runtime),
             "runtime_sandbox_tree_metadata_sha256": sandbox[
                 "sandbox_tree_metadata_sha256"
@@ -266,13 +271,34 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 "mode": "smoke",
                 "arm": arm,
                 "seed": 3,
-                "amp_skip_attempts": [],
-                "amp_skip_signature_expected_value_enforced": True,
+                "amp_skip_attempts": [2, 7],
+                "amp_skip_signature_expected_value_enforced": False,
+                "amp_skip_policy": launcher.AMP_SKIP_POLICY,
+                "initial_common_state_sha256": "9" * 64,
                 "source_git_head": source["git_head"],
                 "source_content_sha256": source["content_sha256"],
             }
             validation_path = run_dir / launcher.VALIDATION_FILENAME
             validation_path.write_text(json.dumps(validation), encoding="utf-8")
+            launch_manifest_path = run_dir / "launch_manifest.json"
+            launch_manifest_path.write_text(
+                json.dumps(
+                    {
+                        "run_directory": str(run_dir),
+                        "gpu": {"uuid": "GPU-test"},
+                        "training": {"phase": "smoke", "arm": arm, "seed": 3},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            for name in launcher.CORE_ARM_ARTIFACTS:
+                path = run_dir / name
+                if not path.exists():
+                    path.write_bytes(f"trusted-{arm}-{name}".encode("utf-8"))
+            artifact_paths = {
+                name: run_dir / name for name in launcher.CORE_ARM_ARTIFACTS
+            }
+            artifact_paths[launcher.VALIDATION_FILENAME] = validation_path
             hashes = {
                 "schema": launcher.HASH_RECEIPT_SCHEMA,
                 "status": "passed",
@@ -281,18 +307,98 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 "arm": arm,
                 "seed": 3,
                 "artifacts": {
-                    artifact.name: {
-                        "bytes": artifact.stat().st_size,
-                        "sha256": launcher.sha256_file(artifact),
+                    name: {
+                        "bytes": path.stat().st_size,
+                        "sha256": launcher.sha256_file(path),
                     }
+                    for name, path in artifact_paths.items()
                 },
             }
             hashes_path = run_dir / launcher.HASH_RECEIPT_FILENAME
             hashes_path.write_text(json.dumps(hashes), encoding="utf-8")
+            runner_log_path = run_dir / "runner.log"
+            runner_log_path.write_text("runner PASS\n", encoding="utf-8")
+            verifier_log_path = run_dir / "arm_verifier.log"
+            verifier_log_path.write_text("verifier PASS\n", encoding="utf-8")
+            monitor = {
+                "schema": launcher.GPU_MONITOR_SCHEMA,
+                "status": "PASS",
+                "gpu_uuid": "GPU-test",
+                "root_process_pid": 123,
+                "poll_interval_seconds": 1.0,
+                "cadence_grace_seconds": 0.25,
+                "probe_timeout_seconds": 0.4,
+                "started_utc": "2026-08-19T00:00:00Z",
+                "finished_utc": "2026-08-19T00:00:01Z",
+                "first_check_started_utc": "2026-08-19T00:00:00Z",
+                "last_check_started_utc": "2026-08-19T00:00:01Z",
+                "checks_completed": 2,
+                "first_check_offset_seconds": 0.0,
+                "last_check_offset_seconds": 1.0,
+                "monitor_duration_seconds": 1.0,
+                "max_observed_poll_gap_seconds": 1.0,
+                "max_observed_check_duration_seconds": 0.1,
+                "max_observed_schedule_lateness_seconds": 0.01,
+                "foreign_process_incident": None,
+                "own_process_group_signals": [],
+            }
+            runner_completion = {
+                "schema": launcher.RUNNER_COMPLETION_SCHEMA,
+                "experiment_id": launcher.EXPERIMENT_ID,
+                "started_utc": "2026-08-19T00:00:00Z",
+                "finished_utc": "2026-08-19T00:00:02Z",
+                "status": "PASS",
+                "returncode": 0,
+                "verifier_returncode": 0,
+                "launch_manifest": launch_manifest_path.name,
+                "launch_manifest_sha256": launcher.sha256_file(
+                    launch_manifest_path
+                ),
+                "runner_log": runner_log_path.name,
+                "runner_log_sha256": launcher.sha256_file(runner_log_path),
+                "verifier_log": verifier_log_path.name,
+                "verifier_log_sha256": launcher.sha256_file(verifier_log_path),
+                "training_gpu_exclusivity_monitor": monitor,
+                "verifier_gpu_exclusivity_monitor": monitor,
+                "final_prelaunch_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:00:00Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
+                "post_training_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:00:01Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
+                "post_verifier_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:00:02Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
+                "verification": {
+                    "validation_receipt_sha256": launcher.sha256_file(
+                        validation_path
+                    ),
+                    "artifact_hash_receipt_sha256": launcher.sha256_file(
+                        hashes_path
+                    ),
+                },
+            }
+            runner_completion_path = run_dir / "runner_completion.json"
+            runner_completion_path.write_text(
+                json.dumps(runner_completion), encoding="utf-8"
+            )
             bindings[arm] = {
                 "run_dir": str(run_dir),
                 "validation_receipt_sha256": launcher.sha256_file(validation_path),
                 "artifact_hash_receipt_sha256": launcher.sha256_file(hashes_path),
+                "runner_completion_path": str(runner_completion_path),
+                "runner_completion_sha256": launcher.sha256_file(
+                    runner_completion_path
+                ),
             }
         return bindings
 
@@ -755,6 +861,40 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 ),
                 "runner_log": "runner.log",
                 "runner_log_sha256": launcher.sha256_file(run_dir / "runner.log"),
+                "final_prelaunch_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:00:00Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
+                "training_gpu_exclusivity_monitor": {
+                    "schema": launcher.GPU_MONITOR_SCHEMA,
+                    "status": "PASS",
+                    "gpu_uuid": "GPU-test",
+                    "root_process_pid": 123,
+                    "poll_interval_seconds": 1.0,
+                    "cadence_grace_seconds": 0.25,
+                    "probe_timeout_seconds": 0.4,
+                    "started_utc": "2026-08-19T00:00:00Z",
+                    "finished_utc": "2026-08-19T00:00:59Z",
+                    "first_check_started_utc": "2026-08-19T00:00:00Z",
+                    "last_check_started_utc": "2026-08-19T00:00:58Z",
+                    "checks_completed": 59,
+                    "first_check_offset_seconds": 0.0,
+                    "last_check_offset_seconds": 58.0,
+                    "monitor_duration_seconds": 59.0,
+                    "max_observed_poll_gap_seconds": 1.0,
+                    "max_observed_check_duration_seconds": 0.1,
+                    "max_observed_schedule_lateness_seconds": 0.01,
+                    "foreign_process_incident": None,
+                    "own_process_group_signals": [],
+                },
+                "post_training_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:01:00Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
                 "planned_pause_verification": report,
                 "full_arm_verifier_invoked": False,
                 "resume_required": True,
@@ -829,9 +969,19 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 "PYTHONDONTWRITEBYTECODE": "1",
             }
 
-            def fake_stream(_command, *, cwd, env, log_path):
+            def fake_stream(
+                _command,
+                *,
+                cwd,
+                env,
+                log_path,
+                gpu_monitor_record=None,
+                **_kwargs,
+            ):
                 self.assertEqual(cwd, launcher.REPO_ROOT)
                 self.assertEqual(env, process_env)
+                if gpu_monitor_record is not None:
+                    gpu_monitor_record["status"] = "PASS"
                 log_path.write_text("planned process returned zero\n", encoding="utf-8")
                 return 0
 
@@ -958,25 +1108,274 @@ class TargetWeightLauncherTest(unittest.TestCase):
             self.assertFalse(completion["full_arm_verifier_invoked"])
             self.assertTrue(completion["resume_required"])
 
-    def test_expected_skip_signature_is_frozen_empty(self):
-        self.assertEqual(launcher.parse_expected_skip_attempts(None, "formal"), [])
+    def test_amp_skip_policy_observes_by_default_and_allows_prospective_signature(self):
+        self.assertIsNone(launcher.parse_expected_skip_attempts(None, "formal"))
         self.assertEqual(launcher.parse_expected_skip_attempts("[]", "formal"), [])
         self.assertEqual(launcher.parse_expected_skip_attempts("", "smoke"), [])
-        with self.assertRaisesRegex(launcher.LaunchError, r"exactly \[\]"):
-            launcher.parse_expected_skip_attempts("1,2,10", "formal")
+        self.assertEqual(
+            launcher.parse_expected_skip_attempts("1,2,10", "formal"),
+            [1, 2, 10],
+        )
         with self.assertRaisesRegex(launcher.LaunchError, "strictly increasing"):
             launcher.parse_expected_skip_attempts("2,1", "formal")
         with self.assertRaisesRegex(launcher.LaunchError, "within"):
             launcher.parse_expected_skip_attempts("33", "smoke")
-        with self.assertRaisesRegex(launcher.LaunchError, r"canonical \[\]"):
-            launcher.build_verifier_command(
-                python_bin="python",
-                run_dir=Path("/run"),
-                phase="smoke",
-                arm="A",
-                seed=3,
-                expected_skip_attempts="[1]",
+        with self.assertRaisesRegex(launcher.LaunchError, "tick-0 warm-up"):
+            launcher.parse_expected_skip_attempts("79", "formal")
+        with self.assertRaisesRegex(launcher.LaunchError, "tick-0 warm-up"):
+            launcher.validate_amp_skip_signature(
+                [79], phase="formal", label="immutable verifier receipt"
             )
+        command = launcher.build_verifier_command(
+            python_bin="python",
+            run_dir=Path("/run"),
+            phase="smoke",
+            arm="A",
+            seed=3,
+            expected_skip_attempts="[1]",
+        )
+        self.assertEqual(command[-2:], ["--expected-skip-attempts", "[1]"])
+        observed = launcher.build_verifier_command(
+            python_bin="python",
+            run_dir=Path("/run"),
+            phase="smoke",
+            arm="A",
+            seed=3,
+        )
+        self.assertNotIn("--expected-skip-attempts", observed)
+
+    def test_in_run_gpu_monitor_stops_only_our_process_group_on_foreign_pid(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            record = {}
+            foreign = {
+                "pid": 999999,
+                "process_name": "/foreign/train.py",
+                "used_gpu_memory_mib": "2048",
+            }
+            with mock.patch.object(
+                launcher,
+                "query_gpu_compute_processes",
+                return_value=[foreign],
+            ), mock.patch.object(
+                launcher,
+                "process_tree_pids",
+                side_effect=lambda root_pid, **_kwargs: {root_pid},
+            ):
+                returncode = launcher.stream_process(
+                    [
+                        sys.executable,
+                        "-c",
+                        "import time; print('started', flush=True); time.sleep(30)",
+                    ],
+                    cwd=launcher.REPO_ROOT,
+                    env=os.environ,
+                    log_path=Path(tmp) / "monitored.log",
+                    monitored_gpu_uuid="GPU-test",
+                    gpu_monitor_record=record,
+                    gpu_monitor_interval_seconds=0.01,
+                )
+            self.assertNotEqual(returncode, 0)
+            self.assertEqual(record["status"], "EXCLUSIVITY_LOST")
+            self.assertEqual(
+                record["foreign_process_incident"]["foreign_processes"],
+                [foreign],
+            )
+            self.assertEqual(record["own_process_group_signals"], ["SIGTERM"])
+
+    def test_monitor_thread_start_failure_reaps_launched_child(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            launched = []
+            real_popen = subprocess.Popen
+
+            def capture_popen(*args, **kwargs):
+                process = real_popen(*args, **kwargs)
+                launched.append(process)
+                return process
+
+            with mock.patch.object(
+                launcher.subprocess, "Popen", side_effect=capture_popen
+            ), mock.patch.object(
+                launcher.threading.Thread,
+                "start",
+                side_effect=RuntimeError("thread start fault"),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "thread start fault"):
+                    launcher.stream_process(
+                        [sys.executable, "-c", "import time; time.sleep(60)"],
+                        cwd=launcher.REPO_ROOT,
+                        env=os.environ,
+                        log_path=Path(tmp) / "thread-start-fault.log",
+                        monitored_gpu_uuid="GPU-test",
+                        gpu_monitor_record={},
+                        gpu_monitor_interval_seconds=1.0,
+                    )
+            self.assertEqual(len(launched), 1)
+            self.assertIsNotNone(launched[0].poll())
+
+    @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux /proc process audit")
+    def test_group_drain_kills_term_ignoring_stdout_descendant(self):
+        code = (
+            "import os, signal, sys, time\n"
+            "pid = os.fork()\n"
+            "if pid == 0:\n"
+            "    signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+            "    while True: time.sleep(1)\n"
+            "print('ready', flush=True)\n"
+            "while True: time.sleep(1)\n"
+        )
+        process = subprocess.Popen(
+            [sys.executable, "-c", code],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        assert process.stdout is not None
+        self.assertEqual(process.stdout.readline().strip(), b"ready")
+        signals = launcher.stop_and_reap_process_group(
+            process, label="term-ignoring-descendant-test"
+        )
+        self.assertEqual(signals, ["SIGTERM", "SIGKILL"])
+        self.assertIsNotNone(process.poll())
+        with self.assertRaises(ProcessLookupError):
+            os.killpg(process.pid, 0)
+        process.stdout.close()
+
+    def test_matrix_binds_passing_in_run_gpu_monitor_receipts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "runner_completion.json"
+            monitor = {
+                "schema": launcher.GPU_MONITOR_SCHEMA,
+                "status": "PASS",
+                "gpu_uuid": "GPU-test",
+                "root_process_pid": 123,
+                "poll_interval_seconds": 1.0,
+                "cadence_grace_seconds": 0.25,
+                "probe_timeout_seconds": 0.4,
+                "started_utc": "2026-08-19T00:00:00Z",
+                "finished_utc": "2026-08-19T00:00:01Z",
+                "first_check_started_utc": "2026-08-19T00:00:00Z",
+                "last_check_started_utc": "2026-08-19T00:00:01Z",
+                "checks_completed": 3,
+                "first_check_offset_seconds": 0.0,
+                "last_check_offset_seconds": 1.0,
+                "monitor_duration_seconds": 1.0,
+                "max_observed_poll_gap_seconds": 1.0,
+                "max_observed_check_duration_seconds": 0.1,
+                "max_observed_schedule_lateness_seconds": 0.01,
+                "foreign_process_incident": None,
+                "own_process_group_signals": [],
+            }
+            payload = {
+                "schema": launcher.RUNNER_COMPLETION_SCHEMA,
+                "experiment_id": launcher.EXPERIMENT_ID,
+                "started_utc": "2026-08-19T00:00:00Z",
+                "finished_utc": "2026-08-19T00:00:02Z",
+                "status": "PASS",
+                "returncode": 0,
+                "verifier_returncode": 0,
+                "launch_manifest": "launch_manifest.json",
+                "launch_manifest_sha256": "3" * 64,
+                "runner_log": "runner.log",
+                "runner_log_sha256": "4" * 64,
+                "verifier_log": "arm_verifier.log",
+                "verifier_log_sha256": "5" * 64,
+                "training_gpu_exclusivity_monitor": monitor,
+                "verifier_gpu_exclusivity_monitor": monitor,
+                "final_prelaunch_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:00:00Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
+                "post_training_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:00:01Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
+                "post_verifier_gpu_idle_check": {
+                    "checked_utc": "2026-08-19T00:00:02Z",
+                    "gpu_uuid": "GPU-test",
+                    "compute_process_count": 0,
+                    "query": "gpu_uuid,pid,process_name,used_gpu_memory",
+                },
+                "verification": {
+                    "validation_receipt_sha256": "1" * 64,
+                    "artifact_hash_receipt_sha256": "2" * 64,
+                },
+            }
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            record = launcher.validate_runner_completion_receipt(path)
+            self.assertEqual(record["sha256"], launcher.sha256_file(path))
+            payload["training_gpu_exclusivity_monitor"] = {
+                **monitor,
+                "status": "EXCLUSIVITY_LOST",
+            }
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            with self.assertRaisesRegex(launcher.LaunchError, "training GPU monitor"):
+                launcher.validate_runner_completion_receipt(path)
+
+    def test_in_run_gpu_monitor_fails_closed_on_unexpected_audit_exception(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            record = {}
+            with mock.patch.object(
+                launcher,
+                "query_gpu_compute_processes",
+                side_effect=RuntimeError("audit probe crashed"),
+            ):
+                returncode = launcher.stream_process(
+                    [sys.executable, "-c", "import time; time.sleep(30)"],
+                    cwd=launcher.REPO_ROOT,
+                    env=os.environ,
+                    log_path=Path(tmp) / "audit-failure.log",
+                    monitored_gpu_uuid="GPU-test",
+                    gpu_monitor_record=record,
+                    gpu_monitor_interval_seconds=0.01,
+                )
+            self.assertNotEqual(returncode, 0)
+            self.assertEqual(record["status"], "STOPPED_FOR_AUDIT")
+            self.assertEqual(
+                record["foreign_process_incident"]["kind"],
+                "GPU_AUDIT_FAILED",
+            )
+            self.assertIn(
+                "RuntimeError: audit probe crashed",
+                record["foreign_process_incident"]["error"],
+            )
+
+    def test_in_run_gpu_monitor_fails_closed_when_cadence_is_missed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            record = {}
+
+            def slow_probe(*_args, **_kwargs):
+                time.sleep(0.08)
+                return []
+
+            with mock.patch.object(
+                launcher,
+                "query_gpu_compute_processes",
+                side_effect=slow_probe,
+            ), mock.patch.object(
+                launcher,
+                "process_tree_pids",
+                side_effect=lambda root_pid, **_kwargs: {root_pid},
+            ):
+                returncode = launcher.stream_process(
+                    [sys.executable, "-c", "import time; time.sleep(30)"],
+                    cwd=launcher.REPO_ROOT,
+                    env=os.environ,
+                    log_path=Path(tmp) / "cadence-failure.log",
+                    monitored_gpu_uuid="GPU-test",
+                    gpu_monitor_record=record,
+                    gpu_monitor_interval_seconds=0.01,
+                )
+            self.assertNotEqual(returncode, 0)
+            self.assertEqual(record["status"], "STOPPED_FOR_AUDIT")
+            self.assertEqual(
+                record["foreign_process_incident"]["kind"],
+                "GPU_MONITOR_CADENCE_MISSED",
+            )
+            self.assertEqual(record["own_process_group_signals"], ["SIGTERM"])
 
     def test_authorization_fails_closed_and_binds_gate_hash(self):
         source, runtime, sandbox, dataset, transfer, file_hashes = (
@@ -1029,6 +1428,7 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 "runtime": runtime,
                 "runtime_sandbox": sandbox,
                 "assets": {"dataset": dataset, "transfer": transfer},
+                "post_training_verifier": {"expected_skip_attempts": None},
             }
             launcher.verify_internal_authorization(
                 run_dir,
@@ -1165,16 +1565,54 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 encoding="utf-8",
             )
             matrix = root / "matrix.json"
+            smoke_bindings = self._write_smoke_arm_passes(root, source)
+            resume_root = root / "exact-resume-pair"
+            resume_root.mkdir()
+            resumed_bindings = self._write_smoke_arm_passes(resume_root, source)
+            uninterrupted = smoke_bindings["A"]
+            resumed = resumed_bindings["A"]
+            fake_provenance = {
+                "status": "PASS",
+                "provenance_sha256": "7" * 64,
+            }
             matrix_payload = {
                 "schema": launcher.SMOKE_MATRIX_VALIDATION_SCHEMA,
                 "status": "passed",
                 "mode": "smoke",
                 "seed": 3,
-                "arms": self._write_smoke_arm_passes(root, source),
+                "arms": smoke_bindings,
                 "source_git_head": source["git_head"],
                 "source_content_sha256": source["content_sha256"],
-                "amp_skip_attempts": [],
-                "exact_resume": {"status": "passed"},
+                "amp_skip_attempts": [2, 7],
+                "amp_skip_signature_expected_value_enforced": False,
+                "amp_skip_policy": launcher.AMP_SKIP_POLICY,
+                "initial_common_state_sha256": "9" * 64,
+                "exact_resume": {
+                    "status": "passed",
+                    "arm": "A",
+                    "uninterrupted_run_dir": uninterrupted["run_dir"],
+                    "resumed_run_dir": resumed["run_dir"],
+                    "uninterrupted_validation_receipt_sha256": uninterrupted[
+                        "validation_receipt_sha256"
+                    ],
+                    "resumed_validation_receipt_sha256": resumed[
+                        "validation_receipt_sha256"
+                    ],
+                    "uninterrupted_artifact_hash_receipt_sha256": uninterrupted[
+                        "artifact_hash_receipt_sha256"
+                    ],
+                    "resumed_artifact_hash_receipt_sha256": resumed[
+                        "artifact_hash_receipt_sha256"
+                    ],
+                    "uninterrupted_runner_completion_sha256": uninterrupted[
+                        "runner_completion_sha256"
+                    ],
+                    "resumed_runner_completion_sha256": resumed[
+                        "runner_completion_sha256"
+                    ],
+                    "provenance": fake_provenance,
+                    "provenance_sha256": fake_provenance["provenance_sha256"],
+                },
             }
             matrix.write_text(json.dumps(matrix_payload), encoding="utf-8")
             matrix_sha = launcher.sha256_file(matrix)
@@ -1212,6 +1650,27 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 gates=gates,
             )
             receipt.write_text(json.dumps(payload), encoding="utf-8")
+            deep_revalidation = mock.patch.object(
+                launcher,
+                "deep_revalidate_existing_arm",
+                return_value={"status": "PASS", "report_sha256": "8" * 64},
+            )
+            deep_revalidation.start()
+            self.addCleanup(deep_revalidation.stop)
+            matrix_revalidation = mock.patch.object(
+                launcher,
+                "deep_revalidate_smoke_matrix",
+                return_value={"status": "PASS", "report_sha256": "9" * 64},
+            )
+            matrix_revalidation.start()
+            self.addCleanup(matrix_revalidation.stop)
+            exact_provenance = mock.patch.object(
+                launcher,
+                "validate_exact_resume_provenance",
+                return_value=fake_provenance,
+            )
+            exact_provenance.start()
+            self.addCleanup(exact_provenance.stop)
             validated = launcher.validate_authorization(
                 receipt,
                 phase="formal",
@@ -1299,7 +1758,8 @@ class TargetWeightLauncherTest(unittest.TestCase):
             ["role_e_ab_parity", "four_arm_smoke_matrix", "exact_resume"],
         )
         for phase, template in (("smoke", smoke), ("formal", formal)):
-            self.assertEqual(template["expected_amp_skip_attempts"], [])
+            self.assertIsNone(template["expected_amp_skip_attempts"])
+            self.assertEqual(template["amp_skip_policy"], launcher.AMP_SKIP_POLICY)
             self.assertEqual(
                 template["role_e_gate_runtime"],
                 launcher.role_e_gate_runtime_scope(runtime),
@@ -1315,24 +1775,88 @@ class TargetWeightLauncherTest(unittest.TestCase):
             ["3:A=/runs/a/training-state-latest.pt", "3:D=/runs/d/training-state-000001.pt"],
             "smoke",
         )
-        jobs = launcher.make_matrix_jobs(
-            phase="smoke",
-            seed_gpu={3: "GPU-abc"},
-            runs_root=Path("/runs"),
-            matrix_id="ignored-for-resume",
-            authorization_receipt=None,
-            data=Path("/data.zip"),
-            transfer=Path("/transfer.pkl"),
-            python_bin=Path("/env/python"),
-            lock_root=Path("/locks"),
-            base_port=33000,
-            resume_cells=resumes,
+        common = {
+            "phase": "smoke",
+            "seed_gpu": {3: "GPU-abc"},
+            "runs_root": Path("/runs"),
+            "matrix_id": "ignored-for-resume",
+            "authorization_receipt": None,
+            "data": Path("/data.zip"),
+            "transfer": Path("/transfer.pkl"),
+            "python_bin": Path("/env/python"),
+            "lock_root": Path("/locks"),
+            "base_port": 33000,
+        }
+        with self.assertRaisesRegex(launcher.LaunchError, "complete phase cell set"):
+            launcher.make_matrix_jobs(**common, resume_cells=resumes)
+        complete = {
+            (3, arm): Path(f"/runs/{arm}/training-state-latest.pt")
+            for arm in launcher.ARMS
+        }
+        jobs = launcher.make_matrix_jobs(**common, resume_cells=complete)
+        self.assertEqual(
+            [(job.seed, job.arm) for job in jobs],
+            [(3, arm) for arm in launcher.ARMS],
         )
-        self.assertEqual([(job.seed, job.arm) for job in jobs], [(3, "A"), (3, "D")])
         self.assertTrue(all(job.resume is not None and job.outdir is None for job in jobs))
         self.assertTrue(all("--outdir" not in job.command for job in jobs))
 
     def test_existing_pass_receipts_are_hash_bound_for_matrix_skip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = Path(tmp)
+            validation = {
+                "schema": launcher.VALIDATION_SCHEMA,
+                "status": "passed",
+                "run_dir": str(run_dir.resolve()),
+                "mode": "smoke",
+                "arm": "A",
+                "seed": 3,
+                "amp_skip_attempts": [2, 7],
+                "amp_skip_signature_expected_value_enforced": False,
+                "amp_skip_policy": launcher.AMP_SKIP_POLICY,
+                "initial_common_state_sha256": "9" * 64,
+            }
+            (run_dir / launcher.VALIDATION_FILENAME).write_text(
+                json.dumps(validation), encoding="utf-8"
+            )
+            artifact_paths = {}
+            for name in launcher.CORE_ARM_ARTIFACTS:
+                path = run_dir / name
+                path.write_bytes(f"trusted-{name}".encode("utf-8"))
+                artifact_paths[name] = path
+            artifact_paths[launcher.VALIDATION_FILENAME] = (
+                run_dir / launcher.VALIDATION_FILENAME
+            )
+            hashes = {
+                "schema": launcher.HASH_RECEIPT_SCHEMA,
+                "status": "passed",
+                "run_dir": str(run_dir.resolve()),
+                "mode": "smoke",
+                "arm": "A",
+                "seed": 3,
+                "artifacts": {
+                    name: {
+                        "bytes": path.stat().st_size,
+                        "sha256": launcher.sha256_file(path),
+                    }
+                    for name, path in artifact_paths.items()
+                },
+            }
+            (run_dir / launcher.HASH_RECEIPT_FILENAME).write_text(
+                json.dumps(hashes), encoding="utf-8"
+            )
+            record = launcher.validate_existing_verifier_receipts(
+                run_dir, phase="smoke", arm="A", seed=3
+            )
+            self.assertEqual(record["amp_skip_attempts"], [2, 7])
+            artifact = run_dir / "training-state-latest.pt"
+            artifact.write_bytes(b"mutated-state")
+            with self.assertRaisesRegex(launcher.LaunchError, "changed"):
+                launcher.validate_existing_verifier_receipts(
+                    run_dir, phase="smoke", arm="A", seed=3
+                )
+
+    def test_existing_pass_receipts_reject_incomplete_artifact_set(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = Path(tmp)
             artifact = run_dir / "training-state-latest.pt"
@@ -1345,11 +1869,12 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 "arm": "A",
                 "seed": 3,
                 "amp_skip_attempts": [],
-                "amp_skip_signature_expected_value_enforced": True,
+                "amp_skip_signature_expected_value_enforced": False,
+                "amp_skip_policy": launcher.AMP_SKIP_POLICY,
+                "initial_common_state_sha256": "9" * 64,
             }
-            (run_dir / launcher.VALIDATION_FILENAME).write_text(
-                json.dumps(validation), encoding="utf-8"
-            )
+            validation_path = run_dir / launcher.VALIDATION_FILENAME
+            validation_path.write_text(json.dumps(validation), encoding="utf-8")
             hashes = {
                 "schema": launcher.HASH_RECEIPT_SCHEMA,
                 "status": "passed",
@@ -1367,15 +1892,40 @@ class TargetWeightLauncherTest(unittest.TestCase):
             (run_dir / launcher.HASH_RECEIPT_FILENAME).write_text(
                 json.dumps(hashes), encoding="utf-8"
             )
-            record = launcher.validate_existing_verifier_receipts(
-                run_dir, phase="smoke", arm="A", seed=3
-            )
-            self.assertEqual(record["amp_skip_attempts"], [])
-            artifact.write_bytes(b"mutated-state")
-            with self.assertRaisesRegex(launcher.LaunchError, "changed"):
+            with self.assertRaisesRegex(
+                launcher.LaunchError, "missing required verifier artifacts"
+            ):
                 launcher.validate_existing_verifier_receipts(
                     run_dir, phase="smoke", arm="A", seed=3
                 )
+
+    def test_managed_deep_revalidation_is_registered_stopped_and_reaped(self):
+        stop_event = threading.Event()
+        registered = []
+        unregistered = []
+
+        def register(process):
+            registered.append(process)
+            stop_event.set()
+
+        def unregister(process):
+            unregistered.append(process)
+
+        with self.assertRaisesRegex(
+            launcher.LaunchError, "matrix audit stop was requested"
+        ):
+            launcher._run_deep_revalidation_command(
+                [sys.executable, "-c", "import time; time.sleep(60)"],
+                process_env=os.environ,
+                timeout_seconds=30.0,
+                label="managed-test",
+                stop_event=stop_event,
+                register_process=register,
+                unregister_process=unregister,
+            )
+        self.assertEqual(registered, unregistered)
+        self.assertEqual(len(registered), 1)
+        self.assertIsNotNone(registered[0].poll())
 
     def test_runtime_sandbox_fingerprint_detects_tree_change(self):
         with tempfile.TemporaryDirectory() as tmp:

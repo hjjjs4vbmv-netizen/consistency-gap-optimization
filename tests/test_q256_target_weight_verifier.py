@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest import mock
 
 import numpy as np
 import torch
@@ -55,11 +56,19 @@ def rng_state():
 
 
 class RunFixture:
-    def __init__(self, root: Path, *, arm="A", skip_attempts=(2, 7)):
+    def __init__(
+        self,
+        root: Path,
+        *,
+        arm="A",
+        skip_attempts=(2, 7),
+        expected_skip_attempts=None,
+    ):
         self.root = root
         self.arm = arm
         self.seed = 3
         self.skip_attempts = set(skip_attempts)
+        self.expected_skip_attempts = expected_skip_attempts
         self.factorial = verifier.expected_factorial(arm)
         self.net = TinyNetwork()
         self.ema = copy.deepcopy(self.net)
@@ -307,7 +316,16 @@ class RunFixture:
         receipt_path = auth_dir / "authorization_receipt.json"
         gate_path = auth_dir / "gate-01-correctness.json"
         receipt_path.write_text(
-            json.dumps({"status": "authorized"}) + "\n", encoding="utf-8"
+            json.dumps(
+                {
+                    "schema": verifier.AUTHORIZATION_SCHEMA,
+                    "status": "authorized",
+                    "expected_amp_skip_attempts": self.expected_skip_attempts,
+                    "amp_skip_policy": verifier.AMP_SKIP_POLICY,
+                }
+            )
+            + "\n",
+            encoding="utf-8",
         )
         gate_path.write_text(
             json.dumps({"status": "PASS"}) + "\n", encoding="utf-8"
@@ -318,6 +336,15 @@ class RunFixture:
             "launch_kind": "fresh_transfer",
             "status": "authorized_to_start",
             "run_directory": str(self.root),
+            "gate_control": {
+                "kind": "none",
+                "stop_after_attempts": None,
+                "scientific_training_contract_unchanged": True,
+            },
+            "resume_state": None,
+            "resume_state_sha256": None,
+            "validated_planned_pause_completion": None,
+            "original_gate_control": None,
             "original_launch_manifest_sha256": None,
             "training": verifier.expected_launch_training_contract(
                 "smoke", self.arm, self.seed
@@ -345,7 +372,11 @@ class RunFixture:
                 },
             },
             "runtime": {"cuda_available": True, "cuda_device_count": 1},
-            "gpu": {"name": "NVIDIA A100 80GB PCIe", "memory_total_mib": 81920},
+            "gpu": {
+                "uuid": "GPU-test",
+                "name": "NVIDIA A100 80GB PCIe",
+                "memory_total_mib": 81920,
+            },
             "process_environment": {"WORLD_SIZE": "1", "RANK": "0", "LOCAL_RANK": "0"},
             "authorization": {
                 "receipt_path": "authorization/authorization_receipt.json",
@@ -355,6 +386,9 @@ class RunFixture:
                     "path": "authorization/gate-01-correctness.json",
                     "sha256": verifier.sha256_file(gate_path),
                 }],
+            },
+            "post_training_verifier": {
+                "expected_skip_attempts": self.expected_skip_attempts
             },
         }
 
@@ -402,7 +436,11 @@ class Q256TargetWeightVerifierTest(unittest.TestCase):
         return RunFixture(root, **kwargs)
 
     def test_valid_smoke_emits_immutable_validation_and_hash_receipts(self):
-        fixture = self.make_fixture(arm="C", skip_attempts=(2, 7))
+        fixture = self.make_fixture(
+            arm="C",
+            skip_attempts=(2, 7),
+            expected_skip_attempts=[2, 7],
+        )
         report = verifier.verify_run(
             fixture.root,
             arm="C",
@@ -524,6 +562,19 @@ class Q256TargetWeightVerifierTest(unittest.TestCase):
         with self.assertRaisesRegex(verifier.VerificationError, "does not match AMP skip"):
             verifier.verify_run(
                 fixture.root, arm="A", seed=3, mode="smoke",
+                write_receipts=False,
+            )
+
+    def test_amp_skip_after_tick_zero_warmup_is_rejected(self):
+        fixture = self.make_fixture(skip_attempts=(2,))
+        with mock.patch.object(
+            verifier, "AMP_SKIP_WARMUP_PROCESSED_NIMG", 256
+        ), self.assertRaisesRegex(verifier.VerificationError, "tick-0 warm-up"):
+            verifier.verify_run(
+                fixture.root,
+                arm="A",
+                seed=3,
+                mode="smoke",
                 write_receipts=False,
             )
 

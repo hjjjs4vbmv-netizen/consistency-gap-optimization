@@ -155,6 +155,13 @@ def _validate_preregistration(plan: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _validate_training_cells(plan: Mapping[str, Any]) -> None:
+    training_matrix = plan.get("training_matrix")
+    if (
+        not isinstance(training_matrix, dict)
+        or "expected_amp_skip_attempts" not in training_matrix
+    ):
+        fail("evaluation plan lacks the matrix AMP skip contract")
+    expected_skip_attempts = training_matrix["expected_amp_skip_attempts"]
     records = plan.get("training_cells")
     if not isinstance(records, list) or len(records) != 12:
         fail("evaluation plan must bind exactly 12 training runs")
@@ -167,7 +174,12 @@ def _validate_training_cells(plan: Mapping[str, Any]) -> None:
         if key not in expected or key in seen:
             fail(f"unexpected or duplicate training cell in evaluation plan: {key}")
         seen.add(key)
-        current = evaluator.validate_training_run(Path(record["run_dir"]), key[1], key[0])
+        current = evaluator.validate_training_run(
+            Path(record["run_dir"]),
+            key[1],
+            key[0],
+            expected_skip_attempts=expected_skip_attempts,
+        )
         exact_fields = (
             "checkpoint_sha256",
             "training_validation_receipt_sha256",
@@ -183,6 +195,66 @@ def _validate_training_cells(plan: Mapping[str, Any]) -> None:
         fail(f"evaluation plan has incomplete training runs: {sorted(expected - seen)}")
 
 
+def _validate_training_revalidation(plan: Mapping[str, Any]) -> None:
+    records = plan.get("training_arm_revalidation")
+    cells = plan.get("training_cells")
+    training_matrix = plan.get("training_matrix")
+    runtime = plan.get("runtime")
+    if not isinstance(records, list) or len(records) != 12:
+        fail("evaluation plan lacks exactly 12 fresh arm-revalidation records")
+    if not isinstance(cells, list) or not isinstance(training_matrix, dict):
+        fail("evaluation plan lacks training scope for arm revalidation")
+    if not isinstance(runtime, dict) or not isinstance(runtime.get("python_executable"), str):
+        fail("evaluation plan lacks the revalidation Python runtime binding")
+    expected_skip = training_matrix.get("expected_amp_skip_attempts")
+    cells_by_key = {
+        (cell.get("seed"), cell.get("arm")): cell
+        for cell in cells
+        if isinstance(cell, dict)
+    }
+    expected_keys = {(seed, arm) for seed in evaluator.SEEDS for arm in evaluator.ARMS}
+    seen = set()
+    for record in records:
+        if not isinstance(record, dict):
+            fail("evaluation arm-revalidation record is not an object")
+        key = (record.get("seed"), record.get("arm"))
+        if key not in expected_keys or key in seen or key not in cells_by_key:
+            fail(f"unexpected or duplicate arm-revalidation record: {key}")
+        if record.get("status") != "PASS":
+            fail(f"arm revalidation was not PASS: {key}")
+        cell = cells_by_key[key]
+        run_dir = Path(cell["run_dir"]).resolve(strict=True)
+        expected_command = [
+            runtime["python_executable"],
+            str(evaluator.REPO_ROOT / "scripts" / "verify_q256_target_weight_arm.py"),
+            "--run-dir",
+            str(run_dir),
+            "--arm",
+            str(key[1]),
+            "--seed",
+            str(key[0]),
+            "--mode",
+            "formal",
+            "--check-only",
+        ]
+        if expected_skip is not None:
+            expected_command += [
+                "--expected-skip-attempts",
+                json.dumps(expected_skip, separators=(",", ":")),
+            ]
+        if record.get("command_argv") != expected_command:
+            fail(f"arm revalidation command changed for {key}")
+        validation = load_json(
+            run_dir / evaluator.VALIDATION_FILENAME,
+            f"arm revalidation source receipt {key}",
+        )
+        if record.get("report_sha256") != evaluator.canonical_sha256(validation):
+            fail(f"arm revalidation report hash changed for {key}")
+        seen.add(key)
+    if seen != expected_keys:
+        fail(f"evaluation plan has incomplete arm revalidation: {sorted(expected_keys - seen)}")
+
+
 def validate_and_collect(eval_root: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     eval_root = eval_root.expanduser().resolve(strict=True)
     plan_path = eval_root / "evaluation_plan.json"
@@ -191,6 +263,16 @@ def validate_and_collect(eval_root: Path) -> tuple[list[dict[str, Any]], list[di
     completion = load_json(completion_path, "evaluation completion")
     if plan.get("schema") != evaluator.PLAN_SCHEMA or plan.get("protocol") != evaluator.PROTOCOL:
         fail("wrong formal evaluation plan schema/protocol")
+    planned_source = plan.get("evaluator_source")
+    if not isinstance(planned_source, dict):
+        fail("evaluation plan lacks the frozen evaluator/collector source")
+    try:
+        current_source = evaluator.source_snapshot(require_clean=True)
+    except evaluator.EvaluationError as exc:
+        fail(f"collector source is not clean/frozen: {exc}")
+    for field in ("git_head", "content_sha256"):
+        if current_source.get(field) != planned_source.get(field):
+            fail(f"collector source differs from evaluation plan: {field}")
     if plan.get("status") != "authorized_exact_matrix" or plan.get("job_count") != 24:
         fail("evaluation plan is not the exact authorized 24-job matrix")
     if plan.get("selection_policy") != "all_12_final_256kimg_checkpoints_no_intermediate_selection":
@@ -214,6 +296,12 @@ def validate_and_collect(eval_root: Path) -> tuple[list[dict[str, Any]], list[di
         fail("evaluation plan raw metric set mismatch")
     if plan.get("nfe_modes") != {"1": [], "2": [0.821]}:
         fail("evaluation plan NFE settings mismatch")
+    planned_gpu = plan.get("gpu")
+    if (
+        not isinstance(planned_gpu, dict)
+        or not isinstance(planned_gpu.get("uuid"), str)
+    ):
+        fail("evaluation plan lacks the selected GPU UUID")
     if completion.get("schema") != evaluator.COMPLETION_SCHEMA:
         fail("wrong formal evaluation completion schema")
     if completion.get("status") != "PASS" or completion.get("job_count") != 24:
@@ -222,6 +310,7 @@ def validate_and_collect(eval_root: Path) -> tuple[list[dict[str, Any]], list[di
         fail("formal evaluation completion does not bind the current plan")
     preregistration = _validate_preregistration(plan)
     _validate_training_cells(plan)
+    _validate_training_revalidation(plan)
 
     jobs = plan.get("jobs")
     if not isinstance(jobs, list) or len(jobs) != 24:
@@ -290,6 +379,21 @@ def validate_and_collect(eval_root: Path) -> tuple[list[dict[str, Any]], list[di
         for field, value in receipt_exact.items():
             if receipt.get(field) != value:
                 fail(f"evaluation receipt {job_id} field {field} mismatch")
+        if receipt.get("execution_error") is not None:
+            fail(f"evaluation receipt {job_id} records an execution error")
+        try:
+            evaluator.training_launcher.validate_gpu_monitor_record(
+                receipt.get("gpu_exclusivity_monitor"),
+                label=f"evaluation receipt {job_id}",
+                expected_gpu_uuid=planned_gpu["uuid"],
+            )
+            evaluator.training_launcher.validate_gpu_idle_record(
+                receipt.get("post_job_gpu_idle_check"),
+                label=f"evaluation receipt {job_id} post-job",
+                expected_gpu_uuid=planned_gpu["uuid"],
+            )
+        except evaluator.training_launcher.LaunchError as exc:
+            fail(f"evaluation receipt {job_id} GPU evidence failed: {exc}")
         launch_path = Path(str(receipt.get("launch_manifest", "")))
         process_log = Path(str(receipt.get("process_log", "")))
         if (
@@ -306,6 +410,15 @@ def validate_and_collect(eval_root: Path) -> tuple[list[dict[str, Any]], list[di
             fail(f"evaluation launch does not bind the plan: {job_id}")
         if launch.get("job") != job:
             fail(f"evaluation launch job contract differs from plan: {job_id}")
+        if launch.get("gpu") != planned_gpu:
+            fail(f"evaluation launch selected another GPU: {job_id}")
+        if launch.get("gpu_exclusivity_monitor_contract") != {
+            "schema": evaluator.training_launcher.GPU_MONITOR_SCHEMA,
+            "gpu_uuid": planned_gpu["uuid"],
+            "poll_interval_seconds": 1.0,
+            "fail_closed": True,
+        }:
+            fail(f"evaluation launch has a stale GPU monitor contract: {job_id}")
 
         current_source = (
             receipt.get("evaluator_source_git_head"),
