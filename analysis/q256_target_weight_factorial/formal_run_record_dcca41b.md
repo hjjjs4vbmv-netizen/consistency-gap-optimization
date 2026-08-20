@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-20 19:55 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-20 20:05 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -71,4 +71,21 @@ Both formal workers stopped at approximately 19:37 CST while running their C cel
 
 The latest persisted C checkpoints are the tick-20 checkpoints at approximately 202.4 kimg; final artifacts are absent. Seed3/4 A and B remain complete. Seed3/4 D and all four seed5 cells never started. Current matrix count: 4 complete, 2 incomplete, 6 not started.
 
-This is classified as infrastructure shared-memory exhaustion, not an AMP, loss, CUDA, model-state, or resume-state failure. Detection was read-only: no process, artifact, shared-memory object, or queue was modified, and recovery has not been started.
+This is classified as infrastructure shared-memory exhaustion, not an AMP, loss, CUDA, model-state, or resume-state failure. The initial detection was read-only: no process, artifact, shared-memory object, or queue was modified at that stage.
+
+## Recovery started at 2026-08-20 20:04:35 CST
+
+The global shared-memory occupants were not owned by this experiment: approximately 224 GiB under `/dev/shm/OmniDance` belonged to `niezichao`, and approximately 11 GiB under `/dev/shm/cuisen_suny_ray` belonged to `cuisen`. No global shared-memory object was deleted or modified.
+
+Each GPU worker now binds its own ECT001-owned mode-700 directory to the container's `/dev/shm`. Both private directories passed a disposable 64 MiB allocation test. Workers, sampler configuration, deterministic settings, and source commit remain unchanged.
+
+Before resume, the complete failed CSV/log/stats files were copied into per-cell `incident-20260820T1937-shm-bus-error` directories and verified byte-for-byte by SHA-256. The active train summary and factorial telemetry were then aligned to the authoritative checkpoint at attempt 1581, accepted update 1571, `202.368 kimg`, tick 21; active stats were aligned to the same tick. Exact hashes are in the JSON record.
+
+Both C cells passed strict-resume configuration checks and produced new telemetry:
+
+| Cell | Resume PID | Checkpoint | Observed progress at 20:05:27 CST |
+|---|---:|---:|---:|
+| seed3/C | 112042 | attempt 1581 / 202.368 kimg | attempt 1600 / 204.800 kimg |
+| seed4/C | 112062 | attempt 1581 / 202.368 kimg | attempt 1601 / 204.928 kimg |
+
+The remaining queues are seed3/C → seed3/D → seed5 A/B/C/D on GPU0 and seed4/C → seed4/D on GPU1. Recovery tmux sessions are `q256_dcca_recovery_gpu0` and `q256_dcca_recovery_gpu1`. A five-minute heartbeat monitor is active under automation ID `q256-formal-runs`; it checks processes, GPUs, cell progress, artifacts, errors, shared memory, and disk, and is authorized to apply only minimal experiment-scoped fixes.

@@ -1,9 +1,9 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T11:55:38Z",
+  "updated_utc": "2026-08-20T12:05:27Z",
   "experiment_id": "q256-target-weight-factorial",
-  "status_at_snapshot": "STOPPED_INFRASTRUCTURE_FAILURE",
+  "status_at_snapshot": "RUNNING_RECOVERY",
   "training_source": {
     "branch": "experiment/q256-target-weight-factorial",
     "commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
@@ -161,7 +161,7 @@
     "processes_stopped": true
   },
   "formal_launch": {
-    "status": "STOPPED_INFRASTRUCTURE_FAILURE",
+    "status": "RUNNING_RECOVERY",
     "started_local": "2026-08-20T16:35:23+08:00",
     "source_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
     "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1",
@@ -339,7 +339,20 @@
       "dev_shm_use_percent": 100,
       "dev_shm_inode_use_percent": 1,
       "data_raw_available_tib": 33,
-      "data_temp_available_tib": 5.0
+      "data_temp_available_tib": 5.0,
+      "global_shm_largest_occupants": [
+        {
+          "owner": "niezichao",
+          "path": "/dev/shm/OmniDance",
+          "used_gib_approx": 224
+        },
+        {
+          "owner": "cuisen",
+          "path": "/dev/shm/cuisen_suny_ray",
+          "used_gib_approx": 11
+        }
+      ],
+      "ect001_large_global_shm_objects_found": false
     },
     "affected_cells": {
       "seed3/C": {
@@ -379,8 +392,105 @@
       "not_started_cells": ["seed3/D", "seed4/D", "seed5/A", "seed5/B", "seed5/C", "seed5/D"]
     },
     "semantic_error_scope": "No loss/model/EMA/update/factor/denominator non-finite error, AMP inconsistency, CUDA error, or resume-state error was found. Only the two C-cell DataLoader bus errors were present in formal logs.",
-    "recovery_status": "NOT_STARTED",
+    "recovery_status": "RUNNING_FROM_CHECKPOINT",
     "action_at_detection": "Read-only diagnosis and durable recording only; no process, artifact, shared-memory object, or queue was modified."
+  },
+  "formal_recovery": {
+    "started_local": "2026-08-20T20:04:35+08:00",
+    "strategy": "Resume both C cells from their authoritative tick-20 state, then continue the remaining fresh cells, with one ECT001-owned private /dev/shm bind per GPU.",
+    "global_shm_action": "No global /dev/shm object was deleted, moved, or modified because the large occupants belonged to other users.",
+    "recovery_script": {
+      "local_path": "scripts/recover_q256_formal_after_shm.sh",
+      "server_path": "/data/temp/ECT001/q256_formal_recovery_dcca41b.sh",
+      "sha256": "c848981df27a924e14b9ecf0c8fd8a5a403de5c4e7183c7b736179757858b7e0"
+    },
+    "heartbeat_monitor": {
+      "automation_id": "q256-formal-runs",
+      "interval_minutes": 5,
+      "scope": "current Codex task",
+      "notification_policy": "failed runs only"
+    },
+    "private_shm": {
+      "gpu0": {
+        "path": "/tmp/ECT001-q256-dcca41b-shm-gpu0",
+        "owner_mode": "ECT001:700",
+        "preflight_allocation_bytes": 67108864,
+        "preflight_result": "PASS"
+      },
+      "gpu1": {
+        "path": "/tmp/ECT001-q256-dcca41b-shm-gpu1",
+        "owner_mode": "ECT001:700",
+        "preflight_allocation_bytes": 67108864,
+        "preflight_result": "PASS"
+      }
+    },
+    "rollback_and_archive": {
+      "authoritative_checkpoint_counters": {
+        "attempted_iteration": 1581,
+        "successful_optimizer_steps": 1571,
+        "processed_nimg": 202368,
+        "processed_kimg": 202.368,
+        "cur_tick": 21
+      },
+      "active_train_summary_and_telemetry_rows_after_alignment": 1581,
+      "active_stats_rows_after_alignment": 21,
+      "seed3_archive": {
+        "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1/seed3/armC/incident-20260820T1937-shm-bus-error",
+        "sha256": {
+          "train_summary": "023fe3e7dfd74d813167ff80b3d25fe079001db8d8db9ecd6a565ac901253b91",
+          "telemetry": "6aea2979c57888bcdcb48c853fe9e462f055d9f30f1c962b9e2765f62643f251",
+          "stats": "d2285dfc37921b25b7de6ba33068da05a8bf9e047548c8f99ad099d9643936d2",
+          "log": "c5c3542c1b281548bc46f4b619f9db729e547f273588b4416c0a5783c89a9d4b"
+        }
+      },
+      "seed4_archive": {
+        "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1/seed4/armC/incident-20260820T1937-shm-bus-error",
+        "sha256": {
+          "train_summary": "d36c6d833148245b8283c2fc083cf828b82d4707f72a1e5b0ddf3fe6693d4f78",
+          "telemetry": "73ceae4eba839fdfdb90d69139082d3f4260a25dba1bb2f590e120a283ff7ade",
+          "stats": "1e58cef6e479f96f816895a8fe150f153314c0e452454558f7823d73fc5b87ee",
+          "log": "aa6c3d8abf2013bdd39e9c53df233e8b4604000aead28fc0826c18a23d0e3907"
+        }
+      }
+    },
+    "resume_cells": {
+      "seed3/C": {
+        "checkpoint_sha256": "0e50d5aa8f4d1353f9ab787b2696b43eaa5324645627b3dea3975efed2557af4",
+        "trajectory_config_sha256": "aafec66d80119a5d69961ebf4d65cfb8aaf188ed25e8e3a77c7cb067e94b0fe6",
+        "pid_at_2026_08_20_20_05_27_cst": 112042,
+        "first_observed_resumed_attempt": 1600,
+        "first_observed_resumed_kimg": 204.8
+      },
+      "seed4/C": {
+        "checkpoint_sha256": "ef48d653082346fd38660d1689e175f6cd06607d84d80a9476526cfdfceceb0b",
+        "trajectory_config_sha256": "40838e4b290ae7a8fe50100f1a4a3c2076824d2953cc8a60223b9cf66cca1559",
+        "pid_at_2026_08_20_20_05_27_cst": 112062,
+        "first_observed_resumed_attempt": 1601,
+        "first_observed_resumed_kimg": 204.928
+      }
+    },
+    "tmux": {
+      "gpu0": "q256_dcca_recovery_gpu0",
+      "gpu1": "q256_dcca_recovery_gpu1"
+    },
+    "worker_logs": {
+      "gpu0": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1/recovery-worker-gpu0.log",
+      "gpu1": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1/recovery-worker-gpu1.log"
+    },
+    "queues": {
+      "gpu0": ["seed3/C resume", "seed3/D fresh", "seed5/A fresh", "seed5/B fresh", "seed5/C fresh", "seed5/D fresh"],
+      "gpu1": ["seed4/C resume", "seed4/D fresh"]
+    },
+    "health_at_2026_08_20_20_05_27_cst": {
+      "strict_resume_config_check": "PASS",
+      "new_telemetry_observed": true,
+      "recovery_log_errors": 0,
+      "gpu0_utilization_percent": 33,
+      "gpu1_utilization_percent": 36,
+      "gpu0_memory_mib": 3593,
+      "gpu1_memory_mib": 3593,
+      "private_shm_used_kib_each": 44
+    }
   },
   "open_observations": [
     {
