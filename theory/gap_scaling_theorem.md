@@ -80,6 +80,18 @@ $\nabla_\theta T = 0$ (the target branch carries no $\theta$-gradient).
 ### Assumption D (non-degeneracy)
 $J_0^\top v \neq 0$ (the leading gradient term does not vanish).
 
+### Assumption E (weighting asymptotics)
+For sufficiently small positive gaps, the weighting has the form
+
+$$
+ w(\delta,z) = w_0(z)\,\delta^{-\alpha}\bigl(1+O(\delta)\bigr),
+ \qquad w_0(z)\neq 0.
+$$
+
+An exact power law $w(\delta,z)=w_0(z)\delta^{-\alpha}$ is the stronger special
+case. The exponent formula below relies on this assumption; it does not follow
+from an otherwise arbitrary weighting $w(\delta,z)$.
+
 > **Theorem scope (what this covers / does not).**
 > Covers: stop-gradient target; local path displacement $\delta=t-r$; smooth residual path; radial/degree-$p$-homogeneous outer loss; explicit displacement-dependent weighting; nondegenerate leading gradient.
 > Does **not** cover: non-stop-gradient teachers ($\nabla_\theta T\neq 0$); arbitrary RL/Bellman targets; discontinuous schedules (e.g. hard $r=0$ clamp at the boundary); large-gap regime (Taylor invalid).
@@ -89,18 +101,25 @@ $J_0^\top v \neq 0$ (the leading gradient term does not vanish).
 ## 3. Gradient scaling law
 
 ### Theorem 1 (local gradient scaling)
-For the objective in §1.1 under Assumptions A–D, the **sample-level** gradient is
+For the objective in §1.1 under Assumptions A–E, the **sample-level** gradient is
 
 $$g_i' \;=\; \nabla_\theta \ell_{\delta_i} \;=\; w(\delta_i,z_i)\,\rho'\!\big(|e_{\delta_i}|\big)\,\frac{J_{\delta_i}^{\top} e_{\delta_i}}{|e_{\delta_i}|} \;=\; C(z_i)\,\delta_i^{\kappa} \;+\; R_{\delta_i},$$
 
-with $\frac{|R_{\delta_i}|}{|g_i'|} = O(\delta_i)$ and
+with
+
+$$\frac{\|R_{\delta_i}\|}{\|g_i'\|} = O(\delta_i)$$
+
+on the non-degenerate local support, and
 
 $$\boxed{\;\kappa \;=\; \nu(p-1) \;-\; \alpha.\;}$$
 
-The remainder bound is justified (not hand-waved) when $\rho$ is **exactly**
-homogeneous of degree $p$: the $O(\delta)$ comes from (i) the Taylor remainder in
-$e_\delta$ and (ii) the Jacobian drift $J_\delta-J_0=O(\delta)$. For L1 ($\rho(r)=r$,
-$p=1$) $\rho$ is exactly homogeneous, so the bound holds.
+The exponent $\kappa$ is fixed by the leading terms under Assumptions A and E;
+the displayed gradient relation remains asymptotic because the residual path and
+Jacobian contribute remainders. When $\rho$ is **exactly** homogeneous of degree $p$
+and the weighting is exact power-law, the relative $O(\delta)$ remainder follows from
+(i) the Taylor remainder in $e_\delta$ and (ii) the Jacobian drift
+$J_\delta-J_0=O(\delta)$. For the degree-1 Euclidean norm used by ECT
+($\rho(r)=r$, $p=1$), $\rho$ is exactly homogeneous, so this local bound applies.
 
 **Sample-level prediction:** for two gaps $\delta_1, \delta_g$ on the **same** sample,
 
@@ -110,9 +129,11 @@ using the **realized** gap ratio (§1.3; $=g^\kappa$ only when unclipped).
 
 ### Corollary 1 (homogeneous losses)
 If $\rho$ is exactly degree-$p$ homogeneous and $w(\delta)\propto\delta^{-\alpha}$
-exactly, the leading-order scaling is exact; $a_{\rm pred}$ has **no fitted
-coefficient** once $(\nu,p,\alpha)$ are specified. It is "parameter-free" in the
-weak sense (no fit to data); the general exponent still depends on $\nu$.
+exactly, the leading-order term carries the exponent $\kappa$ exactly; the full
+gradient relation $g_i' = C\,\delta^\kappa + R$ remains asymptotic (the remainder
+$R$ and Jacobian drift do not vanish). $a_{\rm pred}$ has **no fitted coefficient**
+once $(\nu,p,\alpha)$ are specified — "parameter-free" only in the weak sense
+(no fit to data); the general exponent still depends on $\nu$.
 
 ---
 
@@ -128,11 +149,11 @@ ECT's Pseudo-Huber $\rho_c(r) = \sqrt{r^2+c^2}-c$ (matching `loss.py`) has two r
 $$\boxed{\;\kappa_{\rm small} = \nu - \alpha, \qquad \kappa_{\rm large} = -\alpha.\;}$$
 
 ### Corollary 2 (ECT special case)
-ECT's gap runs use $c=0$ (pure L1, $p=1$, $\alpha=1$):
+ECT's gap runs use $c=0$ (degree-1 Euclidean norm, $p=1$, $\alpha=1$):
 
 $$\kappa_{\rm ECT} = \nu(1-1) - 1 = -\alpha = \boxed{-1} \;\Rightarrow\; g_\delta \propto \delta^{-1} \propto 1/g.$$
 
-With $c=0$ the small/large distinction collapses (pure L1 everywhere). The $1/g$ law
+With $c=0$ the small/large distinction collapses (degree-1 Euclidean norm everywhere). The $1/g$ law
 is the $p{=}1,\alpha{=}1$ point of the general law. **Crucially, at $p=1$ the exponent
 is independent of $\nu$** — this is a near-zero-parameter special case, but it also
 means the residual-expansion parameter $\nu$ is **not** probed by this configuration.
@@ -141,15 +162,19 @@ means the residual-expansion parameter $\nu$ is **not** probed by this configura
 
 ## 5. Validation status (honest, post-review)
 
-**What is tested.** The raw-gradient sample-level scalar $a^\star_i$ (best-fit
-$a$ for $g_i' \approx a\, g_i$) matches $a_{\rm pred}=g^{-1}=1/1.3=0.769$ to mean
-relative error 0.18% across four checkpoints of **one** $q{=}128$ seed-3 trajectory.
-This is a **retrospective consistency check along one trajectory**, not a multi-seed
-or multi-dataset validation.
+**What is tested.** The aggregate/minibatch-gradient scalar
 
-**What it establishes (weak).** At $p=1$, $\nu$ drops out, so the 0.18% match supports:
-(i) the weight-ratio prediction ($1/g$), and (ii) local directional stability (small
-Jacobian drift). It does **not** constrain $\nu$, $v$, or $J_0$ — the
+$$a_j^\star = \frac{\langle G_j^g,G_j^1\rangle}{\|G_j^1\|^2}$$
+
+matches $a_{\rm pred}=g^{-1}=1/1.3=0.769$ to mean relative error 0.18% across
+four checkpoints of **one** $q{=}128$ seed-3 trajectory. This is a **retrospective
+consistency check along one trajectory**, not a sample-level measurement, multi-seed
+validation, or multi-dataset validation. A sample-level $a_i^\star$ would require a
+separate measurement and is outside this theory note.
+
+**What it establishes (weak).** At $p=1$, $\nu$ drops out, so the 0.18% aggregate
+match supports (i) the weight-ratio prediction ($1/g$) and (ii) consistency with local
+aggregate gradient geometry. It does **not** constrain $\nu$, $v$, or $J_0$ — the
 residual-expansion machinery (Assumption A) is idle at $p=1$.
 
 **Stage-invariance is a schedule-construction fact.** global_sigmoid makes the
@@ -240,15 +265,18 @@ magnitude, $h$=target-geometry direction). Then
 
 $$\boxed{\; G_{\rm int} \;=\; G_B - G_C - G_D + G_A \;=\; (s_g - s_1)(h_g - h_1) \;+\; (\varepsilon_B - \varepsilon_C - \varepsilon_D + \varepsilon_A). \;}$$
 
-$G_{\rm int}$ is a **factorization-adequacy diagnostic**: small $\Rightarrow$
-approximate separability holds; large $\Rightarrow$ target and denominator are
-strongly coupled. It is **not** asserted to be small a priori — its magnitude is
-the empirical question.
+$G_{\rm int}$ is a **factorization-adequacy diagnostic**: a large value challenges a
+simple weak-coupling factorization $g(r,\Delta)\approx s(\Delta)h(r)$; a small value is
+**consistent with**, but does not prove, approximate separability (even under exact
+factorization, $G_{\rm int}=(s_g-s_1)(h_g-h_1)$ need not vanish). It is **not** asserted
+to be small a priori — its magnitude is the empirical question.
 
-**Prediction:** denominator-only move A→D changes only $s(\Delta)$ ⇒ near-pure scalar
-rescaling $\cos(G_D,G_A)\approx 1$. Target-only move A→C changes $h(r)$ ⇒ directional
-residual $\cos(G_C,G_A) < \cos(G_D,G_A)$. The gradient geometry is not symmetric in
-the two factors.
+**Conditional hypotheses (not consequences of Theorem 1).** Under the factorization
+ansatz, the denominator-only move A→D changes only $s(\Delta)$ and should show
+near-pure scalar rescaling, $\cos(G_D,G_A)\approx 1$; the target-only move A→C changes
+$h(r)$ and may show a larger directional residual, $\cos(G_C,G_A)<\cos(G_D,G_A)$. These
+are testable hypotheses for the existing factorial pipeline, not derived predictions;
+the gradient geometry is not symmetric in the two factors.
 
 ---
 
@@ -271,16 +299,16 @@ The theorem is local ($\delta\to 0$, Assumption A); it fails when:
 | # | Prediction | Observable | Expected |
 |---|-----------|-----------|----------|
 | N1 | Pseudo-Huber regime change ($c>0$) | $a^\star$ small vs large residual | different $\kappa$ ($\nu{-}\alpha$ vs $-\alpha$) |
-| N2 | denominator scalarity | $\cos(G_D, G_A)$ | high (near-pure rescale) |
-| N3 | target directional effect | $\cos(G_C, G_A)$ | $< \cos(G_D, G_A)$ |
+| N2 | denominator scalarity | $\cos(G_D, G_A)$ | high (near-pure rescale, conditional on factorization) |
+| N3 | target directional effect | $\cos(G_C, G_A)$ | $< \cos(G_D, G_A)$ (conditional) |
 | N4 | emergent batch scalarity (Heuristic 3) | sample vs batch $\epsilon_{\rm ns}$ | batch < sample (if conditions hold) |
-| N5 | factorization diagnostic | $\|G_{\rm int}\|/\|G_B\|$ | empirical (small⇒separable) |
+| N5 | factorization diagnostic | $\|G_{\rm int}\|/\|G_B\|$ | empirical (small = consistent with separability, not a proof) |
 
 **Weakly supported (do NOT test the $\nu$-content):**
 
 | # | Prediction | Status |
 |---|-----------|--------|
-| W1 | gap scaling $a^\star/a_{\rm pred}\approx 1$ | weakly checked (0.18%, one trajectory; $\nu$ idle at $p=1$) |
+| W1 | aggregate gap scaling $a_j^\star/a_{\rm pred}\approx 1$ | weakly checked (0.18%, one q=128 seed-3 trajectory; $\nu$ idle at $p=1$) |
 | W2 | stage invariance | schedule-construction fact |
 
 The genuinely theory-specific content is in **N1–N5**; W1–W2 are consistency checks
@@ -305,7 +333,11 @@ that would hold under almost any model with the ECT loss schedule. A reviewer sh
 
 ---
 
-## Open / next (not Role C today)
+## Open / next (no new experiment authorized by this note)
 
-- Falsify N1–N5: factorial (Role D/w10800); $c>0$ regime run.
-- Explicit finite-gap remainder bound $|R_\delta|\le C_1\delta^{\kappa+1}$: needs the second-order term; deferred.
+- Empirical validation of N1–N5 is **deferred to the existing Role D / w10800
+  pipeline** (factorial; $c>0$ regime). This theory note authorizes no new
+  full-training experiment and does not re-assign work; the current four-arm run
+  is owned by the existing pipeline.
+- Explicit finite-gap remainder bound $|R_\delta|\le C_1\delta^{\kappa+1}$: needs the
+  second-order term; deferred.
