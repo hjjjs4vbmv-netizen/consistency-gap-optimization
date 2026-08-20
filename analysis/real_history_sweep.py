@@ -12,16 +12,15 @@ Outputs the inputs for moment_memory_prediction.py:
   - u1.npy / ug.npy      final-step updates
 plus a JSON with per-step deltas and the actual h^update series.
 
-This is the real-data analogue of the #47 self-check: it measures whether the
-#45 moment-memory chain predicts the real optimizer distortion from the real
-δ_j history.
+This is the real-data analogue of the #47 self-check. In the cross-seed
+optimizer-geometry operation it is appendix/supporting evidence, not a
+headline predictor analysis.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import pickle
 from pathlib import Path
 
 import numpy as np
@@ -37,7 +36,7 @@ from training.schedules import get_schedule
 from training.dataset import ImageFolderDataset
 from torch.utils.data import DataLoader
 
-from analysis.radam_stateful_update_audit import load_training_state
+from analysis.radam_stateful_update_audit import load_loss_from_checkpoint, load_training_state
 from analysis import radam_update_gauge as gauge
 
 
@@ -91,12 +90,11 @@ def main(argv=None):
     source_params_before = gauge.module_state_hashes(net)
     source_optimizer_before = gauge.state_sha256(optimizer.state_dict())
 
-    # loss_fn from the checkpoint (q/k/b/stage) — for schedule construction
-    with open(a.checkpoint, "rb") as f:
-        payload = pickle.load(f)
-    loss_fn = payload["loss_fn"]
+    # Reuse the canonical audit's NumPy-2-compatible trusted-checkpoint
+    # loader rather than carrying a second pickle implementation here.
+    loss_fn = load_loss_from_checkpoint(a.checkpoint)
     q, k, b = float(loss_fn.q), float(loss_fn.k), float(loss_fn.b)
-    loss_template = payload["loss_fn"]  # provides c, stage
+    loss_template = loss_fn  # provides c, stage
     print(f"checkpoint loss: q={q} k={k} b={b} c={loss_template.c} schedule={loss_template.schedule.name}")
 
     sched_ref = get_schedule("global_sigmoid", q=q, k=k, b=b, global_gap_scale=1.0)

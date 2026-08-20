@@ -2,7 +2,7 @@
   "schema_version": 1,
   "manifest_kind": "cross-seed-optimizer-geometry-runtime-binding",
   "protocol": "cross-seed-gap-induced-optimizer-divergence-v1",
-  "description": "Runtime-only binding for K=256 cross-seed mechanism replication. Fill every REQUIRED value in a copy stored outside Git; this example is intentionally not executable.",
+  "description": "Runtime-only binding for the K=256 cross-seed optimizer-geometry supporting analysis. Fill every REQUIRED value in a copy stored outside Git; this example is intentionally not executable.",
   "canonical": {
     "budget_kimg": 256,
     "arm": {
@@ -22,6 +22,7 @@
       "state_contract": "Restore theta, RAdam m/v/step, and GradScaler; share minibatch, t, noise, and dropout RNG; do not commit either virtual step."
     },
     "layer_b": {
+      "evidence_class": "appendix_supporting_evidence",
       "reference_gain": 1.0,
       "candidate_gain": 1.3,
       "batch_size": 128,
@@ -29,7 +30,7 @@
       "n_steps": 20,
       "eval_step": 19,
       "probe_rng_seed": 20260809,
-      "protocol_source": "Canonical #47/#58 prospective scalar-history replay with full per-step update histories."
+      "protocol_source": "Canonical #47/#58 prospective scalar-history replay with full per-step update histories; report only as appendix/supporting evidence."
     }
   },
   "dataset": {

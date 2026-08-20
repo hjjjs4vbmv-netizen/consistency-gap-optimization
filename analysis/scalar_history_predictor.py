@@ -1,8 +1,9 @@
 """Scalar-History Predictor: how much of the real optimizer residual is
 explained by a scalar gradient-scale history through RAdam moment memory?
 
-This is the SCIENTIFIC mechanism test (vs the coordinate-wise algebraic sanity check, which is
-only an algebra/implementation sanity check).
+This is appendix/supporting evidence for the optimizer-geometry analysis. It
+does not support a headline cross-seed predictor claim, because explanatory
+power can differ materially by training trajectory.
 
 Protocol (per step j, from the stored paired gradient history):
   1. global scalar  a_j* = <G_j^1.3, G_j^1.0> / ||G_j^1.0||^2   (ONE scalar)
@@ -39,7 +40,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from analysis.pickle_compat import NUMPY2_COMPAT_PICKLE_MODULE
+# Reuse #65's canonical compatibility path. This predictor is supporting
+# evidence only, so it must not grow a second checkpoint-unpickling layer.
+from analysis.radam_stateful_update_audit import _NumpyCompatPickleModule
 
 BETA1, BETA2 = 0.9, 0.999
 
@@ -172,7 +175,7 @@ def load_training_state_payload(path: Path) -> dict:
     return torch.load(
         path,
         map_location="cpu",
-        pickle_module=NUMPY2_COMPAT_PICKLE_MODULE,
+        pickle_module=_NumpyCompatPickleModule,
         weights_only=False,
     )
 
@@ -300,7 +303,7 @@ def main(argv=None):
     np.save(a.out.parent / "h_actual.npy", h_act[eff])
     np.save(a.out.parent / "weights.npy", w[eff])
 
-    print("=== Scalar-History Predictor (mechanism test) ===")
+    print("=== Scalar-History Predictor (appendix supporting evidence) ===")
     print(f"steps={T}, eval t={t}, effective coords={eff.sum()}")
     print(f"a_j*: mean={result['a_star_mean']:.4f}, std={result['a_star_std']:.4f}")
     print(f"ĥ^scalar mean={result['h_pred_scalar_mean']:.4f}, h^actual mean={result['h_actual_mean']:.4f}")

@@ -7,8 +7,8 @@ training seed:
 * Layer A is a same-state, one-step virtual fork.  It delegates to
   ``analysis/radam_stateful_update_audit.py`` and restores the complete RAdam
   state plus GradScaler before comparing g=1.0 with g=1.3.
-* Layer B is the canonical #47/#58 20-step prospective scalar-history replay.
-  It first creates the paired raw history, then runs
+* Layer B is an **appendix/supporting-evidence** #47/#58 20-step prospective
+  scalar-history replay. It first creates the paired raw history, then runs
   ``analysis/scalar_history_predictor.py`` at the same endpoint (step 19).
 
 ``seed3`` is an already-existing, immutable reference artifact.  Only seed4
@@ -30,6 +30,8 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+
+from analysis import radam_stateful_schema_compat as schema_compat
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -97,6 +99,15 @@ def require_number(value: Any, label: str) -> float:
     return float(value)
 
 
+def receipt_metric(whole: dict[str, Any], name: str, *, label: str) -> float:
+    """Read #65 generic or legacy whole-model metrics without silent drift."""
+    try:
+        value = schema_compat.metric(whole, name)
+    except (KeyError, ValueError) as exc:
+        fail(f"{label}.whole_model.{name}: {exc}")
+    return require_number(value, f"{label}.whole_model.{name}")
+
+
 def require_mapping(value: Any, label: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         fail(f"{label} must be an object")
@@ -160,6 +171,8 @@ def validate_manifest(manifest: dict[str, Any]) -> dict[int, dict[str, Any]]:
         fail("Layer B must be the canonical 20-step #47/#58 endpoint replay")
     if layer_b.get("lr") != 1e-4:
         fail("Layer B must use the canonical RAdam lr=1e-4")
+    if layer_b.get("evidence_class") != "appendix_supporting_evidence":
+        fail("Layer B must be classified as appendix_supporting_evidence")
 
     dataset = require_mapping(manifest.get("dataset"), "dataset")
     reject_latest_alias(dataset.get("path"), "dataset.path")
@@ -264,8 +277,12 @@ def read_existing_seed3(row: dict[str, Any], canonical: dict[str, Any]) -> dict[
 
 
 def verify_layer_a_receipt(receipt: dict[str, Any], canonical: dict[str, Any], *, label: str) -> None:
-    if receipt.get("gains") != [1.0, 1.3]:
+    legacy_gains = receipt.get("gains")
+    generic_gains = (receipt.get("reference_gap_scale"), receipt.get("probe_gap_scale"))
+    if legacy_gains not in (None, [1.0, 1.3]) or generic_gains not in ((None, None), (1.0, 1.3)):
         fail(f"{label} gains are not [1.0, 1.3]")
+    if legacy_gains is None and generic_gains == (None, None):
+        fail(f"{label} does not record its reference/probe gains")
     random_contract = require_mapping(receipt.get("randomness_contract"), f"{label}.randomness_contract")
     for key in ("same_minibatch", "same_t", "same_noise", "same_dropout_rng_state"):
         if random_contract.get(key) is not True:
@@ -281,7 +298,7 @@ def verify_layer_a_receipt(receipt: dict[str, Any], canonical: dict[str, Any], *
         fail(f"{label} has an undefined optimizer gauge")
     for key in ("a_K_star", "R_grad", "s_K_star", "c_K_star", "R_opt",
                 "on_support_gauge_dispersion_energy"):
-        require_number(whole.get(key), f"{label}.whole_model.{key}")
+        receipt_metric(whole, key, label=label)
     stateful = require_mapping(receipt.get("stateful_radam"), f"{label}.stateful_radam")
     if stateful.get("gradscaler_restored") is not True or stateful.get("moments_nontrivial") is not True:
         fail(f"{label} did not restore non-trivial moments and GradScaler")
@@ -417,6 +434,8 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
             "--state-kimg", "256", "--batch-size", str(layer_a["batch_size"]),
             "--batch-gpu", str(layer_a["batch_gpu"]), "--seed", str(layer_a["probe_rng_seed"]),
             "--support-atol", str(layer_a["support_atol"]), "--lr", str(layer_a["lr"]), "--amp",
+            "--reference-gap-scale", str(layer_a["reference_gain"]),
+            "--probe-gap-scale", str(layer_a["candidate_gain"]),
             "--device", device, "--out", str(layer_a_dir),
         ], label=f"seed{seed} Layer A same-state virtual fork")
     layer_a_payload = load_json(layer_a_receipt, f"seed{seed} Layer A receipt")
@@ -451,7 +470,7 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
             "--batch-size", str(layer_b["batch_size"]), "--n-steps", str(layer_b["n_steps"]),
             "--seed", str(layer_b["probe_rng_seed"]), "--g-candidate", str(layer_b["candidate_gain"]),
             "--lr", str(layer_b["lr"]), "--device", device, "--out", str(layer_b_raw),
-        ], label=f"seed{seed} Layer B paired raw-history fork")
+        ], label=f"seed{seed} Appendix Layer B paired raw-history fork")
     scalar_receipt = layer_b_dir / "scalar_history_prediction.json"
     scalar_reused = scalar_receipt.exists()
     if scalar_reused:
@@ -472,7 +491,7 @@ def execute_new_seed(row: dict[str, Any], canonical: dict[str, Any], dataset: di
             "--eval-step", str(layer_b["eval_step"]), "--lr", str(layer_b["lr"]),
             "--seed", str(layer_b["probe_rng_seed"]),
             "--out", str(scalar_receipt),
-        ], label=f"seed{seed} Layer B scalar-history predictor")
+        ], label=f"seed{seed} Appendix Layer B scalar-history predictor")
     scalar_payload = load_json(scalar_receipt, f"seed{seed} Layer B receipt")
     verify_layer_b_receipt(scalar_payload, canonical, label=f"seed{seed} Layer B")
     if scalar_payload.get("source_state_sha256") != row["training_state"]["sha256"]:

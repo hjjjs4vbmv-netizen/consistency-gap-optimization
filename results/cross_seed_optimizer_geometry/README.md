@@ -1,11 +1,13 @@
-# Cross-seed optimizer geometry operation
+# Cross-seed optimizer geometry supporting analysis
 
 This directory isolates the operational contract for the 256k same-state
 paired audit across Arm A seeds 3, 4, and 5. It does **not** store
 checkpoints, training states, raw tensor arrays, or logs in Git. It does store
 the small, hash-verified receipts needed to inspect the reported result.
 
-Proposed PR title: `analysis: cross-seed replication of gap-induced optimizer divergence`.
+This is supporting evidence for the q256 optimizer-geometry program; it is not
+a same-configuration three-seed replication and must not merge ahead of the
+canonical q256 audit mainline.
 
 ## Checked-in receipt bundle
 
@@ -30,11 +32,13 @@ The operation has two layers for each row:
   `(theta, m, v, step, GradScaler)` and compare `g=1.0` with `g=1.3` on the
   identical minibatch, `t`, noise, and dropout RNG state. It reports `a*`,
   `R_grad`, `R_opt`, `c*`, `s*`, and support-aware `h_i` diagnostics.
-- **Layer B — canonical 20-step scalar-history replay.** Run the #47/#58
+- **Appendix Layer B — canonical 20-step scalar-history replay.** Run the #47/#58
   paired prospective fork from the exact Arm-A state, persist the raw paired
   gradient/update histories, then evaluate the scalar-history predictor at
   step 19 at the frozen RAdam learning rate `1e-4`. It reports weighted R²,
-  Corr, and weighted RMSE.
+  Corr, and weighted RMSE as supporting evidence only. The seed4/seed5
+  explanatory values are heterogeneous, so this layer must not support a
+  headline predictor claim.
 
 Seed 3 is an existing, hash-bound K=256 reference artifact. Seeds 4 and 5 are
 new measurements on two independent training trajectories; a repeated batch

@@ -54,6 +54,41 @@ class CrossSeedOptimizerGeometryTests(unittest.TestCase):
         self.assertEqual(rows[3]["row_kind"], "existing_artifact")
         self.assertEqual(rows[4]["row_kind"], "new_independent_training_trajectory")
         self.assertEqual(rows[5]["row_kind"], "new_independent_training_trajectory")
+        self.assertEqual(
+            payload["canonical"]["layer_b"]["evidence_class"],
+            "appendix_supporting_evidence",
+        )
+
+    def test_layer_a_accepts_the_generic_schema_maintained_by_pr65(self):
+        canonical = self.executable_logical_manifest()["canonical"]
+        receipt = {
+            "reference_gap_scale": 1.0,
+            "probe_gap_scale": 1.3,
+            "randomness_contract": {
+                "same_minibatch": True,
+                "same_t": True,
+                "same_noise": True,
+                "same_dropout_rng_state": True,
+            },
+            "source_state_non_committing": {"preserved": True},
+            "branches": [{"step_skipped": False}, {"step_skipped": False}],
+            "whole_model": {
+                "gauge_defined": True,
+                "a_star": 0.8,
+                "R_grad": 0.2,
+                "s_star": 0.9,
+                "c_star": 1.1,
+                "R_opt": 0.1,
+                "on_support_gauge_dispersion_energy": 0.01,
+            },
+            "stateful_radam": {
+                "gradscaler_restored": True,
+                "moments_nontrivial": True,
+                "support_atol": 0.0,
+            },
+            "provenance": {"training_state_meta": {"cur_nimg": 256000}},
+        }
+        RUNNER.verify_layer_a_receipt(receipt, canonical, label="generic receipt")
 
     def test_seed3_existing_anchor_is_hash_bound_and_protocol_complete(self):
         payload = self.executable_logical_manifest()
@@ -144,8 +179,8 @@ class CrossSeedOptimizerGeometryTests(unittest.TestCase):
                 layer_a_path.parent.mkdir()
                 layer_a = {
                     "whole_model": {
-                        "gauge_defined": True, "a_K_star": 0.75, "R_grad": 0.04,
-                        "s_K_star": 0.95, "c_K_star": 1.05, "R_opt": 0.08,
+                        "gauge_defined": True, "a_star": 0.75, "R_grad": 0.04,
+                        "s_star": 0.95, "c_star": 1.05, "R_opt": 0.08,
                         "on_support_gauge_dispersion_energy": 0.0063,
                         "off_support_candidate_energy_exact": 0.0001, "H_K": 0.08,
                     }
@@ -179,6 +214,7 @@ class CrossSeedOptimizerGeometryTests(unittest.TestCase):
             markdown = (out / "OPTIMIZER_GEOMETRY_TABLE.md").read_text(encoding="utf-8")
             self.assertIn("all schedules equal: `False`", markdown)
             self.assertIn("not a repeated-minibatch estimate", markdown)
+            self.assertIn("Appendix: scalar-history supporting evidence", markdown)
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Summarize a completed cross-seed optimizer-geometry operation.
 
-The summary is intentionally descriptive.  It reports the raw-gradient and
-optimizer-update residuals, the support-aware h_i dispersion, and Layer B's
-prospective scalar-history explanatory metrics without turning any of them
-into a causal claim about endpoint quality.
+The summary is intentionally descriptive. It reports raw-gradient and
+optimizer-update residuals plus support-aware h_i dispersion as the main
+readout. Layer B's prospective scalar-history metrics are emitted separately
+as appendix/supporting evidence, never as a headline predictor claim.
 """
 from __future__ import annotations
 
@@ -15,6 +15,8 @@ import json
 import math
 from pathlib import Path
 from typing import Any
+
+from analysis import radam_stateful_schema_compat as schema_compat
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -47,6 +49,15 @@ def finite(value: Any, label: str) -> float:
     if not isinstance(value, (float, int)) or isinstance(value, bool) or not math.isfinite(float(value)):
         fail(f"{label} must be finite")
     return float(value)
+
+
+def whole_metric(whole: dict[str, Any], name: str, *, seed: int) -> float:
+    """Read #65 generic or legacy whole-model names and fail closed on drift."""
+    try:
+        value = schema_compat.metric(whole, name)
+    except (KeyError, ValueError) as exc:
+        fail(f"seed{seed}.{name}: {exc}")
+    return finite(value, f"seed{seed}.{name}")
 
 
 def resolve_receipt(root: Path, record: dict[str, Any], label: str) -> Path:
@@ -92,10 +103,10 @@ def receipt_row(root: Path, seed_result: dict[str, Any]) -> dict[str, Any]:
         "training_trajectory_id": seed_result.get("training_trajectory_id"),
         "state_kimg": seed_result.get("state_kimg"),
         "schedule_q": seed_result.get("schedule_q"),
-        "a_K_star": finite(whole.get("a_K_star"), f"seed{seed}.a_K_star"),
+        "a_star": whole_metric(whole, "a_K_star", seed=seed),
         "R_grad": finite(whole.get("R_grad"), f"seed{seed}.R_grad"),
-        "s_K_star": finite(whole.get("s_K_star"), f"seed{seed}.s_K_star"),
-        "c_K_star": finite(whole.get("c_K_star"), f"seed{seed}.c_K_star"),
+        "s_star": whole_metric(whole, "s_K_star", seed=seed),
+        "c_star": whole_metric(whole, "c_K_star", seed=seed),
         "R_opt": finite(whole.get("R_opt"), f"seed{seed}.R_opt"),
         "h_i_dispersion_on_support": math.sqrt(on_support_energy),
         "h_i_off_support_candidate_energy": finite(whole.get("off_support_candidate_energy_exact"),
@@ -120,22 +131,36 @@ def write_json(path: Path, value: dict[str, Any]) -> None:
 
 def render_markdown(rows: list[dict[str, Any]], accounting: dict[str, Any]) -> str:
     lines = [
-        "# Cross-seed replication of gap-induced optimizer divergence",
+        "# Cross-seed optimizer-geometry supporting evidence",
         "",
         "The table contains one same-state Layer A receipt and one 20-step Layer B receipt per training seed. A row is a training-trajectory observation, not a repeated-minibatch estimate.",
         "",
-        "| seed | row | K | schedule q | a* | R_grad | R_opt | h_i disp. (on support) | scalar-history R² | Corr | wRMSE |",
-        "|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| seed | row | K | schedule q | a* | R_grad | R_opt | h_i disp. (on support) |",
+        "|---:|---|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
         lines.append(
-            "| {seed} | {row_kind} | {state_kimg} | {schedule_q} | {a_K_star:.6f} | "
-            "{R_grad:.6f} | {R_opt:.6f} | {h_i_dispersion_on_support:.6f} | "
-            "{scalar_history_R2:.6f} | {scalar_history_corr:.6f} | {scalar_history_wRMSE:.6f} |".format(**row)
+            "| {seed} | {row_kind} | {state_kimg} | {schedule_q} | {a_star:.6f} | "
+            "{R_grad:.6f} | {R_opt:.6f} | {h_i_dispersion_on_support:.6f} |".format(**row)
         )
     lines.extend([
         "",
         "`h_i` dispersion is the square root of the exact on-support dispersion energy. `H_K` is retained in the CSV as an algebraic identity check (`H_K = R_opt` after off-support energy is included), not as a second mechanism measurement.",
+        "",
+        "## Appendix: scalar-history supporting evidence",
+        "",
+        "These 20-step prospective scalar-history values are supporting evidence only. They are not a cross-seed headline predictor claim because explanatory power is heterogeneous across trajectories.",
+        "",
+        "| seed | scalar-history R² | Corr | wRMSE |",
+        "|---:|---:|---:|---:|",
+    ])
+    for row in rows:
+        lines.append(
+            "| {seed} | {scalar_history_R2:.6f} | {scalar_history_corr:.6f} | "
+            "{scalar_history_wRMSE:.6f} |".format(**row)
+        )
+    lines.extend([
+        "",
         "",
         "## Accounting and claim boundary",
         "",
@@ -144,7 +169,7 @@ def render_markdown(rows: list[dict[str, Any]], accounting: dict[str, Any]) -> s
         f"- Layer A uses shared minibatch/t/noise/dropout **within** each seed; this pairing does not substitute for training-seed replication.",
         f"- schedule q by seed: `{accounting.get('schedule_q_by_seed')}`; all schedules equal: `{accounting.get('all_schedule_q_equal')}`.",
         "",
-        "The historical seed-3 anchor is explicitly retained with its recorded schedule q. If the schedule-q accounting is false, do not pool all three rows as a pure same-configuration seed effect; report the q256 seed4/5 trajectories as independent replications and the seed-3 row as a hash-bound mechanism anchor. In every case, the scalar-history values quantify prospective update-ratio explanatory power, not endpoint-quality causality.",
+        "The historical seed-3 anchor is explicitly retained with its recorded schedule q. If the schedule-q accounting is false, do not pool all three rows as a pure same-configuration seed effect; report the q256 seed4/5 trajectories as independent replications and the seed-3 row as a hash-bound mechanism anchor. The appendix scalar-history values quantify prospective update-ratio explanatory power, not endpoint-quality causality.",
         "",
     ])
     return "\n".join(lines)
