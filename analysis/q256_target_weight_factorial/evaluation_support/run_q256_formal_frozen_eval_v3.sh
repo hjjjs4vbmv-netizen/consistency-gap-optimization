@@ -18,7 +18,7 @@ umask 027
 [[ -f "${adapter}" ]] || { echo 'missing evaluation repair adapter' >&2; exit 2; }
 [[ "$(cd "${repo}" && git symbolic-ref --quiet --short HEAD)" == 'experiment/q256-target-weight-factorial' ]] || { echo 'wrong evaluator branch' >&2; exit 2; }
 [[ -z "$(cd "${repo}" && git status --porcelain --untracked-files=all)" ]] || { echo 'evaluator source is dirty' >&2; exit 2; }
-git -C "${repo}" merge-base --is-ancestor "${training_head}" HEAD || { echo 'evaluator repair is not based on frozen training commit' >&2; exit 2; }
+(cd "${repo}" && git merge-base --is-ancestor "${training_head}" HEAD) || { echo 'evaluator repair is not based on frozen training commit' >&2; exit 2; }
 [[ -d "${matrix_dir}" ]] || { echo 'missing immutable v2 matrix binding' >&2; exit 2; }
 [[ -d "${private_shm}" && ! -L "${private_shm}" && "$(stat -c '%U:%a' "${private_shm}")" == 'ECT001:700' ]] || { echo 'invalid private shared-memory directory' >&2; exit 2; }
 [[ ! -e "${outdir}" ]] || { echo 'refusing an existing v3 evaluation root' >&2; exit 3; }
@@ -26,7 +26,7 @@ gpu_processes=$(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,nohead
 [[ "${gpu_processes}" == 0 ]] || { echo 'formal GPU0 is not compute-idle' >&2; exit 2; }
 
 exec >>"${log}" 2>&1
-echo "[formal-evaluation-v3] START utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) gpu=${gpu_uuid} evaluator_head=$(git -C "${repo}" rev-parse HEAD) training_head=${training_head}"
+echo "[formal-evaluation-v3] START utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) gpu=${gpu_uuid} evaluator_head=$(cd "${repo}" && git rev-parse HEAD) training_head=${training_head}"
 
 CUDA_VISIBLE_DEVICES="${gpu_uuid}" /usr/bin/apptainer exec --nv \
   --bind /data/raw:/data/raw --bind /data/temp:/data/temp \
