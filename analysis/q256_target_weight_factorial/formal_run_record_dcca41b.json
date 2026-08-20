@@ -1,7 +1,7 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T14:40:50Z",
+  "updated_utc": "2026-08-20T15:34:56Z",
   "experiment_id": "q256-target-weight-factorial",
   "status_at_snapshot": "RUNNING_POST_RECOVERY",
   "training_source": {
@@ -596,6 +596,43 @@
         "gpu0_private_shm_used_kib": 44,
         "data_raw_available_tib": 33,
         "data_temp_available_tib": 5.0
+      }
+    },
+    "seed5_B_completion": {
+      "observed_local": "2026-08-20T23:34:56+08:00",
+      "status": "TEN_OF_TWELVE_COMPLETE",
+      "cell": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1990,
+        "processed_nimg": 256000,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 13, 1163],
+        "semantic_nonfinite_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "worker_pass_line_present": true,
+        "artifact_sha256": {
+          "training_state": "ce30ab23fdd93d2e11ffd58e08233d14b9d7ddff7ba59358eb5f1585f7eb244c",
+          "network_snapshot": "c8f764202e2407303c79e4107c71fe4babe0ae97b049638fd47bb35524f09ef8",
+          "telemetry": "69d5a8724f592bd79f3ad63b9ced6fbed82158e06be8e4733189e24136f6e760",
+          "initial_state_receipt": "075488c0805a4c7e7d38b3f81ed838cfa69270cb13b8f8f008070366ca0a8de1",
+          "final_image": "b38e787e2fd248d7f16c8500e48d80680252a369a217415ff242f87026bf487b"
+        }
+      },
+      "next_cell_started": {
+        "cell": "seed5/C",
+        "pid": 1654,
+        "observed_attempt": 94,
+        "observed_accepted_updates": 84,
+        "observed_kimg": 12.032,
+        "gpu": 0
+      },
+      "health": {
+        "recovery_log_errors": 0,
+        "gpu0_utilization_percent": 35,
+        "gpu1_utilization_percent": 0,
+        "gpu0_memory_mib": 3549,
+        "gpu1_memory_mib": 4
       }
     },
     "tmux": {

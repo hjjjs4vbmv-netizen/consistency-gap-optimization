@@ -1,0 +1,159 @@
+{
+  "schema": "ect.q256.target-weight-factorial-interim-training-summary/v1",
+  "generated_utc": "2026-08-20T15:34:55Z",
+  "verification_status": "ANALYZED",
+  "training_source_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "formal_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1",
+  "scope": {
+    "completed_seeds": [3, 4],
+    "independent_seed_count": 2,
+    "completed_cells": 8,
+    "planned_cells": 12,
+    "formal_metrics_available": false,
+    "matrix_complete": false
+  },
+  "arm_definitions": {
+    "A": {"target_gap_scale": 1.0, "denominator_gap_scale": 1.0, "label": "native_baseline"},
+    "B": {"target_gap_scale": 1.1, "denominator_gap_scale": 1.1, "label": "native_g110"},
+    "C": {"target_gap_scale": 1.1, "denominator_gap_scale": 1.0, "label": "target_geometry_only"},
+    "D": {"target_gap_scale": 1.0, "denominator_gap_scale": 1.1, "label": "loss_weighting_only"}
+  },
+  "cells": {
+    "seed3/A": {
+      "attempts": 2000, "accepted_updates": 1990, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,12,1317],
+      "final_loss": 16.88090193, "last200_loss_mean": 16.2441282832,
+      "last200_loss_sd": 1.1089281230, "last500_loss_mean": 16.3025903132,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "d6ad0687c642b03c009557f4128c15538c6579b0fc2abfae0e06b2ea0ca8d06c",
+        "telemetry": "6b3fec1e04cb54d37bc6cdadd8a2cfdc92074b1082a4dcef6dddcd7e4ee7ab04",
+        "training_options": "f19bef299530eb5835af77fc52eec80f1c9c1f0248cd9905c30270c4ca771b94",
+        "final_image": "780133af6eaad6b48f4a12d818d85f029ba7c5bb7345a73d87a3c3e0fc43e5c5"
+      }
+    },
+    "seed3/B": {
+      "attempts": 2000, "accepted_updates": 1990, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,11,1326],
+      "final_loss": 16.52927291, "last200_loss_mean": 16.2131966655,
+      "last200_loss_sd": 1.0917133098, "last500_loss_mean": 16.2729611305,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "8061102d6a193e0dadf59602793ccad86b6fd9e4cf49f79691dcb3100093066c",
+        "telemetry": "f27fbc3d0cdf648ad10118a42fba73ef70713c57dc3e39155ff10b34afe5bb70",
+        "training_options": "29daf7926e2ce3943b86de63ba1b6e0ac60fb6a7f822d6f7a469c26398a22714",
+        "final_image": "828fd46f7e52dc48fcab650a5d71e9f8beddef0e1f3aefa0a249c84bb46a5be9"
+      }
+    },
+    "seed3/C": {
+      "attempts": 2000, "accepted_updates": 1990, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,11,1418],
+      "final_loss": 18.29579282, "last200_loss_mean": 17.7548944740,
+      "last200_loss_sd": 1.2112421483, "last500_loss_mean": 17.8244017607,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "fcfe0ff93eb34485c3cb1efd0f3a4bed6d0c54bb8b4fbba3b22e0df842875f48",
+        "telemetry": "5404857483ef2cb2842dd1735fa17a8f5162d15c51c2a5571a1e816d224956f5",
+        "training_options": "084ededddd842b01d39362084f268dc4c020c4a71d6a013ddb3035244cce1f4f",
+        "final_image": "ab347e55e526f42206676b4bcb093b26bf5ec5652af1c1ae6620fd61fbf61741"
+      }
+    },
+    "seed3/D": {
+      "attempts": 2000, "accepted_updates": 1990, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,12,1317],
+      "final_loss": 15.36517978, "last200_loss_mean": 14.8094925806,
+      "last200_loss_sd": 1.0193503847, "last500_loss_mean": 14.8675079971,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "49c917d3906878aedec29d3dfffb5fec04269082b60b433b6b9ba6c78deff1b1",
+        "telemetry": "e9e4a6b17415f99926a9dde1a233ffcf287080d2ee7a9bcf2b3a9d5fb660c843",
+        "training_options": "5258b0053856139bee97c35ec18d5248e342674edc92557e973d326b7e54ec87",
+        "final_image": "996673937462c190875329416e91db4c74b3d2f038ceddcec7f703fc5c35872f"
+      }
+    },
+    "seed4/A": {
+      "attempts": 2000, "accepted_updates": 1990, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,11,956],
+      "final_loss": 16.65566444, "last200_loss_mean": 16.5774869881,
+      "last200_loss_sd": 1.1219111774, "last500_loss_mean": 16.5522682499,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "85a194e2c2a8887af2e0f87a1362d637e2861487d7f20b5c6290eb91b86a2817",
+        "telemetry": "804b5365123202f3c9727b0cd6939333b6e3123a1c32f2a1e7af5e00aaf0fded",
+        "training_options": "2aabf72a6ae10a1f1f962be2f9db3c09a2e8440085f53f9070e5e297fa384463",
+        "final_image": "3355c85311c026f6b0e56a4ce1c912be9c684ffc47f25dde217cb59668ecc5a0"
+      }
+    },
+    "seed4/B": {
+      "attempts": 2000, "accepted_updates": 1991, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,10],
+      "final_loss": 16.68918335, "last200_loss_mean": 16.4438691110,
+      "last200_loss_sd": 1.0801176920, "last500_loss_mean": 16.4335947380,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "a18bdb8adb974748cc52d4537a8338d7c199c2c875238bd761953988c617e477",
+        "telemetry": "c4384b20e6ac401f049bf8e98033c674211b2c7c67f67c962668dc39aab7b472",
+        "training_options": "5cb9249293a93b934133149ac56e72dc01605b5b3daccf03ddb87068a73cad2f",
+        "final_image": "a405136cb6f72f6f920f34a5c10ed8f3651f00afb982e44bc538af7f66d3d69a"
+      }
+    },
+    "seed4/C": {
+      "attempts": 2000, "accepted_updates": 1990, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,11,956],
+      "final_loss": 18.29391026, "last200_loss_mean": 18.0838523938,
+      "last200_loss_sd": 1.2283880356, "last500_loss_mean": 18.0646774131,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "67b009e37deb5194b9099ad803960ce7bc765d435a7e1a0fe459b270df44b475",
+        "telemetry": "a7b9b5bec1da751d03c63763878e35812fb2c18d879fad38ac2299b165c1a9d2",
+        "training_options": "25d153f137824e3aae15a83ddb596fa478b486922ddf5c965d9bb4a05f7c3ec6",
+        "final_image": "f00a2b773c95c7251d7bd6993ef5e4320dae565e822bd96f684fc46170172b95"
+      }
+    },
+    "seed4/D": {
+      "attempts": 2000, "accepted_updates": 1990, "processed_kimg": 256.0,
+      "amp_skip_attempts": [1,2,3,4,5,6,7,8,10,979],
+      "final_loss": 15.27564740, "last200_loss_mean": 15.0310700719,
+      "last200_loss_sd": 1.0146441629, "last500_loss_mean": 15.0235144363,
+      "semantic_nonfinite_count": 0, "raw_grad_skip_mismatch_count": 0,
+      "nonpositive_denominator_count": 0,
+      "artifact_sha256": {
+        "train_summary": "fffaaea653f3fb865823afd95df98f35e305ff54367a6bb377ab6c0e3fb59d37",
+        "telemetry": "66ade0a6e3bdea32f3c0e77b68371ed5eb1a975e6b35834870a19a47afa1a8ce",
+        "training_options": "06e730b58dbd87fb80b88d11088a6c7c60749c179bae17f45d7023d6c9be8266",
+        "final_image": "03ad95933a32b8a707f5532561e770d4dfc2cb397469d65be7e42699325e188e"
+      }
+    }
+  },
+  "last200_loss_aggregate": {
+    "A": {"mean": 16.4108076357, "range": [16.2441282832, 16.5774869881]},
+    "B": {"mean": 16.3285328882, "range": [16.2131966655, 16.4438691110]},
+    "C": {"mean": 17.9193734339, "range": [17.7548944740, 18.0838523938]},
+    "D": {"mean": 14.9202813262, "range": [14.8094925806, 15.0310700719]}
+  },
+  "same_denominator_loss_differences": {
+    "seed3": {"C_minus_A": 1.5107661908, "B_minus_D": 1.4037040849},
+    "seed4": {"C_minus_A": 1.5063654057, "B_minus_D": 1.4127990391}
+  },
+  "telemetry_identity_checks": {
+    "A_vs_D_same_target": {"seed3": true, "seed4": true},
+    "B_vs_C_same_target": {"seed3": true, "seed4": true},
+    "A_vs_C_same_denominator": {"seed3": true, "seed4": true},
+    "B_vs_D_same_denominator": {"seed3": true, "seed4": true}
+  },
+  "interpretation": {
+    "overall_confidence": "CAUTION",
+    "training_integrity": "PASS_FOR_ALL_EIGHT_COMPLETED_CELLS",
+    "loss_scope": "optimization diagnostic only; not a common external quality scale",
+    "fixed_grid_scope": "exploratory only; seed3 and seed4 do not establish a stable visual factorial mechanism",
+    "formal_quality_verdict": "CANNOT_VERIFY_UNTIL_SEED5_AND_FROZEN_EVALUATION_COMPLETE",
+    "fallacy_scan_coverage": "11/11"
+  }
+}
