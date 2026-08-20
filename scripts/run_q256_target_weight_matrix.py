@@ -3258,10 +3258,13 @@ def stream_process(
                 sys.stdout.buffer.write(chunk)
                 sys.stdout.buffer.flush()
             returncode = process.wait()
-            if process_group_exists(process.pid):
+            remaining_groups = wait_for_process_groups_gone(
+                [process.pid], timeout_seconds=2.0
+            )
+            if remaining_groups:
                 raise ProcessCleanupError(
                     "stream root exited while its launcher-owned process group "
-                    "still exists"
+                    f"still exists after teardown grace: {remaining_groups}"
                 )
         except ProcessCleanupError:
             raise

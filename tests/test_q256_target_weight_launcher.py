@@ -1313,13 +1313,13 @@ class TargetWeightLauncherTest(unittest.TestCase):
         self.assertEqual(record["status"], "STOPPED_FOR_AUDIT")
 
     @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux process groups")
-    def test_stream_rejects_success_when_same_group_child_remains(self):
+    def test_stream_rejects_success_when_same_group_child_outlives_grace(self):
         child_code = (
             "import os,signal,time\n"
             "pid=os.fork()\n"
             "if pid==0:\n"
             " os.close(1); os.close(2); signal.signal(signal.SIGTERM,signal.SIG_IGN); "
-            "time.sleep(0.4); os._exit(0)\n"
+            "time.sleep(2.4); os._exit(0)\n"
             "os._exit(0)\n"
         )
         with tempfile.TemporaryDirectory() as tmp:
@@ -1333,6 +1333,24 @@ class TargetWeightLauncherTest(unittest.TestCase):
                     log_path=Path(tmp) / "same-group-child.log",
                 )
             time.sleep(0.5)
+
+    @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux process groups")
+    def test_stream_allows_short_same_group_teardown_within_grace(self):
+        child_code = (
+            "import os,time\n"
+            "pid=os.fork()\n"
+            "if pid==0:\n"
+            " os.close(1); os.close(2); time.sleep(0.2); os._exit(0)\n"
+            "os._exit(0)\n"
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            returncode = launcher.stream_process(
+                [sys.executable, "-c", child_code],
+                cwd=launcher.REPO_ROOT,
+                env=os.environ,
+                log_path=Path(tmp) / "short-same-group-child.log",
+            )
+        self.assertEqual(returncode, 0)
 
     @unittest.skipUnless(Path("/proc").is_dir(), "requires Linux PDEATHSIG audit")
     def test_matrix_registry_drains_inner_session_after_outer_abrupt_exit(self):
