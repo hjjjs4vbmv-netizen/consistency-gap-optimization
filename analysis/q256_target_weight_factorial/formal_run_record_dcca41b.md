@@ -1,6 +1,6 @@
 # q256 formal run record — dcca41b
 
-Created: 2026-08-20 19:16 CST; updated: 2026-08-21 00:29 CST. This is a durable run record, not a new gate or audit framework.
+Created: 2026-08-20 19:16 CST; updated: 2026-08-21 01:14 CST. This is a durable run record, not a new gate or audit framework.
 
 ## Source and resume disposition
 
@@ -125,6 +125,12 @@ Nine of twelve formal cells are now complete. The queue automatically advanced t
 Seed5/B completed with 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Its final state, network snapshot, telemetry, initial-state receipt, and final image are present, and the recovery worker emitted an explicit PASS line. The AMP skips were attempts 1–8, 13, and 1163; no semantic non-finite event or raw-gradient/skip inconsistency was observed. Artifact hashes are recorded in the JSON record.
 
 Ten of twelve formal cells are now complete. The queue automatically advanced to seed5/C; at this milestone it was at attempt 94, accepted update 84, and `12.032 kimg` (PID 1654). GPU0 was active at 35% utilization with 3549 MiB allocated; GPU1 remained expectedly idle. No new Traceback, bus error, OOM, CUDA error, or semantic non-finite event was present.
+
+## Seed5/C completion observed at 2026-08-21 01:13:35 CST
+
+Seed5/C completed with 2000 attempts, 1990 accepted updates, and exactly 256.000 kimg. Its final state, network snapshot, telemetry, initial-state receipt, and final image are present, and the recovery worker emitted an explicit PASS line. The AMP skips were attempts 1–8, 13, and 14; semantic non-finite, nonpositive-denominator, and raw-gradient/skip mismatch counts were all zero. Artifact hashes are recorded in the JSON record.
+
+Eleven of twelve formal cells are now complete. The queue automatically advanced to the final cell, seed5/D; at this milestone it was at attempt 12, accepted update 4, and `1.536 kimg` (PID 112271) on physical GPU0. The separate seed6/7 extension continued on GPU1 without sharing the formal GPU. No Traceback, bus error, OOM, CUDA error, or semantic non-finite event was present; the formal private shared-memory directory used 44 KiB, `/data/raw` had 33 TiB available, and `/data/temp` had 5.0 TiB available.
 
 ## Post-seed5 frozen evaluation scheduled at 2026-08-21 00:25 CST
 

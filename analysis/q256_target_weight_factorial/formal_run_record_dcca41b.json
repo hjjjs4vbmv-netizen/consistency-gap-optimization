@@ -1,7 +1,7 @@
 {
   "schema": "ect.q256.target-weight-formal-run-record/v1",
   "created_utc": "2026-08-20T11:16:13Z",
-  "updated_utc": "2026-08-20T16:29:04Z",
+  "updated_utc": "2026-08-20T17:14:35Z",
   "experiment_id": "q256-target-weight-factorial",
   "status_at_snapshot": "RUNNING_POST_RECOVERY",
   "training_source": {
@@ -633,6 +633,46 @@
         "gpu1_utilization_percent": 0,
         "gpu0_memory_mib": 3549,
         "gpu1_memory_mib": 4
+      }
+    },
+    "seed5_C_completion": {
+      "observed_local": "2026-08-21T01:13:35+08:00",
+      "status": "ELEVEN_OF_TWELVE_COMPLETE",
+      "cell": {
+        "status": "COMPLETE",
+        "attempts": 2000,
+        "accepted_updates": 1990,
+        "processed_nimg": 256000,
+        "processed_kimg": 256.0,
+        "amp_skip_attempts": [1, 2, 3, 4, 5, 6, 7, 8, 13, 14],
+        "semantic_nonfinite_count": 0,
+        "nonpositive_denominator_count": 0,
+        "raw_skip_mismatch_count": 0,
+        "worker_pass_line_present": true,
+        "artifact_sha256": {
+          "training_state": "1de48f490577e8def3838fc2afecbd67a780b82bf9711ec9c7008632bf7641ba",
+          "network_snapshot": "1c60935424ad50242d29d2a636c46e14394f97a4e275651606a39c735af22414",
+          "telemetry": "d91510496a00251e7ffc0ffbd716e258e4267a69ac07f4ac8b38c78934b4878f",
+          "initial_state_receipt": "2a97739ff10a932fae1ad901238e1557e241956f4b1e0ede22b8e73c5e5d9837",
+          "final_image": "d65592e1542a50b3a19c11d3646dee6158062c30a6f62ebf6d13604f87f4e650"
+        }
+      },
+      "next_cell_started": {
+        "cell": "seed5/D",
+        "pid": 112271,
+        "observed_attempt": 12,
+        "observed_accepted_updates": 4,
+        "observed_kimg": 1.536,
+        "gpu": 0
+      },
+      "health": {
+        "recovery_log_errors": 0,
+        "gpu0_utilization_percent": 6,
+        "gpu0_memory_mib": 3165,
+        "gpu0_private_shm_used_kib": 44,
+        "gpu1_activity": "separate authorized seed6/7 extension; not part of formal queue",
+        "data_raw_available_tib": 33,
+        "data_temp_available_tib": 5.0
       }
     },
     "tmux": {
