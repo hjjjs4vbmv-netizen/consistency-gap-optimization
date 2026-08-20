@@ -61,9 +61,11 @@ SOURCE_FILES = (
     "training/reproducibility.py",
     "torch_utils/misc.py",
     "scripts/run_q256_target_weight_correctness_gate.py",
+    "scripts/run_q256_target_weight_evaluation.py",
     "scripts/run_q256_target_weight_matrix.py",
     "scripts/verify_q256_target_weight_arm.py",
     "scripts/verify_q256_target_weight_smoke_matrix.py",
+    "analysis/q256_target_weight_factorial/preregistration_amendment_002.json",
 ) + TEST_FILES
 
 
