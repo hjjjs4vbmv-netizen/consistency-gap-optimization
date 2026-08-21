@@ -1,0 +1,14 @@
+{
+  "schema": "q256-target-weight-seed14-18-native-evaluation-launch-v1",
+  "status": "LAUNCHED",
+  "launched_at_utc": "2026-08-21T16:16:30Z",
+  "continuation_from": ["/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v2", "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v3-recovery"],
+  "reason": "proot ptrace serialized MKL-intensive KID while native rootfs dynamic loading passed exact runtime and CUDA probes",
+  "runtime_invariants": {"python": "3.10.12", "torch": "2.2.0a0+81ea7a4", "cuda": "12.3", "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810"},
+  "numerical_protocol_modified": false,
+  "cache_template": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v2/seed14/evaluator_cache",
+  "detector_sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4",
+  "canonical_reference_stats_sha256": "8478c50d243e9876a4e82d71feb0a8420036bdc16f7962fba1511d24e4a7cfde",
+  "seed_gpu_mapping": {"14": 0, "15": 1, "16": 2, "17": 3, "18": 4},
+  "job_count": 40
+}

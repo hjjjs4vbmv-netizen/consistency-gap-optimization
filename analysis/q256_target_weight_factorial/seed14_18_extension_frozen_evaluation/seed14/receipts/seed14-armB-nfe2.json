@@ -1,0 +1,143 @@
+{
+  "completed_at_utc": "2026-08-21T16:35:45.497122+00:00",
+  "job": {
+    "arm": "B",
+    "checkpoint": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/seed14/armB/network-snapshot-latest.pkl",
+    "checkpoint_sha256": "09c6debf85a4116e92f34d988264945e4e75bae348545c4c09a34b25fcc59bca",
+    "command_argv": [
+      "bash",
+      "/data/temp/ECT001/q256-factorial-eval-d6aba02-seed14-18-v1/scripts/evaluate_checkpoint.sh",
+      "1",
+      "37143",
+      "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/seed14/armB/network-snapshot-latest.pkl",
+      "--outdir",
+      "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v4-native/seed14/jobs/seed14-armB-nfe2",
+      "--nosubdir",
+      "--data",
+      "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+      "--cond=False",
+      "--arch=ddpmpp",
+      "--precond=ct",
+      "--dropout=0.2",
+      "--augment=0",
+      "--xflip=False",
+      "--fp16=False",
+      "--cache=True",
+      "--workers=3",
+      "--eval-batch=512",
+      "--metric-generator-batch=128",
+      "--nfe=2",
+      "--mid_t=0.821",
+      "--metrics=kid50k_full,fid50k_full",
+      "--metric-repeats=1",
+      "--sample-seeds=0-49999",
+      "--seed=20260730",
+      "--retain-generated-artifacts",
+      "--desc=q256-target-weight-formal-evaluation-v1-seed14-armB-nfe2"
+    ],
+    "job_id": "seed14-armB-nfe2",
+    "metric_seed": 20260730,
+    "metrics": [
+      "kid50k_full",
+      "fid50k_full"
+    ],
+    "mid_t": [
+      0.821
+    ],
+    "nfe": 2,
+    "output_directory": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v4-native/seed14/jobs/seed14-armB-nfe2",
+    "precision": "fp32",
+    "sample_count": 50000,
+    "sample_seeds": "0-49999",
+    "seed": 14,
+    "training_run": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/seed14/armB"
+  },
+  "process_log": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v4-native/seed14/process_logs/seed14-armB-nfe2.log",
+  "process_log_sha256": "d58d5390520e62a7857949367e12a48738315de57ad3bfa19bc337edd2ae9c86",
+  "schema": "q256-target-weight-seed14-18-evaluation-job-receipt-v1",
+  "started_at_utc": "2026-08-21T16:30:59.580863+00:00",
+  "status": "PASS",
+  "validation": {
+    "artifacts": {
+      "data.png": {
+        "bytes": 557514,
+        "sha256": "a488133b79b6bc88794be5694b64deca534f88323bfbc5614ef19bd38bad520a"
+      },
+      "generated-features-fid50k_full-repeat00.npy": {
+        "bytes": 409600128,
+        "sha256": "8308e88aa72c3a9fcb6368d0f7f44997f005d3bd21984bdfce56aec9ba0dfa79"
+      },
+      "generated-features-kid50k_full-repeat00.npy": {
+        "bytes": 409600128,
+        "sha256": "8308e88aa72c3a9fcb6368d0f7f44997f005d3bd21984bdfce56aec9ba0dfa79"
+      },
+      "generated-samples.npy": {
+        "bytes": 153600128,
+        "sha256": "f5d83aac2036a4396bf2feb1909243fde70a3b2c756038c6430538b85458f2c6"
+      },
+      "log.txt": {
+        "bytes": 4187,
+        "sha256": "e7ff6018cd0e833240cd6658e97696b9b864171cd7b827d507a11f1e2d03e0c8"
+      },
+      "metric-fid50k_full.jsonl": {
+        "bytes": 251,
+        "sha256": "65f78b07801359c089026bc2a5dd42f75e92028e78fed93be337c3cea46c9c49"
+      },
+      "metric-kid50k_full.jsonl": {
+        "bytes": 255,
+        "sha256": "5c0f1de53f4ff6a27630cb0e4f304549261010159088d4277da6b8f3afa5130e"
+      },
+      "sample.png": {
+        "bytes": 490294,
+        "sha256": "041302980b027bcf60d13fcdac4563fb320c89db4a2b1276f7d738a1a95175ef"
+      },
+      "sampling_block_diagnostics_v1.json": {
+        "bytes": 2975,
+        "sha256": "954e7b0e5fafa5d35925040aefe2c96b3f59bc23399e90b39648b73669f6b8ad"
+      },
+      "training_options.json": {
+        "bytes": 540209,
+        "sha256": "085abc9039cdc51f202bcb8a23ed9d92951443837a67ea3d83bc2ebe623d573e"
+      }
+    },
+    "artifacts_tree_sha256": "17b4a84f3759ec61970b0ec09094c18ba4da661b7eb12b6575b0afe0a372b27a",
+    "cache": {
+      "artifact_count": 3,
+      "artifacts": {
+        "downloads/a866f8d678872dcf6fcf60ddd09807ab_https___nvlabs-fi-cdn.nvidia.com_stylegan2-ada-pytorch_pretrained_metrics_inception-2015-12-05.pt": {
+          "bytes": 95607719,
+          "sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4"
+        },
+        "gan-metrics/cifar10-32x32-canonical-08c9ed1b2b1c-inception-2015-12-05-0fa1f5d271a9ae22be4cfe13dcd2bb5d.pkl": {
+          "bytes": 443188772,
+          "sha256": "8478c50d243e9876a4e82d71feb0a8420036bdc16f7962fba1511d24e4a7cfde"
+        },
+        "gan-metrics/cifar10-32x32-canonical-08c9ed1b2b1c-inception-2015-12-05-aad45a63395a8faeaad423fdcda71cb1.pkl": {
+          "bytes": 33571138,
+          "sha256": "7c40fa0d3ddd7f13c249dd6ef01a95fa2c5d49177a6556ef04a237e8202863de"
+        }
+      },
+      "inception_detector_url": "https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/inception-2015-12-05.pt",
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v4-native/seed14/evaluator_cache",
+      "tree_sha256": "91710cdafc3797fb2bc174641e618e6bfc5e092fc6ea7748ca3d3991122d6ae8"
+    },
+    "metrics": [
+      {
+        "metric": "kid50k_full",
+        "raw_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v4-native/seed14/jobs/seed14-armB-nfe2/metric-kid50k_full.jsonl",
+        "raw_sha256": "5c0f1de53f4ff6a27630cb0e4f304549261010159088d4277da6b8f3afa5130e",
+        "value": 0.05730699949199197
+      },
+      {
+        "metric": "fid50k_full",
+        "raw_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v4-native/seed14/jobs/seed14-armB-nfe2/metric-fid50k_full.jsonl",
+        "raw_sha256": "65f78b07801359c089026bc2a5dd42f75e92028e78fed93be337c3cea46c9c49",
+        "value": 71.93339056145194
+      }
+    ],
+    "sampling_block_diagnostics": {
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-dcca41b-v2/frozen-evaluation-seed14-18-v4-native/seed14/jobs/seed14-armB-nfe2/sampling_block_diagnostics_v1.json",
+      "sha256": "954e7b0e5fafa5d35925040aefe2c96b3f59bc23399e90b39648b73669f6b8ad"
+    }
+  }
+}
