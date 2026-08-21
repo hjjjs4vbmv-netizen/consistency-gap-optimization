@@ -1073,8 +1073,37 @@ def training_loop(
                     'training-state trajectory config hash is internally invalid'
                 )
             if saved_trajectory_sha256 != strict_trajectory_config_sha256:
-                raise RuntimeError(
-                    'training-state trajectory config does not match current run'
+                saved_trajectory_config = reproducibility.canonical_json_data(
+                    data['trajectory_config']
+                )
+                current_trajectory_config = reproducibility.canonical_json_data(
+                    strict_trajectory_config
+                )
+                saved_total_kimg = saved_trajectory_config.pop(
+                    'total_kimg', None
+                )
+                current_total_kimg = current_trajectory_config.pop(
+                    'total_kimg', None
+                )
+                completed_saved_budget = (
+                    isinstance(saved_total_kimg, int)
+                    and int(data['cur_nimg']) == saved_total_kimg * 1000
+                )
+                valid_budget_extension = (
+                    saved_trajectory_config == current_trajectory_config
+                    and isinstance(current_total_kimg, int)
+                    and isinstance(saved_total_kimg, int)
+                    and current_total_kimg > saved_total_kimg
+                    and completed_saved_budget
+                )
+                if not valid_budget_extension:
+                    raise RuntimeError(
+                        'training-state trajectory config does not match current run'
+                    )
+                dist.print0(
+                    'Extending completed strict training budget from '
+                    f'{saved_total_kimg} to {current_total_kimg} kimg; '
+                    'all other trajectory settings match exactly.'
                 )
         if strict_reproducibility:
             copy_module_state_exact(
