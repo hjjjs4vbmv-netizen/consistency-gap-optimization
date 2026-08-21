@@ -11,6 +11,10 @@ EVALUATION = ANALYSIS / "seed14_18_extension_frozen_evaluation"
 CSV_PATH = ANALYSIS / "q256_factorial_seed14_18_extension_results.csv"
 JSON_PATH = ANALYSIS / "q256_factorial_seed14_18_extension_results.json"
 SCOPE_PATH = ANALYSIS / "q256_factorial_seed14_18_extension_report.md"
+RESULTS_MD_PATH = ANALYSIS / "q256_factorial_seed14_18_extension_results.md"
+COLLECTOR_PATH = (
+    ANALYSIS / "extension_support" / "collect_q256_seed14_18_fid_kid.py"
+)
 
 SEEDS = tuple(range(14, 19))
 ARMS = ("A", "B", "C", "D")
@@ -145,8 +149,30 @@ def test_seed14_18_report_keeps_the_claim_boundary() -> None:
         "does not replace, enlarge, or retrospectively relabel",
         "all observed seeds, descriptive only",
         "not a pooled confirmatory `n=10` study",
+        "B intervention is uniformly robust or generally the best arm",
+        "lower for D (299.4704) than for B (306.9997)",
+        "B−D is favorable in only 2/5 seeds",
+        "original preregistered seeds3–5 | 3/3 | 3/3 | 2/3 | 3/3",
+        "secondary seeds6–7 | 2/2 | 1/2 | 2/2 | 0/2",
+        "secondary seeds14–18 | 4/5 | 4/5 | 4/5 | 2/5",
+        "all observed seeds, descriptive only | 9/10 | 8/10 | 8/10 | 5/10",
+        "exact objective-level factorization does not yield a seed-stable endpoint factorization",
         "do not support a universal target-geometry-dominant decomposition",
         "no causal percentage decomposition or universal mechanism claim",
+        "PR #72",
+        "seeds8–12 remain the prospective Cohort III validation cohort",
+        "must not be pooled with or relabeled as the held-out confirmation",
+        "RAdam or optimizer-scale theory is not a novelty claim",
+        "valid observation and is retained in every summary",
     )
     for phrase in required:
         assert phrase in text
+
+    generated = RESULTS_MD_PATH.read_text(encoding="utf-8")
+    assert "## Primary-readout factorial contrasts" in generated
+    assert "## Preregistered NFE1 contrasts" not in generated
+    assert "Seed14–18 themselves are post-preregistration secondary sensitivity seeds" in generated
+
+    collector = COLLECTOR_PATH.read_text(encoding="utf-8")
+    assert '"Primary-readout factorial contrasts"' in collector
+    assert '"Preregistered NFE1 contrasts"' not in collector

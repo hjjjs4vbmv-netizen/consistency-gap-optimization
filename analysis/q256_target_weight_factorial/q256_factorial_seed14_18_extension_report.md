@@ -29,11 +29,20 @@ Lower is better.  The full intervention is B versus baseline A.
 | KID-50k @ NFE2 | -0.014153901 | 3/5 |
 
 Seed17 reverses B−A for both FID and KID at both NFE modes.  Seed18 also has a
-small adverse B−A reversal at NFE2.  The new cohort therefore weakens a claim
-that the full intervention is uniformly favorable, even though the mean B−A
-contrast remains favorable in every readout.
+small adverse B−A reversal at NFE2.  Seed17 is the clearest observed
+counterexample to a universal full-intervention claim: B is worse than A on
+both FID and KID at both NFE modes.  It is a valid observation and is retained
+in every summary, not designated or removed as an outlier.
 
-For transparency, the observed sign pattern by separately labeled cohort is:
+The new cohort therefore weakens both a universal target-dominance claim and
+any wording that the coupled B intervention is uniformly robust or generally
+the best arm.  B retains a favorable average and directional tendency versus A
+in this cohort, but it does not dominate the isolated components.  For primary
+NFE1 FID, B−A is favorable in 4/5 seeds and D−A is also favorable in 4/5;
+the cohort mean is lower for D (299.4704) than for B (306.9997), while B−D is
+favorable in only 2/5 seeds.
+
+For transparency, the observed B−A sign pattern across all readouts is:
 
 | Cohort | NFE1 FID | NFE1 KID | NFE2 FID | NFE2 KID |
 |:---|:---:|:---:|:---:|:---:|
@@ -45,6 +54,19 @@ For transparency, the observed sign pattern by separately labeled cohort is:
 The last row is a transparency count, not a pooled confirmatory `n=10` study.
 The cohorts were authorized at different times and retain their original
 evidence labels.
+
+The primary NFE1 FID factorial contrasts make the cross-cohort sensitivity
+visible.  Entries are favorable/negative sign counts; lower FID is better.
+
+| Evidence group | B−A | C−A | D−A | B−D |
+|:---|:---:|:---:|:---:|:---:|
+| original preregistered seeds3–5 | 3/3 | 3/3 | 2/3 | 3/3 |
+| secondary seeds6–7 | 2/2 | 1/2 | 2/2 | 0/2 |
+| secondary seeds14–18 | 4/5 | 4/5 | 4/5 | 2/5 |
+| all observed seeds, descriptive only | 9/10 | 8/10 | 8/10 | 5/10 |
+
+These direction changes show that exact objective-level factorization does not
+yield a seed-stable endpoint factorization.
 
 ## Factorial mechanism boundary
 
@@ -66,14 +88,32 @@ KID at NFE1.  NFE2 shows the same four-of-five positive interaction pattern.
 
 Accordingly:
 
-- the preregistered seed3/4/5 target-dominant interpretation remains a valid
-  description of that cohort;
-- seed6/7 and seed14–18 show that isolated component effects and interaction
-  signs are trajectory dependent;
+- target and denominator contributions remain exactly factorized at the
+  objective definition level;
+- seed6/7 and seed14–18 show that endpoint component effects and interaction
+  signs are strongly trajectory dependent;
+- B retains an average/directional tendency versus A in the observed
+  sensitivity cohorts, but neither B nor the target component is uniformly
+  dominant at the endpoint;
 - no causal percentage decomposition or universal mechanism claim follows
   from the combined observed seeds; and
 - this extension must be disclosed anywhere the original mechanism result is
   summarized at paper level.
+
+## Paper-facing evidence boundary
+
+Seeds14–18 are a post-preregistration secondary sensitivity extension.  They
+must not be pooled with or relabeled as the held-out confirmation of the
+revised B−A hypothesis.  [PR #72](https://github.com/hjjjs4vbmv-netizen/consistency-gap-optimization/pull/72)
+seeds8–12 remain the prospective Cohort III validation cohort.  The prospective
+question is still unresolved: does the favorable average/directional B−A NFE1
+FID tendency replicate in that held-out cohort?
+
+The manuscript interpretation should therefore center on (i) exact
+objective-level target/denominator factorization, (ii) strongly
+trajectory-dependent endpoint component effects and interaction signs, and
+(iii) the unresolved prospective Cohort III test.  RAdam or optimizer-scale
+theory is not a novelty claim of this result.
 
 ## Included evidence
 

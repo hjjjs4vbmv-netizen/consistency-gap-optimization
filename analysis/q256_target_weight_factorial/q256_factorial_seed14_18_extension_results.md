@@ -46,9 +46,9 @@ Values are mean ± sample standard deviation over seed14–18 (`n=5`).
 | C | 2 | 155.675446351 ± 117.034367809 | 0.159906745126 ± 0.143448390841 |
 | D | 2 | 113.847600601 ± 122.973872704 | 0.112104055245 ± 0.147835583398 |
 
-## Preregistered NFE1 contrasts
+## Primary-readout factorial contrasts
 
-A negative contrast favors its first term. The interaction is `I=B−C−D+A`.
+These use the factorial definitions originally frozen for the preregistered study. Seed14–18 themselves are post-preregistration secondary sensitivity seeds. A negative contrast favors its first term. The interaction is `I=B−C−D+A`.
 
 | Metric | Seed | C−A | B−D | D−A | B−C | I |
 |:---|---:|---:|---:|---:|---:|---:|

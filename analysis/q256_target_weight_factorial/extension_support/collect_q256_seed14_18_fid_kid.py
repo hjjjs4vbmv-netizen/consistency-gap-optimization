@@ -279,12 +279,18 @@ def render_markdown(rows: list[dict], cell_summaries: list[dict], per_seed: list
             lines.append(
                 f"| {arm} | {nfe} | {fmt(fid['mean'])} ± {fmt(fid['sample_sd'])} | {fmt(kid['mean'], 12)} ± {fmt(kid['sample_sd'], 12)} |"
             )
-    for nfe, title in ((1, "Preregistered NFE1 contrasts"), (2, "Secondary NFE2 contrasts")):
+    for nfe, title in ((1, "Primary-readout factorial contrasts"), (2, "Secondary NFE2 contrasts")):
+        definition_note = (
+            "These use the factorial definitions originally frozen for the preregistered study. "
+            "Seed14–18 themselves are post-preregistration secondary sensitivity seeds. "
+            if nfe == 1
+            else ""
+        )
         lines += [
             "",
             f"## {title}",
             "",
-            "A negative contrast favors its first term. The interaction is `I=B−C−D+A`.",
+            definition_note + "A negative contrast favors its first term. The interaction is `I=B−C−D+A`.",
             "",
             "| Metric | Seed | C−A | B−D | D−A | B−C | I |",
             "|:---|---:|---:|---:|---:|---:|---:|",
