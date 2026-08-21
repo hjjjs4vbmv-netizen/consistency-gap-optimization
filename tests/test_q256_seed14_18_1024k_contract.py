@@ -9,6 +9,8 @@ SUPPORT = ROOT / "analysis" / "q256_target_weight_factorial" / "extension_suppor
 DRIVER = SUPPORT / "run_q256_seed14_18_1024k_frozen_evaluation.py"
 WORKER = SUPPORT / "run_q256_seed14_18_1024k_worker.sh"
 LAUNCHER = SUPPORT / "launch_q256_seed14_18_1024k.sh"
+RECOVERY_WORKER = SUPPORT / "run_q256_seed14_18_1024k_recovery_v2_worker.sh"
+RECOVERY_LAUNCHER = SUPPORT / "launch_q256_seed14_18_1024k_recovery_v2.sh"
 
 
 def load_driver():
@@ -68,3 +70,17 @@ def test_evaluation_contract_matches_seed3_5_metrics() -> None:
     assert driver.SAMPLE_COUNT == 50_000
     assert driver.METRIC_SEED == 20_260_730
     assert driver.NFE_SETTINGS == {1: [], 2: [0.821]}
+
+
+def test_recovery_v2_repairs_only_the_post_training_verifier() -> None:
+    worker = RECOVERY_WORKER.read_text(encoding="utf-8")
+    launcher = RECOVERY_LAUNCHER.read_text(encoding="utf-8")
+    assert 'PYTHONPATH="${repo}"' in worker
+    assert "adopt_completed_arm_a" in worker
+    assert "run_arm A" not in worker
+    assert worker.index("adopt_completed_arm_a") < worker.index("run_arm B")
+    assert "hash_identical_adoption_after_post_training_verifier_failure" in worker
+    assert "seed14-18-1024k-from-v2-4582051-recovery-v2" in worker
+    assert "ModuleNotFoundError: No module named 'torch_utils'" in launcher
+    assert "failed_v1_completed_armA_artifacts.sha256" in launcher
+    assert "q1024r2_s${seed}" in launcher
