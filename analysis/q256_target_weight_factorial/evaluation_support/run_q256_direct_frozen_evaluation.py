@@ -31,6 +31,26 @@ EXPECTED_PRIOR_COMPLETED = (
     "seed4-armC-nfe1",
     "seed4-armD-nfe1",
 )
+EXPECTED_V5_COMPLETED = (
+    "seed5-armA-nfe1",
+    "seed5-armB-nfe1",
+    "seed5-armC-nfe1",
+    "seed5-armD-nfe1",
+    "seed3-armA-nfe2",
+    "seed3-armB-nfe2",
+    "seed3-armC-nfe2",
+    "seed3-armD-nfe2",
+    "seed4-armA-nfe2",
+    "seed4-armB-nfe2",
+    "seed4-armC-nfe2",
+    "seed4-armD-nfe2",
+)
+EXPECTED_V5_JOBS = EXPECTED_V5_COMPLETED + (
+    "seed5-armA-nfe2",
+    "seed5-armB-nfe2",
+    "seed5-armC-nfe2",
+    "seed5-armD-nfe2",
+)
 ARMS = ("A", "B", "C", "D")
 SEEDS = (3, 4, 5)
 ARM_SCALES = {
@@ -556,6 +576,133 @@ def bind_failed_evaluation_attempt(
     }
 
 
+def validate_v5_passed_continuation(
+    prior_root: Path, evaluator: Any
+) -> tuple[set[str], dict[str, Any]]:
+    prior_root = prior_root.resolve(strict=True)
+    if prior_root.is_symlink() or not prior_root.is_dir():
+        fail(f"invalid v5 continuation root: {prior_root}")
+    plan_path = prior_root / "evaluation_plan.json"
+    completion_path = prior_root / "evaluation_completion.json"
+    plan = load_json(plan_path)
+    completion = load_json(completion_path)
+    job_ids = tuple(str(job.get("job_id")) for job in plan.get("jobs", []))
+    if plan.get("job_count") != 16 or job_ids != EXPECTED_V5_JOBS:
+        fail("v5 continuation has the wrong exact job sequence")
+    if completion.get("status") != "STOPPED_FOR_AUDIT":
+        fail("v5 continuation did not stop fail-closed")
+    if tuple(completion.get("completed_job_ids", ())) != EXPECTED_V5_COMPLETED:
+        fail("v5 continuation has the wrong completed prefix")
+    if completion.get("failed_job_id") != "seed5-armA-nfe2":
+        fail("v5 continuation did not stop at seed5/A/NFE2")
+    if completion.get("evaluation_plan_sha256") != sha256_file(plan_path):
+        fail("v5 continuation completion does not bind its plan")
+    if (
+        plan.get("precision") != "fp32"
+        or plan.get("sample_count_per_job") != 50_000
+        or plan.get("sample_seed_range") != "0-49999"
+        or plan.get("metric_seed") != 20_260_730
+        or tuple(plan.get("metrics_per_job", ())) != ("kid50k_full", "fid50k_full")
+        or plan.get("nfe_modes") != {"1": [], "2": [0.821]}
+    ):
+        fail("v5 continuation numerical contract is not frozen")
+    inherited = plan.get("continuation")
+    if not isinstance(inherited, dict) or inherited.get("carried_forward_job_count") != 8:
+        fail("v5 continuation does not bind the eight v3 PASS jobs")
+
+    prior_source = plan.get("evaluator_source")
+    current_source = evaluator.source_snapshot(require_clean=True)
+    if not isinstance(prior_source, dict):
+        fail("v5 continuation has no evaluator source receipt")
+    prior_files = {
+        item["path"]: item["sha256"]
+        for item in prior_source.get("files", [])
+        if isinstance(item, dict) and "path" in item and "sha256" in item
+    }
+    current_files = {
+        item["path"]: item["sha256"]
+        for item in current_source.get("files", [])
+        if isinstance(item, dict) and "path" in item and "sha256" in item
+    }
+    scheduling_file = "scripts/run_q256_target_weight_evaluation.py"
+    if not prior_files or set(prior_files) != set(current_files):
+        fail("v5/current evaluator source file sets differ")
+    for relative in prior_files:
+        if relative != scheduling_file and prior_files[relative] != current_files[relative]:
+            fail(f"numerical evaluator source changed since v5 PASS: {relative}")
+
+    jobs = {str(job["job_id"]): job for job in plan["jobs"]}
+    carry_receipts = []
+    for job_id in EXPECTED_V5_COMPLETED:
+        job = jobs[job_id]
+        receipt_path = prior_root / "receipts" / f"{job_id}.json"
+        receipt = load_json(receipt_path)
+        if (
+            receipt.get("schema") != evaluator.JOB_RECEIPT_SCHEMA
+            or receipt.get("status") != "passed"
+            or receipt.get("job_id") != job_id
+            or receipt.get("checkpoint_sha256") != job.get("checkpoint_sha256")
+            or receipt.get("dataset_sha256") != plan["dataset"]["sha256"]
+        ):
+            fail(f"v5 PASS receipt identity mismatch: {job_id}")
+        artifacts = receipt.get("artifacts")
+        if not isinstance(artifacts, dict):
+            fail(f"v5 PASS receipt has no artifact tree: {job_id}")
+        observed = evaluator.hash_regular_tree(Path(job["output_directory"]))
+        if observed != artifacts or receipt.get("artifacts_tree_sha256") != evaluator.canonical_sha256(observed):
+            fail(f"v5 PASS artifacts changed: {job_id}")
+        kid = artifacts.get("generated-features-kid50k_full-repeat00.npy", {})
+        fid = artifacts.get("generated-features-fid50k_full-repeat00.npy", {})
+        if kid.get("sha256") != fid.get("sha256"):
+            fail(f"v5 PASS feature identity changed: {job_id}")
+        carry_receipts.append(
+            {
+                "job_id": job_id,
+                "receipt": str(receipt_path),
+                "receipt_sha256": sha256_file(receipt_path),
+                "artifacts_tree_sha256": receipt["artifacts_tree_sha256"],
+            }
+        )
+
+    failed_job = "seed5-armA-nfe2"
+    failed_receipt_path = prior_root / "receipts" / f"{failed_job}.json"
+    failed_receipt = load_json(failed_receipt_path)
+    monitor = failed_receipt.get("gpu_exclusivity_monitor")
+    incident = monitor.get("foreign_process_incident") if isinstance(monitor, dict) else None
+    if (
+        failed_receipt.get("status") != "STOPPED_FOR_AUDIT"
+        or failed_receipt.get("returncode") != -15
+        or not isinstance(incident, dict)
+        or incident.get("kind") != "FOREIGN_GPU_COMPUTE_PROCESS"
+    ):
+        fail("v5 failed job does not bind a foreign-process stop")
+    idle = failed_receipt.get("post_job_gpu_idle_check")
+    if not isinstance(idle, dict) or idle.get("compute_process_count") != 0:
+        fail("v5 failed job did not leave GPU0 idle")
+    failed_artifacts = evaluator.hash_regular_tree(Path(jobs[failed_job]["output_directory"]))
+    record = {
+        "schema": "ect.q256.formal-evaluation-continuation/v2",
+        "status": "PASS_PREFIX_BOUND",
+        "prior_root": str(prior_root),
+        "prior_plan": str(plan_path),
+        "prior_plan_sha256": sha256_file(plan_path),
+        "prior_completion": str(completion_path),
+        "prior_completion_sha256": sha256_file(completion_path),
+        "carried_forward_job_count": len(carry_receipts),
+        "carried_forward_receipts": carry_receipts,
+        "superseded_failed_attempt": {
+            "job_id": failed_job,
+            "receipt": str(failed_receipt_path),
+            "receipt_sha256": sha256_file(failed_receipt_path),
+            "job_artifacts_tree_sha256": evaluator.canonical_sha256(failed_artifacts),
+            "failure_kind": "FOREIGN_GPU_COMPUTE_PROCESS",
+        },
+        "failed_job_restarted_fresh": failed_job,
+        "metric_numerical_semantics_changed": False,
+    }
+    return set(EXPECTED_V5_COMPLETED), record
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, required=True)
@@ -566,6 +713,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--reuse-bound-matrix", action="store_true")
     parser.add_argument("--prior-evaluation-root", type=Path)
     parser.add_argument("--prior-failed-evaluation-root", type=Path)
+    parser.add_argument("--prior-passed-continuation-root", type=Path)
     parser.add_argument("--data", type=Path)
     parser.add_argument("--base-port", type=int, default=31_800)
     parser.add_argument("--lock-root", type=Path, default=Path("/data/temp/ECT001-q256-evaluation-locks"))
@@ -597,6 +745,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         continuation_record["superseded_failed_attempt"] = bind_failed_evaluation_attempt(
             args.prior_failed_evaluation_root, evaluator
         )
+    if args.prior_passed_continuation_root is not None:
+        if continuation_record is None:
+            fail("a passed-continuation binding requires a prior PASS-prefix binding")
+        passed_ids, passed_record = validate_v5_passed_continuation(
+            args.prior_passed_continuation_root, evaluator
+        )
+        if carried_forward_ids.intersection(passed_ids):
+            fail("carried-forward continuation jobs overlap the v3 PASS prefix")
+        carried_forward_ids.update(passed_ids)
+        continuation_record["passed_continuation"] = passed_record
+        continuation_record["total_carried_forward_job_count"] = len(
+            carried_forward_ids
+        )
+        continuation_record["failed_job_restarted_fresh"] = "seed5-armA-nfe2"
 
     def primary_first_jobs(cells: Sequence[Mapping[str, Any]], output_root: Path, base_port: int) -> list[dict[str, Any]]:
         jobs = original_build_jobs(cells, output_root, base_port)
@@ -668,18 +830,54 @@ def main(argv: Sequence[str] | None = None) -> int:
         records: list[dict[str, object]] = []
         for process in running:
             pid = int(process.pid)
+            proc_root = Path("/proc") / str(pid)
             try:
-                raw_name = (Path("/proc") / str(pid) / "comm").read_text(
-                    encoding="utf-8"
-                ).strip()
+                raw_name = (proc_root / "comm").read_text(encoding="utf-8").strip()
             except OSError:
                 raw_name = "<exited>"
+            metadata: dict[str, object] = {}
+            try:
+                raw_stat = (proc_root / "stat").read_bytes()
+                close = raw_stat.rfind(b")")
+                fields = raw_stat[close + 2 :].split()
+                metadata["ppid"] = int(fields[1])
+                metadata["process_group_id"] = int(fields[2])
+                metadata["session_id"] = int(fields[3])
+            except (OSError, ValueError, IndexError):
+                pass
+            try:
+                metadata["executable"] = os.readlink(proc_root / "exe")
+            except OSError:
+                pass
+            try:
+                metadata["command_line"] = (
+                    (proc_root / "cmdline")
+                    .read_bytes()
+                    .replace(b"\0", b" ")
+                    .decode("utf-8", "replace")[:1024]
+                )
+            except OSError:
+                pass
+            try:
+                environment = dict(
+                    item.split(b"=", 1)
+                    for item in (proc_root / "environ").read_bytes().split(b"\0")
+                    if b"=" in item
+                )
+                for name in (b"CUDA_VISIBLE_DEVICES", b"NVIDIA_VISIBLE_DEVICES"):
+                    if name in environment:
+                        metadata[name.decode("ascii").lower()] = environment[name].decode(
+                            "utf-8", "replace"
+                        )
+            except OSError:
+                pass
             used_bytes = int(process.usedGpuMemory)
             records.append(
                 {
                     "pid": pid,
                     "process_name": raw_name,
                     "used_gpu_memory_mib": str(used_bytes // (1024 * 1024)),
+                    **metadata,
                 }
             )
         return records
