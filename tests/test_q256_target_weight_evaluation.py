@@ -57,7 +57,7 @@ class Q256TargetWeightEvaluationTest(unittest.TestCase):
             "checkpoint": str(checkpoint),
             "checkpoint_sha256": evaluator.sha256_file(checkpoint),
         }
-        plan = {"jobs": [job]}
+        plan = {"job_count": 1, "jobs": [job]}
         plan_path = output_root / "evaluation_plan.json"
         dump_json(plan_path, plan)
         return output_root, plan_path, plan, dataset
