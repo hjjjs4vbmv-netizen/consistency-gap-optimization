@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "original_branch_head": "1fd9d5afeafa83de79d3e74926c72ac5abe54afd",
+  "target_base_head": "c01a61d767793ac52b427e4064f1f71583a17e1c",
+  "merge_base": "f2cac51355252aff62016a27c6ca2ad40e5220fd",
+  "final_tested_code_commit": "18c36a9d2143556f0203470a4dd8d3938c541e52",
+  "same_environment": {
+    "python": "3.10.12",
+    "torch": "2.2.0a0+81ea7a4",
+    "cuda": "12.3",
+    "cuda_available": true,
+    "numpy": "1.24.4",
+    "container": "/data/temp/ect001-pytorch2401-sandbox"
+  },
+  "tests": [
+    {
+      "node_id": "tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_amp_path_unscales_and_preserves_source_scaler",
+      "branch_original": {
+        "outcome": "FAIL",
+        "exit_code": 1,
+        "signature": "RuntimeError: this PyTorch version has no enabled non-CUDA GradScaler",
+        "stdout_sha256": "d3a25b824dc281c2af25f0f6b3274a27deb37e5cb7e540b7e0b8b28a2a3ef27b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "target_base": {
+        "outcome": "FAIL",
+        "exit_code": 1,
+        "signature": "AttributeError: module 'torch.amp' has no attribute 'GradScaler'",
+        "stdout_sha256": "3714168cbfa53b6e0d762c5f92f3bfeb688ac0f8342c04403fccc1db409e0edb",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "base_identical": false,
+      "classification": "pre-existing PyTorch-2.2 CPU GradScaler capability gap with a branch-changed failure signature",
+      "remediation": "Use a deterministic test-only CPU scaler to exercise scale/unscale and source-preservation semantics; leave the production CUDA fallback unchanged.",
+      "remediation_status": "PASS_at_final_tested_code_commit"
+    },
+    {
+      "node_id": "tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_scaler_falls_back_to_cuda_amp_on_torch22",
+      "branch_original": {
+        "outcome": "FAIL",
+        "exit_code": 1,
+        "signature": "AttributeError: torch.amp does not have the attribute 'GradScaler'",
+        "stdout_sha256": "b09571f97011d774521ed80ac4633f08ee37581a7407155b00186ee418b6a47a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "target_base": {
+        "outcome": "TEST_ABSENT",
+        "exit_code": 4,
+        "signature": "pytest collection error: exact node ID not found",
+        "stdout_sha256": "20ed985a93b862e9f212d87748f5148e21bb717514995293117b4dba522b79c8",
+        "stderr_sha256": "bc249a94ad23f77833e133f6086dbdcea173013fe13b40015f800d60f03f6bc6"
+      },
+      "base_identical": false,
+      "classification": "branch-induced test-fixture regression",
+      "remediation": "Patch the missing torch.amp.GradScaler attribute with create=True so the test reaches the production CUDA fallback.",
+      "remediation_status": "PASS_at_final_tested_code_commit"
+    }
+  ],
+  "additional_full_suite_failure": {
+    "node_id": "tests/test_training_integrity.py::TrainingIntegrityTest::test_checker_adds_repository_root_to_import_path",
+    "triggering_order": "tests/test_gap_artifact_manifest.py followed by the exact node ID",
+    "target_base": {
+      "outcome": "FAIL",
+      "exit_code": 1,
+      "signature": "AssertionError: sys.path[0] is the scripts directory instead of the repository root"
+    },
+    "merged_branch_before_fix": {
+      "outcome": "FAIL",
+      "exit_code": 1,
+      "signature": "AssertionError: sys.path[0] is the scripts directory instead of the repository root"
+    },
+    "base_identical_after_normalizing_checkout_prefix": true,
+    "classification": "target-base sys.path leak exposed by full-suite collection order",
+    "remediation": "Restore sys.path after the two temporary standalone-script imports, add a regression assertion that the structural audit preserves the import path, and replace the order-dependent global sys.path[0] assertion with an isolated subprocess check of the actual checker contract when the repository root is absent.",
+    "remediation_status": "PASS_at_final_tested_code_commit"
+  }
+}

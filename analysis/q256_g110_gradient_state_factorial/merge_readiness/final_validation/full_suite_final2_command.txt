@@ -1,0 +1,1 @@
+apptainer exec /data/temp/ect001-pytorch2401-sandbox env PYTHONPATH=/home/ECT001/q256-py310-test-compat python -m pytest -q --junitxml=/home/ECT001/q256-final-validation-ebafb68/full_suite_final2.xml

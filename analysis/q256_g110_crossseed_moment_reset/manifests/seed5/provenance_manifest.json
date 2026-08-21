@@ -1,0 +1,193 @@
+{
+  "audit_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "frozen_formal_audit_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "provenance": {
+    "audit_library_sha256": "a8436d747ca11fd507bb96eaffa9a73e20adb0801edda2ac69abfe9838593350",
+    "b": 1.0,
+    "batch_gpu": 16,
+    "batch_size": 128,
+    "checkpoint": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed/network-snapshot-latest.pkl",
+    "checkpoint_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+    "code_commit": "15eac7cd881e75be11eba4b724825d04844baf96",
+    "cuda_version": "12.3",
+    "data": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "dataset_hash_algorithm": "sha256_file",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "k": 8.0,
+    "operations_excluded": [
+      "training",
+      "sample_generation",
+      "FID",
+      "KID"
+    ],
+    "probe_gap_scale": 1.1,
+    "q": 256.0,
+    "reference_gap_scale": 1.0,
+    "runner_sha256": "9946567e88cf26d388b5ce9a94b3d30c32a9f0308623aec81615a95823cf2545",
+    "schedule": "sigmoid",
+    "source_state": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed/training-state-latest.pt",
+    "source_state_sha256": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+    "state_kimg": 256.0,
+    "support_atol": 0.0,
+    "torch_version": "2.2.0a0+81ea7a4",
+    "training_seed": 5,
+    "training_state_meta": {
+      "attempted_iteration": 2000,
+      "cur_nimg": 256000.0,
+      "cur_tick": 27,
+      "has_gradscaler_state": true,
+      "has_loss_fn_state": true,
+      "successful_optimizer_steps": 1990
+    }
+  },
+  "receipts": [
+    {
+      "audit_seed": 2026081101,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081101/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081101/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081101,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081101/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081101/reset_moments.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081102,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081102/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081102/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081102,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081102/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081102/reset_moments.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081103,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081103/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081103/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081103,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081103/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081103/reset_moments.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081104,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081104/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081104/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081104,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081104/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081104/reset_moments.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081105,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081105/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081105/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081105,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081105/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081105/reset_moments.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081106,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081106/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081106/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081106,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081106/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081106/reset_moments.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081107,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081107/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081107/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081107,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081107/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081107/reset_moments.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081108,
+      "condition": "real",
+      "layerwise": "receipts/seed5/audit2026081108/real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081108/real.json",
+      "training_seed": 5
+    },
+    {
+      "audit_seed": 2026081108,
+      "condition": "reset_moments",
+      "layerwise": "receipts/seed5/audit2026081108/reset_moments_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081108/reset_moments.json",
+      "training_seed": 5
+    }
+  ],
+  "smoke": false,
+  "source_preservation_across_all_audits": {
+    "optimizer_hash_after": "4b6edacdd9db4e936157167af8075d5bad2957b1075f55ff608bc9f86aa7b05b",
+    "optimizer_hash_before": "4b6edacdd9db4e936157167af8075d5bad2957b1075f55ff608bc9f86aa7b05b",
+    "parameter_hash_after": {
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee",
+      "parameter_sha256": "4ff7539b74dd16c1d7b9eb4501cde974cd3d03be4a11b8770bb2445c5012e930"
+    },
+    "parameter_hash_before": {
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee",
+      "parameter_sha256": "4ff7539b74dd16c1d7b9eb4501cde974cd3d03be4a11b8770bb2445c5012e930"
+    },
+    "preserved": true,
+    "source_state_file_hash_after": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+    "source_state_file_hash_before": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033"
+  },
+  "status": "PASS",
+  "training_seed": 5
+}

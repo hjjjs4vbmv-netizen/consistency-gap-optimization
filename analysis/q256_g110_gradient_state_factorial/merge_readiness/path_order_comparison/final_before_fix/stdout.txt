@@ -1,0 +1,19 @@
+Running 8 items in this shard
+.......F                                                                 [100%]
+=================================== FAILURES ===================================
+____ TrainingIntegrityTest.test_checker_adds_repository_root_to_import_path ____
+
+self = <test_training_integrity.TrainingIntegrityTest testMethod=test_checker_adds_repository_root_to_import_path>
+
+    def test_checker_adds_repository_root_to_import_path(self):
+>       self.assertEqual(sys.path[0], str(check_training_integrity.REPO_ROOT))
+E       AssertionError: '/home/ECT001/q256-finalize-final-ebafb68/scripts' != '/home/ECT001/q256-finalize-final-ebafb68'
+E       - /home/ECT001/q256-finalize-final-ebafb68/scripts
+E       ?                                         --------
+E       + /home/ECT001/q256-finalize-final-ebafb68
+
+tests/test_training_integrity.py:35: AssertionError
+- generated xml file: /home/ECT001/q256-path-order-comparison/final_before_fix/junit.xml -
+=========================== short test summary info ============================
+FAILED tests/test_training_integrity.py::TrainingIntegrityTest::test_checker_adds_repository_root_to_import_path
+1 failed, 7 passed in 6.03s

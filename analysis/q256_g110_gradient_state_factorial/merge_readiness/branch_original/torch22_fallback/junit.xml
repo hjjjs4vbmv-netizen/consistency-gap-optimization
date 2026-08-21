@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.421" timestamp="2026-08-19T00:51:51.733750" hostname="gpu0003"><testcase classname="tests.test_radam_update_gauge.RAdamUpdateGaugeTests" name="test_scaler_falls_back_to_cuda_amp_on_torch22" time="0.001"><failure message="AttributeError: &lt;module 'torch.amp' from '/usr/local/lib/python3.10/dist-packages/torch/amp/__init__.py'&gt; does not have the attribute 'GradScaler'">self = &lt;test_radam_update_gauge.RAdamUpdateGaugeTests testMethod=test_scaler_falls_back_to_cuda_amp_on_torch22&gt;
+
+    def test_scaler_falls_back_to_cuda_amp_on_torch22(self):
+        sentinel = object()
+&gt;       with mock.patch.object(MODULE.torch.amp, "GradScaler", None), \
+                mock.patch.object(
+                    MODULE.torch.cuda.amp, "GradScaler", return_value=sentinel,
+                ) as legacy_scaler:
+
+tests/test_radam_update_gauge.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;unittest.mock._patch object at 0x7f77fe4e1960&gt;
+
+    def __enter__(self):
+        """Perform the patch."""
+        new, spec, spec_set = self.new, self.spec, self.spec_set
+        autospec, kwargs = self.autospec, self.kwargs
+        new_callable = self.new_callable
+        self.target = self.getter()
+    
+        # normalise False to None
+        if spec is False:
+            spec = None
+        if spec_set is False:
+            spec_set = None
+        if autospec is False:
+            autospec = None
+    
+        if spec is not None and autospec is not None:
+            raise TypeError("Can't specify spec and autospec")
+        if ((spec is not None or autospec is not None) and
+            spec_set not in (True, None)):
+            raise TypeError("Can't provide explicit spec_set *and* spec or autospec")
+    
+&gt;       original, local = self.get_original()
+
+/usr/lib/python3.10/unittest/mock.py:1447: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;unittest.mock._patch object at 0x7f77fe4e1960&gt;
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+&gt;           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: &lt;module 'torch.amp' from '/usr/local/lib/python3.10/dist-packages/torch/amp/__init__.py'&gt; does not have the attribute 'GradScaler'
+
+/usr/lib/python3.10/unittest/mock.py:1420: AttributeError</failure></testcase></testsuite></testsuites>

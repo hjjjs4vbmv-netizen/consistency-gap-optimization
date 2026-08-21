@@ -1,0 +1,421 @@
+{
+  "audit_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "batch_receipts": [
+    "receipts/seed5/audit2026081101/batch_receipt.json",
+    "receipts/seed5/audit2026081102/batch_receipt.json",
+    "receipts/seed5/audit2026081103/batch_receipt.json",
+    "receipts/seed5/audit2026081104/batch_receipt.json",
+    "receipts/seed5/audit2026081105/batch_receipt.json",
+    "receipts/seed5/audit2026081106/batch_receipt.json",
+    "receipts/seed5/audit2026081107/batch_receipt.json",
+    "receipts/seed5/audit2026081108/batch_receipt.json"
+  ],
+  "frozen_formal_audit_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "provenance": {
+    "a_star_denominator_atol": 1e-30,
+    "audit_library_sha256": "dc105a0dcfd36b4c984b3c8cf36abcf462ab2a7d2d9fadb44a8aa90f4a275fc0",
+    "b": 1.0,
+    "batch_gpu": 16,
+    "batch_size": 128,
+    "checkpoint": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed/network-snapshot-latest.pkl",
+    "checkpoint_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a",
+    "code_commit": "0033dbb3b4a64cd587fb5bd4c5881ae3ea99e1c4",
+    "cuda_version": "12.3",
+    "data": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+    "dataset_hash_algorithm": "sha256_file",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "exact_scalar_r_grad_tolerance": 1e-12,
+    "exact_scale_identity_tolerance": 0.001,
+    "k": 8.0,
+    "operations_excluded": [
+      "training",
+      "sample_generation",
+      "FID",
+      "KID",
+      "continuation_training",
+      "moment_only_variants"
+    ],
+    "order_numeric_tolerance": 1e-12,
+    "preregistration_sha256": "32d2d05aabe290c5cef3ad7c8628621e4d79e3fbc328ca926abe706ae8c9252c",
+    "probe_gap_scale": 1.1,
+    "q": 256.0,
+    "reference_gap_scale": 1.0,
+    "runner_sha256": "e05df71611f8725314bbec6aa4d67963dbd816aa52432c2ccfef1f63d0938e98",
+    "schedule": "sigmoid",
+    "source_state": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed5_fixed/training-state-latest.pt",
+    "source_state_sha256": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+    "state_kimg": 256.0,
+    "support_atol": 0.0,
+    "torch_version": "2.2.0a0+81ea7a4",
+    "training_seed": 5,
+    "training_state_meta": {
+      "attempted_iteration": 2000,
+      "cur_nimg": 256000.0,
+      "cur_tick": 27,
+      "has_gradscaler_state": true,
+      "has_loss_fn_state": true,
+      "successful_optimizer_steps": 1990
+    }
+  },
+  "receipts": [
+    {
+      "audit_batch_id": 2026081101,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081101/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081101/observed_real.json",
+      "result_hash": "1f7405dc03cfc0916701b68ecd38182bf5b265ed578535c37a6fd3a2576ad045",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081101,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081101/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081101/observed_reset.json",
+      "result_hash": "332dff53cf9b6fa03236871825fa966b6ae0bf2cc9bac58c60fddc9a0d186332",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081101,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081101/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081101/exact_scalar_real.json",
+      "result_hash": "572a7f0aa05910be4453055015bcbd02f26231ce2f4982f6b8c24325c973e44c",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081101,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081101/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081101/exact_scalar_reset.json",
+      "result_hash": "101084c30544b30bf781187709b0aefa93d084d1d7dbf46f7e284c01a213b5d1",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081102,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081102/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081102/observed_real.json",
+      "result_hash": "50411e66494eae4a9b8d3df8ac25a196fb6c8ec764de4cc4131dcdcacc905a0d",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081102,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081102/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081102/observed_reset.json",
+      "result_hash": "9183075b696b57b2e6bd9997c49360b434904903d491c959979c60a87499bb14",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081102,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081102/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081102/exact_scalar_real.json",
+      "result_hash": "1dd6967aff5da43e1898c5f8980a7bf81e533c49815acf0e9f5786fea48aa4b5",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081102,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081102/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081102/exact_scalar_reset.json",
+      "result_hash": "0c02fe7808df216b5716e0eb48b3fe2d29fc5ed776dd3684c2005ef42aa431cc",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081103,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081103/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081103/observed_real.json",
+      "result_hash": "62f7c4ab58c8f5d7826626bbf1f6ef29c078e61b787128654395f52a9f14daf8",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081103,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081103/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081103/observed_reset.json",
+      "result_hash": "9ecb16028b8107c3d91166c6351b9143fd7933b85838c595b32b32a82906c0ad",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081103,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081103/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081103/exact_scalar_real.json",
+      "result_hash": "532caf043bb18bb97b82dbf2319398cff368181c612d3f80bd8bae1496f2a1cb",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081103,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081103/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081103/exact_scalar_reset.json",
+      "result_hash": "67d3e1dbd4b35e230201c9bf0601e049485def2346a15e54289110ab3473f895",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081104,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081104/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081104/observed_real.json",
+      "result_hash": "a9bd052ff808489d334b60035b7a6d093a234ba09c5abfb1432cb6f9ced34a15",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081104,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081104/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081104/observed_reset.json",
+      "result_hash": "c8adc6847589090feec929b2ff730d692eb1be9500d059d3e3d411e1b2e66686",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081104,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081104/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081104/exact_scalar_real.json",
+      "result_hash": "bad93f72ba996dd754885ead16ff5113313df7b622e049f801d628c45402ba87",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081104,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081104/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081104/exact_scalar_reset.json",
+      "result_hash": "4aa8e2616c46ed9f4c29911c92960b6d5c7e54ea1c1a4b51c3bd0b738b0af061",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081105,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081105/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081105/observed_real.json",
+      "result_hash": "bbfef12c8282b02f40aec6c831c983ad09924f040ab99cbdd050153ab5f351eb",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081105,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081105/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081105/observed_reset.json",
+      "result_hash": "cfd9a02e0128667883e023d1e4d41959d2956af7d2b94558c372ba553097d7ef",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081105,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081105/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081105/exact_scalar_real.json",
+      "result_hash": "34162442dad43a6dc63158f5dce477e6a834636269f951636c03cd4dc3b631cf",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081105,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081105/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081105/exact_scalar_reset.json",
+      "result_hash": "269c6ca253f855f905b58cae42522e8dc858163644f16b40d488e7e6a8c2810c",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081106,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081106/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081106/observed_real.json",
+      "result_hash": "188cc7036049163435c88b1f93f8e1c65cdfbf5d9266941e85490e6eeb216e68",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081106,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081106/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081106/observed_reset.json",
+      "result_hash": "05904681256913f744f929252630a03a56809838c3620bad34bc9a539d24b1be",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081106,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081106/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081106/exact_scalar_real.json",
+      "result_hash": "e0f115545ba3ca5b374a3ce0134e9246c0b2fca3ce90a3b429c79d067390d371",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081106,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081106/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081106/exact_scalar_reset.json",
+      "result_hash": "e6aeb15bcb89763f5bf79976e2008d973dbc05a126ae68b1546279af7d6d55ef",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081107,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081107/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081107/observed_real.json",
+      "result_hash": "1dc09191f099b5d4593c4d2a8456d9d54a99d6699c3826e9c28508a2a6f80324",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081107,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081107/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081107/observed_reset.json",
+      "result_hash": "a7c25714951a604286b921c902d1a680930577ba387bc7e71379d5a64c9e144d",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081107,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081107/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081107/exact_scalar_real.json",
+      "result_hash": "5598f56e3d59fb9ee3389e10bb59302e2355d1852ee1e810abc609fb94487a2f",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081107,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081107/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081107/exact_scalar_reset.json",
+      "result_hash": "e4d834a6a15ec84d6ef813beac6ccef34e2b3e4f4a2c198bbea548590b816d2c",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081108,
+      "cell": "A",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081108/observed_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081108/observed_real.json",
+      "result_hash": "0a26cf9454d95a3318ebb3646f587555540320c78d9f4fc9ae43c5d73788224f",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081108,
+      "cell": "B",
+      "gradient_mode": "observed",
+      "layerwise": "receipts/seed5/audit2026081108/observed_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081108/observed_reset.json",
+      "result_hash": "e5cee1d4f99667b45c03b8a1a71ef2af17dfb40bde7062225520f79c2789e217",
+      "state_mode": "reset",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081108,
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081108/exact_scalar_real_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081108/exact_scalar_real.json",
+      "result_hash": "f75bc720c340c531342e7cee02a9d3c98c087bc0eb187c8c3dd8e414269c6866",
+      "state_mode": "real",
+      "training_seed": 5
+    },
+    {
+      "audit_batch_id": 2026081108,
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "layerwise": "receipts/seed5/audit2026081108/exact_scalar_reset_layerwise.csv",
+      "receipt": "receipts/seed5/audit2026081108/exact_scalar_reset.json",
+      "result_hash": "ae40d51d34e16ebef7c97adafe26aaf02265f199d2a7a84b5fbfa5c98b82913f",
+      "state_mode": "reset",
+      "training_seed": 5
+    }
+  ],
+  "schema_version": 1,
+  "smoke": false,
+  "source_preservation_across_all_audits": {
+    "gradient_buffers_hash_after": "6e9c46fa26cfe7445a6570b703a8adaace5a1ae5acda439b416265fe60d344ba",
+    "gradient_buffers_hash_before": "6e9c46fa26cfe7445a6570b703a8adaace5a1ae5acda439b416265fe60d344ba",
+    "optimizer_hash_after": "4b6edacdd9db4e936157167af8075d5bad2957b1075f55ff608bc9f86aa7b05b",
+    "optimizer_hash_before": "4b6edacdd9db4e936157167af8075d5bad2957b1075f55ff608bc9f86aa7b05b",
+    "parameter_hash_after": {
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee",
+      "parameter_sha256": "4ff7539b74dd16c1d7b9eb4501cde974cd3d03be4a11b8770bb2445c5012e930"
+    },
+    "parameter_hash_before": {
+      "buffer_sha256": "30b9349e40d1d53010d9764911771919a12bf32fa719ba30063956a111ce0cee",
+      "parameter_sha256": "4ff7539b74dd16c1d7b9eb4501cde974cd3d03be4a11b8770bb2445c5012e930"
+    },
+    "preserved": true,
+    "source_state_file_hash_after": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033",
+    "source_state_file_hash_before": "6bc92e3d9fb4f6349f4c7485b913441e97b144d267214a7f80ce7e27e25e6033"
+  },
+  "status": "PASS",
+  "training_seed": 5
+}

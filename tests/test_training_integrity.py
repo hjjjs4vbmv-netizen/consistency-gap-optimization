@@ -1,6 +1,7 @@
 import csv
 import json
 import pickle
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -32,7 +33,20 @@ class CheckpointEMA(torch.nn.Module):
 
 class TrainingIntegrityTest(unittest.TestCase):
     def test_checker_adds_repository_root_to_import_path(self):
-        self.assertEqual(sys.path[0], str(check_training_integrity.REPO_ROOT))
+        root = str(check_training_integrity.REPO_ROOT)
+        script = str(Path(check_training_integrity.__file__).resolve())
+        code = (
+            "import runpy, sys; "
+            f"root = {root!r}; script = {script!r}; "
+            "sys.path[:] = [item for item in sys.path if item != root]; "
+            "runpy.run_path(script, run_name='check_training_integrity_test'); "
+            "assert sys.path[0] == root, sys.path"
+        )
+        subprocess.run(
+            [sys.executable, "-c", code],
+            cwd=check_training_integrity.REPO_ROOT,
+            check=True,
+        )
 
     def make_run(
         self, root: Path, finite: bool = True, method: str = "fixed",

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.145" timestamp="2026-08-19T00:51:58.470405" hostname="gpu0003"><testcase classname="tests.test_radam_update_gauge.RAdamUpdateGaugeTests" name="test_amp_path_unscales_and_preserves_source_scaler" time="0.699"><failure message="AttributeError: module 'torch.amp' has no attribute 'GradScaler'">self = &lt;test_radam_update_gauge.RAdamUpdateGaugeTests testMethod=test_amp_path_unscales_and_preserves_source_scaler&gt;
+
+    def test_amp_path_unscales_and_preserves_source_scaler(self):
+&gt;       _, (audit, _) = self._run(amp=True)
+
+tests/test_radam_update_gauge.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_radam_update_gauge.RAdamUpdateGaugeTests testMethod=test_amp_path_unscales_and_preserves_source_scaler&gt;
+amp = True
+
+    def _run(self, amp=False):
+        net = TinyEDM().train()
+        images = torch.linspace(-0.8, 0.8, 8).reshape(8, 1, 1, 1)
+        labels = torch.empty((8, 0))
+&gt;       return net, MODULE.run_pair(net, TinyLoss(), images, labels, amp=amp,
+                                    initial_scale=128.0, random_seed=1234)
+
+tests/test_radam_update_gauge.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+common_net = TinyEDM(
+  (encoder): Linear(in_features=1, out_features=1, bias=True)
+  (decoder): Linear(in_features=1, out_features=1, bias=True)
+  (dropout): Dropout(p=0.2, inplace=False)
+)
+loss_template = &lt;test_radam_update_gauge.TinyLoss object at 0x7fe0f2856ad0&gt;
+images = tensor([[[[-0.8000]]],
+
+
+        [[[-0.5714]]],
+
+
+        [[[-0.3429]]],
+
+
+        [[[-0.1143]]],
+
+
+        [[[ 0.1143]]],
+
+
+        [[[ 0.3429]]],
+
+
+        [[[ 0.5714]]],
+
+
+        [[[ 0.8000]]]])
+labels = tensor([], size=(8, 0))
+
+    def run_pair(common_net, loss_template, images, labels, *, gains=(1.0, 1.3), lr=1e-4,
+                 betas=(0.9, 0.999), eps_opt=1e-8, amp=True, initial_scale=65536.0,
+                 random_seed: int | None = None,
+                 microbatch_size: int | None = None) -&gt; tuple[dict[str, Any], list[dict[str, float]]]:
+        """Run the pair while proving the common source objects are unchanged."""
+        if tuple(gains) != (1.0, 1.3):
+            raise ValueError("this audit is defined for exactly gains (1.0, 1.3)")
+        device = images.device
+        microbatch_size = images.shape[0] if microbatch_size is None else microbatch_size
+        if microbatch_size &lt; 1 or images.shape[0] % microbatch_size:
+            raise ValueError("microbatch_size must be a positive divisor of batch size")
+        cpu_rng_before = torch.get_rng_state().clone()
+        cuda_rng_before = torch.cuda.get_rng_state(device=device).clone() if device.type == "cuda" else None
+        try:
+            if random_seed is not None:
+                torch.manual_seed(random_seed)
+                if device.type == "cuda":
+                    torch.cuda.manual_seed_all(random_seed)
+            source_before = module_state_hashes(common_net)
+            source_optimizer = torch.optim.RAdam(common_net.parameters(), lr=lr, betas=betas, eps=eps_opt)
+            source_optimizer_before = state_sha256(source_optimizer.state_dict())
+&gt;           scaler_template = _new_scaler(device, amp, initial_scale)
+
+analysis/radam_update_gauge.py:340: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+device = device(type='cpu'), enabled = True, initial_scale = 128.0
+
+    def _new_scaler(device: torch.device, enabled: bool, initial_scale: float):
+        # torch.amp is available in supported PyTorch versions and also permits a
+        # CPU unit-test path; production runs use the CUDA branch.
+&gt;       return torch.amp.GradScaler(device.type, enabled=enabled, init_scale=initial_scale)
+E       AttributeError: module 'torch.amp' has no attribute 'GradScaler'
+
+analysis/radam_update_gauge.py:170: AttributeError</failure></testcase></testsuite></testsuites>

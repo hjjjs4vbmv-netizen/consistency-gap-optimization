@@ -1,5 +1,7 @@
 """Regression tests for the stateful non-zero RAdam update audit."""
+import builtins
 import importlib.util
+import io
 import math
 import pickle
 import sys
@@ -8,13 +10,15 @@ from pathlib import Path
 import unittest
 from unittest import mock
 
+import numpy as np
 import torch
 
 from training.schedules import get_schedule
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ANALYSIS_DIR = REPO_ROOT / "analysis"
-if str(ANALYSIS_DIR) not in sys.path:
+ADDED_ANALYSIS_PATH = str(ANALYSIS_DIR) not in sys.path
+if ADDED_ANALYSIS_PATH:
     sys.path.insert(0, str(ANALYSIS_DIR))
 
 import radam_update_gauge as gauge  # noqa: E402
@@ -24,6 +28,8 @@ SPEC = importlib.util.spec_from_file_location("radam_stateful_update_audit", SCR
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 SPEC.loader.exec_module(MODULE)
+if ADDED_ANALYSIS_PATH:
+    sys.path.remove(str(ANALYSIS_DIR))
 
 
 class TinyLoss:
@@ -88,6 +94,49 @@ def _warmup_nonzero_state(step: int = 64):
 
 
 class StatefulRAdamAuditTests(unittest.TestCase):
+    def test_exact_quantiles_do_not_call_size_limited_torch_quantile(self):
+        values = torch.tensor([9.0, 1.0, 4.0, 7.0, 2.0, 8.0], dtype=torch.float64)
+        expected = tuple(float(value) for value in np.quantile(
+            values.numpy(), (0.05, 0.50, 0.95), method="linear"))
+        with mock.patch.object(torch, "quantile", side_effect=RuntimeError("too large")):
+            actual = MODULE._quantiles(values, (0.05, 0.50, 0.95))
+        for observed, target in zip(actual, expected):
+            self.assertAlmostEqual(observed, target, places=14)
+
+    def test_numpy2_checkpoint_symbol_falls_back_under_numpy1(self):
+        real_import = builtins.__import__
+
+        def reject_numpy2_core(name, *args, **kwargs):
+            if name == "numpy._core.multiarray":
+                error = ModuleNotFoundError("No module named 'numpy._core'")
+                error.name = "numpy._core"
+                raise error
+            return real_import(name, *args, **kwargs)
+
+        loader = MODULE._NumpyCompatUnpickler(io.BytesIO())
+        with mock.patch("builtins.__import__", side_effect=reject_numpy2_core):
+            scalar = loader.find_class("numpy._core.multiarray", "scalar")
+        self.assertEqual(scalar.__name__, "scalar")
+
+    def test_torch_load_uses_numpy_pickle_compatibility(self):
+        real_import = builtins.__import__
+
+        def reject_numpy2_core(name, *args, **kwargs):
+            if name.startswith("numpy._core"):
+                error = ModuleNotFoundError("No module named 'numpy._core'")
+                error.name = "numpy._core"
+                raise error
+            return real_import(name, *args, **kwargs)
+
+        with tempfile.NamedTemporaryFile(suffix=".pt") as handle:
+            torch.save({"value": np.float64(1.25)}, handle.name)
+            with mock.patch("builtins.__import__", side_effect=reject_numpy2_core):
+                loaded = torch.load(
+                    handle.name, map_location="cpu", weights_only=False,
+                    pickle_module=MODULE._NumpyCompatPickleModule,
+                )
+        self.assertEqual(float(loaded["value"]), 1.25)
+
     def test_load_loss_accepts_global_sigmoid_reference_checkpoint(self):
         loss = TinyLoss()
         loss.schedule = get_schedule(
@@ -114,14 +163,15 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         images = torch.linspace(-0.8, 0.8, 4).reshape(4, 1, 1, 1)
         labels = torch.empty((4, 0))
         with self.assertRaisesRegex(RuntimeError, "moments are still zero"):
-            MODULE.run_stateful_pair(net, optimizer, TinyLoss(), images, labels, amp=False)
+            MODULE.run_stateful_pair_generic(
+                net, optimizer, TinyLoss(), images, labels, amp=False)
 
     def test_refuses_partial_or_divergent_optimizer_state(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
         first_parameter = next(net.parameters())
         del optimizer.state[first_parameter]
         with self.assertRaisesRegex(RuntimeError, "missing optimizer state"):
-            MODULE.run_stateful_pair(
+            MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=False, random_seed=1234,
             )
 
@@ -129,7 +179,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         first_parameter = next(net.parameters())
         optimizer.state[first_parameter]["step"] = torch.tensor(63.0)
         with self.assertRaisesRegex(RuntimeError, "n_K is not uniform"):
-            MODULE.run_stateful_pair(
+            MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=False, random_seed=1234,
             )
 
@@ -138,7 +188,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         source_opt = MODULE.gauge.state_sha256(optimizer.state_dict())
         source_params = MODULE.gauge.module_state_hashes(net)
         # Seed 1234 keeps the tiny ECT geometry finite (same seed as the fresh gauge).
-        audit, layers = MODULE.run_stateful_pair(
+        audit, layers = MODULE.run_stateful_pair_generic(
             net, optimizer, loss, images, labels, amp=False, random_seed=1234,
         )
         self.assertTrue(audit["source_state_non_committing"]["preserved"])
@@ -152,7 +202,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
                          state_validation["parameter_count"])
         whole = audit["whole_model"]
         self.assertTrue(whole["gauge_defined"])
-        for key in ("a_K_star", "R_grad", "s_K_star", "c_K_star", "R_opt",
+        for key in ("a_star", "R_grad", "s_star", "c_star", "R_opt",
                     "H_K", "R_opt_minus_R_grad", "R_pred",
                     "on_support_gauge_dispersion_energy",
                     "off_support_candidate_energy_exact",
@@ -173,17 +223,17 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         self.assertIn("h_update_weighted_mean", layers[0])
         self.assertIn("h_moment_weighted_mean", layers[0])
         self.assertIn("layer_residual_with_global_c_star", layers[0])
-        self.assertEqual(set(layers[0]), set(MODULE.LAYERWISE_FIELDS))
+        self.assertEqual(set(layers[0]), set(MODULE.GENERIC_LAYERWISE_FIELDS))
 
     def test_idealized_predictor_matches_actual_update(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
-        audit, _ = MODULE.run_stateful_pair(
+        audit, _ = MODULE.run_stateful_pair_generic(
             net, optimizer, loss, images, labels, amp=False, random_seed=1234,
         )
         rel = audit["whole_model"]["predicted_vs_actual_relative_l2"]
         # Float32 RAdam vs double predictor: agree to better than 1e-3 relative.
-        self.assertLess(rel["1.0"], 1e-3)
-        self.assertLess(rel["1.3"], 1e-3)
+        self.assertLess(rel["reference"], 1e-3)
+        self.assertLess(rel["probe"], 1e-3)
         self.assertTrue(math.isfinite(
             audit["whole_model"]["h_update_minus_moment_weighted_rmse"]
         ))
@@ -252,7 +302,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
             with self.subTest(seed=seed):
                 net, optimizer, images, labels, loss = _warmup_nonzero_state()
                 rng_before = torch.get_rng_state().clone()
-                audit, _ = MODULE.run_stateful_pair(
+                audit, _ = MODULE.run_stateful_pair_generic(
                     net, optimizer, loss, images, labels, amp=False,
                     random_seed=seed, microbatch_size=4,
                 )
@@ -267,7 +317,7 @@ class StatefulRAdamAuditTests(unittest.TestCase):
     def test_amp_without_gradscaler_state_fails_closed(self):
         net, optimizer, images, labels, loss = _warmup_nonzero_state()
         with self.assertRaisesRegex(RuntimeError, "GradScaler_K"):
-            MODULE.run_stateful_pair(
+            MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=True, scaler_state=None,
                 random_seed=1234,
             )
@@ -278,14 +328,14 @@ class StatefulRAdamAuditTests(unittest.TestCase):
 
         def skip_one(*args, **kwargs):
             grads, predicted, actual, moments, detail = real_step(*args, **kwargs)
-            if kwargs.get("gain") == 1.3:
+            if kwargs.get("gain") == 1.1:
                 detail = dict(detail)
                 detail["step_skipped"] = True
                 actual = {name: torch.zeros_like(value) for name, value in actual.items()}
             return grads, predicted, actual, moments, detail
 
         with mock.patch.object(MODULE, "virtual_stateful_step", side_effect=skip_one):
-            audit, layers = MODULE.run_stateful_pair(
+            audit, layers = MODULE.run_stateful_pair_generic(
                 net, optimizer, loss, images, labels, amp=False, random_seed=1234,
             )
         self.assertFalse(audit["whole_model"]["gauge_defined"])
@@ -311,6 +361,85 @@ class StatefulRAdamAuditTests(unittest.TestCase):
         predicted = MODULE.idealized_radam_update(net, optimizer)
         self.assertIn("unused.weight", predicted)
         self.assertEqual(float(predicted["unused.weight"].abs().sum()), 0.0)
+
+    def test_reset_zeros_only_moments_and_preserves_every_step(self):
+        net, optimizer, _, _, _ = _warmup_nonzero_state()
+        before_steps = MODULE._optimizer_steps_by_name(net, optimizer)
+        before_groups = MODULE._optimizer_hyperparameter_contract(optimizer)
+        receipt = MODULE.reset_radam_moments_(net, optimizer)
+        self.assertTrue(receipt["exp_avg_all_zero"])
+        self.assertTrue(receipt["exp_avg_sq_all_zero"])
+        self.assertTrue(receipt["per_parameter_step_preserved"])
+        self.assertTrue(receipt["param_groups_preserved"])
+        self.assertEqual(before_groups, MODULE._optimizer_hyperparameter_contract(optimizer))
+        after_steps = MODULE._optimizer_steps_by_name(net, optimizer)
+        self.assertEqual(set(before_steps), set(after_steps))
+        for name in before_steps:
+            self.assertTrue(torch.equal(before_steps[name], after_steps[name]))
+
+    def test_moment_manipulation_reuses_gradient_pair_and_preserves_source(self):
+        net, optimizer, images, labels, loss = _warmup_nonzero_state()
+        source_optimizer = MODULE.gauge.state_sha256(optimizer.state_dict())
+        audits, layers = MODULE.run_moment_reset_manipulation(
+            net, optimizer, loss, images, labels, amp=False, random_seed=1234,
+            reference_gap_scale=1.0, probe_gap_scale=1.1,
+        )
+        self.assertEqual(set(audits), {"real", "reset_moments"})
+        self.assertEqual(set(layers), {"real", "reset_moments"})
+        real, reset = audits["real"], audits["reset_moments"]
+        self.assertEqual(real["reference_gap_scale"], 1.0)
+        self.assertEqual(real["probe_gap_scale"], 1.1)
+        self.assertEqual(real["whole_model"]["R_grad"], reset["whole_model"]["R_grad"])
+        for label in ("reference", "probe"):
+            self.assertEqual(
+                real["gradient_contract"][label]["gradient_sha256"],
+                reset["gradient_contract"][label]["gradient_sha256"],
+            )
+            self.assertFalse(real["branches"][label]["step_skipped"])
+            self.assertFalse(reset["branches"][label]["step_skipped"])
+            self.assertTrue(reset["branches"][label]["reset_contract"]["exp_avg_all_zero"])
+            self.assertTrue(reset["branches"][label]["reset_contract"]["per_parameter_step_preserved"])
+        self.assertTrue(real["whole_model"]["H_K_equals_R_opt_identity"])
+        self.assertTrue(reset["whole_model"]["H_K_equals_R_opt_identity"])
+        self.assertTrue(real["source_state_non_committing"]["preserved"])
+        self.assertEqual(source_optimizer, MODULE.gauge.state_sha256(optimizer.state_dict()))
+
+    def test_generic_and_legacy_schema_boundaries_are_compatible(self):
+        net, optimizer, images, labels, loss = _warmup_nonzero_state()
+        generic, generic_layers = MODULE.run_stateful_pair_generic(
+            net, optimizer, loss, images, labels, amp=False, random_seed=1234,
+            reference_gap_scale=1.0, probe_gap_scale=1.3,
+        )
+        legacy, legacy_layers = MODULE.run_stateful_pair(
+            net, optimizer, loss, images, labels, amp=False, random_seed=1234,
+        )
+        self.assertEqual(legacy["gains"], [1.0, 1.3])
+        key_pairs = {
+            "a_star": "a_K_star",
+            "s_star": "s_K_star",
+            "c_star": "c_K_star",
+            "update_reference_l2": "update_1_l2",
+            "update_probe_l2": "update_1p3_l2",
+            "grad_reference_l2": "grad_1_l2",
+            "grad_probe_l2": "grad_1p3_l2",
+        }
+        for generic_key, legacy_key in key_pairs.items():
+            self.assertEqual(
+                generic["whole_model"][generic_key],
+                legacy["whole_model"][legacy_key],
+            )
+            self.assertNotIn(legacy_key, generic["whole_model"])
+        self.assertEqual(
+            generic["whole_model"]["predicted_vs_actual_relative_l2"]["reference"],
+            legacy["whole_model"]["predicted_vs_actual_relative_l2"]["1.0"],
+        )
+        self.assertEqual(set(generic_layers[0]), set(MODULE.GENERIC_LAYERWISE_FIELDS))
+        self.assertEqual(set(legacy_layers[0]), set(MODULE.LEGACY_LAYERWISE_FIELDS))
+        self.assertNotIn("update_1p3_l2", generic_layers[0])
+        self.assertIn("update_1p3_l2", legacy_layers[0])
+        source = Path(SCRIPT).read_text(encoding="utf-8")
+        self.assertIn("--reference-gap-scale", source)
+        self.assertIn("--probe-gap-scale", source)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -14,7 +15,15 @@ MANIFEST = ROOT / "evidence" / "gap_artifact_manifest_v1.json"
 class GapArtifactManifestTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.import_path_before_audit = list(sys.path)
         cls.report = verify_gap_artifact_manifest.run_audit(ROOT, MANIFEST)
+        cls.import_path_after_audit = list(sys.path)
+
+    def test_structural_audit_preserves_import_path(self):
+        self.assertEqual(
+            self.import_path_before_audit,
+            self.import_path_after_audit,
+        )
 
     def test_full_structural_audit_passes_publication_gate(self):
         self.assertEqual(self.report["structural_checks"], "PASS")

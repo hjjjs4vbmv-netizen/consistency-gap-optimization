@@ -1,0 +1,87 @@
+{
+  "audit_rng_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "cells": [
+    {
+      "cell": "A",
+      "gradient_mode": "observed",
+      "state_mode": "real"
+    },
+    {
+      "cell": "B",
+      "gradient_mode": "observed",
+      "state_mode": "reset"
+    },
+    {
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "state_mode": "real"
+    },
+    {
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "state_mode": "reset"
+    }
+  ],
+  "formal_source": {
+    "q": 256,
+    "source_gap_scale": 1.0,
+    "state_kimg": 256,
+    "training_seeds": [3, 4, 5]
+  },
+  "gap_pair": {
+    "probe_gap_scale": 1.1,
+    "reference_gap_scale": 1.0
+  },
+  "gradient_construction": {
+    "a_star": "dot(G_1.00,G_1.10)/dot(G_1.00,G_1.00)",
+    "a_star_accumulation": "float64",
+    "a_star_clamped": false,
+    "exact_scalar_treatment": "a_star * saved G_1.00",
+    "extra_forward_for_exact_scalar": false
+  },
+  "independent_unit": "training_seed",
+  "required_correctness_gates": {
+    "all_24_batches_x_4_cells_complete": true,
+    "all_required_numerics_finite": true,
+    "branch_order_invariant": true,
+    "control_control_update_byte_identical": true,
+    "deterministic_summary_rebuild": true,
+    "exact_scalar_R_grad_atol": 1e-12,
+    "exact_scalar_reset_H_equals_R_opt": true,
+    "exact_scalar_reset_actual_vs_idealized_RAdam_atol": 0.001,
+    "global_a_star_denominator_atol": 1e-30,
+    "no_virtual_step_skipped": true,
+    "order_required_metric_atol": 1e-12,
+    "same_batch_rerun_result_hash_identical": true,
+    "source_model_optimizer_gradient_buffers_preserved": true
+  },
+  "tolerance_rationale": {
+    "exact_scalar_reset_actual_vs_idealized_RAdam_atol": "Frozen at 1e-3 from the repository's pre-existing float32 RAdam-vs-float64 analytical predictor regression test. RAdam eps=1e-8 can create a real non-zero D-cell R_opt even for exactly scalar gradients, so correctness is actual-vs-predicted plus H=R_opt, not an invalid R_opt=0 assertion.",
+    "formal_result_tuning": false
+  },
+  "operations_excluded": [
+    "training",
+    "sample_generation",
+    "FID",
+    "KID",
+    "continuation_training",
+    "moment_only_variants"
+  ],
+  "interpretation_order": [
+    "D",
+    "C",
+    "B_minus_D",
+    "A_minus_C",
+    "A_minus_B"
+  ],
+  "interpretation_boundary": "The four cells are a diagnostic factorial and not an additive causal decomposition. Audit batches are repeated measurements within three training-seed replicates."
+}
