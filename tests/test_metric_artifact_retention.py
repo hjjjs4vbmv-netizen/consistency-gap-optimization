@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from pathlib import Path
 from unittest import mock
 
 import numpy as np
@@ -86,6 +87,42 @@ class MetricArtifactRetentionTests(unittest.TestCase):
                 detector_kwargs={},
                 max_items=1,
             )
+
+    def test_reuses_retained_features_byte_for_byte(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source_path = os.path.join(tmpdir, 'kid-features.npy')
+            destination_path = os.path.join(tmpdir, 'fid-features.npy')
+            features = np.arange(24, dtype=np.float32).reshape(3, 8)
+            metric_utils._atomic_save_npy(source_path, features)
+            opts = metric_utils.MetricOptions(
+                G=None,
+                dataset_kwargs={},
+                device=torch.device('cpu'),
+                generated_features_path=destination_path,
+                precomputed_generated_features_path=source_path,
+            )
+            with mock.patch.object(
+                metric_utils.dnnlib.util,
+                'construct_class_by_name',
+                side_effect=AssertionError('dataset must not be loaded'),
+            ), mock.patch.object(
+                metric_utils,
+                'get_feature_detector',
+                side_effect=AssertionError('detector must not be loaded'),
+            ):
+                stats = metric_utils.compute_feature_stats_for_generator(
+                    opts,
+                    detector_url='unused',
+                    detector_kwargs={},
+                    capture_mean_cov=True,
+                    max_items=3,
+                )
+
+            np.testing.assert_array_equal(stats.get_all(), features)
+            self.assertEqual(Path(source_path).read_bytes(), Path(destination_path).read_bytes())
+            mean, covariance = stats.get_mean_cov()
+            np.testing.assert_allclose(mean, features.astype(np.float64).mean(axis=0))
+            self.assertEqual(covariance.shape, (8, 8))
 
 
 if __name__ == '__main__':

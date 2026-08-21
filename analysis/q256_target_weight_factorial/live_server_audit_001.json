@@ -1,0 +1,56 @@
+{
+  "schema": "ect.q256.target-weight-live-server-audit/v1",
+  "audit_id": "001",
+  "date": "2026-08-19",
+  "host": "gpu0003",
+  "endpoint": "ECT001@172.16.30.17:22",
+  "status": "STOP",
+  "formal_training_authorized": false,
+  "assets": {
+    "dataset": {
+      "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+      "size_bytes": 166000134,
+      "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+    },
+    "transfer": {
+      "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+      "size_bytes": 223173327,
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    }
+  },
+  "runtime": {
+    "sandbox": "/data/temp/ect001-pytorch2401-sandbox",
+    "python": "3.10.12",
+    "torch": "2.2.0a0+81ea7a4",
+    "torch_cuda": "12.3",
+    "cudnn": 8907,
+    "tf32_must_be_false": true
+  },
+  "storage": {
+    "ineligible_home_free_gb": 36,
+    "project_root_filesystem": "/data/temp",
+    "project_root_free_tb": 5.0,
+    "run_root": "/data/raw/ECT/ect_runs",
+    "run_root_free_tb": 33.0,
+    "minimum_formal_free_gb": 60
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "name": "NVIDIA A100 80GB PCIe",
+      "uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859"
+    },
+    {
+      "index": 1,
+      "name": "NVIDIA A100 80GB PCIe",
+      "uuid": "GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10"
+    }
+  ],
+  "blockers": [
+    "foreign_ray_compute_processes_on_both_gpus",
+    "independent_ect001_gradient_audit_on_gpu0_at_audit_time",
+    "isolated_committed_execution_source_not_yet_installed",
+    "correctness_and_resume_gates_not_yet_passed"
+  ],
+  "prohibited_source": "/data/raw/ECT/recurrence_of_ect"
+}

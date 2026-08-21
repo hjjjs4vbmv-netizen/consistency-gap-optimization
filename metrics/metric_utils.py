@@ -11,6 +11,7 @@ import time
 import hashlib
 import pickle
 import copy
+import shutil
 import uuid
 import numpy as np
 import torch
@@ -24,7 +25,7 @@ class MetricOptions:
         num_gpus=1, rank=0, device=None, progress=None, cache=True,
         sample_seeds=None, metric_seed=None,
         generated_features_path=None, generated_samples_path=None,
-        generator_batch_size=None,
+        generator_batch_size=None, precomputed_generated_features_path=None,
     ):
         assert 0 <= rank < num_gpus
 
@@ -42,6 +43,7 @@ class MetricOptions:
         self.generated_features_path = generated_features_path
         self.generated_samples_path = generated_samples_path
         self.generator_batch_size = generator_batch_size
+        self.precomputed_generated_features_path = precomputed_generated_features_path
 
 #----------------------------------------------------------------------------
 
@@ -259,6 +261,17 @@ def _atomic_save_npy(path, array):
     np.save(temp_path, array, allow_pickle=False)
     os.replace(temp_path, path)
 
+def _atomic_copy_file(source_path, destination_path):
+    """Copy a file byte-for-byte, then atomically publish the final path."""
+    os.makedirs(os.path.dirname(os.path.abspath(destination_path)), exist_ok=True)
+    temp_path = destination_path + '.' + uuid.uuid4().hex
+    try:
+        shutil.copyfile(source_path, temp_path)
+        os.replace(temp_path, destination_path)
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
 #----------------------------------------------------------------------------
 
 def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel_lo=0, rel_hi=1, batch_size=128, batch_gen=128, jit=False, **stats_kwargs):
@@ -267,6 +280,29 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
         raise ValueError('generated artifact retention currently requires num_gpus=1')
     if opts.generated_features_path is not None:
         stats_kwargs['capture_all'] = True
+    if opts.precomputed_generated_features_path is not None:
+        if opts.num_gpus != 1:
+            raise ValueError('precomputed generated features currently require num_gpus=1')
+        if opts.generated_samples_path is not None:
+            raise ValueError('cannot retain generated samples while reusing precomputed features')
+        stats = FeatureStats(**stats_kwargs)
+        if stats.max_items is None:
+            raise ValueError('precomputed generated features require max_items')
+        features = np.load(opts.precomputed_generated_features_path, allow_pickle=False)
+        if features.ndim != 2 or features.shape[0] != stats.max_items:
+            raise ValueError(
+                f'precomputed generated features have shape {features.shape}, '
+                f'expected ({stats.max_items}, feature_dim)'
+            )
+        if features.dtype != np.float32 or not np.isfinite(features).all():
+            raise ValueError('precomputed generated features must be finite float32')
+        stats.append(features)
+        if opts.generated_features_path is not None:
+            _atomic_copy_file(
+                opts.precomputed_generated_features_path,
+                opts.generated_features_path,
+            )
+        return stats
     if opts.generator_batch_size is not None:
         batch_gen = opts.generator_batch_size
     elif batch_gen is None:

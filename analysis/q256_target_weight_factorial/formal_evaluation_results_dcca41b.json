@@ -1,0 +1,125 @@
+{
+  "schema": "ect.q256.formal-evaluation-final-report/v1",
+  "status": "PASS",
+  "completed_utc": "2026-08-21T03:15:53Z",
+  "experiment_id": "q256-target-weight-factorial",
+  "protocol": "q256-target-weight-formal-evaluation-v1",
+  "training_source_git_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "gpu_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+  "precision": "fp32",
+  "sample_count_per_job": 50000,
+  "sample_seed_range": "0-49999",
+  "metric_seed": 20260730,
+  "metrics_per_job": [
+    "kid50k_full",
+    "fid50k_full"
+  ],
+  "nfe_modes": {
+    "1": [],
+    "2": [
+      0.821
+    ]
+  },
+  "primary_first": true,
+  "unique_passed_job_count": 24,
+  "expected_job_count": 24,
+  "continuation_chain": [
+    {
+      "name": "v3",
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v3",
+      "terminal_status": "STOPPED_FOR_AUDIT",
+      "passed_job_count": 8,
+      "plan_sha256": "fa9ac9e191faf55b099d02159467d0864578b2abe5f093b5edb4c023a97ea170",
+      "completion_sha256": "f585a88d172cfa452ce1d149a0e7d3e15a8a02df77fa1dcd87a847cc3e35455d"
+    },
+    {
+      "name": "v4",
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v4-seed5-continuation",
+      "terminal_status": "STOPPED_FOR_AUDIT",
+      "passed_job_count": 0,
+      "plan_sha256": "78ea0c212b5cfe341724b03ac9b5e3058362b75ae841eb246ff589ae00812d44",
+      "completion_sha256": "6c40c38dc4bffc0406df1f0a86e196e31cc65c7ae2912712ec1f51dd24037dfd"
+    },
+    {
+      "name": "v5",
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v5-seed5-continuation",
+      "terminal_status": "STOPPED_FOR_AUDIT",
+      "passed_job_count": 12,
+      "failure_kind": "FOREIGN_GPU_COMPUTE_PROCESS",
+      "foreign_process_name": "cudaCheck",
+      "plan_sha256": "b2ce4f4038e1663f8cdad38b2b54c55e67aa8ee179a16f238e716b80f602c1ed",
+      "completion_sha256": "01d55d1f3882471e59bf88b0dba8e97e359ecd6afb06a0451171f9110dd74d88"
+    },
+    {
+      "name": "v6",
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v6-seed5-nfe2-continuation",
+      "terminal_status": "PASS",
+      "passed_job_count": 4,
+      "plan_sha256": "35c5ca203503eea554c4fb6b5fd6c469ea6cba44e9a13c7b72ae07bd2b17751e",
+      "completion_sha256": "d827916918c4310d4b4075dd41259a78871c48882a601ab76a7d0123b9429103"
+    }
+  ],
+  "seed5": {
+    "A": {
+      "nfe1": {
+        "fid50k_full": 318.6385297533079,
+        "kid50k_full": 0.3294346994419418,
+        "receipt_sha256": "40ec8467c53b35628a58bcc0698146989d9fc3bfb82a242a6fc975c81958ac28"
+      },
+      "nfe2": {
+        "mid_t": 0.821,
+        "fid50k_full": 75.26642903818004,
+        "kid50k_full": 0.06215020699949952,
+        "receipt_sha256": "39c8d728b83ba10d80cb1c63c9d1a3b3677e9194d77f401031af1f906c329cb0"
+      }
+    },
+    "B": {
+      "nfe1": {
+        "fid50k_full": 308.85489208234196,
+        "kid50k_full": 0.32612545178928926,
+        "receipt_sha256": "ba26e3bdf17ed2647f0418ec64c92796201d35ffdd1c103f5c6f80a9d46d8f64"
+      },
+      "nfe2": {
+        "mid_t": 0.821,
+        "fid50k_full": 70.23602179880805,
+        "kid50k_full": 0.05611848965465464,
+        "receipt_sha256": "24c519832be2f5d097fa2832feafe36e9e9597fbea0e47a2e25fb4cbd3971406"
+      }
+    },
+    "C": {
+      "nfe1": {
+        "fid50k_full": 308.41434431478046,
+        "kid50k_full": 0.3257360813138138,
+        "receipt_sha256": "9f1800fd19a13f540d6e893f64e95d28f73ee8d00cdbdd05828a9e063ad7250d"
+      },
+      "nfe2": {
+        "mid_t": 0.821,
+        "fid50k_full": 70.48590285136073,
+        "kid50k_full": 0.05650777670670676,
+        "receipt_sha256": "50fb0bed0fb70eab49854d08205d44f07d855ac9281baeee11f872e723377cdb"
+      }
+    },
+    "D": {
+      "nfe1": {
+        "fid50k_full": 315.20035018470526,
+        "kid50k_full": 0.3297561528603603,
+        "receipt_sha256": "076c538dd038e01420935eb806f0b2f4e20eed548534a161c87a53ca724b654b"
+      },
+      "nfe2": {
+        "mid_t": 0.821,
+        "fid50k_full": 75.40786898330393,
+        "kid50k_full": 0.06210935437687687,
+        "receipt_sha256": "08a23145697b66f1c2399f5536540e6a55627417a67a5b5c4ef95b293238fad8"
+      }
+    }
+  },
+  "audit": {
+    "all_seed5_receipts_passed": true,
+    "all_seed5_gpu_monitors_passed": true,
+    "all_seed5_foreign_process_incidents": null,
+    "all_seed5_fid_kid_feature_hashes_identical_within_job": true,
+    "v6_error_log_hits": [],
+    "post_completion_gpu0_compute_process_count": 0,
+    "metric_numerical_semantics_changed_by_continuations": false
+  }
+}

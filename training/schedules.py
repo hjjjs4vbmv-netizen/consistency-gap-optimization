@@ -221,6 +221,18 @@ def _apply_global_gap_scale(t, base_r, global_gap_scale):
     return safe_t - scaled_gap
 
 
+def apply_global_gap_scale(t, base_r, global_gap_scale):
+    """Public, audited entry point for realized per-sample gap scaling.
+
+    Factorial experiments must reuse the production mapping and clamp instead
+    of approximating the denominator with a batch-level scalar.  Keep the
+    implementation in ``_apply_global_gap_scale`` so the native
+    ``global_sigmoid`` schedule and factorized loss share one numerical path.
+    """
+    scale = _validate_global_gap_scale(global_gap_scale)
+    return _apply_global_gap_scale(t, base_r, scale)
+
+
 @register_schedule('global_sigmoid')
 class GlobalSigmoidSchedule(SigmoidSchedule):
     """Official sigmoid mapping with one fixed multiplier on every gap."""

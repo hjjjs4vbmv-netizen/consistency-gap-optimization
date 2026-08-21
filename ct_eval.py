@@ -426,6 +426,7 @@ def evaluation(
 
     dist.print0('Evaluating few-step generation...')
     for repeat_index in range(metric_repeats):
+        shared_generated_features_path = None
         for metric_index, metric in enumerate(metrics):
             generated_features_path = None
             generated_samples_path = None
@@ -440,7 +441,10 @@ def evaluation(
                 sample_seeds=sample_seeds, metric_seed=seed,
                 generated_features_path=generated_features_path,
                 generated_samples_path=generated_samples_path,
-                generator_batch_size=metric_generator_batch)
+                generator_batch_size=metric_generator_batch,
+                precomputed_generated_features_path=shared_generated_features_path)
+            if generated_features_path is not None and shared_generated_features_path is None:
+                shared_generated_features_path = generated_features_path
             if dist.get_rank() == 0:
                 metric_main.report_metric(result_dict, run_dir=run_dir, snapshot_pkl=f'{resume_pkl}')
 

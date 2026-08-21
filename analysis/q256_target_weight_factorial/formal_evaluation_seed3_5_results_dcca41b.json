@@ -1,0 +1,77 @@
+{
+  "schema": "ect.q256.formal-evaluation-seed3-5-aggregate/v1",
+  "status": "PASS",
+  "completed_utc": "2026-08-21T03:15:53Z",
+  "experiment_id": "q256-target-weight-factorial",
+  "training_source_git_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "protocol": {
+    "name": "q256-target-weight-formal-evaluation-v1",
+    "gpu_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+    "precision": "fp32",
+    "sample_count_per_job": 50000,
+    "sample_seed_range": "0-49999",
+    "metric_seed": 20260730,
+    "metrics_in_execution_order": ["kid50k_full", "fid50k_full"],
+    "nfe_order": [1, 2],
+    "nfe2_mid_t": 0.821,
+    "reference": "same frozen CIFAR-10 reference for all jobs"
+  },
+  "expected_job_count": 24,
+  "passed_job_count": 24,
+  "results": [
+    {"job_id":"seed3-armA-nfe1","seed":3,"arm":"A","nfe":1,"mid_t":null,"fid50k_full":331.88455474375274,"kid50k_full":0.3535313746371371,"receipt_sha256":"28bed3378d9f2200df6a46ccd83d282998a6bc75761bc04d69c8458b17284654"},
+    {"job_id":"seed3-armA-nfe2","seed":3,"arm":"A","nfe":2,"mid_t":0.821,"fid50k_full":238.77431960944048,"kid50k_full":0.25276169594594594,"receipt_sha256":"00687da9a77ab5201c2bef9e9e0570fb711026ba53167aa965c0de54d6915b30"},
+    {"job_id":"seed3-armB-nfe1","seed":3,"arm":"B","nfe":1,"mid_t":null,"fid50k_full":310.507547139056,"kid50k_full":0.3136368375725727,"receipt_sha256":"9cd2ddb4f8abadb99e7df862f68ddd3042f68820ddfaccfa89e106e132ab25b8"},
+    {"job_id":"seed3-armB-nfe2","seed":3,"arm":"B","nfe":2,"mid_t":0.821,"fid50k_full":100.49756906488496,"kid50k_full":0.08820685366366368,"receipt_sha256":"945c3ad2f7c2fc92888fb49cb14683f19f3accf9afdd9f9bcf7613df730c7e41"},
+    {"job_id":"seed3-armC-nfe1","seed":3,"arm":"C","nfe":1,"mid_t":null,"fid50k_full":318.17461495161774,"kid50k_full":0.34372183045295285,"receipt_sha256":"5cbaf64362a564bdab0cd4048a057d08faea660e72fabd14d7e63b89c6545471"},
+    {"job_id":"seed3-armC-nfe2","seed":3,"arm":"C","nfe":2,"mid_t":0.821,"fid50k_full":294.10341668869313,"kid50k_full":0.3122041781881883,"receipt_sha256":"3d127c3f32df3c092fd1577e8a1155e51f233c87c90a415471cfd10e5b9ee7ca"},
+    {"job_id":"seed3-armD-nfe1","seed":3,"arm":"D","nfe":1,"mid_t":null,"fid50k_full":329.2343182917125,"kid50k_full":0.34501647522272266,"receipt_sha256":"08f3f2e8f1008bc4770665adc6eb7510a053ab72701dea039a527e84b1f38a6b"},
+    {"job_id":"seed3-armD-nfe2","seed":3,"arm":"D","nfe":2,"mid_t":0.821,"fid50k_full":194.6701794665164,"kid50k_full":0.20275581906156148,"receipt_sha256":"a36cb9c3a54aaa3bd92abf8c2affefac7efc24c046c206dea17bc5f2d3b8a042"},
+    {"job_id":"seed4-armA-nfe1","seed":4,"arm":"A","nfe":1,"mid_t":null,"fid50k_full":310.23485475281177,"kid50k_full":0.31559251016516526,"receipt_sha256":"182fa423b7d35b141f6a9f916042190340bf17608541ebe210baa1226b7aea40"},
+    {"job_id":"seed4-armA-nfe2","seed":4,"arm":"A","nfe":2,"mid_t":0.821,"fid50k_full":113.81673200903708,"kid50k_full":0.10391068428428428,"receipt_sha256":"f88750a742b02dd45b0abd5ac89d99bfaa3bb6ef03734e086e546f3e46ae8e4d"},
+    {"job_id":"seed4-armB-nfe1","seed":4,"arm":"B","nfe":1,"mid_t":null,"fid50k_full":306.77338169259417,"kid50k_full":0.3101227850525524,"receipt_sha256":"b6753ac7b01d0a9b812a495c08c21b98ab56e060838d987097c0ff2ccfa20616"},
+    {"job_id":"seed4-armB-nfe2","seed":4,"arm":"B","nfe":2,"mid_t":0.821,"fid50k_full":112.89292680541745,"kid50k_full":0.10227081211461461,"receipt_sha256":"18da59d0ff46f531bfde200067eef3723d81f617923c4910e0d325c18416c259"},
+    {"job_id":"seed4-armC-nfe1","seed":4,"arm":"C","nfe":1,"mid_t":null,"fid50k_full":304.5662814280197,"kid50k_full":0.3072177151801801,"receipt_sha256":"b9226413161bc7ead5b044daafc1ed308ef9924f62c678afde0ff4782b73d271"},
+    {"job_id":"seed4-armC-nfe2","seed":4,"arm":"C","nfe":2,"mid_t":0.821,"fid50k_full":103.08953559203871,"kid50k_full":0.09174650262262259,"receipt_sha256":"79ea383097f166bd83f5c4d196087b165fbd587cfc29350317fd1cdfbcb47262"},
+    {"job_id":"seed4-armD-nfe1","seed":4,"arm":"D","nfe":1,"mid_t":null,"fid50k_full":324.7224928339265,"kid50k_full":0.3391430930480481,"receipt_sha256":"3615a72e37be4bb1749baf491987abc7bed689f5c513c924d3f959b3991a9ea0"},
+    {"job_id":"seed4-armD-nfe2","seed":4,"arm":"D","nfe":2,"mid_t":0.821,"fid50k_full":176.96071866881078,"kid50k_full":0.18012173852102112,"receipt_sha256":"5d163c3f1ded19bae1548496cb6c4401a0f3554f9a5baf23a7e91c664336348b"},
+    {"job_id":"seed5-armA-nfe1","seed":5,"arm":"A","nfe":1,"mid_t":null,"fid50k_full":318.6385297533079,"kid50k_full":0.3294346994419418,"receipt_sha256":"40ec8467c53b35628a58bcc0698146989d9fc3bfb82a242a6fc975c81958ac28"},
+    {"job_id":"seed5-armA-nfe2","seed":5,"arm":"A","nfe":2,"mid_t":0.821,"fid50k_full":75.26642903818004,"kid50k_full":0.06215020699949952,"receipt_sha256":"39c8d728b83ba10d80cb1c63c9d1a3b3677e9194d77f401031af1f906c329cb0"},
+    {"job_id":"seed5-armB-nfe1","seed":5,"arm":"B","nfe":1,"mid_t":null,"fid50k_full":308.85489208234196,"kid50k_full":0.32612545178928926,"receipt_sha256":"ba26e3bdf17ed2647f0418ec64c92796201d35ffdd1c103f5c6f80a9d46d8f64"},
+    {"job_id":"seed5-armB-nfe2","seed":5,"arm":"B","nfe":2,"mid_t":0.821,"fid50k_full":70.23602179880805,"kid50k_full":0.05611848965465464,"receipt_sha256":"24c519832be2f5d097fa2832feafe36e9e9597fbea0e47a2e25fb4cbd3971406"},
+    {"job_id":"seed5-armC-nfe1","seed":5,"arm":"C","nfe":1,"mid_t":null,"fid50k_full":308.41434431478046,"kid50k_full":0.3257360813138138,"receipt_sha256":"9f1800fd19a13f540d6e893f64e95d28f73ee8d00cdbdd05828a9e063ad7250d"},
+    {"job_id":"seed5-armC-nfe2","seed":5,"arm":"C","nfe":2,"mid_t":0.821,"fid50k_full":70.48590285136073,"kid50k_full":0.05650777670670676,"receipt_sha256":"50fb0bed0fb70eab49854d08205d44f07d855ac9281baeee11f872e723377cdb"},
+    {"job_id":"seed5-armD-nfe1","seed":5,"arm":"D","nfe":1,"mid_t":null,"fid50k_full":315.20035018470526,"kid50k_full":0.3297561528603603,"receipt_sha256":"076c538dd038e01420935eb806f0b2f4e20eed548534a161c87a53ca724b654b"},
+    {"job_id":"seed5-armD-nfe2","seed":5,"arm":"D","nfe":2,"mid_t":0.821,"fid50k_full":75.40786898330393,"kid50k_full":0.06210935437687687,"receipt_sha256":"08a23145697b66f1c2399f5536540e6a55627417a67a5b5c4ef95b293238fad8"}
+  ],
+  "across_seed_summary": [
+    {"arm":"A","nfe":1,"n":3,"fid_mean":320.25264641662415,"fid_sample_sd":10.914733477118611,"kid_mean":0.33285286141474807,"kid_sample_sd":0.01919901645423315},
+    {"arm":"B","nfe":1,"n":3,"fid_mean":308.71194030466404,"fid_sample_sd":1.8711825948964205,"kid_mean":0.3166283581381381,"kid_sample_sd":0.008410305115893033},
+    {"arm":"C","nfe":1,"n":3,"fid_mean":310.3850802314726,"fid_sample_sd":7.01495084532857,"kid_mean":0.3255585423156489,"kid_sample_sd":0.01825270522508574},
+    {"arm":"D","nfe":1,"n":3,"fid_mean":323.0523871034481,"fid_sample_sd":7.164496149092181,"kid_mean":0.3379719070437104,"kid_sample_sd":0.00769727985351784},
+    {"arm":"A","nfe":2,"n":3,"fid_mean":142.61916021888587,"fid_sample_sd":85.4745135865273,"kid_mean":0.1396075290765766,"kid_sample_sd":0.10019422875440016},
+    {"arm":"B","nfe":2,"n":3,"fid_mean":94.54217255637015,"fid_sample_sd":21.943175405258625,"kid_mean":0.08219871847764432,"kid_sample_sd":0.023655495839701703},
+    {"arm":"C","nfe":2,"n":3,"fid_mean":155.89295171069753,"fid_sample_sd":120.7987942367289,"kid_mean":0.15348615250583922,"kid_sample_sd":0.13857850016658924},
+    {"arm":"D","nfe":2,"n":3,"fid_mean":149.01292237287703,"fid_sample_sd":64.35591786151292,"kid_mean":0.14832897065315315,"kid_sample_sd":0.07552113660161744}
+  ],
+  "source_roots": {
+    "seed3_4_nfe1": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v3",
+    "seed5_nfe1_and_seed3_4_nfe2": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v5-seed5-continuation",
+    "seed5_nfe2": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v6-seed5-nfe2-continuation"
+  },
+  "completion_receipts": [
+    {"chain":"v3","status":"STOPPED_FOR_AUDIT","sha256":"f585a88d172cfa452ce1d149a0e7d3e15a8a02df77fa1dcd87a847cc3e35455d"},
+    {"chain":"v5","status":"STOPPED_FOR_AUDIT","sha256":"01d55d1f3882471e59bf88b0dba8e97e359ecd6afb06a0451171f9110dd74d88"},
+    {"chain":"v6","status":"PASS","sha256":"d827916918c4310d4b4075dd41259a78871c48882a601ab76a7d0123b9429103"}
+  ],
+  "audit": {
+    "all_job_receipts_passed": true,
+    "all_job_return_codes_zero": true,
+    "all_gpu_exclusivity_monitors_passed": true,
+    "all_foreign_process_incidents_null": true,
+    "all_fid_kid_feature_hashes_identical_within_job": true,
+    "metric_numerical_semantics_changed_by_continuations": false,
+    "failed_continuation_evidence_preserved_fail_closed": true
+  },
+  "descriptive_note": "Arm B has the lowest mean FID and KID at NFE1 and NFE2 over seed3-5; this is descriptive and not an inferential significance claim."
+}
