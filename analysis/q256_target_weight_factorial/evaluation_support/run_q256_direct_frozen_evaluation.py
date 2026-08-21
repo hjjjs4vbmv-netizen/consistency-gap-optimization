@@ -508,6 +508,54 @@ def validate_prior_evaluation(
     return set(EXPECTED_PRIOR_COMPLETED), record
 
 
+def bind_failed_evaluation_attempt(
+    prior_failed_root: Path, evaluator: Any
+) -> dict[str, Any]:
+    prior_failed_root = prior_failed_root.resolve(strict=True)
+    if prior_failed_root.is_symlink() or not prior_failed_root.is_dir():
+        fail(f"invalid prior failed evaluation root: {prior_failed_root}")
+    plan_path = prior_failed_root / "evaluation_plan.json"
+    completion_path = prior_failed_root / "evaluation_completion.json"
+    receipt_path = prior_failed_root / "receipts" / "seed5-armA-nfe1.json"
+    job_root = prior_failed_root / "jobs" / "seed5-armA-nfe1"
+    plan = load_json(plan_path)
+    completion = load_json(completion_path)
+    receipt = load_json(receipt_path)
+    if plan.get("job_count") != 16 or len(plan.get("jobs", [])) != 16:
+        fail("prior failed continuation has the wrong job count")
+    if completion.get("status") != "STOPPED_FOR_AUDIT":
+        fail("prior failed continuation did not stop for audit")
+    if completion.get("completed_job_ids") != []:
+        fail("prior failed continuation unexpectedly completed a job")
+    if completion.get("failed_job_id") != "seed5-armA-nfe1":
+        fail("prior failed continuation stopped at the wrong job")
+    if receipt.get("status") != "STOPPED_FOR_AUDIT" or receipt.get("returncode") != -15:
+        fail("prior failed continuation receipt has the wrong terminal state")
+    monitor = receipt.get("gpu_exclusivity_monitor")
+    incident = monitor.get("foreign_process_incident") if isinstance(monitor, dict) else None
+    if not isinstance(incident, dict) or incident.get("kind") != "GPU_AUDIT_FAILED":
+        fail("prior failed continuation did not record a GPU audit failure")
+    idle = receipt.get("post_job_gpu_idle_check")
+    if not isinstance(idle, dict) or idle.get("compute_process_count") != 0:
+        fail("prior failed continuation did not leave GPU0 idle")
+    artifacts = evaluator.hash_regular_tree(job_root)
+    return {
+        "schema": "ect.q256.failed-evaluation-attempt-binding/v1",
+        "status": "BOUND_STOPPED_FOR_AUDIT",
+        "root": str(prior_failed_root),
+        "plan": str(plan_path),
+        "plan_sha256": sha256_file(plan_path),
+        "completion": str(completion_path),
+        "completion_sha256": sha256_file(completion_path),
+        "receipt": str(receipt_path),
+        "receipt_sha256": sha256_file(receipt_path),
+        "job_artifacts_tree_sha256": evaluator.canonical_sha256(artifacts),
+        "failed_job_id": "seed5-armA-nfe1",
+        "failure_kind": "GPU_AUDIT_FAILED",
+        "metric_numerical_semantics_changed": False,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, required=True)
@@ -517,6 +565,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--gpu", required=True)
     parser.add_argument("--reuse-bound-matrix", action="store_true")
     parser.add_argument("--prior-evaluation-root", type=Path)
+    parser.add_argument("--prior-failed-evaluation-root", type=Path)
     parser.add_argument("--data", type=Path)
     parser.add_argument("--base-port", type=int, default=31_800)
     parser.add_argument("--lock-root", type=Path, default=Path("/data/temp/ECT001-q256-evaluation-locks"))
@@ -541,6 +590,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.prior_evaluation_root is not None:
         carried_forward_ids, continuation_record = validate_prior_evaluation(
             args.prior_evaluation_root, evaluator
+        )
+    if args.prior_failed_evaluation_root is not None:
+        if continuation_record is None:
+            fail("a failed-attempt binding requires a prior PASS-prefix binding")
+        continuation_record["superseded_failed_attempt"] = bind_failed_evaluation_attempt(
+            args.prior_failed_evaluation_root, evaluator
         )
 
     def primary_first_jobs(cells: Sequence[Mapping[str, Any]], output_root: Path, base_port: int) -> list[dict[str, Any]]:
@@ -576,63 +631,91 @@ def main(argv: Sequence[str] | None = None) -> int:
     evaluator.build_jobs = primary_first_jobs
     evaluator.training_launcher.deep_revalidate_existing_arm = direct_revalidation
 
-    # A single host-side nvidia-smi probe exceeded the frozen 0.4 s timeout in
-    # the first launch even though the immediately following idle audit passed
-    # and no foreign process existed.  Preserve the one-second monitor cadence
-    # and every exclusivity check, but allow one explicitly recorded bounded
-    # bounded retry per job for host-tool timeouts only.  Foreign processes,
-    # cadence failures, and a second timeout from either probe still stop the
-    # job for audit.
+    # Host-side nvidia-smi/ps subprocess startup exceeded the 0.4 s probe
+    # deadline in two independent attempts despite an idle post-job audit.
+    # Preserve the frozen one-second cadence and exact foreign-PID semantics,
+    # but obtain both snapshots in-process from NVML and Linux /proc.  This is
+    # an audit/scheduling-only substitution: no metric process arguments,
+    # checkpoint, seed, precision, or numerical evaluator code changes.
+    import pynvml
+
+    pynvml.nvmlInit()
+    nvml_handles: dict[str, Any] = {}
+    for index in range(pynvml.nvmlDeviceGetCount()):
+        handle = pynvml.nvmlDeviceGetHandleByIndex(index)
+        observed_uuid = pynvml.nvmlDeviceGetUUID(handle)
+        if isinstance(observed_uuid, bytes):
+            observed_uuid = observed_uuid.decode("ascii")
+        nvml_handles[str(observed_uuid)] = handle
+    if args.gpu not in nvml_handles:
+        fail(f"NVML cannot resolve the selected GPU UUID: {args.gpu}")
+
     original_stream_process = evaluator.training_launcher.stream_process
     original_gpu_query = evaluator.training_launcher.query_gpu_compute_processes
     original_process_tree = evaluator.training_launcher.process_tree_pids
 
-    def stream_with_one_bounded_gpu_probe_retry(*stream_args: Any, **stream_kwargs: Any) -> int:
-        gpu_retries_used = 0
-        process_tree_retries_used = 0
-
-        def bounded_gpu_query(gpu_uuid: str, *, timeout_seconds: float = 5.0) -> list[dict[str, object]]:
-            nonlocal gpu_retries_used
+    def nvml_gpu_query(
+        gpu_uuid: str, *, timeout_seconds: float = 5.0
+    ) -> list[dict[str, object]]:
+        del timeout_seconds
+        handle = nvml_handles.get(gpu_uuid)
+        if handle is None:
+            fail(f"NVML audit received another GPU UUID: {gpu_uuid}")
+        try:
+            running = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)
+        except pynvml.NVMLError as exc:
+            fail(f"cannot audit GPU compute processes through NVML: {exc}")
+        records: list[dict[str, object]] = []
+        for process in running:
+            pid = int(process.pid)
             try:
-                return original_gpu_query(gpu_uuid, timeout_seconds=timeout_seconds)
-            except evaluator.training_launcher.LaunchError as exc:
-                if gpu_retries_used == 0 and "timed out after" in str(exc):
-                    gpu_retries_used = 1
-                    return original_gpu_query(gpu_uuid, timeout_seconds=0.8)
-                raise
+                raw_name = (Path("/proc") / str(pid) / "comm").read_text(
+                    encoding="utf-8"
+                ).strip()
+            except OSError:
+                raw_name = "<exited>"
+            used_bytes = int(process.usedGpuMemory)
+            records.append(
+                {
+                    "pid": pid,
+                    "process_name": raw_name,
+                    "used_gpu_memory_mib": str(used_bytes // (1024 * 1024)),
+                }
+            )
+        return records
 
-        def bounded_process_tree(root_pid: int, *, timeout_seconds: float = 5.0) -> set[int]:
-            nonlocal process_tree_retries_used
-            try:
-                return original_process_tree(root_pid, timeout_seconds=timeout_seconds)
-            except evaluator.training_launcher.LaunchError as exc:
-                if process_tree_retries_used == 0 and "timed out after" in str(exc):
-                    process_tree_retries_used = 1
-                    return original_process_tree(root_pid, timeout_seconds=0.8)
-                raise
+    def proc_process_tree(
+        root_pid: int, *, timeout_seconds: float = 5.0
+    ) -> set[int]:
+        del timeout_seconds
+        snapshot = evaluator.training_launcher.linux_process_snapshot()
+        descendants = evaluator.training_launcher.snapshot_descendants(
+            snapshot, root_pid
+        )
+        return {root_pid, *descendants}
 
-        evaluator.training_launcher.query_gpu_compute_processes = bounded_gpu_query
-        evaluator.training_launcher.process_tree_pids = bounded_process_tree
+    def stream_with_in_process_gpu_audit(*stream_args: Any, **stream_kwargs: Any) -> int:
+        evaluator.training_launcher.query_gpu_compute_processes = nvml_gpu_query
+        evaluator.training_launcher.process_tree_pids = proc_process_tree
+
         try:
             return original_stream_process(*stream_args, **stream_kwargs)
         finally:
             monitor = stream_kwargs.get("gpu_monitor_record")
             if isinstance(monitor, dict):
-                monitor["gpu_audit_probe_timeout_recovery"] = {
-                    "schema": "ect.q256.gpu-audit-probe-timeout-recovery/v1",
-                    "base_timeout_seconds": 0.4,
-                    "bounded_retry_timeout_seconds": 0.8,
-                    "maximum_retries_per_probe_per_job": 1,
-                    "nvidia_smi_retries_used": gpu_retries_used,
-                    "process_tree_ps_retries_used": process_tree_retries_used,
-                    "trigger": "nvidia-smi or process-tree ps timeout only",
+                monitor["gpu_audit_backend"] = {
+                    "schema": "ect.q256.gpu-audit-backend/v1",
+                    "gpu_process_source": "pynvml.nvmlDeviceGetComputeRunningProcesses",
+                    "process_tree_source": "linux-procfs",
+                    "poll_interval_seconds": 1.0,
+                    "subprocess_probe_retries": 0,
                     "foreign_process_tolerance_changed": False,
                     "metric_numerical_semantics_changed": False,
                 }
             evaluator.training_launcher.query_gpu_compute_processes = original_gpu_query
             evaluator.training_launcher.process_tree_pids = original_process_tree
 
-    evaluator.training_launcher.stream_process = stream_with_one_bounded_gpu_probe_retry
+    evaluator.training_launcher.stream_process = stream_with_in_process_gpu_audit
     if continuation_record is not None:
         original_build_plan = evaluator.build_plan
 
@@ -652,7 +735,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         lock_root=args.lock_root,
         evaluator_repair_base_git_head=EXPECTED_HEAD,
     )
-    return evaluator.execute(execute_args)
+    try:
+        return evaluator.execute(execute_args)
+    finally:
+        pynvml.nvmlShutdown()
 
 
 if __name__ == "__main__":
