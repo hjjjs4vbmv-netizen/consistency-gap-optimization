@@ -67,7 +67,7 @@ PLANNED_PAUSE_ATTEMPTS = 16
 PLANNED_PAUSE_EVIDENCE_DIR = "exact_resume_pause_evidence_v1"
 PLANNED_PAUSE_EVIDENCE_MANIFEST = "pause_evidence_manifest.json"
 PLANNED_PAUSE_EVIDENCE_SCHEMA = "ect.q256.exact-resume-pause-evidence/v1"
-ROLE_E_AB_PARITY_SCHEMA = "ect.q256.target-weight-role-e-ab-parity/v1"
+ROLE_E_AB_PARITY_SCHEMA = "ect.q256.target-weight-role-e-correctness/v2"
 SMOKE_MATRIX_VALIDATION_SCHEMA = (
     "ect.q256.target-weight-smoke-matrix-validation/v2"
 )
@@ -176,6 +176,10 @@ ROLE_E_REQUIRED_TEST_CASES = (
     (
         "tests.test_q256_target_weight_factorial.CanonicalParityTest",
         "test_B_is_bitwise_equal_to_native_global_sigmoid_g110",
+    ),
+    (
+        "tests.test_q256_target_weight_factorial.CanonicalParityTest",
+        "test_clip_free_denominator_gradient_scaling_identities",
     ),
     (
         "tests.test_q256_target_weight_factorial.CanonicalParityTest",

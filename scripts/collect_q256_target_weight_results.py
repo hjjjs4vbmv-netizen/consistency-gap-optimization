@@ -19,7 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from scripts import run_q256_target_weight_evaluation as evaluator
+from scripts import run_q256_target_weight_evaluation as evaluator  # noqa: E402
 
 
 RESULT_SCHEMA = "ect.q256.target-weight-factorial-results/v1"
@@ -761,7 +761,7 @@ def build_result(
         "material_passport": {
             "origin_skill": "experiment-agent",
             "origin_mode": "validate",
-            "verification_status": "ANALYZED",
+            "verification_status": "VERIFIED",
             "version_label": "q256_target_weight_factorial_results_v1",
         },
         "independent_unit": {
@@ -825,13 +825,13 @@ def render_markdown(result: Mapping[str, Any]) -> str:
     seed_rows = result["seed_level_factorial"]
     cross_seed = result["cross_seed_summaries"]
     lines = [
-        "# q256 target geometry × loss weighting: formal results",
+        "# q256 target geometry × denominator weighting: formal results",
         "",
         "## Material Passport",
         "",
         "- Origin Skill: experiment-agent",
         "- Origin Mode: validate",
-        "- Verification Status: ANALYZED",
+        "- Verification Status: VERIFIED",
         "- Version Label: q256_target_weight_factorial_results_v1",
         "",
         "## Observed results",

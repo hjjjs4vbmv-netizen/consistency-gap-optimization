@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Run the immutable Role-E A/B parity gate on one visible target GPU.
+"""Run the immutable Role-E q256 factorial correctness gate on one GPU.
 
 This gate is intentionally narrower than the training smoke gate.  It proves
 that the frozen factorized A/B controls reproduce the canonical production
-paths, and records the exact source and CUDA runtime used for that proof.
+paths, verifies the same-state/same-batch denominator gradient manipulation,
+and records the exact source and CUDA runtime used for those proofs.
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ import xml.etree.ElementTree as ET
 import torch
 
 
-SCHEMA = "ect.q256.target-weight-role-e-ab-parity/v1"
+SCHEMA = "ect.q256.target-weight-role-e-correctness/v2"
 GIT_STATUS_COMMAND = (
     "git", "status", "--porcelain", "--untracked-files=all"
 )
@@ -36,6 +37,10 @@ REQUIRED_TEST_CASES = (
     (
         "tests.test_q256_target_weight_factorial.CanonicalParityTest",
         "test_B_is_bitwise_equal_to_native_global_sigmoid_g110",
+    ),
+    (
+        "tests.test_q256_target_weight_factorial.CanonicalParityTest",
+        "test_clip_free_denominator_gradient_scaling_identities",
     ),
     (
         "tests.test_q256_target_weight_factorial.CanonicalParityTest",
@@ -236,7 +241,7 @@ def parse_junit(path: Path) -> dict[str, object]:
     }
     if invalid_counts:
         raise GateError(
-            "required A/B parity tests must each be collected exactly once: "
+            "required frozen correctness tests must each be collected exactly once: "
             f"{invalid_counts}"
         )
     required_failures = []
@@ -398,7 +403,10 @@ def run_gate(
     receipt: dict[str, object] = {
         "schema": SCHEMA,
         "status": "PASS" if passed else "FAIL",
-        "scope": "canonical A/B factorized parity and q256 correctness gates",
+        "scope": (
+            "canonical A/B factorized parity, clip-free denominator gradient "
+            "scaling identities, and q256 correctness gates"
+        ),
         "source": source_before,
         "executed_git_archive_sha256": archive_sha256,
         "runtime": runtime,
@@ -421,7 +429,7 @@ def run_gate(
         (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode("utf-8"),
     )
     if not passed:
-        raise GateError(f"Role-E A/B parity gate failed; receipt={output}")
+        raise GateError(f"Role-E q256 correctness gate failed; receipt={output}")
     return receipt
 
 

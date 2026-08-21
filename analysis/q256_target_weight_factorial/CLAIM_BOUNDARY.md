@@ -1,20 +1,22 @@
-# Claim boundary: q256 target geometry x loss weighting
+# Claim boundary: q256 target geometry × denominator weighting
 
 ## Material Passport
 
 - Origin Skill: experiment-agent
 - Origin Mode: validate
 - Origin Date: 2026-08-19
-- Verification Status: UNVERIFIED
-- Version Label: q256_target_weight_factorial_claim_boundary_v1
+- Verification Status: VERIFIED
+- Version Label: q256_target_weight_factorial_claim_boundary_v2
 
-## Supported after successful completion
+## Supported by the completed formal matrix and evaluation
 
+The 12/12 fresh training matrix and 24/24 frozen evaluation jobs are complete.
 The experiment may describe the observed seed-level and cross-seed patterns of
 the four frozen 256-kimg endpoints, their preregistered contrasts, and the
-factorial interaction. It may say that a pattern is consistent with one of the
-preregistered interpretation branches, while retaining the `n=3` uncertainty
-and any seed heterogeneity.
+factorial interaction. It may say that the NFE1 pattern is consistent with the
+preregistered target-geometry-dominant branch, while retaining the `n=3`
+uncertainty, the mixed denominator contrasts, the unstable interaction sign,
+and the strong NFE2 heterogeneity.
 
 ## Unsupported
 
@@ -34,4 +36,3 @@ The experiment does not support any of the following claims:
 
 Every final statement must be marked as one of: observed result,
 preregistered interpretation, exploratory observation, or unsupported claim.
-

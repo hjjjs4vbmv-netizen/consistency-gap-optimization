@@ -15,6 +15,10 @@ from training.loss import (
 from training.schedules import get_schedule
 
 
+GRADIENT_SCALING_RTOL = 2e-6
+GRADIENT_SCALING_ATOL = 1e-6
+
+
 def make_loss(**kwargs):
     defaults = dict(q=256, k=8, b=1, c=0, adj='sigmoid')
     defaults.update(kwargs)
@@ -212,6 +216,92 @@ def run_cuda_loss(loss_fn, seed=20260819):
     }
 
 
+def run_gradient_identity_loss(loss_fn, seed=20260819):
+    """Run one deterministic CPU arm for the frozen gradient manipulation check."""
+    device = torch.device('cpu')
+    net = MultiParameterRecordingNet(device)
+    images = torch.linspace(
+        -1, 1, 4 * 2 * 3 * 3, device=device
+    ).reshape(4, 2, 3, 3)
+    initial_parameters = {
+        name: parameter.detach().clone()
+        for name, parameter in net.named_parameters()
+    }
+    torch.manual_seed(seed)
+    per_sample = loss_fn(net=net, images=images)
+    reduced = per_sample.mean()
+    reduced.backward()
+    source_t = net.calls[0]['t']
+    base_r = loss_fn.schedule.compute_r(t=source_t, stage=loss_fn.stage)
+    r_target, r_denominator, _, delta_denominator = (
+        compute_target_weight_times(
+            source_t,
+            base_r,
+            target_gap_scale=loss_fn.factorial['target_gap_scale'],
+            denominator_gap_scale=(
+                loss_fn.factorial['denominator_gap_scale']
+            ),
+        )
+    )
+    return {
+        'images': images.detach().clone(),
+        'initial_parameters': initial_parameters,
+        'gradients': {
+            name: parameter.grad.detach().clone()
+            for name, parameter in net.named_parameters()
+        },
+        'calls': net.calls,
+        'r_target': r_target.detach().clone(),
+        'r_denominator': r_denominator.detach().clone(),
+        'delta_denominator': delta_denominator.detach().clone(),
+        'telemetry': loss_fn.factorial_runtime_metrics(),
+        'post_rng': torch.get_rng_state().clone(),
+    }
+
+
+def gradient_scaling_residual(reference, scaled):
+    """Return auditable residuals for G_scaled = G_reference / 1.10."""
+    max_absolute_residual = 0.0
+    max_relative_residual = 0.0
+    max_expected_absolute = 0.0
+    for name, reference_gradient in reference['gradients'].items():
+        expected = reference_gradient / 1.1
+        observed = scaled['gradients'][name]
+        residual = (observed - expected).abs()
+        max_absolute_residual = max(
+            max_absolute_residual, float(residual.max())
+        )
+        max_expected_absolute = max(
+            max_expected_absolute, float(expected.abs().max())
+        )
+        nonzero = expected != 0
+        if bool(nonzero.any()):
+            max_relative_residual = max(
+                max_relative_residual,
+                float((residual[nonzero] / expected[nonzero].abs()).max()),
+            )
+
+    expected_denominator = reference['delta_denominator'] * 1.1
+    denominator_residual = (
+        scaled['delta_denominator'] - expected_denominator
+    ).abs()
+    denominator_nonzero = expected_denominator != 0
+    return {
+        'gradient_max_absolute_residual': max_absolute_residual,
+        'gradient_max_relative_residual': max_relative_residual,
+        'gradient_max_expected_absolute': max_expected_absolute,
+        'denominator_max_absolute_residual': float(
+            denominator_residual.max()
+        ),
+        'denominator_max_relative_residual': float(
+            (
+                denominator_residual[denominator_nonzero]
+                / expected_denominator[denominator_nonzero].abs()
+            ).max()
+        ),
+    }
+
+
 class FactorialConfigurationTest(unittest.TestCase):
     def test_all_four_arm_labels_are_derived_from_explicit_factors(self):
         for factors, expected_arm in TARGET_WEIGHT_FACTORIAL_ARMS.items():
@@ -379,6 +469,76 @@ class CanonicalParityTest(unittest.TestCase):
                     ))
         self.assertFalse(torch.equal(runs['A']['loss'], runs['D']['loss']))
         self.assertFalse(torch.equal(runs['B']['loss'], runs['C']['loss']))
+
+    def test_clip_free_denominator_gradient_scaling_identities(self):
+        runs = {
+            arm: run_gradient_identity_loss(factorized(arm))
+            for arm in 'ABCD'
+        }
+        for arm in 'BCD':
+            self.assertTrue(torch.equal(
+                runs['A']['images'], runs[arm]['images']
+            ))
+            self.assertEqual(
+                runs['A']['initial_parameters'].keys(),
+                runs[arm]['initial_parameters'].keys(),
+            )
+            for name in runs['A']['initial_parameters']:
+                self.assertTrue(torch.equal(
+                    runs['A']['initial_parameters'][name],
+                    runs[arm]['initial_parameters'][name],
+                ))
+            self.assertTrue(torch.equal(
+                runs['A']['post_rng'], runs[arm]['post_rng']
+            ))
+
+        for first, second in [('A', 'D'), ('C', 'B')]:
+            with self.subTest(identity=f'G_{second}=G_{first}/1.10'):
+                for key in ('t', 'x', 'output', 'mask'):
+                    self.assertTrue(torch.equal(
+                        runs[first]['calls'][1][key],
+                        runs[second]['calls'][1][key],
+                    ), key)
+                self.assertTrue(torch.equal(
+                    runs[first]['r_target'], runs[second]['r_target']
+                ))
+                self.assertEqual(
+                    runs[second]['telemetry'][
+                        'denominator_scaled_to_zero_count'
+                    ],
+                    0,
+                )
+                self.assertTrue(bool(
+                    (runs[second]['r_denominator'] > 0).all()
+                ))
+                torch.testing.assert_close(
+                    runs[second]['delta_denominator'],
+                    runs[first]['delta_denominator'] * 1.1,
+                    rtol=GRADIENT_SCALING_RTOL,
+                    atol=GRADIENT_SCALING_ATOL,
+                )
+                for name, reference_gradient in (
+                    runs[first]['gradients'].items()
+                ):
+                    torch.testing.assert_close(
+                        runs[second]['gradients'][name],
+                        reference_gradient / 1.1,
+                        rtol=GRADIENT_SCALING_RTOL,
+                        atol=GRADIENT_SCALING_ATOL,
+                    )
+
+                residual = gradient_scaling_residual(
+                    runs[first], runs[second]
+                )
+                allowed_at_max = (
+                    GRADIENT_SCALING_ATOL
+                    + GRADIENT_SCALING_RTOL
+                    * residual['gradient_max_expected_absolute']
+                )
+                self.assertLessEqual(
+                    residual['gradient_max_absolute_residual'],
+                    allowed_at_max,
+                )
 
     def test_target_branch_is_stop_gradient_and_dropout_is_paired(self):
         result = run_loss(factorized('C'))

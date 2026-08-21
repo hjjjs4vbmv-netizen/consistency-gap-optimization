@@ -981,6 +981,7 @@ class TargetWeightLauncherTest(unittest.TestCase):
                 "RANK": "0",
                 "LOCAL_RANK": "0",
                 "WORLD_SIZE": "1",
+                "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
                 "PYTHONUNBUFFERED": "1",
                 "PYTHONDONTWRITEBYTECODE": "1",
             }
