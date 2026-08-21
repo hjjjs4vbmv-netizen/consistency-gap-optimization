@@ -1059,7 +1059,7 @@ def build_plan(
         "metrics_per_job": list(METRICS),
         "metric_repeats": 1,
         "nfe_modes": {str(key): value for key, value in NFE_SETTINGS.items()},
-        "job_count": 24,
+        "job_count": len(jobs),
         "jobs": jobs,
     }
 
@@ -1085,6 +1085,9 @@ def run_authorized_plan_jobs(
     """
 
     plan_sha = plan_sha256
+    total_jobs = len(plan["jobs"])
+    if plan.get("job_count") != total_jobs or total_jobs <= 0:
+        fail("evaluation plan job_count does not match its non-empty job list")
     completion_path = output_root / "evaluation_completion.json"
     completed: list[str] = []
     cache_sha: str | None = None
@@ -1201,7 +1204,7 @@ def run_authorized_plan_jobs(
             launch_path = output_root / "manifests" / f"{job['job_id']}.json"
             write_json_exclusive(launch_path, launch)
             log_path = output_root / "process_logs" / f"{job['job_id']}.log"
-            print(f"[{ordinal}/24] {job['job_id']}", flush=True)
+            print(f"[{ordinal}/{total_jobs}] {job['job_id']}", flush=True)
             started = time.time()
             gpu_monitor: dict[str, Any] = {}
             returncode: int | None = None
@@ -1311,7 +1314,7 @@ def run_authorized_plan_jobs(
             "finished_utc": utc_now(),
             "evaluation_plan": str(plan_path),
             "evaluation_plan_sha256": plan_sha,
-            "job_count": 24,
+            "job_count": total_jobs,
             "completed_job_ids": completed,
             "failed_job_id": None,
             "failed_receipt": None,
