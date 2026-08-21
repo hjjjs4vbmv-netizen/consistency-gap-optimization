@@ -1,0 +1,27 @@
+{
+  "assets": {
+    "dataset": {
+      "bytes": 166000134,
+      "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+      "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+    },
+    "transfer": {
+      "bytes": 223173327,
+      "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    }
+  },
+  "error": "KeyError: 'successful_optimizer_steps'",
+  "extension_classification": "secondary_precision_extension_not_original_preregistration",
+  "finished_utc": "2026-08-20T21:57:01+00:00",
+  "four_arm_complete": false,
+  "replaces_preregistered_seed": false,
+  "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-dcca41b-v1",
+  "schema": "ect.q256.target-weight-secondary-extension-integrity/v1",
+  "seed": 6,
+  "source_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "source_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+  "started_utc": "2026-08-20T21:56:56+00:00",
+  "status": "FAIL",
+  "traceback": "Traceback (most recent call last):\n  File \"/data/temp/ECT001/audit_q256_seed_extension.py\", line 477, in audit_seed\n    state_info = production.validate_training_state(\n  File \"/data/temp/ECT001/q256-factorial-clean-25c3d22/scripts/verify_q256_target_weight_arm.py\", line 1070, in validate_training_state\n    telemetry[\"successful_optimizer_steps\"],\nKeyError: 'successful_optimizer_steps'\n"
+}
