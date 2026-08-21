@@ -1,0 +1,422 @@
+{
+  "bindings": {
+    "adjudication_tooling_commit": "d375b321c02935c8802f0bb18a8aa51f1e3abc3e",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "execution_protocol_commit": "583c2fe0f914fc1191903d747737fd54b4ba1eef",
+    "matrix_sha256": "113a4676916e045f95a1928dd6fa163552515ce589a3721b8873bb72f389ad77",
+    "source_audit_receipt_sha256": "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa",
+    "tool_source_sha256": "8d0ea110dfebc9577a630861a6c9a1183c3247e5878064e129f0bd3106f67695",
+    "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
+    "transfer_checkpoint_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+  },
+  "canonicalization": {
+    "excluded": [
+      "module mode",
+      "requires_grad",
+      "non-tensor attributes"
+    ],
+    "fields": [
+      "kind",
+      "name",
+      "dtype",
+      "rank",
+      "shape",
+      "nbytes",
+      "raw_bytes"
+    ],
+    "metadata_integer_encoding": "unsigned 64-bit big-endian",
+    "ordering": "UTF-8 fully-qualified tensor name, then kind",
+    "raw_bytes": "detach, CPU, contiguous, row-major, little-endian",
+    "schema": "ECT_CANONICAL_TORCH_MODULE_V1"
+  },
+  "cross_run": {
+    "all_six_dataset_interfaces_equal": true,
+    "all_six_initialization_contract_hashes_equal": true,
+    "all_six_reconstructed_net_hashes_equal": true,
+    "distinct_initialization_contract_hashes": [
+      "e289cfc813855fa657e37ad31a2a8b07079e08bfbf86220ddcfc2ddaa4520cdd"
+    ],
+    "distinct_reconstructed_net_hashes": [
+      "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19"
+    ],
+    "run_hashes": {
+      "arm_a_g1_0_lr_fixed_s4": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+      "arm_a_g1_0_lr_fixed_s5": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+      "arm_b_g1_3_lr_fixed_s4": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+      "arm_b_g1_3_lr_fixed_s5": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+      "arm_c_g1_3_lr_matched_s4": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+      "arm_c_g1_3_lr_matched_s5": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19"
+    }
+  },
+  "experiment_id": "gap_lr_matched_q128_s45_replication_v1",
+  "interpretation": {
+    "does_not_attest_historical_process_memory": true,
+    "hash_kind": "reconstructed_expected_initialization_hash",
+    "historical_observed_preupdate_hash_captured": false,
+    "rng_state_reconstructed": false,
+    "scope": "transferred tensor state only"
+  },
+  "quality_blind": {
+    "generation_quality_metrics_accessed": false,
+    "inputs_explicitly_not_read": [
+      "FID",
+      "KID",
+      "quality-evaluation outputs",
+      "trained network snapshots",
+      "training states"
+    ],
+    "inputs_read": [
+      "receipt-bound training_options.json",
+      "frozen transfer checkpoint",
+      "frozen implementation modules",
+      "frozen dataset metadata"
+    ]
+  },
+  "receipt_type": "gap_lr_seed_initialization_reconstruction",
+  "runs": {
+    "arm_a_g1_0_lr_fixed_s4": {
+      "arm": "A",
+      "copy_contract": {
+        "all_destination_tensors_covered": true,
+        "destination_tensor_count": 424,
+        "missing_destination_names": [],
+        "shape_dtype_mismatches": [],
+        "source_only_ignored_by_destination_iterating_copy": [
+          {
+            "dtype": "float32",
+            "name": "model.map_augment.weight",
+            "raw_bytes": 4608,
+            "shape": [
+              128,
+              9
+            ]
+          }
+        ],
+        "source_tensor_count": 425
+      },
+      "ema": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "ema_copy_contract_equal": true,
+      "initialization_contract_sha256": "e289cfc813855fa657e37ad31a2a8b07079e08bfbf86220ddcfc2ddaa4520cdd",
+      "interface_kwargs": {
+        "img_channels": 3,
+        "img_resolution": 32,
+        "label_dim": 0
+      },
+      "internal_integrity_receipt_sha256": "79f466ed90c85f1511d07e78d2f7a96d41fca8b12fb0a5e830b345af1cabb5ec",
+      "net": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "seed": 4,
+      "training_options_sha256": "17aad9dcbcf1cc80bae0c7baccf47c146afd4389d287d24f5cc5826e507b2f27"
+    },
+    "arm_a_g1_0_lr_fixed_s5": {
+      "arm": "A",
+      "copy_contract": {
+        "all_destination_tensors_covered": true,
+        "destination_tensor_count": 424,
+        "missing_destination_names": [],
+        "shape_dtype_mismatches": [],
+        "source_only_ignored_by_destination_iterating_copy": [
+          {
+            "dtype": "float32",
+            "name": "model.map_augment.weight",
+            "raw_bytes": 4608,
+            "shape": [
+              128,
+              9
+            ]
+          }
+        ],
+        "source_tensor_count": 425
+      },
+      "ema": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "ema_copy_contract_equal": true,
+      "initialization_contract_sha256": "e289cfc813855fa657e37ad31a2a8b07079e08bfbf86220ddcfc2ddaa4520cdd",
+      "interface_kwargs": {
+        "img_channels": 3,
+        "img_resolution": 32,
+        "label_dim": 0
+      },
+      "internal_integrity_receipt_sha256": "decc87841f9ed80a1a2849243f90d92b52c99c657572bfdd7ffa306768f92fe8",
+      "net": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "seed": 5,
+      "training_options_sha256": "c0a7b4aec6cb6dc92a91c8e2bfe62ba532530133d4beee062fc3561204855d80"
+    },
+    "arm_b_g1_3_lr_fixed_s4": {
+      "arm": "B",
+      "copy_contract": {
+        "all_destination_tensors_covered": true,
+        "destination_tensor_count": 424,
+        "missing_destination_names": [],
+        "shape_dtype_mismatches": [],
+        "source_only_ignored_by_destination_iterating_copy": [
+          {
+            "dtype": "float32",
+            "name": "model.map_augment.weight",
+            "raw_bytes": 4608,
+            "shape": [
+              128,
+              9
+            ]
+          }
+        ],
+        "source_tensor_count": 425
+      },
+      "ema": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "ema_copy_contract_equal": true,
+      "initialization_contract_sha256": "e289cfc813855fa657e37ad31a2a8b07079e08bfbf86220ddcfc2ddaa4520cdd",
+      "interface_kwargs": {
+        "img_channels": 3,
+        "img_resolution": 32,
+        "label_dim": 0
+      },
+      "internal_integrity_receipt_sha256": "978bfc9de33ee21978ad7eaa61ab33b46c3ef8678aadaa39962c66f357b4c29e",
+      "net": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "seed": 4,
+      "training_options_sha256": "5b903acd3874a15ac7e52902d305d7d65c105e46cf9c24a6aebbc1bbdc37bafe"
+    },
+    "arm_b_g1_3_lr_fixed_s5": {
+      "arm": "B",
+      "copy_contract": {
+        "all_destination_tensors_covered": true,
+        "destination_tensor_count": 424,
+        "missing_destination_names": [],
+        "shape_dtype_mismatches": [],
+        "source_only_ignored_by_destination_iterating_copy": [
+          {
+            "dtype": "float32",
+            "name": "model.map_augment.weight",
+            "raw_bytes": 4608,
+            "shape": [
+              128,
+              9
+            ]
+          }
+        ],
+        "source_tensor_count": 425
+      },
+      "ema": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "ema_copy_contract_equal": true,
+      "initialization_contract_sha256": "e289cfc813855fa657e37ad31a2a8b07079e08bfbf86220ddcfc2ddaa4520cdd",
+      "interface_kwargs": {
+        "img_channels": 3,
+        "img_resolution": 32,
+        "label_dim": 0
+      },
+      "internal_integrity_receipt_sha256": "64f8e02414c7c425448e3a98faacf83f839add463bb9f15d9c8b1f159c8cef0a",
+      "net": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "seed": 5,
+      "training_options_sha256": "eaa646c8dbb1b80b9ff5f9b21b4ad9ff4a6c6bb4aefe3074053fbe8e364b4e21"
+    },
+    "arm_c_g1_3_lr_matched_s4": {
+      "arm": "C",
+      "copy_contract": {
+        "all_destination_tensors_covered": true,
+        "destination_tensor_count": 424,
+        "missing_destination_names": [],
+        "shape_dtype_mismatches": [],
+        "source_only_ignored_by_destination_iterating_copy": [
+          {
+            "dtype": "float32",
+            "name": "model.map_augment.weight",
+            "raw_bytes": 4608,
+            "shape": [
+              128,
+              9
+            ]
+          }
+        ],
+        "source_tensor_count": 425
+      },
+      "ema": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "ema_copy_contract_equal": true,
+      "initialization_contract_sha256": "e289cfc813855fa657e37ad31a2a8b07079e08bfbf86220ddcfc2ddaa4520cdd",
+      "interface_kwargs": {
+        "img_channels": 3,
+        "img_resolution": 32,
+        "label_dim": 0
+      },
+      "internal_integrity_receipt_sha256": "2d639938d0fad770d0f7c2fe0e37792c69fe37a9aba95f18189d8da7e6ca30ff",
+      "net": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "seed": 4,
+      "training_options_sha256": "0dcf3608fc34f64e5db2351ded38337ba77e82e2ee1ae0bab2f8c94fdfed7876"
+    },
+    "arm_c_g1_3_lr_matched_s5": {
+      "arm": "C",
+      "copy_contract": {
+        "all_destination_tensors_covered": true,
+        "destination_tensor_count": 424,
+        "missing_destination_names": [],
+        "shape_dtype_mismatches": [],
+        "source_only_ignored_by_destination_iterating_copy": [
+          {
+            "dtype": "float32",
+            "name": "model.map_augment.weight",
+            "raw_bytes": 4608,
+            "shape": [
+              128,
+              9
+            ]
+          }
+        ],
+        "source_tensor_count": 425
+      },
+      "ema": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "ema_copy_contract_equal": true,
+      "initialization_contract_sha256": "e289cfc813855fa657e37ad31a2a8b07079e08bfbf86220ddcfc2ddaa4520cdd",
+      "interface_kwargs": {
+        "img_channels": 3,
+        "img_resolution": 32,
+        "label_dim": 0
+      },
+      "internal_integrity_receipt_sha256": "e405cd3c856933685015f0598d846e653ea2684393eb9e473ca477eeb502e5f0",
+      "net": {
+        "dtype_counts": {
+          "float32": 424
+        },
+        "kind_counts": {
+          "buffer": 8,
+          "parameter": 416
+        },
+        "schema": "ECT_CANONICAL_TORCH_MODULE_V1",
+        "sha256": "cabefcddf9ca190fe50eee05714f2cd5d92680b6974a6d8bd2be3be42a1ada19",
+        "tensor_count": 424,
+        "total_raw_bytes": 222931084
+      },
+      "seed": 5,
+      "training_options_sha256": "ec629538398d1b952dae7f31480e9f18828bea2eed2d6e99c0ed2e12ce36cac7"
+    }
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

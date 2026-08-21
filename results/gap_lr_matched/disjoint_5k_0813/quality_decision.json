@@ -1,0 +1,15 @@
+{
+  "evidence_class": "NFE1 disjoint FID/KID-5k sampling-block replication",
+  "training_seeds": [3, 4, 5],
+  "sample_seed_blocks": ["5000-9999", "10000-14999", "15000-19999"],
+  "evaluation_cells": 27,
+  "metric_files": 54,
+  "delta_gap_definition": "B-A",
+  "delta_ctrl_definition": "C-B",
+  "gap_direction_consistent_all_seeds_blocks_metrics": true,
+  "control_sign_consistent_within_each_training_seed": true,
+  "sampling_noise_explains_seed4_seed5_reversal": false,
+  "fid50k_status": "not_run",
+  "claim": "Opposite fixed-control effects for training seeds 4 and 5 persist across three disjoint 5k sampling blocks and both FID and KID.",
+  "claim_boundary": "Supports training-seed or trajectory dependence; does not identify optimizer history or non-gauge residuals as the causal mechanism."
+}
