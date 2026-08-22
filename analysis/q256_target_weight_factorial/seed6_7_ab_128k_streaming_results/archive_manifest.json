@@ -1,0 +1,514 @@
+{
+  "created_utc": "2026-08-22T14:24:50Z",
+  "critical_files": [
+    {
+      "bytes": 7055,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/integrity/source_state_audit.json",
+      "sha256": "51e1d9b58583e2b1e72138cc6cef8f5094ab6b992d5491d1f35e88ff423aea5d"
+    },
+    {
+      "bytes": 27945,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/integrity/seed6_checkpoint_inventory.json",
+      "sha256": "a70602c25177e3440f02cba80a11954cbb8d591e7273b6084081d2b8d0115dd9"
+    },
+    {
+      "bytes": 27956,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/integrity/seed7_checkpoint_inventory.json",
+      "sha256": "515b35b450fb547b3dbd2697e5444752187fc1c4b1173a9c442ad07ba1249a66"
+    },
+    {
+      "bytes": 50822,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/learning_curve_seed6_7_ab_nfe1_nfe2_128k.json",
+      "sha256": "9dabb0adffa8e99328db01c942525da9ba1e75fe6c9b00d6dd235df216477b77"
+    },
+    {
+      "bytes": 12143,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/learning_curve_seed6_7_ab_nfe1_nfe2_128k.csv",
+      "sha256": "85e37b871eba410745f158c7a9383def89257092d6a123bae76e169e686d861c"
+    },
+    {
+      "bytes": 6694,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/learning_curve_seed6_7_ab_nfe1_nfe2_128k.md",
+      "sha256": "c3f675bb549b22774138914debfe4c94ee0886822edaa4ea2a13aae276050763"
+    },
+    {
+      "bytes": 3198,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/learning_curve_seed6_7_ab_contrasts_128k.csv",
+      "sha256": "eb453415c46554059445bc02e3d820a2b3409f5f82f8de938445d11873f319b1"
+    },
+    {
+      "bytes": 293,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/time_to_quality_seed6_7_ab_128k.csv",
+      "sha256": "97db312de60dede1dcaa48d7e8925e5c90be9cca2ca40e2ee386b29b05015a76"
+    },
+    {
+      "bytes": 17952,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+      "sha256": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k384-nfe1.json",
+      "sha256": "c0b860380481aa037460a2979b3ac0abed125106891e2eaaa5474b2a9d56a038"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k384-nfe2.json",
+      "sha256": "51ff107822c87ddeea4ef4072babcc39fd8e054fe547565e1a11da8e500fb7c1"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k512-nfe1.json",
+      "sha256": "9ed27b4c2b58b540e8857e7e6c8c349d40d1a27dfacd0799cda4a06cce17f711"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k512-nfe2.json",
+      "sha256": "2cbef1d41afce7a6af3b28790071dd99bdc4d9c6b7958b165c6207637a1acef7"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k640-nfe1.json",
+      "sha256": "25383bcf0e79758ddd356b170066a71a09bb7f49c611425bb000b2b99a41201e"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k640-nfe2.json",
+      "sha256": "5da238d2c9f5df0225276c9c7ff6c896f29b5bbaeb86a93bc734b5b7919c1ecf"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k768-nfe1.json",
+      "sha256": "7537ff588d5557b0473d2efd625e18d5c30aa1fbd0febbefe1c14e7d1c967651"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k768-nfe2.json",
+      "sha256": "9e81ee39f975b734264662f1e145e108a95effaf18abf73f251ca854be6f9925"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k896-nfe1.json",
+      "sha256": "b0219a5b638dae5adc81f6a7c9cb2efd9e3aa59b8f040f1f770b24b090d88183"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k896-nfe2.json",
+      "sha256": "ef4bfc93b65a3fc9d16040f8edcabc3e647b525646e1410b236a2aa7a5861c59"
+    },
+    {
+      "bytes": 2919,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k1024-nfe1.json",
+      "sha256": "563625b31bbf2f0e1e7541018341be6d9371813a38f5e2396d10ec54d554051d"
+    },
+    {
+      "bytes": 2920,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armA-k1024-nfe2.json",
+      "sha256": "89a52562a1c5be08bc099ac0e09c7d432102fcb48957b5957a8123130340f9ba"
+    },
+    {
+      "bytes": 2913,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k384-nfe1.json",
+      "sha256": "87365d9074d07de8ab9c04548fada9d6e6a6e503e67f77a9f91ebba2d44e1d8e"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k384-nfe2.json",
+      "sha256": "b43d10ef3d919a87b2c688f998081046fa81f50e130ff30c405ce44bbea915e8"
+    },
+    {
+      "bytes": 2914,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k512-nfe1.json",
+      "sha256": "6989124eb9a1c4d71653f0515fc1add9885cc556678bfb210396f22f611f22b9"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k512-nfe2.json",
+      "sha256": "600247a0219354b90448398c65e8ee2c60573aae216d753bbbcd81d48382d269"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k640-nfe1.json",
+      "sha256": "20b93915c4b7994f2c500b1111d0061243a4760dbaf95c09c785b235b0941685"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k640-nfe2.json",
+      "sha256": "b1b9bf8013ed6e371bc303f6235d5c03e9d849e6cbf6fc804ec402281bab2fde"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k768-nfe1.json",
+      "sha256": "1a317d68ec9c1c6bac502305d3f3dc009696894205f0b3131e0457915acb3a2e"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k768-nfe2.json",
+      "sha256": "e41734281eb59bb978f7c333fa64ea8f16c9a360261f8e6c77cdcec317044f2c"
+    },
+    {
+      "bytes": 2914,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k896-nfe1.json",
+      "sha256": "b099eae45f449a3c8f3afa6c4514c45154b9653f6d801d249dc4e9b630560824"
+    },
+    {
+      "bytes": 2918,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k896-nfe2.json",
+      "sha256": "582f7991bce01ca2aa1045862d04fada1424041777b0c3908a41e18f5c1c9dd3"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k1024-nfe1.json",
+      "sha256": "b2e858bce7e10161b280377a150fe7d6b557ab2e1f337e6a092bf1d2bdd871fe"
+    },
+    {
+      "bytes": 2919,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed6-armB-k1024-nfe2.json",
+      "sha256": "ff9e8624bc0f2a8de735e3f383a1219832733395ebae846ab1fc920c5b705d00"
+    },
+    {
+      "bytes": 2914,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k384-nfe1.json",
+      "sha256": "283732007e7252995d249484218f97c4a6a6bfabf3248466e1a25dc3da0729bc"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k384-nfe2.json",
+      "sha256": "4475e25e4be35316e2f055daa6221a57990dc5864b382f496a86cfa2ea1da76e"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k512-nfe1.json",
+      "sha256": "8f5ca045a1d70598595e497c26fd1f43a88489dc7f61eac500ebdcad5304ff34"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k512-nfe2.json",
+      "sha256": "9b32a365ee94cbc29c2f76028ac49447094291d8b5920677dfda4a12caeab46e"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k640-nfe1.json",
+      "sha256": "bbe54921636f570d076979dc5f75055762b6c3ea7101a86f45563fb1685ad9d2"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k640-nfe2.json",
+      "sha256": "d95d2a509865207abb08fa568cde3f8f458ddede119ecf1e7513dc503002315f"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k768-nfe1.json",
+      "sha256": "b8e858af6f9d2be26397f6501a5d0051aab6ab0abec8e21ae92a9591d0d8ef68"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k768-nfe2.json",
+      "sha256": "156db9b663eaedd6bff90cd358e0d5c097f0a565d3217649a7594b86dee105bd"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k896-nfe1.json",
+      "sha256": "61244237ecbf41f29f4428112d16290553fe086f1dc8983f89c15c84af14bf35"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k896-nfe2.json",
+      "sha256": "64dbbb671bf4a73297a77b8ae4f4a620db62837e543e6325908651b9fd63d36a"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k1024-nfe1.json",
+      "sha256": "5e5843c27b345a5228ef4777c2a277386bde72dcbd414020b9f650a0ea50e004"
+    },
+    {
+      "bytes": 2920,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armA-k1024-nfe2.json",
+      "sha256": "ad34fecd9e750b640ffc7db9698546afa3038c5bd5ceaa1dae228f7ad529ccf6"
+    },
+    {
+      "bytes": 2914,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k384-nfe1.json",
+      "sha256": "c62f820dedea8b806a5517a0f8083cd41c3bc249f6448b2fc3b1d597ac73e400"
+    },
+    {
+      "bytes": 2914,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k384-nfe2.json",
+      "sha256": "87e411c9f83a35944dc0812b9900c5fcd12ec688e747e16ed38473e1ad46df87"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k512-nfe1.json",
+      "sha256": "169674d3a38b966e251b39d74491be6cb85a78e50a258a56ba41b2fe849eb161"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k512-nfe2.json",
+      "sha256": "787c974ad14458671d8cfb30c5b42142f07533e807310dd86e056a76ab781305"
+    },
+    {
+      "bytes": 2915,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k640-nfe1.json",
+      "sha256": "d3380f6f3b479a73538fbfd298454cfd6e265ebaeabeb4d4364b824fe9b8e2fb"
+    },
+    {
+      "bytes": 2918,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k640-nfe2.json",
+      "sha256": "d9e5a811a2eee99b937564f5612576bb301cd00405aa1df2d33a270b8a13466e"
+    },
+    {
+      "bytes": 2916,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k768-nfe1.json",
+      "sha256": "02ee2eff99c73bc05e9a906339f3c1e97cd60cea54a8df50e46113b11213d6e0"
+    },
+    {
+      "bytes": 2917,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k768-nfe2.json",
+      "sha256": "1366d1405fe87e6b41ba6f76cb76c68d085f5cf2d483032e03c8099eba66cf76"
+    },
+    {
+      "bytes": 2914,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k896-nfe1.json",
+      "sha256": "67d584135b314d3d5f8fea8dc5e6d302e3e099800485c9f86373fd6737a37c65"
+    },
+    {
+      "bytes": 2918,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k896-nfe2.json",
+      "sha256": "b45f30c227d80e30a2a974bdd2a8131f623be5f8793afe98c0355e9f5ec4ac4d"
+    },
+    {
+      "bytes": 2918,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k1024-nfe1.json",
+      "sha256": "a020dc0ded7a14816d7e8e6a647ee34b6bbc8ef831bef61c95f0bc622822a0d5"
+    },
+    {
+      "bytes": 2920,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/evaluation_evidence/receipts/seed7-armB-k1024-nfe2.json",
+      "sha256": "a12b8561123c800fb1405cfc3d80cfacbeeb02c79f281930615ccf77075c62af"
+    }
+  ],
+  "critical_files_tree_sha256": "f40743fe29d3aed8ed1afb143407f8a251c33fc6c2793e25c45549bf66334e56",
+  "large_generated_arrays_policy": "omitted from consolidated archive; hashes preserved in PASS receipts",
+  "large_generated_arrays_retained": false,
+  "schema": "ect.q256.seed6-7-ab-128k-server-archive/v1",
+  "server_archive_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1",
+  "status": "PASS",
+  "training_checkpoints": [
+    {
+      "arm": "A",
+      "budget_kimg": 384,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/384k/network-snapshot.pkl",
+      "snapshot_sha256": "f0bd74764224722f75d168a5ffd3f1b317f0fd335d9a3832732eab7ee734871b",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/384k/training-state.pt",
+      "training_state_sha256": "f883b71245f8aa62831885e5f127a01da2113bc96733e6f1a7422a046da97aed"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 512,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/512k/network-snapshot.pkl",
+      "snapshot_sha256": "a13ded65c78502d447500b14edf8a2c9de4665e53a6c51e86b1ffb01ca590713",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/512k/training-state.pt",
+      "training_state_sha256": "2dd0bf345dc5ca4fbcf7183e6e6d2fa90a8699e8372729692bf6f1c0f70d40ac"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 640,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/640k/network-snapshot.pkl",
+      "snapshot_sha256": "0fed2756c707a14b9d984a4dcc313ae0f1022cb5c572a774ff9c1ad61433e439",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/640k/training-state.pt",
+      "training_state_sha256": "48ec5c41d4a67a1f3277e0c01d1198a557a914e5872f19ec3c289182669d4d37"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 768,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/768k/network-snapshot.pkl",
+      "snapshot_sha256": "d7133731e6547b82d1f4300864279069ede5df4991b1139c15125a01d88aa6a7",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/768k/training-state.pt",
+      "training_state_sha256": "2291719a3d2244a1378642d7b2d1a5d65e994c1f3bd7eab1cd7af0db80ad6b46"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 896,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/896k/network-snapshot.pkl",
+      "snapshot_sha256": "a554897cf899c7c12222da4b8b2f8921e137c3cb78586065ccb019921dbc41e3",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/896k/training-state.pt",
+      "training_state_sha256": "09e3d74a05cb2bcdbe22fd9e9f05c9b72efa3dc87a49d26075d4cc69333098b3"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 1024,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/1024k/network-snapshot.pkl",
+      "snapshot_sha256": "c9beea7a3f99bbb959a9f21158fda18bb7c2a0d5e17347fa9d8e2947885578cb",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/1024k/training-state.pt",
+      "training_state_sha256": "c935c036a78d6c557d18182ae98c05eb50e67d85c9cb5cdffb3054e7dad5381b"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 384,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/384k/network-snapshot.pkl",
+      "snapshot_sha256": "8cd3137ce30bab527998c6e533a80d699d66b5fd090cbd1ba6fbe8de21bd305a",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/384k/training-state.pt",
+      "training_state_sha256": "fbc69bbbed650b09ab2a66060c8ad9a1db31b0ae95d39235fa4907bf723150ea"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 512,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/512k/network-snapshot.pkl",
+      "snapshot_sha256": "f945a5bbcad42f6a49fbe88e4c15f016c3df87e18dfd2188dfe38ee8a428d34c",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/512k/training-state.pt",
+      "training_state_sha256": "1b134048da8f8a3740ef794a50403ce2f15956774474ff068d43c60fb1cb5d21"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 640,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/640k/network-snapshot.pkl",
+      "snapshot_sha256": "f50b4fce587a6b40a8a1d2641e8d76491b294a4a37e99decc5a26c59176042b8",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/640k/training-state.pt",
+      "training_state_sha256": "080b8571aa51456e7e0f25a781e43e60bfa0f13e2298529e2df9c18214e6317c"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 768,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/768k/network-snapshot.pkl",
+      "snapshot_sha256": "35bd8684d07201317f88b8b8aa60641663230e607abe7a0ede13ed05ef93550d",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/768k/training-state.pt",
+      "training_state_sha256": "fc10a8963961371edfe4afb6799bef13d367f574fb1893f9661d6861cb634de2"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 896,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/896k/network-snapshot.pkl",
+      "snapshot_sha256": "faa94678e29083a6f283fcb05b8e62e5325e06f12d81ab745e0a050ee9c0fba5",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/896k/training-state.pt",
+      "training_state_sha256": "eb1ea5b8be6d5083d4a39ea537bbc4af61ab393a51bfc779f1419c8328535554"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 1024,
+      "seed": 6,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/1024k/network-snapshot.pkl",
+      "snapshot_sha256": "7111f5f459e7bdf2287d0e8c950ef07c8b813861c30dc390bb716a2289eb7894",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/1024k/training-state.pt",
+      "training_state_sha256": "3eab4f1917f5592ce6e4a8cde6b7f949460cf62063047250147e3ba3c8a3bda5"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 384,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/384k/network-snapshot.pkl",
+      "snapshot_sha256": "d2a63e244f1e6ea90c86159d5e1e6a551589739fa2fc00178693dc66ff788588",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/384k/training-state.pt",
+      "training_state_sha256": "db9fe2e995746a1bf1fd25389033827711cbae8819c2d93bc38496717d5c85cb"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 512,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/512k/network-snapshot.pkl",
+      "snapshot_sha256": "58378f43115681314204430a0c99b8a4feada2e7f54d7b90995ad65f8ef9f075",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/512k/training-state.pt",
+      "training_state_sha256": "904e3cf2123f249206931c8263e8c6871036f09208cdbb01e1aa96c3ec621fd4"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 640,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/640k/network-snapshot.pkl",
+      "snapshot_sha256": "b1b357529378bde1ea472979cd10c81014e961ddeec5a944df8cdc74c7835541",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/640k/training-state.pt",
+      "training_state_sha256": "0cecc36c6f9fe58f6718d5c220271425b692d96dfbe278ed124a9e29c4118648"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 768,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/768k/network-snapshot.pkl",
+      "snapshot_sha256": "bf681bf14571f219d5eaa556919c870f8290cc0ae844ec3ba60269ef2d9dac19",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/768k/training-state.pt",
+      "training_state_sha256": "66f2414b8dcb332542241a2453c5e199e3697b0751a341cdd514e22fce4fbd52"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 896,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/896k/network-snapshot.pkl",
+      "snapshot_sha256": "516b5953f781389155cebeb622e809a47e934a29fb9850d67e2c8d1045a90657",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/896k/training-state.pt",
+      "training_state_sha256": "cb4a025ff02faaa7e63584955bc850b561699d006536686cd26eab9cdf50d3b6"
+    },
+    {
+      "arm": "A",
+      "budget_kimg": 1024,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/1024k/network-snapshot.pkl",
+      "snapshot_sha256": "cae3b91701fcf88601b195191decd6b13b211da6cf842e8ce82cddcca33ac35f",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/1024k/training-state.pt",
+      "training_state_sha256": "a4164c7dab7d2ac4cf9372a7f1e3ae5195ad86bf3f28a2147fc48b8d5954ed72"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 384,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/384k/network-snapshot.pkl",
+      "snapshot_sha256": "18db07926b7c8b577dbfe6fd1c034579fb747b92345ee3916d2fefef74de54fa",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/384k/training-state.pt",
+      "training_state_sha256": "c1d75b5b801ff7b9b176c5237be36992d36b3bad65a12af524b9c166f6924ba1"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 512,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/512k/network-snapshot.pkl",
+      "snapshot_sha256": "4de8a69efe12e6c56e547e87043c34e451b5cd9b9f524a632d9091aad73c7ed7",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/512k/training-state.pt",
+      "training_state_sha256": "9a06876749202a6716ab4aa4894909f13aaf0ddca25244e1cf2b5e249a1c1550"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 640,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/640k/network-snapshot.pkl",
+      "snapshot_sha256": "071fddd768d44e76b70213d18b0d19fa6a6e38c7b3fbe8bc93d0b4e25438d883",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/640k/training-state.pt",
+      "training_state_sha256": "4185fd8bdc705d4de236c910b66499be1758d91f92c53bcfcf4752df1e3a62dd"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 768,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/768k/network-snapshot.pkl",
+      "snapshot_sha256": "28d6a724765664966454474bede4ba81c1235d4ba2e815561f3f9ed1216aba00",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/768k/training-state.pt",
+      "training_state_sha256": "39e604e14844c8f4102b027e171ff4f6af7e793ed1c371977394f50eeb3d65ae"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 896,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/896k/network-snapshot.pkl",
+      "snapshot_sha256": "3925ef42a87d78a90f423d88aff603832ffb7c8fb15f28c4d04617cd23984e9b",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/896k/training-state.pt",
+      "training_state_sha256": "3a5a61d18728d54008e109ce7d2b54dddd7c4a0f5c184a9855b6973ff79b4c16"
+    },
+    {
+      "arm": "B",
+      "budget_kimg": 1024,
+      "seed": 7,
+      "snapshot": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/1024k/network-snapshot.pkl",
+      "snapshot_sha256": "ef7b8bf54e7026eb75d6ed5e1c049a0fe965f5c35cb566ed8623145ca8374dd8",
+      "training_state": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/1024k/training-state.pt",
+      "training_state_sha256": "1faa160b6c54279f762c7a0ed33cc05921c4c595e0ac0cc500a8fd754246597e"
+    }
+  ]
+}

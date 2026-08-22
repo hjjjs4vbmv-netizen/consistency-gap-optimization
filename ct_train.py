@@ -213,6 +213,11 @@ def make_loss_kwargs(opts):
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
 @click.option('--resume-tick',   help='Number of tick from previous training state', metavar='INT', type=int)
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
+@click.option('--budget-checkpoint-interval-kimg', metavar='KIMG', type=click.IntRange(min=1), default=None, hidden=True)
+@click.option('--budget-checkpoint-start-kimg', metavar='KIMG', type=click.IntRange(min=1), default=None, hidden=True)
+@click.option('--budget-checkpoint-root', metavar='DIR', type=str, default=None, hidden=True)
+@click.option('--budget-checkpoint-source-sha256', metavar='SHA256', type=str, default=None, hidden=True)
+@click.option('--budget-checkpoint-training-commit', metavar='GIT_OID', type=str, default=None, hidden=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
 
 # Evaluation
@@ -290,7 +295,12 @@ def main(**kwargs):
              state_dump_ticks=None if opts.dump == 0 else opts.dump,
              ckpt_ticks=opts.ckpt,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
-             stop_after_attempts=opts.stop_after_attempts)
+             stop_after_attempts=opts.stop_after_attempts,
+             budget_checkpoint_interval_kimg=opts.budget_checkpoint_interval_kimg,
+             budget_checkpoint_start_kimg=opts.budget_checkpoint_start_kimg,
+             budget_checkpoint_root=opts.budget_checkpoint_root,
+             budget_checkpoint_source_sha256=opts.budget_checkpoint_source_sha256,
+             budget_checkpoint_training_commit=opts.budget_checkpoint_training_commit)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
 
     # Random seed.

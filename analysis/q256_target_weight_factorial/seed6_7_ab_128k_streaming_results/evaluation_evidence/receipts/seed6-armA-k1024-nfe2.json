@@ -1,0 +1,67 @@
+{
+  "arm": "A",
+  "artifacts": {
+    "generated-features-fid50k_full-repeat00.npy": {
+      "bytes": 409600128,
+      "sha256": "5f31f900b4a227fc1c028374a493311f0017e604e075bd02ae2bd23a0adec9d0"
+    },
+    "generated-features-kid50k_full-repeat00.npy": {
+      "bytes": 409600128,
+      "sha256": "5f31f900b4a227fc1c028374a493311f0017e604e075bd02ae2bd23a0adec9d0"
+    },
+    "generated-samples.npy": {
+      "bytes": 153600128,
+      "sha256": "824fe13c17be16643d9504176451401e1edcac78bf70b32dfa67f76ab8ff9fa2"
+    },
+    "log.txt": {
+      "bytes": 4092,
+      "sha256": "5a2fb1484a26529027bf5b2fb6e1b8b9a9612a0acbf26662e51c59c04d25e2f0"
+    },
+    "metric-fid50k_full.jsonl": {
+      "bytes": 247,
+      "sha256": "99fd315a49f5640e686ba1a1d5c565b0f97f52a0209ea8a0cf5566368be73309"
+    },
+    "metric-kid50k_full.jsonl": {
+      "bytes": 256,
+      "sha256": "fbdca86588ee3ad2cce822970ce63d6c4d66fe344948596e00666333f206b776"
+    },
+    "training_options.json": {
+      "bytes": 539961,
+      "sha256": "016a14950b56d4e48e3bb12ed639bf51570bb743afb6e73351bfb847b6f49dae"
+    }
+  },
+  "budget_kimg": 1024,
+  "checkpoint": "/root/q256_eval/inbox/seed6/armA/1024k/network-snapshot.pkl",
+  "checkpoint_sha256": "c9beea7a3f99bbb959a9f21158fda18bb7c2a0d5e17347fa9d8e2947885578cb",
+  "classification": "secondary_precision_extension_portability_runtime",
+  "created_utc": "2026-08-22T09:45:25Z",
+  "dataset": "/mnt/ect_project/datasets/cifar10-32x32.zip",
+  "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+  "elapsed_seconds": 242.0,
+  "evaluator_source": "/root/q256_eval/source/evaluator",
+  "evaluator_source_git_head": "9d06ccc72545d4189af1b86de7f629f9c09d3f73",
+  "generated_feature_sha256": "5f31f900b4a227fc1c028374a493311f0017e604e075bd02ae2bd23a0adec9d0",
+  "gpu_identity_row": "1, GPU-53dffea0-6669-8333-8d42-b8e37cb42a03, NVIDIA A100-PCIE-40GB, 40960, 570.211.01",
+  "gpu_uuid": "GPU-53dffea0-6669-8333-8d42-b8e37cb42a03",
+  "job_dir": "/root/q256_eval/runs/seed6-armA-k1024-nfe2",
+  "metric_numerical_semantics_changed": false,
+  "metric_seed": 20260730,
+  "metrics": {
+    "fid50k_full": 2.982469336294808,
+    "kid50k_full": 0.0010846282157157157
+  },
+  "mid_t": 0.821,
+  "nfe": 2,
+  "portability_gate": "/root/q256_eval/portability_gate.json",
+  "portability_gate_sha256": "0e1e71948de226745aabe1a4b0d51a2808697944f1e06e62db10a6d2a3db73a9",
+  "precision": "fp32",
+  "runtime_integrity_receipt": "/root/q256_eval/runtime/runtime_integrity.json",
+  "runtime_integrity_receipt_sha256": "0f0161f0f31c6da2f7f65d664e229798dae8420507aa91b1bd3f50842230e9a2",
+  "runtime_sif": "/root/q256_eval/runtime/ect-pytorch2401-deterministic.sif",
+  "runtime_sif_sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea",
+  "sample_count": 50000,
+  "sample_seed_range": "0-49999",
+  "schema": "ect.q256.seed6-7.streaming-evaluation-job/v1",
+  "seed": 6,
+  "status": "PASS"
+}
