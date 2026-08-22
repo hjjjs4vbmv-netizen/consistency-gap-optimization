@@ -46,11 +46,13 @@ git -C "${repo}" diff --quiet "${approved_base}"..HEAD -- training/loss.py train
 mkdir -p "${run_root}/seed${seed}" "${private_shm}"
 chmod 700 "${private_shm}"
 mkdir -p "$(dirname "${dataset_runtime}")"
-if [[ -e "${dataset_runtime}" || -L "${dataset_runtime}" ]]; then
-  [[ "$(readlink -f "${dataset_runtime}")" == "$(readlink -f "${dataset_host}")" ]] || { echo "canonical dataset path points elsewhere" >&2; exit 2; }
-else
-  ln -s "${dataset_host}" "${dataset_runtime}"
+if [[ ! -e "${dataset_runtime}" && ! -L "${dataset_runtime}" ]]; then
+  ln -s "${dataset_host}" "${dataset_runtime}" 2>/dev/null || true
 fi
+[[ "$(readlink -f "${dataset_runtime}")" == "$(readlink -f "${dataset_host}")" ]] || { echo "canonical dataset path points elsewhere" >&2; exit 2; }
+dataset_sha256="$(sha256sum "${dataset_host}" | cut -d' ' -f1)"
+runtime_sha256="$(awk '$2 == "./runtime/ect-pytorch2401-deterministic.sif" {print $1}' /mnt/ect_project/q256_target_weight_1024k/SHA256SUMS.release.txt)"
+[[ "${runtime_sha256}" =~ ^[0-9a-f]{64}$ ]] || { echo "missing runtime hash in release manifest" >&2; exit 2; }
 
 echo "[q256-replay] WORKER_START seed=${seed} gpu=${gpu_id} commit=$(git -C "${repo}" rev-parse HEAD)"
 for arm_spec in A:1.0:1.0 B:1.1:1.1 C:1.1:1.0 D:1.0:1.1; do
@@ -83,6 +85,34 @@ for arm_spec in A:1.0:1.0 B:1.1:1.1 C:1.1:1.0 D:1.0:1.1; do
     *) echo "refuse out-of-scope resume state: ${resume_state}" >&2; exit 3 ;;
   esac
 
+  start_utc="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  source_sha256="$(sha256sum "${source_state}" | cut -d' ' -f1)"
+  resume_sha256="$(sha256sum "${resume_state}" | cut -d' ' -f1)"
+  git_commit="$(git -C "${repo}" rev-parse HEAD)"
+  git -C "${repo}" diff --binary > "${run_dir}/git-dirty.diff"
+  {
+    echo "start_utc=${start_utc}"
+    echo "hostname=$(hostname)"
+    echo "gpu_id=${gpu_id}"
+    nvidia-smi --query-gpu=index,name,uuid,driver_version --format=csv,noheader
+    echo "git_commit=${git_commit}"
+    echo "source_state=${source_state}"
+    echo "source_state_sha256=${source_sha256}"
+    echo "resume_state=${resume_state}"
+    echo "resume_state_sha256=${resume_sha256}"
+    echo "dataset_host=${dataset_host}"
+    echo "dataset_sha256=${dataset_sha256}"
+    echo "runtime_sif=${sif}"
+    echo "runtime_sif_sha256=${runtime_sha256}"
+  } >> "${run_dir}/replay-environment.log"
+  printf '%s\n' \
+    "${runtime_python} ${repo}/ct_train.py --data=${dataset_runtime} --outdir=${run_dir} --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q256_target_weight_v1 --target-gap-scale=${target_scale} --denominator-gap-scale=${denominator_scale} -q 256 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=${seed} --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=${milestones} --resume=${resume_state}" \
+    >> "${run_dir}/replay-launch-commands.txt"
+  printf 'START,%s,%s,%s,%s,%s,%s\n' \
+    "${start_utc}" "${seed}" "${arm}" "${gpu_id}" \
+    "${resume_state}" "${resume_sha256}" \
+    >> "${run_dir}/replay-resume-history.csv"
+
   echo "[q256-replay] START seed=${seed} arm=${arm} gpu=${gpu_id} resume=${resume_state}"
   env \
     ECT_Q256_LAUNCHER_IN_SANDBOX=1 \
@@ -114,6 +144,11 @@ for arm_spec in A:1.0:1.0 B:1.1:1.1 C:1.1:1.0 D:1.0:1.1; do
   for budget in 384 512 640 768 896 1024; do
     [[ -s "${run_dir}/training-state-kimg$(printf '%06d' "${budget}").pt" ]] || { echo "missing immutable milestone seed=${seed} arm=${arm} budget=${budget}" >&2; exit 4; }
   done
+  end_utc="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  printf 'END,%s,%s,%s,%s,%s,%s\n' \
+    "${end_utc}" "${seed}" "${arm}" "${gpu_id}" \
+    "${resume_state}" "${resume_sha256}" \
+    >> "${run_dir}/replay-resume-history.csv"
   echo "[q256-replay] PASS seed=${seed} arm=${arm}"
 done
 
