@@ -31,3 +31,20 @@ The command emits SVG, PDF, and PNG versions of `asset_a_fid_vs_budget`, a
 normalized figure-data CSV, and a provenance manifest with hashes.  The 1024
 kimg FID-5k point is an auxiliary same-protocol curve point; a 1024 kimg
 FID-50k value belongs in a separate endpoint asset, never this trajectory.
+
+## Asset B — Compute-to-quality
+
+Asset B is driven by a version-controlled frozen threshold JSON.  It defines
+the threshold, metric, NFE, two paired arms, protocol, and checkpoint budgets
+before results are rendered.  `crossing_mode` is one global choice for an
+asset: `first_observed` reports the first checkpoint at or below the threshold;
+`linear_interpolation_descriptive` labels every crossing as a descriptive
+between-checkpoint estimate.  The renderer rejects a chart that would mix
+those definitions, and it rejects an interpolation that is unbracketed before
+the first checkpoint.
+
+For each seed it writes both `tau_A`, `tau_B`, and
+`Δtau = tau_B − tau_A` in kimg.  The figure keeps each paired seed as a thin
+connector; median lines are summaries only.  The manifest flags the special
+case in which every observed paired `Δtau` is negative, without making a
+population-level claim.
