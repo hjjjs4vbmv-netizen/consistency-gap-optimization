@@ -1,0 +1,2528 @@
+{
+  "classification": "secondary_precision_extension_not_original_preregistration",
+  "diagnostics": {
+    "10": {
+      "B_minus_A": -0.17782977342605477,
+      "B_minus_C": -1.7185749572515476,
+      "B_minus_D": 1.4057742524147034,
+      "C_minus_A": 1.5407451838254929,
+      "D_minus_A": -1.5836040258407582,
+      "interaction": -0.13497093141078764
+    },
+    "11": {
+      "B_minus_A": -0.16851025581359735,
+      "B_minus_C": -1.7455702441930754,
+      "B_minus_D": 1.2880494052171727,
+      "C_minus_A": 1.577059988379478,
+      "D_minus_A": -1.45655966103077,
+      "interaction": -0.2890105831623053
+    },
+    "12": {
+      "B_minus_A": -0.22921835303306537,
+      "B_minus_C": -1.7582158911228198,
+      "B_minus_D": 1.3840406054258345,
+      "C_minus_A": 1.5289975380897545,
+      "D_minus_A": -1.6132589584588999,
+      "interaction": -0.14495693266391996
+    },
+    "13": {
+      "B_minus_A": -0.03210424304008441,
+      "B_minus_C": -1.6113144713640182,
+      "B_minus_D": 1.4125321969389937,
+      "C_minus_A": 1.5792102283239338,
+      "D_minus_A": -1.444636439979078,
+      "interaction": -0.16667803138494008
+    },
+    "8": {
+      "B_minus_A": -0.133310777544974,
+      "B_minus_C": -1.7207889360189412,
+      "B_minus_D": 1.4458459997177133,
+      "C_minus_A": 1.5874781584739672,
+      "D_minus_A": -1.5791567772626873,
+      "interaction": -0.14163215875625212
+    },
+    "9": {
+      "B_minus_A": -0.06715557605028266,
+      "B_minus_C": -1.5959133800864223,
+      "B_minus_D": 1.378544680476189,
+      "C_minus_A": 1.5287578040361396,
+      "D_minus_A": -1.4457002565264716,
+      "interaction": -0.15021312355995065
+    }
+  },
+  "generated_utc": "2026-08-21T19:46:32+00:00",
+  "quality_conclusion": "not_permitted_from_training_diagnostics",
+  "schema": "ect.q256.target-weight-secondary-extension-report/v1",
+  "seeds": {
+    "10": {
+      "assets": {
+        "dataset": {
+          "bytes": 166000134,
+          "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+          "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+        },
+        "transfer": {
+          "bytes": 223173327,
+          "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+          "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+        }
+      },
+      "cells": {
+        "A": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            14
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1779922,
+              "sha256": "b41ee5e7d5e361509b454ac1ac72057aa6856c7b5744a4276683ffc27688eb62"
+            },
+            "final.png": {
+              "bytes": 544950,
+              "sha256": "e76f1e6e6b6caef77a6a9c305b512b74ee627750f173a9de9e947b440120e44e"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "26b70cf1800409b9c384eba7ad481e04a00ab7ed6dbb5c293979d5b85f892771"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "1c7520083ba584bb63870176a1f8002739baacb3b399de1df18e288e9b9daa03"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "57a74c1e937664d36f4a02e9b179210cb1ca30075017a47df18dcee3f68277df"
+            },
+            "train_summary.csv": {
+              "bytes": 244648,
+              "sha256": "64d8bb28b73abf2660d02e0ed6e06f5a8b882b2aca6f60bb3338b8d163e78024"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "3cc4c58ee5f3785c8680b2552fd8b793f295fd2942e0932a422e3d6b80cf5103"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "044093cbe91161491548a24ec6e2c08192c9f5be497e5fc8abe04fa90b802615"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143858156,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3673.627339,
+          "final_loss": 15.13810670375824,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "0073ff3892b344f12f426898365dc92e734367c997428d5a8055505dbcb009d3",
+          "last200_loss_mean": 16.40599108994007,
+          "last200_loss_sd": 1.0340831990358907,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143858156,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed10/armA",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "02bf5b403a72fbf44d96d57059cb8f826f9acd5e58e7d07e45ea42ff9c8ffea4",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "4cb174d2cc3c6ec3090c825842ff5972cbcee0518c3a9e01c236c95c461e36c9"
+        },
+        "B": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            14,
+            391
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1848118,
+              "sha256": "f4fb38ce0d57de98256e1139c16ad8be511d736e2b3da2e0ce1f99d754c285f0"
+            },
+            "final.png": {
+              "bytes": 438713,
+              "sha256": "5bf5b7cf96366ebff0fc3b4db01398fb453dd820d0cdf98b3d6064b9847d0790"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "c9a45d10804363796983cbee13f8a5ec7c65fe12073e283b3d8ac3eeb8926c02"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "1c76506649c31c6037e8ed61b74d646219bf1eb4d75dc35a0ab5cce26692bcdb"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "b423ddaa9f60fa82277150242fc05dd53b8658e1ed5873c70e10e17e40889a42"
+            },
+            "train_summary.csv": {
+              "bytes": 245023,
+              "sha256": "4560ee0cdc2f5a25ef88798e8f9b908e3f3360b3faaaea4e137709270b21e953"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "b1f4fa74b1aeb1528da6bf765dca1abf476d39693d574dd7a9d956bd57af8720"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "7b739cde567b77c8cda90539c97032289e1167846dc7bcdd04d3b909cbdd5bca"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143856721,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3700.456908,
+          "final_loss": 15.328711748123169,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "0073ff3892b344f12f426898365dc92e734367c997428d5a8055505dbcb009d3",
+          "last200_loss_mean": 16.228161316514015,
+          "last200_loss_sd": 1.0292827772318203,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143856721,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed10/armB",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "263e500b82e3cc9e828b8a984564108a9afd6885b7f7e826185949123203d5c3",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "2ea7da045bb9c04a6c8630056181b5cbb660bff911a37f87e927a8445af589fc"
+        },
+        "C": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            14
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1813556,
+              "sha256": "3c5a9b1682a6ba3c4c1c436fcea93ebb285cb4a0c05b4eb6d2da3099c9436282"
+            },
+            "final.png": {
+              "bytes": 537476,
+              "sha256": "77e69a380193719634b1df71e9a79b91edd65a4868ce9b774e10e92376fb188e"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "2cc46313de6d2c2f736ec804e1c7fbb4ea6830eddf7352789a64ca5987438144"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "06e20e92af3c033d8262f356b177f5783804747da7530257327987f26b1bcb41"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "3d7354fd5fb097a5045d56ce5360828fa56ba35b55292e90ab5f622c1f9249b7"
+            },
+            "train_summary.csv": {
+              "bytes": 244638,
+              "sha256": "1bef81fed2ff8ed70da2ff589dd723713b39d8a5ad1756e75c7761384c409a90"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "9d966aba0d76ea8c19ea09e994f74fdd7313ca24291bc2524a86b5ae2e5e9bce"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "12b705c11c4c4553fb0ea07b1607dfa7973c5b56c31e80c99d4817dc65c63041"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143858120,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3642.883075,
+          "final_loss": 16.649563193321228,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "0073ff3892b344f12f426898365dc92e734367c997428d5a8055505dbcb009d3",
+          "last200_loss_mean": 17.946736273765563,
+          "last200_loss_sd": 1.1225380172252812,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143858120,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed10/armC",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "6d0972f0738a6e60291e03cd27c4e39af4e2f8aa19320006421d4798e6bd0c26",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "9bd86f37cc2fe9dab1b82a4a4b99c769e4cb7c647ae10bd328c7644678c65c3b"
+        },
+        "D": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            23,
+            391
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1814429,
+              "sha256": "4c7d24f718520d51f453aaf4bf0ebf1c5a19c5c23864742beb14d0cb08ec710b"
+            },
+            "final.png": {
+              "bytes": 446716,
+              "sha256": "2ed7f8b4c2045c1e5a3162c5c9173da81445fda9cea1be3cfc930f9a91bf0e9c"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "e1eb035f69fec042303513dc737da7ca85e557d63f927da9a66efb6aa3a2cd14"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "6c6afa791392abee9f63df8180d95e65e9d73456833a7432d9f59c321d882b03"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "00e9c08abdfea686e6decbb0a6f1fd3b226fa799af5ec336f3ddaa10da80c71b"
+            },
+            "train_summary.csv": {
+              "bytes": 245027,
+              "sha256": "bf722de21b09618f70249b826659be2d3076b1b703298ba952eb074884a5e0d3"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "a5bdf0ab4de52242b2b7ed5d95512a8f8a01223ca62ef3096c452e531a7be7e2"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "e351e0ca49b464a74860606b6a15ba8094c29197abe884c2950bc3ac7436ba1a"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143856698,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3652.502668,
+          "final_loss": 13.939112305641174,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "0073ff3892b344f12f426898365dc92e734367c997428d5a8055505dbcb009d3",
+          "last200_loss_mean": 14.822387064099312,
+          "last200_loss_sd": 0.9359042173561005,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143856698,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed10/armD",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "276fb05361e2bbc76bf4d9d2d2a7318276f2e7d521853405432cc9efe56d6155",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "72f59f749df789bc38820ca44983be5ca1231953e1153d41280614612267c1f4"
+        }
+      },
+      "common_initial_state_identity": true,
+      "denominator_integrity": true,
+      "extension_classification": "secondary_precision_extension_not_original_preregistration",
+      "finished_utc": "2026-08-21T19:44:38+00:00",
+      "four_arm_complete": true,
+      "replaces_preregistered_seed": false,
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1",
+      "schema": "ect.q256.target-weight-secondary-extension-integrity/v1",
+      "seed": 10,
+      "source_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+      "source_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+      "started_utc": "2026-08-21T19:44:00+00:00",
+      "status": "PASS",
+      "telemetry_identity_checks": {
+        "A_vs_C_same_denominator": true,
+        "A_vs_D_same_target": true,
+        "B_vs_C_same_target": true,
+        "B_vs_D_same_denominator": true,
+        "all_pass": true
+      }
+    },
+    "11": {
+      "assets": {
+        "dataset": {
+          "bytes": 166000134,
+          "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+          "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+        },
+        "transfer": {
+          "bytes": 223173327,
+          "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+          "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+        }
+      },
+      "cells": {
+        "A": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            14
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1780146,
+              "sha256": "54d5abeb47455bd31933e176d7963733ae7cde8f9b7d33375c5e32074e006ebd"
+            },
+            "final.png": {
+              "bytes": 639354,
+              "sha256": "d5245f23d360f099f3102404e2bed17e4891a1ea7f5fa8c47c189c0b817666c8"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "68b8c5454729dc75b829829b7aeb80a2d03c59bfae23cfbe07e091704eadc317"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "dfa6f57fe59d6ae469157df27df9692721f554f4b154bdfea5e1f3e362ee8ca2"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "3d325816de7baa8c5abc9dcc57ac9ba4dfc69d303a458d263fb86a2ace4e43e0"
+            },
+            "train_summary.csv": {
+              "bytes": 244812,
+              "sha256": "9071a44f9772db905c48c2254a8681c6f924ab6321271d894123f6ba4766c627"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "8ca594acd0b7a38b3099c3895d1255d5d88d474b13fcdd51308a91e0ccef3ba6"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "aff6589dcc84e08072feb9c18a4ac190e8ff5b21e2ce5d011042d35c9a13a1f3"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 118924716,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 4145.864826,
+          "final_loss": 15.235094666481018,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "d280d7cef5896e77bd0f692c7467b69babb0b484ae92fb3b9ba2cdefb2303499",
+          "last200_loss_mean": 16.32616224527359,
+          "last200_loss_sd": 1.0216117429273939,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 118924716,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed11/armA",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "76763ebec18b2fe5761f0ec50f09ed8fa7246f789ad316506d503a09b1fb7020",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "25b4dfacc80be40bdd9b020f0c2820e561e5764839c96b6fe45d6a6cb06a2f6c"
+        },
+        "B": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            888
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1849624,
+              "sha256": "906c99cf710705a02940c15fdf6613d3d876c07da43862116b9dcc506515a94e"
+            },
+            "final.png": {
+              "bytes": 534879,
+              "sha256": "cc45475ed7eaf80650ef3033efba26a577453899a56acf954ce2053e68e715c5"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "fb264515834acac74550fdaf7c7f2e145451d18cab1d44b27fa078cf3d9ad236"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "d05c3cc8629e69bc8dcb27289a222d0b192b6dde82a023d5d246bac0846e580f"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "0d10fab84ca78f8d5aa4f0f870b278f2f50b897e7c4825b0643f489aca475f4f"
+            },
+            "train_summary.csv": {
+              "bytes": 245527,
+              "sha256": "87692a6f80f6935d906cac9152149ac3d86024cf21d98315be9d8dccc5b38e40"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "33fd6eb4656f8b0813fc4c6735025bb496307334269c06685182cec3786db8f0"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "a993d1cd1a811116ea8bda1e84866a6ac52a00f9fffb74543c59819dd7579b03"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 118923419,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3891.666994,
+          "final_loss": 14.84328317642212,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "d280d7cef5896e77bd0f692c7467b69babb0b484ae92fb3b9ba2cdefb2303499",
+          "last200_loss_mean": 16.157651989459993,
+          "last200_loss_sd": 0.9922330666884083,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 118923419,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed11/armB",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "99bf926038c14ea17cf10e5f150baaf36e33264080315a1097b5db4cc604f6a9",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "f58961dad323b5a2c34a18bc7b1828ed54cd797f389faf4b853cff336656f748"
+        },
+        "C": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            13
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1813626,
+              "sha256": "4dcbc72e2c4a67acc4fe192a8d15a37a9563fac55690d703315a2abb4fa4dec3"
+            },
+            "final.png": {
+              "bytes": 606906,
+              "sha256": "cc6403a3efe425cdbc1962d311d086b62355486680fb49a21b441ef2b388d328"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "0588f47e374932a8226ba6e9660b0f8a7edddf5056ef39ac6313c1302458dde7"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "1cae819788ea33a997ffdec574744f171227043187bfc6f4d917841f82a8792d"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "00be77eb3c76951404b3955085dbc7936932d67ccca2d7279b70f2ca11b56ab0"
+            },
+            "train_summary.csv": {
+              "bytes": 244734,
+              "sha256": "5ac62aeb2b160df3f32588865a4058bfa7e923ad88b430d5e403351a0d14a7fd"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "13846ebe661414086ba56d77eb1a196a253cae6149f47cde0a5077efb3137ae7"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "9841bbc1beae6e88eb88735e5fae2b721eb79c49a079c2e4ae553ba8d42bb914"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 118924786,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 4627.744079,
+          "final_loss": 16.220231294631958,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "d280d7cef5896e77bd0f692c7467b69babb0b484ae92fb3b9ba2cdefb2303499",
+          "last200_loss_mean": 17.903222233653068,
+          "last200_loss_sd": 1.1032690641632703,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 118924786,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed11/armC",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "103d6ee613df67c80267c854bc88eb7ec790d4f8f5b9b6846b6559bcd84b1649",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "97ec8c03a5bce9e6d02563d212513d46c5cc533a9e421fd5943181b293087824"
+        },
+        "D": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1817763,
+              "sha256": "bdefc72a3372c65c693fa7fb9aa3b2ba43f740116f029866e959130d79ef1b85"
+            },
+            "final.png": {
+              "bytes": 616845,
+              "sha256": "a0a165fab898e9dd28c76afbd29611ca5df9d9e1d9c2560ec5e72c06fa9ffd73"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "aae866cc448a255d52ab667786fc64d90a06a766e63f87e4e06222caa7402bd0"
+            },
+            "log.txt": {
+              "bytes": 9952,
+              "sha256": "dff96c5ed86ffe0b1148250e4e1a29697bf6370542ff2a7ebf334f6c4f6380fe"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "9394f8aba70e4d4815cd0fd6442d03f0268c5f6b72ff1c92514505ddaaebb4e4"
+            },
+            "train_summary.csv": {
+              "bytes": 246792,
+              "sha256": "5564aee712b6916cb16f827b899152773cdc8c4bf1301591d98ec38807195315"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "2655787632ca209de63035c7c3491078c675581102de3219df27162c226ce66f"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "afec742a8efa28db5e3f3021adff75cb078ad191b0d7309de0463d2c6a934616"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 118923318,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 4016.307682,
+          "final_loss": 13.472232341766357,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "d280d7cef5896e77bd0f692c7467b69babb0b484ae92fb3b9ba2cdefb2303499",
+          "last200_loss_mean": 14.86960258424282,
+          "last200_loss_sd": 0.9249793101467523,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 118923318,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed11/armD",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "fdb8401d83acc23ea1edbe8ece6653fa3c5eda7fc47631cd0f78f29c4005c641",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "f2d40fceaf1bdf7a3b017c66d57a75537cdae4afec13c079b7072de4e5dd0a98"
+        }
+      },
+      "common_initial_state_identity": true,
+      "denominator_integrity": true,
+      "extension_classification": "secondary_precision_extension_not_original_preregistration",
+      "finished_utc": "2026-08-21T11:33:58+00:00",
+      "four_arm_complete": true,
+      "replaces_preregistered_seed": false,
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1",
+      "schema": "ect.q256.target-weight-secondary-extension-integrity/v1",
+      "seed": 11,
+      "source_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+      "source_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+      "started_utc": "2026-08-21T11:33:20+00:00",
+      "status": "PASS",
+      "telemetry_identity_checks": {
+        "A_vs_C_same_denominator": true,
+        "A_vs_D_same_target": true,
+        "B_vs_C_same_target": true,
+        "B_vs_D_same_denominator": true,
+        "all_pass": true
+      }
+    },
+    "12": {
+      "assets": {
+        "dataset": {
+          "bytes": 166000134,
+          "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+          "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+        },
+        "transfer": {
+          "bytes": 223173327,
+          "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+          "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+        }
+      },
+      "cells": {
+        "A": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            15
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1780410,
+              "sha256": "4b4d0ce950b883d6693070721464064d2c2e3f9efee976fa5953912ce4f1735c"
+            },
+            "final.png": {
+              "bytes": 471386,
+              "sha256": "45c1b7d4a63795519be58575f7d71369b0d7a25c79fd1a97d681b08be5b03033"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "6389178260f6ebd518d3128342a9dd6d0083512f8da4723e9fbb8eeef6f6de20"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "57201be6f01f6712fe6ff4f6d30270e86ad09b5aac88846a4b92ee5f4867a4f7"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "70f7990396d1d153617ccb8ad467ea220d432dad8af4d1aa60775eaca5285af2"
+            },
+            "train_summary.csv": {
+              "bytes": 244619,
+              "sha256": "4a10f43c0f5cddfdc7660c43967ff8bd195794cda2398377fbf4e7f2358dd3cc"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "6b8c8c3381fbdbb33d82fd8b777fee6bffe749fb4b6fefe903a4739566e236cc"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "4840a2f72af1ed1fe892394f996e237d5ff94b838e777bcc44967c590afccd5c"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143814993,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3674.204806,
+          "final_loss": 17.178631067276,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "18d960c80039cd1bf3c22818a6973ab4d4b4149858302104f60d6b74d7cc6c46",
+          "last200_loss_mean": 16.466861290335654,
+          "last200_loss_sd": 1.1210718166743556,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143814993,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed12/armA",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "35b37cdc0257e03de280e855429fba6af254ce0b04a332844616bb62758b51dc",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "cd7bef9d36f1cf8743d6d799051d71a718bc203d776d153ca8fed42dbeaf5c12"
+        },
+        "B": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1851005,
+              "sha256": "08876d16a62ec10e581438d67590a3c5a691edf2bcb73aa693d234d8483651f8"
+            },
+            "final.png": {
+              "bytes": 566816,
+              "sha256": "87af8ab349324024a5f1c49a7ac77270f65882644edb9ab929da58e86bc1faa9"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "05c3ba7aa4f026661b7067cab0c88e0ed73adc41d584cd2d9c7182b271711be2"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "3cd901ed218631a51ba2e1355c4d9a61a40893116f6d3ba11e7705359abe0901"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "c3ec287104493ec5a5eed2ede98d073857afae45ee97a5abc3a6d6ac2d1a3ee0"
+            },
+            "train_summary.csv": {
+              "bytes": 246584,
+              "sha256": "9ee0487f02e4abaedce5670ab02909d8fac6484998933d8adbc11425c83040a2"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "a22a5fe4b750bece5eaa97fe837956b13d4449cee566d4aa2c0edd1820658265"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "9a9de6c121e320f6f61a1f30ceaccfcd94453f4346a0f2212256e46ea441c801"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143813692,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3671.654502,
+          "final_loss": 16.84728515148163,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "18d960c80039cd1bf3c22818a6973ab4d4b4149858302104f60d6b74d7cc6c46",
+          "last200_loss_mean": 16.23764293730259,
+          "last200_loss_sd": 1.0914903674413579,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143813692,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed12/armB",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "36d440604926f6cd0c49eb2b6dbed6c41abfd2e848a20b37d105a090b24358a4",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "4551b6a81a430d2a2c6793754625849fcb821d7f90c651478a69da6e24139a7e"
+        },
+        "C": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            15
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1813849,
+              "sha256": "f9239acdf9c36ab7d45b43c04f22cc10a2952595d1523c5e288fb8609726d78b"
+            },
+            "final.png": {
+              "bytes": 541972,
+              "sha256": "8cb8478d6dee37dd3a141d78faf7ffa1ad9dba3cabb767189090e23a48987844"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "7bad0f75f5be12c07d3ac7666b17a575473d285bccd6233d9b071f681f63633e"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "dd385d8114448c12a0e71217befc144b23292482122f39e978850c68ccf4a380"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "a25534d9b2ec3cbc5a360935ea4ce2ab2e57147ce2d2d05056d1822a99421ed7"
+            },
+            "train_summary.csv": {
+              "bytes": 244601,
+              "sha256": "5495011ec8abfa26b12ab2f07fca33a53bc7ccd2ca9f84b126108df22c41cf6c"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "92bf3624faa0d7719a5488e01d2187343bb5cd9e6d03fe9359282c77032a29ae"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "662a7787ae5a90cd96d6cc549409563cae49299cd91617724a40c277c3afc839"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143815030,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3653.518394,
+          "final_loss": 18.60162651538849,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "18d960c80039cd1bf3c22818a6973ab4d4b4149858302104f60d6b74d7cc6c46",
+          "last200_loss_mean": 17.99585882842541,
+          "last200_loss_sd": 1.2242674878106086,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143815030,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed12/armC",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "14c55cc598328ee356ab0f9e7a650542f0d21175209f2e8361a187d6bd68d1b0",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "decd2416396d488ddaa2156d272be99252f77816b06c2b58cab5efd8021fac09"
+        },
+        "D": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            692
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1814907,
+              "sha256": "a6962ede578433979f6aad8b8af43066d580a0b07ac0f6e057d4b42657fa899f"
+            },
+            "final.png": {
+              "bytes": 554106,
+              "sha256": "41aeb62de6b925803b680c9cd3f5cc6c88b83b3ceecc3e98010fdc500fe27e24"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "92a6a5a2121d2387acbf613e1cfd841577b79038eed451975c1fe3657254614d"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "1eb308007c0297d777460d83759058d4df6e1d8f1ff2938da270ff49f32204c1"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "afd9bb17ed8df77935ed5b4d27e093103640ea2f4d3c38e20dcac9f3f46226c1"
+            },
+            "train_summary.csv": {
+              "bytes": 245294,
+              "sha256": "a8ef1e1b02bb8f392c6c8112831647d1a072dad3d907241ef3568794899f9eba"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "437be15414f0a94fb269b29d21b434558fd33df55e58f8764306f92aefd8a37d"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "6f220366d0b1827fab4130204f75323573dfff59989875c891bae36435cea6b8"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 143813634,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3735.170315,
+          "final_loss": 15.309720396995544,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "18d960c80039cd1bf3c22818a6973ab4d4b4149858302104f60d6b74d7cc6c46",
+          "last200_loss_mean": 14.853602331876754,
+          "last200_loss_sd": 1.0082116748112877,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 143813634,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed12/armD",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "617ccd64e0d88d855ecab28d3604c57ad235679a3f15297c18fe607593148769",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "d8687c12660a7daa08b7ce4b885386da10bd92b32a6332ff9d20d72f4b2c4393"
+        }
+      },
+      "common_initial_state_identity": true,
+      "denominator_integrity": true,
+      "extension_classification": "secondary_precision_extension_not_original_preregistration",
+      "finished_utc": "2026-08-21T15:40:58+00:00",
+      "four_arm_complete": true,
+      "replaces_preregistered_seed": false,
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1",
+      "schema": "ect.q256.target-weight-secondary-extension-integrity/v1",
+      "seed": 12,
+      "source_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+      "source_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+      "started_utc": "2026-08-21T15:40:19+00:00",
+      "status": "PASS",
+      "telemetry_identity_checks": {
+        "A_vs_C_same_denominator": true,
+        "A_vs_D_same_target": true,
+        "B_vs_C_same_target": true,
+        "B_vs_D_same_denominator": true,
+        "all_pass": true
+      }
+    },
+    "13": {
+      "assets": {
+        "dataset": {
+          "bytes": 166000134,
+          "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+          "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+        },
+        "transfer": {
+          "bytes": 223173327,
+          "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+          "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+        }
+      },
+      "cells": {
+        "A": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            12,
+            1693
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1783341,
+              "sha256": "729a96541169ca36e5f7edba9fedddf7da1f143e4d687a760155e2651b95a4f1"
+            },
+            "final.png": {
+              "bytes": 695347,
+              "sha256": "8121fe37b373aa8856d4693163c2529e7c7647f1035539028ed6438051154b7f"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "97bbd226278f425c3caad93f5f7edf953418bc6ba25b8ff18e29ed13920f5c31"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "7aa0fd07a654a79c9493302e426bd2c1d2e427a8f063de854f03c8c7313e842a"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "1b780c1515f4e3f54343015e953349a7f5fa84e9418d6dab736fe20259039952"
+            },
+            "train_summary.csv": {
+              "bytes": 246353,
+              "sha256": "2ceaf20e8d859367203f3aac9fee473ea59130509aa8f5af1fbc147db01ca6a7"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "698491aa978af0339497e13500f0fa2cc7331803f4d97f639d4e193ec2857cbd"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "33f45faca42ea70e53f3dc2299a0663890d0c19bddc284cc8a37e78a07ac0fbc"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117305921,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3655.167497,
+          "final_loss": 16.972007155418396,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "721ac4c6843b44eadfef48214a37823d1f33ed8ce1124de7af82c800079e785d",
+          "last200_loss_mean": 16.372184584736825,
+          "last200_loss_sd": 1.0087014479085832,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117305921,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed13/armA",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "bb5b2a7dd65877ffdc6a2113cd9ac86a467b4e333716a9aa3d7ec366c882131c",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "4818c26e7590ed56b9f794799cb2220249d63116f7b20129c47c6f6dd5139d81"
+        },
+        "B": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            14
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1851307,
+              "sha256": "1b19c74ec98ca1e181172d2f126c253ff1672e334e2d2907c1698ed89b14500a"
+            },
+            "final.png": {
+              "bytes": 664479,
+              "sha256": "53b6d8182fed8336028cd145e19f39864487c8e5c2e6871e877e627d022f2fa8"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "8a082985a3965ce50441e5ee2863c8843de8d49530b53a4e0435282e64c6eb26"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "e216816e21a19908695b11477491491741f85f307a7b673af501284971bfe6e0"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "1cdaa920871a78589fd11671667b0ed3679f514c2dfc87ec7aa3c04829c779ee"
+            },
+            "train_summary.csv": {
+              "bytes": 246662,
+              "sha256": "7b7daabcc796cb41141722e6a021b78ab80d3773b54de005759b31d10caeab25"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "418fd9d0ad55d232c73e1b831ae4176e40689b3d9b71afa58fd150f292219a00"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "d0fa2bbc785935ef9f883ef85939c1d1572b562512be4173923ed2283d89cc18"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117304544,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3687.061917,
+          "final_loss": 17.29902744293213,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "721ac4c6843b44eadfef48214a37823d1f33ed8ce1124de7af82c800079e785d",
+          "last200_loss_mean": 16.34008034169674,
+          "last200_loss_sd": 1.0056992695411657,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117304544,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed13/armB",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "b1db76dc9882a6f2a88fb8429b5c12cc0c8fc213ce9ffcdfd8802f6d358d1e91",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "8b3ffe5cbaac6fc4e6753d4a68b0e2154cb42718ded6853523ac82eadebcf59a"
+        },
+        "C": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1817770,
+              "sha256": "4e84882a6b17f2445ae51f6294b70e6cebd4f8b568445e0cefc1ccff0c88e4f2"
+            },
+            "final.png": {
+              "bytes": 693834,
+              "sha256": "9a113951a65e0c678bde6572e88f5fa8da0d694b681e77e2183d847bf2da8a3e"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "1d2cf81de41b5fd27079bd97d56883aae02dc19d4d5ebc9b187b1bfa6e9a4aac"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "d8343f435c5eab053df14d1512534daa3b169182e839073ac1f8e5b878e38a32"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "3433105e8e95fc1e8a1c2dd1bd746c4125bdaa92d4d0b181a3a1b98eb7724a01"
+            },
+            "train_summary.csv": {
+              "bytes": 246666,
+              "sha256": "87a631677bdfe9711e22d214856c8098ada8bc3f75e573aa0fd8a07cf5b79dab"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "2ab5ccd4111374d14f6bbcd3f5c944a65a83b8063ab3296fbb0aacad2ab2e5d3"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "79dad380390efdfb9e7cf3a644e6caa489124d514adb6cb60123ab0cf3367a11"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117306037,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3713.635748,
+          "final_loss": 18.73427939414978,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "721ac4c6843b44eadfef48214a37823d1f33ed8ce1124de7af82c800079e785d",
+          "last200_loss_mean": 17.95139481306076,
+          "last200_loss_sd": 1.1019907853995126,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117306037,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed13/armC",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "004ca5dee98e2b1d06db18f6d6ecdfd2f415895751101b840b6a7da8ca037083",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "2787ca4c11b40ee261706ebeee8dcefd535edb13fe7b90a7571c2c3c1880c4e5"
+        },
+        "D": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            14,
+            1693
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1816951,
+              "sha256": "4efbb17128b3aca160cda29e907b0d784174941f6cd3c8b480182829d26fbb20"
+            },
+            "final.png": {
+              "bytes": 688246,
+              "sha256": "29bb3bf811c5108bc52553e527830ec658f728d7e722f81ecd5f3285594f6715"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5055,
+              "sha256": "a1f9c88a3d922daa9000be3c0f9158e13bb41575bc2d48398b5b45e7dcdbaf26"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "dd5125fb6c9621a1cfe9fdba04433e818e00be0416ce98b2ae2bab43e7f1c414"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "8dc5f2f960c7d4cc0b46b5e14a55560ea0775f0a39ce8420dfbb8915e4c1b117"
+            },
+            "train_summary.csv": {
+              "bytes": 246343,
+              "sha256": "df26cbb791fd791f584f15d56a868f79c831f2d9cafbe932d66cfb16ad5e8f89"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "310464522a2dae55811540d1fc854b223bacb2afd8edc5103655aaf6a139491a"
+            },
+            "training_options.json": {
+              "bytes": 2427,
+              "sha256": "d083a5251ab449d94cc785995dbea5585917f346099c503403c069befd766fe3"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117304397,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3590.508461,
+          "final_loss": 15.883752346038818,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "721ac4c6843b44eadfef48214a37823d1f33ed8ce1124de7af82c800079e785d",
+          "last200_loss_mean": 14.927548144757747,
+          "last200_loss_sd": 0.9336120390799394,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117304397,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed13/armD",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "28cccf4a17f91c31ddf3f80bbf948ccd5dca458b2b8f0816886eddef3dad2fd7",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "a370328d10c5f6a13dee1eb44acfa13b087302a21178f04a2c7c1679fddc4970"
+        }
+      },
+      "common_initial_state_identity": true,
+      "denominator_integrity": true,
+      "extension_classification": "secondary_precision_extension_not_original_preregistration",
+      "finished_utc": "2026-08-21T19:46:29+00:00",
+      "four_arm_complete": true,
+      "replaces_preregistered_seed": false,
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1",
+      "schema": "ect.q256.target-weight-secondary-extension-integrity/v1",
+      "seed": 13,
+      "source_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+      "source_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+      "started_utc": "2026-08-21T19:45:51+00:00",
+      "status": "PASS",
+      "telemetry_identity_checks": {
+        "A_vs_C_same_denominator": true,
+        "A_vs_D_same_target": true,
+        "B_vs_C_same_target": true,
+        "B_vs_D_same_denominator": true,
+        "all_pass": true
+      }
+    },
+    "8": {
+      "assets": {
+        "dataset": {
+          "bytes": 166000134,
+          "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+          "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+        },
+        "transfer": {
+          "bytes": 223173327,
+          "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+          "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+        }
+      },
+      "cells": {
+        "A": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1784405,
+              "sha256": "8e82dac818d07b71d98e8dc0b94921a47a01b524de142f42bfcc8e7784307f6a"
+            },
+            "final.png": {
+              "bytes": 708812,
+              "sha256": "b06c363288779d77911e2a9455c970555ec3a5f1df0d1feadc1fe4e9e21fa9d9"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "edc1de56e88d4a0ead709977f7445ec9f64ef2323c7da3382854b6ffe8748675"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "302645c05a67c91c6f31b9428434ca0125b90d6f7a8cb56cd50a424698b8ac4a"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "cb56b46a408efd8d0e75f096db589aedfa94ec618b2b9ebb593e239c48c05439"
+            },
+            "train_summary.csv": {
+              "bytes": 246801,
+              "sha256": "590f0ad1b8e9273ed69768341740072c8f20d216ecee3ea3a9a642b310b28bb5"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "fe1737d7201fd84ab5deb1ad4ffb309568f11a6e4c657489415b6a3f6d503b6e"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "521eaf6ea4013bbefaebf4386f27ea4036ed02a58a49d9790a77dd2c744faae5"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 110803635,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 4110.059926,
+          "final_loss": 15.250978231430054,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "e8e86c8dc8b22f5e64b6d7ec9ba150d3dfb1363996f03b3f1b47f9f4ead778dd",
+          "last200_loss_mean": 16.379858456254006,
+          "last200_loss_sd": 1.0467321583736844,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 110803635,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed8/armA",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "d6e0080837b6f45904d029f333c7f66ec313fde0df6cf0ed0edcf1dc51e23f02",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "22a14acc4c5bf9f1a0960e4c061d13555c738df1f28842c7c7b9da4524e0b293"
+        },
+        "B": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1851523,
+              "sha256": "6d6c251f52787981f9346893283db0ec7e6277102e4a4eb19faae7499674c6f2"
+            },
+            "final.png": {
+              "bytes": 706499,
+              "sha256": "518b2415b4c86f2bb0a938ec049139e0e0610eaa8b9af88bbde65b6ec1730152"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "f67cec3aa17b633721c4fb2681fd7dd30ba82e4d42b8374181ce9e532fe48bc3"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "4d86baad556bf1e236573b5ae4a11a4626fa6f3a23abf877e8bd175e7d23f9b4"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "acbac322ff47951f0b66c2732976956f40d719068741f690cf16c7a34238e9bc"
+            },
+            "train_summary.csv": {
+              "bytes": 246651,
+              "sha256": "74a103c92c64c94768c03a003441e44656f0f65ea29780f00b50faa5b5c0d852"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "4a6a914ddaaaeb2f8a15b3357783cea33492d20d510d99ad90d260923d67626e"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "0c57b0e1d784d621d454eeb83c3c070d0e214e598d38adf0bd6c77f7690161f0"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 110802208,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3926.753128,
+          "final_loss": 15.33547055721283,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "e8e86c8dc8b22f5e64b6d7ec9ba150d3dfb1363996f03b3f1b47f9f4ead778dd",
+          "last200_loss_mean": 16.24654767870903,
+          "last200_loss_sd": 1.0416468657274203,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 110802208,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed8/armB",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "68880966c55ebc1a2f9a98af84e58edfabf64636759107d16f622224eecd6937",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "1fc68e2e76c6d9e8a33adf4770d95789da104a2e6204d60026fea093702d6ea3"
+        },
+        "C": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1818129,
+              "sha256": "b048e4ebb977c55291afe7767a19c1149b3543760e0d899a53daad0930ba847d"
+            },
+            "final.png": {
+              "bytes": 704073,
+              "sha256": "84b967fbb50fb07d69f8d7d40e091e228de4adb4c7e1bd1083bb767ac795f1ff"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "aa23a3d9c99ceafdaba5f5e88880376edea2bdef6c92239993db9fbb58dbf7da"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "66c59cea74b203cf3418b0f23428bd8fb42ba8966ec6083c98f8556fa63b99e9"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "17ca0a56fcd00cd8464985473c4b94182906c0668716e17877cabc02c0382423"
+            },
+            "train_summary.csv": {
+              "bytes": 246739,
+              "sha256": "83e67a8c8a43259271076d60e3673f92b0a57129af59ead848873295f5634f80"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "5a25ecbb9792d433c589906fb0fb0b3d76819b09559b35ae90581f065fae5b7b"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "6bac30b494726b8efbf53d7237ea37f977f8943a3ebe46dfd037c3dc481eb942"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 110825257,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 4717.897783,
+          "final_loss": 16.672824144363403,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "e8e86c8dc8b22f5e64b6d7ec9ba150d3dfb1363996f03b3f1b47f9f4ead778dd",
+          "last200_loss_mean": 17.967336614727973,
+          "last200_loss_sd": 1.180974079820683,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 110825257,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed8/armC",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "b73b30ea2273e12ff286cf7caa8240671c1657b55591aeba5fadc4c8cf9b9d68",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "e7d32cceb08c17ae72426f2852432a04e15371379e39a20cc796d27890f556cb"
+        },
+        "D": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            1976
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1817923,
+              "sha256": "7e3ca8963853ebed6c834da4ba4ab3c82f060a6b3c7ae06ffc2af1486cf5b1ac"
+            },
+            "final.png": {
+              "bytes": 708016,
+              "sha256": "84961dd0f2cf2e61cf276fffef5433382e42b67d1a2b2023ff8bc04ecf33e008"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "3dddc56dc4033d83296f89249bea782d723c84972b5c6dc653b2774b1d28ac06"
+            },
+            "log.txt": {
+              "bytes": 9952,
+              "sha256": "dabde33451357a46c26c29d3e1e140ccf3561f20c4d97e1b731ea9d0c2d38d1e"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "4479fccb08383281e4485095d1cb0e693606a9b21b44851bd6a936ca24402f78"
+            },
+            "train_summary.csv": {
+              "bytes": 246765,
+              "sha256": "a5f2a1cf2afee8f859b315a862c526f47ef1137f800592233607a5addee3eef6"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724728,
+              "sha256": "b387293194347f97fa4c4370b831af56afa603cea681ca44f1884a2770d03087"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "f850226ecb430d903bfc0fc6557b8fc6245f58b0a56333eb038ef3a75e8445a9"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 110802107,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3910.592253,
+          "final_loss": 13.837356090545654,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "e8e86c8dc8b22f5e64b6d7ec9ba150d3dfb1363996f03b3f1b47f9f4ead778dd",
+          "last200_loss_mean": 14.800701678991318,
+          "last200_loss_sd": 0.9381581818195899,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 110802107,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed8/armD",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "b3f10d5a01a2af4d9852e6798ebeba542910e1d2abbbbf48510d10608ad25264",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "65e47ed2cf5174149905af467e3a8d7f62824b782b9c52d7e90b41809ca21049"
+        }
+      },
+      "common_initial_state_identity": true,
+      "denominator_integrity": true,
+      "extension_classification": "secondary_precision_extension_not_original_preregistration",
+      "finished_utc": "2026-08-21T11:33:44+00:00",
+      "four_arm_complete": true,
+      "replaces_preregistered_seed": false,
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1",
+      "schema": "ect.q256.target-weight-secondary-extension-integrity/v1",
+      "seed": 8,
+      "source_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+      "source_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+      "started_utc": "2026-08-21T11:33:04+00:00",
+      "status": "PASS",
+      "telemetry_identity_checks": {
+        "A_vs_C_same_denominator": true,
+        "A_vs_D_same_target": true,
+        "B_vs_C_same_target": true,
+        "B_vs_D_same_denominator": true,
+        "all_pass": true
+      }
+    },
+    "9": {
+      "assets": {
+        "dataset": {
+          "bytes": 166000134,
+          "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+          "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+        },
+        "transfer": {
+          "bytes": 223173327,
+          "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+          "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+        }
+      },
+      "cells": {
+        "A": {
+          "accepted_updates": 1990,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10,
+            1557
+          ],
+          "amp_skip_count": 10,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1783037,
+              "sha256": "3b276765fa34f0fe0aec85922d68d3159c79858b6cd848f0b40e8a2ad290fdab"
+            },
+            "final.png": {
+              "bytes": 693930,
+              "sha256": "761c5db3de875a938606f03d3e78bdd55ed74012a52b3c672234b44b13e28e95"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "a45d9342e874bd9e7d271d5366a9d5e33b06b5ffb670e17aae6415c30670269f"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "d4514c147b9c44824f05442855d2eb612b1070b092ed35c380bf0b9ecd355b94"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "cbf4d9a9f17933d3dad9dadd8be792b04cd95e7a52ae5ec7e05c771e51f2383a"
+            },
+            "train_summary.csv": {
+              "bytes": 246192,
+              "sha256": "05f5e176475e1d2252803d8d8fbaf68ae01f555d991f1bda8973f82f1ba10ae9"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "b898e51867aafa44758165642247272dadf6667603e75c1ff4662fcb4f824bff"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "3775323cc72fb847b4dccb7c1d048d2b4a621ede7f5b95124276659c91399b84"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117347915,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3727.814574,
+          "final_loss": 16.743587851524353,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "7b34c814845bf1d66143d6691a138905f225b8277f7ab832bcbc70d8c4759740",
+          "last200_loss_mean": 16.374799593687058,
+          "last200_loss_sd": 1.0729983238644547,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117347915,
+          "raw_grad_nonfinite_rows": 10,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed9/armA",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "df0b6bb998480f1fdb1b3bad5cb5c5097888d693edb89eadf8becb4a21f51b46",
+          "successful_optimizer_steps": 1990,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "2ef6b0dc8ad66af250a698ef51fff888eacb8caac39d4bfa30bdef9c6f33379d"
+        },
+        "B": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1851410,
+              "sha256": "22365c76a9174f2e09191396098d6378afcedf7aa73796526d93daabde59116d"
+            },
+            "final.png": {
+              "bytes": 686832,
+              "sha256": "c5886471385b140595cc7c45fc10612386a7ef3b26c0f03b3283650a5ae64214"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "ba7e902e0560fcdfdef9f350691eae2591636edf5f851dd7912da3bee4087db1"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "ad4ecf9128b55d84ec72159bb6c8df4a58f0895e0b2b373a0d52737e87da3e80"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "c4ddf91e3fd451ad17e0231d9dbb4bf3e5a3aa00d7be7ccc4bdf7dee6a72dc13"
+            },
+            "train_summary.csv": {
+              "bytes": 246629,
+              "sha256": "6f5115825794b724d01285c69f2378b4949f9d8d38beba3a4c539f3600c22463"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "3cae1262bacd59d3016ff8f1b0498d07bc5bcb127480e3b701b208873606e598"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "2b37355dbf669828d3fdec8e04996df89fcaf7095a4193c46ff9971cb5ef74b5"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117325101,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3628.44652,
+          "final_loss": 16.57133638858795,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "7b34c814845bf1d66143d6691a138905f225b8277f7ab832bcbc70d8c4759740",
+          "last200_loss_mean": 16.307644017636775,
+          "last200_loss_sd": 1.0700842800928163,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117325101,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed9/armB",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "6c3b1d53630c2c7a2244b1159674aa0abd3056db75e17ae9da362f4ce3486779",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "2356b26e2de1611eba5474eda99b4bb384c9d1b769301a153478bba170422458"
+        },
+        "C": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1817868,
+              "sha256": "dc7dd1880adaf724aec44fa7bb5d8a54f9677b37bc8bca22ddc8698d0361758e"
+            },
+            "final.png": {
+              "bytes": 701712,
+              "sha256": "cb3d2286749130f37be26c5bd8e03cc82b071f103c6dd3056a2f0c2fa9550b88"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "e97fa32f405a5d0f7c953b4cb1e1b21b6cc4de4e1f3c29111d64d9bee8095365"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "3890253a3a9397ba3c3471ccafadab9e2d9058309077c24e1394109b33ecac2e"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "5214f98f694c9e289d3b4941d6b0b21274b6609db98e34f6ecbb24e1a94738e5"
+            },
+            "train_summary.csv": {
+              "bytes": 246609,
+              "sha256": "83fa70e53bed56dd3c9fbc1808aec87b112d2a827cf5d182e46ac6d4fe021944"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "35736473b7b836ccd28d58e82309bf0d91544b33b37591a95c81665ab8239c5e"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "b4ca66549f4b9908c240bc6e61ca7b2743627bc9da685336114cdcee71e769a4"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117347932,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.0,
+          "elapsed_sec": 3594.258822,
+          "final_loss": 18.406868934631348,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "7b34c814845bf1d66143d6691a138905f225b8277f7ab832bcbc70d8c4759740",
+          "last200_loss_mean": 17.903557397723198,
+          "last200_loss_sd": 1.160138738362917,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117347932,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed9/armC",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "28c9111e399e76b141e6048b1f2514026d1b309e3cb496ac8e91492c82278e28",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.1,
+          "trajectory_config_sha256": "9fe9c233fa58a1c3d0a7e7069220097b6bcb6c9e3548e4a4cdc438d62ea7cd96"
+        },
+        "D": {
+          "accepted_updates": 1991,
+          "amp_skip_attempts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10
+          ],
+          "amp_skip_count": 9,
+          "artifact_hashes": {
+            "factorial_training_telemetry_v1.csv": {
+              "bytes": 1817630,
+              "sha256": "fe73486124d6cfe220e4081b60c345e39c328d6552db66758d05c0425839ff87"
+            },
+            "final.png": {
+              "bytes": 685023,
+              "sha256": "5a461345f096cdc85243be19917e11963090fece95bfebf29d2564a658ab1ef9"
+            },
+            "initial_state_receipt_v1.json": {
+              "bytes": 5051,
+              "sha256": "d200e2d2a64cdc79700bddd64cadde0fed24b01fd27ca61eef5221fdbd094d49"
+            },
+            "log.txt": {
+              "bytes": 9728,
+              "sha256": "40ca38a8439fb82378d10f5a9586d45597e03a248f9dff25d592ffc99dd69156"
+            },
+            "network-snapshot-latest.pkl": {
+              "bytes": 223185675,
+              "sha256": "dccd46d70f2244426cdd5773af1526f0c5a75038efa5f81a46be37506f0b0df1"
+            },
+            "train_summary.csv": {
+              "bytes": 246630,
+              "sha256": "d2f7632fe68f2db9544c9dd2a925000ea9fe7fe3d2c7453abc976a7669474148"
+            },
+            "training-state-latest.pt": {
+              "bytes": 895724792,
+              "sha256": "2b7cfb38fd33eb306aff736e2e0fee881116e38d0747512882e1b77242b72e67"
+            },
+            "training_options.json": {
+              "bytes": 2425,
+              "sha256": "a5d151ea4221d5f02a3b11c0506f938a33fe70ac954702825459dcf7d0be5a0f"
+            }
+          },
+          "attempts": 2000,
+          "counter_totals": {
+            "base_r_zero_count": 0,
+            "denominator_r_equal_t_count": 0,
+            "denominator_r_zero_count": 0,
+            "denominator_scaled_to_zero_count": 0,
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "raw_grad_nonfinite_count": 117325071,
+            "sample_count": 256000,
+            "sanitized_grad_nonfinite_count": 0,
+            "target_r_equal_t_count": 0,
+            "target_r_zero_count": 0,
+            "target_scaled_to_zero_count": 0,
+            "update_nonfinite_count": 0
+          },
+          "denominator_gap_scale": 1.1,
+          "elapsed_sec": 3663.019477,
+          "final_loss": 15.225864291191101,
+          "finite_tensor_checks": {
+            "snapshot_ema": 424,
+            "state_ema": 424,
+            "state_gradscaler": 0,
+            "state_net": 424,
+            "state_optimizer": 1248
+          },
+          "initial_common_state_sha256": "7b34c814845bf1d66143d6691a138905f225b8277f7ab832bcbc70d8c4759740",
+          "last200_loss_mean": 14.929099337160586,
+          "last200_loss_sd": 0.9906735667204816,
+          "nonpositive_denominator_count": 0,
+          "processed_kimg": 256.0,
+          "processed_nimg": 256000,
+          "raw_grad_nonfinite_elements": 117325071,
+          "raw_grad_nonfinite_rows": 9,
+          "raw_grad_skip_mismatch_count": 0,
+          "run_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed9/armD",
+          "semantic_nonfinite_count": 0,
+          "snapshot_ema_sha256": "c1a9618e9c7d336f88b3e25cbc3a7ab531f0cf79443efa028b0b0aae4e7e2b72",
+          "successful_optimizer_steps": 1991,
+          "target_gap_scale": 1.0,
+          "trajectory_config_sha256": "423acf34ac4786c947fedb127c64d94e547989a4391ddc1bf555b933c6fb9bbb"
+        }
+      },
+      "common_initial_state_identity": true,
+      "denominator_integrity": true,
+      "extension_classification": "secondary_precision_extension_not_original_preregistration",
+      "finished_utc": "2026-08-21T15:38:44+00:00",
+      "four_arm_complete": true,
+      "replaces_preregistered_seed": false,
+      "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1",
+      "schema": "ect.q256.target-weight-secondary-extension-integrity/v1",
+      "seed": 9,
+      "source_head": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+      "source_repo": "/data/temp/ECT001/q256-factorial-clean-25c3d22",
+      "started_utc": "2026-08-21T15:38:05+00:00",
+      "status": "PASS",
+      "telemetry_identity_checks": {
+        "A_vs_C_same_denominator": true,
+        "A_vs_D_same_target": true,
+        "B_vs_C_same_target": true,
+        "B_vs_D_same_denominator": true,
+        "all_pass": true
+      }
+    }
+  },
+  "status": "PASS",
+  "structure_check": {
+    "B_vs_A_near_cancellation": true,
+    "denominator_lowers_raw_objective": true,
+    "descriptive_threshold_fraction": 0.25,
+    "interaction_small": true,
+    "target_geometry_raises_raw_objective": true
+  }
+}
