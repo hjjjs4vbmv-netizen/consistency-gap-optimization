@@ -38,6 +38,11 @@ Server archive root: `/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-
 
 The archive contains the 72 immutable replay states, 84 EMA snapshots, 12 frozen 256 kimg source states, deterministic runtime image, code bundles, resolved options, telemetry, logs, audits, and saver smoke evidence. `artifact_hashes.sha256` is generated after server-side transfer verification.
 
+Server verification passed for all 84 inventory rows. The unified archive
+manifest contains 1,487 entries and has SHA256
+`4cf4014dc47923764cfedc9e7da60a52c62c636d0fd827c93c10acf41d231c0d`.
+The archive receipt and complete manifest are under `server_archive/`.
+
 ## Formal learning-curve evaluation
 
 All 168 frozen jobs completed: FID-50k and KID-50k at NFE=1 and NFE=2 for every seed×arm×budget checkpoint. NFE=2 uses `mid_t=0.821`. Evaluation used FP32, 50,000 samples, generation seeds 0–49999, metric seed 20260730, and byte-identical generated features within every KID/FID pair. The compact results are under `fidkid50k-final-20260823/`; regenerable sample and feature arrays are intentionally excluded from the final archive.
