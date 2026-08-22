@@ -43,6 +43,8 @@ def main() -> None:
         arm not in ALL_ARMS for arm in selected_arms
     ):
         raise RuntimeError(f"invalid Q256_EVAL_ARMS: {selected_arms}")
+    shard = "".join(selected_arms).lower()
+    state_path = DURABLE / f"durable_copy_state_{shard}.json"
     expected_jobs = 5 * len(selected_arms) * 6 * 2
     while True:
         copied = 0
@@ -109,14 +111,15 @@ def main() -> None:
         state = {
             "schema": "ect.q256.seed14-18.durable-copy-state/v1",
             "status": "PASS" if copied == expected_jobs else "RUNNING",
+            "shard": shard,
             "copied_job_count": copied,
             "expected_job_count": expected_jobs,
             "arms": list(selected_arms),
             "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
-        temporary_state = DURABLE / f".durable_copy_state.json.tmp-{os.getpid()}"
+        temporary_state = DURABLE / f".{state_path.name}.tmp-{os.getpid()}"
         temporary_state.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
-        os.replace(temporary_state, DURABLE / "durable_copy_state.json")
+        os.replace(temporary_state, state_path)
         if copied == expected_jobs:
             return
         time.sleep(30)
