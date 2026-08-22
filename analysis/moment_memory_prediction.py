@@ -1,0 +1,205 @@
+"""Predict the optimizer-update distortion h from the gap-scale history δ_j.
+
+Implements the PR #45 moment-memory chain on real paired gradient histories:
+
+    δ_j  →  A^(1)_{t,i}, A^(2)_{t,i}, B^(2)_{t,i}  →  ĥ_{t,i}
+    ĥ_{t,i}  vs  h^actual_{t,i}
+
+The gradient history comes from a paired (same-batch) sweep: for each virtual
+step j we record the reference gradient G_{j,i} and the candidate gradient
+G^g_{j,i}, and recover the per-step scalar scale δ_j as the coordinate-aggregate
+best fit of G^g to G:
+
+    δ_j ≈ <G^g_j, G_j> / ||G_j||^2 - 1
+
+Then the moment-memory terms are the history-weighted gauges:
+
+    A^(1)_{t,i} = ( Σ_j p_j δ_j G_{j,i} ) / ( Σ_j p_j G_{j,i} ),  p_j ∝ β1^{t-j}
+    A^(2)_{t,i} = ( Σ_j q_j δ_j G²_{j,i} ) / ( Σ_j q_j G²_{j,i} ), q_j ∝ β2^{t-j}
+    B^(2)_{t,i} = ( Σ_j q_j δ_j² G²_{j,i} ) / ( Σ_j q_j G²_{j,i} )
+
+    ĥ_{t,i} = (1 + A^(1)) / sqrt(1 + 2 A^(2) + B^(2))
+
+Outputs per evaluation state t:
+    - weighted RMSE(ĥ, h^update)
+    - correlation Corr(ĥ, h^update)
+    - Disp(ĥ) (weighted std) vs R_opt (update residual)
+
+The chain is self-contained: given the paired gradient history it predicts the
+optimizer distortion from the scale history alone (no access to the optimizer
+moments), which is the #45 theorem's content.
+
+SCOPE (per PR #47 review): this direct formula is a **controlled algebraic
+sanity check for a ZERO / controlled initial optimizer state only**. It sums
+the gauges over the provided gradient history but does NOT include the
+contribution of a nonzero initial moment state (m0, v0). For a real
+nonzero-initial-state prospective replay, the correct object is
+`scalar_history_predictor.py` (which replays RAdam from the actual m0/v0/step).
+Do not call this a "real-state oracle" — it is exact only when the initial
+moments are zero (or when the history fully determines the moments).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+from pathlib import Path
+
+import numpy as np
+
+BETA1, BETA2 = 0.9, 0.999
+
+
+def recover_delta_j(grad_g: np.ndarray, grad_1: np.ndarray) -> float:
+    """Per-step scalar scale: G^g ≈ (1+δ) G  =>  δ = <Gg,G>/||G||² - 1."""
+    denom = float(np.sum(grad_1 * grad_1))
+    if denom <= 0:
+        return 0.0
+    return float(np.sum(grad_g * grad_1) / denom) - 1.0
+
+
+def moment_memory_terms(grad_hist_1: list[np.ndarray], grad_hist_g: list[np.ndarray],
+                        t: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Return (A1, A2, B2, delta_hist) at step t from gradient histories.
+
+    grad_hist_1[j] / grad_hist_g[j] are (d,) arrays for steps j = 0..t.
+
+    CORRECTED (self-review): we do NOT recover a global best-fit delta_j and
+    multiply it back. With G^g_{j,i} = (1 + δ_{j,i}) G_{j,i}, the identity
+      δ_{j,i} G_{j,i} = G^g_{j,i} - G_{j,i}
+    holds COORDINATE-WISE, so the gauges are computed directly from the paired
+    gradients (exact, no scalar-delta approximation):
+      A1_i = Σ_j p_j (G^g_j - G_j)_i  /  Σ_j p_j G_{j,i}
+      A2_i = Σ_j q_j (G^g_j - G_j)_i G_{j,i} / Σ_j q_j G_{j,i}²
+      B2_i = Σ_j q_j (G^g_j - G_j)_i²  /  Σ_j q_j G_{j,i}²
+    This is exact to machine precision even when δ is coordinate-dependent
+    (non-scalar), which the earlier global-delta method was not.
+    """
+    d = grad_hist_1[0].shape[0]
+    num1 = np.zeros(d); den1 = np.zeros(d)
+    num2 = np.zeros(d); den2 = np.zeros(d)
+    numB = np.zeros(d)
+    delta_hist = []
+    for j in range(t + 1):
+        G = grad_hist_1[j]; Gg = grad_hist_g[j]
+        D = Gg - G                     # coordinate-wise δ·G (exact)
+        delta_hist.append(recover_delta_j(Gg, G))   # kept only as a scalar summary
+        p = BETA1 ** (t - j)
+        q = BETA2 ** (t - j)
+        num1 += p * D; den1 += p * G
+        num2 += q * D * G; den2 += q * G * G
+        numB += q * D * D
+    with np.errstate(divide="ignore", invalid="ignore"):
+        safe1 = np.abs(den1) > 1e-30
+        safe2 = np.abs(den2) > 1e-30
+        A1 = np.where(safe1, num1 / np.where(safe1, den1, 1.0), 0.0)
+        A2 = np.where(safe2, num2 / np.where(safe2, den2, 1.0), 0.0)
+        B2 = np.where(safe2, numB / np.where(safe2, den2, 1.0), 0.0)
+    return A1, A2, B2, np.array(delta_hist)
+
+
+def predict_h(A1: np.ndarray, A2: np.ndarray, B2: np.ndarray) -> np.ndarray:
+    """ĥ = (1+A1) / sqrt(1 + 2 A2 + B2)."""
+    radicand = np.maximum(1.0 + 2.0 * A2 + B2, 1e-30)
+    return (1.0 + A1) / np.sqrt(radicand)
+
+
+def actual_update_h(u1: np.ndarray, ug: np.ndarray) -> np.ndarray:
+    """h^actual = ug / u1 on the support (else 1)."""
+    h = np.ones_like(u1)
+    sup = np.abs(u1) > 1e-30
+    h[sup] = ug[sup] / u1[sup]
+    return h
+
+
+def weighted_rmse(h_pred: np.ndarray, h_act: np.ndarray, w: np.ndarray) -> float:
+    sup = w > 0
+    if not sup.any():
+        return math.nan
+    return math.sqrt(float(np.sum(w[sup] * (h_pred[sup] - h_act[sup]) ** 2) / np.sum(w[sup])))
+
+
+def corr(h_pred: np.ndarray, h_act: np.ndarray, w: np.ndarray) -> float:
+    sup = w > 0
+    if sup.sum() < 2:
+        return math.nan
+    wp = w[sup]
+    x, y = h_pred[sup], h_act[sup]
+    xm = np.sum(wp * x) / np.sum(wp); ym = np.sum(wp * y) / np.sum(wp)
+    cov = np.sum(wp * (x - xm) * (y - ym))
+    vx = np.sum(wp * (x - xm) ** 2); vy = np.sum(wp * (y - ym) ** 2)
+    if vx <= 0 or vy <= 0:
+        return math.nan
+    return float(cov / math.sqrt(vx * vy))
+
+
+def dispersion(h_pred: np.ndarray, w: np.ndarray) -> float:
+    sup = w > 0
+    if not sup.any():
+        return math.nan
+    wp = w[sup]
+    m = np.sum(wp * h_pred[sup]) / np.sum(wp)
+    return math.sqrt(float(np.sum(wp * (h_pred[sup] - m) ** 2) / np.sum(wp)))
+
+
+def main(args=None):
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--grad-history-1", type=Path, help="npy of stacked reference gradients (T,d)")
+    ap.add_argument("--grad-history-g", type=Path, help="npy of stacked candidate gradients (T,d)")
+    ap.add_argument("--u1", type=Path, help="npy of final reference update (d,)")
+    ap.add_argument("--ug", type=Path, help="npy of final candidate update (d,)")
+    ap.add_argument("--eval-step", type=int, default=-1, help="which step to evaluate (default last)")
+    ap.add_argument("--out", type=Path, default=Path("analysis/moment_memory_prediction.json"))
+    a = ap.parse_args(args)
+
+    G1 = np.load(a.grad_history_1)      # (T, d)
+    Gg = np.load(a.grad_history_g)      # (T, d)
+    u1 = np.load(a.u1)                  # (d,)
+    ug = np.load(a.ug)                  # (d,)
+    T = G1.shape[0]
+    t = T - 1 if a.eval_step < 0 else min(a.eval_step, T - 1)
+
+    grad_hist_1 = [G1[j] for j in range(t + 1)]
+    grad_hist_g = [Gg[j] for j in range(t + 1)]
+    A1, A2, B2, delta_hist = moment_memory_terms(grad_hist_1, grad_hist_g, t)
+    h_pred = predict_h(A1, A2, B2)
+    h_act = actual_update_h(u1, ug)
+    w = u1 ** 2
+
+    rmse = weighted_rmse(h_pred, h_act, w)
+    r = corr(h_pred, h_act, w)
+    disp = dispersion(h_pred, w)
+    # R_opt (update residual, reference-normalized)
+    s_opt = float(np.sum(ug * u1) / max(np.sum(u1 * u1), 1e-30))
+    R_opt = float(np.linalg.norm(ug - s_opt * u1) / max(np.linalg.norm(u1), 1e-30))
+
+    result = {
+        "T_steps": T,
+        "eval_step": t,
+        "delta_mean": float(np.mean(delta_hist)),
+        "delta_std": float(np.std(delta_hist)),
+        "h_pred_support_fraction": float((w > 0).mean()),
+        "weighted_RMSE_h_pred_vs_actual": rmse,
+        "corr_h_pred_vs_actual": r,
+        "Disp_h_pred": disp,
+        "R_opt": R_opt,
+        "Disp_vs_R_opt": (disp / R_opt) if R_opt > 1e-12 else math.nan,
+        "h_pred_mean": float(np.mean(h_pred[w > 0])) if (w > 0).any() else math.nan,
+        "h_actual_mean": float(np.mean(h_act[w > 0])) if (w > 0).any() else math.nan,
+    }
+    a.out.parent.mkdir(parents=True, exist_ok=True)
+    a.out.write_text(json.dumps(result, indent=2))
+
+    print("=== moment-memory prediction chain ===")
+    print(f"steps: {T}, eval at t={t}")
+    print(f"δ_j: mean={result['delta_mean']:.4f}, std={result['delta_std']:.4f}")
+    print(f"weighted RMSE(ĥ, h^actual) = {rmse:.4e}")
+    print(f"Corr(ĥ, h^actual)         = {r:.4f}")
+    print(f"Disp(ĥ)                   = {disp:.4f}")
+    print(f"R_opt                     = {R_opt:.4f}")
+    print(f"Disp(ĥ)/R_opt             = {result['Disp_vs_R_opt']:.4f}  (≈1 if dispersion explains residual)")
+    print(f"wrote {a.out}")
+
+
+if __name__ == "__main__":
+    main()

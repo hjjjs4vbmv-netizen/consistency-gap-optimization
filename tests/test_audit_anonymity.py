@@ -18,14 +18,25 @@ class AnonymityAuditTests(unittest.TestCase):
         text = "\n".join(
             [
                 "output=/mnt/ect_project/runs/example",
+                "cache=/data/raw/ECT/private",
+                "local=/Users/researcher/project",
+                "account=ECT001",
                 "token=ghp_abcdefghijklmnopqrstuvwxyz123456",
-                "source=https://github.com/hjjjs4vbmv-netizen/recurrence_of_ect",
+                "source=https://github.com/hjjjs4vbmv-netizen/consistency-gap-optimization",
             ]
         )
         findings = list(MODULE.scan_text("README.md", text, sorted(MODULE.PATTERNS)))
         self.assertEqual(
             {item.rule for item in findings},
-            {"project_mount_path", "github_token", "collaboration_repo_url"},
+            {
+                "project_mount_path",
+                "private_data_path",
+                "macos_user_path",
+                "server_account",
+                "github_token",
+                "collaboration_repo_url",
+                "collaboration_owner",
+            },
         )
 
     def test_sensitive_excerpts_are_redacted(self):
@@ -63,6 +74,19 @@ class AnonymityAuditTests(unittest.TestCase):
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0].rule, "linux_root_path")
         self.assertEqual(findings[0].path, "README.md")
+
+    def test_recursive_scan_rejects_agents_and_git_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".agents").mkdir()
+            (root / ".git").mkdir()
+
+            findings = MODULE.scan(root, sorted(MODULE.PATTERNS), use_git=False)
+
+        self.assertEqual(
+            {(item.rule, item.path) for item in findings},
+            {("agents_metadata", ".agents"), ("git_metadata", ".git")},
+        )
 
 
 if __name__ == "__main__":

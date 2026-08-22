@@ -5,7 +5,141 @@ import torch.nn as nn
 from torch_utils import persistence
 from torch_utils import distributed as dist
 
-from training.schedules import get_schedule
+from training.schedules import apply_global_gap_scale, get_schedule
+from training import reproducibility
+
+
+TARGET_WEIGHT_FACTORIAL_PROTOCOL = 'q256_target_weight_v1'
+TARGET_WEIGHT_FACTORIAL_ARMS = {
+    (1.0, 1.0): 'A',
+    (1.1, 1.1): 'B',
+    (1.1, 1.0): 'C',
+    (1.0, 1.1): 'D',
+}
+
+
+def resolve_target_weight_factorial(
+    protocol='none',
+    target_gap_scale=None,
+    denominator_gap_scale=None,
+    *,
+    adj='sigmoid',
+    global_gap_scale=1.0,
+    q=2,
+    c=0.0,
+):
+    """Validate and derive the explicit two-factor training configuration.
+
+    The arm label is derived from the two persisted factors; it is never the
+    source of training semantics.  Legacy configurations remain byte-for-byte
+    behavior compatible by omitting both factors and using ``protocol=none``.
+    """
+    protocol = 'none' if protocol is None else str(protocol)
+    if protocol == 'none':
+        if target_gap_scale is not None or denominator_gap_scale is not None:
+            raise ValueError(
+                'target/denominator gap scales require '
+                f'factorial_protocol={TARGET_WEIGHT_FACTORIAL_PROTOCOL}'
+            )
+        return {
+            'enabled': False,
+            'protocol': 'none',
+            'arm': None,
+            'target_gap_scale': None,
+            'denominator_gap_scale': None,
+        }
+    if protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+        raise ValueError(f'unsupported factorial_protocol: {protocol!r}')
+    if adj != 'sigmoid':
+        raise ValueError(
+            f'{protocol} requires adj="sigmoid", got {adj!r}; the native '
+            'g=1.10 parity reference remains global_sigmoid'
+        )
+    if float(global_gap_scale) != 1.0:
+        raise ValueError(
+            f'{protocol} requires legacy global_gap_scale=1.0, got '
+            f'{global_gap_scale}; use the two explicit factors'
+        )
+    if float(q) != 256.0:
+        raise ValueError(f'{protocol} requires q=256, got {q}')
+    if float(c) != 0.0:
+        raise ValueError(f'{protocol} requires c=0, got {c}')
+    if target_gap_scale is None or denominator_gap_scale is None:
+        raise ValueError(
+            f'{protocol} requires both target_gap_scale and '
+            'denominator_gap_scale'
+        )
+    target = float(target_gap_scale)
+    denominator = float(denominator_gap_scale)
+    if not math.isfinite(target) or not math.isfinite(denominator):
+        raise ValueError('factorial gap scales must be finite')
+    arm = TARGET_WEIGHT_FACTORIAL_ARMS.get((target, denominator))
+    if arm is None:
+        raise ValueError(
+            'factorial scales must define exactly one frozen arm: '
+            f'target={target}, denominator={denominator}'
+        )
+    return {
+        'enabled': True,
+        'protocol': protocol,
+        'arm': arm,
+        'target_gap_scale': target,
+        'denominator_gap_scale': denominator,
+    }
+
+
+def compute_target_weight_times(
+    t,
+    base_r,
+    *,
+    target_gap_scale,
+    denominator_gap_scale,
+):
+    """Return target and weighting times from the same realized base pair."""
+    if not bool((torch.isfinite(t) & (t > 0)).all()):
+        raise FloatingPointError('factorial source times must be finite and positive')
+    if not bool(
+        (
+            torch.isfinite(base_r)
+            & (base_r >= 0)
+            & (base_r <= t)
+        ).all()
+    ):
+        raise FloatingPointError(
+            'factorial base times must be finite and satisfy 0 <= r <= t'
+        )
+    r_target = apply_global_gap_scale(t, base_r, target_gap_scale)
+    if float(target_gap_scale) == float(denominator_gap_scale):
+        r_denominator = r_target
+    else:
+        r_denominator = apply_global_gap_scale(
+            t, base_r, denominator_gap_scale
+        )
+    delta_target = t - r_target
+    delta_denominator = t - r_denominator
+    finite = (
+        torch.isfinite(r_target)
+        & torch.isfinite(r_denominator)
+        & torch.isfinite(delta_target)
+        & torch.isfinite(delta_denominator)
+    )
+    if not bool(finite.all()):
+        raise FloatingPointError('non-finite realized factorial time or gap')
+    if not bool(((r_target >= 0) & (r_target <= t)).all()):
+        raise FloatingPointError(
+            'target realized times must satisfy 0 <= r <= t'
+        )
+    if not bool(((r_denominator >= 0) & (r_denominator <= t)).all()):
+        raise FloatingPointError(
+            'denominator realized times must satisfy 0 <= r <= t'
+        )
+    if not bool((delta_target > 0).all()):
+        raise FloatingPointError('target realized gaps must be strictly positive')
+    if not bool((delta_denominator > 0).all()):
+        raise FloatingPointError(
+            'denominator realized gaps must be strictly positive'
+        )
+    return r_target, r_denominator, delta_target, delta_denominator
 
 #----------------------------------------------------------------------------
 # Loss function proposed in the blog "Consistency Models Made Easy"
@@ -19,10 +153,21 @@ class ECMLoss:
                  local_tbin_long_beta=0.99, local_tbin_warmup_updates=32,
                  local_tbin_gain=0.5, local_tbin_min_scale=0.75,
                  local_tbin_max_scale=1.5, local_tbin_deadband=0.02,
-                 local_tbin_min_gap=1e-3, global_gap_scale=1.0):
+                 local_tbin_min_gap=1e-3, global_gap_scale=1.0,
+                 factorial_protocol='none', target_gap_scale=None,
+                 denominator_gap_scale=None):
         self.P_mean = P_mean
         self.P_std = P_std
         self.sigma_data = sigma_data
+        self.factorial = resolve_target_weight_factorial(
+            factorial_protocol,
+            target_gap_scale,
+            denominator_gap_scale,
+            adj=adj,
+            global_gap_scale=global_gap_scale,
+            q=q,
+            c=c,
+        )
         
         # t -> r entry point, dispatched through training/schedules.py.
         # 'const' / 'sigmoid' are the official fixed formulas (bit-identical
@@ -70,6 +215,7 @@ class ECMLoss:
         self._runtime_lower_gap_clip_rate = float('nan')
         self._runtime_upper_gap_clip_rate = float('nan')
         self._runtime_local_training_signal = None
+        self._runtime_factorial_metrics = None
         dist.print0(f'P_mean: {self.P_mean}, P_std: {self.P_std}, q: {self.q}, k {self.k}, b {self.b}, c: {self.c}')
 
     def update_schedule(self, stage):
@@ -127,6 +273,12 @@ class ECMLoss:
     def local_training_signal(self):
         """Return raw per-bin pair-loss sums/counts from the latest microbatch."""
         return self._runtime_local_training_signal
+
+    def factorial_runtime_metrics(self):
+        """Return versioned realized target/denominator telemetry."""
+        if self._runtime_factorial_metrics is None:
+            return None
+        return dict(self._runtime_factorial_metrics)
 
     def schedule_local_runtime_metrics(self):
         if hasattr(self.schedule, 'local_runtime_metrics'):
@@ -226,8 +378,76 @@ class ECMLoss:
         # t ~ p(t) and r ~ p(r|t, iters) (Mapping fn)
         rnd_normal = torch.randn([images.shape[0], 1, 1, 1], device=images.device)
         t = (rnd_normal * self.P_std + self.P_mean).exp()
-        r = self.schedule.compute_r(t=t, stage=self.stage)
-        self._record_schedule_runtime_pair(t=t, r=r)
+        base_r = self.schedule.compute_r(t=t, stage=self.stage)
+        self._record_schedule_runtime_pair(t=t, r=base_r)
+        self._runtime_factorial_metrics = None
+        if self.factorial['enabled']:
+            r_target, r_denominator, delta_target, delta_denominator = (
+                compute_target_weight_times(
+                    t,
+                    base_r,
+                    target_gap_scale=self.factorial['target_gap_scale'],
+                    denominator_gap_scale=(
+                        self.factorial['denominator_gap_scale']
+                    ),
+                )
+            )
+            with torch.no_grad():
+                self._runtime_factorial_metrics = {
+                    'schema': 'ect.q256.target-weight-runtime/v1',
+                    'protocol': self.factorial['protocol'],
+                    'arm': self.factorial['arm'],
+                    'target_gap_scale': self.factorial['target_gap_scale'],
+                    'denominator_gap_scale': (
+                        self.factorial['denominator_gap_scale']
+                    ),
+                    'sample_count': int(t.numel()),
+                    't_sha256': reproducibility.state_sha256(t),
+                    'base_r_sha256': reproducibility.state_sha256(base_r),
+                    'target_r_sha256': reproducibility.state_sha256(r_target),
+                    'denominator_r_sha256': (
+                        reproducibility.state_sha256(r_denominator)
+                    ),
+                    'target_delta_sha256': (
+                        reproducibility.state_sha256(delta_target)
+                    ),
+                    'denominator_delta_sha256': (
+                        reproducibility.state_sha256(delta_denominator)
+                    ),
+                    'base_r_zero_count': int((base_r == 0).sum().cpu()),
+                    'target_r_zero_count': int((r_target == 0).sum().cpu()),
+                    'target_r_equal_t_count': int(
+                        (r_target == t).sum().cpu()
+                    ),
+                    'target_scaled_to_zero_count': int(
+                        ((base_r > 0) & (r_target == 0)).sum().cpu()
+                    ),
+                    'denominator_r_zero_count': int(
+                        (r_denominator == 0).sum().cpu()
+                    ),
+                    'denominator_r_equal_t_count': int(
+                        (r_denominator == t).sum().cpu()
+                    ),
+                    'denominator_scaled_to_zero_count': int(
+                        ((base_r > 0) & (r_denominator == 0)).sum().cpu()
+                    ),
+                    'target_delta_min': float(delta_target.min().cpu()),
+                    'target_delta_max': float(delta_target.max().cpu()),
+                    'target_delta_mean': float(delta_target.mean().cpu()),
+                    'denominator_delta_min': float(
+                        delta_denominator.min().cpu()
+                    ),
+                    'denominator_delta_max': float(
+                        delta_denominator.max().cpu()
+                    ),
+                    'denominator_delta_mean': float(
+                        delta_denominator.mean().cpu()
+                    ),
+                    'nonfinite_count': 0,
+                    'nonpositive_denominator_count': 0,
+                }
+        else:
+            r_target = base_r
 
         # Augmentation if needed
         y, augment_labels = augment_pipe(images) if augment_pipe is not None else (images, None)
@@ -235,18 +455,29 @@ class ECMLoss:
         # Shared noise direction
         eps   = torch.randn_like(y)
         eps_t = eps * t
-        eps_r = eps * r
+        eps_r = eps * r_target
         
         # Shared Dropout Mask
-        rng_state = torch.cuda.get_rng_state()
+        if y.is_cuda:
+            rng_state = torch.cuda.get_rng_state()
+        else:
+            rng_state = torch.get_rng_state()
         D_yt = net(y + eps_t, t, labels, augment_labels=augment_labels)
         
-        if r.max() > 0:
-            torch.cuda.set_rng_state(rng_state)
+        if r_target.max() > 0:
+            if y.is_cuda:
+                torch.cuda.set_rng_state(rng_state)
+            else:
+                torch.set_rng_state(rng_state)
             with torch.no_grad():
-                D_yr = net(y + eps_r, r, labels, augment_labels=augment_labels)
+                D_yr = net(
+                    y + eps_r,
+                    r_target,
+                    labels,
+                    augment_labels=augment_labels,
+                )
             
-            mask = r > 0
+            mask = r_target > 0
             D_yr = torch.nan_to_num(D_yr)
             D_yr = mask * D_yr + (~mask) * y
         else:
@@ -277,4 +508,8 @@ class ECMLoss:
             loss = torch.sqrt(loss)
         
         # Weighting fn
-        return loss / (t - r).flatten()
+        if self.factorial['enabled']:
+            return loss / delta_denominator.flatten()
+        # Keep the legacy expression at its original location so disabled
+        # factorial support does not perturb allocator/kernel timing.
+        return loss / (t - base_r).flatten()

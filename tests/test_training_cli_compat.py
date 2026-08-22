@@ -8,7 +8,7 @@ import torch
 from click.testing import CliRunner
 
 import ct_train
-from training.loss import ECMLoss
+from training.loss import ECMLoss, TARGET_WEIGHT_FACTORIAL_PROTOCOL
 
 
 def parse_train_args(*extra_args):
@@ -28,6 +28,10 @@ class TrainingCliCompatibilityTest(unittest.TestCase):
         self.assertEqual(params['adaptive_max_adjust'], 0.05)
         self.assertEqual(params['adaptive_min_gap'], 1e-3)
         self.assertEqual(params['global_gap_scale'], 1.0)
+        loss_kwargs = ct_train.make_loss_kwargs(dnnlib.EasyDict(params))
+        self.assertNotIn('factorial_protocol', loss_kwargs)
+        self.assertNotIn('target_gap_scale', loss_kwargs)
+        self.assertNotIn('denominator_gap_scale', loss_kwargs)
 
     def test_zero_disables_numbered_snapshot_and_state_dump(self):
         params = parse_train_args('--snap', '0', '--dump', '0')
@@ -125,6 +129,45 @@ class TrainingCliCompatibilityTest(unittest.TestCase):
             loss_fn.schedule.compute_r(t=t, stage=loss_fn.stage),
             loss_fn.t_to_r_sigmoid(t),
         ))
+
+    def test_all_factorial_arms_are_explicitly_persisted(self):
+        arms = {
+            'A': (1.0, 1.0),
+            'B': (1.1, 1.1),
+            'C': (1.1, 1.0),
+            'D': (1.0, 1.1),
+        }
+        for arm, (target, denominator) in arms.items():
+            with self.subTest(arm=arm):
+                params = parse_train_args(
+                    '--schedule', 'sigmoid',
+                    '-q', '256',
+                    '-c', '0',
+                    '--factorial-protocol', TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+                    '--target-gap-scale', str(target),
+                    '--denominator-gap-scale', str(denominator),
+                )
+                loss_kwargs = ct_train.make_loss_kwargs(
+                    dnnlib.EasyDict(params)
+                )
+                self.assertEqual(
+                    loss_kwargs.factorial_protocol,
+                    TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+                )
+                self.assertEqual(loss_kwargs.target_gap_scale, target)
+                self.assertEqual(
+                    loss_kwargs.denominator_gap_scale, denominator
+                )
+
+    def test_factorial_cli_fails_closed_on_partial_factors(self):
+        params = parse_train_args(
+            '-q', '256',
+            '-c', '0',
+            '--factorial-protocol', TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+            '--target-gap-scale', '1.1',
+        )
+        with self.assertRaises(ValueError):
+            ct_train.make_loss_kwargs(dnnlib.EasyDict(params))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,23 @@
+{
+  "schema": "ect.q256.target-weight-factorial-live-server-audit/v1",
+  "audit_id": "live_server_audit_007",
+  "observed_utc": "2026-08-19T09:19:29Z",
+  "status": "HOLD_RESOLVED_IN_TEST_PENDING_REGATE",
+  "event": "role_e_test_environment_isolation_failure",
+  "source_commit_attempted": "9473dca3840925dbbbbcc3e006c3b6a9926751f4",
+  "role_e_receipt_status": "FAIL",
+  "junit": {
+    "tests": 127,
+    "passed": 126,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "failed_test": "tests.test_q256_target_weight_launcher.TargetWeightLauncherTest.test_arm_shell_bootstraps_old_host_python_through_sandbox",
+  "required_ab_parity_failures": [],
+  "training_started": false,
+  "gpu_compute_processes_after_stop": 0,
+  "root_cause": "The test simulating an old host copied the gate process environment and therefore inherited ECT_Q256_LAUNCHER_IN_SANDBOX=1. It exercised the real inside-sandbox path instead of its mocked host bootstrap.",
+  "corrective_action": "Explicitly remove ECT_Q256_LAUNCHER_IN_SANDBOX from the simulated host environment, rerun the launcher unit suite locally, recommit, and regenerate the complete Role E gate.",
+  "reuse_policy": "The FAIL receipt is negative evidence only and cannot authorize any launch."
+}

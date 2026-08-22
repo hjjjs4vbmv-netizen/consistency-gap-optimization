@@ -1,0 +1,1516 @@
+{
+  "schema_version": 1,
+  "manifest_id": "publication-v2-regenerated-disjoint-5k-v2",
+  "status": "PASS",
+  "evidence_class": "regenerated evaluation provenance",
+  "source_commit": "1c8971e78637a31f044a5e05e262c08adf15c5d2",
+  "contract_sha256": "1528a2bb69f6768f445604e86db652e27a6c818bff3804a7572079b3f5e2c66f",
+  "run_summary_sha256": "a1e31ab45a0e8f08a7317c55476a0ca612f542f20329e59931c0201850bf292e",
+  "finished_at_utc": "2026-08-18T11:00:11.026460Z",
+  "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+  "matrix": {
+    "cells": 27,
+    "metric_receipts": 54,
+    "checkpoint_hash_bound_receipts": 54,
+    "sample_range_bound_receipts": 54,
+    "retained_sample_arrays": 27,
+    "retained_feature_arrays": 54,
+    "retry_count": 0
+  },
+  "historical_pr53_comparison": {
+    "rows": 54,
+    "max_absolute_delta": 0.0016857887424350793,
+    "mean_absolute_delta": 0.000334809856219084,
+    "note": "PR #53 is archival only; v2 is the publication evidence table."
+  },
+  "b003_status": "RESOLVED_BY_REGENERATED_PROVENANCE",
+  "b005_status": "RESOLVED_BY_RECOVERED_ORIGINAL_BYTES",
+  "b006_status": "RESOLVED_54_OF_54_CHECKPOINT_HASH_BOUND",
+  "cells": [
+    {
+      "cell_id": "block_5000_9999/seed3/arm_a",
+      "training_seed": 3,
+      "arm": "A",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b",
+      "metrics": {
+        "fid5k_full": 316.22897690262977,
+        "kid5k_full": 0.3244565268018019
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed3/arm_a/generated-samples.npy",
+          "sha256": "6a8557f98d9b93ed6925c5654fbbedf1282434ecd8d1dfc0de32b54ce4cfecde",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "a131f463f2689700a14043347c940b011f0c6ba1fd3cdbdd74b5d48205cb7c1e",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "22f31c469760f282b16c7c82f004bf9c6a50e4b6b3544a96a829016080415dad",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "fcafd9e9c9ff60b038244db6fd09b3479a27937e8237c9ac98ff84e98c0ebb03"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "3d90043878317f84082eed82c85a7cd1e1efdb111b7a945bc70961e680495504"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed3/arm_b",
+      "training_seed": 3,
+      "arm": "B",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
+      "metrics": {
+        "fid5k_full": 207.87934298943534,
+        "kid5k_full": 0.20322853068068078
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed3/arm_b/generated-samples.npy",
+          "sha256": "37487650228d290d37e03f815705d33640a896e2be54b8a5a5506525fde89f42",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "f31185e7cfa95e94293e75e4e2e1cfed4853e73cc72ed9b7cb5c63764141cd3e",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "ef880eb0ffc537a402ff2b2bc5e2d8a5b8d37f2d594c1a6635e5475b91507d50",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "f0ec976b0c0198c2184dd2a8eac02664792b19ffa5adbb19b77d63c473774042"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "29eb8b82a27c0855e61595ffebe0169314fd3e69e58b87ea5086ac4d3a37b963"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed3/arm_c",
+      "training_seed": 3,
+      "arm": "C",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
+      "metrics": {
+        "fid5k_full": 298.91305887845175,
+        "kid5k_full": 0.3052322839664664
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed3/arm_c/generated-samples.npy",
+          "sha256": "4f4a3cccc9621d1ac8d6b008e2deb12e8ae5bf0cb2a8f3afdd402b3b590a73bf",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "7bbaa6ba93d7edddc7a04a36d1183232c8825e0e913715898c4cb44188221967",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "f7e50a5803b69f679d03ec4efac3b7151c6f5d0954f25393dd37a6336633d381",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "0790e93b4dc680ad42ab0a3a6779701b9c7a17cedfb0f46e5851ae0a3d9a4c4d"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed3/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "a75a765b9acd6af0a755cf8cfe1bbabbd4282673a637941890f4247eb3d5aacf"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed4/arm_a",
+      "training_seed": 4,
+      "arm": "A",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "ec724a4705cab6a789f05404a2fc82b362d5e3ef3aa5ed24735b82583059b684",
+      "metrics": {
+        "fid5k_full": 253.94764692081287,
+        "kid5k_full": 0.2565451969144144
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed4/arm_a/generated-samples.npy",
+          "sha256": "e023270a1efda76412ca7198010f7d22f01ca8df69c82a8a015e8261d0c8dca7",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "74496a3d37cd776f6c7d89e15563102cb918a51d89e1340bca2aa9e46f50962a",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "079e325393f053369ead1e0543fa6e298976cdc149e9ebfd79a50116e1f3792d",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "e774aaa30cb988cac00a1c5bba00575fc7fe91e12592c7a65d16a4e2516ec51c"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "d4ab898ef426d8184f40ebe77b77a60993c2788eed55364d45702859e1b6573d"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed4/arm_b",
+      "training_seed": 4,
+      "arm": "B",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "e6adb0548babb1de2aaa4a55e22ae4adfbe4d7daae2f2547e11e46628b726595",
+      "metrics": {
+        "fid5k_full": 216.5224393467861,
+        "kid5k_full": 0.21271042240490495
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed4/arm_b/generated-samples.npy",
+          "sha256": "d634e9aa68be860a3f73d6f6558170d2fb233cd68d71653175bf0934ffa02622",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "ce5bc9ff5b742f706ebf3d05249ee123abe11f023583375c1366009a930942bf",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "78b22025ebc9c76cda9ca13544c8c504fb4e1fbf262eed0789eb89e5f7567284",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "14243a1040bc9dd310594a3bdba3f32aeb5f69bfae70c6a94caac2d54c9da8f2"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "85e13c8c218db2efb1a24423202158cf2de3d39d0af5fd7862a184365c064ecf"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed4/arm_c",
+      "training_seed": 4,
+      "arm": "C",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "b5d19259a9089ba2bc8b8cb90e7dcd669b065a364efbb4f99736aae5bdded31e",
+      "metrics": {
+        "fid5k_full": 221.5520480582708,
+        "kid5k_full": 0.21644975146896886
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed4/arm_c/generated-samples.npy",
+          "sha256": "98c9686d02121df92b5c5c8ed7a9e2ee4b1d2860ebfbf95143702bcd8feabe73",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "deba29c2cbbb8fa7f7a57f784cdb7ac47a8801f2e2663413bfba6659de4bf786",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "65f040e985279e06f520204ff6e4b09246bfec57e21d532b3fd3ef6b3c9ee6d7",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "e89b93e8a24871b773916d614e6b16e18bdb8351cb7e2019768c7b94c044f79d"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed4/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "a550fb3fb44329d1f635ee71c61b6fb87b1990019fb09d19b07cf28dea1709b0"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed5/arm_a",
+      "training_seed": 5,
+      "arm": "A",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "97837ecba0f11d5b7d25c1eada17adf8ce5d5671ceae6553291f1405c5c16455",
+      "metrics": {
+        "fid5k_full": 255.6646421234234,
+        "kid5k_full": 0.2576860672697697
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed5/arm_a/generated-samples.npy",
+          "sha256": "d319c6fa45cb41ab52b94afce08bb3c21661633b7c35918ec23d753486c7f7c8",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "d9627f9674c71f52360ae31f74dbb1bc1e3d39cf1a390dbed155291d47484bc9",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "3e920351248c9c6df969aceefe4ffb872a93be1f158a29296202244fe16ae566",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "dec58f08641e16df4feae9d92637e924c494b96380a5d0e83375ab7fff63e3ac"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "d01d373532b1b84fa15fb3165501d75dcf825cde57c824c5b4c6320372438f0e"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed5/arm_b",
+      "training_seed": 5,
+      "arm": "B",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "fce3c1f2c14357b617f51e7220dd3dfe0e02c3e9894318678d7e167bff6af36a",
+      "metrics": {
+        "fid5k_full": 237.63310475159938,
+        "kid5k_full": 0.23578837201951955
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed5/arm_b/generated-samples.npy",
+          "sha256": "5a7865c504d7daa6a7035565f634fdf3eb2c3025477741cdda7238cd08a4f887",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "f94405153fb758f76c17795d2a391232269d0d39ecfbf78bcdc69b17da6c4eb2",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "8cf326e7ca8f579fc337acab75d69d3255893f2e841df27bc6e127637d9cf672",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "bb7ce692be6e9116f74593d4e9e717af14911a55bd139cb2440d0545ecbafdbe"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "37c00440a2f5cf16d64542a98b58e402a20301fdf7bc31ab566294bfb6261be6"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_5000_9999/seed5/arm_c",
+      "training_seed": 5,
+      "arm": "C",
+      "sample_seed_range": "5000-9999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "48e7fa22cef49b158b9b99da71f20c472149ebced9028b6f5c165653a2762852",
+      "metrics": {
+        "fid5k_full": 222.8906555108875,
+        "kid5k_full": 0.21771251470470476
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_5000_9999/seed5/arm_c/generated-samples.npy",
+          "sha256": "d21d1fbe30a0904f852e601201f7a9c6261efa87b423ed89323ad66750a266eb",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "bcbed57c2aa080750ca9309ac96604567f3a460c0e5c32f2e9717a1a0af2a3ae",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "4be7098c5ec1330dc98e2391895b95b406e5b424ba423c1d93c9589c2d78d230",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "6e8f183a0810c4bd5bfd8b0605bfa6973c1a3f10ba11ea7379c342a2e96f78ee"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_5000_9999/seed5/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "3f2840807ab6ff96a346a9d035240e333642af9c586796ca8666b51ddfbb36ce"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed3/arm_a",
+      "training_seed": 3,
+      "arm": "A",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b",
+      "metrics": {
+        "fid5k_full": 316.1307309841487,
+        "kid5k_full": 0.3243385649474474
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed3/arm_a/generated-samples.npy",
+          "sha256": "6ebec7b196d6a4ecbef002676c0136b1c2eacb3e3f49187fb8d5fe84b81861c4",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "468f6724079be2d066fd51d697a22d023ac0b4a8e755e2e35fa7508fd1afc84d",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "30939ad50d3dd94fd19cd94d87a0696ee8ffd9adc87b6cb4cedf5637802753d9",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "628e78f0e81bf9de9d977404631022b13b1ffca3d40fc857d23ed72d8a3f0354"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "1097e187ea33088ff2300532c371cf27807084d7db4a97752c047a62c36ec64b"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed3/arm_b",
+      "training_seed": 3,
+      "arm": "B",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
+      "metrics": {
+        "fid5k_full": 208.58226001864412,
+        "kid5k_full": 0.203620039562062
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed3/arm_b/generated-samples.npy",
+          "sha256": "88fb243a5dff6e9177580e130f90183946a1438766971538e7e699d9e98e1eee",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "76716a65140a23e822a7a0fd2608a36831806bc0af974d354055655a1d4e8ff4",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "ba310f92f029bd360d8dd7b3329ba3e3db7586afb457aeb27c3a018a93a2f651",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "031bc0ea93875ffff3b115e0bd23ed4b934df41297eb2427511a79fa512055d5"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "9bc9c4d6e198200f474f9de75a3740c65fb5e03760f5db885939bf292d397b25"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed3/arm_c",
+      "training_seed": 3,
+      "arm": "C",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
+      "metrics": {
+        "fid5k_full": 298.77484871720674,
+        "kid5k_full": 0.30522499845595596
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed3/arm_c/generated-samples.npy",
+          "sha256": "202bfdcd4ffc333e88f0afe8107f9114ddaaf19e4619b6782b32f63999d4a432",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "d0279c24d8b592fa0168fc29bf41f094b43b04a8cd4eadf6f746c093e72350ba",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "8b87adc944eb4eb00d074a87e8605f09de80a7e6cbd95fd865b0de5394703060",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "40f1176772c493ab86696b759d34b31935f2b2e6f022e471203a9d2aa4df45b4"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed3/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "bfc2786712002e22db59b610dc035b711b9857def1ec5bd932bbeb05078a166b"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed4/arm_a",
+      "training_seed": 4,
+      "arm": "A",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "ec724a4705cab6a789f05404a2fc82b362d5e3ef3aa5ed24735b82583059b684",
+      "metrics": {
+        "fid5k_full": 254.19210375265095,
+        "kid5k_full": 0.2571151327277278
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed4/arm_a/generated-samples.npy",
+          "sha256": "1ef47945c2d0f1b5158b7ef10d5252297c5fe87207a5ffd5d28b66b71dfcfd2a",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "f3d3771f9fc1e91b5413f5cc347f1e47aed4cc1d665288461dca78d8c1b1a998",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "52b1b74707f4f133cd259229b7f1fc746c36665c4ea5be508d3334b8ccb5d20a",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "9d703c85da863719d158a300da1f4c9c69a22ba48a4646a36f1eb16532a21ad6"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "cc4bda061bc2147badbb97f69e5cc837531a2b473b5b8121620df710b30fdf0c"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed4/arm_b",
+      "training_seed": 4,
+      "arm": "B",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "e6adb0548babb1de2aaa4a55e22ae4adfbe4d7daae2f2547e11e46628b726595",
+      "metrics": {
+        "fid5k_full": 217.36914413772126,
+        "kid5k_full": 0.21349046158908902
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed4/arm_b/generated-samples.npy",
+          "sha256": "d6a4d3128dd4e0a2e198e64b13b3f3d08c986e32ca211892461ca1ea4e132f57",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "bf43bc7a7c4115dbaec9f0838a36a34556cec30c42ee6199552e906d55fc04e9",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "5ce2251419181a003bce2f143829d12b70b623c6366e7eb80160796ca8838f25",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "2207815a5868186626872e1c221d1fbff619a3b64db38f3f0bd0fd6ded5dba58"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "6b2fc2d453449cff784b901111aa3dd06065d27184072233b1756a3ac6ae43a8"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed4/arm_c",
+      "training_seed": 4,
+      "arm": "C",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "b5d19259a9089ba2bc8b8cb90e7dcd669b065a364efbb4f99736aae5bdded31e",
+      "metrics": {
+        "fid5k_full": 222.40665074184926,
+        "kid5k_full": 0.2176698349824825
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed4/arm_c/generated-samples.npy",
+          "sha256": "399756005c3688a4333e26ef5b3f0ddf8155ccc321712f2b48e6e5011910d664",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "15ac6f40ca50700f581741d0c92f6e83773a3de2a3dbadaf5015fb01fcea8047",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "9d78b3b2effa3c423f421053be0a3dd8c39bd3c5d6423be2fec6f9e122ae8b32",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "b74d2fcb107cd1f9422914690171d06d8ffbe036482af714649202d66430599f"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed4/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "a9049ecc99760feb4a9795e5c9c6baa4fe2d7794ea86280fdc3bba54bd2ca13f"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed5/arm_a",
+      "training_seed": 5,
+      "arm": "A",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "97837ecba0f11d5b7d25c1eada17adf8ce5d5671ceae6553291f1405c5c16455",
+      "metrics": {
+        "fid5k_full": 255.791425651295,
+        "kid5k_full": 0.25807553801551547
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed5/arm_a/generated-samples.npy",
+          "sha256": "5c9940d41c77ecae8be4006832498c6fff5e2225ad88b67d53052df88c18d858",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "2daa7435f7e64599473b4ff9950957892c27354be5bcae85ea17fb2ef89366f0",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "5e942aeeaa6e524f4342f083c35cd64743118fae616f2b6f12d3b6397d05b5b2",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "9f9119289ab0b97af5b609b220a4fba413b3e571caa5b2f71a051bf2d7038b31"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "cd8a8def53797e53b2343b94831f91f60b104ac1f8024cedc46b4a4d8ed57adb"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed5/arm_b",
+      "training_seed": 5,
+      "arm": "B",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "fce3c1f2c14357b617f51e7220dd3dfe0e02c3e9894318678d7e167bff6af36a",
+      "metrics": {
+        "fid5k_full": 237.9359290372802,
+        "kid5k_full": 0.23644247694944945
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed5/arm_b/generated-samples.npy",
+          "sha256": "3507f43e733714fca931f5188eed67d04168846a9ba8df4a1636a59965fb5119",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "a26e0545e49f7000e7a18d39ce9885db110b5f54eedadd2583524963f4b1f8ea",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "02977459ced2f57fa460cd8e9f32792621c328e5a158296ade3a37f68bb9d20b",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "1d94d5ad69cb40094cf4753146512dc5edbc7b1b0d7e6cd4706c6a7443fee54e"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "2486116422e85c4bcb240093c3bc46cfd8baec4b869064b0c422c028ae15f29b"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_10000_14999/seed5/arm_c",
+      "training_seed": 5,
+      "arm": "C",
+      "sample_seed_range": "10000-14999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "48e7fa22cef49b158b9b99da71f20c472149ebced9028b6f5c165653a2762852",
+      "metrics": {
+        "fid5k_full": 223.72172712140627,
+        "kid5k_full": 0.21890455233233228
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_10000_14999/seed5/arm_c/generated-samples.npy",
+          "sha256": "103330c125f5ddd5e7bb8d6796aad672f6bdb23891e882a4a8777cddb065904f",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "829e1dabec52f9aa005f4a4934da82fbbdf12d6dbe6ad7a3ad484c7c74c0c5cf",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "3552ab9fae42aa3133e85797a29561203d72d7e0a01ffc288620108acee99988",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "73844af50ff12991f8117e7b9184523fe95b9495b4d4d7e4f2e8b7489e997eef"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_10000_14999/seed5/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "76fcad4d6826d816c7fa4983323f04160e6891f3c093d24861bfc5029d8dd7e8"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed3/arm_a",
+      "training_seed": 3,
+      "arm": "A",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b",
+      "metrics": {
+        "fid5k_full": 317.1062171221313,
+        "kid5k_full": 0.3254824335435436
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed3/arm_a/generated-samples.npy",
+          "sha256": "652b25b2de584af0420411f3f98dcc9420bea76c1b254e8a5f525ceacd6ede24",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "66e0e1dc1a772b89f1b667ab7195bb7fa2eda43535467178e6e2d4b9d1213773",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "3e33faa07fdb65d66da50437a40ed18857d99ba6170d3b52b07e9fcade8a37cd",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "ab6fa74d5cfb66cc22705a63772c51c3d0fad52f61df907f72ad8e952d38e7e5"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "d4dd98742ac6a1511f350da4b6138130585334024a21c63c5846a0b895f3c56b"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed3/arm_b",
+      "training_seed": 3,
+      "arm": "B",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
+      "metrics": {
+        "fid5k_full": 209.27454890372144,
+        "kid5k_full": 0.2044699731606607
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed3/arm_b/generated-samples.npy",
+          "sha256": "ebfb8a212c3db5a9f7c03a5813c858245b700b5d801bce30545b1c3ca6861488",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "bc9d4270eb003a22e23b09a8aac8e5c2b3098744e9a1afd89eecba376b6d3f3c",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "f05c9b02fec55b4ce2f94a770309ba03da7032985e7fe58e1adfbda7e7f2703a",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "b39ad813b0e54b777173a3aba5bdd28e2f942927df00d3070118741978348b35"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "ca73b160b7e9c208551ebf640fb3a09e1a0768ea5a0505ea8cf30f705f1128e5"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed3/arm_c",
+      "training_seed": 3,
+      "arm": "C",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
+      "metrics": {
+        "fid5k_full": 299.5324397227327,
+        "kid5k_full": 0.30614267009759755
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed3/arm_c/generated-samples.npy",
+          "sha256": "7b21cbff110590a2ed745c9ba3bd96dc19c1c138ce4a828753706d51ebca9ebb",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "65a7a6fa0941665f761275224d0f954b9c561e8f067dfa66a755956f88001144",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "e22e1312aadabf540bbc7fbd26af4348a388c2932d0ec7ef561359fc79e6fcdf",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "5f23df3037983a6d9892656dd84421e62b2b9d5e764c3cbe0474228066f8caa7"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed3/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "8f0db3b99e00ad5192f38c57f71b932a8939821eb35eeec2bbfefb6b40088497"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed4/arm_a",
+      "training_seed": 4,
+      "arm": "A",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "ec724a4705cab6a789f05404a2fc82b362d5e3ef3aa5ed24735b82583059b684",
+      "metrics": {
+        "fid5k_full": 255.00651141439033,
+        "kid5k_full": 0.25813315034034034
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed4/arm_a/generated-samples.npy",
+          "sha256": "c44bdc21d3fcd1cd1877c8fa45b0389b2f620f01f91a65ff81f794ee925cbb54",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "b4a179c96c496a106bcd5e64bdaec60a54ac094d71eb3476a0dbde302f70a1ba",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "59d81b002d98476d266d26d10570c0f74e9e9f606b1636326bc6999b81cb6100",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "3b8be4b11932f7e5c60004a362764acc2bf2e8142050c82b9a459d703b9520af"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "6a281635ce4dbc1eb8e3e213a39111550f4a639e84e56e4bd03a5cc45c1615ef"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed4/arm_b",
+      "training_seed": 4,
+      "arm": "B",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "e6adb0548babb1de2aaa4a55e22ae4adfbe4d7daae2f2547e11e46628b726595",
+      "metrics": {
+        "fid5k_full": 217.66056256707594,
+        "kid5k_full": 0.21394872357107106
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed4/arm_b/generated-samples.npy",
+          "sha256": "906d19d5170a56b9e7aaac0c71f8a7f70c0c35c188efd4b95f1b5613b9beab68",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "eae360282d2e0c61eb635a72f2ba62bed1037b79b77d96f9ced30b665e939136",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "f424c0f50504c46594f5bf96ae31fb2236d1d1b720042e2f4b6bfa28c11ce4b1",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "20a10abeeeffaf760b705954b4f227e917ddb417d67294d9c24d9496d441c720"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "96c37d09a99674e72505885af8b98802b33272187ba84e0dfabbbed38baea292"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed4/arm_c",
+      "training_seed": 4,
+      "arm": "C",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "b5d19259a9089ba2bc8b8cb90e7dcd669b065a364efbb4f99736aae5bdded31e",
+      "metrics": {
+        "fid5k_full": 222.43168131866884,
+        "kid5k_full": 0.2177713513013013
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed4/arm_c/generated-samples.npy",
+          "sha256": "c17cca306c04b0e176277a83d693d85e09d6bca216f806e9ee500babb54ccc3e",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "5ffd2f1b8d0a0e9ee204127281632783491448f38cb4907c03fe61c1a4e6877e",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "d1809460eef65c78116dad83c8ac600d6f7de9724431a0da31f3e058f38a0152",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "119d7a42d2496b16ea85f7e84ec82e7b62b2fba54eb9ee118e4a3d0bc87bb646"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed4/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "a50165e38621b003feed7f6956740349a5119a875f76cd6989fe205b4d6a4291"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed5/arm_a",
+      "training_seed": 5,
+      "arm": "A",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "97837ecba0f11d5b7d25c1eada17adf8ce5d5671ceae6553291f1405c5c16455",
+      "metrics": {
+        "fid5k_full": 256.6779113668614,
+        "kid5k_full": 0.2592394916166167
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed5/arm_a/generated-samples.npy",
+          "sha256": "8d5bb82a422e048f2761dda53ef01cb690af2b88658ff5d12b18cffb9cf3e4c7",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_a/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "00c5cb4b9e95181bad438b77c2e8be376c8949a8d1ae1410ea70d1f0ca939f7a",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_a/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "ca42f5091f4397be581808282889ec535956b061c152a011598dad75e3f497b6",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_a/metric-fid5k_full.jsonl",
+            "sha256": "b19d29a16bc3842b2d45134ee4ab28d1380274db7466f332377d48d0ff785ac8"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_a/metric-kid5k_full.jsonl",
+            "sha256": "929550a0d1372c7a8c12c69a85569f5388809b3d8ea2008a9a47d6da8bc91aff"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed5/arm_b",
+      "training_seed": 5,
+      "arm": "B",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "fce3c1f2c14357b617f51e7220dd3dfe0e02c3e9894318678d7e167bff6af36a",
+      "metrics": {
+        "fid5k_full": 238.56238128504347,
+        "kid5k_full": 0.23726190300800798
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed5/arm_b/generated-samples.npy",
+          "sha256": "80e41cd34d23b03f5731e557ed2943c709e024ccdda0dbd0f5345a828c62ddda",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_b/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "a6c056454cf077024e307df7d85cbfc51f8756929c9756082c2d503aa0095614",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_b/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "5e1df87dbf5487802c25cdacc7eb651f78a409b06013af4a49cbdabdcef46b72",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_b/metric-fid5k_full.jsonl",
+            "sha256": "acc97fa0d9599f3e1081c0a862bcb38786a4b68d95d48de166e4ff974010b942"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_b/metric-kid5k_full.jsonl",
+            "sha256": "fd50f4f1a7ddbb0b1048f06441e80ffb6b88b080beaf1384754646b7b0f9e261"
+          }
+        }
+      }
+    },
+    {
+      "cell_id": "block_15000_19999/seed5/arm_c",
+      "training_seed": 5,
+      "arm": "C",
+      "sample_seed_range": "15000-19999",
+      "sample_count": 5000,
+      "checkpoint_sha256": "48e7fa22cef49b158b9b99da71f20c472149ebced9028b6f5c165653a2762852",
+      "metrics": {
+        "fid5k_full": 223.96743508464954,
+        "kid5k_full": 0.21927052776776765
+      },
+      "artifacts": {
+        "samples": {
+          "path": "blocks/block_15000_19999/seed5/arm_c/generated-samples.npy",
+          "sha256": "c1783c4770cdfc0e4388c3dcfbf784e9860e219b86c6343cd94e43f5ff54d7c6",
+          "shape": [
+            5000,
+            3,
+            32,
+            32
+          ],
+          "dtype": "uint8"
+        },
+        "features": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_c/generated-features-fid5k_full-repeat00.npy",
+            "sha256": "bfafb56ed16290e0a056579dddba2aa1781dc834c8b72848fcdfed36430f8aff",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_c/generated-features-kid5k_full-repeat00.npy",
+            "sha256": "35ede1d1fabd9b5d1aca0427fdf26a0a97496d067234072bf4ae9b6fe9900c8f",
+            "shape": [
+              5000,
+              2048
+            ],
+            "dtype": "float32"
+          }
+        },
+        "metric_receipts": {
+          "fid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_c/metric-fid5k_full.jsonl",
+            "sha256": "f3f7c7a041d1429995898b30af382700e987f1df36f9bc31de7c54d4b7594eaf"
+          },
+          "kid5k_full": {
+            "path": "blocks/block_15000_19999/seed5/arm_c/metric-kid5k_full.jsonl",
+            "sha256": "6549fa8e1a085c27f304cdccc18c061615c77852b7ed74452e42f752c7bba582"
+          }
+        }
+      }
+    }
+  ]
+}

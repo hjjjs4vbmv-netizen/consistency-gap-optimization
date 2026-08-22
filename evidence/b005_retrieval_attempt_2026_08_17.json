@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "finding_id": "B005",
+  "attempted_at": "2026-08-17T09:46:00+08:00",
+  "operation": "read_only_exact_snapshot_rehash",
+  "target_checkpoint_records": [
+    "s3-B-k256000",
+    "s3-C-k256000"
+  ],
+  "target_filename": "network-snapshot-000008.pkl",
+  "attempts": [
+    {
+      "endpoint_class": "original_private_training_host",
+      "result": "DNS_NAME_NOT_RESOLVABLE"
+    },
+    {
+      "endpoint_class": "previous_cloud_transfer_host",
+      "result": "CONNECTION_REFUSED"
+    },
+    {
+      "endpoint_class": "current_evaluation_cloud_host",
+      "result": "CONNECTION_REFUSED"
+    }
+  ],
+  "local_archive_check": {
+    "archives_inspected": [
+      "seeds3_ckpts_full.tar.gz",
+      "seeds45_ckpts_full.tar.gz"
+    ],
+    "target_run_ids_present": false,
+    "note": "The archives contain a different fixed/global checkpoint family, not the A/B/C gap-LR experiment."
+  },
+  "result": "BLOCKED_NO_SOURCE_BYTES",
+  "hashes_recovered": 0,
+  "inference_prohibited": true,
+  "publication_safe": true
+}
