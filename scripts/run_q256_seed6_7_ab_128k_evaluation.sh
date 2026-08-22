@@ -9,6 +9,7 @@ expected_evaluator_head=9d06ccc72545d4189af1b86de7f629f9c09d3f73
 formal_adapter="${Q256_LC_FORMAL_ADAPTER:-/data/temp/ECT001/run_q256_direct_frozen_evaluation_v6.py}"
 formal_adapter_sha=7e687c7664fdd204153f658539393c6ef6dc7e4fb1c62d54d37414433f13b67f
 cache_source="${Q256_LC_CACHE_SOURCE:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-dcca41b-v1/frozen-evaluation/run-primary-first-v1/evaluator_cache}"
+baseline_eval_root="${Q256_LC_BASELINE_EVAL_ROOT:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-dcca41b-v1/frozen-evaluation/run-primary-first-v1}"
 dataset=/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip
 sandbox="${Q256_LC_SANDBOX:-/data/temp/ect001-pytorch2401-sandbox}"
 apptainer="${Q256_LC_APPTAINER:-/usr/bin/apptainer}"
@@ -18,6 +19,7 @@ matrix_dir="${artifact_root}/evaluation/matrix-binding-v1"
 durable_root="${artifact_root}/evaluation/run-primary-nfe1-v1"
 adapter="${tool_repo}/scripts/run_q256_seed6_7_ab_128k_frozen_evaluation.py"
 compactor="${tool_repo}/scripts/compact_q256_seed6_7_ab_128k_evaluation.py"
+collector="${tool_repo}/scripts/collect_q256_seed6_7_ab_128k_learning_curve.py"
 worker_log="${artifact_root}/evaluation/run-primary-nfe1-v1.log"
 lock_path=/data/temp/ECT001-q256-seed6-7-ab128k-evaluation.lock
 active_phase=preflight
@@ -45,7 +47,7 @@ exec 9>"${lock_path}"
 flock -n 9 || { echo 'evaluation lock is already held' >&2; exit 2; }
 
 [[ -d "${tool_repo}/.git" && -d "${evaluator_repo}/.git" && -d "${sandbox}" ]] || { echo 'missing tool/evaluator repo or sandbox' >&2; exit 2; }
-[[ -f "${adapter}" && -f "${compactor}" && -f "${formal_adapter}" && -d "${cache_source}" && -f "${dataset}" ]] || { echo 'missing evaluation input' >&2; exit 2; }
+[[ -f "${adapter}" && -f "${compactor}" && -f "${collector}" && -f "${formal_adapter}" && -d "${cache_source}" && -d "${baseline_eval_root}" && -f "${dataset}" ]] || { echo 'missing evaluation input' >&2; exit 2; }
 [[ "$(cd "${tool_repo}" && git rev-parse HEAD)" == "${expected_tool_commit}" ]] || { echo 'wrong tool commit' >&2; exit 2; }
 [[ -z "$(cd "${tool_repo}" && git status --porcelain)" ]] || { echo 'tool repo is dirty' >&2; exit 2; }
 [[ "$(cd "${evaluator_repo}" && git rev-parse HEAD)" == "${expected_evaluator_head}" ]] || { echo 'wrong evaluator commit' >&2; exit 2; }
@@ -96,6 +98,10 @@ active_phase=compact
   --durable-root "${durable_root}" --tool-commit "${expected_tool_commit}" \
   --delete-ephemeral-on-pass
 rmdir "${private_shm}"
+
+active_phase=collect
+python3 "${collector}" --artifact-root "${artifact_root}" \
+  --baseline-eval-root "${baseline_eval_root}"
 
 active_phase=complete
 trap - ERR
