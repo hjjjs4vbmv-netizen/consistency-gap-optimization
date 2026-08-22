@@ -29,9 +29,15 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
 try:  # Supports both ``python scripts/...`` and package-level tests.
-    from .paper_asset_data import complete_matrix, fail, load_trajectory, sha256
+    from .paper_asset_data import (
+        PAPER_PREVIEW_DPI, command_text, complete_matrix, fail, load_trajectory, sha256,
+        write_publication_sidecars,
+    )
 except ImportError:
-    from paper_asset_data import complete_matrix, fail, load_trajectory, sha256
+    from paper_asset_data import (
+        PAPER_PREVIEW_DPI, command_text, complete_matrix, fail, load_trajectory, sha256,
+        write_publication_sidecars,
+    )
 
 
 PREFIX = "render_paper_asset_c"
@@ -184,7 +190,7 @@ def render(per_seed: list[dict], summary: list[dict], config: dict, outdir: Path
     outputs = []
     for extension in ("svg", "png", "pdf"):
         path = outdir / "asset_c_arm_dispersion.{}".format(extension)
-        figure.savefig(path, dpi=220, bbox_inches="tight", facecolor="white")
+        figure.savefig(path, dpi=PAPER_PREVIEW_DPI, bbox_inches="tight", facecolor="white")
         outputs.append(path)
     plt.close(figure)
     return outputs
@@ -220,6 +226,22 @@ def main(argv: list[str] | None = None) -> None:
     save_csv(summary_path, summary)
     save_csv(contraction_path, contraction)
     figures = render(per_seed, summary, config, outdir)
+    png_path = next(path for path in figures if path.suffix == ".png")
+    command = command_text([
+        "python", "scripts/render_paper_asset_c.py", "--input-csv", source,
+        "--arm-config", config_path, "--outdir", outdir,
+    ])
+    sidecars = write_publication_sidecars(
+        outdir,
+        "asset_c_arm_dispersion",
+        png_path,
+        "Figure. Four-arm FID dispersion across training budgets. Each line is one matched training seed; "
+        "mean and median traces summarize, but do not replace, the seed-level values.",
+        "Dispersion is the observed four-arm FID range at the listed budgets under the single evaluation "
+        "contract in the manifest. A decrease from the first to final observed budget does not establish "
+        "identical limiting solutions or convergence outside the evaluated range.",
+        command,
+    )
     manifest = {
         "asset": "C",
         "title": "Arm dispersion contraction",
@@ -231,7 +253,15 @@ def main(argv: list[str] | None = None) -> None:
         "protocol": protocol,
         "seeds": seeds,
         "all_seed_dispersions_contract": all(row["contracts"] == "true" for row in contraction),
-        "outputs": {path.name: sha256(path) for path in [per_seed_path, summary_path, contraction_path] + figures},
+        "publication_qa": sidecars,
+        "outputs": {
+            path.name: sha256(path)
+            for path in [per_seed_path, summary_path, contraction_path] + figures + [
+                outdir / sidecars["caption"], outdir / sidecars["interpretation_boundary"],
+                outdir / sidecars["render_command"], outdir / sidecars["grayscale_preview"],
+                outdir / sidecars["grayscale_qa"],
+            ]
+        },
     }
     (outdir / "asset_c_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print("Rendered Asset C with {} seeds to {}".format(len(seeds), outdir))

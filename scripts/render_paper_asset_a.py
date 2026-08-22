@@ -40,8 +40,10 @@ from matplotlib.lines import Line2D
 
 try:  # Supports both ``python scripts/...`` and package-level tests.
     from .collect_multibudget_results import read_rows
+    from .paper_asset_data import PAPER_PREVIEW_DPI, command_text, write_publication_sidecars
 except ImportError:
     from collect_multibudget_results import read_rows
+    from paper_asset_data import PAPER_PREVIEW_DPI, command_text, write_publication_sidecars
 
 
 DEFAULT_BUDGETS = (256, 512, 768, 1024)
@@ -257,7 +259,7 @@ def render(
     outputs = []
     for extension in ("svg", "png", "pdf"):
         path = outdir / "asset_a_fid_vs_budget.{}".format(extension)
-        figure.savefig(path, dpi=220, bbox_inches="tight", facecolor="white")
+        figure.savefig(path, dpi=PAPER_PREVIEW_DPI, bbox_inches="tight", facecolor="white")
         outputs.append(path)
     plt.close(figure)
     return outputs
@@ -305,6 +307,11 @@ def main(argv: list[str] | None = None) -> None:
     budgets = parse_csv_values(args.budgets, "budgets")
     if tuple(sorted(budgets)) != budgets:
         fail("budgets must be strictly ascending")
+    if budgets != DEFAULT_BUDGETS:
+        fail(
+            "Asset A is reserved for the complete protocol-matched 256/512/768/1024 learning curve; "
+            "use render_paper_asset_endpoint.py for a two-budget endpoint comparison"
+        )
     source = args.input_csv.resolve()
     output = args.outdir.resolve()
     rows, methods, seeds, protocol = select_rows(
@@ -328,6 +335,25 @@ def main(argv: list[str] | None = None) -> None:
     )
     figure_data = output / "asset_a_fid_vs_budget.csv"
     write_csv(figure_data, rows, requested_primary, seed_labels)
+    png_path = next(path for path in files if path.suffix == ".png")
+    command = command_text([
+        "python", "scripts/render_paper_asset_a.py", "--input-csv", source,
+        "--outdir", output, "--metric-name", args.metric_name, "--nfe", str(args.nfe),
+        "--analysis-track", args.analysis_track, "--budgets", ",".join(str(value) for value in budgets),
+        "--primary-seeds", ",".join(str(value) for value in requested_primary),
+        "--seed-labels", args.seed_labels, "--secondary-mode", args.secondary_mode,
+    ])
+    sidecars = write_publication_sidecars(
+        output,
+        "asset_a_fid_vs_budget",
+        png_path,
+        "Figure. FID versus training budget for each evaluated training seed. "
+        "Thin trajectories retain seed-level outcomes; summary styling is descriptive only.",
+        "This figure is a complete learning-curve asset only when every plotted point uses the "
+        "single evaluation contract recorded in the manifest. It does not support claims about "
+        "unobserved budgets or asymptotic convergence.",
+        command,
+    )
     manifest = {
         "asset": "A",
         "title": "FID vs training budget",
@@ -345,7 +371,15 @@ def main(argv: list[str] | None = None) -> None:
         "secondary_mode": args.secondary_mode,
         "row_count": len(rows),
         "protocol": protocol,
-        "outputs": {path.name: sha256(path) for path in [figure_data] + files},
+        "publication_qa": sidecars,
+        "outputs": {
+            path.name: sha256(path)
+            for path in [figure_data] + files + [
+                output / sidecars["caption"], output / sidecars["interpretation_boundary"],
+                output / sidecars["render_command"], output / sidecars["grayscale_preview"],
+                output / sidecars["grayscale_qa"],
+            ]
+        },
     }
     (output / "asset_a_manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8",

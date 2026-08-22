@@ -41,9 +41,15 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
 try:  # Supports both ``python scripts/...`` and package-level tests.
-    from .paper_asset_data import complete_matrix, fail, load_trajectory, sha256
+    from .paper_asset_data import (
+        PAPER_PREVIEW_DPI, command_text, complete_matrix, fail, load_trajectory, sha256,
+        write_publication_sidecars,
+    )
 except ImportError:
-    from paper_asset_data import complete_matrix, fail, load_trajectory, sha256
+    from paper_asset_data import (
+        PAPER_PREVIEW_DPI, command_text, complete_matrix, fail, load_trajectory, sha256,
+        write_publication_sidecars,
+    )
 
 
 PREFIX = "render_paper_asset_b"
@@ -263,7 +269,7 @@ def render(per_arm: list[dict], per_seed: list[dict], config: dict, outdir: Path
     outputs = []
     for extension in ("svg", "png", "pdf"):
         path = outdir / "asset_b_compute_to_quality.{}".format(extension)
-        figure.savefig(path, dpi=220, bbox_inches="tight", facecolor="white")
+        figure.savefig(path, dpi=PAPER_PREVIEW_DPI, bbox_inches="tight", facecolor="white")
         outputs.append(path)
     plt.close(figure)
     return outputs
@@ -295,6 +301,27 @@ def main(argv: list[str] | None = None) -> None:
     save_csv(arm_path, per_arm)
     save_csv(delta_path, per_seed)
     figures = render(per_arm, per_seed, config, outdir)
+    png_path = next(path for path in figures if path.suffix == ".png")
+    command = command_text([
+        "python", "scripts/render_paper_asset_b.py", "--input-csv", source,
+        "--threshold-config", config_path, "--outdir", outdir,
+    ])
+    crossing_label = (
+        "the first observed evaluation checkpoint" if config["crossing_mode"] == MODE_FIRST_OBSERVED
+        else "a descriptive linear interpolation between adjacent evaluation checkpoints"
+    )
+    sidecars = write_publication_sidecars(
+        outdir,
+        "asset_b_compute_to_quality",
+        png_path,
+        "Figure. Per-seed compute required for arms A and B to reach FID <= {}. "
+        "Each paired connector retains the matched training seed; the dashed summaries are medians. "
+        "Crossing times use {}.".format(config["threshold"], crossing_label),
+        "The figure reports the frozen threshold and one frozen crossing definition. "
+        "When interpolation is selected, each crossing is a descriptive between-checkpoint estimate, "
+        "not an observed crossing or a population-level guarantee.",
+        command,
+    )
     paired_deltas = [float(row["delta_tau_B_minus_A_kimg"]) for row in per_seed if row["delta_tau_B_minus_A_kimg"]]
     manifest = {
         "asset": "B",
@@ -313,7 +340,15 @@ def main(argv: list[str] | None = None) -> None:
             "B": summary_values([row for row in per_arm if row["arm"] == "B"], "tau_kimg"),
             "delta_B_minus_A": summary_values(per_seed, "delta_tau_B_minus_A_kimg"),
         },
-        "outputs": {path.name: sha256(path) for path in [arm_path, delta_path] + figures},
+        "publication_qa": sidecars,
+        "outputs": {
+            path.name: sha256(path)
+            for path in [arm_path, delta_path] + figures + [
+                outdir / sidecars["caption"], outdir / sidecars["interpretation_boundary"],
+                outdir / sidecars["render_command"], outdir / sidecars["grayscale_preview"],
+                outdir / sidecars["grayscale_qa"],
+            ]
+        },
     }
     (outdir / "asset_b_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print("Rendered Asset B with {} paired seeds to {}".format(len(paired_deltas), outdir))

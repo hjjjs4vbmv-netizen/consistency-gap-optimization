@@ -79,6 +79,17 @@ class PaperAssetATest(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "matrix incomplete"):
                 asset_a.main(["--input-csv", str(source), "--outdir", str(root / "asset_a"), "--nfe", "2"])
 
+    def test_rejects_two_budget_endpoint_as_a_learning_curve(self):
+        rows = [row for row in self.make_rows() if row["budget_kimg"] in {256, 1024}]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self.write_source(root, rows)
+            with self.assertRaisesRegex(SystemExit, "reserved for the complete protocol-matched"):
+                asset_a.main([
+                    "--input-csv", str(source), "--outdir", str(root / "asset_a"), "--nfe", "2",
+                    "--budgets", "256,1024",
+                ])
+
 
 if __name__ == "__main__":
     unittest.main()

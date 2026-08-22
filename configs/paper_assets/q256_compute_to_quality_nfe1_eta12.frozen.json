@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "asset": "B",
+  "threshold_id": "q256-fid50k-nfe1-eta-12",
+  "metric_name": "fid50k_full",
+  "nfe": 1,
+  "threshold": 12.0,
+  "crossing_mode": "linear_interpolation_descriptive",
+  "evaluation_contract": "q256-fid50k-50k-v1",
+  "analysis_track": "two_budget_endpoint",
+  "budgets_kimg": [256, 1024],
+  "arms": {
+    "A": "arm_a_g100_weight100",
+    "B": "arm_b_g110_weight110"
+  },
+  "frozen_on": "2026-08-22",
+  "selection_rationale": "FID-50k <= 12 is the predeclared useful-quality threshold for the primary NFE=1 endpoint analysis. With only two observed budgets, each reported crossing is a descriptive between-checkpoint estimate."
+}
