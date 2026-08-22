@@ -1,0 +1,146 @@
+{
+  "arm": "D",
+  "artifacts": {
+    "data.png": {
+      "bytes": 557514,
+      "sha256": "a488133b79b6bc88794be5694b64deca534f88323bfbc5614ef19bd38bad520a"
+    },
+    "generated-features-fid50k_full-repeat00.npy": {
+      "bytes": 409600128,
+      "sha256": "a893b89335f49584729a6082d6c4c1303a58cf2eadd172c204589371708304a1"
+    },
+    "generated-features-kid50k_full-repeat00.npy": {
+      "bytes": 409600128,
+      "sha256": "a893b89335f49584729a6082d6c4c1303a58cf2eadd172c204589371708304a1"
+    },
+    "generated-samples.npy": {
+      "bytes": 153600128,
+      "sha256": "511b781805c0f2423e1381c21708023374ae359fb046b16ff95cb0ebfb88ce73"
+    },
+    "log.txt": {
+      "bytes": 4186,
+      "sha256": "8c2cba4ef88bba4f7977c7933df8bec13eda2eb165da497ac27fb2b66b9ddb22"
+    },
+    "metric-fid50k_full.jsonl": {
+      "bytes": 250,
+      "sha256": "b017894515b45cf7891bba94dce67e392a67d09f20cc35e65020b87f1ad44708"
+    },
+    "metric-kid50k_full.jsonl": {
+      "bytes": 256,
+      "sha256": "af54c19484bbf4b492319f2025730c3161a16b358bbfea024782edbaf1e5c241"
+    },
+    "sample.png": {
+      "bytes": 448333,
+      "sha256": "7e169d40e16970963a3feff068b2ed1f85fc9504b6bfdec7e4b370e09dd485f4"
+    },
+    "sampling_block_diagnostics_v1.json": {
+      "bytes": 2971,
+      "sha256": "c5583a7bec763c08ca073bc3fd7e59dc652baa1a2a1fbc5e7fb932dbf30527ee"
+    },
+    "training_options.json": {
+      "bytes": 540201,
+      "sha256": "571cfd7b015222bc16337ee6cf097c0dd2ca04ccef543d5ca01d8fc4e78fd8ca"
+    }
+  },
+  "artifacts_tree_sha256": "7f9fde2762ac59a78fe18f3f49436c803f8bd399a2f942024ed5e63487b40b0c",
+  "cache": {
+    "artifact_count": 3,
+    "artifacts": {
+      "downloads/a866f8d678872dcf6fcf60ddd09807ab_https___nvlabs-fi-cdn.nvidia.com_stylegan2-ada-pytorch_pretrained_metrics_inception-2015-12-05.pt": {
+        "bytes": 95607719,
+        "sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4"
+      },
+      "gan-metrics/cifar10-32x32-canonical-08c9ed1b2b1c-inception-2015-12-05-0fa1f5d271a9ae22be4cfe13dcd2bb5d.pkl": {
+        "bytes": 443188772,
+        "sha256": "8478c50d243e9876a4e82d71feb0a8420036bdc16f7962fba1511d24e4a7cfde"
+      },
+      "gan-metrics/cifar10-32x32-canonical-08c9ed1b2b1c-inception-2015-12-05-aad45a63395a8faeaad423fdcda71cb1.pkl": {
+        "bytes": 33571138,
+        "sha256": "7c40fa0d3ddd7f13c249dd6ef01a95fa2c5d49177a6556ef04a237e8202863de"
+      }
+    },
+    "inception_detector_url": "https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/inception-2015-12-05.pt",
+    "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/frozen-evaluation/run-primary-first-v1/evaluator_cache",
+    "tree_sha256": "91710cdafc3797fb2bc174641e618e6bfc5e092fc6ea7748ca3d3991122d6ae8"
+  },
+  "checkpoint": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/seed10/armD/network-snapshot-latest.pkl",
+  "checkpoint_sha256": "00e9c08abdfea686e6decbb0a6f1fd3b226fa799af5ec336f3ddaa10da80c71b",
+  "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+  "elapsed_seconds": 237.989,
+  "evaluator_source_content_sha256": "0e9427d6793d9da57e88ea2ba3105d57a85d69e425dfe108a049c0b943b9e500",
+  "evaluator_source_git_head": "9d06ccc72545d4189af1b86de7f629f9c09d3f73",
+  "execution_error": null,
+  "finished_utc": "2026-08-21T21:59:45Z",
+  "gpu_exclusivity_monitor": {
+    "cadence_grace_seconds": 0.25,
+    "checks_completed": 238,
+    "finished_utc": "2026-08-21T21:59:45Z",
+    "first_check_offset_seconds": 0.0005647055804729462,
+    "first_check_started_utc": "2026-08-21T21:55:47Z",
+    "foreign_process_incident": null,
+    "gpu_audit_backend": {
+      "gpu_process_source": "pynvml",
+      "metric_numerical_semantics_changed": false,
+      "poll_interval_seconds": 1.0,
+      "process_tree_source": "linux-procfs",
+      "schema": "ect.q256.gpu-audit-backend/v1"
+    },
+    "gpu_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+    "last_check_offset_seconds": 237.00059502758086,
+    "last_check_started_utc": "2026-08-21T21:59:44Z",
+    "max_observed_check_duration_seconds": 0.25193842500448227,
+    "max_observed_poll_gap_seconds": 1.0002967901527882,
+    "max_observed_schedule_lateness_seconds": 0.0005020033568143845,
+    "monitor_duration_seconds": 237.9304815698415,
+    "own_process_group_signals": [],
+    "poll_interval_seconds": 1.0,
+    "probe_timeout_seconds": 0.4,
+    "received_signal": null,
+    "root_process_pid": 100421,
+    "schema": "ect.q256.in-run-gpu-exclusivity-monitor/v2",
+    "started_utc": "2026-08-21T21:55:47Z",
+    "status": "PASS"
+  },
+  "job_id": "seed10-armD-nfe2",
+  "launch_manifest": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/frozen-evaluation/run-primary-first-v1/manifests/seed10-armD-nfe2.json",
+  "launch_manifest_sha256": "3998057fb6630d80fa86ed80eea7464764e832774de08f68b8ed895b54716d66",
+  "metric_seed": 20260730,
+  "metrics": [
+    {
+      "metric": "kid50k_full",
+      "raw_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/frozen-evaluation/run-primary-first-v1/jobs/seed10-armD-nfe2/metric-kid50k_full.jsonl",
+      "raw_sha256": "af54c19484bbf4b492319f2025730c3161a16b358bbfea024782edbaf1e5c241",
+      "value": 0.03362067005005005
+    },
+    {
+      "metric": "fid50k_full",
+      "raw_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/frozen-evaluation/run-primary-first-v1/jobs/seed10-armD-nfe2/metric-fid50k_full.jsonl",
+      "raw_sha256": "b017894515b45cf7891bba94dce67e392a67d09f20cc35e65020b87f1ad44708",
+      "value": 44.99241654841444
+    }
+  ],
+  "mid_t": [
+    0.821
+  ],
+  "nfe": 2,
+  "post_job_gpu_idle_check": {
+    "checked_utc": "2026-08-21T21:59:45Z",
+    "compute_process_count": 0,
+    "gpu_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+    "query": "gpu_uuid,pid,process_name,used_gpu_memory"
+  },
+  "precision": "fp32",
+  "process_log": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/frozen-evaluation/run-primary-first-v1/process_logs/seed10-armD-nfe2.log",
+  "process_log_sha256": "eca5007a743c3f870fe6f998fa3dad1954a1f2cd5dfefb7873741546e174d2e1",
+  "protocol": "q256-target-weight-secondary-extension-frozen-evaluation-v1",
+  "returncode": 0,
+  "sample_count": 50000,
+  "sample_seed_range": "0-49999",
+  "sampling_block_diagnostics": {
+    "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed8-13-dcca41b-v1/frozen-evaluation/run-primary-first-v1/jobs/seed10-armD-nfe2/sampling_block_diagnostics_v1.json",
+    "sha256": "c5583a7bec763c08ca073bc3fd7e59dc652baa1a2a1fbc5e7fb932dbf30527ee"
+  },
+  "schema": "ect.q256.target-weight-evaluation-job-receipt/v2",
+  "seed": 10,
+  "status": "passed"
+}

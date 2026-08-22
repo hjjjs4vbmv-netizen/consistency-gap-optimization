@@ -1,0 +1,170 @@
+{
+  "attempted_iteration": 0,
+  "batch_gpu": 16,
+  "batch_size": 128,
+  "common_initial_state_sha256": "7b34c814845bf1d66143d6691a138905f225b8277f7ab832bcbc70d8c4759740",
+  "dataset_path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+  "factorial": {
+    "arm": "C",
+    "denominator_gap_scale": 1.0,
+    "enabled": true,
+    "protocol": "q256_target_weight_v1",
+    "target_gap_scale": 1.1
+  },
+  "hashes": {
+    "ema": "48ff3bf1055433bc91154947f1bd18b03459f74c7e747241e7b60e003260c427",
+    "gradscaler": "2fdb487b7936a774e43b67159d5b24e25f25fb9e3c125deba4e75f2e94e5b29c",
+    "model": "48ff3bf1055433bc91154947f1bd18b03459f74c7e747241e7b60e003260c427",
+    "optimizer": "ae2d8b7f3196c3095cc0fa8d19fd089a9cfde4503a0790c7377caf783aceaa60",
+    "rank_rng": [
+      "d7a1f845cf9785e862b1ea6889254cda19af7421c11bc85129f647ee224ccbec"
+    ],
+    "rank_sampler": [
+      "d08601c6ed6722cb620f96e46f733e68d49858009224073597e087597a16b50b"
+    ]
+  },
+  "processed_nimg": 0,
+  "rank_states": [
+    {
+      "rank": 0,
+      "rng_sha256": "d7a1f845cf9785e862b1ea6889254cda19af7421c11bc85129f647ee224ccbec",
+      "sampler_sha256": "d08601c6ed6722cb620f96e46f733e68d49858009224073597e087597a16b50b",
+      "sampler_state": {
+        "consumed_samples": 0,
+        "dataset_size": 50000,
+        "num_replicas": 1,
+        "rank": 0,
+        "schema": "ect.infinite-sampler/v1",
+        "seed": 9,
+        "shuffle": true,
+        "window_size": 0.5
+      },
+      "world_size": 1
+    }
+  ],
+  "schema": "ect.q256.target-weight-initial-state/v1",
+  "seed": 9,
+  "trajectory_config": {
+    "adaptive_update_kimg": 0.5,
+    "augment_kwargs": null,
+    "authoritative_transfer_source_policy": {
+      "allowed_source_extras": {
+        "model.map_augment.weight": {
+          "dtype": "torch.float32",
+          "reason": "authoritative checkpoint augmentation map unused by augment=0 target",
+          "shape": [
+            128,
+            9
+          ],
+          "tensor_bytes_sha256": "4500f8ac1eb5cc8dd4096595a798c8ea4793d42f8433014ab67e41d5ceb70de0"
+        }
+      },
+      "required_target_coverage": "all_parameters_and_buffers",
+      "schema": "ect.q256.authoritative-transfer-source-policy/v1"
+    },
+    "batch_gpu": 16,
+    "batch_size": 128,
+    "ckpt_ticks": 10,
+    "cublas_workspace_config": ":4096:8",
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "data_loader_kwargs": {
+      "num_workers": 1,
+      "pin_memory": true,
+      "prefetch_factor": 2
+    },
+    "dataset_kwargs": {
+      "cache": true,
+      "class_name": "training.dataset.ImageFolderDataset",
+      "max_size": 50000,
+      "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+      "resolution": 32,
+      "use_labels": false,
+      "xflip": false
+    },
+    "deterministic_algorithms": true,
+    "device": "cuda",
+    "double_ticks": 10000,
+    "ema_beta": 0.9993,
+    "ema_halflife_kimg": null,
+    "ema_rampup_ratio": null,
+    "enable_amp": true,
+    "enable_tf32": false,
+    "eval_ticks": 50,
+    "kimg_per_tick": 10.0,
+    "loss_kwargs": {
+      "P_mean": -1.1,
+      "P_std": 2.0,
+      "adaptive_loss_ema_beta": 0.9,
+      "adaptive_max_adjust": 0.05,
+      "adaptive_min_gap": 0.001,
+      "adaptive_warmup_updates": 2,
+      "adj": "sigmoid",
+      "b": 1.0,
+      "c": 0.0,
+      "class_name": "training.loss.ECMLoss",
+      "denominator_gap_scale": 1.0,
+      "factorial_protocol": "q256_target_weight_v1",
+      "global_gap_scale": 1.0,
+      "k": 8.0,
+      "local_tbin_deadband": 0.02,
+      "local_tbin_gain": 0.5,
+      "local_tbin_long_beta": 0.99,
+      "local_tbin_max_scale": 1.5,
+      "local_tbin_min_gap": 0.001,
+      "local_tbin_min_scale": 0.75,
+      "local_tbin_num_bins": 4,
+      "local_tbin_short_beta": 0.9,
+      "local_tbin_warmup_updates": 32,
+      "q": 256.0,
+      "target_gap_scale": 1.1
+    },
+    "loss_scaling": 1.0,
+    "lr_rampup_kimg": 0,
+    "metrics": [],
+    "mid_t": [
+      0.821
+    ],
+    "network_kwargs": {
+      "channel_mult": [
+        2,
+        2,
+        2
+      ],
+      "channel_mult_noise": 1,
+      "class_name": "training.networks.ECMPrecond",
+      "decoder_type": "standard",
+      "dropout": 0.2,
+      "embedding_type": "positional",
+      "encoder_type": "standard",
+      "model_channels": 128,
+      "model_type": "SongUNet",
+      "resample_filter": [
+        1,
+        1
+      ],
+      "use_fp16": true
+    },
+    "num_accumulation_rounds": 8,
+    "optimizer_kwargs": {
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "class_name": "torch.optim.RAdam",
+      "eps": 1e-08,
+      "lr": 0.0001
+    },
+    "rank_seed": 9,
+    "sample_ticks": 26,
+    "schema": "ect.q256.target-weight-trajectory-config/v1",
+    "seed": 9,
+    "snapshot_ticks": null,
+    "state_dump_ticks": null,
+    "total_kimg": 256,
+    "world_size": 1
+  },
+  "trajectory_config_sha256": "9fe9c233fa58a1c3d0a7e7069220097b6bcb6c9e3548e4a4cdc438d62ea7cd96",
+  "transfer_path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+  "world_size": 1
+}
