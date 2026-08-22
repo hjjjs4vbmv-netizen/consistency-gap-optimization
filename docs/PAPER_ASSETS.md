@@ -48,3 +48,19 @@ For each seed it writes both `tau_A`, `tau_B`, and
 connector; median lines are summaries only.  The manifest flags the special
 case in which every observed paired `Δtau` is negative, without making a
 population-level claim.
+
+## Asset C — Arm dispersion contraction
+
+Asset C uses a frozen arm configuration that maps A/B/C/D to four distinct
+methods.  At every seed and checkpoint it computes
+`S_s(K) = max_a FID_{s,a}(K) − min_a FID_{s,a}(K)`.  The output includes the
+complete seed-by-budget values, a mean/median summary, and each seed's change
+from the first to final budget.  It refuses incomplete four-arm cells and
+refuses to generate a single-seed mean-only figure.
+
+## Asset D — Seed-resolved reporting rule
+
+Every paper plot must retain one visible mark or thin trajectory per seed.
+Mean and median are permitted only as explicitly labelled overlays or summary
+rows; they may not replace the seed-level data.  This is a hard renderer rule
+for Assets A–C, so heterogeneous seeds cannot be hidden by an aggregate curve.
