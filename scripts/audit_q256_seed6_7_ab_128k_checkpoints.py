@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit seed6/7 A/B 256->1024k continuation checkpoints."""
+"""Audit seed6/7 A/B 256->1024k continuation checkpoints at 128-kimg intervals."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ ARMS = {"A": (1.0, 1.0), "B": (1.1, 1.1)}
 SOURCE_KIMG = 256
 SOURCE_ATTEMPTS = 2000
 SCHEMA_SOURCE = "ect.q256.seed6-7-ab-source-state-audit/v1"
-SCHEMA_INVENTORY = "ect.q256.seed6-7-ab-64k-checkpoint-inventory/v1"
+SCHEMA_INVENTORY = "ect.q256.seed6-7-ab-128k-checkpoint-inventory/v1"
 CHECKPOINT_SCHEMA = "ect.q256.seed6-7-ab-budget-checkpoint/v1"
 CLASSIFICATION = "secondary_precision_extension_not_original_preregistration"
 REQUIRED_STATE_FIELDS = {
@@ -308,7 +308,7 @@ def inventory_command(args: argparse.Namespace) -> None:
                     "denominator_gap_scale": denominator_scale,
                     "source_checkpoint_sha256": source["source_state_sha256"],
                     "training_commit": args.training_commit,
-                    "checkpoint_interval_kimg": 64,
+                    "checkpoint_interval_kimg": 128,
                     "atomic_directory_publish": True,
                 }
                 for field, expected in exact.items():
@@ -503,7 +503,7 @@ def main() -> int:
         args.handler(args)
         return 0
     except (AuditError, AssertionError, KeyError, OSError, ValueError) as exc:
-        print(f"[q256-seed6-7-ab-64k-audit] ERROR: {exc}", file=os.sys.stderr)
+        print(f"[q256-seed6-7-ab-128k-audit] ERROR: {exc}", file=os.sys.stderr)
         return 1
 
 

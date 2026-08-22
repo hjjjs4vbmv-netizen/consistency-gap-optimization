@@ -882,7 +882,7 @@ def training_loop(
             total_kimg=total_kimg,
         )
         if batch_size != 128:
-            raise ValueError('q256 64-kimg durability requires batch_size=128')
+            raise ValueError('q256 128-kimg durability requires batch_size=128')
         expected_checkpoint_root = os.path.join(
             os.path.abspath(run_dir), 'checkpoints'
         )

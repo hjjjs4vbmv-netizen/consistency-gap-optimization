@@ -4,17 +4,17 @@ set -euo pipefail
 repo="${Q256_LC_REPO:?Q256_LC_REPO is required}"
 expected_commit="${Q256_LC_EXPECTED_TRAINING_COMMIT:?Q256_LC_EXPECTED_TRAINING_COMMIT is required}"
 source_root="${Q256_LC_SOURCE_ROOT:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-dcca41b-v1}"
-artifact_root="${Q256_LC_ARTIFACT_ROOT:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-64k-learning-curve-v1}"
+artifact_root="${Q256_LC_ARTIFACT_ROOT:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1}"
 sandbox="${Q256_LC_SANDBOX:-/data/temp/ect001-pytorch2401-sandbox}"
 apptainer="${Q256_LC_APPTAINER:-/usr/bin/apptainer}"
 dataset="${Q256_LC_DATASET:-/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip}"
 dataset_sha=08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372
 gpu0=GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859
 gpu1=GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10
-session6=q256_seed6_ab_64k
-session7=q256_seed7_ab_64k
-queue_script="${repo}/scripts/run_q256_seed6_7_ab_64k_training_queue.sh"
-audit_script="${repo}/scripts/audit_q256_seed6_7_ab_64k_checkpoints.py"
+session6=q256_seed6_ab_128k
+session7=q256_seed7_ab_128k
+queue_script="${repo}/scripts/run_q256_seed6_7_ab_128k_training_queue.sh"
+audit_script="${repo}/scripts/audit_q256_seed6_7_ab_128k_checkpoints.py"
 
 umask 027
 
@@ -24,7 +24,7 @@ umask 027
 [[ -z "$(cd "${repo}" && git status --porcelain)" ]] || { echo 'source worktree is dirty' >&2; exit 2; }
 [[ "$(sha256sum "${dataset}" | awk '{print $1}')" == "${dataset_sha}" ]] || { echo 'dataset SHA256 mismatch' >&2; exit 2; }
 [[ ! -e "${artifact_root}" ]] || { echo "refuse existing artifact root: ${artifact_root}" >&2; exit 3; }
-[[ ! -e /dev/shm/ECT001-q256-seed6-ab64k-train && ! -e /dev/shm/ECT001-q256-seed7-ab64k-train ]] || { echo 'private training shm path already exists' >&2; exit 3; }
+[[ ! -e /dev/shm/ECT001-q256-seed6-ab128k-train && ! -e /dev/shm/ECT001-q256-seed7-ab128k-train ]] || { echo 'private training shm path already exists' >&2; exit 3; }
 tmux has-session -t "${session6}" 2>/dev/null && { echo "tmux exists: ${session6}" >&2; exit 3; }
 tmux has-session -t "${session7}" 2>/dev/null && { echo "tmux exists: ${session7}" >&2; exit 3; }
 
@@ -53,7 +53,7 @@ done
   --output "${artifact_root}/integrity/source_state_audit.json" \
   >"${artifact_root}/logs/source-state-audit.log" 2>&1
 
-printf '{\n  "schema": "ect.q256.seed6-7-ab-64k-learning-curve-contract/v1",\n  "status": "AUTHORIZED",\n  "extension_classification": "secondary_precision_extension_not_original_preregistration",\n  "replaces_preregistered_seed": false,\n  "training_commit": "%s",\n  "training_numerical_base_commit": "458205192722883df393a8d017c26e6fa46f48f7",\n  "source_root": "%s",\n  "artifact_root": "%s",\n  "seeds": [6, 7],\n  "arms": ["A", "B"],\n  "budgets_kimg": [320, 384, 448, 512, 576, 640, 704, 768, 832, 896, 960, 1024],\n  "new_checkpoint_count": 48,\n  "evaluation_job_count": 48,\n  "evaluation_nfe": 1,\n  "evaluation_sample_count": 50000,\n  "evaluation_sample_seed_range": "0-49999",\n  "metric_seed": 20260730,\n  "metrics": ["kid50k_full", "fid50k_full"],\n  "gpu_assignment": {"seed6": "%s", "seed7": "%s"},\n  "created_utc": "%s"\n}\n' \
+printf '{\n  "schema": "ect.q256.seed6-7-ab-128k-learning-curve-contract/v1",\n  "status": "AUTHORIZED",\n  "extension_classification": "secondary_precision_extension_not_original_preregistration",\n  "replaces_preregistered_seed": false,\n  "training_commit": "%s",\n  "training_numerical_base_commit": "458205192722883df393a8d017c26e6fa46f48f7",\n  "source_root": "%s",\n  "artifact_root": "%s",\n  "seeds": [6, 7],\n  "arms": ["A", "B"],\n  "budgets_kimg": [384, 512, 640, 768, 896, 1024],\n  "new_checkpoint_count": 24,\n  "evaluation_job_count": 24,\n  "evaluation_nfe": 1,\n  "evaluation_sample_count": 50000,\n  "evaluation_sample_seed_range": "0-49999",\n  "metric_seed": 20260730,\n  "metrics": ["kid50k_full", "fid50k_full"],\n  "gpu_assignment": {"seed6": "%s", "seed7": "%s"},\n  "created_utc": "%s"\n}\n' \
   "${expected_commit}" "${source_root}" "${artifact_root}" "${gpu0}" "${gpu1}" \
   "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >"${artifact_root}/experiment_contract.json"
 

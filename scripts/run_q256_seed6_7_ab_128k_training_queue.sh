@@ -15,15 +15,15 @@ esac
 repo="${Q256_LC_REPO:?Q256_LC_REPO is required}"
 expected_commit="${Q256_LC_EXPECTED_TRAINING_COMMIT:?Q256_LC_EXPECTED_TRAINING_COMMIT is required}"
 source_root="${Q256_LC_SOURCE_ROOT:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-dcca41b-v1}"
-artifact_root="${Q256_LC_ARTIFACT_ROOT:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-64k-learning-curve-v1}"
+artifact_root="${Q256_LC_ARTIFACT_ROOT:-/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1}"
 dataset="${Q256_LC_DATASET:-/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip}"
 dataset_sha=08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372
 sandbox="${Q256_LC_SANDBOX:-/data/temp/ect001-pytorch2401-sandbox}"
 apptainer="${Q256_LC_APPTAINER:-/usr/bin/apptainer}"
-audit_script="${repo}/scripts/audit_q256_seed6_7_ab_64k_checkpoints.py"
-private_shm="/dev/shm/ECT001-q256-seed${seed}-ab64k-train"
+audit_script="${repo}/scripts/audit_q256_seed6_7_ab_128k_checkpoints.py"
+private_shm="/dev/shm/ECT001-q256-seed${seed}-ab128k-train"
 worker_log="${artifact_root}/logs/training-seed${seed}.log"
-lock_path="/data/temp/ECT001-q256-seed${seed}-ab64k-training.lock"
+lock_path="/data/temp/ECT001-q256-seed${seed}-ab128k-training.lock"
 active_arm=preflight
 arm_started_epoch=0
 
@@ -35,7 +35,7 @@ write_failure() {
   timestamp=$(date -u +%Y%m%dT%H%M%SZ)
   mkdir -p "${artifact_root}/failures"
   {
-    printf '# q256 seed6/7 A/B 64-kimg training failure\n\n'
+    printf '# q256 seed6/7 A/B 128-kimg training failure\n\n'
     printf -- '- UTC: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
     printf -- '- Seed: %s\n' "${seed}"
     printf -- '- Arm: %s\n' "${active_arm}"
@@ -144,8 +144,8 @@ run_arm() {
     --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 \
     --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 \
     --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 \
-    --budget-checkpoint-interval-kimg=64 \
-    --budget-checkpoint-start-kimg=320 \
+    --budget-checkpoint-interval-kimg=128 \
+    --budget-checkpoint-start-kimg=384 \
     --budget-checkpoint-root="${run_dir}/checkpoints" \
     --budget-checkpoint-source-sha256="${source_sha}" \
     --budget-checkpoint-training-commit="${expected_commit}" \

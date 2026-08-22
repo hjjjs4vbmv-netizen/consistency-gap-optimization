@@ -1,4 +1,4 @@
-"""Pure schedule helpers for q256 64-kimg durability checkpoints.
+"""Pure schedule helpers for q256 128-kimg durability checkpoints.
 
 This module deliberately contains no Torch or training math.  It only decides
 whether a committed image count is one of the predeclared learning-curve
@@ -8,8 +8,8 @@ budgets.
 from __future__ import annotations
 
 
-INTERVAL_KIMG = 64
-START_KIMG = 320
+INTERVAL_KIMG = 128
+START_KIMG = 384
 FINAL_KIMG = 1024
 BUDGETS_KIMG = tuple(range(START_KIMG, FINAL_KIMG + 1, INTERVAL_KIMG))
 
