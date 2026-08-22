@@ -109,4 +109,3 @@ def complete_matrix(
     if missing or extra:
         fail(prefix, "matrix incomplete; missing={}, extra={}".format(sorted(missing), sorted(extra)))
     return seeds, index
-
