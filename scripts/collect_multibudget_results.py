@@ -111,8 +111,14 @@ def read_rows(path: Path) -> list[dict]:
             fail("row {}: training_time_hours must be non-negative".format(row_number))
         if row["sample_count"] is not None and row["sample_count"] < 1:
             fail("row {}: sample_count must be positive".format(row_number))
-        if row["analysis_track"] and row["analysis_track"] not in {"budget_curve", "formal_endpoint"}:
-            fail("row {}: analysis_track must be budget_curve or formal_endpoint".format(row_number))
+        if row["analysis_track"] and row["analysis_track"] not in {
+                "budget_curve", "formal_endpoint", "two_budget_endpoint",
+        }:
+            fail(
+                "row {}: analysis_track must be budget_curve, formal_endpoint, or two_budget_endpoint".format(
+                    row_number,
+                ),
+            )
         if bool(row["analysis_track"]) != bool(row["evaluation_contract"]):
             fail("row {}: analysis_track and evaluation_contract must be provided together".format(row_number))
         rows.append(row)

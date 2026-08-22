@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "asset": "two_budget_endpoint",
+  "metric_name": "fid50k_full",
+  "nfe": 1,
+  "evaluation_contract": "q256-fid50k-50k-v1",
+  "analysis_track": "two_budget_endpoint",
+  "budgets_kimg": [256, 1024],
+  "arms": {
+    "A": "arm_a_g100_weight100",
+    "B": "arm_b_g110_weight110",
+    "C": "arm_c_g110_weight100",
+    "D": "arm_d_g100_weight110"
+  },
+  "interpretation": "A two-budget endpoint comparison; it is not a complete learning curve."
+}
