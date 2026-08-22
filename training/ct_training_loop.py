@@ -2139,7 +2139,8 @@ def training_loop(
                         f'refusing existing replay milestone: {milestone_dir}'
                     )
                 os.makedirs(milestone_dir, mode=0o750)
-            dist.barrier()
+            # Strict factorial replay is already constrained to world_size=1,
+            # so no cross-rank publication barrier is required here.
             milestone_snapshot = dict(
                 ema=ema,
                 loss_fn=loss_fn,
@@ -2194,7 +2195,6 @@ def training_loop(
                     overwrite=False,
                 )
             del milestone_snapshot
-            dist.barrier()
             dist.print0(
                 'Saved formal replay milestone at '
                 f'{milestone_kimg} kimg / {attempted_iteration} attempts.'

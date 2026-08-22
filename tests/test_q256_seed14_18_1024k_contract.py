@@ -103,6 +103,10 @@ def test_learning_curve_milestones_are_output_only_and_exact() -> None:
         "strict_trajectory_config = reproducibility.canonical_json_data({", 1
     )[1].split("strict_trajectory_config_sha256 =", 1)[0]
     assert "checkpoint_milestone_kimg" not in trajectory_block
+    milestone_block = loop.split(
+        "# Save immutable, independently loadable replay milestone artifacts.", 1
+    )[1].split("# Sample Img", 1)[0]
+    assert "dist.barrier" not in milestone_block
 
 
 def test_learning_curve_evaluation_is_nfe1_first(tmp_path: Path) -> None:
@@ -168,3 +172,28 @@ def test_learning_curve_replay_launcher_freezes_scope() -> None:
     assert "seed14-18-256to1024-learning-curve-replay-v1" in launcher
     assert "checkpoints=120 evaluation_jobs=240" in launcher
     assert "q256lc_s${seed}" in launcher
+
+
+def test_learning_curve_recovery_adopts_exact_384_without_retraining() -> None:
+    support = (
+        ROOT
+        / "analysis"
+        / "q256_target_weight_factorial"
+        / "learning_curve_replay"
+    )
+    worker = (
+        support / "run_learning_curve_replay_recovery_v2_worker.sh"
+    ).read_text(encoding="utf-8")
+    launcher = (
+        support / "launch_learning_curve_replay_recovery_v2.sh"
+    ).read_text(encoding="utf-8")
+    adopter = (support / "adopt_failed_384_milestone.py").read_text(
+        encoding="utf-8"
+    )
+    assert "adopt_failed_384_milestone.py" in worker
+    assert "resume_state=${outdir}/training-state-latest.pt" in worker
+    assert "formal_source_state" in worker
+    assert "q256lcr2_s${seed}" in launcher
+    assert "armA_384_policy" in launcher
+    assert "int(state[\"attempted_iteration\"]) != 3000" in adopter
+    assert "adopted 384 training state is not byte-identical" in adopter
