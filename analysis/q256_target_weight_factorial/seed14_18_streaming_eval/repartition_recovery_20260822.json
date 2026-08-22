@@ -1,0 +1,22 @@
+{
+  "action": "Quarantined two interrupted, receipt-free NFE2 output directories and regenerated both jobs from their immutable checkpoints.",
+  "affected_jobs": [
+    {
+      "final_receipt": "/root/q256_eval/receipts/seed14-armA-k384-nfe2.json",
+      "final_receipt_sha256": "94bc78c5bd678a643f492afa11a751b5553de6b6ab58ce66cc31bd17824f196b",
+      "job_id": "seed14-armA-k384-nfe2",
+      "quarantine": "/root/q256_eval/quarantine/repartition-20260822T1221Z/seed14-armA-k384-nfe2"
+    },
+    {
+      "final_receipt": "/root/q256_eval/receipts/seed15-armA-k384-nfe2.json",
+      "final_receipt_sha256": "0e56e1ba3e3d9f759c83bb5ecd8be3975469039d59c2fb531ae9b78ce3bcddfe",
+      "job_id": "seed15-armA-k384-nfe2",
+      "quarantine": "/root/q256_eval/quarantine/repartition-20260822T1221Z/seed15-armA-k384-nfe2"
+    }
+  ],
+  "created_utc": "2026-08-22T12:30:00Z",
+  "failed_partial_outputs_used": false,
+  "reason": "The first five-card worker parents were stopped while repartitioning the 240-job matrix across ten GPUs; two already-started child jobs were interrupted when their tmux sessions were retired.",
+  "schema": "ect.q256.seed14-18.evaluation-repartition-recovery/v1",
+  "status": "PASS"
+}
