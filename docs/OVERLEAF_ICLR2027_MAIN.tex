@@ -395,14 +395,31 @@ The resulting matrix contains 168 completed FID/KID-50k evaluation jobs
 ($3$ seeds $\times4$ arms $\times7$ budgets $\times2$ NFE values). All formal
 jobs passed the recorded artifact and status audit.
 
-Table~\ref{tab:ba-curve} reports the NFE1 FID contrast for the complete
-intervention. The separation is large at 256--384 kimg and much smaller from
-512 kimg onward. From 512 kimg, only two of three seeds favor $B$, and the
-cohort-mean contrast changes sign at 512 kimg. At NFE2, the mean $B-A$ FID
-contrast likewise changes from $-48.0770$ at 256 kimg and $-28.8781$ at
+Figure~\ref{fig:seed-resolved-curves} shows every formal seed, arm, budget, and
+NFE readout. Table~\ref{tab:ba-curve} reports the NFE1 FID contrast for the
+complete intervention. The separation is large at 256--384 kimg and much
+smaller from 512 kimg onward. From 512 kimg, only two of three seeds favor $B$,
+and the cohort-mean contrast changes sign at 512 kimg. At NFE2, the mean $B-A$
+FID contrast likewise changes from $-48.0770$ at 256 kimg and $-28.8781$ at
 384 kimg to $-0.0377$ at 1024 kimg, with seed heterogeneity at later budgets.
 The evidence therefore supports a transient learning-trajectory effect more
 directly than a stable endpoint ordering.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]
+    {figures/figure2_seed_resolved_learning_curves.pdf}
+  \caption{\textbf{Seed-resolved finite-budget learning trajectories.}
+  Columns show formal training seeds 3--5 and rows show NFE1 and NFE2.
+  Each curve contains the seven frozen budgets from 256 to 1024 kimg; every
+  point is a FID-50k evaluation. Arms A and B are emphasized, while the
+  target-only arm C and denominator-only arm D provide factorial context.
+  The logarithmic FID axis exposes both the large early separations and the
+  later contraction and crossings. Training seed is the independent unit;
+  budgets and NFE readouts are repeated measurements, not additional
+  replicates.}
+  \label{fig:seed-resolved-curves}
+\end{figure}
 
 \begin{table}[t]
   \caption{Budget-resolved NFE1 FID contrast for the complete intervention in
@@ -425,9 +442,27 @@ directly than a stable endpoint ordering.
   \end{tabular}
 \end{table}
 
-\empnote{Figure 2 should replace or accompany Table~\ref{tab:ba-curve}: show
-every seed-resolved FID--budget line; emphasize A/B and retain C/D as context.
-Do not show only a cohort mean.}
+The component contrasts themselves are also budget dependent
+(Figure~\ref{fig:factorial-contrast-curves}). Target, denominator, and
+interaction trajectories can change sign even when their 256-kimg summaries
+are directionally clear. This is the quality-level distinction between an
+exact matched-state factorial identity and a factorial comparison after
+separate training.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]
+    {figures/figure4_budget_dependent_factorial_contrasts.pdf}
+  \caption{\textbf{Budget-dependent NFE1 factorial contrasts.}
+  Panels show the paired FID-50k contrasts $B-A$, $C-A$, $D-A$, and
+  $B-C-D+A$ for each formal training seed and their descriptive cohort mean.
+  Negative values favor the first named arm. The shared signed pseudo-log axis
+  is linear near zero ($\sigma=1$) and logarithmic in both tails, allowing
+  early large contrasts and later near-zero variation to remain visible on the
+  same scale. The dotted line marks zero. All three seed trajectories are
+  displayed; the blue mean is not treated as an additional replicate.}
+  \label{fig:factorial-contrast-curves}
+\end{figure}
 
 \subsection{Secondary long-budget sensitivity}
 
