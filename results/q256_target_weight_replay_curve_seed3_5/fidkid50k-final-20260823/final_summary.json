@@ -1,0 +1,87 @@
+{
+  "arms": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "budgets_kimg": [
+    256,
+    384,
+    512,
+    640,
+    768,
+    896,
+    1024
+  ],
+  "created_utc": "2026-08-22T16:41:02Z",
+  "evaluation_job_count": 168,
+  "factorial_contrast_row_count": 504,
+  "generated_feature_identity": "PASS: 168/168 KID/FID pairs byte-identical",
+  "metric_seed": 20260730,
+  "metrics": [
+    "fid50k_full",
+    "kid50k_full"
+  ],
+  "nfes": [
+    1,
+    2
+  ],
+  "paired_contrast_summary_row_count": 168,
+  "provenance_join": "PASS: source state + canonical EMA + snapshot SHA256",
+  "sample_count": 50000,
+  "sample_seed_range": "0-49999",
+  "schema": "ect.q256.replay-fidkid50k-final-summary/v1",
+  "seeds": [
+    3,
+    4,
+    5
+  ],
+  "status": "PASS",
+  "training_audits": [
+    {
+      "all_pass": true,
+      "audit_path": "/mnt/ect_project/q256_target_weight_replay_curve_v1/audits/seed3-replay-audit.json",
+      "audit_sha256": "84b2c14f621a96faacbded00d2925ff2f811a5febe1513944db20c2a19187756",
+      "ema_snapshot_count": 28,
+      "inventory_rows": 28,
+      "parity_counts": {
+        "BITWISE_EQUIVALENT": 4
+      },
+      "replay_milestone_count": 24,
+      "seed": 3,
+      "trajectory_count": 4
+    },
+    {
+      "all_pass": true,
+      "audit_path": "/mnt/ect_project/q256_target_weight_replay_curve_v1/audits/seed4-replay-audit.json",
+      "audit_sha256": "0eafcfa8fbd4d8100132ade6ae0b5057180fce5c65e1ade3142c3ef585b1a6ee",
+      "ema_snapshot_count": 28,
+      "inventory_rows": 28,
+      "parity_counts": {
+        "BITWISE_EQUIVALENT": 4
+      },
+      "replay_milestone_count": 24,
+      "seed": 4,
+      "trajectory_count": 4
+    },
+    {
+      "all_pass": true,
+      "audit_path": "/mnt/ect_project/q256_target_weight_replay_curve_v1/audits/seed5-replay-audit.json",
+      "audit_sha256": "c64ce382d9c58240fa1517da22e1d8da84946c2112faf2c50c50d6738fa32ecb",
+      "ema_snapshot_count": 28,
+      "inventory_rows": 28,
+      "parity_counts": {
+        "BITWISE_EQUIVALENT": 4
+      },
+      "replay_milestone_count": 24,
+      "seed": 5,
+      "trajectory_count": 4
+    }
+  ],
+  "training_checkpoint_count": 84,
+  "worker_completion": {
+    "partition_workers": 3,
+    "stream_workers": 3
+  }
+}
