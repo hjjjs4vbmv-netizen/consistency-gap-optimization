@@ -48,7 +48,8 @@ done
 
 "${apptainer}" exec --nv \
   --bind /data/raw:/data/raw --bind /data/temp:/data/temp \
-  "${sandbox}" env PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
+  "${sandbox}" env PYTHONPATH="${repo}" \
+  PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
   python "${audit_script}" source --source-root "${source_root}" \
   --output "${artifact_root}/integrity/source_state_audit.json" \
   >"${artifact_root}/logs/source-state-audit.log" 2>&1

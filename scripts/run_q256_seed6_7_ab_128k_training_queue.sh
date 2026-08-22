@@ -78,6 +78,7 @@ container_python() {
     --bind /data/raw:/data/raw --bind /data/temp:/data/temp \
     --bind "${private_shm}:/dev/shm" \
     "${sandbox}" env \
+    PYTHONPATH="${repo}" \
     PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     Q256_EXTENSION_SOURCE_REPO="${repo}" \
     python "$@"
