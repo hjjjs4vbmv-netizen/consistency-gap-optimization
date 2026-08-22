@@ -762,6 +762,53 @@ def save_image_grid(img, fname, drange, grid_size):
     if C == 3:
         PIL.Image.fromarray(img, 'RGB').save(fname)
 
+
+def normalize_immutable_checkpoint_nimg(
+    milestone_kimg, *, total_kimg, batch_size
+):
+    """Validate I/O-only milestones and return their exact image counts."""
+    values = tuple(milestone_kimg or ())
+    if len(set(values)) != len(values):
+        raise ValueError('immutable checkpoint kimg values must be unique')
+    if values != tuple(sorted(values)):
+        raise ValueError('immutable checkpoint kimg values must be increasing')
+    result = []
+    for value in values:
+        if isinstance(value, bool) or int(value) != value or int(value) <= 0:
+            raise ValueError(
+                'immutable checkpoint kimg values must be positive integers'
+            )
+        nimg = int(value) * 1000
+        if nimg > int(total_kimg) * 1000:
+            raise ValueError(
+                f'immutable checkpoint {value} kimg exceeds total budget '
+                f'{total_kimg} kimg'
+            )
+        if nimg % int(batch_size) != 0:
+            raise ValueError(
+                f'immutable checkpoint {value} kimg is not reachable with '
+                f'batch_size={batch_size}'
+            )
+        result.append(nimg)
+    return tuple(result)
+
+
+def immutable_training_state_path(run_dir, cur_nimg):
+    if int(cur_nimg) != cur_nimg or int(cur_nimg) <= 0:
+        raise ValueError('immutable checkpoint image count must be positive')
+    cur_nimg = int(cur_nimg)
+    if cur_nimg % 1000 != 0:
+        raise ValueError('immutable checkpoint image count must be whole kimg')
+    return os.path.join(
+        run_dir, f'training-state-kimg{cur_nimg // 1000:06d}.pt'
+    )
+
+
+def save_immutable_training_state(state, run_dir, cur_nimg):
+    path = immutable_training_state_path(run_dir, cur_nimg)
+    reproducibility.atomic_torch_save(state, path, overwrite=False)
+    return path
+
 #----------------------------------------------------------------------------
 
 @torch.no_grad()
@@ -807,6 +854,7 @@ def training_loop(
     snapshot_ticks      = 500,      # How often to save network snapshots, None = disable.
     state_dump_ticks    = 500,      # How often to dump training state, None = disable.
     ckpt_ticks          = 100,      # How often to save latest checkpoints, None = disable.
+    immutable_checkpoint_kimg = (), # Exact I/O-only full-state milestones.
     sample_ticks        = 50,       # How often to sample images, None = disable.
     eval_ticks          = 500,      # How often to evaluate models, None = disable.
     double_ticks        = 500,      # How often to evaluate models, None = disable.
@@ -850,6 +898,15 @@ def training_loop(
                 'stop_after_attempts is frozen to 16 for the exact 16+16 gate'
             )
         stop_after_attempts = int(stop_after_attempts)
+    immutable_checkpoint_nimg = normalize_immutable_checkpoint_nimg(
+        immutable_checkpoint_kimg,
+        total_kimg=total_kimg,
+        batch_size=batch_size,
+    )
+    if immutable_checkpoint_nimg and not strict_reproducibility:
+        raise ValueError(
+            'immutable checkpoint milestones are reserved for strict factorial runs'
+        )
     rank_seed = (seed * dist.get_world_size() + dist.get_rank()) % (1 << 31)
     np.random.seed(rank_seed)
     if strict_reproducibility:
@@ -1248,6 +1305,20 @@ def training_loop(
         tick_start_nimg = resumed_tick_start_nimg
     else:
         tick_start_nimg = cur_nimg
+    for milestone_nimg in immutable_checkpoint_nimg:
+        milestone_path = immutable_training_state_path(
+            run_dir, milestone_nimg
+        )
+        if milestone_nimg <= cur_nimg and not os.path.isfile(milestone_path):
+            raise RuntimeError(
+                'restored progress has passed immutable checkpoint without '
+                f'its artifact: {milestone_path}'
+            )
+        if milestone_nimg > cur_nimg and os.path.exists(milestone_path):
+            raise RuntimeError(
+                'future immutable checkpoint already exists before replay '
+                f'reaches it: {milestone_path}'
+            )
     tick_start_time = time.time()
     maintenance_time = tick_start_time - start_time
     dist.update_progress(cur_nimg / 1000, total_kimg)
@@ -1949,6 +2020,46 @@ def training_loop(
                 'peak_vram_gb': f'{peak_vram_gb:.6f}',
             })
             train_summary_csv.flush()
+
+        immutable_checkpoint_due = cur_nimg in immutable_checkpoint_nimg
+        if immutable_checkpoint_due:
+            if train_summary_csv is not None:
+                train_summary_csv.flush()
+                os.fsync(train_summary_csv.fileno())
+            if factorial_telemetry_csv is not None:
+                factorial_telemetry_csv.flush()
+                os.fsync(factorial_telemetry_csv.fileno())
+            immutable_adaptive_state = None
+            if adaptive_signal_window is not None:
+                immutable_adaptive_state = (
+                    gather_adaptive_signal_window_state(
+                        adaptive_signal_window, device
+                    )
+                )
+            immutable_rank_states = None
+            if strict_reproducibility:
+                if local_consumed_samples != cur_nimg:
+                    raise RuntimeError(
+                        'immutable checkpoint sampler consumption does not '
+                        'match processed images'
+                    )
+                immutable_rank_states = gather_rank_reproducibility_state(
+                    dataset_sampler, local_consumed_samples
+                )
+            if dist.get_rank() == 0:
+                immutable_path = save_immutable_training_state(
+                    build_training_state(
+                        immutable_adaptive_state,
+                        immutable_rank_states,
+                        advance_tick=natural_maintenance_due,
+                    ),
+                    run_dir,
+                    cur_nimg,
+                )
+                dist.print0(
+                    'Saved immutable full-state milestone at '
+                    f'{cur_nimg / 1000:.3f} kimg: {immutable_path}'
+                )
 
         # Perform maintenance tasks once per tick.
         if not maintenance_due:

@@ -41,6 +41,28 @@ class CommaSeparatedList(click.ParamType):
         return value.split(',')
 
 
+def parse_immutable_checkpoint_kimg(_ctx, _param, value):
+    """Parse a frozen comma-separated list of exact integer kimg budgets."""
+    if value is None or value == '':
+        return ()
+    result = []
+    for token in value.split(','):
+        token = token.strip()
+        if not token or not token.isdigit():
+            raise click.BadParameter(
+                'expected comma-separated positive integer kimg values'
+            )
+        budget = int(token)
+        if budget <= 0:
+            raise click.BadParameter('checkpoint kimg values must be positive')
+        result.append(budget)
+    if len(set(result)) != len(result):
+        raise click.BadParameter('checkpoint kimg values must be unique')
+    if result != sorted(result):
+        raise click.BadParameter('checkpoint kimg values must be increasing')
+    return tuple(result)
+
+
 def normalize_schedule_name(_ctx, _param, value):
     aliases = {
         'adaptive-v1': 'adaptive_v1',
@@ -208,6 +230,14 @@ def make_loss_kwargs(opts):
 @click.option('--snap',          help='How often to save numbered snapshots; 0 disables them', metavar='TICKS', type=click.IntRange(min=0), default=500, show_default=True)
 @click.option('--dump',          help='How often to save numbered state dumps; 0 disables them', metavar='TICKS', type=click.IntRange(min=0), default=500, show_default=True)
 @click.option('--ckpt',          help='How often to save latest checkpoints', metavar='TICKS',      type=click.IntRange(min=1), default=50, show_default=True)
+@click.option(
+    '--immutable-checkpoint-kimg',
+    help='Comma-separated exact kimg budgets for immutable full-state saves',
+    metavar='KIMG[,KIMG...]',
+    type=str,
+    callback=parse_immutable_checkpoint_kimg,
+    default='',
+)
 @click.option('--seed',          help='Random seed  [default: random]', metavar='INT',              type=int)
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
@@ -289,6 +319,7 @@ def main(**kwargs):
              snapshot_ticks=None if opts.snap == 0 else opts.snap,
              state_dump_ticks=None if opts.dump == 0 else opts.dump,
              ckpt_ticks=opts.ckpt,
+             immutable_checkpoint_kimg=opts.immutable_checkpoint_kimg,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
              stop_after_attempts=opts.stop_after_attempts)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
