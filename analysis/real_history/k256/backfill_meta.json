@@ -1,0 +1,17 @@
+{
+  "training_state": "/data/raw/ECT/ect_runs/gap_lr_matched_q128_s3_v1/arm_a_g1_0_lr_fixed_s3/training-state-000008.pt",
+  "n_steps": 20,
+  "dim": 55732739,
+  "lr": 0.0001,
+  "u1_verify": {
+    "float32_exact": true,
+    "max_abs_diff": 1.1920928955078125e-07,
+    "final_ref_path": "analysis/real_history/k256/u1.npy"
+  },
+  "ug_verify": {
+    "float32_exact": true,
+    "max_abs_diff": 1.1920928955078125e-07,
+    "final_ref_path": "analysis/real_history/k256/ug.npy"
+  },
+  "note": "reconstruction is float32-machine-precision exact (residual = float32 ulp of O(1) params ~2^-23); not bit-exact due to step-tensor dtype in RAdam rectification, negligible for R^2"
+}

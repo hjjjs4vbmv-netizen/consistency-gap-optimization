@@ -1,0 +1,117 @@
+{
+  "schema": "ect.q256.target-weight-factorial-preregistration/v1",
+  "status": "frozen_before_formal_training",
+  "frozen_date": "2026-08-19",
+  "formal_training_authorized": false,
+  "question": "Which component of g=1.10, stop-gradient target geometry or realized per-sample loss weighting, changes finite-budget generation quality?",
+  "independent_unit": {
+    "name": "training_seed",
+    "values": [3, 4, 5],
+    "n": 3,
+    "not_independent": [
+      "minibatch",
+      "optimizer_attempt",
+      "checkpoint",
+      "generation_seed_block",
+      "evaluation_repeat",
+      "nfe_mode"
+    ]
+  },
+  "factors": {
+    "base_gap_scale": 1.0,
+    "scaled_gap_scale": 1.1,
+    "realized_after_mapping_and_clamp": true,
+    "batch_level_scalar_approximation_forbidden": true,
+    "arms": {
+      "A": {"target_gap_scale": 1.0, "denominator_gap_scale": 1.0, "label": "native_baseline"},
+      "B": {"target_gap_scale": 1.1, "denominator_gap_scale": 1.1, "label": "native_g110"},
+      "C": {"target_gap_scale": 1.1, "denominator_gap_scale": 1.0, "label": "target_geometry_only"},
+      "D": {"target_gap_scale": 1.0, "denominator_gap_scale": 1.1, "label": "loss_weighting_only"}
+    }
+  },
+  "training": {
+    "fresh_runs_required": true,
+    "run_count": 12,
+    "dataset": {
+      "name": "CIFAR-10 32x32 unconditional",
+      "archive_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+    },
+    "initial_transfer": {
+      "name": "edm-cifar10-32x32-uncond-vp.pkl",
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    },
+    "budget_kimg": 256,
+    "model": {"arch": "ddpmpp", "precond": "ect", "conditional": false},
+    "loss": {"q": 256, "k": 8, "b": 1, "c": 0, "double_ticks": 10000},
+    "optimizer": {"name": "RAdam", "lr": 0.0001, "betas": [0.9, 0.999], "eps": 1e-8, "weight_decay": 0},
+    "batch": {"global": 128, "per_gpu": 16},
+    "regularization": {"dropout": 0.2, "augmentation": 0, "dataset_xflip": false},
+    "precision": {"network_fp16": true, "amp": true, "tf32": false, "loss_scaling": 1.0},
+    "ema_beta": 0.9993,
+    "checkpointing": {"tick_kimg": 10, "snapshot_ticks": null, "state_dump_ticks": null, "latest_checkpoint_ticks": 10, "preview_ticks": 26},
+    "metrics_during_training": []
+  },
+  "evaluation": {
+    "checkpoint_kimg": 256,
+    "precision": "fp32",
+    "generation_seed_range": "0-49999",
+    "sample_count": 50000,
+    "metric_seed": 20260730,
+    "primary": {"metric": "fid50k_full", "nfe": 1},
+    "secondary": [
+      {"metric": "kid50k_full", "nfe": 1},
+      {"metric": "fid50k_full", "nfe": 2, "mid_t": 0.821},
+      {"metric": "kid50k_full", "nfe": 2, "mid_t": 0.821}
+    ]
+  },
+  "contrasts": [
+    {"name": "target_at_baseline_weight", "formula": "Y_C-Y_A"},
+    {"name": "target_at_g_weight", "formula": "Y_B-Y_D"},
+    {"name": "weight_at_baseline_target", "formula": "Y_D-Y_A"},
+    {"name": "weight_at_g_target", "formula": "Y_B-Y_C"}
+  ],
+  "interaction": {"name": "target_x_weight", "formula": "Y_B-Y_C-Y_D+Y_A"},
+  "direction": "lower_is_better_negative_contrast_favors_first_term",
+  "interpretation_branches": [
+    {"condition": "C approximately B < A and D approximately A", "label": "target_geometry_dominant"},
+    {"condition": "D approximately B < A and C approximately A", "label": "loss_weighting_dominant"},
+    {"condition": "B best and neither C nor D reproduces B", "label": "target_weight_interaction"},
+    {"condition": "C and D both partly improve", "label": "both_pathways"},
+    {"condition": "fresh B is not better than A", "label": "original_quality_effect_not_reproduced"},
+    {"condition": "seed directions unstable", "label": "heterogeneity_only"}
+  ],
+  "reuse": {
+    "old_A": "ineligible_fresh_required",
+    "old_B": "ineligible_fresh_required",
+    "reason": "archived compatibility audit has blocking source, RNG/sampler, configuration, cadence, and protocol identity gaps or mismatches"
+  },
+  "correctness_gate_order": [
+    "unit_and_synthetic",
+    "canonical_A_B_parity",
+    "factorial_same_target_and_realized_denominator_identities",
+    "stop_gradient_source_preservation_arm_order",
+    "deterministic_same_batch_gradient_rerun",
+    "seed3_four_arm_32_attempt_smoke",
+    "checkpoint_save_load_resume",
+    "finite_loss_gradient_update_ema_and_positive_denominator",
+    "canonical_amp_skip_pattern_no_extra_arm_specific_skip",
+    "full_suite_and_git_diff_check"
+  ],
+  "planning": {
+    "historical_training_wall_seconds_per_run_range": [1446, 2147],
+    "training_gpu_hours_upper_per_run": 0.65,
+    "training_gpu_hours_upper_total": 7.8,
+    "evaluation_gpu_hours_estimate_range": [12, 16],
+    "minimum_free_disk_gb": 50,
+    "expected_completion_after_unblock": "within_one_day",
+    "deadline": "2026-09-05"
+  },
+  "current_blockers": [
+    {
+      "id": "server_ssh_refused",
+      "observed": "region-9.autodl.pro:34360 returns Connection refused before authentication",
+      "blocks": ["live_source_audit", "gpu_audit", "disk_audit", "server_smoke", "formal_training", "formal_evaluation"]
+    }
+  ]
+}
+

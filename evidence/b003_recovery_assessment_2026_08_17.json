@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "finding_id": "B003",
+  "assessed_at": "2026-08-17T10:20:00+08:00",
+  "operation": "read_only_sample_and_feature_artifact_inventory",
+  "scope": {
+    "source_artifact_commit": "fbdcb13ed7dab8a5fb179382e4453df9c1a0f7d2",
+    "evaluation_cells": 27,
+    "metric_receipts": 54,
+    "sample_count_per_cell": 5000
+  },
+  "checks": [
+    {
+      "surface": "committed_pr53_result_tree",
+      "retained_generated_samples_or_feature_npz": 0
+    },
+    {
+      "surface": "local_workspace_checkpoint_and_result_archives",
+      "matching_pr53_generated_samples_or_feature_npz": 0
+    },
+    {
+      "surface": "source_and_transfer_hosts",
+      "result": "UNAVAILABLE_FOR_READ_ONLY_RECOVERY"
+    }
+  ],
+  "result": "REGENERATION_OR_EXTERNAL_RECOVERY_REQUIRED",
+  "closure_contract": {
+    "per_cell_required": [
+      "checkpoint_sha256",
+      "ordered_sample_seed_range",
+      "sample_or_feature_artifact_path",
+      "sample_or_feature_artifact_sha256",
+      "artifact_count_shape_dtype",
+      "generator_and_metric_code_commit"
+    ],
+    "recompute_required": [
+      "fid5k_full",
+      "kid5k_full"
+    ]
+  },
+  "metric_values_recomputed": false,
+  "publication_safe": true
+}

@@ -41,13 +41,18 @@ PATTERNS = {
         r"\s*[:=]\s*['\"]?[A-Za-z0-9+/_.-]{8,}"
     ),
     "windows_user_path": re.compile(r"(?i)\b[A-Z]:\\Users\\[^\\\s]+"),
+    "macos_user_path": re.compile(r"(?<![A-Za-z0-9_])/Users/[^/\s]+/"),
     "linux_root_path": re.compile(r"(?<![A-Za-z0-9_])/root/(?!\.cache/torch/hub/checkpoints/)"),
     "linux_home_path": re.compile(r"(?<![A-Za-z0-9_])/home/[^/\s]+/"),
     "project_mount_path": re.compile(r"(?<![A-Za-z0-9_])/mnt/(?:ect_project|mydata|workspace)(?:/|\b)"),
+    "private_data_path": re.compile(r"(?<![A-Za-z0-9_])/data/raw/ECT(?:/|\b)"),
     "collaboration_repo_url": re.compile(
-        r"https?://github\.com/hjjjs4vbmv-netizen/recurrence_of_ect(?:\.git)?(?:[/\s]|$)",
+        r"https?://github\.com/hjjjs4vbmv-netizen/"
+        r"(?:recurrence_of_ect|consistency-gap-optimization)(?:\.git)?(?:[/\s]|$)",
         re.IGNORECASE,
     ),
+    "collaboration_owner": re.compile(r"\bhjjjs4vbmv-netizen\b", re.IGNORECASE),
+    "server_account": re.compile(r"\bECT001\b"),
     "email": re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.IGNORECASE),
 }
 
@@ -108,6 +113,13 @@ def scan_text(relative_path: str, text: str, rules: Sequence[str]) -> Iterator[F
 
 def scan(root: Path, rules: Sequence[str], use_git: bool = True) -> list[Finding]:
     findings: list[Finding] = []
+    if not use_git:
+        for forbidden_name, rule in ((".agents", "agents_metadata"), (".git", "git_metadata")):
+            for path in root.rglob(forbidden_name):
+                relative = path.relative_to(root).as_posix()
+                findings.append(
+                    Finding(rule=rule, path=relative, line=0, excerpt="forbidden metadata tree")
+                )
     for path in iter_files(root, use_git=use_git):
         try:
             text = path.read_text(encoding="utf-8")

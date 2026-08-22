@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "finding_id": "B005",
+  "result": "RECOVERED_ORIGINAL_BYTES",
+  "recovered_at_utc": "2026-08-18T08:00:00Z",
+  "recovery_mode": "read_only_external_research_storage_inventory",
+  "hash_inference_used": false,
+  "immutable_release_copy_created": true,
+  "independent_rehash_completed": true,
+  "recovered_checkpoints": [
+    {
+      "checkpoint_record_id": "s3-B-k256000",
+      "network_snapshot_filename": "network-snapshot-000008.pkl",
+      "size_bytes": 223171497,
+      "network_snapshot_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
+      "training_state_sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96"
+    },
+    {
+      "checkpoint_record_id": "s3-C-k256000",
+      "network_snapshot_filename": "network-snapshot-000008.pkl",
+      "size_bytes": 223171497,
+      "network_snapshot_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
+      "training_state_sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c"
+    }
+  ],
+  "publication_v2_contract_sha256": "1528a2bb69f6768f445604e86db652e27a6c818bff3804a7572079b3f5e2c66f",
+  "publication_v2_manifest_sha256": "deb846e36ac01104ae91de6744a64675a51e5f5a2b89b2c455d0f5c2db6c6ce8",
+  "status": "PASS"
+}
