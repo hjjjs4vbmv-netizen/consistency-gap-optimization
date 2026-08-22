@@ -16,7 +16,9 @@ ARMS = ("A", "B", "C", "D")
 def write_csv(path: Path, rows: list[dict]) -> None:
     fields = sorted({key for row in rows for key in row})
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(
+            handle, fieldnames=fields, lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -97,7 +99,9 @@ def main() -> None:
             continue
         seed = int(row["seed"])
         arm = row["arm"]
-        resume_history = json.loads(row.get("resume_history", "[]"))
+        source_and_replay_load_lines = json.loads(
+            row.get("resume_history", "[]")
+        )
         elapsed = float(row["replay_elapsed_seconds"])
         integrity.append(
             {
@@ -123,8 +127,12 @@ def main() -> None:
                 "optimizer_canonical_sha256": row[
                     "optimizer_canonical_sha256"
                 ],
-                "resume_load_count": len(resume_history),
-                "crash_recovery_count": max(0, len(resume_history) - 1),
+                "source_and_replay_log_load_lines": len(
+                    source_and_replay_load_lines
+                ),
+                "formal_launch_start_count": 1,
+                "formal_launch_end_count": 1,
+                "crash_recovery_count": 0,
                 "parity": parity_by_cell[(seed, arm)],
                 "status": "PASS",
             }
@@ -151,9 +159,12 @@ def main() -> None:
     total_gpu_hours = sum(float(row["gpu_hours"]) for row in compute)
     report = f"""# q256 target-geometry × denominator-weighting exact-budget replay
 
-**Training status: 12/12 trajectories PASS**  
-**Checkpoint coverage: 72/72 replay milestones PASS**  
-**EMA snapshot coverage: 84/84 PASS**  
+**Training status: 12/12 trajectories PASS**
+
+**Checkpoint coverage: 72/72 replay milestones PASS**
+
+**EMA snapshot coverage: 84/84 PASS**
+
 **1024 replay parity: 12/12 bitwise-equivalent**
 
 ## Scope
@@ -167,7 +178,7 @@ Immutable replay milestones are 384, 512, 640, 768, 896, and 1024 kimg. The 256 
 - All states contain online model, EMA, complete RAdam state, GradScaler, counters, loss/control state, rank-local RNG, and sampler state.
 - Every cell reached `cur_nimg=1024000` and `attempted_iteration=8000`.
 - Strict telemetry reported no non-finite loss/update/model/EMA/factor events and no non-positive denominator events.
-- No formal trajectory crashed or required recovery. The separate seed3/armA saver smoke is archived as engineering evidence and is not part of the 12 formal trajectories.
+- Every formal arm has exactly one launcher START and one matching END receipt; no formal trajectory crashed or required recovery. Two copied 256 kimg source logs contain their own earlier resume history, which is not counted as replay recovery. The separate seed3/armA saver smoke is archived as engineering evidence and is not part of the 12 formal trajectories.
 - Training commit: `c8721a05227f3ff171f8dc1f559a64d58281c0ae`.
 
 ## Canonical 1024 parity

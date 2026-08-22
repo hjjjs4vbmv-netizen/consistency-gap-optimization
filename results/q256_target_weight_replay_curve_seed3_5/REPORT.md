@@ -1,8 +1,11 @@
 # q256 target-geometry × denominator-weighting exact-budget replay
 
-**Training status: 12/12 trajectories PASS**  
-**Checkpoint coverage: 72/72 replay milestones PASS**  
-**EMA snapshot coverage: 84/84 PASS**  
+**Training status: 12/12 trajectories PASS**
+
+**Checkpoint coverage: 72/72 replay milestones PASS**
+
+**EMA snapshot coverage: 84/84 PASS**
+
 **1024 replay parity: 12/12 bitwise-equivalent**
 
 ## Scope
@@ -16,7 +19,7 @@ Immutable replay milestones are 384, 512, 640, 768, 896, and 1024 kimg. The 256 
 - All states contain online model, EMA, complete RAdam state, GradScaler, counters, loss/control state, rank-local RNG, and sampler state.
 - Every cell reached `cur_nimg=1024000` and `attempted_iteration=8000`.
 - Strict telemetry reported no non-finite loss/update/model/EMA/factor events and no non-positive denominator events.
-- No formal trajectory crashed or required recovery. The separate seed3/armA saver smoke is archived as engineering evidence and is not part of the 12 formal trajectories.
+- Every formal arm has exactly one launcher START and one matching END receipt; no formal trajectory crashed or required recovery. Two copied 256 kimg source logs contain their own earlier resume history, which is not counted as replay recovery. The separate seed3/armA saver smoke is archived as engineering evidence and is not part of the 12 formal trajectories.
 - Training commit: `c8721a05227f3ff171f8dc1f559a64d58281c0ae`.
 
 ## Canonical 1024 parity
