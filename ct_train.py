@@ -213,6 +213,7 @@ def make_loss_kwargs(opts):
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
 @click.option('--resume-tick',   help='Number of tick from previous training state', metavar='INT', type=int)
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
+@click.option('--checkpoint-milestone-kimg', help='Formal replay-only exact checkpoint milestone', metavar='KIMG', type=click.IntRange(min=1), multiple=True, hidden=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
 
 # Evaluation
@@ -290,7 +291,8 @@ def main(**kwargs):
              state_dump_ticks=None if opts.dump == 0 else opts.dump,
              ckpt_ticks=opts.ckpt,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
-             stop_after_attempts=opts.stop_after_attempts)
+             stop_after_attempts=opts.stop_after_attempts,
+             checkpoint_milestone_kimg=tuple(opts.checkpoint_milestone_kimg))
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
 
     # Random seed.
