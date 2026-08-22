@@ -23,6 +23,7 @@ from training import reproducibility
 from metrics import metric_main
 
 _STRICT_FACTORIAL_PROTOCOL = 'q256_target_weight_v1'
+_FORMAL_REPLAY_MILESTONE_KIMG = (384, 512, 640, 768, 896, 1024)
 _AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
     'schema': 'ect.q256.authoritative-transfer-source-policy/v1',
     'required_target_coverage': 'all_parameters_and_buffers',
@@ -820,6 +821,7 @@ def training_loop(
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
+    checkpoint_milestone_kimg = (), # Output-only exact milestones for formal replay.
     device              = torch.device('cuda'),
 ):
     # Initialize.
@@ -850,6 +852,35 @@ def training_loop(
                 'stop_after_attempts is frozen to 16 for the exact 16+16 gate'
             )
         stop_after_attempts = int(stop_after_attempts)
+    checkpoint_milestone_kimg = tuple(checkpoint_milestone_kimg or ())
+    if checkpoint_milestone_kimg:
+        if not strict_reproducibility:
+            raise ValueError(
+                'checkpoint milestones are reserved for strict factorial replay'
+            )
+        if checkpoint_milestone_kimg != _FORMAL_REPLAY_MILESTONE_KIMG:
+            raise ValueError(
+                'formal replay checkpoint milestones must be exactly '
+                f'{_FORMAL_REPLAY_MILESTONE_KIMG}'
+            )
+        if resume_state_dump is None or total_kimg != 1024:
+            raise ValueError(
+                'formal replay milestones require a full-state resume to '
+                'exactly 1024 kimg'
+            )
+        if stop_after_attempts is not None:
+            raise ValueError(
+                'formal replay milestones cannot be combined with a planned pause'
+            )
+    milestone_by_attempt = {}
+    for milestone_kimg in checkpoint_milestone_kimg:
+        milestone_nimg = milestone_kimg * 1000
+        if milestone_nimg % batch_size != 0:
+            raise ValueError(
+                f'milestone {milestone_kimg} kimg is not divisible by '
+                f'batch_size={batch_size}'
+            )
+        milestone_by_attempt[milestone_nimg // batch_size] = milestone_kimg
     rank_seed = (seed * dist.get_world_size() + dist.get_rank()) % (1 << 31)
     np.random.seed(rank_seed)
     if strict_reproducibility:
@@ -1910,6 +1941,14 @@ def training_loop(
         # always performs maintenance, and completion forces it regardless of
         # --tick. A checkpoint saved below persists this same cur_tick value.
         done = (cur_nimg >= total_kimg * 1000)
+        milestone_kimg = milestone_by_attempt.get(attempted_iteration)
+        milestone_due = milestone_kimg is not None
+        if milestone_due and cur_nimg != milestone_kimg * 1000:
+            raise RuntimeError(
+                'formal replay milestone attempt/image mismatch: '
+                f'attempt={attempted_iteration}, cur_nimg={cur_nimg}, '
+                f'milestone_kimg={milestone_kimg}'
+            )
         planned_pause = (
             stop_after_attempts is not None
             and attempted_iteration >= stop_after_attempts
@@ -1920,7 +1959,7 @@ def training_loop(
             or cur_tick == 0
             or cur_nimg >= tick_start_nimg + kimg_per_tick * 1000
         )
-        maintenance_due = natural_maintenance_due or planned_pause
+        maintenance_due = natural_maintenance_due or planned_pause or milestone_due
         next_loop_cur_tick = cur_tick + int(natural_maintenance_due)
 
         if train_summary_writer is not None:
@@ -1985,12 +2024,17 @@ def training_loop(
         )
         latest_checkpoint_due = (
             (ckpt_ticks is not None)
-            and (done or planned_pause or cur_tick % ckpt_ticks == 0)
+            and (
+                done
+                or planned_pause
+                or milestone_due
+                or cur_tick % ckpt_ticks == 0
+            )
             and cur_tick != 0
         )
         checkpoint_rank_states = None
         checkpoint_adaptive_state = None
-        if state_dump_due or latest_checkpoint_due:
+        if state_dump_due or latest_checkpoint_due or milestone_due:
             if train_summary_csv is not None:
                 train_summary_csv.flush()
                 os.fsync(train_summary_csv.fileno())
@@ -2081,6 +2125,80 @@ def training_loop(
                     os.path.join(run_dir, f'training-state-latest.pt'),
                     overwrite=True,
                 )
+
+        # Save immutable, independently loadable replay milestone artifacts.
+        # This is output-only: it does not enter the strict trajectory config,
+        # consume RNG, change optimizer state, or advance tick/schedule state.
+        if milestone_due:
+            milestone_dir = os.path.join(
+                run_dir, f'kimg{milestone_kimg:04d}'
+            )
+            if dist.get_rank() == 0:
+                if os.path.lexists(milestone_dir):
+                    raise FileExistsError(
+                        f'refusing existing replay milestone: {milestone_dir}'
+                    )
+                os.makedirs(milestone_dir, mode=0o750)
+            dist.barrier()
+            milestone_snapshot = dict(
+                ema=ema,
+                loss_fn=loss_fn,
+                augment_pipe=augment_pipe,
+                dataset_kwargs=dict(dataset_kwargs),
+            )
+            for key, value in milestone_snapshot.items():
+                if isinstance(value, torch.nn.Module):
+                    value = copy.deepcopy(value).eval().requires_grad_(False)
+                    misc.check_ddp_consistency(value)
+                    milestone_snapshot[key] = value.cpu()
+                del value
+            if dist.get_rank() == 0:
+                snapshot_path = os.path.join(
+                    milestone_dir, 'network-snapshot.pkl'
+                )
+                state_path = os.path.join(
+                    milestone_dir, 'training-state.pt'
+                )
+                reproducibility.atomic_pickle_dump(
+                    milestone_snapshot, snapshot_path, overwrite=False
+                )
+                reproducibility.atomic_torch_save(
+                    build_training_state(
+                        checkpoint_adaptive_state,
+                        checkpoint_rank_states,
+                        advance_tick=natural_maintenance_due,
+                    ),
+                    state_path,
+                    overwrite=False,
+                )
+                reproducibility.atomic_json_dump(
+                    {
+                        'schema': 'ect.q256.learning-curve-milestone/v1',
+                        'seed': seed,
+                        'arm': dict(loss_fn.factorial)['arm'],
+                        'milestone_kimg': milestone_kimg,
+                        'attempted_iteration': attempted_iteration,
+                        'successful_optimizer_steps': (
+                            successful_optimizer_steps
+                        ),
+                        'processed_nimg': cur_nimg,
+                        'processed_kimg': cur_nimg / 1000,
+                        'network_snapshot': os.path.basename(snapshot_path),
+                        'training_state': os.path.basename(state_path),
+                        'trajectory_config_sha256': (
+                            strict_trajectory_config_sha256
+                        ),
+                        'natural_maintenance_due': natural_maintenance_due,
+                    },
+                    os.path.join(milestone_dir, 'milestone_receipt.json'),
+                    overwrite=False,
+                )
+            del milestone_snapshot
+            dist.barrier()
+            dist.print0(
+                'Saved formal replay milestone at '
+                f'{milestone_kimg} kimg / {attempted_iteration} attempts.'
+            )
 
         # Sample Img
         if (sample_ticks is not None) and (done or cur_tick % sample_ticks == 0) and dist.get_rank() == 0:

@@ -84,3 +84,87 @@ def test_recovery_v2_repairs_only_the_post_training_verifier() -> None:
     assert "ModuleNotFoundError: No module named 'torch_utils'" in launcher
     assert "failed_v1_completed_armA_artifacts.sha256" in launcher
     assert "q1024r2_s${seed}" in launcher
+
+
+def test_learning_curve_milestones_are_output_only_and_exact() -> None:
+    cli = (ROOT / "ct_train.py").read_text(encoding="utf-8")
+    loop = (ROOT / "training" / "ct_training_loop.py").read_text(
+        encoding="utf-8"
+    )
+    assert "--checkpoint-milestone-kimg" in cli
+    assert "checkpoint_milestone_kimg=tuple(opts.checkpoint_milestone_kimg)" in cli
+    assert "_FORMAL_REPLAY_MILESTONE_KIMG = (384, 512, 640, 768, 896, 1024)" in loop
+    assert "milestone_nimg % batch_size" in loop
+    assert "f'kimg{milestone_kimg:04d}'" in loop
+    assert "network-snapshot.pkl" in loop
+    assert "training-state.pt" in loop
+    assert "ect.q256.learning-curve-milestone/v1" in loop
+    trajectory_block = loop.split(
+        "strict_trajectory_config = reproducibility.canonical_json_data({", 1
+    )[1].split("strict_trajectory_config_sha256 =", 1)[0]
+    assert "checkpoint_milestone_kimg" not in trajectory_block
+
+
+def test_learning_curve_evaluation_is_nfe1_first(tmp_path: Path) -> None:
+    driver_path = (
+        ROOT
+        / "analysis"
+        / "q256_target_weight_factorial"
+        / "learning_curve_replay"
+        / "run_learning_curve_frozen_evaluation.py"
+    )
+    spec = importlib.util.spec_from_file_location("q256_learning_curve_eval", driver_path)
+    assert spec is not None and spec.loader is not None
+    driver = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(driver)
+    cells = [
+        {
+            "seed": 14,
+            "arm": arm,
+            "budget_kimg": budget,
+            "checkpoint": str(tmp_path / f"{arm}-{budget}.pkl"),
+            "checkpoint_sha256": "0" * 64,
+            "run_dir": str(tmp_path / arm),
+        }
+        for arm in "ABCD"
+        for budget in driver.BUDGETS
+    ]
+    jobs = driver.build_jobs(
+        source_root=tmp_path,
+        output_root=tmp_path / "out",
+        dataset=tmp_path / "data.zip",
+        cells=cells,
+        base_port=50140,
+    )
+    assert len(jobs) == 48
+    assert [job["nfe"] for job in jobs[:24]] == [1] * 24
+    assert [job["nfe"] for job in jobs[24:]] == [2] * 24
+    assert [job["budget_kimg"] for job in jobs[:6]] == list(driver.BUDGETS)
+    assert jobs[0]["job_id"] == "seed14-armA-kimg0384-nfe1"
+    assert jobs[-1]["job_id"] == "seed14-armD-kimg1024-nfe2"
+
+
+def test_learning_curve_replay_launcher_freezes_scope() -> None:
+    support = (
+        ROOT
+        / "analysis"
+        / "q256_target_weight_factorial"
+        / "learning_curve_replay"
+    )
+    worker = (support / "run_learning_curve_replay_worker.sh").read_text(
+        encoding="utf-8"
+    )
+    launcher = (support / "launch_learning_curve_replay.sh").read_text(
+        encoding="utf-8"
+    )
+    assert worker.count("--checkpoint-milestone-kimg=") == 6
+    assert "run_arm A 1.0 1.0" in worker
+    assert "run_arm B 1.1 1.1" in worker
+    assert "run_arm C 1.1 1.0" in worker
+    assert "run_arm D 1.0 1.1" in worker
+    assert "--duration=1.024" in worker
+    assert '--resume="${resume_state}"' in worker
+    assert "--transfer=" not in worker
+    assert "seed14-18-256to1024-learning-curve-replay-v1" in launcher
+    assert "checkpoints=120 evaluation_jobs=240" in launcher
+    assert "q256lc_s${seed}" in launcher
