@@ -75,10 +75,21 @@ for arm_spec in A:1.0:1.0 B:1.1:1.1 C:1.1:1.0 D:1.0:1.1; do
   done
   [[ -s "${source_state}" ]] || { echo "missing formal source: ${source_state}" >&2; exit 3; }
 
-  if [[ -f "${run_dir}/training-state-latest.pt" ]]; then
-    resume_state="${run_dir}/training-state-latest.pt"
-  else
-    resume_state="${source_state}"
+  latest_state="${run_dir}/training-state-latest.pt"
+  latest_milestone="$(find "${run_dir}" -maxdepth 1 -type f -name 'training-state-kimg*.pt' -print | sort | tail -n 1)"
+  resume_state="${source_state}"
+  latest_nimg=0
+  if [[ -s "${latest_state}" ]]; then
+    latest_nimg="$(env PYTHONNOUSERSITE=1 LD_LIBRARY_PATH="${runtime_ld_library_path}" PATH="${runtime_path}" "${runtime_python}" -c "import torch; print(int(torch.load('${latest_state}', map_location='cpu', weights_only=False)['cur_nimg']))")"
+    resume_state="${latest_state}"
+  fi
+  if [[ -n "${latest_milestone}" ]]; then
+    milestone_name="$(basename "${latest_milestone}")"
+    [[ "${milestone_name}" =~ ^training-state-kimg([0-9]{6})\.pt$ ]] || { echo "invalid milestone filename: ${milestone_name}" >&2; exit 3; }
+    milestone_nimg=$((10#${BASH_REMATCH[1]} * 1000))
+    if (( milestone_nimg >= latest_nimg )); then
+      resume_state="${latest_milestone}"
+    fi
   fi
   case "${resume_state}" in
     "${source_root}"/*|"${run_root}"/*) ;;
