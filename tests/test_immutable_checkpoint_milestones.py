@@ -10,6 +10,20 @@ from training import ct_training_loop
 
 
 class ImmutableCheckpointMilestoneTests(unittest.TestCase):
+    def test_exact_kimg_state_is_a_valid_resume_name(self):
+        self.assertEqual(
+            ct_train.parse_resume_state_token(
+                "/runs/training-state-kimg000384.pt"
+            ),
+            "kimg000384",
+        )
+        self.assertEqual(
+            ct_train.parse_resume_state_token(
+                "/runs/training-state-latest.pt"
+            ),
+            "latest",
+        )
+
     def test_cli_parser_accepts_frozen_curve(self):
         runner = CliRunner()
         result = runner.invoke(

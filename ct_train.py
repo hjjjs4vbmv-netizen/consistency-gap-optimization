@@ -63,6 +63,14 @@ def parse_immutable_checkpoint_kimg(_ctx, _param, value):
     return tuple(result)
 
 
+def parse_resume_state_token(path):
+    match = re.fullmatch(
+        r'training-state-(\d+|latest|kimg\d+)\.pt',
+        os.path.basename(path),
+    )
+    return None if match is None else match.group(1)
+
+
 def normalize_schedule_name(_ctx, _param, value):
     aliases = {
         'adaptive-v1': 'adaptive_v1',
@@ -339,8 +347,8 @@ def main(**kwargs):
         c.resume_pkl = opts.transfer
         c.ema_rampup_ratio = None
     elif opts.resume is not None:
-        match = re.fullmatch(r'training-state-(\d+|latest).pt', os.path.basename(opts.resume))
-        if not match or not os.path.isfile(opts.resume):
+        resume_token = parse_resume_state_token(opts.resume)
+        if resume_token is None or not os.path.isfile(opts.resume):
             raise click.ClickException('--resume must point to training-state-*.pt from a previous training run')
         if opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL:
             # The versioned factorial training-state is self-contained (net +
@@ -351,17 +359,17 @@ def main(**kwargs):
         else:
             c.resume_pkl = os.path.join(
                 os.path.dirname(opts.resume),
-                f'network-snapshot-{match.group(1)}.pkl',
+                f'network-snapshot-{resume_token}.pkl',
             )
         # Prefer explicit --resume-tick; otherwise parse numeric tick from the filename.
         # training-state-latest.pt cannot be converted with int(); the training loop
         # restores the authoritative cur_tick / cur_nimg from the serialized state.
         if opts.resume_tick is not None:
             c.resume_tick = opts.resume_tick
-        elif match.group(1) == 'latest':
+        elif resume_token == 'latest' or resume_token.startswith('kimg'):
             c.resume_tick = 0
         else:
-            c.resume_tick = int(match.group(1))
+            c.resume_tick = int(resume_token)
         c.resume_state_dump = opts.resume
 
     # Description string.
