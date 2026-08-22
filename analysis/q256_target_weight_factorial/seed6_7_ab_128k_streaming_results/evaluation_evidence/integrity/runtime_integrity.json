@@ -1,0 +1,21 @@
+{
+  "created_utc": "2026-08-22T08:23:34Z",
+  "extraction": "unsquashfs_offset_45056_from_verified_sif",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "cuda_device_name": "NVIDIA A100-PCIE-40GB",
+    "cudnn": 8907,
+    "numpy": "1.24.4",
+    "python": "3.10.12",
+    "scipy": "1.12.0",
+    "torch": "2.2.0a0+81ea7a4",
+    "torch_cuda": "12.3"
+  },
+  "runtime_sif": "/root/q256_eval/runtime/ect-pytorch2401-deterministic.sif",
+  "runtime_sif_bytes": 10135425024,
+  "runtime_sif_sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea",
+  "sandbox": "/root/q256_eval/runtime/sandbox",
+  "schema": "ect.q256.portable-frozen-runtime/v1",
+  "status": "PASS"
+}
