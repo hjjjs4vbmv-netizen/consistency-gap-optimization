@@ -33,13 +33,20 @@ runtime_path+=":${sandbox_root}/usr/local/ucx/bin:${sandbox_root}/opt/tensorrt/b
 
 [[ -x "${runtime_python}" && -s "${source_state}" && -f "${dataset_host}" ]] || { echo "missing runtime/source/dataset" >&2; exit 2; }
 [[ -z "$(git -C "${repo}" status --porcelain)" ]] || { echo "source worktree is dirty" >&2; exit 2; }
-[[ ! -e "${run_dir}" ]] || { echo "smoke run directory already exists: ${run_dir}" >&2; exit 3; }
-mkdir -p "${run_dir}" "$(dirname "${dataset_runtime}")"
-cp -p "${source_dir}/training_options.json" "${run_dir}/"
-cp -p "${source_dir}/train_summary.csv" "${run_dir}/"
-cp -p "${source_dir}/factorial_training_telemetry_v1.csv" "${run_dir}/"
-cp -p "${source_dir}/initial_state_receipt_v1.json" "${run_dir}/"
-cp -p "${source_dir}/log.txt" "${run_dir}/"
+if [[ ! -e "${run_dir}" ]]; then
+  mkdir -p "${run_dir}" "$(dirname "${dataset_runtime}")"
+  cp -p "${source_dir}/training_options.json" "${run_dir}/"
+  cp -p "${source_dir}/train_summary.csv" "${run_dir}/"
+  cp -p "${source_dir}/factorial_training_telemetry_v1.csv" "${run_dir}/"
+  cp -p "${source_dir}/initial_state_receipt_v1.json" "${run_dir}/"
+  cp -p "${source_dir}/log.txt" "${run_dir}/"
+elif [[ ! -s "${milestone_state}" ]]; then
+  echo "refuse incomplete existing smoke directory: ${run_dir}" >&2
+  exit 3
+else
+  echo "[q256-replay-smoke] REUSE existing immutable 384 kimg state"
+fi
+mkdir -p "$(dirname "${dataset_runtime}")"
 if [[ -e "${dataset_runtime}" || -L "${dataset_runtime}" ]]; then
   [[ "$(readlink -f "${dataset_runtime}")" == "$(readlink -f "${dataset_host}")" ]] || { echo "canonical dataset path points elsewhere" >&2; exit 2; }
 else
@@ -78,8 +85,10 @@ run_training() {
     "${common_args[@]}" --resume="${resume_state}"
 }
 
-echo "[q256-replay-smoke] TRAIN source=${source_state} target=384kimg"
-run_training "${source_state}"
+if [[ ! -s "${milestone_state}" ]]; then
+  echo "[q256-replay-smoke] TRAIN source=${source_state} target=384kimg"
+  run_training "${source_state}"
+fi
 [[ -s "${milestone_state}" ]] || { echo "missing smoke milestone" >&2; exit 4; }
 env PYTHONNOUSERSITE=1 LD_LIBRARY_PATH="${runtime_ld_library_path}" PATH="${runtime_path}" \
   "${runtime_python}" -c \
