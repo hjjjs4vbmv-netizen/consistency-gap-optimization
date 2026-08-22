@@ -19,6 +19,7 @@ from torch_utils import distributed as dist
 from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
+from training import q256_budget_checkpoints
 
 from metrics import metric_main
 
@@ -820,6 +821,11 @@ def training_loop(
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
+    budget_checkpoint_interval_kimg = None,  # Non-numerical q256 durability interval.
+    budget_checkpoint_start_kimg = None,     # First immutable budget checkpoint.
+    budget_checkpoint_root = None,           # Immutable checkpoint directory.
+    budget_checkpoint_source_sha256 = None,  # Bound 256k source full-state SHA256.
+    budget_checkpoint_training_commit = None, # Exact continuation implementation.
     device              = torch.device('cuda'),
 ):
     # Initialize.
@@ -850,6 +856,62 @@ def training_loop(
                 'stop_after_attempts is frozen to 16 for the exact 16+16 gate'
             )
         stop_after_attempts = int(stop_after_attempts)
+    budget_checkpoint_values = (
+        budget_checkpoint_interval_kimg,
+        budget_checkpoint_start_kimg,
+        budget_checkpoint_root,
+        budget_checkpoint_source_sha256,
+        budget_checkpoint_training_commit,
+    )
+    budget_checkpoint_enabled = any(
+        value is not None for value in budget_checkpoint_values
+    )
+    if budget_checkpoint_enabled:
+        if not all(value is not None for value in budget_checkpoint_values):
+            raise ValueError(
+                'budget checkpoint durability requires interval, start, root, '
+                'source SHA256, and training commit together'
+            )
+        if not strict_reproducibility:
+            raise ValueError(
+                'budget checkpoint durability is reserved for strict q256 factorial runs'
+            )
+        q256_budget_checkpoints.validate_contract(
+            interval_kimg=budget_checkpoint_interval_kimg,
+            start_kimg=budget_checkpoint_start_kimg,
+            total_kimg=total_kimg,
+        )
+        if batch_size != 128:
+            raise ValueError('q256 64-kimg durability requires batch_size=128')
+        expected_checkpoint_root = os.path.join(
+            os.path.abspath(run_dir), 'checkpoints'
+        )
+        budget_checkpoint_root = os.path.abspath(budget_checkpoint_root)
+        if budget_checkpoint_root != expected_checkpoint_root:
+            raise ValueError(
+                'budget checkpoint root must be RUN_DIR/checkpoints exactly'
+            )
+        if os.path.islink(budget_checkpoint_root):
+            raise ValueError('budget checkpoint root cannot be a symlink')
+        os.makedirs(budget_checkpoint_root, mode=0o750, exist_ok=True)
+        if not os.path.isdir(budget_checkpoint_root):
+            raise ValueError('budget checkpoint root is not a directory')
+        if (
+            len(budget_checkpoint_source_sha256) != 64
+            or any(
+                char not in '0123456789abcdef'
+                for char in budget_checkpoint_source_sha256
+            )
+        ):
+            raise ValueError('budget checkpoint source SHA256 is invalid')
+        if (
+            len(budget_checkpoint_training_commit) != 40
+            or any(
+                char not in '0123456789abcdef'
+                for char in budget_checkpoint_training_commit
+            )
+        ):
+            raise ValueError('budget checkpoint training commit is invalid')
     rank_seed = (seed * dist.get_world_size() + dist.get_rank()) % (1 << 31)
     np.random.seed(rank_seed)
     if strict_reproducibility:
@@ -1480,6 +1542,150 @@ def training_loop(
                 snapshot_grid_size=tuple(grid_size),
             )
         return data
+
+    def collect_checkpoint_state():
+        if train_summary_csv is not None:
+            train_summary_csv.flush()
+            os.fsync(train_summary_csv.fileno())
+        if factorial_telemetry_csv is not None:
+            factorial_telemetry_csv.flush()
+            os.fsync(factorial_telemetry_csv.fileno())
+        adaptive_state = None
+        if adaptive_signal_window is not None:
+            adaptive_state = gather_adaptive_signal_window_state(
+                adaptive_signal_window, device
+            )
+        rank_states = None
+        if strict_reproducibility:
+            if cur_nimg % dist.get_world_size() != 0:
+                raise RuntimeError(
+                    'strict factorial cur_nimg is not divisible by world size'
+                )
+            expected_local_consumed = cur_nimg // dist.get_world_size()
+            if local_consumed_samples != expected_local_consumed:
+                raise RuntimeError(
+                    'logical sampler consumption does not match committed '
+                    f'progress: {local_consumed_samples} != '
+                    f'{expected_local_consumed}'
+                )
+            rank_states = gather_rank_reproducibility_state(
+                dataset_sampler, local_consumed_samples
+            )
+        return adaptive_state, rank_states
+
+    def checkpoint_file_sha256(path):
+        digest = hashlib.sha256()
+        with open(path, 'rb') as handle:
+            for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b''):
+                digest.update(chunk)
+        return digest.hexdigest()
+
+    def write_budget_checkpoint(
+        budget_kimg,
+        adaptive_signal_window_state,
+        rank_states,
+        *,
+        advance_tick,
+    ):
+        if dist.get_rank() != 0:
+            return
+        final_dir = os.path.join(
+            budget_checkpoint_root, f'{budget_kimg}k'
+        )
+        if os.path.lexists(final_dir):
+            raise RuntimeError(
+                f'refuse to overwrite immutable budget checkpoint: {final_dir}'
+            )
+        temporary_dir = os.path.join(
+            budget_checkpoint_root,
+            f'.{budget_kimg}k.tmp-{os.getpid()}-{time.time_ns()}',
+        )
+        os.mkdir(temporary_dir, mode=0o750)
+        state_path = os.path.join(temporary_dir, 'training-state.pt')
+        snapshot_path = os.path.join(temporary_dir, 'network-snapshot.pkl')
+        metadata_path = os.path.join(temporary_dir, 'metadata.json')
+
+        checkpoint_state = build_training_state(
+            adaptive_signal_window_state,
+            rank_states,
+            advance_tick=advance_tick,
+        )
+        reproducibility.atomic_torch_save(
+            checkpoint_state, state_path, overwrite=False
+        )
+        state_keys = sorted(checkpoint_state)
+        del checkpoint_state
+
+        snapshot = dict(
+            ema=ema,
+            loss_fn=loss_fn,
+            augment_pipe=augment_pipe,
+            dataset_kwargs=dict(dataset_kwargs),
+        )
+        for key, value in snapshot.items():
+            if isinstance(value, torch.nn.Module):
+                value = copy.deepcopy(value).eval().requires_grad_(False)
+                misc.check_ddp_consistency(value)
+                snapshot[key] = value.cpu()
+            del value
+        reproducibility.atomic_pickle_dump(
+            snapshot, snapshot_path, overwrite=False
+        )
+        del snapshot
+
+        state_sha256 = checkpoint_file_sha256(state_path)
+        snapshot_sha256 = checkpoint_file_sha256(snapshot_path)
+        metadata = {
+            'schema': 'ect.q256.seed6-7-ab-budget-checkpoint/v1',
+            'status': 'immutable_checkpoint_written',
+            'extension_classification': (
+                'secondary_precision_extension_not_original_preregistration'
+            ),
+            'replaces_preregistered_seed': False,
+            'seed': seed,
+            'arm': loss_fn.factorial['arm'],
+            'budget_kimg': budget_kimg,
+            'attempted_iteration': attempted_iteration,
+            'successful_optimizer_steps': successful_optimizer_steps,
+            'amp_skips': attempted_iteration - successful_optimizer_steps,
+            'cur_nimg': cur_nimg,
+            'target_gap_scale': loss_fn.factorial['target_gap_scale'],
+            'denominator_gap_scale': loss_fn.factorial[
+                'denominator_gap_scale'
+            ],
+            'source_checkpoint_sha256': budget_checkpoint_source_sha256,
+            'training_state_sha256': state_sha256,
+            'training_state_bytes': os.path.getsize(state_path),
+            'snapshot_sha256': snapshot_sha256,
+            'snapshot_bytes': os.path.getsize(snapshot_path),
+            'training_commit': budget_checkpoint_training_commit,
+            'training_state_fields': state_keys,
+            'timestamp_utc': time.strftime(
+                '%Y-%m-%dT%H:%M:%SZ', time.gmtime()
+            ),
+            'atomic_directory_publish': True,
+            'checkpoint_interval_kimg': budget_checkpoint_interval_kimg,
+        }
+        reproducibility.atomic_json_dump(
+            metadata, metadata_path, overwrite=False
+        )
+        for path in (state_path, snapshot_path, metadata_path):
+            os.chmod(path, 0o440)
+        os.chmod(temporary_dir, 0o550)
+        os.rename(temporary_dir, final_dir)
+        parent_fd = os.open(
+            budget_checkpoint_root,
+            os.O_RDONLY | getattr(os, 'O_DIRECTORY', 0),
+        )
+        try:
+            os.fsync(parent_fd)
+        finally:
+            os.close(parent_fd)
+        dist.print0(
+            '[q256-budget-checkpoint] PASS '
+            f'budget={budget_kimg}k attempts={attempted_iteration} '
+            f'state_sha256={state_sha256} snapshot_sha256={snapshot_sha256}'
+        )
         
     # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
     # updates its stage from (cur_tick - 1) after natural maintenance.
@@ -1921,6 +2127,16 @@ def training_loop(
             or cur_nimg >= tick_start_nimg + kimg_per_tick * 1000
         )
         maintenance_due = natural_maintenance_due or planned_pause
+        budget_checkpoint_kimg = (
+            q256_budget_checkpoints.checkpoint_budget_kimg(
+                cur_nimg,
+                interval_kimg=budget_checkpoint_interval_kimg,
+                start_kimg=budget_checkpoint_start_kimg,
+                total_kimg=total_kimg,
+            )
+            if budget_checkpoint_enabled
+            else None
+        )
         next_loop_cur_tick = cur_tick + int(natural_maintenance_due)
 
         if train_summary_writer is not None:
@@ -1949,6 +2165,21 @@ def training_loop(
                 'peak_vram_gb': f'{peak_vram_gb:.6f}',
             })
             train_summary_csv.flush()
+
+        # A budget-only durability point saves the exact next-iteration state
+        # without turning the point into a training tick, sample, or metric
+        # boundary.  This keeps the numerical trajectory identical.
+        if budget_checkpoint_kimg is not None and not maintenance_due:
+            (
+                checkpoint_adaptive_state,
+                checkpoint_rank_states,
+            ) = collect_checkpoint_state()
+            write_budget_checkpoint(
+                budget_checkpoint_kimg,
+                checkpoint_adaptive_state,
+                checkpoint_rank_states,
+                advance_tick=False,
+            )
 
         # Perform maintenance tasks once per tick.
         if not maintenance_due:
@@ -1990,34 +2221,15 @@ def training_loop(
         )
         checkpoint_rank_states = None
         checkpoint_adaptive_state = None
-        if state_dump_due or latest_checkpoint_due:
-            if train_summary_csv is not None:
-                train_summary_csv.flush()
-                os.fsync(train_summary_csv.fileno())
-            if factorial_telemetry_csv is not None:
-                factorial_telemetry_csv.flush()
-                os.fsync(factorial_telemetry_csv.fileno())
-            if adaptive_signal_window is not None:
-                checkpoint_adaptive_state = (
-                    gather_adaptive_signal_window_state(
-                        adaptive_signal_window, device
-                    )
-                )
-            if strict_reproducibility:
-                if cur_nimg % dist.get_world_size() != 0:
-                    raise RuntimeError(
-                        'strict factorial cur_nimg is not divisible by world size'
-                    )
-                expected_local_consumed = cur_nimg // dist.get_world_size()
-                if local_consumed_samples != expected_local_consumed:
-                    raise RuntimeError(
-                        'logical sampler consumption does not match committed '
-                        f'progress: {local_consumed_samples} != '
-                        f'{expected_local_consumed}'
-                    )
-                checkpoint_rank_states = gather_rank_reproducibility_state(
-                    dataset_sampler, local_consumed_samples
-                )
+        if (
+            state_dump_due
+            or latest_checkpoint_due
+            or budget_checkpoint_kimg is not None
+        ):
+            (
+                checkpoint_adaptive_state,
+                checkpoint_rank_states,
+            ) = collect_checkpoint_state()
 
         # Save network snapshot.
         if (snapshot_ticks is not None) and (done or cur_tick % snapshot_ticks == 0) and cur_tick != 0:
@@ -2081,6 +2293,14 @@ def training_loop(
                     os.path.join(run_dir, f'training-state-latest.pt'),
                     overwrite=True,
                 )
+
+        if budget_checkpoint_kimg is not None:
+            write_budget_checkpoint(
+                budget_checkpoint_kimg,
+                checkpoint_adaptive_state,
+                checkpoint_rank_states,
+                advance_tick=natural_maintenance_due,
+            )
 
         # Sample Img
         if (sample_ticks is not None) and (done or cur_tick % sample_ticks == 0) and dist.get_rank() == 0:
