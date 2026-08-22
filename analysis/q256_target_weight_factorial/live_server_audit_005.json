@@ -1,0 +1,24 @@
+{
+  "schema": "ect.q256.target-weight-factorial-live-server-audit/v1",
+  "audit_id": "live_server_audit_005",
+  "observed_utc": "2026-08-19T08:47:44Z",
+  "status": "HOLD_RESOLVED_IN_SOURCE_PENDING_REGATE",
+  "event": "role_e_gate_output_mount_failure",
+  "source_commit_attempted": "1abe5c65982c9103eb0cb69f6d4b97f15b32c27f",
+  "command_exit_code": 1,
+  "error": "[Errno 30] Read-only file system: '/data/raw'",
+  "tests_started": false,
+  "training_started": false,
+  "partial_gate_artifacts": [],
+  "host_mounts": {
+    "/data/raw": "rw NFS, 33T available",
+    "/data/temp": "rw NFS, 5.0T available"
+  },
+  "container_without_explicit_binds": {
+    "/data/raw": "absent/not writable",
+    "/data/temp": "absent/not writable"
+  },
+  "root_cause": "The Apptainer entry points did not explicitly bind the host data filesystems into the sandbox.",
+  "corrective_action": "Bind /data/raw and /data/temp explicitly in both launcher entry paths, persist the bind contract in runtime identity, recommit, rerun all frozen tests, and issue a new Role E receipt from the new clean commit.",
+  "reuse_policy": "No receipt from the failed attempt exists or may be reused."
+}

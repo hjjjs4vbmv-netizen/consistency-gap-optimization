@@ -1,0 +1,968 @@
+{
+  "schema_version": 1,
+  "manifest_id": "pr53-disjoint-5k-cell-bindings-v1",
+  "generated_at": "2026-08-17T00:00:00+08:00",
+  "source_artifact_commit": "fbdcb13ed7dab8a5fb179382e4453df9c1a0f7d2",
+  "metric_root": "results/gap_lr_matched/disjoint_5k_0813",
+  "sample_policy": {
+    "range_from_frozen_block_directory": true,
+    "ordering": "ascending_inclusive",
+    "count_per_cell": 5000
+  },
+  "summary": {
+    "cells": 27,
+    "metric_receipts": 54,
+    "sample_range_bound_receipts": 54,
+    "checkpoint_hash_bound_receipts": 54,
+    "checkpoint_hash_unbound_receipts": 0,
+    "checkpoint_records_blocked_by_b005": [],
+    "b006_status": "HASH_BOUND_54_OF_54"
+  },
+  "cells": [
+    {
+      "cell_id": "block_5000_9999/seed3/arm_a",
+      "training_seed": 3,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b",
+        "training_state_sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed3/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "ed3bdc3e467f85a8afa2cc649e26cb7dc2d5498353ee4d834b630e0eab6e974a",
+          "reported_value": 316.2286207804385
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed3/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "93cf75f933a2c8c20a1b3e3d38762addb8f4de2fc7e9332cae1fb98b8b9d9aef",
+          "reported_value": 0.32445674280280284
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed3/arm_b",
+      "training_seed": 3,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
+        "training_state_sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed3/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "ec802454e8c324012d4997f585f19e9c19794a1e54a3f13769f1b6c8a149bce4",
+          "reported_value": 207.8802884223472
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed3/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "18ce185a1af6b5979aaaee415f6a7c778ce9845ddc6ed66dace6b89f84bd12e8",
+          "reported_value": 0.20322906735485485
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed3/arm_c",
+      "training_seed": 3,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
+        "training_state_sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed3/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "7da399882f86dc54063ffc8a5148dfcc1b191e8e9b72a0ec2acda01964fcbdd2",
+          "reported_value": 298.91274043236103
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed3/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "5fdead10d879865634229fe0aa897d0267d7792df69aaf3b4104072be3c55499",
+          "reported_value": 0.3052326821796796
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed4/arm_a",
+      "training_seed": 4,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "ec724a4705cab6a789f05404a2fc82b362d5e3ef3aa5ed24735b82583059b684",
+        "training_state_sha256": "abaeb816eb9929360405371f4c99273524e86e819fa0f9a56912c57a7f22703a",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed4/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "2d6271e1d88901effeac7830640c854f06e48c7035e77d432d9897d20868fead",
+          "reported_value": 253.94699969627183
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed4/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "f53085230e6cc8a2ca71e177733021907e6ae86d3de11cbcbb62265b96ef5df4",
+          "reported_value": 0.25654408056556566
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed4/arm_b",
+      "training_seed": 4,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "e6adb0548babb1de2aaa4a55e22ae4adfbe4d7daae2f2547e11e46628b726595",
+        "training_state_sha256": "b5dc3fb056d6f3355f24d6d5af617d67f292f9522403fbb29760d5c2f3e375ce",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed4/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "03cafed690b0b7e05c13575e0d7ba909146209978067335d864655146fd3d2f2",
+          "reported_value": 216.52199521363173
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed4/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "2a828e2867f6671d4b8f13872927f10b16115d5fa854f6a7bdf2179df30f1482",
+          "reported_value": 0.2127101212762762
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed4/arm_c",
+      "training_seed": 4,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "b5d19259a9089ba2bc8b8cb90e7dcd669b065a364efbb4f99736aae5bdded31e",
+        "training_state_sha256": "838db1f31fe8d9c3093e17c8e873e1c9d786f29a289d8b7bc0774f7ce475cd7b",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed4/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "fb3274629212a518b58995d4c434cb0210b2d45f46c615918b06da5c903d6119",
+          "reported_value": 221.5524795050354
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed4/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "3f5104a95c106bafdbe5f14c266e0c549e9ed9a89bb716a0840f6abb07515805",
+          "reported_value": 0.21645007821071077
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed5/arm_a",
+      "training_seed": 5,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "97837ecba0f11d5b7d25c1eada17adf8ce5d5671ceae6553291f1405c5c16455",
+        "training_state_sha256": "e67f06c55ea86cd43e2c978092fdff2621644ae67545afc549e5ff1487ed0e28",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed5/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "d8bd5334b6aa74b6624f6a8a2f96fa5a54d48d9b9afe51f9b69f7b9469ffd8c5",
+          "reported_value": 255.66451189574653
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed5/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "40544878c08db9bb6ad570985143ed27866ba9f41c7afafb0845ddce7ce190b8",
+          "reported_value": 0.257685899169169
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed5/arm_b",
+      "training_seed": 5,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "fce3c1f2c14357b617f51e7220dd3dfe0e02c3e9894318678d7e167bff6af36a",
+        "training_state_sha256": "c1d7ed74883439661e57a433efd09fb1dbfbb6207033c10894f17f5f67e41ce9",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed5/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "476058e18d75b39966db4ca7b0c1ceb1462d24ed65884db2b9c26fce12c5184c",
+          "reported_value": 237.6332426217865
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed5/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "ff5c2b50e47ce9ba98588d6e3ee9eb9e34ad2f184c63d8380ff15ad4b76cd95c",
+          "reported_value": 0.23578871548298294
+        }
+      ]
+    },
+    {
+      "cell_id": "block_5000_9999/seed5/arm_c",
+      "training_seed": 5,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "5000-9999",
+        "first_seed": 5000,
+        "last_seed": 9999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "48e7fa22cef49b158b9b99da71f20c472149ebced9028b6f5c165653a2762852",
+        "training_state_sha256": "74f9099aada25fdd1e54f94add10b75ad2abc88df8beb5fea1ea3f92d3fc2d06",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed5/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "095313d7caa2828c132f39d9f2533477b1da054a044ea09c882b2a1c2f13fb9c",
+          "reported_value": 222.89049984799925
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_5000_9999/seed5/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "98bb8d33695e170a383e9df8dd668c166774f360689cc8b00bf1664e73804468",
+          "reported_value": 0.21771228121621616
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed3/arm_a",
+      "training_seed": 3,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b",
+        "training_state_sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed3/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "7502a850c4a265bbf532f6d7e951c6f4ffe8a054628652e1390911e6ac144aaa",
+          "reported_value": 316.13053778726305
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed3/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "135431538ab45cce478981ab7a04bf6b6023a9d3e5043cbf6bf7cd6181f85a9f",
+          "reported_value": 0.32433871034784784
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed3/arm_b",
+      "training_seed": 3,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
+        "training_state_sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed3/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "eb0d352d2971f984ad5550c0392275714f34d57ac7947ef7231a89a4b7e9cb03",
+          "reported_value": 208.58256436261215
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed3/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "0a4c51f496e4e52c7fb8024e2815679c99d8c5fbb97d7c0fdaca242e6d73965b",
+          "reported_value": 0.2036197181856856
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed3/arm_c",
+      "training_seed": 3,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
+        "training_state_sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed3/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "6d89feaf48e2c46f617d45fdb486375690eb3779aa5eee487d7f47d884bafaa9",
+          "reported_value": 298.7762216985931
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed3/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "5f8aa4e2c2201e9e6acca7278629b66dff44de69cc5967f0902d684bba6cd1ee",
+          "reported_value": 0.30522617252502515
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed4/arm_a",
+      "training_seed": 4,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "ec724a4705cab6a789f05404a2fc82b362d5e3ef3aa5ed24735b82583059b684",
+        "training_state_sha256": "abaeb816eb9929360405371f4c99273524e86e819fa0f9a56912c57a7f22703a",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed4/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "23fe5d945b5b805ef75fb5018acc76211e22192891ad8bd0055b56c04e84a0d9",
+          "reported_value": 254.19282908910972
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed4/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "abf537054c375afcdebab1c378ce72b3a874f3688be9c5da360f02eaef9ff22f",
+          "reported_value": 0.2571154534709709
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed4/arm_b",
+      "training_seed": 4,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "e6adb0548babb1de2aaa4a55e22ae4adfbe4d7daae2f2547e11e46628b726595",
+        "training_state_sha256": "b5dc3fb056d6f3355f24d6d5af617d67f292f9522403fbb29760d5c2f3e375ce",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed4/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "06e89ff04b6df7839bf8930bb72d024da0e1f2ce07b5da022005f39f96f29180",
+          "reported_value": 217.3697582517745
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed4/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "11cdc395c982f872856f240cc21f9afd1ea3c3755e47d14939f5e44c5503fd6e",
+          "reported_value": 0.21349087704954942
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed4/arm_c",
+      "training_seed": 4,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "b5d19259a9089ba2bc8b8cb90e7dcd669b065a364efbb4f99736aae5bdded31e",
+        "training_state_sha256": "838db1f31fe8d9c3093e17c8e873e1c9d786f29a289d8b7bc0774f7ce475cd7b",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed4/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "689dc6a33e96739d888f64c1274b979b91e63a07045553ff284d6807f6298888",
+          "reported_value": 222.40727324936591
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed4/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "b7090e154ef2ff688415825462d1e1cd85d6cdb0f58dc7c915ce3195ac575634",
+          "reported_value": 0.21767121106356363
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed5/arm_a",
+      "training_seed": 5,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "97837ecba0f11d5b7d25c1eada17adf8ce5d5671ceae6553291f1405c5c16455",
+        "training_state_sha256": "e67f06c55ea86cd43e2c978092fdff2621644ae67545afc549e5ff1487ed0e28",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed5/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "b03b18e2e3781bed7f2b6db7c50f8b4307c0ed706586523893bfd63efd55e358",
+          "reported_value": 255.79022708989808
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed5/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "c92a3ac630be1a9de1da9809cc2e760bb05d221e4d6402ec3b484f7d40ed5389",
+          "reported_value": 0.2580739324674674
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed5/arm_b",
+      "training_seed": 5,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "fce3c1f2c14357b617f51e7220dd3dfe0e02c3e9894318678d7e167bff6af36a",
+        "training_state_sha256": "c1d7ed74883439661e57a433efd09fb1dbfbb6207033c10894f17f5f67e41ce9",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed5/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "a3b3da0a840d4a9b814e1eaa8e91f8d332725f1696344272fd287235273d5d3f",
+          "reported_value": 237.93727976681674
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed5/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "76ebcd89bfe98169741fa03266725d26a0e1cb914def1a1755ebd3c856964f75",
+          "reported_value": 0.23644448582582586
+        }
+      ]
+    },
+    {
+      "cell_id": "block_10000_14999/seed5/arm_c",
+      "training_seed": 5,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "10000-14999",
+        "first_seed": 10000,
+        "last_seed": 14999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "48e7fa22cef49b158b9b99da71f20c472149ebced9028b6f5c165653a2762852",
+        "training_state_sha256": "74f9099aada25fdd1e54f94add10b75ad2abc88df8beb5fea1ea3f92d3fc2d06",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed5/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "6564c2dae7c7fb4de56185454ec62de703569a2c2f607bdf0dddc27779c1b643",
+          "reported_value": 223.7234129101487
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_10000_14999/seed5/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "2c3501fdba8ba87c3e3024a567ac8689e8da34585febcc6a6bbc14c0d4882eca",
+          "reported_value": 0.21890610116366377
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed3/arm_a",
+      "training_seed": 3,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "fa48bf5a3c7488678e3efd79d43229196bba6e24bacad2c7fc4cda5c2ff1c32b",
+        "training_state_sha256": "a5401395ac4c7f8ac85717836fe7d661a3bf3b852c94bad9af7ae0323529bbc8",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed3/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "c60fbf2ccd2601144bb994fdc095c0728df129c251374b47851396674f46c263",
+          "reported_value": 317.10730424612893
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed3/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "0711c1b7ea719b6d2dfc4a8491c8c285b5b4c695b6491e60b1656c67ed7febda",
+          "reported_value": 0.32548333044794786
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed3/arm_b",
+      "training_seed": 3,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "a698182f3bbc8307fe1c36c229e5b50772f7fe7e532868353ddf5e395c0ee4db",
+        "training_state_sha256": "cc7f0c2b46a8227c571671e8add892d3889507e1d94ab3f9f02e667c2d462a96",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed3/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "05dd8e0e0da2f84a8b74925e1bf280a6c025ee82671d506e699bacb1cb572f90",
+          "reported_value": 209.27477810853668
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed3/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "1128472e99f3cf086898bd1f4cd670863152984ad8d1edfd7d05b3a907be8cba",
+          "reported_value": 0.20447168440190192
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed3/arm_c",
+      "training_seed": 3,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s3-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s3",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "0caf658fdffc30a5d9fd3d143da1a86a7cf40152403e7235cb2b8ae392bc1639",
+        "training_state_sha256": "33fbefa3934f7e030d0973f1a82becdb91026d4acc030993f452eddf7126a62c",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed3/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "02b0307b54bfb62ca4c00ea2352c629652a1e6c08e510a669aba67bc5b7cff81",
+          "reported_value": 299.5319207007951
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed3/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "82fd417b108908807b0d2cbadc97188560a967eecac0803534ecae4f67eb9916",
+          "reported_value": 0.3061421265565567
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed4/arm_a",
+      "training_seed": 4,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "ec724a4705cab6a789f05404a2fc82b362d5e3ef3aa5ed24735b82583059b684",
+        "training_state_sha256": "abaeb816eb9929360405371f4c99273524e86e819fa0f9a56912c57a7f22703a",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed4/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "a712123082affe8efc238863443e035a517a0bed7ab65500cab1c97d68ec1566",
+          "reported_value": 255.00653874038866
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed4/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "45c755b6d283cc1318a7167ab88bd7f7239d29712bf84852e57373d521da025e",
+          "reported_value": 0.2581343601901902
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed4/arm_b",
+      "training_seed": 4,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "e6adb0548babb1de2aaa4a55e22ae4adfbe4d7daae2f2547e11e46628b726595",
+        "training_state_sha256": "b5dc3fb056d6f3355f24d6d5af617d67f292f9522403fbb29760d5c2f3e375ce",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed4/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "c5d3db453f05ae72ccbfa64650fd7df5993a7c0d3372ccac60ce22447537a857",
+          "reported_value": 217.66029975581313
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed4/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "ad798ce90ab4bd6aeafb81946391efcb91a157324fe2271f19e0ecc230b09520",
+          "reported_value": 0.21394874202952957
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed4/arm_c",
+      "training_seed": 4,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s4-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s4",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "b5d19259a9089ba2bc8b8cb90e7dcd669b065a364efbb4f99736aae5bdded31e",
+        "training_state_sha256": "838db1f31fe8d9c3093e17c8e873e1c9d786f29a289d8b7bc0774f7ce475cd7b",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed4/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "11ac084fc364bec1cd89cfd5497728b24825d9d9afc6e3686d127fc428366448",
+          "reported_value": 222.4301024167902
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed4/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "5a4c6ea8f652554ba94272c65ad866321aa25a40dbd3d178621e8662cf6cb5ae",
+          "reported_value": 0.21776962248999004
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed5/arm_a",
+      "training_seed": 5,
+      "arm": "A",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-A-k256000",
+        "run_id": "arm_a_g1_0_lr_fixed_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "97837ecba0f11d5b7d25c1eada17adf8ce5d5671ceae6553291f1405c5c16455",
+        "training_state_sha256": "e67f06c55ea86cd43e2c978092fdff2621644ae67545afc549e5ff1487ed0e28",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed5/arm_a/metric-fid5k_full.jsonl",
+          "receipt_sha256": "16edc983dfe30b25cd94a0ed0025cae2ca4f6d1b24a29bafb66a917ba0a165bd",
+          "reported_value": 256.67863519887555
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed5/arm_a/metric-kid5k_full.jsonl",
+          "receipt_sha256": "f372d9a614d7523de9251c8a03a20a4022daf61ab4e5a3bea58483ca63bb7e4b",
+          "reported_value": 0.2592400431056056
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed5/arm_b",
+      "training_seed": 5,
+      "arm": "B",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-B-k256000",
+        "run_id": "arm_b_g1_3_lr_fixed_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "fce3c1f2c14357b617f51e7220dd3dfe0e02c3e9894318678d7e167bff6af36a",
+        "training_state_sha256": "c1d7ed74883439661e57a433efd09fb1dbfbb6207033c10894f17f5f67e41ce9",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed5/arm_b/metric-fid5k_full.jsonl",
+          "receipt_sha256": "cf45d5f01c36fd725d0b9d1e5fb29af4be127c366a8a127845990c9f3eaaaf8a",
+          "reported_value": 238.5630371352957
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed5/arm_b/metric-kid5k_full.jsonl",
+          "receipt_sha256": "0893159374c1b876ce53fb7b4c9d0a0f1fdfa5ee6a42d759cf3cf10ef5089b41",
+          "reported_value": 0.237263046996997
+        }
+      ]
+    },
+    {
+      "cell_id": "block_15000_19999/seed5/arm_c",
+      "training_seed": 5,
+      "arm": "C",
+      "sample_binding": {
+        "ordered_sample_seed_range": "15000-19999",
+        "first_seed": 15000,
+        "last_seed": 19999,
+        "count": 5000,
+        "ordering": "ascending_inclusive"
+      },
+      "checkpoint_binding": {
+        "checkpoint_record_id": "s5-C-k256000",
+        "run_id": "arm_c_g1_3_lr_matched_s5",
+        "state_id": "000008",
+        "network_snapshot_filename": "network-snapshot-000008.pkl",
+        "network_snapshot_sha256": "48e7fa22cef49b158b9b99da71f20c472149ebced9028b6f5c165653a2762852",
+        "training_state_sha256": "74f9099aada25fdd1e54f94add10b75ad2abc88df8beb5fea1ea3f92d3fc2d06",
+        "status": "HASH_BOUND"
+      },
+      "metric_receipts": [
+        {
+          "metric": "fid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed5/arm_c/metric-fid5k_full.jsonl",
+          "receipt_sha256": "2f3a4468615a8566a320340a66ae2e2039f071b22971d7704aa2e1b144d271d1",
+          "reported_value": 223.96877533153872
+        },
+        {
+          "metric": "kid5k_full",
+          "receipt_path": "results/gap_lr_matched/disjoint_5k_0813/blocks/block_15000_19999/seed5/arm_c/metric-kid5k_full.jsonl",
+          "receipt_sha256": "a084f0e62f25a24ba06a5e607fb451cd09ee63f171f2526d4aab0d8e8cd7f5f0",
+          "reported_value": 0.21927145377627622
+        }
+      ]
+    }
+  ]
+}

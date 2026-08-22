@@ -15,7 +15,7 @@ import json
 import platform
 import tarfile
 import tempfile
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -87,7 +87,7 @@ def verify(sender_manifest: Path, archive: Path, verifier_identity: str) -> dict
         "status": "passed" if archive_match and all_checkpoint_matches else "failed",
         "handoff_id": sender.get("handoff_id"),
         "verifier_identity": verifier_identity,
-        "verified_at_utc": datetime.now(UTC).isoformat(),
+        "verified_at_utc": datetime.now(timezone.utc).isoformat(),
         "verifier_python": platform.python_version(),
         "sender_manifest_filename": sender_manifest.name,
         "sender_manifest_sha256": sha256_file(sender_manifest),

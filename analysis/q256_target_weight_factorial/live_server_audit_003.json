@@ -1,0 +1,36 @@
+{
+  "schema": "ect.q256.target-weight-live-server-audit/v1",
+  "audit_id": "003",
+  "observed_at_utc": "2026-08-19T08:30:45Z",
+  "host": "gpu0003",
+  "endpoint": "ECT001@172.16.30.17:22",
+  "status": "STOP_REMOTE_ACTIONS",
+  "formal_training_authorized": false,
+  "last_verified_gpu_state": "audit_002_idle",
+  "diagnostic": {
+    "operation": "ssh_health_check",
+    "connect_timeout_seconds": 10,
+    "server_alive_interval_seconds": 5,
+    "server_alive_count_max": 1,
+    "exit_code": 255,
+    "stderr": "Connection to 172.16.30.17 port 22 timed out"
+  },
+  "incomplete_temporary_transfer": {
+    "destination": "/data/temp/ECT001/q256-factorial-prefreeze-20260819T1620",
+    "purpose": "pre-freeze tests only",
+    "formal_artifact": false,
+    "must_not_be_used_without_fresh_hash_and_source_audit": true
+  },
+  "remote_actions_started": {
+    "correctness_test": false,
+    "smoke_training": false,
+    "formal_training": false,
+    "formal_evaluation": false
+  },
+  "resume_conditions": [
+    "ssh_health_check_exit_zero",
+    "fresh_gpu_and_compute_process_audit",
+    "temporary_source_copy_replaced_or_verified_complete",
+    "clean_committed_source_identity_verified_before_gate"
+  ]
+}

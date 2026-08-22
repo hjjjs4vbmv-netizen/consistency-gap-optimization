@@ -1,0 +1,32 @@
+{
+  "schema": "ect.q256.target-weight-factorial-live-server-audit/v1",
+  "audit_id": "live_server_audit_008",
+  "observed_utc": "2026-08-19T10:08:26Z",
+  "status": "HOLD_RESOLVED_IN_SOURCE_PENDING_REGATE",
+  "event": "authoritative_transfer_unused_source_extra",
+  "source_commit_attempted": "3b0ad3c18a5467aee1b33e100d2545aef27b9bb1",
+  "matrix_id": "smoke-uninterrupted-3b0ad3c",
+  "matrix_status": "STOPPED_FOR_AUDIT",
+  "failed_cell": "seed3-armA",
+  "optimizer_attempts": 0,
+  "telemetry_file": "absent",
+  "not_started": [
+    "seed3-armB",
+    "seed3-armC",
+    "seed3-armD"
+  ],
+  "transfer_source_difference": {
+    "target_missing_keys": [],
+    "source_extra_keys": [
+      "model.map_augment.weight"
+    ],
+    "extra_shape": [128, 9],
+    "extra_dtype": "torch.float32",
+    "extra_tensor_bytes_sha256": "4500f8ac1eb5cc8dd4096595a798c8ea4793d42f8433014ab67e41d5ceb70de0",
+    "extra_finite": true
+  },
+  "root_cause": "The authoritative checkpoint contains the historical augmentation-map tensor while the frozen augment=0 target network has no augmentation map. All destination tensors are present in the source.",
+  "corrective_action": "Require complete destination coverage and exact shape/dtype for every copied tensor; permit only the single frozen unused source extra when its name, shape, dtype, content hash, and reason all match. Persist and verify this policy in trajectory identity.",
+  "forbidden_fallback": "Generic require_all=False or an unconstrained source-extra allowlist remains forbidden.",
+  "reuse_policy": "The stopped run and its source-stale smoke authorization are negative evidence only."
+}

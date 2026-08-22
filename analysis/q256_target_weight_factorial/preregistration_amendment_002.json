@@ -1,0 +1,46 @@
+{
+  "schema": "ect.q256.target-weight-factorial-preregistration-amendment/v1",
+  "amendment_id": "002",
+  "date": "2026-08-20",
+  "timing": "after_engineering_smoke_before_formal_training_and_quality_evaluation",
+  "scope": "amp_smoke_acceptance_rule_only",
+  "scientific_protocol_changed": false,
+  "trigger": {
+    "quality_metrics_generated_or_viewed": false,
+    "observation": "All four seed-3 smoke arms completed 32 attempts with 9 AMP warm-up skips and 23 successful optimizer updates, but arm C shifted one skip from attempt 12 to attempt 11.",
+    "skip_attempts_by_arm": {
+      "A": [1, 2, 3, 4, 5, 6, 7, 8, 12],
+      "B": [1, 2, 3, 4, 5, 6, 7, 8, 12],
+      "C": [1, 2, 3, 4, 5, 6, 7, 8, 11],
+      "D": [1, 2, 3, 4, 5, 6, 7, 8, 12]
+    }
+  },
+  "supersedes": {
+    "old_rule": "require_cross_arm_identical_amp_skip_attempt_signature_within_seed",
+    "new_rule": {
+      "all_skips_within_tick_0_amp_warmup": true,
+      "finite_loss_required": true,
+      "raw_nonfinite_exactly_on_skipped_attempts": true,
+      "equal_skip_count_across_arms_within_seed": true,
+      "equal_successful_optimizer_update_count_across_arms_within_seed": true,
+      "objective_dependent_skip_locations_allowed": true
+    }
+  },
+  "rationale": "Dynamic AMP skip location can respond to the preregistered factorial objective. Requiring identical locations would constrain a treatment response rather than verify equal training exposure. Equal skip and successful-update counts preserve the 32-attempt smoke exposure while retaining canonical AMP behavior.",
+  "unchanged": [
+    "question",
+    "arms",
+    "target_and_denominator_implementations",
+    "gradscaler",
+    "optimizer",
+    "training_budget",
+    "fresh_run_requirement",
+    "evaluation_endpoints",
+    "generation_seeds",
+    "metric_seed",
+    "contrasts",
+    "interaction",
+    "reporting_rules"
+  ],
+  "follow_up_mechanism_audit_authorized": false
+}

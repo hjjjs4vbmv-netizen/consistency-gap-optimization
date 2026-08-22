@@ -6,9 +6,11 @@ import filecmp
 import json
 import math
 import pickle
+import random
 import psutil
 import shutil
 import functools
+import hashlib
 import PIL.Image
 import numpy as np
 import torch
@@ -16,8 +18,25 @@ import dnnlib
 from torch_utils import distributed as dist
 from torch_utils import training_stats
 from torch_utils import misc
+from training import reproducibility
 
 from metrics import metric_main
+
+_STRICT_FACTORIAL_PROTOCOL = 'q256_target_weight_v1'
+_AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
+    'schema': 'ect.q256.authoritative-transfer-source-policy/v1',
+    'required_target_coverage': 'all_parameters_and_buffers',
+    'allowed_source_extras': {
+        'model.map_augment.weight': {
+            'shape': [128, 9],
+            'dtype': 'torch.float32',
+            'tensor_bytes_sha256': (
+                '4500f8ac1eb5cc8dd4096595a798c8ea4793d42f8433014ab67e41d5ceb70de0'
+            ),
+            'reason': 'authoritative checkpoint augmentation map unused by augment=0 target',
+        },
+    },
+}
 
 # Per-attempted-iteration CSV for paired fixed/adaptive comparisons.
 # Schedule telemetry comes exclusively from loss_fn.schedule_runtime_metrics().
@@ -91,6 +110,79 @@ _TRAIN_SUMMARY_FIELDS = (
     'upper_gap_clip_rate',
     *_PRE_GAP_DIAGNOSTICS_TRAIN_SUMMARY_FIELDS[-2:],
 )
+
+_FACTORIAL_TELEMETRY_FIELDS = (
+    'schema',
+    'protocol',
+    'arm',
+    'target_gap_scale',
+    'denominator_gap_scale',
+    'attempted_iteration',
+    'successful_optimizer_steps',
+    'processed_nimg',
+    'processed_kimg',
+    'stage',
+    'loss',
+    'loss_nonfinite_count',
+    'raw_grad_norm',
+    'raw_grad_finite_norm',
+    'raw_grad_nonfinite_count',
+    'sanitized_grad_norm',
+    'sanitized_grad_nonfinite_count',
+    'update_norm',
+    'update_nonfinite_count',
+    'model_norm',
+    'model_nonfinite_count',
+    'ema_norm',
+    'ema_nonfinite_count',
+    'sample_count',
+    'batch_sha256',
+    't_sha256',
+    'base_r_sha256',
+    'target_r_sha256',
+    'denominator_r_sha256',
+    'target_delta_sha256',
+    'denominator_delta_sha256',
+    'base_r_zero_count',
+    'target_r_zero_count',
+    'target_r_equal_t_count',
+    'target_scaled_to_zero_count',
+    'denominator_r_zero_count',
+    'denominator_r_equal_t_count',
+    'denominator_scaled_to_zero_count',
+    'target_delta_min',
+    'target_delta_max',
+    'target_delta_mean',
+    'denominator_delta_min',
+    'denominator_delta_max',
+    'denominator_delta_mean',
+    'factor_nonfinite_count',
+    'nonpositive_denominator_count',
+    'learning_rate',
+    'grad_scale_before',
+    'grad_scale_after',
+    'step_skipped',
+    'elapsed_sec',
+    'gpu_hours_cumulative',
+)
+
+#----------------------------------------------------------------------------
+
+def canonical_processed_nimg(value):
+    """Return the exact non-negative integer used by strict CSV contracts."""
+    if isinstance(value, (bool, np.bool_)):
+        raise RuntimeError('processed_nimg must not be boolean')
+    try:
+        number = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise RuntimeError(
+            f'processed_nimg must be a finite non-negative integer: {value!r}'
+        ) from exc
+    if not math.isfinite(number) or number < 0 or not number.is_integer():
+        raise RuntimeError(
+            f'processed_nimg must be a finite non-negative integer: {value!r}'
+        )
+    return int(number)
 
 #----------------------------------------------------------------------------
 
@@ -427,6 +519,190 @@ def globally_average_runtime_pairs(metric_batches, device):
     return result
 
 
+def gather_rank_reproducibility_state(dataset_sampler, consumed_samples):
+    """Collect ordered, logical per-rank state before any preview/evaluation RNG."""
+    local_state = {
+        'rank': dist.get_rank(),
+        'world_size': dist.get_world_size(),
+        'rng_state': reproducibility.capture_rng_state(),
+        'sampler_state': dataset_sampler.state_dict(
+            consumed_samples=consumed_samples
+        ),
+    }
+    if dist.get_world_size() == 1:
+        states = [local_state]
+    else:
+        states = [None] * dist.get_world_size()
+        torch.distributed.all_gather_object(states, local_state)
+    if len(states) != dist.get_world_size():
+        raise RuntimeError('reproducibility rank-state count mismatch')
+    for expected_rank, state in enumerate(states):
+        if not isinstance(state, dict):
+            raise RuntimeError('reproducibility rank state must be a dict')
+        if int(state.get('rank', -1)) != expected_rank:
+            raise RuntimeError(
+                'reproducibility rank states are not in canonical rank order'
+            )
+        if int(state.get('world_size', -1)) != dist.get_world_size():
+            raise RuntimeError('reproducibility world-size mismatch')
+    return states
+
+
+def select_local_reproducibility_state(states):
+    if not isinstance(states, list) or len(states) != dist.get_world_size():
+        raise RuntimeError(
+            'training-state rank count does not match current world size'
+        )
+    for expected_rank, state in enumerate(states):
+        if not isinstance(state, dict) or int(state.get('rank', -1)) != expected_rank:
+            raise RuntimeError('training-state rank ordering is invalid')
+        if int(state.get('world_size', -1)) != dist.get_world_size():
+            raise RuntimeError('training-state rank world size is invalid')
+    return states[dist.get_rank()]
+
+
+@torch.no_grad()
+def copy_module_state_exact(
+    src_module, dst_module, *, label, allowed_source_extras=None
+):
+    """Copy every destination tensor after fail-closed source validation."""
+    if not isinstance(src_module, torch.nn.Module):
+        raise RuntimeError(f'{label} source is not a torch module')
+    if not isinstance(dst_module, torch.nn.Module):
+        raise RuntimeError(f'{label} destination is not a torch module')
+    src_items = list(misc.named_params_and_buffers(src_module))
+    dst_items = list(misc.named_params_and_buffers(dst_module))
+    src = dict(src_items)
+    dst = dict(dst_items)
+    if len(src) != len(src_items) or len(dst) != len(dst_items):
+        raise RuntimeError(f'{label} has duplicate parameter/buffer names')
+    missing = sorted(set(dst) - set(src))
+    extra = sorted(set(src) - set(dst))
+    allowed_source_extras = (
+        {} if allowed_source_extras is None else dict(allowed_source_extras)
+    )
+    if missing or set(extra) != set(allowed_source_extras):
+        raise RuntimeError(
+            f'{label} parameter/buffer key mismatch: '
+            f'missing={missing}, extra={extra}, '
+            f'allowed_source_extras={sorted(allowed_source_extras)}'
+        )
+    for name in extra:
+        record = allowed_source_extras[name]
+        if not isinstance(record, dict) or set(record) != {
+            'shape', 'dtype', 'tensor_bytes_sha256', 'reason'
+        }:
+            raise RuntimeError(
+                f'{label} invalid source-extra policy for {name}'
+            )
+        source = src[name].detach().cpu().contiguous()
+        actual = {
+            'shape': list(source.shape),
+            'dtype': str(source.dtype),
+            'tensor_bytes_sha256': hashlib.sha256(
+                source.numpy().tobytes()
+            ).hexdigest(),
+            'reason': record['reason'],
+        }
+        if actual != record:
+            raise RuntimeError(
+                f'{label} source-extra identity mismatch for {name}: '
+                f'{actual} != {record}'
+            )
+    for name in sorted(dst):
+        source = src[name]
+        target = dst[name]
+        if source.shape != target.shape:
+            raise RuntimeError(
+                f'{label} tensor shape mismatch for {name}: '
+                f'{tuple(source.shape)} != {tuple(target.shape)}'
+            )
+        if source.dtype != target.dtype:
+            raise RuntimeError(
+                f'{label} tensor dtype mismatch for {name}: '
+                f'{source.dtype} != {target.dtype}'
+            )
+        target.copy_(source.detach())
+
+
+@torch.no_grad()
+def tensor_collection_diagnostics(tensors):
+    """Return total non-finite count, mathematical norm, and finite-part norm."""
+    iterator = iter(tensors)
+    first = next(iterator, None)
+    if first is None:
+        return 0, 0.0, 0.0
+    device = first.device
+    nonfinite_count = torch.zeros([], dtype=torch.int64, device=device)
+    finite_square_sum = torch.zeros([], dtype=torch.float64, device=device)
+
+    def accumulate(tensor):
+        nonlocal nonfinite_count, finite_square_sum
+        value = tensor.detach()
+        finite = torch.isfinite(value)
+        nonfinite_count += (~finite).sum()
+        finite_value = torch.where(finite, value, torch.zeros_like(value))
+        finite_square_sum += finite_value.to(torch.float64).square().sum()
+
+    accumulate(first)
+    for tensor in iterator:
+        accumulate(tensor)
+    packed = torch.stack(
+        [nonfinite_count.to(torch.float64), finite_square_sum]
+    ).cpu()
+    count = int(packed[0])
+    finite_norm = math.sqrt(float(packed[1]))
+    norm = float('inf') if count else finite_norm
+    return count, norm, finite_norm
+
+
+def aggregate_factorial_runtime_metrics(metric_batches):
+    if not metric_batches or any(item is None for item in metric_batches):
+        raise RuntimeError('strict factorial loss did not emit runtime telemetry')
+    identity_fields = (
+        'schema', 'protocol', 'arm', 'target_gap_scale',
+        'denominator_gap_scale',
+    )
+    first = metric_batches[0]
+    for metrics in metric_batches[1:]:
+        for field in identity_fields:
+            if metrics[field] != first[field]:
+                raise RuntimeError(
+                    f'factorial runtime telemetry changed {field} within an attempt'
+                )
+    count_fields = (
+        'sample_count', 'base_r_zero_count', 'target_r_zero_count',
+        'target_r_equal_t_count', 'target_scaled_to_zero_count',
+        'denominator_r_zero_count', 'denominator_r_equal_t_count',
+        'denominator_scaled_to_zero_count', 'nonfinite_count',
+        'nonpositive_denominator_count',
+    )
+    result = {field: first[field] for field in identity_fields}
+    for field in count_fields:
+        result[field] = sum(int(metrics[field]) for metrics in metric_batches)
+    for field in (
+        't_sha256', 'base_r_sha256', 'target_r_sha256',
+        'denominator_r_sha256', 'target_delta_sha256',
+        'denominator_delta_sha256',
+    ):
+        result[field] = reproducibility.state_sha256(
+            [metrics[field] for metrics in metric_batches]
+        )
+    for prefix in ('target_delta', 'denominator_delta'):
+        result[f'{prefix}_min'] = min(
+            float(metrics[f'{prefix}_min']) for metrics in metric_batches
+        )
+        result[f'{prefix}_max'] = max(
+            float(metrics[f'{prefix}_max']) for metrics in metric_batches
+        )
+        total_count = result['sample_count']
+        result[f'{prefix}_mean'] = sum(
+            float(metrics[f'{prefix}_mean']) * int(metrics['sample_count'])
+            for metrics in metric_batches
+        ) / total_count
+    return result
+
+
 #----------------------------------------------------------------------------
 
 def setup_snapshot_image_grid(training_set, random_seed=0):
@@ -543,12 +819,55 @@ def training_loop(
     cudnn_benchmark     = True,     # Enable torch.backends.cudnn.benchmark?
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
+    stop_after_attempts = None,     # Gate-only planned pause after N attempts.
     device              = torch.device('cuda'),
 ):
     # Initialize.
     start_time = time.time()
-    np.random.seed((seed * dist.get_world_size() + dist.get_rank()) % (1 << 31))
+    strict_reproducibility = (
+        loss_kwargs.get('factorial_protocol') == _STRICT_FACTORIAL_PROTOCOL
+    )
+    if strict_reproducibility and dist.get_world_size() != 1:
+        raise ValueError(
+            'formal q256 target-weight arms require one process and one '
+            'exclusive GPU per run'
+        )
+    if strict_reproducibility and not enable_amp:
+        raise ValueError(
+            'formal q256 target-weight arms require AMP/GradScaler enabled'
+        )
+    if stop_after_attempts is not None:
+        if not strict_reproducibility:
+            raise ValueError(
+                'stop_after_attempts is reserved for strict factorial resume gates'
+            )
+        if (
+            isinstance(stop_after_attempts, bool)
+            or int(stop_after_attempts) != stop_after_attempts
+            or int(stop_after_attempts) != 16
+        ):
+            raise ValueError(
+                'stop_after_attempts is frozen to 16 for the exact 16+16 gate'
+            )
+        stop_after_attempts = int(stop_after_attempts)
+    rank_seed = (seed * dist.get_world_size() + dist.get_rank()) % (1 << 31)
+    np.random.seed(rank_seed)
+    if strict_reproducibility:
+        random.seed(rank_seed)
     torch.manual_seed(np.random.randint(1 << 31))
+    if strict_reproducibility:
+        if cudnn_benchmark:
+            raise ValueError(
+                'formal q256 target-weight arms require cudnn_benchmark=False '
+                'for exact replay'
+            )
+        if os.environ.get('CUBLAS_WORKSPACE_CONFIG') != ':4096:8':
+            raise ValueError(
+                'formal q256 target-weight arms require '
+                'CUBLAS_WORKSPACE_CONFIG=:4096:8 for exact replay'
+            )
+        torch.backends.cudnn.deterministic = True
+        torch.use_deterministic_algorithms(True)
     torch.backends.cudnn.benchmark = cudnn_benchmark
 
     # Enable these to speed up on A100 GPUs
@@ -563,12 +882,75 @@ def training_loop(
         batch_gpu = batch_gpu_total
     num_accumulation_rounds = batch_gpu_total // batch_gpu
     assert batch_size == batch_gpu * num_accumulation_rounds * dist.get_world_size()
+    strict_trajectory_config = None
+    strict_trajectory_config_sha256 = None
+    if strict_reproducibility:
+        strict_trajectory_config = reproducibility.canonical_json_data({
+            'schema': reproducibility.TRAJECTORY_CONFIG_SCHEMA,
+            'seed': seed,
+            'rank_seed': rank_seed,
+            'world_size': dist.get_world_size(),
+            'batch_size': batch_size,
+            'batch_gpu': batch_gpu,
+            'num_accumulation_rounds': num_accumulation_rounds,
+            'total_kimg': total_kimg,
+            'ema_beta': ema_beta,
+            'ema_halflife_kimg': ema_halflife_kimg,
+            'ema_rampup_ratio': ema_rampup_ratio,
+            'lr_rampup_kimg': lr_rampup_kimg,
+            'loss_scaling': loss_scaling,
+            'kimg_per_tick': kimg_per_tick,
+            'snapshot_ticks': snapshot_ticks,
+            'state_dump_ticks': state_dump_ticks,
+            'ckpt_ticks': ckpt_ticks,
+            'sample_ticks': sample_ticks,
+            'eval_ticks': eval_ticks,
+            'double_ticks': double_ticks,
+            'adaptive_update_kimg': adaptive_update_kimg,
+            'mid_t': mid_t,
+            'metrics': metrics,
+            'cudnn_benchmark': cudnn_benchmark,
+            'cudnn_deterministic': torch.backends.cudnn.deterministic,
+            'deterministic_algorithms': (
+                torch.are_deterministic_algorithms_enabled()
+            ),
+            'cublas_workspace_config': os.environ.get(
+                'CUBLAS_WORKSPACE_CONFIG'
+            ),
+            'enable_tf32': enable_tf32,
+            'enable_amp': enable_amp,
+            'device': str(device),
+            'dataset_kwargs': dict(dataset_kwargs),
+            'data_loader_kwargs': dict(data_loader_kwargs),
+            'network_kwargs': dict(network_kwargs),
+            'loss_kwargs': dict(loss_kwargs),
+            'optimizer_kwargs': dict(optimizer_kwargs),
+            'augment_kwargs': (
+                None if augment_kwargs is None else dict(augment_kwargs)
+            ),
+            'authoritative_transfer_source_policy': copy.deepcopy(
+                _AUTHORITATIVE_TRANSFER_SOURCE_POLICY
+            ),
+        })
+        strict_trajectory_config_sha256 = reproducibility.state_sha256(
+            strict_trajectory_config
+        )
 
     # Load dataset.
     dist.print0('Loading dataset...')
     dataset_obj = dnnlib.util.construct_class_by_name(**dataset_kwargs) # subclass of training.dataset.Dataset
     dataset_sampler = misc.InfiniteSampler(dataset=dataset_obj, rank=dist.get_rank(), num_replicas=dist.get_world_size(), seed=seed)
-    dataset_iterator = iter(torch.utils.data.DataLoader(dataset=dataset_obj, sampler=dataset_sampler, batch_size=batch_gpu, **data_loader_kwargs))
+    # A strict resume must load the logical sampler cursor before creating the
+    # iterator; otherwise DataLoader prefetch would enqueue examples from zero.
+    dataset_iterator = None
+    if not (strict_reproducibility and resume_state_dump):
+        dataset_iterator = iter(torch.utils.data.DataLoader(
+            dataset=dataset_obj,
+            sampler=dataset_sampler,
+            batch_size=batch_gpu,
+            **data_loader_kwargs,
+        ))
+    local_consumed_samples = 0
 
     # Construct network.
     dist.print0('Constructing network...')
@@ -596,7 +978,9 @@ def training_loop(
     ema = copy.deepcopy(net).eval().requires_grad_(False)
     
     # Stats
-    if dist.get_rank() == 0:
+    if dist.get_rank() == 0 and not (
+        strict_reproducibility and resume_state_dump
+    ):
         with torch.no_grad():
             images = torch.zeros([batch_gpu, net.img_channels, net.img_resolution, net.img_resolution], device=device)
             sigma = torch.ones([batch_gpu], device=device)
@@ -612,8 +996,30 @@ def training_loop(
             data = pickle.load(f)
         if dist.get_rank() == 0:
             torch.distributed.barrier() # other ranks follow
-        misc.copy_params_and_buffers(src_module=data['ema'], dst_module=net, require_all=False)
-        misc.copy_params_and_buffers(src_module=data['ema'], dst_module=ema, require_all=False)
+        if strict_reproducibility:
+            copy_module_state_exact(
+                data.get('ema'), net, label='authoritative transfer -> net',
+                allowed_source_extras=(
+                    _AUTHORITATIVE_TRANSFER_SOURCE_POLICY[
+                        'allowed_source_extras'
+                    ]
+                ),
+            )
+            copy_module_state_exact(
+                data.get('ema'), ema, label='authoritative transfer -> EMA',
+                allowed_source_extras=(
+                    _AUTHORITATIVE_TRANSFER_SOURCE_POLICY[
+                        'allowed_source_extras'
+                    ]
+                ),
+            )
+        else:
+            misc.copy_params_and_buffers(
+                src_module=data['ema'], dst_module=net, require_all=False
+            )
+            misc.copy_params_and_buffers(
+                src_module=data['ema'], dst_module=ema, require_all=False
+            )
         del data # conserve memory
     attempted_iteration = 0
     successful_optimizer_steps = 0
@@ -621,6 +1027,10 @@ def training_loop(
     resumed_cur_tick = None
     resumed_tick_start_nimg = None
     resumed_adaptive_signal_window_state = None
+    resumed_rng_state = None
+    resumed_snapshot_grid_z = None
+    resumed_snapshot_grid_c = None
+    resumed_snapshot_grid_size = None
     elapsed_base_sec = 0.0
     if resume_state_dump:
         dist.print0(f'Loading training state from "{resume_state_dump}"...')
@@ -631,7 +1041,53 @@ def training_loop(
             map_location=torch.device('cpu'),
             weights_only=False,
         )
-        misc.copy_params_and_buffers(src_module=data['net'], dst_module=net, require_all=True)
+        if strict_reproducibility:
+            if data.get('reproducibility_schema') != reproducibility.TRAINING_STATE_SCHEMA:
+                raise RuntimeError(
+                    'strict factorial resume requires a complete versioned '
+                    'training-state; legacy state is not replayable'
+                )
+            required = (
+                'net', 'ema', 'optimizer_state', 'loss_fn_state',
+                'rank_states', 'factorial', 'gradscaler_state',
+                'attempted_iteration', 'successful_optimizer_steps',
+                'cur_nimg', 'cur_tick', 'tick_start_nimg',
+                'snapshot_grid_z', 'snapshot_grid_c', 'snapshot_grid_size',
+                'trajectory_config', 'trajectory_config_sha256',
+            )
+            missing = [name for name in required if name not in data]
+            if missing:
+                raise RuntimeError(
+                    'strict factorial training-state missing fields: '
+                    + ', '.join(missing)
+                )
+            if data['factorial'] != loss_fn.factorial:
+                raise RuntimeError(
+                    'factorial factors in training-state do not match current config'
+                )
+            saved_trajectory_sha256 = reproducibility.state_sha256(
+                data['trajectory_config']
+            )
+            if saved_trajectory_sha256 != data['trajectory_config_sha256']:
+                raise RuntimeError(
+                    'training-state trajectory config hash is internally invalid'
+                )
+            if saved_trajectory_sha256 != strict_trajectory_config_sha256:
+                raise RuntimeError(
+                    'training-state trajectory config does not match current run'
+                )
+        if strict_reproducibility:
+            copy_module_state_exact(
+                data.get('net'), net, label='strict training-state -> net'
+            )
+        else:
+            misc.copy_params_and_buffers(
+                src_module=data['net'], dst_module=net, require_all=True
+            )
+        if strict_reproducibility:
+            copy_module_state_exact(
+                data.get('ema'), ema, label='strict training-state -> EMA'
+            )
         optimizer.load_state_dict(data['optimizer_state'])
         if 'cur_nimg' not in data:
             raise RuntimeError(
@@ -641,13 +1097,39 @@ def training_loop(
         attempted_iteration = int(data.get('attempted_iteration', 0))
         successful_optimizer_steps = int(data.get('successful_optimizer_steps', 0))
         resumed_cur_nimg = int(data['cur_nimg'])
+        if strict_reproducibility:
+            local_rank_state = select_local_reproducibility_state(
+                data['rank_states']
+            )
+            dataset_sampler.load_state_dict(local_rank_state['sampler_state'])
+            local_consumed_samples = int(
+                local_rank_state['sampler_state']['consumed_samples']
+            )
+            if resumed_cur_nimg % dist.get_world_size() != 0:
+                raise RuntimeError(
+                    'strict factorial cur_nimg is not divisible by world size'
+                )
+            expected_consumed = resumed_cur_nimg // dist.get_world_size()
+            if local_consumed_samples != expected_consumed:
+                raise RuntimeError(
+                    'sampler consumed_samples does not match restored cur_nimg: '
+                    f'{local_consumed_samples} != {expected_consumed}'
+                )
+            resumed_rng_state = local_rank_state['rng_state']
+            resumed_snapshot_grid_z = data['snapshot_grid_z']
+            resumed_snapshot_grid_c = data['snapshot_grid_c']
+            resumed_snapshot_grid_size = tuple(data['snapshot_grid_size'])
         if 'cur_tick' in data:
             resumed_cur_tick = int(data['cur_tick'])
         if 'tick_start_nimg' in data:
             resumed_tick_start_nimg = int(data['tick_start_nimg'])
         elapsed_base_sec = float(data.get('elapsed_sec', 0.0))
         if hasattr(loss_fn, 'load_schedule_state_dict') and 'loss_fn_state' in data:
-            loss_fn.load_schedule_state_dict(data['loss_fn_state'])
+            loaded = loss_fn.load_schedule_state_dict(data['loss_fn_state'])
+            if strict_reproducibility and loaded is not True:
+                raise RuntimeError(
+                    'strict factorial loss schedule state is incompatible'
+                )
         if 'adaptive_signal_window_state' in data:
             resumed_adaptive_signal_window_state = data['adaptive_signal_window_state']
         if enable_amp:
@@ -657,8 +1139,22 @@ def training_loop(
                 dist.print0(f'Loading GradScaler state from "{resume_state_dump}"...')
                 scaler.load_state_dict(data['gradscaler_state'])
             else:
+                if strict_reproducibility:
+                    raise RuntimeError(
+                        'strict factorial training-state is missing GradScaler state'
+                    )
                 dist.print0(f'GradScaler state is not found in "{resume_state_dump}", using the default state.')
         del data # conserve memory
+
+    if dataset_iterator is None:
+        if not (strict_reproducibility and resume_state_dump):
+            raise RuntimeError('dataset iterator was not initialized')
+        dataset_iterator = iter(torch.utils.data.DataLoader(
+            dataset=dataset_obj,
+            sampler=dataset_sampler,
+            batch_size=batch_gpu,
+            **data_loader_kwargs,
+        ))
     
     # Export sample images.
     grid_size = None
@@ -666,29 +1162,55 @@ def training_loop(
     grid_c = None
         
     if dist.get_rank() == 0:
-        dist.print0('Exporting sample images...')
+        write_startup_preview = not (
+            strict_reproducibility and resume_state_dump
+        )
+        if write_startup_preview:
+            dist.print0('Exporting sample images...')
         grid_size, images, labels = setup_snapshot_image_grid(training_set=dataset_obj)
-        save_image_grid(images, os.path.join(run_dir, 'data.png'), drange=[0,255], grid_size=grid_size)
+        if resumed_snapshot_grid_size is not None:
+            if tuple(grid_size) != resumed_snapshot_grid_size:
+                raise RuntimeError('snapshot grid size changed across resume')
+        if write_startup_preview:
+            save_image_grid(images, os.path.join(run_dir, 'data.png'), drange=[0,255], grid_size=grid_size)
         
-        grid_z = torch.randn([labels.shape[0], ema.img_channels, ema.img_resolution, ema.img_resolution], device=device)
-        grid_z = grid_z.split(batch_gpu)
+        if resumed_snapshot_grid_z is None:
+            grid_z = torch.randn([labels.shape[0], ema.img_channels, ema.img_resolution, ema.img_resolution], device=device)
+            grid_z = grid_z.split(batch_gpu)
+            grid_c = torch.from_numpy(labels).to(device)
+            grid_c = grid_c.split(batch_gpu)
+        else:
+            if resumed_snapshot_grid_c is None:
+                raise RuntimeError('resumed snapshot grid labels are missing')
+            grid_z = tuple(value.to(device) for value in resumed_snapshot_grid_z)
+            grid_c = tuple(value.to(device) for value in resumed_snapshot_grid_c)
         
-        grid_c = torch.from_numpy(labels).to(device)
-        grid_c = grid_c.split(batch_gpu)
-        
-        images = [generator_fn(ema, z, c).cpu() for z, c in zip(grid_z, grid_c)]
-        images = torch.cat(images).numpy()
-        save_image_grid(images, os.path.join(run_dir, 'model_init.png'), drange=[-1,1], grid_size=grid_size)
-        del images
+        if write_startup_preview:
+            images = [generator_fn(ema, z, c).cpu() for z, c in zip(grid_z, grid_c)]
+            images = torch.cat(images).numpy()
+            save_image_grid(images, os.path.join(run_dir, 'model_init.png'), drange=[-1,1], grid_size=grid_size)
+            del images
+
+    # DataLoader worker seeding, module-summary dropout, and startup previews
+    # are intentionally outside the resumed trajectory. Restore only after
+    # all of them complete and immediately before training setup/iteration.
+    if resumed_rng_state is not None:
+        if dist.get_world_size() > 1:
+            torch.distributed.barrier()
+        reproducibility.restore_rng_state(resumed_rng_state)
+        if dist.get_world_size() > 1:
+            torch.distributed.barrier()
 
     # Train.
     dist.print0(f'Training for {total_kimg} kimg...')
     dist.print0()
     # Prefer exact progress from training-state; filename-derived resume_tick is only a fallback.
     if resumed_cur_nimg is not None:
-        cur_nimg = resumed_cur_nimg
+        cur_nimg = canonical_processed_nimg(resumed_cur_nimg)
     else:
-        cur_nimg = resume_tick * kimg_per_tick * 1000
+        cur_nimg = canonical_processed_nimg(
+            resume_tick * kimg_per_tick * 1000
+        )
     if resumed_cur_tick is not None:
         cur_tick = resumed_cur_tick
     else:
@@ -809,6 +1331,62 @@ def training_loop(
             train_summary_writer.writeheader()
             train_summary_csv.flush()
 
+    factorial_telemetry_csv = None
+    factorial_telemetry_writer = None
+    if strict_reproducibility and dist.get_rank() == 0:
+        telemetry_path = os.path.join(
+            run_dir, 'factorial_training_telemetry_v1.csv'
+        )
+        telemetry_exists = (
+            os.path.isfile(telemetry_path)
+            and os.path.getsize(telemetry_path) > 0
+        )
+        if resume_state_dump:
+            if not telemetry_exists:
+                raise RuntimeError(
+                    'strict factorial resume requires existing versioned telemetry'
+                )
+            with open(telemetry_path, 'rt', newline='') as handle:
+                reader = csv.DictReader(handle)
+                if tuple(reader.fieldnames or ()) != _FACTORIAL_TELEMETRY_FIELDS:
+                    raise RuntimeError(
+                        'factorial telemetry schema does not match v1 exactly'
+                    )
+                rows = list(reader)
+            if not rows:
+                raise RuntimeError('factorial telemetry has no attempted rows')
+            last = rows[-1]
+            if int(last['attempted_iteration']) != attempted_iteration:
+                raise RuntimeError(
+                    'factorial telemetry attempt does not match training-state'
+                )
+            if int(last['processed_nimg']) != cur_nimg:
+                raise RuntimeError(
+                    'factorial telemetry nimg does not match training-state'
+                )
+            if last['arm'] != loss_fn.factorial['arm']:
+                raise RuntimeError(
+                    'factorial telemetry arm does not match current config'
+                )
+            factorial_telemetry_csv = open(
+                telemetry_path, 'at', newline=''
+            )
+        else:
+            if telemetry_exists:
+                raise RuntimeError(
+                    'fresh run refuses existing factorial telemetry'
+                )
+            factorial_telemetry_csv = open(
+                telemetry_path, 'xt', newline=''
+            )
+        factorial_telemetry_writer = csv.DictWriter(
+            factorial_telemetry_csv,
+            fieldnames=_FACTORIAL_TELEMETRY_FIELDS,
+        )
+        if not resume_state_dump:
+            factorial_telemetry_writer.writeheader()
+            factorial_telemetry_csv.flush()
+
     # Prepare for the mapping fn p(r|t).
     dist.print0(f'Reduce dt every {double_ticks} ticks.')
     
@@ -816,19 +1394,25 @@ def training_loop(
         loss_fn.update_schedule(stage)
         dist.print0(f'Update scheduler at {cur_tick} ticks, {cur_nimg / 1e3} kimg, ratio {loss_fn.ratio}')
 
-    def build_training_state(adaptive_signal_window_state=None):
-        # Checkpointing happens during maintenance, before the loop advances:
-        #   cur_tick += 1
-        #   tick_start_nimg = cur_nimg
-        # Persist the *next-loop* values so resume matches uninterrupted training.
+    def build_training_state(
+        adaptive_signal_window_state=None,
+        rank_states=None,
+        *,
+        advance_tick=True,
+    ):
+        # Natural maintenance checkpoints are written before the loop advances
+        # cur_tick and tick_start_nimg, so persist their next-loop values.  A
+        # planned-pause-only checkpoint is merely a durability boundary: it
+        # must preserve the current tick controls exactly so resume matches a
+        # run that never paused.
         data = dict(
             net=net,
             optimizer_state=optimizer.state_dict(),
             attempted_iteration=attempted_iteration,
             successful_optimizer_steps=successful_optimizer_steps,
             cur_nimg=cur_nimg,
-            cur_tick=cur_tick + 1,
-            tick_start_nimg=cur_nimg,
+            cur_tick=cur_tick + int(advance_tick),
+            tick_start_nimg=(cur_nimg if advance_tick else tick_start_nimg),
             # Match the final CSV row exactly; resume timing continues from
             # the last completed attempted iteration rather than from later
             # checkpoint I/O and maintenance work.
@@ -842,10 +1426,121 @@ def training_loop(
             data['adaptive_signal_window_state'] = adaptive_signal_window_state
         if enable_amp:
             data['gradscaler_state'] = scaler.state_dict()
+        if strict_reproducibility:
+            if rank_states is None:
+                raise RuntimeError(
+                    'strict factorial state requires every rank RNG/sampler state'
+                )
+            next_cur_tick = cur_tick + int(advance_tick)
+            next_stage = max((next_cur_tick - 1) // double_ticks, 0)
+            strict_loss_state = dict(data['loss_fn_state'])
+            strict_loss_state.update(
+                stage=next_stage,
+                ratio=1 - 1 / loss_fn.q ** (next_stage + 1),
+            )
+            data.update(
+                reproducibility_schema=reproducibility.TRAINING_STATE_SCHEMA,
+                ema=ema,
+                rank_states=rank_states,
+                factorial=dict(loss_fn.factorial),
+                trajectory_config=strict_trajectory_config,
+                trajectory_config_sha256=strict_trajectory_config_sha256,
+                loss_fn_state=strict_loss_state,
+                snapshot_grid_z=[value.detach().cpu() for value in grid_z],
+                snapshot_grid_c=[value.detach().cpu() for value in grid_c],
+                snapshot_grid_size=tuple(grid_size),
+            )
         return data
         
-    stage = cur_tick // double_ticks
+    # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
+    # updates its stage from (cur_tick - 1) after natural maintenance.
+    stage = max((cur_tick - 1) // double_ticks, 0)
+    if strict_reproducibility and resume_state_dump:
+        if loss_fn.stage != stage:
+            raise RuntimeError(
+                'strict factorial restored loss stage does not match tick state'
+            )
     update_scheduler(loss_fn)
+
+    initial_receipt_path = (
+        os.path.join(run_dir, 'initial_state_receipt_v1.json')
+        if dist.get_rank() == 0 else None
+    )
+    if strict_reproducibility and resume_state_dump:
+        if dist.get_rank() == 0 and not os.path.isfile(initial_receipt_path):
+            raise RuntimeError(
+                'strict factorial resume requires the original initial-state receipt'
+            )
+    elif strict_reproducibility:
+        initial_rank_states = gather_rank_reproducibility_state(
+            dataset_sampler, local_consumed_samples
+        )
+        if dist.get_rank() == 0:
+            model_sha256 = reproducibility.module_state_sha256(net)
+            ema_sha256 = reproducibility.module_state_sha256(ema)
+            optimizer_sha256 = reproducibility.state_sha256(
+                optimizer.state_dict()
+            )
+            gradscaler_sha256 = reproducibility.state_sha256(
+                scaler.state_dict() if enable_amp else None
+            )
+            rank_receipts = [
+                {
+                    'rank': state['rank'],
+                    'world_size': state['world_size'],
+                    'rng_sha256': reproducibility.state_sha256(
+                        state['rng_state']
+                    ),
+                    'sampler_sha256': reproducibility.state_sha256(
+                        state['sampler_state']
+                    ),
+                    'sampler_state': state['sampler_state'],
+                }
+                for state in initial_rank_states
+            ]
+            common_hashes = {
+                'model': model_sha256,
+                'ema': ema_sha256,
+                'optimizer': optimizer_sha256,
+                'gradscaler': gradscaler_sha256,
+                'rank_rng': [row['rng_sha256'] for row in rank_receipts],
+                'rank_sampler': [
+                    row['sampler_sha256'] for row in rank_receipts
+                ],
+            }
+            reproducibility.atomic_json_dump(
+                {
+                    'schema': reproducibility.INITIAL_RECEIPT_SCHEMA,
+                    'seed': seed,
+                    'attempted_iteration': attempted_iteration,
+                    'processed_nimg': cur_nimg,
+                    'factorial': dict(loss_fn.factorial),
+                    'dataset_path': dataset_kwargs.get('path'),
+                    'transfer_path': resume_pkl,
+                    'world_size': dist.get_world_size(),
+                    'batch_size': batch_size,
+                    'batch_gpu': batch_gpu,
+                    'trajectory_config': strict_trajectory_config,
+                    'trajectory_config_sha256': (
+                        strict_trajectory_config_sha256
+                    ),
+                    'hashes': common_hashes,
+                    'common_initial_state_sha256': (
+                        reproducibility.state_sha256(common_hashes)
+                    ),
+                    'rank_states': rank_receipts,
+                },
+                initial_receipt_path,
+                overwrite=False,
+            )
+
+    if (
+        stop_after_attempts is not None
+        and attempted_iteration >= stop_after_attempts
+    ):
+        raise RuntimeError(
+            'planned pause target must be greater than restored attempts'
+        )
 
     # Already at/past the requested budget (e.g. resume with same duration): do not
     # execute an extra optimizer step before noticing done.
@@ -853,6 +1548,8 @@ def training_loop(
         dist.print0(f'Already reached training budget at {cur_nimg / 1e3:.3f} kimg; exiting.')
         if train_summary_csv is not None:
             train_summary_csv.close()
+        if factorial_telemetry_csv is not None:
+            factorial_telemetry_csv.close()
         dist.print0()
         dist.print0('Exiting...')
         return
@@ -864,15 +1561,29 @@ def training_loop(
         loss_batches = []
         schedule_metric_batches = []
         local_signal_batches = []
+        factorial_metric_batches = []
+        batch_input_hashes = []
         for round_idx in range(num_accumulation_rounds):
             with misc.ddp_sync(ddp, (round_idx == num_accumulation_rounds - 1)):
                 images, labels = next(dataset_iterator)
+                local_consumed_samples += int(images.shape[0])
+                if strict_reproducibility:
+                    batch_input_hashes.append(
+                        reproducibility.state_sha256({
+                            'images': images,
+                            'labels': labels,
+                        })
+                    )
                 images = images.to(device).to(torch.float32) / 127.5 - 1
                 labels = labels.to(device)
 
                 loss = loss_fn(net=ddp, images=images, labels=labels, augment_pipe=augment_pipe)
                 loss_batches.append(loss.detach())
                 schedule_metric_batches.append(loss_fn.schedule_runtime_metrics())
+                if strict_reproducibility:
+                    factorial_metric_batches.append(
+                        loss_fn.factorial_runtime_metrics()
+                    )
                 if schedule_name in ('local_tbin_v1', 'local_tbin_v2', 'local_tbin_v3'):
                     signal = loss_fn.local_training_signal()
                     if signal is None:
@@ -892,10 +1603,36 @@ def training_loop(
         if enable_amp:
             scaler.unscale_(optimizer)
 
+        if strict_reproducibility:
+            loss_nonfinite_count, _, _ = tensor_collection_diagnostics(
+                loss_batches
+            )
+            (
+                raw_grad_nonfinite_count,
+                raw_grad_norm,
+                raw_grad_finite_norm,
+            ) = tensor_collection_diagnostics(
+                param.grad for param in net.parameters()
+                if param.grad is not None
+            )
+            parameters_before_step = [
+                param.detach().clone() for param in net.parameters()
+            ]
+
         # NOTE(aiihn & Gsunshine): This should be further tested for AMP.
         for param in net.parameters():
             if param.grad is not None:
                 torch.nan_to_num(param.grad, nan=0, posinf=1e5, neginf=-1e5, out=param.grad)
+
+        if strict_reproducibility:
+            (
+                sanitized_grad_nonfinite_count,
+                sanitized_grad_norm,
+                _,
+            ) = tensor_collection_diagnostics(
+                param.grad for param in net.parameters()
+                if param.grad is not None
+            )
 
         # LR scheduler (if needed in the future)
         # for g in optimizer.param_groups:
@@ -905,6 +1642,7 @@ def training_loop(
         # scale_before is the scale applied to this step; a drop after update()
         # means overflow was detected and optimizer.step was skipped.
         grad_scale = float(loss_scaling)
+        scale_after = grad_scale
         step_skipped = 0
         if enable_amp:
             scale_before = float(scaler.get_scale())
@@ -915,6 +1653,24 @@ def training_loop(
             step_skipped = int(scale_after < scale_before)
         else:
             optimizer.step()
+
+        if strict_reproducibility:
+            (
+                update_nonfinite_count,
+                update_norm,
+                _,
+            ) = tensor_collection_diagnostics(
+                param.detach() - before
+                for param, before in zip(
+                    net.parameters(), parameters_before_step
+                )
+            )
+            del parameters_before_step
+            (
+                model_nonfinite_count,
+                model_norm,
+                _,
+            ) = tensor_collection_diagnostics(net.parameters())
 
         attempted_iteration += 1
         if not step_skipped:
@@ -941,6 +1697,13 @@ def training_loop(
             ema_beta = 0.5 ** (batch_size / max(ema_halflife_nimg, 1e-8))
         for p_ema, p_net in zip(ema.parameters(), net.parameters()):
             p_ema.copy_(p_net.detach().lerp(p_ema, ema_beta))
+
+        if strict_reproducibility:
+            (
+                ema_nonfinite_count,
+                ema_norm,
+                _,
+            ) = tensor_collection_diagnostics(ema.parameters())
 
         # Advance iteration-local state. Adaptive updates intentionally happen
         # here, before the maintenance early-continue below.
@@ -1008,17 +1771,128 @@ def training_loop(
                     f'{prefix}/active', int(local_runtime_metrics['bin_active'][index])
                 )
 
+        if strict_reproducibility:
+            factorial_metrics = aggregate_factorial_runtime_metrics(
+                factorial_metric_batches
+            )
+            learning_rates = {
+                float(group['lr']) for group in optimizer.param_groups
+            }
+            if len(learning_rates) != 1:
+                raise RuntimeError(
+                    'strict factorial protocol requires one common learning rate'
+                )
+            learning_rate = learning_rates.pop()
+            telemetry_row = {
+                'schema': 'ect.q256.target-weight-training-telemetry/v1',
+                'protocol': factorial_metrics['protocol'],
+                'arm': factorial_metrics['arm'],
+                'target_gap_scale': f"{factorial_metrics['target_gap_scale']:.17g}",
+                'denominator_gap_scale': f"{factorial_metrics['denominator_gap_scale']:.17g}",
+                'attempted_iteration': attempted_iteration,
+                'successful_optimizer_steps': successful_optimizer_steps,
+                'processed_nimg': cur_nimg,
+                'processed_kimg': f'{cur_nimg / 1e3:.6f}',
+                'stage': stage,
+                'loss': f'{loss_mean:.17g}',
+                'loss_nonfinite_count': loss_nonfinite_count,
+                'raw_grad_norm': f'{raw_grad_norm:.17g}',
+                'raw_grad_finite_norm': f'{raw_grad_finite_norm:.17g}',
+                'raw_grad_nonfinite_count': raw_grad_nonfinite_count,
+                'sanitized_grad_norm': f'{sanitized_grad_norm:.17g}',
+                'sanitized_grad_nonfinite_count': (
+                    sanitized_grad_nonfinite_count
+                ),
+                'update_norm': f'{update_norm:.17g}',
+                'update_nonfinite_count': update_nonfinite_count,
+                'model_norm': f'{model_norm:.17g}',
+                'model_nonfinite_count': model_nonfinite_count,
+                'ema_norm': f'{ema_norm:.17g}',
+                'ema_nonfinite_count': ema_nonfinite_count,
+                'sample_count': factorial_metrics['sample_count'],
+                'batch_sha256': reproducibility.state_sha256(
+                    batch_input_hashes
+                ),
+                't_sha256': factorial_metrics['t_sha256'],
+                'base_r_sha256': factorial_metrics['base_r_sha256'],
+                'target_r_sha256': factorial_metrics['target_r_sha256'],
+                'denominator_r_sha256': factorial_metrics['denominator_r_sha256'],
+                'target_delta_sha256': factorial_metrics['target_delta_sha256'],
+                'denominator_delta_sha256': factorial_metrics['denominator_delta_sha256'],
+                'base_r_zero_count': factorial_metrics['base_r_zero_count'],
+                'target_r_zero_count': factorial_metrics['target_r_zero_count'],
+                'target_r_equal_t_count': factorial_metrics['target_r_equal_t_count'],
+                'target_scaled_to_zero_count': factorial_metrics['target_scaled_to_zero_count'],
+                'denominator_r_zero_count': factorial_metrics['denominator_r_zero_count'],
+                'denominator_r_equal_t_count': factorial_metrics['denominator_r_equal_t_count'],
+                'denominator_scaled_to_zero_count': factorial_metrics['denominator_scaled_to_zero_count'],
+                'target_delta_min': f"{factorial_metrics['target_delta_min']:.17g}",
+                'target_delta_max': f"{factorial_metrics['target_delta_max']:.17g}",
+                'target_delta_mean': f"{factorial_metrics['target_delta_mean']:.17g}",
+                'denominator_delta_min': f"{factorial_metrics['denominator_delta_min']:.17g}",
+                'denominator_delta_max': f"{factorial_metrics['denominator_delta_max']:.17g}",
+                'denominator_delta_mean': f"{factorial_metrics['denominator_delta_mean']:.17g}",
+                'factor_nonfinite_count': factorial_metrics['nonfinite_count'],
+                'nonpositive_denominator_count': factorial_metrics['nonpositive_denominator_count'],
+                'learning_rate': f'{learning_rate:.17g}',
+                'grad_scale_before': f'{grad_scale:.17g}',
+                'grad_scale_after': f'{scale_after:.17g}',
+                'step_skipped': step_skipped,
+                'elapsed_sec': f'{elapsed_sec:.6f}',
+                'gpu_hours_cumulative': f'{elapsed_sec / 3600:.9f}',
+            }
+            if factorial_telemetry_writer is not None:
+                factorial_telemetry_writer.writerow(telemetry_row)
+                factorial_telemetry_csv.flush()
+
+            invariant_failures = []
+            if factorial_metrics['sample_count'] != batch_size:
+                invariant_failures.append('factorial sample_count != batch_size')
+            if local_consumed_samples != cur_nimg:
+                invariant_failures.append('sampler consumption != processed_nimg')
+            if loss_nonfinite_count:
+                invariant_failures.append('non-finite loss')
+            if sanitized_grad_nonfinite_count:
+                invariant_failures.append('non-finite sanitized gradient')
+            if update_nonfinite_count or model_nonfinite_count or ema_nonfinite_count:
+                invariant_failures.append('non-finite update/model/EMA')
+            if factorial_metrics['nonfinite_count']:
+                invariant_failures.append('non-finite target/denominator factor')
+            if factorial_metrics['nonpositive_denominator_count']:
+                invariant_failures.append('non-positive realized denominator')
+            if bool(raw_grad_nonfinite_count) != bool(step_skipped):
+                invariant_failures.append(
+                    'raw gradient non-finite status does not match AMP skip'
+                )
+            if step_skipped and update_norm != 0:
+                invariant_failures.append('skipped optimizer attempt changed parameters')
+            if not step_skipped and (not math.isfinite(update_norm) or update_norm <= 0):
+                invariant_failures.append('successful optimizer update norm is not positive')
+            if invariant_failures:
+                if factorial_telemetry_csv is not None:
+                    os.fsync(factorial_telemetry_csv.fileno())
+                raise FloatingPointError(
+                    'strict factorial training invariant failure: '
+                    + '; '.join(invariant_failures)
+                )
+
         # Record the exact state that the following loop iteration will see.
         # This cannot be derived reliably from image count: the first iteration
         # always performs maintenance, and completion forces it regardless of
         # --tick. A checkpoint saved below persists this same cur_tick value.
         done = (cur_nimg >= total_kimg * 1000)
-        maintenance_due = (
+        planned_pause = (
+            stop_after_attempts is not None
+            and attempted_iteration >= stop_after_attempts
+            and not done
+        )
+        natural_maintenance_due = (
             done
             or cur_tick == 0
             or cur_nimg >= tick_start_nimg + kimg_per_tick * 1000
         )
-        next_loop_cur_tick = cur_tick + int(maintenance_due)
+        maintenance_due = natural_maintenance_due or planned_pause
+        next_loop_cur_tick = cur_tick + int(natural_maintenance_due)
 
         if train_summary_writer is not None:
             train_summary_writer.writerow({
@@ -1075,6 +1949,47 @@ def training_loop(
             dist.print0()
             dist.print0('Aborting...')
 
+        state_dump_due = (
+            (state_dump_ticks is not None)
+            and (done or cur_tick % state_dump_ticks == 0)
+            and cur_tick != 0
+        )
+        latest_checkpoint_due = (
+            (ckpt_ticks is not None)
+            and (done or planned_pause or cur_tick % ckpt_ticks == 0)
+            and cur_tick != 0
+        )
+        checkpoint_rank_states = None
+        checkpoint_adaptive_state = None
+        if state_dump_due or latest_checkpoint_due:
+            if train_summary_csv is not None:
+                train_summary_csv.flush()
+                os.fsync(train_summary_csv.fileno())
+            if factorial_telemetry_csv is not None:
+                factorial_telemetry_csv.flush()
+                os.fsync(factorial_telemetry_csv.fileno())
+            if adaptive_signal_window is not None:
+                checkpoint_adaptive_state = (
+                    gather_adaptive_signal_window_state(
+                        adaptive_signal_window, device
+                    )
+                )
+            if strict_reproducibility:
+                if cur_nimg % dist.get_world_size() != 0:
+                    raise RuntimeError(
+                        'strict factorial cur_nimg is not divisible by world size'
+                    )
+                expected_local_consumed = cur_nimg // dist.get_world_size()
+                if local_consumed_samples != expected_local_consumed:
+                    raise RuntimeError(
+                        'logical sampler consumption does not match committed '
+                        f'progress: {local_consumed_samples} != '
+                        f'{expected_local_consumed}'
+                    )
+                checkpoint_rank_states = gather_rank_reproducibility_state(
+                    dataset_sampler, local_consumed_samples
+                )
+
         # Save network snapshot.
         if (snapshot_ticks is not None) and (done or cur_tick % snapshot_ticks == 0) and cur_tick != 0:
             data = dict(ema=ema, loss_fn=loss_fn, augment_pipe=augment_pipe, dataset_kwargs=dict(dataset_kwargs))
@@ -1085,35 +2000,31 @@ def training_loop(
                     data[key] = value.cpu()
                 del value # conserve memory
             if dist.get_rank() == 0:
-                with open(os.path.join(run_dir, f'network-snapshot-{cur_tick:06d}.pkl'), 'wb') as f:
-                    pickle.dump(data, f)
+                reproducibility.atomic_pickle_dump(
+                    data,
+                    os.path.join(
+                        run_dir, f'network-snapshot-{cur_tick:06d}.pkl'
+                    ),
+                    overwrite=False,
+                )
             del data # conserve memory
 
         # Save full dump of the training state. Every rank participates in
         # collecting its local adaptive-loss accumulator; rank 0 writes the
         # resulting combined state.
-        state_dump_due = (
-            (state_dump_ticks is not None)
-            and (done or cur_tick % state_dump_ticks == 0)
-            and cur_tick != 0
-        )
         if state_dump_due:
-            adaptive_signal_window_state = (
-                gather_adaptive_signal_window_state(adaptive_signal_window, device)
-                if adaptive_signal_window is not None else None
-            )
             if dist.get_rank() == 0:
-                torch.save(
-                    build_training_state(adaptive_signal_window_state),
+                reproducibility.atomic_torch_save(
+                    build_training_state(
+                        checkpoint_adaptive_state,
+                        checkpoint_rank_states,
+                        advance_tick=natural_maintenance_due,
+                    ),
                     os.path.join(run_dir, f'training-state-{cur_tick:06d}.pt'),
+                    overwrite=False,
                 )
 
         # Save latest checkpoints
-        latest_checkpoint_due = (
-            (ckpt_ticks is not None)
-            and (done or cur_tick % ckpt_ticks == 0)
-            and cur_tick != 0
-        )
         if latest_checkpoint_due:
             dist.print0(f'Save the latest checkpoint at {cur_tick:06d} img...')
             data = dict(ema=ema, loss_fn=loss_fn, augment_pipe=augment_pipe, dataset_kwargs=dict(dataset_kwargs))
@@ -1124,18 +2035,22 @@ def training_loop(
                     data[key] = value.cpu()
                 del value # conserve memory
             if dist.get_rank() == 0:
-                with open(os.path.join(run_dir, f'network-snapshot-latest.pkl'), 'wb') as f:
-                    pickle.dump(data, f)
+                reproducibility.atomic_pickle_dump(
+                    data,
+                    os.path.join(run_dir, 'network-snapshot-latest.pkl'),
+                    overwrite=True,
+                )
             del data # conserve memory
 
-            adaptive_signal_window_state = (
-                gather_adaptive_signal_window_state(adaptive_signal_window, device)
-                if adaptive_signal_window is not None else None
-            )
             if dist.get_rank() == 0:
-                torch.save(
-                    build_training_state(adaptive_signal_window_state),
+                reproducibility.atomic_torch_save(
+                    build_training_state(
+                        checkpoint_adaptive_state,
+                        checkpoint_rank_states,
+                        advance_tick=natural_maintenance_due,
+                    ),
                     os.path.join(run_dir, f'training-state-latest.pt'),
+                    overwrite=True,
                 )
 
         # Sample Img
@@ -1171,13 +2086,26 @@ def training_loop(
             stats_jsonl.flush()
         dist.update_progress(cur_nimg / 1000, total_kimg)
 
-        # Update state.
-        cur_tick += 1
-        tick_start_nimg = cur_nimg
-        tick_start_time = time.time()
-        maintenance_time = tick_start_time - tick_end_time
+        # Only a natural maintenance boundary advances tick control state.
+        # A planned-pause-only checkpoint must resume from the exact controls
+        # that an uninterrupted run would see on its next iteration.
+        if natural_maintenance_due:
+            cur_tick += 1
+            tick_start_nimg = cur_nimg
+            tick_start_time = time.time()
+            maintenance_time = tick_start_time - tick_end_time
         if done:
             break
+        if planned_pause:
+            if train_summary_csv is not None:
+                train_summary_csv.close()
+            if factorial_telemetry_csv is not None:
+                factorial_telemetry_csv.close()
+            dist.print0()
+            dist.print0(
+                f'Planned pause after {attempted_iteration} attempts; exiting.'
+            )
+            return
         
         # Update Scheduler
         new_stage = (cur_tick-1) // double_ticks
@@ -1207,6 +2135,8 @@ def training_loop(
     # Done.
     if train_summary_csv is not None:
         train_summary_csv.close()
+    if factorial_telemetry_csv is not None:
+        factorial_telemetry_csv.close()
     dist.print0()
     dist.print0('Exiting...')
 

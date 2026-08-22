@@ -82,6 +82,8 @@ class CommaSeparatedList(click.ParamType):
 @click.option('--bench',         help='Enable cuDNN benchmarking', metavar='BOOL',                  type=bool, default=True, show_default=True)
 @click.option('--cache',         help='Cache dataset in CPU memory', metavar='BOOL',                type=bool, default=True, show_default=True)
 @click.option('--workers',       help='DataLoader worker processes', metavar='INT',                 type=click.IntRange(min=1), default=1, show_default=True)
+@click.option('--eval-batch',    help='Batch size for evaluator previews/module summary', metavar='INT', type=click.IntRange(min=1), default=512, show_default=True)
+@click.option('--metric-generator-batch', help='Generator microbatch used by metrics', metavar='INT', type=click.IntRange(min=1), default=128, show_default=True)
 
 # I/O-related.
 @click.option('--desc',          help='String to include in result dir name', metavar='STR',        type=str)
@@ -96,6 +98,7 @@ class CommaSeparatedList(click.ParamType):
 @click.option('--metrics',       help='Comma-separated list or "none" [default: fid50k_full]',      type=CommaSeparatedList(), default='fid50k_full')
 @click.option('--metric-repeats', help='Number of times to repeat each metric',                     type=click.IntRange(min=1), default=3, show_default=True)
 @click.option('--sample-seeds',  help='Explicit per-sample seed list/range (single-GPU only)',       metavar='LIST', type=str)
+@click.option('--retain-generated-artifacts', help='Retain exact generated samples and metric features', is_flag=True)
 
 
 def main(**kwargs):
@@ -156,11 +159,18 @@ def main(**kwargs):
             raise click.ClickException('--sample-seeds must not contain duplicates')
         if dist.get_world_size() != 1:
             raise click.ClickException('--sample-seeds currently requires exactly one GPU')
+    if opts.retain_generated_artifacts and dist.get_world_size() != 1:
+        raise click.ClickException('--retain-generated-artifacts currently requires exactly one GPU')
+    if 128 % opts.metric_generator_batch != 0:
+        raise click.ClickException('--metric-generator-batch must divide the metric batch size 128')
     c.update(
+        batch_size=opts.eval_batch,
         mid_t=() if opts.nfe == '1' else opts.mid_t,
         metrics=opts.metrics,
         metric_repeats=opts.metric_repeats,
         sample_seeds=sample_seeds,
+        retain_generated_artifacts=opts.retain_generated_artifacts,
+        metric_generator_batch=opts.metric_generator_batch,
     )
 
     # Random seed.
@@ -344,6 +354,8 @@ def evaluation(
     metrics             = None,     # Metrics for evaluation.
     metric_repeats      = 3,        # Number of deterministic repeats per metric.
     sample_seeds        = None,     # Explicit per-sample seeds for proxy metrics.
+    retain_generated_artifacts = False, # Save exact generated samples/features used by metrics.
+    metric_generator_batch = 128, # Generator microbatch used inside metric feature extraction.
     cudnn_benchmark     = True,     # Enable torch.backends.cudnn.benchmark?
     device              = torch.device('cuda'),
 ):
@@ -413,12 +425,26 @@ def evaluation(
         del images
 
     dist.print0('Evaluating few-step generation...')
-    for _ in range(metric_repeats):
-        for metric in metrics:
+    for repeat_index in range(metric_repeats):
+        shared_generated_features_path = None
+        for metric_index, metric in enumerate(metrics):
+            generated_features_path = None
+            generated_samples_path = None
+            if retain_generated_artifacts and dist.get_rank() == 0:
+                generated_features_path = os.path.join(
+                    run_dir, f'generated-features-{metric}-repeat{repeat_index:02d}.npy')
+                if repeat_index == 0 and metric_index == 0:
+                    generated_samples_path = os.path.join(run_dir, 'generated-samples.npy')
             result_dict = metric_main.calc_metric(metric=metric, 
                 generator_fn=few_step_fn, G=net, G_kwargs={},
                 dataset_kwargs=dataset_kwargs, num_gpus=dist.get_world_size(), rank=dist.get_rank(), device=device,
-                sample_seeds=sample_seeds, metric_seed=seed)
+                sample_seeds=sample_seeds, metric_seed=seed,
+                generated_features_path=generated_features_path,
+                generated_samples_path=generated_samples_path,
+                generator_batch_size=metric_generator_batch,
+                precomputed_generated_features_path=shared_generated_features_path)
+            if generated_features_path is not None and shared_generated_features_path is None:
+                shared_generated_features_path = generated_features_path
             if dist.get_rank() == 0:
                 metric_main.report_metric(result_dict, run_dir=run_dir, snapshot_pkl=f'{resume_pkl}')
 

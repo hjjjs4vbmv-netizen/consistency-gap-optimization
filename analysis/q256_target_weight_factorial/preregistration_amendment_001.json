@@ -1,0 +1,40 @@
+{
+  "schema": "ect.q256.target-weight-factorial-preregistration-amendment/v1",
+  "amendment_id": "001",
+  "date": "2026-08-19",
+  "timing": "before_formal_training_and_evaluation",
+  "parent_schema": "ect.q256.target-weight-factorial-preregistration/v1",
+  "scope": "operational_compute_forecast_only",
+  "scientific_protocol_changed": false,
+  "supersedes": {
+    "path": "planning.evaluation_gpu_hours_estimate_range",
+    "old_value": [12, 16],
+    "new_value": [2.4, 4.0]
+  },
+  "evidence": {
+    "proxy": "archived_q128_same_staged_evaluator",
+    "nfe1_seconds_per_checkpoint_mean": 285.115,
+    "nfe2_seconds_per_checkpoint_mean": 426.918,
+    "checkpoint_count": 12,
+    "nfe_modes": 2,
+    "sampling_job_count": 24,
+    "fid_and_kid_share_each_sampling_job": true,
+    "proxy_total_seconds": 8544.396,
+    "proxy_total_gpu_hours": 2.373443333333333
+  },
+  "corrected_end_to_end_gpu_hours_range": [8.4, 12.0],
+  "unchanged": [
+    "question",
+    "arms",
+    "training_protocol",
+    "training_budget",
+    "evaluation_endpoints",
+    "generation_seeds",
+    "metric_seed",
+    "nfe_modes",
+    "contrasts",
+    "interaction",
+    "stopping_rules",
+    "reporting_rules"
+  ]
+}

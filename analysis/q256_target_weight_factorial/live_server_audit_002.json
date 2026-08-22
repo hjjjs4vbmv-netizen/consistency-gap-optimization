@@ -1,0 +1,47 @@
+{
+  "schema": "ect.q256.target-weight-live-server-audit/v1",
+  "audit_id": "002",
+  "observed_at_utc": "2026-08-19T07:52:09Z",
+  "host": "gpu0003",
+  "endpoint": "ECT001@172.16.30.17:22",
+  "status": "GO_CORRECTNESS_GATES_ONLY",
+  "formal_training_authorized": false,
+  "assets_inherited_from_audit_001": true,
+  "storage": {
+    "run_root": "/data/raw/ECT/ect_runs",
+    "run_root_available_bytes": 35989850161152,
+    "temporary_root": "/data/temp",
+    "temporary_root_available_bytes": 5475417194496,
+    "minimum_formal_free_bytes": 64424509440
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "name": "NVIDIA A100 80GB PCIe",
+      "uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+      "memory_used_mib": 4,
+      "utilization_percent": 0,
+      "temperature_c": 34
+    },
+    {
+      "index": 1,
+      "name": "NVIDIA A100 80GB PCIe",
+      "uuid": "GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10",
+      "memory_used_mib": 4,
+      "utilization_percent": 0,
+      "temperature_c": 34
+    }
+  ],
+  "compute_processes": [],
+  "resolved_blockers": [
+    "foreign_ray_compute_processes_on_both_gpus",
+    "independent_ect001_gradient_audit_on_gpu0"
+  ],
+  "remaining_blockers_before_formal": [
+    "clean_committed_source_not_yet_frozen_on_server",
+    "role_e_ab_parity_receipt_not_yet_passed",
+    "four_arm_smoke_receipt_not_yet_passed",
+    "exact_resume_receipt_not_yet_passed"
+  ],
+  "prohibited_source": "/data/raw/ECT/recurrence_of_ect"
+}

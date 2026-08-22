@@ -1,0 +1,43 @@
+{
+  "schema": "ect.q256.target-weight-live-server-audit/v1",
+  "audit_id": "004",
+  "observed_at_utc": "2026-08-19T08:38:35Z",
+  "host": "gpu0003",
+  "endpoint": "ECT001@172.16.30.17:22",
+  "status": "GO_PREFREEZE_TESTS_ONLY",
+  "formal_training_authorized": false,
+  "ssh_health_check_exit_code": 0,
+  "gpus": [
+    {
+      "index": 0,
+      "name": "NVIDIA A100 80GB PCIe",
+      "uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+      "memory_used_mib": 4,
+      "utilization_percent": 0,
+      "temperature_c": 34
+    },
+    {
+      "index": 1,
+      "name": "NVIDIA A100 80GB PCIe",
+      "uuid": "GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10",
+      "memory_used_mib": 4,
+      "utilization_percent": 0,
+      "temperature_c": 34
+    }
+  ],
+  "compute_processes": [],
+  "prefreeze_source": {
+    "base": "c01a61d767793ac52b427e4064f1f71583a17e1c",
+    "path": "/data/temp/ECT001/q256-factorial-prefreeze-v2-20260819T1635",
+    "overlay_file_count_before_this_receipt": 33,
+    "rsync_checksum_dry_run_difference_count": 0,
+    "formal_source": false
+  },
+  "remaining_blockers_before_formal": [
+    "prefreeze_test_suite_not_yet_passed",
+    "clean_source_commit_not_yet_created_and_installed",
+    "role_e_ab_parity_receipt_not_yet_passed",
+    "four_arm_smoke_receipt_not_yet_passed",
+    "exact_resume_receipt_not_yet_passed"
+  ]
+}
