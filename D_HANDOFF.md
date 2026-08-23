@@ -1,5 +1,11 @@
 # Role C → Role D Handoff: Confirmatory 256k (seed 3)
 
+> **Superseded for current paper-mainline work by
+> [`ROLE_D_HANDOFF_COMPUTE_TO_QUALITY_20260822.md`](ROLE_D_HANDOFF_COMPUTE_TO_QUALITY_20260822.md); retained for historical provenance.**
+>
+> The immutable historical copy is also retained as
+> [`OLD_ROLE_D_HANDOFF.md`](OLD_ROLE_D_HANDOFF.md).
+
 **Provenance:**
 - training_code_sha: `3a0d603da97dd93ddbb6c7ce49e4a7351d54bb43` (the commit seed-3 was trained on; recorded in each run dir `commit_sha.txt`)
 - pr_head_sha: `79143c685e5588948972c17457b1c51c7a77bb49` (this PR head; only adds docs + the resume fix, not a training baseline)

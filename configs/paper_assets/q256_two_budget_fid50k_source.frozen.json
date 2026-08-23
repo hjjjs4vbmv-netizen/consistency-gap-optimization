@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "kind": "q256_two_budget_fid50k_source",
+  "description": "Frozen normalization contract for the q256 256/1024-kimg FID-50k endpoint evidence. The contract rejects FID-5k records and incomplete seed/arm/NFE cells.",
+  "budgets_kimg": [256, 1024],
+  "training_seeds": [3, 4, 5],
+  "nfes": [1, 2],
+  "arms": {
+    "A": "arm_a_g100_weight100",
+    "B": "arm_b_g110_weight110",
+    "C": "arm_c_g110_weight100",
+    "D": "arm_d_g100_weight110"
+  },
+  "metric_name": "fid50k_full",
+  "sample_count": 50000,
+  "generation_seed_range": "0-49999",
+  "metric_seed": 20260730,
+  "evidence_class": "formal_preregistered",
+  "evaluation_contract": "q256-fid50k-50k-v1",
+  "analysis_track": "two_budget_endpoint",
+  "prohibition": "FID-5k values at 512 or 768 kimg are not admissible inputs and must never be connected to these FID-50k endpoints."
+}

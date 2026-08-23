@@ -1,0 +1,612 @@
+% Anonymous ICLR 2027 manuscript. Keep \iclrfinalcopy commented for review.
+\documentclass{article}
+\usepackage{iclr2027_conference,times}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{url}
+
+\newcommand{\sg}{\operatorname{sg}}
+\newcommand{\Dsg}{\mathcal{D}^{\mathrm{sg}}_\theta}
+\newcommand{\Ropt}{R_{\mathrm{opt}}}
+
+\title{Pair Spacing Reshapes Finite-Budget Learning\\
+in Easy Consistency Tuning}
+\author{Anonymous Authors}
+% \iclrfinalcopy
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Easy Consistency Tuning (ECT) trains one-step generators from states paired at
+a temporal separation, but the optimization meaning of that pair spacing is
+unclear. We show that changing the spacing is an exact composite intervention:
+it moves the detached target endpoint and changes the explicit inverse-gap
+weight. These two channels factorize at a matched objective-gradient state,
+yet the factorization does not determine outcomes after training arms acquire
+different parameters and optimizer histories. We test this distinction in a
+fixed-$q=256$ CIFAR-10 ECT configuration using a controlled $g=1.10$ spacing
+probe. A three-seed formal factorial favored the complete intervention over the
+baseline in all 12 seedwise FID/KID directions across one- and two-step
+sampling at 256 kimg. Audited exact-budget replays and two secondary cohorts
+then track 456 paired FID/KID evaluation jobs through 1024 kimg. At the descriptive
+one-step FID threshold of 10, the complete intervention reached the threshold
+one 128-kimg stage earlier for five of ten training seeds; two seeds tied, two
+crossed later, and one pair was censored. Four-arm rankings also changed with
+seed, budget, and sampling NFE. Pair spacing can therefore advance entry into
+a useful finite-budget regime, but the advance is not universal. In this
+setting, pair spacing is best understood as a locally structured training
+control with trajectory- and horizon-dependent consequences, not as a
+universally superior final hyperparameter.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Consistency models replace iterative diffusion sampling with a mapping that is
+constant along a probability-flow trajectory, enabling one- or few-step
+generation \citep{song2023consistency}. Their sampling speed shifts part of the
+computational burden to training: a useful model must learn a long trajectory
+relation from local or discretized consistency constraints. Improved
+consistency training and Easy Consistency Tuning (ECT) make this process far
+more effective \citep{song2024improved,geng2024ect}, but they also introduce a
+concrete control question. How far apart should the two training states be?
+This question matters at finite budget because pair spacing can change when a
+one-step model first enters a useful-quality regime, even if differences later
+contract.
+
+Pair spacing is easy to misread as a scalar knob. In the ECT objective studied
+here, a larger spacing changes which earlier state supplies the detached target
+and also changes the explicit inverse-gap weight multiplying the residual.
+These are distinct interventions. At one matched model state, their action on
+the loss and one-sided training derivative is exactly characterizable. After a
+single update, however, separately trained arms generally no longer share
+parameters, stochastic gradients, or optimizer state. A local identity is
+therefore not an endpoint-ranking theorem. This local-to-trajectory distinction
+is the organizing problem of the paper (Figure~\ref{fig:composite}).
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{figures/figure1_composite_intervention.pdf}
+  \caption{\textbf{Pair spacing is a composite local intervention.} In the
+  studied ECT objective, changing $\Delta$ moves the detached target endpoint
+  and changes the explicit inverse-gap weight. Their matched-state
+  loss/gradient action factorizes exactly. Separate finite training then
+  creates different parameter and optimizer histories, so time-to-quality and
+  arm ranking remain empirical, horizon-dependent quantities. The fixed
+  $g=1.10$ multiplier is a controlled probe, not a proposed universal method.}
+  \label{fig:composite}
+\end{figure*}
+
+We study this problem at fixed $q=256$. Both $q$ and the multiplier $g$ can
+affect realized pair spacing; our experiment changes only $g$ and does not
+establish invariance across $q$. The novelty is consequently not that
+$g=1.10$ is ``better.'' It is the conjunction of (i) an exact ECT-specific
+composite-intervention formulation, (ii) a target-by-denominator factorial
+followed through complete learning trajectories, and (iii) a seed-resolved
+account of when the intervention advances, ties, or delays entry into a
+high-quality one-step regime.
+
+Our contributions are threefold:
+\begin{enumerate}
+  \item We derive exact finite-gap loss and one-sided gradient decompositions,
+  exact target-by-denominator identities, and a conditional local scaling law
+  $\kappa=\nu(p-1)-\alpha$ that specializes to $\kappa=-1$ for the ECT loss.
+  \item We combine a formal three-seed factorial with audited deterministic
+  four-arm replays over seven budgets. This design separates objective-level
+  factorization from finite-training outcome non-factorization.
+  \item We quantify finite-budget phase advance without averaging away adverse
+  seeds. Across three evidence groups, the complete intervention is one
+  observed stage earlier for five seeds, tied for two, later for two, and
+  censored for one; component rankings also depend on horizon and sampling NFE.
+\end{enumerate}
+
+\section{Related Work and Problem Setup}
+\label{sec:setup}
+
+\subsection{Training fast generative models}
+
+Consistency models can be trained by distillation or directly from data
+\citep{song2023consistency}. Improved consistency training (iCT) corrected the
+teacher update and introduced loss, noise-sampling, and discretization choices
+that substantially strengthened training from scratch
+\citep{song2024improved}. ECT instead fine-tunes a pretrained diffusion model
+while progressively strengthening consistency constraints
+\citep{geng2024ect}. Related work improves continuous-time parameterization and
+stability \citep{lu2025scm}, reduces target variance
+\citep{wang2024sct,silvestri2025vct}, or adapts traversal difficulty and
+discretization \citep{liu2025ccm,bai2025adcm}. These methods establish that
+pair construction, weighting, and trajectory coverage affect trainability.
+Our question is narrower: for one fixed ECT configuration, what intervention
+does pair spacing implement locally, and how does that intervention appear
+along finite training trajectories?
+
+Adaptive optimizers provide a relevant boundary. Adam and RAdam retain unequal
+moment histories \citep{kingma2015adam,liu2020radam}, and nonstationary gradient
+magnitude can interact with stored moments \citep{ellis2024adamrel}. Gradient
+scaling therefore need not imply trajectory equivalence. Section~\ref{sec:optimizer}
+uses a frozen-state ECT diagnostic only to establish this boundary.
+
+\subsection{ECT objective and factorial arms}
+
+For a coupled sample, write $x_t=y+t\epsilon$ and $x_r=y+r\epsilon$, with
+$\Delta=t-r>0$. The online output is $D_t=f_\theta(x_t,t)$ and the target is
+$T_r=\sg[f_\theta(x_r,r)]$. The studied loss uses the Euclidean residual and
+an external inverse-gap weight,
+\begin{equation}
+  \ell(r,\Delta)=\frac{\lVert D_t-T_r\rVert_2}{\Delta}.
+  \label{eq:ect-loss}
+\end{equation}
+We compare the native baseline spacing $\Delta_1$ with the realized spacing
+$\Delta_g$ under $g=1.10$, including the production boundary clamp. The four
+training arms cross the detached target and denominator assignments:
+\begin{table}[H]
+  \centering
+  \caption{Target-by-denominator factorial.}
+  \label{tab:arms}
+  \small
+  \begin{tabular}{clll}
+    \toprule
+    Arm & Target & Denominator & Role \\
+    \midrule
+    A & $r_1=t-\Delta_1$ & $\Delta_1$ & baseline \\
+    B & $r_g=t-\Delta_g$ & $\Delta_g$ & complete probe \\
+    C & $r_g$ & $\Delta_1$ & target only \\
+    D & $r_1$ & $\Delta_g$ & denominator only \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Exact Local Structure of the Intervention}
+\label{sec:theory}
+
+\subsection{Ideal endpoint invariance is conditional}
+
+Pair spacing can change training without changing an ideal consistency map.
+Let $\mathcal{T}_{t\rightarrow r}$ be exact compositional transport along a
+trajectory. Suppose a schedule connects every supported $t$ to a common
+anchor $t_\star$, every scheduled edge is covered by the population objective,
+the function class attains zero edge residual, optimization reaches that
+solution, and the map is fixed at the anchor. Zero residual then telescopes:
+\begin{equation}
+  F^\star(x_t,t)=F^\star(\mathcal{T}_{t\rightarrow t_\star}(x_t),t_\star).
+  \label{eq:ideal-invariance}
+\end{equation}
+Two legal schedules with the same support, transport, and anchor therefore
+identify the same ideal map on reachable states. This is an identification
+statement under strong assumptions, not a claim about finite-capacity or
+incompletely optimized networks \citep{lyu2024convergence,dou2024theory}.
+
+\subsection{One-sided derivative and exact finite-gap decomposition}
+
+Stop-gradient must be represented at the derivative level. Introduce a lifted
+loss $\widetilde\ell(\theta,\bar\theta)$ whose target branch uses
+$\bar\theta$. The training derivative is
+\begin{equation}
+  \Dsg\ell:=\left.\partial_\theta
+  \widetilde\ell(\theta,\bar\theta)\right|_{\bar\theta=\theta},
+  \label{eq:sg-derivative}
+\end{equation}
+not the diagonal total derivative, which would also differentiate the target
+copy. Let $e_r=D_t-T_r$, $u_r=e_r/\lVert e_r\rVert_2$, and
+$J_t=\partial_\theta D_t$. Away from $e_r=0$, the implemented per-sample
+training derivative is exactly
+\begin{equation}
+  g(r,\Delta):=\Dsg\ell(r,\Delta)=\frac{1}{\Delta}J_t^\top u_r.
+  \label{eq:exact-gradient}
+\end{equation}
+
+Evaluate the baseline and enlarged spacing at the same parameters, online
+realization, data, and noise. With $s=\Delta_1/\Delta_g$, substitution into
+Equations~\eqref{eq:ect-loss}--\eqref{eq:exact-gradient} yields
+\begin{align}
+  \ell_g
+  &=s\ell_1+\frac{\lVert e_{r_g}\rVert_2-\lVert e_{r_1}\rVert_2}{\Delta_g},
+  \label{eq:loss-decomp}\\
+  g_g
+  &=s g_1+\frac{1}{\Delta_g}J_t^\top(u_{r_g}-u_{r_1}).
+  \label{eq:grad-decomp}
+\end{align}
+The first term is exact denominator rescaling; the second contains the entire
+target-endpoint change. No small-gap or optimizer approximation is used.
+
+The factorial follows immediately. At a matched sample,
+\begin{equation}
+  g_B=s g_C,\qquad g_D=s g_A,\qquad
+  g_B-g_D=s(g_C-g_A),
+  \label{eq:factorial-identities}
+\end{equation}
+and the interaction satisfies
+\begin{equation}
+  g_B-g_C-g_D+g_A=(s-1)(g_C-g_A).
+  \label{eq:interaction-identity}
+\end{equation}
+When the multiplier is unclipped, $s=1/g$ is common and these identities also
+hold after minibatch summation. The production manipulation test verified the
+two scalar identities with maximum elementwise relative residuals below
+$3.9\times10^{-7}$. These are local objective-gradient identities; they neither
+rank trained arms nor decompose FID into causal percentages.
+
+\subsection{A conditional local scaling law}
+
+The exact decomposition has a useful asymptotic corollary. Consider
+$\ell_\delta=w(\delta,z)\Phi(e_\delta)$ and assume
+$e_\delta=\delta^\nu v+O(\delta^{\nu+1})$ with $v\neq0$,
+$w(\delta,z)=w_0(z)\delta^{-\alpha}(1+O(\delta))$, a regular online Jacobian,
+a nonzero leading derivative, and a degree-$p$ homogeneous $\Phi$. Then
+\begin{equation}
+  g^{\mathrm{sg}}_\delta=C(\theta,z)\delta^\kappa
+  +O(\delta^{\kappa+1}),\qquad
+  \boxed{\kappa=\nu(p-1)-\alpha}.
+  \label{eq:kappa-law}
+\end{equation}
+For the present $c=0$ ECT loss, $p=1$ and $\alpha=1$, hence
+$\kappa_{\mathrm{ECT}}=-1$. This special case predicts a leading inverse-gap
+scale, independent of $\nu$; it therefore does not validate the residual order
+$\nu$. It is also local. The finite target correction in
+Equation~\eqref{eq:grad-decomp}, minibatch heterogeneity, and all subsequent
+optimizer states remain outside the scalar prediction. Appendix~\ref{app:proof}
+gives the proof and scope.
+
+\section{Experimental Design and Evidence Status}
+\label{sec:design}
+
+\paragraph{Training and evaluation.}
+We fine-tuned the same unconditional CIFAR-10 $32\times32$ DDPM++ model with
+ECT preconditioning in every arm. Runs used $q=256$, RAdam with learning rate
+$10^{-4}$ and $(\beta_1,\beta_2)=(0.9,0.999)$, global batch 128, dropout 0.2,
+EMA decay 0.9993, FP16 networks with AMP, and no augmentation or weight decay.
+The formal arms began from the same immutable pretrained checkpoint within
+each seed and differed only in the target/denominator assignment in
+Table~\ref{tab:arms}. FID and KID use 50,000 generated samples, generation
+seeds 0--49,999, metric seed 20260730, and FP32 sampling
+\citep{heusel2017fid,binkowski2018kid}. NFE2 uses the frozen intermediate time
+$0.821$. Training seed is the independent unit; budgets, NFE, and the two
+metrics are repeated readouts.
+
+\paragraph{Evidence groups.}
+The original formal experiment contains seeds 3--5, four arms, and the
+256-kimg endpoint. A deterministic replay of the same 12 trajectories provides
+exact checkpoints at 256, 384, 512, 640, 768, 896, and 1024 kimg; all 168
+FID/KID jobs passed, and all 12 terminal replay states were bitwise identical
+to their canonical 1024-kimg states. Secondary evidence is reported separately:
+seeds 6--7 contain A/B curves from 384 to 1024 kimg (48 jobs), and seeds
+14--18 contain four-arm curves over the same six budgets (240 jobs). These
+secondary cohorts improve descriptive coverage but are not prospectively
+relabelled confirmation.
+
+\paragraph{Time-to-quality.}
+For arm $a$, seed $s$, and descriptive threshold $\eta=10$, define
+\begin{equation}
+  \tau_{a,s}(\eta)=\min\{K:\mathrm{FID}_{a,s}^{\mathrm{NFE1}}(K)\leq\eta\}.
+  \label{eq:ttq}
+\end{equation}
+We use observed checkpoints only and report censoring when a crossing is absent.
+The threshold summarizes entry into the quality range reached late in training;
+it was not preregistered as a confirmatory endpoint. Matched-budget differences
+are reported alongside it so the conclusion does not rest on one threshold.
+
+\section{Finite-Budget Learning Results}
+\label{sec:results}
+
+\subsection{The controlled early endpoint favors the complete intervention}
+
+At 256 kimg, B had lower FID and KID than A for every formal seed under both
+NFE1 and NFE2 (Table~\ref{tab:formal256}). This gives 12 favorable seedwise
+directions: three seeds, two metrics, and two samplers. It is an early
+finite-budget intervention result, not a practical terminal benchmark; among
+A and B, NFE1 FID remained between 306.8 and 331.9.
+
+\begin{table}[H]
+  \centering
+  \caption{\textbf{Formal 256-kimg seed-level results.} FID columns show all
+  four NFE1 arms. $\Delta$ is B$-$A; negative values favor the complete
+  intervention. KID differences are multiplied by $10^3$. FID and KID share
+  generated features and are not independent experiments.}
+  \label{tab:formal256}
+  \small
+  \begin{tabular}{crrrrrrrr}
+    \toprule
+    & \multicolumn{4}{c}{NFE1 FID-50k} & \multicolumn{2}{c}{NFE1 B$-$A}
+    & \multicolumn{2}{c}{NFE2 B$-$A} \\
+    \cmidrule(lr){2-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+    Seed & A & B & C & D & $\Delta$FID & $10^3\Delta$KID
+    & $\Delta$FID & $10^3\Delta$KID \\
+    \midrule
+    3 & 331.885 & 310.508 & 318.175 & 329.234 & -21.377 & -39.895 & -138.277 & -164.555 \\
+    4 & 310.235 & 306.773 & 304.566 & 324.722 &  -3.461 &  -5.470 &   -0.924 &   -1.640 \\
+    5 & 318.639 & 308.855 & 308.414 & 315.200 &  -9.784 &  -3.309 &   -5.030 &   -6.032 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The factorial qualifies the interpretation. At NFE1, both target-related
+contrasts, C$-$A and B$-$D, were negative for all three seeds. By contrast,
+the denominator contrasts D$-$A and B$-$C and the factorial interaction had
+mixed signs. This pattern motivated the component analysis, but it does not
+show that the target explains a fixed share of B$-$A or that the denominator
+is irrelevant.
+
+\subsection{Exact-budget curves reveal contraction and rank changes}
+
+The deterministic replay replaces a single endpoint with the complete formal
+learning paths (Figure~\ref{fig:learning-curves}). Early separations can be
+large: for example, the NFE1 B$-$A FID difference at 384 kimg is $-65.65$ for
+seed 5. The sign reverses at 512 kimg ($+5.61$) and becomes favorable again
+after 640 kimg. Seed 4 changes in the other direction: B is favorable through
+512 kimg and slightly unfavorable thereafter. Thus even within one seed,
+matched-budget direction is not fixed by the early endpoint.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.98\textwidth]{figures/figure2_seed_resolved_learning_curves.pdf}
+  \caption{\textbf{Formal deterministic four-arm learning curves.} Every panel
+  shows all arms for one training seed at the seven exact replay budgets. FID
+  is plotted on a log scale; NFE and budget are repeated readouts of the same
+  three seed trajectories. Large early differences contract, while the order
+  of A/B/C/D remains seed- and NFE-dependent.}
+  \label{fig:learning-curves}
+\end{figure*}
+
+By 1024 kimg, the formal NFE1 B$-$A differences are $-0.983$, $+0.229$, and
+$-0.596$ for seeds 3--5. The corresponding NFE2 differences are $-0.034$,
+$+0.023$, and $-0.101$. Absolute quality is now substantially better---formal
+NFE1 FID is 7.64--10.67 across all arms and NFE2 FID is 2.71--3.09---but the
+best arms are B, A, and C for both samplers across the three seeds. Mature
+contraction therefore does not produce a universal terminal winner.
+
+\subsection{Phase advance occurs on several, not all, trajectories}
+
+Figure~\ref{fig:ttq} reports the first observed NFE1 checkpoint with FID at
+most 10. B crosses one 128-kimg stage earlier for seeds 3, 5, 6, 7, and 14.
+Seeds 4 and 15 tie; seeds 17 and 18 cross one stage later under B. Neither arm
+crosses for seed 16 by 1024 kimg (A: 13.13; B: 10.92), so that pair is
+censored. The phase advance is consequently real on multiple trajectories but
+not a seed-uniform property.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.92\textwidth]{figures/figure3_time_to_quality_seed_resolved.pdf}
+  \caption{\textbf{Seed-resolved descriptive time-to-quality.} Points are the
+  first observed budgets with FID-50k@NFE1 $\leq10$; connectors pair A and B
+  within a training seed. Evidence groups are separated. Open markers denote
+  no crossing by the last observed checkpoint. The grid is 128 kimg and no
+  interpolation is used. The threshold was chosen for descriptive analysis,
+  not as a preregistered confirmatory endpoint.}
+  \label{fig:ttq}
+\end{figure*}
+
+Matched-budget comparisons tell the same, less threshold-dependent story. B
+has lower NFE1 FID at 16/21 formal replay points, 9/12 secondary A/B points,
+and 20/30 secondary factorial points. These are repeated observations along
+ten trajectories, not 45 independent wins. At 1024 kimg the favorable B$-$A
+counts are 2/3, 2/2, and 3/5 in the three evidence groups, respectively. The
+effect therefore persists into a mature-quality regime for several seeds, but
+its direction is neither universal nor constant over horizon.
+
+\subsection{Component rankings are horizon- and sampler-dependent}
+
+The formal contrast paths make outcome non-factorization explicit
+(Figure~\ref{fig:contrasts}). At 256 kimg, both NFE1 target contrasts are
+negative for all three seeds. At 1024 kimg, C$-$A is positive for seeds 3 and 4
+but negative for seed 5; denominator and interaction contrasts also mix signs.
+The exact relation in Equation~\eqref{eq:interaction-identity} still holds for
+a matched objective state, but it does not constrain these separately trained
+FID contrasts.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{figures/figure4_budget_dependent_factorial_contrasts.pdf}
+  \caption{\textbf{Formal NFE1 FID contrasts across budget.} Negative values
+  favor the first arm in each title. A signed pseudo-log axis preserves zero
+  and displays both early large effects and late small contrasts. Thin lines
+  are training seeds; the thick line is their descriptive mean. Target,
+  denominator, and interaction directions change with seed and horizon.}
+  \label{fig:contrasts}
+\end{figure*}
+
+The five-seed secondary factorial supplies an adverse-sensitivity check. At
+1024 kimg, the NFE1 winners for seeds 14--18 are D, B, B, A, and A; the NFE2
+winners are D, A, D, A, and A. Thus the sampler changes the winner for two of
+five seeds, while no single arm wins across the cohort. Early rankings differ
+again. The empirical conclusion is therefore narrower than a component
+hierarchy: the intervention factorizes exactly at the objective level, while
+the functional ranking of its components depends on budget, seed, and sampler.
+
+\section{Supporting Optimizer-State Boundary}
+\label{sec:optimizer}
+
+Stateful optimization is one reason a local scalar relation need not become a
+trajectory equivalence. We compared virtual RAdam updates after best scalar
+alignment,
+\begin{equation}
+  \Ropt(U_1,U_0)=\frac{\lVert U_1-c^\star U_0\rVert_2}{\lVert U_0\rVert_2},
+  \quad c^\star=\frac{\langle U_1,U_0\rangle}{\lVert U_0\rVert_2^2}.
+  \label{eq:ropt}
+\end{equation}
+Across seeds 3--5, the median residual was 0.074--0.088 for observed gradients
+under real accumulated state and 0.467--0.491 after moment reset. Even an
+exact-scalar gradient pair retained 0.049--0.077 under real state. Moment reset
+is therefore not a memory-neutral control. A preregistered moment-transport
+attempt subsequently worsened all 12 held-out residuals and failed its gate;
+no continuation training or FID/KID evaluation was launched. These diagnostics
+support only the boundary that instantaneous gradients do not determine
+stateful updates. They do not establish that RAdam caused the quality changes.
+
+\section{Discussion, Limitations, and Conclusion}
+\label{sec:discussion}
+
+\paragraph{Scientific interpretation.}
+Pair spacing in ECT is locally structured but globally trajectory-dependent.
+The exact decomposition explains why the intervention cannot be reduced to a
+single unspecified ``gap effect.'' The curves explain why the decomposition
+should not be promoted to a fixed quality attribution: each arm changes the
+future states at which later objectives are evaluated. The useful practical
+quantity is therefore not only terminal FID, but the path from compute to
+quality. On five trajectories, the complete probe advances the first observed
+high-quality NFE1 checkpoint by one stage. Ties, delays, censoring, and changing
+four-arm winners establish the boundary of that advance.
+
+\paragraph{Limitations and next tests.}
+The evidence comes from CIFAR-10, one unconditional DDPM++/ECT configuration,
+fixed $q=256$, and one spacing multiplier. Both $g$ and $q$ affect effective
+pair spacing, so transfer across $q$ is unknown. NFE1 and NFE2 can rank arms
+differently, the time-to-quality threshold is descriptive, and the extended
+cohorts are secondary/post-preregistration analyses. The optimizer diagnostic
+does not close a causal path to FID, and ideal endpoint invariance depends on
+the assumptions preceding Equation~\eqref{eq:ideal-invariance}. The highest
+priority validation is an effective-spacing-matched cross-$q$ control,
+followed by a fresh prospective phase-advance test and a second weighting rule
+or dataset. Those tests would determine whether trajectory-conditioned
+scheduling is warranted; simply adding more retrospective $q=256$ seeds would
+not resolve the main generalization question.
+
+\paragraph{Conclusion.}
+Changing ECT pair spacing exactly combines a detached-target intervention with
+inverse-gap reweighting. This local factorization coexists with finite-budget
+learning paths whose quality and component rankings depend on seed, horizon,
+and sampler. Pair spacing can advance time-to-quality, but it does not define a
+universally best static gap. The resulting view is a bounded one: pair spacing
+is a finite-budget training control whose local action can be derived and whose
+global consequence must be measured along the trajectory.
+
+\section*{AI Use Statement}
+
+Generative AI tools assisted hypothesis refinement, experiment-design
+feedback, code generation and editing, code and derivation review, theoretical
+auditing, result interpretation, manuscript organization, prose editing, and
+figure-code preparation. Numerical measurements reported in the paper were
+produced by executed evaluation pipelines, not generated by a language model.
+The authors checked formulas, numerical transcriptions, figures, and claims
+against the archived repository records, reviewed all AI-assisted content, and
+assume responsibility for the manuscript.
+
+\section*{Ethics Statement}
+
+This work studies optimization on the public CIFAR-10 benchmark and introduces
+no human-participant study, private data, or deployment system. Its main risk is
+misinterpretation of a configuration-specific diagnostic as a universal
+training prescription; the evidence-status labels and limitations are intended
+to prevent that use.
+
+\section*{Reproducibility Statement}
+
+The supplementary package includes exact arm definitions, source-bound
+seed-level metric tables, deterministic replay checks, figure-generation code,
+and compact CSV/JSON artifacts. Full training and evaluation settings are
+listed in Appendix~\ref{app:protocol}. Checkpoints and generated samples are
+excluded from the paper package because of size, but their hashes are retained
+in the audit records.
+
+\bibliographystyle{iclr2027_conference}
+\bibliography{OVERLEAF_ICLR2027_REFERENCES}
+
+\appendix
+
+\section{Proof and Scope of the Local Scaling Law}
+\label{app:proof}
+
+For the lifted one-sided objective, the exact chain rule is
+$g^{\mathrm{sg}}_\delta=w(\delta,z){J^+_\delta}^{\!\top}
+\nabla\Phi(e_\delta)$. Under the assumptions in Section~\ref{sec:theory},
+positive homogeneity gives
+\begin{equation}
+  \nabla\Phi(e_\delta)=\delta^{\nu(p-1)}
+  \left[\nabla\Phi(v)+O(\delta)\right].
+\end{equation}
+Multiplying by $w_0\delta^{-\alpha}[1+O(\delta)]$ and
+${J^+_\delta}^{\!\top}={J^+_0}^{\!\top}+O(\delta)$ proves
+Equation~\eqref{eq:kappa-law}, provided
+${J^+_0}^{\!\top}\nabla\Phi(v)\neq0$. The theorem does not cover the ordinary
+diagonal total derivative, large gaps, a Pseudo-Huber crossover, a
+non-smooth clipping boundary, or a degenerate leading term. The exact
+finite-gap identities in Equations~\eqref{eq:grad-decomp}--
+\eqref{eq:interaction-identity} do not require this asymptotic theorem.
+
+\section{Full Formal Endpoint Matrix}
+\label{app:formal}
+
+\begin{table}[H]
+  \centering
+  \caption{Formal 256-kimg metrics. Lower is better.}
+  \small
+  \begin{tabular}{ccrrrr}
+    \toprule
+    Seed & Arm & FID$_1$ & KID$_1$ & FID$_2$ & KID$_2$ \\
+    \midrule
+    3&A&331.885&.353531&238.774&.252762\\
+    3&B&310.508&.313637&100.498&.088207\\
+    3&C&318.175&.343722&294.103&.312204\\
+    3&D&329.234&.345016&194.670&.202756\\
+    4&A&310.235&.315593&113.817&.103911\\
+    4&B&306.773&.310123&112.893&.102271\\
+    4&C&304.566&.307218&103.090&.091747\\
+    4&D&324.722&.339143&176.961&.180122\\
+    5&A&318.639&.329435&75.266&.062150\\
+    5&B&308.855&.326125&70.236&.056118\\
+    5&C&308.414&.325736&70.486&.056508\\
+    5&D&315.200&.329756&75.408&.062109\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Secondary Trajectory Summaries}
+\label{app:secondary}
+
+\begin{table}[H]
+  \centering
+  \caption{First observed budget with NFE1 FID $\leq10$. A dash denotes no
+  crossing by 1024 kimg.}
+  \small
+  \begin{tabular}{clrrl}
+    \toprule
+    Seed & Evidence group & $\tau_A$ & $\tau_B$ & Class \\
+    \midrule
+    3 & formal replay & 1024 & 896 & B earlier \\
+    4 & formal replay & 896 & 896 & tie \\
+    5 & formal replay & 896 & 768 & B earlier \\
+    6 & secondary A/B & 896 & 768 & B earlier \\
+    7 & secondary A/B & 1024 & 896 & B earlier \\
+    14 & secondary factorial & 896 & 768 & B earlier \\
+    15 & secondary factorial & 896 & 896 & tie \\
+    16 & secondary factorial & -- & -- & censored \\
+    17 & secondary factorial & 896 & 1024 & B later \\
+    18 & secondary factorial & 768 & 896 & B later \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+For the secondary factorial at 1024 kimg, NFE1 winners for seeds 14--18 are
+D/B/B/A/A, while NFE2 winners are D/A/D/A/A. The corresponding NFE1 B$-$A
+differences are $-1.266$, $-0.072$, $-2.213$, $+1.248$, and $+0.934$.
+These values are descriptive sensitivity evidence and are not pooled with the
+formal seed cohort.
+
+\section{Protocol and Optimizer Diagnostic Details}
+\label{app:protocol}
+
+The training loss used $q=256$, $k=8$, $b=1$, $c=0$, a global batch of 128
+with per-device minibatches of 16, RAdam learning rate $10^{-4}$, betas
+$(0.9,0.999)$, epsilon $10^{-8}$, zero weight decay, dropout 0.2, no data
+augmentation or horizontal flip, FP16 networks, AMP loss scaling 1.0, TF32
+disabled, and EMA decay 0.9993. Formal training used deterministic algorithms,
+deterministic cuDNN, cuDNN benchmarking disabled, and
+\texttt{CUBLAS\_WORKSPACE\_CONFIG=:4096:8}. The archived execution environment
+records Python 3.10.12, PyTorch 2.2.0a0+81ea7a4, CUDA 12.3, cuDNN 8.9.0.7, and
+two NVIDIA A100 80GB PCIe devices for the training queues.
+
+The frozen-state optimizer factorial uses three training seeds and eight
+paired audit minibatches per seed. The latter are repeated measurements. Its
+four median-$\Ropt$ cells (observed/real, observed/reset, exact-scalar/real,
+exact-scalar/reset) are respectively $(0.0830,0.4770,0.0704,0.00171)$,
+$(0.0878,0.4907,0.0772,0.00164)$, and
+$(0.0741,0.4669,0.0489,0.00060)$ for seeds 3--5. The subsequent held-out
+moment-transport gate produced negative suppression for every seed and all 12
+minibatches, so the planned continuation stopped before training.
+
+\end{document}
