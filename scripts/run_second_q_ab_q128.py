@@ -120,6 +120,20 @@ def validate_config(config: dict[str, Any]) -> None:
             "seed3-armA", "seed3-armB", "seed4-armA",
             "seed4-armB", "seed5-armA", "seed5-armB",
         }, "v2 GPU assignment does not cover exactly six cells")
+        artifact_export = config.get("artifact_export", {})
+        require(
+            artifact_export.get("script")
+            == "scripts/export_second_q_ab_snapshots.py",
+            "v2 artifact exporter changed",
+        )
+        require(
+            artifact_export.get("required_snapshot_count") == 42,
+            "v2 snapshot matrix must contain 42 outputs",
+        )
+        require(
+            artifact_export.get("rng_unchanged_required") is True,
+            "v2 snapshot export must preserve RNG",
+        )
 
     training = config.get("training", {})
     require(training.get("schedule_q") == 128, "second-q schedule must be q=128")
@@ -530,11 +544,36 @@ def execute_cell(args: argparse.Namespace, config: dict[str, Any], receipt: dict
     result = subprocess.run(command, cwd=args.repo.resolve(), env=env, check=False)
     if result.returncode != 0:
         raise ContractError(f"training crashed for seed={args.seed} arm={args.arm}; no automatic retry was attempted")
+    export_command = [
+        str(args.runtime_python.resolve()),
+        str(args.repo.resolve() / "scripts/export_second_q_ab_snapshots.py"),
+        "--run-root",
+        str(run_root),
+        "--cells",
+        f"{args.seed}:{args.arm}",
+        "--summary-out",
+        str(run_dir / "ema_export_summary.json"),
+    ]
+    export_result = subprocess.run(
+        export_command,
+        cwd=args.repo.resolve(),
+        env=env,
+        check=False,
+    )
+    if export_result.returncode != 0:
+        raise ContractError(
+            f"EMA snapshot export failed for seed={args.seed} arm={args.arm}"
+        )
     for budget in config["training"]["immutable_checkpoint_kimg"]:
         state = run_dir / f"training-state-kimg{budget:06d}.pt"
         snapshot = run_dir / f"network-snapshot-kimg{budget:06d}.pkl"
+        receipt_path = snapshot.with_suffix(".receipt.json")
         require(state.is_file() and state.stat().st_size > 0, f"missing immutable state: {state}")
         require(snapshot.is_file() and snapshot.stat().st_size > 0, f"missing immutable snapshot: {snapshot}")
+        require(
+            receipt_path.is_file() and receipt_path.stat().st_size > 0,
+            f"missing immutable snapshot receipt: {receipt_path}",
+        )
     print(f"[second-q] PASS seed={args.seed} arm={args.arm}", flush=True)
 
 

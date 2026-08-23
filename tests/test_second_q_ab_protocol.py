@@ -92,6 +92,14 @@ class SecondQProtocolTests(unittest.TestCase):
         self.assertIn("--denominator-gap-scale=1.1", command)
         self.assertIn("--outdir=/runs/seed4/armB", command)
 
+    def test_v2_requires_all_42_ema_snapshot_receipts(self):
+        artifact = self.config_v2["artifact_export"]
+        self.assertEqual(
+            artifact["script"], "scripts/export_second_q_ab_snapshots.py"
+        )
+        self.assertEqual(artifact["required_snapshot_count"], 42)
+        self.assertTrue(artifact["rng_unchanged_required"])
+
     def test_matrix_is_only_q128_a_b_three_paired_seeds(self):
         self.assertEqual(self.config["training"]["schedule_q"], 128)
         self.assertEqual(self.config["training"]["training_seeds"], [3, 4, 5])

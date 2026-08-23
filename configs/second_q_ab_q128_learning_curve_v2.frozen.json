@@ -113,6 +113,18 @@
     "shared_preflight_receipt_required": true,
     "pairing_note": "Concurrent execution does not change the paired unit; A and B remain paired by training seed."
   },
+  "artifact_export": {
+    "script": "scripts/export_second_q_ab_snapshots.py",
+    "mode": "cpu_only_from_immutable_full_state",
+    "source_of_truth": "training-state-kimgNNNNNN.pt",
+    "required_outputs_per_state": [
+      "network-snapshot-kimgNNNNNN.pkl",
+      "network-snapshot-kimgNNNNNN.receipt.json"
+    ],
+    "required_snapshot_count": 42,
+    "rng_unchanged_required": true,
+    "active_run_note": "The current c1e2a19 training checkout remains unchanged; a separate artifact-tools checkout may export snapshots while training continues."
+  },
   "training": {
     "schedule_q": 128,
     "training_seeds": [

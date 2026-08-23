@@ -129,6 +129,21 @@ still keyed by training seed; physical simultaneity does not change the paired
 design. Every cell refuses an existing arm directory and never auto-retries a
 crash. Training remains disabled during `validate` and `preflight`.
 
+## Immutable EMA snapshot export
+
+Training uses `--snap=0` so evaluation snapshots are derived only from the
+frozen full states, not from mutable periodic snapshot timing. For every one of
+the 42 seed-by-arm-by-budget states,
+`scripts/export_second_q_ab_snapshots.py` exports an EMA-only
+`network-snapshot-kimgNNNNNN.pkl` and a receipt binding its source-state hash,
+canonical EMA hash, snapshot hash, seed, arm, q, and budget. Export is CPU-only
+and must leave Python, NumPy, and Torch CPU RNG unchanged.
+
+For the already-running c1e2a19 trajectories, the exporter runs from a separate
+artifact-tools checkout so the active training checkout and process-loaded code
+remain unchanged. This is an I/O-only artifact completion step; immutable
+training states remain the source of truth.
+
 ## Compute and claim boundary
 
 The V1 estimate remains approximately 23.5 A100 GPU-hours, or 25.9 GPU-hours
