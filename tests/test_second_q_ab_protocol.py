@@ -7,6 +7,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/second_q_ab_q128_learning_curve.frozen.json"
+CONFIG_V2_PATH = ROOT / "configs/second_q_ab_q128_learning_curve_v2.frozen.json"
 VERDICT_TEMPLATE = ROOT / "configs/role_e_q128_dataset_verdict.template.json"
 LAUNCHER_PATH = ROOT / "scripts/run_second_q_ab_q128.py"
 
@@ -24,9 +25,26 @@ class SecondQProtocolTests(unittest.TestCase):
     def setUpClass(cls):
         cls.launcher = load_launcher()
         cls.config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+        cls.config_v2 = json.loads(CONFIG_V2_PATH.read_text(encoding="utf-8"))
 
     def test_frozen_config_validates(self):
         self.launcher.validate_config(self.config)
+
+    def test_canonical_v2_config_validates(self):
+        self.launcher.validate_config(self.config_v2)
+        amendment = self.config_v2["amendment"]
+        self.assertFalse(amendment["scientific_results_observed_before_amendment"])
+        self.assertFalse(amendment["training_started_before_amendment"])
+        self.assertEqual(
+            self.config_v2["provenance_gate"]["required_preflight_status"],
+            "GO_CANONICAL_DATASET",
+        )
+
+    def test_v2_priority_cannot_select_budgets(self):
+        primary = self.config_v2["evaluation"]["primary"]
+        self.assertTrue(primary["execution_priority_is_not_selection"])
+        self.assertTrue(primary["all_frozen_budgets_mandatory"])
+        self.assertEqual(primary["budgets_kimg"], [512, 640, 768, 896, 1024])
 
     def test_matrix_is_only_q128_a_b_three_paired_seeds(self):
         self.assertEqual(self.config["training"]["schedule_q"], 128)

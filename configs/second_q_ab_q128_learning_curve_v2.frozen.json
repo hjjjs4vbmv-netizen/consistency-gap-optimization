@@ -1,0 +1,199 @@
+{
+  "schema": "ect.second-q-ab-learning-curve/v2",
+  "protocol_id": "second-q-q128-ab-pair-spacing-v2-canonical-dataset",
+  "frozen_utc": "2026-08-23T00:00:00Z",
+  "status": "FROZEN_CANONICAL_DATASET_READY_FOR_PREFLIGHT",
+  "amendment": {
+    "supersedes_protocol_commit": "05157e7a0532b02184e2c38d051fe8c4c8aabac4",
+    "supersedes_protocol_id": "second-q-q128-ab-pair-spacing-v1",
+    "reason": "unresolved dataset identity",
+    "scientific_results_observed_before_amendment": false,
+    "training_started_before_amendment": false,
+    "scientific_change_from_v1": "none",
+    "provenance_change_from_v1": "Bind q128 directly to the byte-identical q256 canonical CIFAR-10 training ZIP and replace the legacy-equivalence wait gate with an exhaustive canonical-loader smoke."
+  },
+  "research_question": "Does the q256 A-to-B pair-spacing effect replicate when the only intended scientific change is schedule q=128?",
+  "comparison": {
+    "baseline_arm": "A",
+    "candidate_arm": "B",
+    "pairing_key": [
+      "training_seed",
+      "budget_kimg",
+      "nfe"
+    ],
+    "delta_direction": "B - A",
+    "lower_is_better": true
+  },
+  "scope": {
+    "included_arms": [
+      "A",
+      "B"
+    ],
+    "excluded_work": [
+      "new_q256_training_seeds",
+      "arm_C",
+      "arm_D",
+      "optimizer_ablation_or_RAdam_mechanism_work",
+      "legacy_q128_dataset_equivalence_recovery"
+    ],
+    "optimizer_note": "RAdam remains a frozen training constant inherited from q256; it is not an experimental arm or a new RAdam study."
+  },
+  "provenance_gate": {
+    "required_preflight_status": "GO_CANONICAL_DATASET",
+    "role_e_semantic_equivalence_verdict_required": false,
+    "legacy_q128_dataset_sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+    "q256_canonical_training_dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "selected_execution_path": "canonical_fresh_rerun",
+    "legacy_asset_policy": "PR31/PR32 q128 checkpoints and metrics remain historical exploratory evidence and are never used, mixed, resumed, or substituted in this matrix.",
+    "dataset_binding_rule": "Every q128 cell must read the exact q256 canonical training archive whose byte SHA256 is frozen here.",
+    "dataset_loader_smoke": {
+      "script": "scripts/check_canonical_dataset_loader.py",
+      "sample_count": 50000,
+      "class_count": 10,
+      "class_balance": "5000 samples per integer class 0-9",
+      "image_shape": [
+        3,
+        32,
+        32
+      ],
+      "image_layout": "CHW",
+      "image_dtype": "uint8",
+      "color_space": "RGB",
+      "xflip": false,
+      "label_source": "dataset.json",
+      "preprocessing": "float32(uint8_image) / 127.5 - 1.0",
+      "loader_path": "training/dataset.py",
+      "loader_sha256": "f46fe15ecd66206819e416ffca6ea22a06610405d6954ccc0fffc53092ab81c2"
+    }
+  },
+  "source_contract": {
+    "reference_training_commit": "c8721a05227f3ff171f8dc1f559a64d58281c0ae",
+    "allowed_change_from_reference": "schedule q: 256 -> 128 only",
+    "training_paths_required_byte_equivalent": [
+      "ct_train.py",
+      "training/ct_training_loop.py",
+      "training/loss.py",
+      "training/schedules.py",
+      "training/networks.py",
+      "training/dataset.py",
+      "training/reproducibility.py"
+    ]
+  },
+  "training": {
+    "schedule_q": 128,
+    "training_seeds": [
+      3,
+      4,
+      5
+    ],
+    "start": "official_transfer_checkpoint",
+    "transfer_checkpoint_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da",
+    "final_budget_kimg": 1024,
+    "immutable_checkpoint_kimg": [
+      256,
+      384,
+      512,
+      640,
+      768,
+      896,
+      1024
+    ],
+    "shared_hyperparameters": {
+      "architecture": "ddpmpp",
+      "preconditioning": "ect",
+      "global_batch": 128,
+      "batch_gpu": 16,
+      "optimizer": "RAdam",
+      "learning_rate": 0.0001,
+      "dropout": 0.2,
+      "augment": 0,
+      "xflip": false,
+      "mapping": "sigmoid",
+      "k": 8,
+      "b": 1,
+      "c": 0,
+      "double": 10000,
+      "ema_beta": 0.9993,
+      "fp16": true,
+      "amp": true,
+      "tf32": false,
+      "workers": 1
+    },
+    "arms": {
+      "A": {
+        "label": "baseline",
+        "target_gap_scale": 1.0,
+        "denominator_gap_scale": 1.0
+      },
+      "B": {
+        "label": "pair-spacing intervention 1.10",
+        "target_gap_scale": 1.1,
+        "denominator_gap_scale": 1.1
+      }
+    }
+  },
+  "evaluation": {
+    "evaluator_commit": "c8721a05227f3ff171f8dc1f559a64d58281c0ae",
+    "precision": "fp32",
+    "sample_count": 50000,
+    "sample_seed_start": 0,
+    "sample_seed_end": 49999,
+    "metric_seed": 20260730,
+    "detector_sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4",
+    "fid_reference_sha256": "7c40fa0d3ddd7f13c249dd6ef01a95fa2c5d49177a6556ef04a237e8202863de",
+    "kid_reference_sha256": "8478c50d243e9876a4e82d71feb0a8420036bdc16f7962fba1511d24e4a7cfde",
+    "shared_generated_features_for_fid_kid": true,
+    "primary": {
+      "metric": "fid50k_full",
+      "nfe": 1,
+      "mid_t": [],
+      "budgets_kimg": [
+        512,
+        640,
+        768,
+        896,
+        1024
+      ],
+      "execution_priority_kimg": [
+        768,
+        896,
+        1024,
+        640,
+        512
+      ],
+      "execution_priority_is_not_selection": true,
+      "all_frozen_budgets_mandatory": true,
+      "rationale": "The q256 NFE1 FID-50k curve approaches and crosses FID 10 between 768 and 896 kimg; 640 and 1024 bracket that region and 512 anchors the sharp quality transition."
+    },
+    "secondary": {
+      "kid": "kid50k_full from the same generated features as every primary job",
+      "nfe2": {
+        "nfe": 2,
+        "mid_t": [
+          0.821
+        ],
+        "budgets_kimg": [
+          768,
+          896,
+          1024
+        ],
+        "metrics": [
+          "fid50k_full",
+          "kid50k_full"
+        ]
+      }
+    },
+    "completion_rule": "Execution priority is scheduling only, never an adaptive selection policy. Report the primary curve only after all 30 NFE1 seed-by-arm-by-budget jobs pass; no early result may cancel, add, replace, or select a frozen budget. Secondary NFE2 incompleteness must be explicit and must not alter the primary set."
+  },
+  "analysis": {
+    "unit": "paired training seed",
+    "primary_summary": "Per-budget A and B FID-50k values, paired B-A deltas, mean paired delta, sample SD, range, and directional wins out of three.",
+    "secondary_summary": "KID-50k and NFE2 descriptive paired summaries using the same seed-level unit.",
+    "forbidden": [
+      "checkpoint selection based on observed FID or KID",
+      "mixing legacy q128 cells into the frozen matrix",
+      "treating checkpoints or sample seeds as independent training replicates",
+      "claiming significance from n=3"
+    ]
+  }
+}

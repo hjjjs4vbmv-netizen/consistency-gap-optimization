@@ -1,0 +1,123 @@
+# Second-q q128 A/B learning-curve protocol V2
+
+## Material Passport
+
+- Origin Skill: experiment-agent
+- Origin Mode: plan/run preparation
+- Origin Date: 2026-08-23
+- Verification Status: ANALYZED
+- Version Label: second_q_q128_ab_v2_canonical_dataset
+
+## Amendment record
+
+V2 supersedes, but does not rewrite, commit
+`05157e7a0532b02184e2c38d051fe8c4c8aabac4` and protocol
+`second-q-q128-ab-pair-spacing-v1`.
+
+- Reason: unresolved dataset identity.
+- Scientific results observed before amendment: **false**.
+- Training started before amendment: **false**.
+- Scientific design changed: **no**.
+- Provenance correction: q128 now binds directly to the byte-identical q256
+  canonical CIFAR-10 archive, SHA256
+  `08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372`.
+
+This is a pre-execution provenance correction. PR31/PR32 q128 assets remain
+historical exploratory evidence; V2 never uses, resumes, mixes, or substitutes
+them. Role E does not need to establish semantic equivalence between the old
+`9818...` ZIP and canonical `08c9...` ZIP for V2 to run.
+
+The machine-readable authority is
+`configs/second_q_ab_q128_learning_curve_v2.frozen.json`.
+
+## Scientific contract retained from V1
+
+- q=128; paired training seeds 3, 4, and 5.
+- A: baseline target/denominator scales 1.0/1.0.
+- B: q256-matched 1.10 pair-spacing intervention, scales 1.1/1.1.
+- No new q256 seeds, arms C/D, optimizer ablation, or RAdam mechanism study.
+- Fresh training from the same official transfer checkpoint as q256.
+- Immutable state and EMA checkpoints at 256, 384, 512, 640, 768, 896, and
+  1024 kimg.
+- Primary: NFE1 FID-50k at 512, 640, 768, 896, and 1024 kimg.
+- Secondary: KID-50k from the same generated features; NFE2 with
+  `mid_t=[0.821]` at 768, 896, and 1024 kimg.
+- FP32 evaluation, sample seeds 0-49999, metric seed 20260730, and the frozen
+  q256 detector/FID-reference/KID-reference identities.
+
+## Canonical dataset-loader gate
+
+Before training, the launcher invokes the formal runtime Python on
+`scripts/check_canonical_dataset_loader.py`. The smoke exhaustively consumes
+all 50,000 records through the repository's actual `ImageFolderDataset` and
+requires:
+
+- exact archive SHA256 `08c9...4f372`;
+- loader SHA256 `f46fe15e...1c2` at the recorded Git commit;
+- 50,000 RGB images, CHW uint8, 32x32, xflip disabled;
+- integer labels 0-9 from `dataset.json`, one-hot mapping consistency, and
+  exactly 5,000 samples per class;
+- preprocessing exactly `float32(image) / 127.5 - 1.0`, with range [-1, 1];
+- q256 detector and FID/KID reference hashes included in the receipt.
+
+The receipt records hashes of sorted filenames, decoded CHW pixels, integer
+labels, and the preprocessed float32 stream. This is not an equivalence test
+against the old q128 ZIP. It proves that the new q128 run consumes the frozen
+q256 archive through the frozen loader and preprocessing path.
+
+The only successful preflight status for V2 is
+`GO_CANONICAL_DATASET`. Any other status is a provenance NO-GO.
+
+## Evaluation ordering is not selection
+
+Primary execution priority remains 768, 896, 1024, 640, then 512 kimg so the
+high-quality crossing region is available first for pipeline diagnostics.
+This order is scheduling only:
+
+> execution priority is not an adaptive selection policy.
+
+All 30 frozen NFE1 jobs—3 seeds x 2 arms x 5 budgets—are mandatory. No early
+FID/KID value may cancel, add, replace, or select a budget. The primary curve
+is complete only after every frozen job passes.
+
+## Commands
+
+Local static validation:
+
+```bash
+python scripts/run_second_q_ab_q128.py validate
+```
+
+Execution-node preflight; this performs the exhaustive loader smoke but starts
+no training:
+
+```bash
+python scripts/run_second_q_ab_q128.py preflight
+```
+
+Only after the exact `GO_CANONICAL_DATASET` receipt, launch one paired seed per
+GPU with distinct ports:
+
+```bash
+python scripts/run_second_q_ab_q128.py run --seed 3 --gpu-id 0 --master-port 29631
+python scripts/run_second_q_ab_q128.py run --seed 4 --gpu-id 1 --master-port 29632
+python scripts/run_second_q_ab_q128.py run --seed 5 --gpu-id 2 --master-port 29633
+```
+
+Each worker runs A then B sequentially, refuses an existing seed directory,
+and never auto-retries a crash. Training remains disabled during `validate` and
+`preflight`.
+
+## Compute and claim boundary
+
+The V1 estimate remains approximately 23.5 A100 GPU-hours, or 25.9 GPU-hours
+with a 10% operational reserve. With three comparable A100-class GPUs, the
+expected training-plus-evaluation wall time is about 7.9 hours before archive
+verification.
+
+If V2 completes its provenance, training, checkpoint, and evaluation gates,
+the intended Methods claim is:
+
+> For the cross-q study, both discretization settings use the same
+> byte-identical CIFAR-10 archive, training configuration, paired seeds, and
+> evaluation protocol; only q is changed.
