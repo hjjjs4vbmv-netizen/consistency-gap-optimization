@@ -70,10 +70,11 @@
 \maketitle
 
 \begin{abstract}
-Consistency training pairs states separated by a temporal gap, yet the
-optimization meaning of changing this gap is unclear. We show that an ECT gap
-change is a composite intervention that exactly decomposes into a detached
-target-endpoint change and an explicit loss-rescaling change. These components
+Consistency training pairs states separated along a noise trajectory, yet the
+optimization meaning of changing their realized spacing is unclear. We study
+a controlled ECT pair-spacing perturbation and show that it is a composite
+intervention that exactly decomposes into a detached target-endpoint change and
+an explicit loss-rescaling change. These components
 factorize at the instantaneous objective-gradient level under the one-sided
 stop-gradient training derivative. They need not factorize after separately
 trained models enter different parameter trajectories. In a controlled
@@ -106,13 +107,17 @@ can identify the same ideal consistency mapping under strong assumptions.
 This creates the central puzzle of the paper:
 \emph{why can changing the consistency gap alter finite-budget learning speed
 and generation quality when the ideal mapping may be unchanged?}
-The answer is not that a gap is merely a different discretization step. In the
-ECT objective studied here, changing the gap simultaneously changes the
-detached target endpoint and the explicit denominator applied to the loss.
-These interventions are exactly separable at one fixed model state, but
-separate training runs feed their gradients into different parameter and
-optimizer trajectories. Objective-level identities therefore constrain the
-instantaneous intervention without determining finite-training outcomes.
+We treat the gap as the realized pair spacing $\Delta=t-r$, not as a new
+mechanism independent of the schedule that generated it. In the present
+experiments, $q=256$ fixes the baseline ECT mapping and $g=1.10$ is a
+controlled probe that scales its realized spacing. We have not established an
+effect of $g$ that is independent of $q$; the estimand is conditional on this
+baseline schedule. In the ECT objective studied here, perturbing $\Delta$
+jointly changes the detached target endpoint and the explicit loss weight.
+These changes are exactly separable at one fixed model state, but separate
+training runs feed their gradients into different parameter and optimizer
+trajectories. Objective-level identities therefore constrain the instantaneous
+intervention without determining finite-training outcomes.
 
 Our contributions are:
 \begin{enumerate}
@@ -146,8 +151,73 @@ percentage of the gap effect.
 finite-training geometry. Do not re-center the narrative on RAdam history,
 balanced beta, optimizer scale invariance, or a universal best gap.}
 
+\section{Relation to discretization, curricula, and weighting}
+\label{sec:related-work}
+
+Consistency models were originally formulated by discretizing a probability
+flow ODE and matching predictions at neighboring noise levels, with the
+discretization schedule and loss weight left as explicit design choices
+\citep{song2023consistency}. Improved consistency training subsequently changed
+both the discretization curriculum and the weighting rule, including the
+inverse-spacing weight $1/(t_{i+1}-t_i)$
+\citep{song2024improved}. ECT replaces non-overlapping intervals with a
+continuous pair mapping $p(r\mid t,\mathrm{iters})$, uses $q$ to shrink the
+spacing during training, and explicitly observes that $1/(t-r)$ couples the
+weighting rule to that mapping \citep{geng2024consistency}. Pair spacing,
+curriculum, and weighting are therefore established parts of consistency-model
+design rather than novelty claims of this paper.
+
+Adjacent work removes discrete schedules through continuous-time objectives
+\citep{lu2024simplifying}, analyzes consistency-model discretization complexity
+\citep{yang2025discretization}, learns adaptive discretizations together with
+an adaptive weight \citep{bai2025adaptive}, and develops broader flow-map and
+self-distillation formulations \citep{boffi2025how}. Our contribution is
+narrower: for the one-sided stop-gradient ECT objective, we derive an exact
+finite-spacing target-endpoint plus explicit-rescaling decomposition, construct
+matched objective-gradient factorial identities, and test what remains after
+the corresponding arms enter separate finite-training trajectories.
+
 \section{Consistency gaps as composite interventions}
 \label{sec:theory}
+
+\paragraph{The roles of $q$, $g$, and realized pair spacing.}
+
+Let $j\in\{0,1,\ldots\}$ index the ECT curriculum stage and define
+$n(t)=1+k\,\sigma(-bt)$. Under the repository convention, the official
+sigmoid mapping and its realized spacing are
+\begin{equation}
+  r_q(t,j)=\max\!\left\{0,
+    t\left(1-\frac{n(t)}{q^{j+1}}\right)\right\},
+  \qquad
+  \Delta_q(t,j)=t-r_q(t,j)
+  =\min\!\left\{t,\frac{t\,n(t)}{q^{j+1}}\right\}.
+  \label{eq:q-realized-spacing}
+\end{equation}
+The global probe $g>0$ acts on this realized baseline spacing through the
+production clamp,
+\begin{equation}
+  \Delta_{q,g}(t,j)=\min\{t,g\Delta_q(t,j)\},
+  \qquad r_{q,g}(t,j)=t-\Delta_{q,g}(t,j).
+  \label{eq:g-realized-spacing}
+\end{equation}
+Thus $q$ and $g$ are not two proven-independent mechanisms: both parameterize
+the realized pair. Conditional on a fixed stage and away from clipping, a
+$g$-scaled pair can be written as a stage-specific effective value
+$q_{\mathrm{eff}}(j)=q/g^{1/(j+1)}$. A single fixed $q_{\mathrm{eff}}$ does not
+generally reproduce the same constant-$g$ perturbation across multiple stages,
+and clipping must be checked on the realized pairs.
+
+The effective spacing of a training design is consequently the joint law of
+$(J,T,\Delta_{q,g}(T,J))$ under its frozen stage curriculum and time sampler,
+not one scalar hyperparameter or a cohort-average gap. We use the native ECT
+coordinate $\Delta=t-r$ because it determines both the detached target at $r$
+and the explicit denominator in the CIFAR-10 objective. The current experiment
+holds $q=256$ fixed and uses $g$ only as a controlled probe of this pair-spacing
+intervention.
+
+\claimnote{Do not describe $q$ and $g$ as causally independent factors. The
+current result is conditional on $q=256$ and identifies a controlled realized
+pair-spacing intervention.}
 
 \subsection{Ideal target and endpoint-invariance intuition}
 \label{sec:theory-ideal-endpoint}
@@ -310,8 +380,10 @@ finite-training quality contrasts.
 
 \subsection{Design and estimands}
 
-We evaluate the decomposition with a $2\times2$ intervention in the q=256
+We evaluate the decomposition with a $2\times2$ intervention in the $q=256$
 ECT setting. The enlarged-gap condition uses a global multiplier $g=1.10$.
+This fixes the baseline $q$ schedule and probes its realized pair spacing; it
+is not a $q\times g$ factorial and does not establish a $q$-independent effect.
 The four arms are shown in Table~\ref{tab:arms}. Arms share the same starting
 checkpoint, data order, sampled times, noise, dropout stream, optimizer,
 learning rate, EMA, and numerical settings; only the target endpoint and
@@ -579,6 +651,16 @@ gap-independent weighting regime. Equation~\eqref{eq:general-weight-decompositio
 is an algebraic extension; a second-regime network audit and training result
 remain pending.
 
+\paragraph{What the $q$-fixed design identifies.}
+The present factorial identifies the effect of a controlled spacing
+perturbation conditional on the $q=256$ curriculum. It does not compare
+alternative $q$ curricula. A future parameterization control would hold the
+realized pairs $(t,r)$ pointwise fixed while generating them through a
+stage-specific $q$ rule rather than the global $g$ wrapper. Such a control is
+an implementation-equivalence test: once $(t,r)$ and the explicit weight are
+matched, the ECT objectives should also match. This control is specified for
+future work and is not part of the current evidence.
+
 \paragraph{Current limitations.}
 The formal budget-resolved evidence contains three independent training seeds
 in one CIFAR-10 ECT setting, complemented by five post-preregistration
@@ -589,16 +671,12 @@ statement over architectures, datasets, weighting rules, or samplers.
 A prospectively unseen cohort, a budget-resolved target-gradient audit, and a
 second weighting regime are the highest-value extensions.
 
-\todo{Related-work owner: complete the citation audit for consistency
-training, weighting schedules, finite-budget optimization, and adaptive
-optimizer scale effects. Preserve the bounded novelty statement.}
-
 \section{Conclusion}
 \label{sec:conclusion}
 
-A consistency-gap change in ECT is an exact composite intervention: it changes
-both the detached target endpoint and the explicit loss denominator. Those
-components factorize at the instantaneous objective-gradient level, but the
+A controlled pair-spacing change in ECT is an exact composite intervention: it
+changes both the detached target endpoint and the explicit loss denominator.
+Those components factorize at the instantaneous objective-gradient level, but the
 factorization does not determine quality after separate finite-training
 trajectories emerge. Controlled four-arm experiments show large early
 differences, later contraction, and rankings that vary with seed and sampling
