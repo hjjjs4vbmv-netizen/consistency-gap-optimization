@@ -95,9 +95,21 @@ def validate_config(config: dict[str, Any]) -> None:
 
     source = config.get("source_contract", {})
     require(bool(GIT_COMMIT_RE.fullmatch(str(source.get("reference_training_commit", "")))), "invalid training reference commit")
-    require(source.get("allowed_change_from_reference") == "schedule q: 256 -> 128 only", "only-q source contract changed")
-    require(len(source.get("training_paths_required_byte_equivalent", [])) >= 7, "training path contract is incomplete")
+    expected_source_change = (
+        "schedule q: 256 -> 128 only"
+        if schema.endswith("/v1")
+        else "scientific CLI q: 256 -> 128; validation-only source amendment admits q=128 to the otherwise unchanged strict path"
+    )
+    require(source.get("allowed_change_from_reference") == expected_source_change, "only-q source contract changed")
+    minimum_frozen_paths = 7 if schema.endswith("/v1") else 6
+    require(len(source.get("training_paths_required_byte_equivalent", [])) >= minimum_frozen_paths, "training path contract is incomplete")
     if schema.endswith("/v2"):
+        q_scope = source.get("strict_protocol_q_scope_amendment", {})
+        require(q_scope.get("optimizer_steps_before_amendment") == 0, "q-scope amendment must precede optimizer steps")
+        require(q_scope.get("scientific_results_observed_before_amendment") is False, "q-scope amendment must be pre-result")
+        require(q_scope.get("scientific_math_changed") is False, "q-scope amendment must be validation-only")
+        require(q_scope.get("path") == "training/loss.py", "unexpected q-scope amendment path")
+        require(bool(SHA256_RE.fullmatch(str(q_scope.get("amended_file_sha256", "")))), "invalid amended loss SHA256")
         runtime_execution = config.get("runtime_execution", {})
         require(runtime_execution.get("training_started_before_runtime_amendment") is False, "runtime amendment must be pre-training")
         require(runtime_execution.get("scientific_results_observed_before_runtime_amendment") is False, "runtime amendment must be pre-result")
@@ -267,6 +279,13 @@ def machine_preflight(
     paths = source["training_paths_required_byte_equivalent"]
     run_checked(["git", "-C", str(repo), "cat-file", "-e", f"{reference}^{{commit}}"])
     run_checked(["git", "-C", str(repo), "diff", "--quiet", f"{reference}..HEAD", "--", *paths])
+    if is_v2:
+        q_scope = source["strict_protocol_q_scope_amendment"]
+        amended_path = repo / q_scope["path"]
+        require(
+            sha256_file(amended_path) == q_scope["amended_file_sha256"],
+            "validation-only q-scope amendment SHA256 mismatch",
+        )
     dirty = run_checked(["git", "-C", str(repo), "status", "--porcelain"], capture=True)
     require(not dirty, "source worktree is dirty")
     git_commit = run_checked(["git", "-C", str(repo), "rev-parse", "HEAD"], capture=True)

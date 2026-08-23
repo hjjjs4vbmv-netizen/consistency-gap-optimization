@@ -30,6 +30,21 @@ them. Role E does not need to establish semantic equivalence between the old
 The machine-readable authority is
 `configs/second_q_ab_q128_learning_curve_v2.frozen.json`.
 
+### Strict-protocol validation amendment
+
+The first authorized six-cell launch was rejected before the training loop by
+the inherited validation check `q256_target_weight_v1 requires q=256`. All six
+GPUs remained unused; no optimizer step, checkpoint, metric, or scientific
+result was produced. The failed launch directories contain only immutable
+launch records and are retained outside the formal run root.
+
+Before retry, the strict protocol's q validation was amended from `q == 256`
+to `q in {128, 256}`. No schedule, target, denominator, loss, optimizer, RNG,
+or checkpoint computation changed. The amended `training/loss.py` SHA256 and
+four required A/B native-parity tests at q128/q256 are frozen in the config.
+The remaining six training-path files remain byte-identical to the q256
+reference commit.
+
 ## Scientific contract retained from V1
 
 - q=128; paired training seeds 3, 4, and 5.

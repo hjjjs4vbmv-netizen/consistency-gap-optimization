@@ -68,16 +68,32 @@
   },
   "source_contract": {
     "reference_training_commit": "c8721a05227f3ff171f8dc1f559a64d58281c0ae",
-    "allowed_change_from_reference": "schedule q: 256 -> 128 only",
+    "allowed_change_from_reference": "scientific CLI q: 256 -> 128; validation-only source amendment admits q=128 to the otherwise unchanged strict path",
     "training_paths_required_byte_equivalent": [
       "ct_train.py",
       "training/ct_training_loop.py",
-      "training/loss.py",
       "training/schedules.py",
       "training/networks.py",
       "training/dataset.py",
       "training/reproducibility.py"
-    ]
+    ],
+    "strict_protocol_q_scope_amendment": {
+      "reason": "The first authorized launch was rejected before run-directory creation by the q256-only validation guard.",
+      "failed_launch_cell_count": 6,
+      "optimizer_steps_before_amendment": 0,
+      "scientific_results_observed_before_amendment": false,
+      "scientific_math_changed": false,
+      "path": "training/loss.py",
+      "reference_behavior": "q must equal 256",
+      "amended_behavior": "q must be one of 128 or 256",
+      "amended_file_sha256": "f34a514161ec2aed8c5ee4381198f2e82da93c9dcf6d6da837c57e5e6c3fc9b8",
+      "required_parity_tests": [
+        "q256 A equals native sigmoid bitwise",
+        "q256 B equals native global_sigmoid g=1.10 bitwise",
+        "q128 A equals native sigmoid bitwise",
+        "q128 B equals native global_sigmoid g=1.10 bitwise"
+      ]
+    }
   },
   "runtime_execution": {
     "amendment_reason": "six GPUs supplied; run one independent seed-by-arm cell per GPU",

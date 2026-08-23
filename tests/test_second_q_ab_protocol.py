@@ -61,6 +61,18 @@ class SecondQProtocolTests(unittest.TestCase):
             },
         )
 
+    def test_v2_freezes_validation_only_q_scope_amendment(self):
+        source = self.config_v2["source_contract"]
+        amendment = source["strict_protocol_q_scope_amendment"]
+        self.assertEqual(amendment["optimizer_steps_before_amendment"], 0)
+        self.assertFalse(amendment["scientific_results_observed_before_amendment"])
+        self.assertFalse(amendment["scientific_math_changed"])
+        self.assertEqual(amendment["path"], "training/loss.py")
+        self.assertEqual(
+            self.launcher.sha256_file(ROOT / amendment["path"]),
+            amendment["amended_file_sha256"],
+        )
+
     def test_training_command_is_one_requested_cell(self):
         args = types.SimpleNamespace(
             runtime_python=Path("/runtime/python"),

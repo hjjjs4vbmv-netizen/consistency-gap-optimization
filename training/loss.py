@@ -60,8 +60,8 @@ def resolve_target_weight_factorial(
             f'{protocol} requires legacy global_gap_scale=1.0, got '
             f'{global_gap_scale}; use the two explicit factors'
         )
-    if float(q) != 256.0:
-        raise ValueError(f'{protocol} requires q=256, got {q}')
+    if float(q) not in (128.0, 256.0):
+        raise ValueError(f'{protocol} requires q in {{128, 256}}, got {q}')
     if float(c) != 0.0:
         raise ValueError(f'{protocol} requires c=0, got {c}')
     if target_gap_scale is None or denominator_gap_scale is None:
