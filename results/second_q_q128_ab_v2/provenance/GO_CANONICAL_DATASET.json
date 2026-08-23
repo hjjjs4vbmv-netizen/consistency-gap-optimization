@@ -1,0 +1,74 @@
+{
+  "config_sha256": "25ba6abcab59d58002055475e81e0a86cbf19d47987bbd8c1eb8601bb409cc65",
+  "created_utc": "2026-08-23T09:58:15.859704Z",
+  "dataset_loader_smoke": {
+    "class_count": 10,
+    "class_histogram": {
+      "0": 5000,
+      "1": 5000,
+      "2": 5000,
+      "3": 5000,
+      "4": 5000,
+      "5": 5000,
+      "6": 5000,
+      "7": 5000,
+      "8": 5000,
+      "9": 5000
+    },
+    "color_space": "RGB",
+    "dataset_path": "/mnt/ect_project/datasets/cifar10-32x32.zip",
+    "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "decoded_chw_image_stream_sha256": "9d5c2eddadb0deff02c14c350c0385aab7b1d5ff1edfeb4997c8dc8644960111",
+    "image_dtype": "uint8",
+    "image_layout": "CHW",
+    "image_shape": [
+      3,
+      32,
+      32
+    ],
+    "integer_label_stream_sha256": "f5cfe00b0f00968c0cc5ff3b1d2de51b10e33efa277c2986f4e0fa63e58c9f4f",
+    "label_mapping": "sorted image filename -> integer class -> one-hot[10]",
+    "label_source": "dataset.json",
+    "loader_git_commit": "c1e2a197010727cc463eca01a5e14ad6b6ba50db",
+    "loader_path": "/root/second_q_q128_ab_v2/source/recurrence_of_ect/training/dataset.py",
+    "loader_sha256": "f46fe15ecd66206819e416ffca6ea22a06610405d6954ccc0fffc53092ab81c2",
+    "preprocessed_dtype": "float32",
+    "preprocessed_float32_stream_sha256": "d2449e1384f7fed794dbaa8ec0552b0f4885c37c6964a40ae42f426216f4c2eb",
+    "preprocessed_range": [
+      -1.0,
+      1.0
+    ],
+    "preprocessing": "float32(uint8_image) / 127.5 - 1.0",
+    "q256_detector_sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4",
+    "q256_fid_reference_sha256": "7c40fa0d3ddd7f13c249dd6ef01a95fa2c5d49177a6556ef04a237e8202863de",
+    "q256_kid_reference_sha256": "8478c50d243e9876a4e82d71feb0a8420036bdc16f7962fba1511d24e4a7cfde",
+    "sample_count": 50000,
+    "schema": "ect.canonical-dataset-loader-smoke/v1",
+    "sorted_filename_stream_sha256": "f097649832a8573f2bd6673550dc13bce02359e8de0801faa873a9697ffb0f52",
+    "status": "PASS",
+    "xflip": false
+  },
+  "dataset_path": "/mnt/ect_project/datasets/cifar10-32x32.zip",
+  "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+  "dataset_stat": {
+    "mtime_ns": 1784102905887370103,
+    "size": 166000134
+  },
+  "execution_path": "canonical_fresh_rerun",
+  "git_commit": "c1e2a197010727cc463eca01a5e14ad6b6ba50db",
+  "role_e_verdict": "NOT_REQUIRED_CANONICAL_BINDING",
+  "run_root": "/root/second_q_q128_ab_v2/runs/second-q-q128-ab-v2",
+  "runtime_sif_path": "/mnt/ect_project/q256_target_weight_1024k/runtime/ect-pytorch2401-deterministic.sif",
+  "runtime_sif_sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea",
+  "runtime_sif_stat": {
+    "mtime_ns": 1787290710000000000,
+    "size": 10135425024
+  },
+  "status": "GO_CANONICAL_DATASET",
+  "transfer_path": "/mnt/ect_project/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+  "transfer_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da",
+  "transfer_stat": {
+    "mtime_ns": 1784102907707767352,
+    "size": 223173327
+  }
+}
