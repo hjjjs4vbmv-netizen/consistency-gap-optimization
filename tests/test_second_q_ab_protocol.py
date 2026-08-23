@@ -46,6 +46,40 @@ class SecondQProtocolTests(unittest.TestCase):
         self.assertTrue(primary["all_frozen_budgets_mandatory"])
         self.assertEqual(primary["budgets_kimg"], [512, 640, 768, 896, 1024])
 
+    def test_v2_maps_exactly_one_cell_to_each_of_six_gpus(self):
+        execution = self.config_v2["runtime_execution"]
+        self.assertEqual(execution["max_concurrent_cells"], 6)
+        self.assertEqual(
+            set(execution["gpu_assignment"].values()),
+            {
+                "seed3-armA",
+                "seed3-armB",
+                "seed4-armA",
+                "seed4-armB",
+                "seed5-armA",
+                "seed5-armB",
+            },
+        )
+
+    def test_training_command_is_one_requested_cell(self):
+        args = types.SimpleNamespace(
+            runtime_python=Path("/runtime/python"),
+            repo=Path("/repo"),
+            dataset=Path("/canonical.zip"),
+            transfer=Path("/transfer.pkl"),
+        )
+        command = self.launcher.training_command(
+            args,
+            self.config_v2,
+            seed=4,
+            arm="B",
+            run_dir=Path("/runs/seed4/armB"),
+        )
+        self.assertIn("--seed=4", command)
+        self.assertIn("--target-gap-scale=1.1", command)
+        self.assertIn("--denominator-gap-scale=1.1", command)
+        self.assertIn("--outdir=/runs/seed4/armB", command)
+
     def test_matrix_is_only_q128_a_b_three_paired_seeds(self):
         self.assertEqual(self.config["training"]["schedule_q"], 128)
         self.assertEqual(self.config["training"]["training_seeds"], [3, 4, 5])

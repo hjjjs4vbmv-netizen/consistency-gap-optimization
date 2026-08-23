@@ -92,21 +92,27 @@ Execution-node preflight; this performs the exhaustive loader smoke but starts
 no training:
 
 ```bash
-python scripts/run_second_q_ab_q128.py preflight
+python scripts/run_second_q_ab_q128.py preflight \
+  --receipt-out /root/second_q_q128_ab_v2/preflight/GO_CANONICAL_DATASET.json
 ```
 
-Only after the exact `GO_CANONICAL_DATASET` receipt, launch one paired seed per
-GPU with distinct ports:
+Only after the exact `GO_CANONICAL_DATASET` receipt, launch one independent
+seed-by-arm cell per GPU with distinct ports:
 
 ```bash
-python scripts/run_second_q_ab_q128.py run --seed 3 --gpu-id 0 --master-port 29631
-python scripts/run_second_q_ab_q128.py run --seed 4 --gpu-id 1 --master-port 29632
-python scripts/run_second_q_ab_q128.py run --seed 5 --gpu-id 2 --master-port 29633
+RECEIPT=/root/second_q_q128_ab_v2/preflight/GO_CANONICAL_DATASET.json
+python scripts/run_second_q_ab_q128.py run --preflight-receipt "$RECEIPT" --seed 3 --arm A --gpu-id 0 --master-port 29631
+python scripts/run_second_q_ab_q128.py run --preflight-receipt "$RECEIPT" --seed 3 --arm B --gpu-id 1 --master-port 29632
+python scripts/run_second_q_ab_q128.py run --preflight-receipt "$RECEIPT" --seed 4 --arm A --gpu-id 2 --master-port 29633
+python scripts/run_second_q_ab_q128.py run --preflight-receipt "$RECEIPT" --seed 4 --arm B --gpu-id 3 --master-port 29634
+python scripts/run_second_q_ab_q128.py run --preflight-receipt "$RECEIPT" --seed 5 --arm A --gpu-id 4 --master-port 29635
+python scripts/run_second_q_ab_q128.py run --preflight-receipt "$RECEIPT" --seed 5 --arm B --gpu-id 5 --master-port 29636
 ```
 
-Each worker runs A then B sequentially, refuses an existing seed directory,
-and never auto-retries a crash. Training remains disabled during `validate` and
-`preflight`.
+The six processes may run concurrently. Pairing remains statistical and is
+still keyed by training seed; physical simultaneity does not change the paired
+design. Every cell refuses an existing arm directory and never auto-retries a
+crash. Training remains disabled during `validate` and `preflight`.
 
 ## Compute and claim boundary
 

@@ -79,6 +79,24 @@
       "training/reproducibility.py"
     ]
   },
+  "runtime_execution": {
+    "amendment_reason": "six GPUs supplied; run one independent seed-by-arm cell per GPU",
+    "training_started_before_runtime_amendment": false,
+    "scientific_results_observed_before_runtime_amendment": false,
+    "scientific_change": "none",
+    "cell_mode": "one_seed_by_arm_cell_per_single_gpu_process",
+    "max_concurrent_cells": 6,
+    "gpu_assignment": {
+      "0": "seed3-armA",
+      "1": "seed3-armB",
+      "2": "seed4-armA",
+      "3": "seed4-armB",
+      "4": "seed5-armA",
+      "5": "seed5-armB"
+    },
+    "shared_preflight_receipt_required": true,
+    "pairing_note": "Concurrent execution does not change the paired unit; A and B remain paired by training seed."
+  },
   "training": {
     "schedule_q": 128,
     "training_seeds": [

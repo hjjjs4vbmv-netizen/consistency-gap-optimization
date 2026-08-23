@@ -18,6 +18,7 @@ import re
 import shlex
 import subprocess
 import sys
+from datetime import datetime, timezone
 from typing import Any
 
 
@@ -96,6 +97,17 @@ def validate_config(config: dict[str, Any]) -> None:
     require(bool(GIT_COMMIT_RE.fullmatch(str(source.get("reference_training_commit", "")))), "invalid training reference commit")
     require(source.get("allowed_change_from_reference") == "schedule q: 256 -> 128 only", "only-q source contract changed")
     require(len(source.get("training_paths_required_byte_equivalent", [])) >= 7, "training path contract is incomplete")
+    if schema.endswith("/v2"):
+        runtime_execution = config.get("runtime_execution", {})
+        require(runtime_execution.get("training_started_before_runtime_amendment") is False, "runtime amendment must be pre-training")
+        require(runtime_execution.get("scientific_results_observed_before_runtime_amendment") is False, "runtime amendment must be pre-result")
+        require(runtime_execution.get("cell_mode") == "one_seed_by_arm_cell_per_single_gpu_process", "v2 cell execution mode changed")
+        require(runtime_execution.get("max_concurrent_cells") == 6, "v2 must freeze six concurrent cells")
+        require(runtime_execution.get("shared_preflight_receipt_required") is True, "v2 requires one shared preflight receipt")
+        require(set(runtime_execution.get("gpu_assignment", {}).values()) == {
+            "seed3-armA", "seed3-armB", "seed4-armA",
+            "seed4-armB", "seed5-armA", "seed5-armB",
+        }, "v2 GPU assignment does not cover exactly six cells")
 
     training = config.get("training", {})
     require(training.get("schedule_q") == 128, "second-q schedule must be q=128")
@@ -269,13 +281,20 @@ def machine_preflight(
 
     receipt = {
         "status": "GO_CANONICAL_DATASET" if is_v2 else "GO",
+        "created_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "role_e_verdict": decision,
         "execution_path": "canonical_fresh_rerun",
         "config_sha256": sha256_file(args.config.resolve()),
         "git_commit": git_commit,
         "dataset_sha256": actual_dataset,
+        "dataset_path": str(dataset),
+        "dataset_stat": {"size": dataset.stat().st_size, "mtime_ns": dataset.stat().st_mtime_ns},
         "transfer_sha256": actual_transfer,
+        "transfer_path": str(transfer),
+        "transfer_stat": {"size": transfer.stat().st_size, "mtime_ns": transfer.stat().st_mtime_ns},
         "runtime_sif_sha256": actual_runtime,
+        "runtime_sif_path": str(runtime_sif),
+        "runtime_sif_stat": {"size": runtime_sif.stat().st_size, "mtime_ns": runtime_sif.stat().st_mtime_ns},
         "run_root": str(run_root),
     }
     if verdict is not None:
@@ -413,38 +432,91 @@ def runtime_environment(args: argparse.Namespace) -> dict[str, str]:
     return env
 
 
-def execute_seed(args: argparse.Namespace, config: dict[str, Any], receipt: dict[str, Any]) -> None:
+def write_preflight_receipt(path: Path, receipt: dict[str, Any], job_root: Path) -> None:
+    ensure_within(path, job_root, "preflight receipt")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    require(not path.exists(), f"refusing to overwrite preflight receipt: {path}")
+    payload = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+    path.write_text(payload, encoding="utf-8")
+    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    sidecar = Path(str(path) + ".sha256")
+    sidecar.write_text(f"{digest}  {path.name}\n", encoding="utf-8")
+
+
+def load_bound_preflight_receipt(
+    args: argparse.Namespace, config: dict[str, Any]
+) -> dict[str, Any]:
+    require(args.preflight_receipt is not None, "--preflight-receipt is required for run")
+    path = args.preflight_receipt.resolve()
+    ensure_within(path, args.job_root.resolve(), "preflight receipt")
+    sidecar = Path(str(path) + ".sha256")
+    require(path.is_file() and sidecar.is_file(), "missing preflight receipt or SHA256 sidecar")
+    fields = sidecar.read_text(encoding="utf-8").split()
+    require(len(fields) == 2 and fields[1] == path.name, "invalid preflight receipt sidecar")
+    require(fields[0] == sha256_file(path), "preflight receipt SHA256 mismatch")
+    receipt = read_json(path)
+    require(receipt.get("status") == "GO_CANONICAL_DATASET", "preflight receipt is not GO_CANONICAL_DATASET")
+    require(receipt.get("execution_path") == "canonical_fresh_rerun", "preflight execution path mismatch")
+    require(receipt.get("config_sha256") == sha256_file(args.config.resolve()), "preflight config binding mismatch")
+    require(receipt.get("run_root") == str(args.run_root.resolve()), "preflight run-root binding mismatch")
+    require(receipt.get("dataset_sha256") == config["provenance_gate"]["q256_canonical_training_dataset_sha256"], "preflight dataset identity mismatch")
+    require(receipt.get("transfer_sha256") == config["training"]["transfer_checkpoint_sha256"], "preflight transfer identity mismatch")
+    require(receipt.get("dataset_loader_smoke", {}).get("status") == "PASS", "preflight loader smoke did not pass")
+
+    repo = args.repo.resolve()
+    git_commit = run_checked(["git", "-C", str(repo), "rev-parse", "HEAD"], capture=True)
+    require(receipt.get("git_commit") == git_commit, "source commit changed after preflight")
+    dirty = run_checked(["git", "-C", str(repo), "status", "--porcelain"], capture=True)
+    require(not dirty, "source worktree became dirty after preflight")
+    for label, file_path in (
+        ("dataset", args.dataset.resolve()),
+        ("transfer", args.transfer.resolve()),
+        ("runtime_sif", args.runtime_sif.resolve()),
+    ):
+        require(file_path.is_file(), f"{label} disappeared after preflight")
+        expected_path = receipt.get(f"{label}_path")
+        expected_stat = receipt.get(f"{label}_stat", {})
+        actual_stat = file_path.stat()
+        require(expected_path == str(file_path), f"{label} path changed after preflight")
+        require(
+            expected_stat == {"size": actual_stat.st_size, "mtime_ns": actual_stat.st_mtime_ns},
+            f"{label} file changed after preflight",
+        )
+    return receipt
+
+
+def execute_cell(args: argparse.Namespace, config: dict[str, Any], receipt: dict[str, Any]) -> None:
     require(args.seed in config["training"]["training_seeds"], f"unsupported seed: {args.seed}")
+    require(args.arm in config["training"]["arms"], f"unsupported arm: {args.arm}")
     run_root = args.run_root.resolve()
     run_root.mkdir(parents=True, exist_ok=True)
     seed_root = run_root / f"seed{args.seed}"
-    seed_root.mkdir(exist_ok=False)
-    (seed_root / "preflight_receipt.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    seed_root.mkdir(exist_ok=True)
 
     env = runtime_environment(args)
-    for arm in ("A", "B"):
-        run_dir = seed_root / f"arm{arm}"
-        run_dir.mkdir(exist_ok=False)
-        command = training_command(args, config, args.seed, arm, run_dir)
-        launch_record = {
-            "schema": "ect.second-q-training-launch/v2",
-            "seed": args.seed,
-            "arm": arm,
-            "command": command,
-            "scientific_identity": config["training"]["arms"][arm],
-            "preflight": receipt,
-        }
-        (run_dir / "launch_record.json").write_text(json.dumps(launch_record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        print(f"[second-q] START seed={args.seed} arm={arm}", flush=True)
-        result = subprocess.run(command, cwd=args.repo.resolve(), env=env, check=False)
-        if result.returncode != 0:
-            raise ContractError(f"training crashed for seed={args.seed} arm={arm}; no automatic retry was attempted")
-        for budget in config["training"]["immutable_checkpoint_kimg"]:
-            state = run_dir / f"training-state-kimg{budget:06d}.pt"
-            snapshot = run_dir / f"network-snapshot-kimg{budget:06d}.pkl"
-            require(state.is_file() and state.stat().st_size > 0, f"missing immutable state: {state}")
-            require(snapshot.is_file() and snapshot.stat().st_size > 0, f"missing immutable snapshot: {snapshot}")
-        print(f"[second-q] PASS seed={args.seed} arm={arm}", flush=True)
+    run_dir = seed_root / f"arm{args.arm}"
+    run_dir.mkdir(exist_ok=False)
+    command = training_command(args, config, args.seed, args.arm, run_dir)
+    launch_record = {
+        "schema": "ect.second-q-training-launch/v3",
+        "seed": args.seed,
+        "arm": args.arm,
+        "command": command,
+        "scientific_identity": config["training"]["arms"][args.arm],
+        "preflight_receipt_path": str(args.preflight_receipt.resolve()),
+        "preflight_receipt_sha256": sha256_file(args.preflight_receipt.resolve()),
+    }
+    (run_dir / "launch_record.json").write_text(json.dumps(launch_record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(f"[second-q] START seed={args.seed} arm={args.arm}", flush=True)
+    result = subprocess.run(command, cwd=args.repo.resolve(), env=env, check=False)
+    if result.returncode != 0:
+        raise ContractError(f"training crashed for seed={args.seed} arm={args.arm}; no automatic retry was attempted")
+    for budget in config["training"]["immutable_checkpoint_kimg"]:
+        state = run_dir / f"training-state-kimg{budget:06d}.pt"
+        snapshot = run_dir / f"network-snapshot-kimg{budget:06d}.pkl"
+        require(state.is_file() and state.stat().st_size > 0, f"missing immutable state: {state}")
+        require(snapshot.is_file() and snapshot.stat().st_size > 0, f"missing immutable snapshot: {snapshot}")
+    print(f"[second-q] PASS seed={args.seed} arm={args.arm}", flush=True)
 
 
 def parse_args() -> argparse.Namespace:
@@ -453,6 +525,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--verdict", type=Path)
     parser.add_argument("--seed", type=int)
+    parser.add_argument("--arm", choices=("A", "B"))
     parser.add_argument("--gpu-id", default="0")
     parser.add_argument("--master-port", type=int, default=29631)
     parser.add_argument("--job-root", type=Path, default=Path("/root/second_q_q128_ab_v2"))
@@ -464,6 +537,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--runtime-manifest", type=Path, default=Path("/mnt/ect_project/q256_target_weight_1024k/SHA256SUMS.release.txt"))
     parser.add_argument("--sandbox-root", type=Path, default=Path("/root/q256_target_weight_1024k/runtime/sandbox"))
     parser.add_argument("--runtime-python", type=Path, default=Path("/root/q256_target_weight_1024k/runtime/sandbox/usr/bin/python"))
+    parser.add_argument("--receipt-out", type=Path)
+    parser.add_argument("--preflight-receipt", type=Path)
     return parser.parse_args()
 
 
@@ -481,12 +556,18 @@ def main() -> int:
         else:
             require(args.verdict is not None, "--verdict is required for v1 preflight and run")
             verdict = read_json(args.verdict)
-        receipt = machine_preflight(args, config, verdict)
         if args.action == "preflight":
+            receipt = machine_preflight(args, config, verdict)
+            if args.receipt_out is not None:
+                write_preflight_receipt(
+                    args.receipt_out.resolve(), receipt, args.job_root.resolve()
+                )
             print(json.dumps(receipt, indent=2, sort_keys=True))
             return 0
         require(args.seed is not None, "--seed is required for run")
-        execute_seed(args, config, receipt)
+        require(args.arm is not None, "--arm is required for one-cell-per-GPU run")
+        receipt = load_bound_preflight_receipt(args, config)
+        execute_cell(args, config, receipt)
         return 0
     except ContractError as exc:
         print(f"[second-q] NO-GO: {exc}", file=sys.stderr)
