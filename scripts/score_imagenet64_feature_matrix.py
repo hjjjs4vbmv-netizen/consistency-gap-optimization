@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Score the complete 108-job ImageNet-64 feature matrix in one shot."""
+"""Score the complete 120-job ImageNet-64 feature matrix in one shot."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ SEEDS = (101, 102, 103)
 METHODS = ('IA', 'IB')
 MILESTONES = tuple(
     (iteration, iteration * 128 // 1000)
-    for iteration in range(20_000, 100_001, 10_000)
+    for iteration in range(10_000, 100_001, 10_000)
 )
 NFES = (1, 2)
 JOB_COUNT = len(SEEDS) * len(METHODS) * len(MILESTONES) * len(NFES)

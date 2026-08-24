@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a deterministic shard of the 108-job ImageNet-64 feature matrix."""
+"""Run a deterministic shard of the 120-job ImageNet-64 feature matrix."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = (101, 102, 103)
 METHODS = ("IA", "IB")
-MILESTONES_KIMG = tuple(range(2560, 12801, 1280))
+MILESTONES_KIMG = tuple(range(1280, 12801, 1280))
 NFES = (1, 2)
 FEATURE_SHAPE = (50_000, 2_048)
 JOB_COUNT = len(SEEDS) * len(METHODS) * len(MILESTONES_KIMG) * len(NFES)
