@@ -124,6 +124,32 @@ class MetricArtifactRetentionTests(unittest.TestCase):
             np.testing.assert_allclose(mean, features.astype(np.float64).mean(axis=0))
             self.assertEqual(covariance.shape, (8, 8))
 
+    def test_reuse_rejects_wrong_shape_or_non_float32(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = os.path.join(tmpdir, 'features.npy')
+            opts = metric_utils.MetricOptions(
+                generator_fn=_generator,
+                G=_DummyNet(),
+                dataset_kwargs={},
+                device=torch.device('cpu'),
+                precomputed_generated_features_path=path,
+            )
+            np.save(path, np.zeros((2, 8), dtype=np.float32), allow_pickle=False)
+            with self.assertRaisesRegex(ValueError, 'expected'):
+                metric_utils.compute_feature_stats_for_generator(
+                    opts,
+                    detector_url='unused',
+                    detector_kwargs={},
+                    max_items=3,
+                )
+            np.save(path, np.zeros((3, 8), dtype=np.float64), allow_pickle=False)
+            with self.assertRaisesRegex(ValueError, 'finite float32'):
+                metric_utils.compute_feature_stats_for_generator(
+                    opts,
+                    detector_url='unused',
+                    detector_kwargs={},
+                    max_items=3,
+                )
 
 if __name__ == '__main__':
     unittest.main()

@@ -88,9 +88,9 @@ while [[ "$(job_count)" -lt 210 ]]; do
         echo "existing nonterminal output for ${job_id}" > "${lock}/STOPPED_FOR_AUDIT"
         exit 3
       fi
-      mid_args=()
+      mid_t=""
       if [[ "${nfe}" == 2 ]]; then
-        mid_args+=(--mid_t=0.821)
+        mid_t="0.821"
       fi
       port=$((33000 + worker_id * 1000 + 10#${budget} + nfe))
       echo "START ${job_id} worker=${worker_id} gpu=${gpu_id}" > "${lock}/launch.txt"
@@ -107,7 +107,7 @@ while [[ "$(job_count)" -lt 210 ]]; do
             --data "${dataset}" --cond=False --arch=ddpmpp --precond=ct \
             --dropout=0.2 --augment=0 --xflip=False --fp16=False \
             --cache=True --workers=3 --eval-batch=512 --metric-generator-batch=128 \
-            --nfe="${nfe}" "${mid_args[@]}" \
+            --nfe="${nfe}" ${mid_t:+--mid_t="${mid_t}"} \
             --metrics=kid50k_full,fid50k_full --metric-repeats=1 \
             --sample-seeds=0-49999 --seed=20260730 --retain-generated-artifacts \
               --desc="q128-matched-spacing-${job_id}"
@@ -125,7 +125,7 @@ while [[ "$(job_count)" -lt 210 ]]; do
               --data "${dataset}" --cond=False --arch=ddpmpp --precond=ct \
               --dropout=0.2 --augment=0 --xflip=False --fp16=False \
               --cache=True --workers=3 --eval-batch=512 --metric-generator-batch=128 \
-              --nfe="${nfe}" "${mid_args[@]}" \
+              --nfe="${nfe}" ${mid_t:+--mid_t="${mid_t}"} \
               --metrics=kid50k_full,fid50k_full --metric-repeats=1 \
               --sample-seeds=0-49999 --seed=20260730 --retain-generated-artifacts \
               --desc="q128-matched-spacing-${job_id}"
