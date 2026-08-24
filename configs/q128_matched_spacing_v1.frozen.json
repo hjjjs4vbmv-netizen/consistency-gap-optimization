@@ -14,6 +14,14 @@
     "training_matrix_changed": false,
     "change": "Expose a fail-closed --gpu-id runtime selector; every process remains one seed-by-arm cell on one exclusive A100."
   },
+  "artifact_streaming_amendment_20260824": {
+    "created_utc": "2026-08-24T05:04:00Z",
+    "reason": "Export and relay every immutable checkpoint immediately instead of waiting for trajectory completion.",
+    "quality_results_observed_before_amendment": false,
+    "scientific_math_changed": false,
+    "training_state_changed": false,
+    "change": "Admit five-arm names and single-budget EMA export; add a read-only checkpoint watcher that emits hash-bound relay receipts."
+  },
   "historical_q128_policy": "The completed canonical A/B block remains history and does not replace any cell in this fresh five-arm matrix.",
   "calibration": {
     "quality_blind": true,
@@ -48,7 +56,8 @@
       "training/dataset.py": "f46fe15ecd66206819e416ffca6ea22a06610405d6954ccc0fffc53092ab81c2",
       "training/reproducibility.py": "e414aeeb7390db74570bb9fbc6dc5751ed3153b248e8d66433e50b6a55df470d",
       "scripts/run_q128_matched_spacing.py": "437f6e23368052e9b824aa45f6acfd62e90b2ca343d8d7a26f70381af5a7972d",
-      "scripts/export_second_q_ab_snapshots.py": "26f6fdcf02b3c96d9721718ded4c0e2110166eb571044761c8fad71890539930",
+      "scripts/export_second_q_ab_snapshots.py": "c5bde7bcf29df88a433a5de089b0b2647da10d55ad71beaab73069a9d4b54189",
+      "scripts/watch_q128_stream.py": "eb08e4de6f2834778989dbfd08d40db280b6d800d2dcad0b05d2aeb3f621a5eb",
       "scripts/calibrate_q128_matched_spacing.py": "edea5685ba58f4c8d8f69d9c464e372bd047d8c920f103397827d48fb3bc34fc"
     }
   },
