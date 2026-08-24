@@ -1,0 +1,15 @@
+{
+  "fallacy_scan_coverage": "11/11",
+  "jobs": 210,
+  "limitations": [
+    "Only three training seeds; paired outcomes are descriptive.",
+    "The primary Bmatch-Bsame AULC direction is seed-sensitive.",
+    "q128 TTQ was not preregistered and is exploratory.",
+    "Redundant attempts were resolved by frozen partition ownership, never quality."
+  ],
+  "metric_values": 420,
+  "overall_confidence": "CAUTION",
+  "reproducibility": "not rerun; sealed artifact and matrix audit only",
+  "schema": "ect.q128-matched-spacing-validation/v1",
+  "verification_status": "ANALYZED"
+}

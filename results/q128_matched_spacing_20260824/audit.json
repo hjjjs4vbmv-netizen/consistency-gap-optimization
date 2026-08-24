@@ -1,0 +1,52 @@
+{
+  "arms": [
+    "A",
+    "Bsame",
+    "Bmatch",
+    "Cmatch",
+    "Dmatch"
+  ],
+  "authoritative_job_counts": {
+    "data-card-partition": 7,
+    "server-main": 187,
+    "server-partition": 16
+  },
+  "budgets_kimg": [
+    256,
+    384,
+    512,
+    640,
+    768,
+    896,
+    1024
+  ],
+  "differing_metric_values": 24,
+  "invalidated_directories_included": false,
+  "jobs": 210,
+  "matrix_extra_jobs": 0,
+  "matrix_missing_jobs": 0,
+  "max_duplicate_fid_abs_difference": 8.830906750745271e-05,
+  "max_duplicate_kid_abs_difference": 2.2550550538014136e-07,
+  "metric_values": 420,
+  "nfes": [
+    1,
+    2
+  ],
+  "overlap_jobs": 23,
+  "protocol": {
+    "metric_seed": 20260730,
+    "nfe2_mid_t": 0.821,
+    "precision": "fp32",
+    "sample_seeds": "0-49999",
+    "samples": 50000,
+    "shared_feature_reuse_patch": "a818883"
+  },
+  "schema": "ect.q128-matched-spacing-results-audit/v1",
+  "seeds": [
+    3,
+    4,
+    5
+  ],
+  "selection_rule": "Use preassigned data/server partitions for their disjoint jobs; never choose by metric quality.",
+  "status": "PASS"
+}
