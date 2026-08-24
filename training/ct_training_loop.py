@@ -1886,8 +1886,13 @@ def training_loop(
                     'strict factorial protocol requires one common learning rate'
                 )
             learning_rate = learning_rates.pop()
+            telemetry_schema = (
+                'ect.q128.matched-spacing-training-telemetry/v1'
+                if factorial_metrics['protocol'] == 'q128_matched_spacing_v1'
+                else 'ect.q256.target-weight-training-telemetry/v1'
+            )
             telemetry_row = {
-                'schema': 'ect.q256.target-weight-training-telemetry/v1',
+                'schema': telemetry_schema,
                 'protocol': factorial_metrics['protocol'],
                 'arm': factorial_metrics['arm'],
                 'target_gap_scale': f"{factorial_metrics['target_gap_scale']:.17g}",
