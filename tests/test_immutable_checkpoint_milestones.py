@@ -49,11 +49,47 @@ class ImmutableCheckpointMilestoneTests(unittest.TestCase):
             (384000, 512000, 640000, 768000, 896000, 1024000),
         )
 
+    def test_imagenet_milestones_map_to_20k_iteration_steps(self):
+        milestones = (2560, 5120, 7680, 10240, 12800)
+        nimg = ct_training_loop.normalize_immutable_checkpoint_nimg(
+            milestones,
+            total_kimg=12800,
+            batch_size=128,
+        )
+        self.assertEqual(
+            tuple(value // 128 for value in nimg),
+            (20000, 40000, 60000, 80000, 100000),
+        )
+
     def test_unreachable_budget_is_rejected(self):
         with self.assertRaisesRegex(ValueError, 'not reachable'):
             ct_training_loop.normalize_immutable_checkpoint_nimg(
                 (385,), total_kimg=1024, batch_size=128
             )
+
+    def test_fixed_global_batch_supports_w2_and_w4_but_rejects_w3(self):
+        self.assertEqual(
+            ct_training_loop.resolve_batch_layout(128, 32, 2),
+            (32, 2),
+        )
+        self.assertEqual(
+            ct_training_loop.resolve_batch_layout(128, 32, 4),
+            (32, 1),
+        )
+        with self.assertRaisesRegex(ValueError, 'not divisible'):
+            ct_training_loop.resolve_batch_layout(128, 32, 3)
+
+    def test_inverse_sqrt_lr_uses_global_batch_iteration_count(self):
+        schedule = ct_training_loop.learning_rate_schedule
+        self.assertEqual(schedule(0, 128, ref_lr=0.001, ref_batches=2000), 0.001)
+        self.assertEqual(
+            schedule(256000, 128, ref_lr=0.001, ref_batches=2000),
+            0.001,
+        )
+        self.assertAlmostEqual(
+            schedule(1024000, 128, ref_lr=0.001, ref_batches=2000),
+            0.0005,
+        )
 
     def test_atomic_state_is_immutable_and_reloadable(self):
         with tempfile.TemporaryDirectory() as directory:

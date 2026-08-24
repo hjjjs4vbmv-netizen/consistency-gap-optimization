@@ -9,6 +9,7 @@ from click.testing import CliRunner
 
 import ct_train
 from training.loss import ECMLoss, TARGET_WEIGHT_FACTORIAL_PROTOCOL
+from training.networks_edm2 import MPConv
 
 
 def parse_train_args(*extra_args):
@@ -32,11 +33,131 @@ class TrainingCliCompatibilityTest(unittest.TestCase):
         self.assertNotIn('factorial_protocol', loss_kwargs)
         self.assertNotIn('target_gap_scale', loss_kwargs)
         self.assertNotIn('denominator_gap_scale', loss_kwargs)
+        self.assertNotIn('wt', loss_kwargs)
+
+    def test_edm2_img64_s_preset_is_the_frozen_donor_recipe(self):
+        params = dnnlib.EasyDict(parse_train_args('--preset', 'edm2-img64-s'))
+        ct_train.apply_config_preset(params)
+        self.assertEqual(params.arch, 'edm2')
+        self.assertEqual(params.cbase, 192)
+        self.assertEqual(params.betas, (0.9, 0.99))
+        self.assertEqual(params.lr_ref_batches, 2000)
+        self.assertEqual(params.lr, 0.001)
+        self.assertEqual(params.dropout, 0.4)
+        self.assertEqual(params.dropres, 16)
+        self.assertEqual(params.augment, 0)
+        self.assertFalse(params.xflip)
+        self.assertEqual(params.mean, -0.8)
+        self.assertEqual(params.std, 1.6)
+        self.assertEqual(params.q, 4)
+        self.assertEqual(params.k, 8)
+        self.assertEqual(params.b, 1)
+        self.assertEqual(params.c, 0.06)
+        self.assertEqual(params.wt, 'snrpk')
+        self.assertEqual(params.power_ema_stds, (0.01, 0.05, 0.1))
+        loss_kwargs = ct_train.make_loss_kwargs(params)
+        self.assertEqual(loss_kwargs.wt, 'snrpk')
+
+    def test_edm2_img64_s_requires_the_formal_dataset_contract(self):
+        class Dataset:
+            resolution = 64
+            num_channels = 3
+            label_dim = 1000
+
+        opts = dnnlib.EasyDict(
+            preset='edm2-img64-s', cond=True, xflip=False
+        )
+        ct_train.validate_edm2_img64_dataset(opts, Dataset())
+        for field, value in (
+            ('resolution', 32),
+            ('num_channels', 1),
+            ('label_dim', 10),
+        ):
+            dataset = Dataset()
+            setattr(dataset, field, value)
+            with self.subTest(field=field), self.assertRaises(click.ClickException):
+                ct_train.validate_edm2_img64_dataset(opts, dataset)
+        with self.assertRaises(click.ClickException):
+            ct_train.validate_edm2_img64_dataset(
+                dnnlib.EasyDict(
+                    preset='edm2-img64-s', cond=True, xflip=True
+                ),
+                Dataset(),
+            )
+
+    def test_snrpk_weight_matches_edm2_formula(self):
+        with contextlib.redirect_stdout(io.StringIO()):
+            loss_fn = ECMLoss(wt='snrpk')
+        t = torch.tensor([0.25, 0.5, 1.0])
+        expected = (t.square() + 0.5 ** 2) / (t * 0.5).square()
+        self.assertTrue(torch.equal(loss_fn.snrplusk_wt(t), expected))
+
+    def test_snrpk_rejects_factorial_denominator_protocol(self):
+        with self.assertRaisesRegex(ValueError, 'cannot be combined'):
+            ECMLoss(
+                q=256,
+                c=0,
+                factorial_protocol=TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+                target_gap_scale=1.0,
+                denominator_gap_scale=1.0,
+                wt='snrpk',
+            )
+
+    def test_edm2_teacher_disables_forced_weight_normalization(self):
+        class RecordingNet(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.mpconv = MPConv(1, 1, kernel=[])
+                self.scale = torch.nn.Parameter(torch.ones([]))
+                self.force_wn_calls = []
+
+            def forward(self, x, _sigma, _labels=None, **_kwargs):
+                self.force_wn_calls.append(self.mpconv.force_wn)
+                return x * self.scale
+
+        net = RecordingNet()
+        loss_fn = ECMLoss(q=4, adj='const', wt='snrpk')
+        loss_fn(net=net, images=torch.randn(2, 1, 2, 2))
+        self.assertEqual(net.force_wn_calls, [True, False])
+        self.assertTrue(net.mpconv.force_wn)
+
+    def test_legacy_force_wn_attribute_is_not_touched(self):
+        class LegacyNet(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.force_wn = True
+                self.scale = torch.nn.Parameter(torch.ones([]))
+                self.calls = []
+
+            def forward(self, x, _sigma, _labels=None, **_kwargs):
+                self.calls.append(self.force_wn)
+                return x * self.scale
+
+        net = LegacyNet()
+        loss_fn = ECMLoss(q=4, adj='const')
+        loss_fn(net=net, images=torch.randn(2, 1, 2, 2))
+        self.assertEqual(net.calls, [True, True])
 
     def test_zero_disables_numbered_snapshot_and_state_dump(self):
         params = parse_train_args('--snap', '0', '--dump', '0')
         self.assertEqual(params['snap'], 0)
         self.assertEqual(params['dump'], 0)
+
+    def test_image_outputs_can_be_explicitly_disabled(self):
+        params = parse_train_args(
+            '--startup-preview', 'False',
+            '--sample_every', '0',
+            '--eval_every', '0',
+        )
+        self.assertFalse(params['startup_preview'])
+        self.assertEqual(params['sample_every'], 0)
+        self.assertEqual(params['eval_every'], 0)
+
+    def test_legacy_image_output_defaults_are_unchanged(self):
+        params = parse_train_args()
+        self.assertTrue(params['startup_preview'])
+        self.assertEqual(params['sample_every'], 10)
+        self.assertEqual(params['eval_every'], 50)
 
     def test_legacy_mapping_option_is_preserved(self):
         self.assertEqual(parse_train_args('--mapping=const')['mapping'], 'const')

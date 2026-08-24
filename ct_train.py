@@ -17,6 +17,15 @@ STRICT_FACTORIAL_PROTOCOLS = {
     Q128_MATCHED_SPACING_PROTOCOL,
 }
 
+CONFIG_PRESETS = {
+    'edm2-img64-s': dnnlib.EasyDict(
+        arch='edm2', cbase=192, lr=0.0010, betas=(0.9, 0.99),
+        lr_ref_batches=2000, dropout=0.40, dropres=16,
+        augment=0.0, mean=-0.8, std=1.6, q=4.0, c=0.06, wt='snrpk',
+        power_ema_stds=(0.010, 0.050, 0.100),
+    ),
+}
+
 import warnings
 warnings.filterwarnings('ignore', 'Grad strides do not match bucket view strides') # False warning printed by PyTorch 1.12.
 
@@ -35,6 +44,44 @@ def parse_int_list(s):
         else:
             ranges.append(int(p))
     return ranges
+
+
+def parse_float_tuple(_ctx, _param, value):
+    if value is None or value == '':
+        return ()
+    try:
+        result = tuple(float(token.strip()) for token in value.split(','))
+    except ValueError as exc:
+        raise click.BadParameter('expected comma-separated floats') from exc
+    if any(not torch.isfinite(torch.tensor(item)) for item in result):
+        raise click.BadParameter('values must be finite')
+    return result
+
+
+def apply_config_preset(opts):
+    preset = getattr(opts, 'preset', '')
+    if not preset:
+        return opts
+    if preset not in CONFIG_PRESETS:
+        raise click.ClickException(f'Invalid configuration preset "{preset}"')
+    opts.update(CONFIG_PRESETS[preset])
+    return opts
+
+
+def validate_edm2_img64_dataset(opts, dataset):
+    if getattr(opts, 'preset', '') != 'edm2-img64-s':
+        return
+    if (
+        dataset.resolution != 64
+        or dataset.num_channels != 3
+        or not opts.cond
+        or dataset.label_dim != 1000
+        or opts.xflip
+    ):
+        raise click.ClickException(
+            'edm2-img64-s requires conditional 3-channel ImageNet-64 with '
+            '1000 classes and --xflip=False'
+        )
 
 
 class CommaSeparatedList(click.ParamType):
@@ -128,6 +175,9 @@ def make_loss_kwargs(opts):
             target_gap_scale=factorial['target_gap_scale'],
             denominator_gap_scale=factorial['denominator_gap_scale'],
         )
+    wt = getattr(opts, 'wt', 'legacy')
+    if wt != 'legacy':
+        kwargs.wt = wt
     return kwargs
 
 #----------------------------------------------------------------------------
@@ -138,8 +188,10 @@ def make_loss_kwargs(opts):
 @click.option('--outdir',        help='Where to save the results', metavar='DIR',                   type=str, required=True)
 @click.option('--data',          help='Path to the dataset', metavar='ZIP|DIR',                     type=str, required=True)
 @click.option('--cond',          help='Train class-conditional model', metavar='BOOL',              type=bool, default=False, show_default=True)
-@click.option('--arch',          help='Network architecture', metavar='ddpmpp|ncsnpp|adm',          type=click.Choice(['ddpmpp', 'ncsnpp', 'adm']), default='ddpmpp', show_default=True)
+@click.option('--arch',          help='Network architecture', metavar='ddpmpp|ncsnpp|adm|edm2',     type=click.Choice(['ddpmpp', 'ncsnpp', 'adm', 'edm2']), default='ddpmpp', show_default=True)
+@click.option('--preset',        help='Configuration preset', metavar='STR',                        type=str, default='', show_default=True)
 @click.option('--precond',       help='Preconditioning & loss function', metavar='ect',             type=click.Choice(['ect']), default='ect', show_default=True)
+@click.option('--wt',            help='Loss weighting objective', metavar='legacy|snrpk',           type=click.Choice(['legacy', 'snrpk']), default='legacy', show_default=True)
 
 # Hyperparameters.
 @click.option('--duration',      help='Training duration', metavar='MIMG',                          type=click.FloatRange(min=0, min_open=True), default=200, show_default=True)
@@ -149,8 +201,12 @@ def make_loss_kwargs(opts):
 @click.option('--cres',          help='Channels per resolution  [default: varies]', metavar='LIST', type=parse_int_list)
 @click.option('--optim',         help='Name of Optimizer', metavar='Optimizer',                     type=str, default='Adam', show_default=True)
 @click.option('--lr',            help='Learning rate', metavar='FLOAT',                             type=click.FloatRange(min=0, min_open=True), default=10e-4, show_default=True)
+@click.option('--lr-ref-batches', '--decay', 'lr_ref_batches', help='Inverse-sqrt LR reference batches; 0 disables decay', metavar='FLOAT', type=click.FloatRange(min=0), default=0, show_default=True)
+@click.option('--betas',         help='Two Adam beta values', metavar='FLOAT',                       type=click.FloatRange(min=0, max=1, max_open=True), multiple=True, default=(0.9, 0.999), show_default=True)
 @click.option('--ema',           help='EMA half-life', metavar='MIMG',                              type=click.FloatRange(min=0), default=None, show_default=True)
 @click.option('--ema_beta',      help='EMA decay rate', metavar='FLOAT',                            type=click.FloatRange(min=0), default=0.9999, show_default=True)
+@click.option('--power-ema-stds', help='Comma-separated PowerEMA relative stds', metavar='FLOATS',  type=str, callback=parse_float_tuple, default='')
+@click.option('--dropres',       help='Highest feature resolution using dropout', metavar='INT',    type=click.IntRange(min=1), default=None)
 @click.option('--dropout',       help='Dropout probability', metavar='FLOAT',                       type=click.FloatRange(min=0, max=1), default=0.13, show_default=True)
 @click.option('--augment',       help='Augment probability', metavar='FLOAT',                       type=click.FloatRange(min=0, max=1), default=0.12, show_default=True)
 @click.option('--xflip',         help='Enable dataset x-flips', metavar='BOOL',                     type=bool, default=False, show_default=True)
@@ -233,6 +289,8 @@ def make_loss_kwargs(opts):
 @click.option('--enable_amp', '--amp', '--enable_gradscaler', 'enable_amp',
               help='Enable torch.cuda.amp.GradScaler; overrides loss scaling set by --ls',
               metavar='BOOL', type=bool, default=False, show_default=True)
+@click.option('--exact-resume', help='Enable topology-bound full-state exact resume', metavar='BOOL', type=bool, default=False, show_default=True)
+@click.option('--global-batch-mean', help='Normalize accumulated gradients by global batch', metavar='BOOL', type=bool, default=False, show_default=True)
 @click.option('--bench',         help='Enable cuDNN benchmarking', metavar='BOOL',                  type=bool, default=True, show_default=True)
 @click.option('--cache',         help='Cache dataset in CPU memory', metavar='BOOL',                type=bool, default=True, show_default=True)
 @click.option('--workers',       help='DataLoader worker processes', metavar='INT',                 type=click.IntRange(min=1), default=1, show_default=True)
@@ -257,13 +315,14 @@ def make_loss_kwargs(opts):
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
 @click.option('--resume-tick',   help='Number of tick from previous training state', metavar='INT', type=int)
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
+@click.option('--startup-preview', help='Write data.png and model_init.png', metavar='BOOL', type=bool, default=True, show_default=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
 
 # Evaluation
 @click.option('--mid_t',         help='Sampler steps [default: 0.821]',                             multiple=True, default=[0.821])
 @click.option('--metrics',       help='Comma-separated list or "none" [default: fid50k_full]',      type=CommaSeparatedList(), default='fid50k_full')
-@click.option('--sample_every',  help='How often to sample imgs', metavar='TICKS',                  type=click.IntRange(min=1), default=10, show_default=True)
-@click.option('--eval_every',    help='How often to evaluate metrics', metavar='TICKS',             type=click.IntRange(min=1), default=50, show_default=True)
+@click.option('--sample_every',  help='How often to sample imgs; 0 disables', metavar='TICKS',       type=click.IntRange(min=0), default=10, show_default=True)
+@click.option('--eval_every',    help='How often to evaluate metrics; 0 disables', metavar='TICKS',  type=click.IntRange(min=0), default=50, show_default=True)
 
 
 def main(**kwargs):
@@ -273,6 +332,34 @@ def main(**kwargs):
     opts = dnnlib.EasyDict(kwargs)
     torch.multiprocessing.set_start_method('spawn')
     dist.init()
+    apply_config_preset(opts)
+    world_size = dist.get_world_size()
+    if len(opts.betas) != 2:
+        raise click.ClickException('--betas must be specified exactly twice')
+    if opts.batch % world_size != 0:
+        raise click.ClickException(
+            f'--batch={opts.batch} is not divisible by world_size={world_size}'
+        )
+    local_batch = opts.batch // world_size
+    if (
+        opts.batch_gpu is not None
+        and opts.batch_gpu <= local_batch
+        and local_batch % opts.batch_gpu != 0
+    ):
+        raise click.ClickException(
+            f'per-rank batch {local_batch} is not divisible by '
+            f'--batch-gpu={opts.batch_gpu}'
+        )
+    if opts.exact_resume and not opts.global_batch_mean:
+        raise click.ClickException(
+            '--exact-resume=True requires --global-batch-mean=True'
+        )
+    if opts.wt == 'snrpk' and opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS:
+        raise click.ClickException(
+            '--wt=snrpk cannot be combined with a factorial protocol'
+        )
+    if any(std <= 0 for std in opts.power_ema_stds):
+        raise click.ClickException('--power-ema-stds values must be positive')
 
     # Initialize config dict.
     c = dnnlib.EasyDict()
@@ -280,7 +367,11 @@ def main(**kwargs):
     c.data_loader_kwargs = dnnlib.EasyDict(pin_memory=True, num_workers=opts.workers, prefetch_factor=2)
     c.network_kwargs = dnnlib.EasyDict()
     c.loss_kwargs = make_loss_kwargs(opts)
-    c.optimizer_kwargs = dnnlib.EasyDict(class_name=f'torch.optim.{opts.optim}', lr=opts.lr, betas=[0.9,0.999], eps=1e-8)
+    c.optimizer_kwargs = dnnlib.EasyDict(class_name=f'torch.optim.{opts.optim}', lr=opts.lr, betas=list(opts.betas), eps=1e-8)
+    if opts.lr_ref_batches > 0:
+        c.lr_kwargs = dnnlib.EasyDict(
+            ref_lr=opts.lr, ref_batches=opts.lr_ref_batches
+        )
 
     # Validate dataset options.
     try:
@@ -288,6 +379,7 @@ def main(**kwargs):
         dataset_name = dataset_obj.name
         c.dataset_kwargs.resolution = dataset_obj.resolution # be explicit about dataset resolution
         c.dataset_kwargs.max_size = len(dataset_obj) # be explicit about dataset size
+        validate_edm2_img64_dataset(opts, dataset_obj)
         if opts.cond and not dataset_obj.has_labels:
             raise click.ClickException('--cond=True requires labels specified in dataset.json')
         del dataset_obj # conserve memory
@@ -301,13 +393,21 @@ def main(**kwargs):
     elif opts.arch == 'ncsnpp':
         c.network_kwargs.update(model_type='SongUNet', embedding_type='fourier', encoder_type='residual', decoder_type='standard')
         c.network_kwargs.update(channel_mult_noise=2, resample_filter=[1,3,3,1], model_channels=128, channel_mult=[2,2,2])
-    else:
+    elif opts.arch == 'adm':
         assert opts.arch == 'adm'
         c.network_kwargs.update(model_type='DhariwalUNet', model_channels=192, channel_mult=[1,2,3,4])
+    else:
+        assert opts.arch == 'edm2'
+        c.network_kwargs.update(
+            class_name='training.networks_edm2.Precond',
+            model_channels=192,
+            channel_mult=[1,2,3,4],
+        )
 
     # Preconditioning & loss function.
     if opts.precond == 'ect':
-        c.network_kwargs.class_name = 'training.networks.ECMPrecond'
+        if opts.arch != 'edm2':
+            c.network_kwargs.class_name = 'training.networks.ECMPrecond'
         c.loss_kwargs.class_name = 'training.loss.ECMLoss'
     else:
         raise ValueError('Unrecognized Precond & Loss!')
@@ -317,6 +417,10 @@ def main(**kwargs):
         c.network_kwargs.model_channels = opts.cbase
     if opts.cres is not None:
         c.network_kwargs.channel_mult = opts.cres
+    if opts.dropres is not None:
+        if opts.arch != 'edm2':
+            raise click.ClickException('--dropres is only supported by --arch=edm2')
+        c.network_kwargs.dropout_res = opts.dropres
     if opts.augment:
         c.augment_kwargs = dnnlib.EasyDict(class_name='training.augment.AugmentPipe', p=opts.augment)
         c.augment_kwargs.update(xflip=1e8, yflip=1, scale=1, rotate_frac=1, aniso=1, translate_frac=1)
@@ -329,6 +433,12 @@ def main(**kwargs):
     c.ema_beta = opts.ema_beta
     c.update(batch_size=opts.batch, batch_gpu=opts.batch_gpu)
     c.update(loss_scaling=opts.ls, cudnn_benchmark=opts.bench, enable_tf32=opts.tf32, enable_amp=opts.enable_amp)
+    if opts.exact_resume:
+        c.exact_resume = True
+    if opts.global_batch_mean:
+        c.global_batch_mean = True
+    if opts.power_ema_stds:
+        c.power_ema_stds = opts.power_ema_stds
     c.update(kimg_per_tick=opts.tick,
              snapshot_ticks=None if opts.snap == 0 else opts.snap,
              state_dump_ticks=None if opts.dump == 0 else opts.dump,
@@ -336,7 +446,14 @@ def main(**kwargs):
              immutable_checkpoint_kimg=opts.immutable_checkpoint_kimg,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
              stop_after_attempts=opts.stop_after_attempts)
-    c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
+    if not opts.startup_preview:
+        c.startup_preview = False
+    c.update(
+        mid_t=opts.mid_t,
+        metrics=opts.metrics,
+        sample_ticks=(None if opts.sample_every == 0 else opts.sample_every),
+        eval_ticks=(None if opts.eval_every == 0 else opts.eval_every),
+    )
 
     # Random seed.
     if opts.seed is not None:
@@ -356,7 +473,10 @@ def main(**kwargs):
         resume_token = parse_resume_state_token(opts.resume)
         if resume_token is None or not os.path.isfile(opts.resume):
             raise click.ClickException('--resume must point to training-state-*.pt from a previous training run')
-        if opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS:
+        if (
+            opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
+            or opts.exact_resume
+        ):
             # The versioned factorial training-state is self-contained (net +
             # EMA + optimizer + scaler + RNG + sampler). Depending on a
             # separately replaced `latest` snapshot creates a crash window in
@@ -425,19 +545,23 @@ def main(**kwargs):
     if dist.get_rank() == 0:
         os.makedirs(c.run_dir, exist_ok=True)
         options_path = os.path.join(c.run_dir, 'training_options.json')
-        strict_factorial_resume = (
+        exact_state_resume = (
             opts.resume is not None
-            and opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
+            and (
+                opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
+                or opts.exact_resume
+            )
         )
-        if strict_factorial_resume:
+        if exact_state_resume:
             if not os.path.isfile(options_path):
                 raise click.ClickException(
-                    'strict factorial resume requires the immutable original '
+                    'exact resume requires the immutable original '
                     'training_options.json in the same run directory'
                 )
         else:
             mode = 'xt' if (
                 opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
+                or opts.exact_resume
             ) else 'wt'
             with open(options_path, mode) as f:
                 json.dump(c, f, indent=2)

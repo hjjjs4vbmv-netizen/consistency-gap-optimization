@@ -15,7 +15,10 @@ from training import reproducibility
 from training.ct_training_loop import (
     canonical_processed_nimg,
     copy_module_state_exact,
+    enforce_generic_exact_finite,
+    enforce_generic_exact_finite_before_sanitization,
 )
+from training.phema import PowerFunctionEMA
 
 
 def take(iterator, count):
@@ -91,6 +94,26 @@ class ExactModuleTransferTest(unittest.TestCase):
                 allowed_source_extras=invalid,
             )
 
+    def test_donor_extras_are_allowed_but_every_target_is_required(self):
+        source = TinyStateModule(extra=True)
+        destination = TinyStateModule()
+        copy_module_state_exact(
+            source,
+            destination,
+            label='donor',
+            allow_unlisted_source_extras=True,
+        )
+        self.assertTrue(torch.equal(source.weight, destination.weight))
+        self.assertTrue(torch.equal(source.running, destination.running))
+
+        with self.assertRaisesRegex(RuntimeError, 'missing'):
+            copy_module_state_exact(
+                TinyStateModule(),
+                TinyStateModule(extra=True),
+                label='donor',
+                allow_unlisted_source_extras=True,
+            )
+
 
 class ProcessedNimgContractTest(unittest.TestCase):
     def test_integral_float_is_canonicalized_for_csv_and_resume(self):
@@ -104,6 +127,37 @@ class ProcessedNimgContractTest(unittest.TestCase):
         for value in (True, -1, 0.5, float('nan'), float('inf'), 'invalid'):
             with self.subTest(value=value), self.assertRaises(RuntimeError):
                 canonical_processed_nimg(value)
+
+    def test_generic_exact_rejects_before_nonfinite_sanitization(self):
+        parameter = torch.nn.Parameter(torch.ones([]))
+        parameter.grad = torch.tensor(float('inf'))
+        with self.assertRaisesRegex(FloatingPointError, 'raw gradient'):
+            enforce_generic_exact_finite_before_sanitization(
+                [torch.zeros([])], [parameter], torch.device('cpu')
+            )
+        self.assertTrue(torch.isinf(parameter.grad))
+
+        parameter.grad = torch.zeros([])
+        with self.assertRaisesRegex(FloatingPointError, 'loss'):
+            enforce_generic_exact_finite_before_sanitization(
+                [torch.tensor(float('nan'))],
+                [parameter],
+                torch.device('cpu'),
+            )
+
+        enforce_generic_exact_finite(
+            'loss/gradient before sanitization',
+            {'loss': 0, 'raw gradient': 0},
+        )
+
+    def test_generic_exact_rejects_nonfinite_model_and_power_ema_state(self):
+        for name in ('optimizer update/model', 'EMA', 'PowerEMA'):
+            with self.subTest(name=name), self.assertRaisesRegex(
+                FloatingPointError, name.split('/')[-1]
+            ):
+                enforce_generic_exact_finite(
+                    'state update', {name: 1}
+                )
 
 
 class InfiniteSamplerReplayTest(unittest.TestCase):
@@ -194,6 +248,43 @@ class RngReplayTest(unittest.TestCase):
         self.assertEqual(actual[0], expected[0])
         np.testing.assert_array_equal(actual[1], expected[1])
         self.assertTrue(torch.equal(actual[2], expected[2]))
+
+    def test_current_device_cpu_rng_roundtrip(self):
+        random.seed(501)
+        np.random.seed(502)
+        torch.manual_seed(503)
+        state = reproducibility.capture_current_device_rng_state('cpu')
+        expected = (random.random(), np.random.randn(4), torch.randn(4))
+        random.random()
+        np.random.randn(9)
+        torch.randn(9)
+        reproducibility.restore_current_device_rng_state(state, 'cpu')
+        actual = (random.random(), np.random.randn(4), torch.randn(4))
+        self.assertEqual(actual[0], expected[0])
+        np.testing.assert_array_equal(actual[1], expected[1])
+        self.assertTrue(torch.equal(actual[2], expected[2]))
+
+
+class PowerEmaStateTest(unittest.TestCase):
+    def test_profiles_roundtrip_without_changing_contract(self):
+        source = TinyStateModule()
+        tracker = PowerFunctionEMA(source, stds=(0.01, 0.05, 0.1))
+        with torch.no_grad():
+            source.weight.add_(3)
+        tracker.update(cur_nimg=128, batch_size=128)
+        state = tracker.state_dict()
+        self.assertEqual(state['stds'], (0.01, 0.05, 0.1))
+        self.assertEqual(len(state['emas']), 3)
+
+        restored = PowerFunctionEMA(
+            TinyStateModule(), stds=(0.01, 0.05, 0.1)
+        )
+        restored.load_state_dict(state)
+        for expected, actual in zip(tracker.emas, restored.emas):
+            for key in expected.state_dict():
+                self.assertTrue(torch.equal(
+                    expected.state_dict()[key], actual.state_dict()[key]
+                ))
 
     @unittest.skipUnless(torch.cuda.is_available(), 'CUDA is required')
     def test_all_cuda_rng_states_roundtrip(self):

@@ -17,22 +17,7 @@ from . import metric_utils
 
 #----------------------------------------------------------------------------
 
-def compute_fid(opts, max_real, num_gen):
-    # Direct TorchScript translation of http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz
-    detector_url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/inception-2015-12-05.pt'
-    detector_kwargs = dict(return_features=True) # Return raw features before the softmax layer.
-
-    mu_real, sigma_real = metric_utils.compute_feature_stats_for_dataset(
-        opts=opts, detector_url=detector_url, detector_kwargs=detector_kwargs,
-        rel_lo=0, rel_hi=0, capture_mean_cov=True, max_items=max_real).get_mean_cov()
-
-    mu_gen, sigma_gen = metric_utils.compute_feature_stats_for_generator(
-        opts=opts, detector_url=detector_url, detector_kwargs=detector_kwargs,
-        rel_lo=0, rel_hi=1, capture_mean_cov=True, max_items=num_gen).get_mean_cov()
-
-    if opts.rank != 0:
-        return float('nan')
-
+def compute_fid_from_stats(mu_real, sigma_real, mu_gen, sigma_gen):
     m = np.square(mu_gen - mu_real).sum()
     # ``disp`` was removed from SciPy's public ``sqrtm`` API in 1.18.
     # Calling it without that legacy argument returns the matrix square root
@@ -40,5 +25,34 @@ def compute_fid(opts, max_real, num_gen):
     s = scipy.linalg.sqrtm(np.dot(sigma_gen, sigma_real)) # pylint: disable=no-member
     fid = np.real(m + np.trace(sigma_gen + sigma_real - s * 2))
     return float(fid)
+
+
+def compute_fid(opts, max_real, num_gen, unbiased=False, detector_url=None):
+    # Direct TorchScript translation of http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz
+    detector_url = detector_url or 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/inception-2015-12-05.pt'
+    detector_kwargs = dict(return_features=True) # Return raw features before the softmax layer.
+
+    real_stats = metric_utils.compute_feature_stats_for_dataset(
+        opts=opts, detector_url=detector_url, detector_kwargs=detector_kwargs,
+        rel_lo=0, rel_hi=0, capture_mean_cov=True, max_items=max_real
+    )
+    mu_real, sigma_real = (
+        real_stats.get_mean_cov(unbiased=True)
+        if unbiased else real_stats.get_mean_cov()
+    )
+
+    gen_stats = metric_utils.compute_feature_stats_for_generator(
+        opts=opts, detector_url=detector_url, detector_kwargs=detector_kwargs,
+        rel_lo=0, rel_hi=1, capture_mean_cov=True, max_items=num_gen
+    )
+    mu_gen, sigma_gen = (
+        gen_stats.get_mean_cov(unbiased=True)
+        if unbiased else gen_stats.get_mean_cov()
+    )
+
+    if opts.rank != 0:
+        return float('nan')
+
+    return compute_fid_from_stats(mu_real, sigma_real, mu_gen, sigma_gen)
 
 #----------------------------------------------------------------------------

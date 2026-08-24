@@ -15,9 +15,29 @@ from . import metric_utils
 
 #----------------------------------------------------------------------------
 
-def compute_kid(opts, max_real, num_gen, num_subsets, max_subset_size, random_seed=None):
+def compute_kid_from_features(
+    real_features, gen_features, num_subsets, max_subset_size,
+    random_seed=None,
+):
+    n = real_features.shape[1]
+    m = min(min(real_features.shape[0], gen_features.shape[0]), max_subset_size)
+    rng = np.random if random_seed is None else np.random.RandomState(random_seed)
+    t = 0
+    for _subset_idx in range(num_subsets):
+        x = gen_features[rng.choice(gen_features.shape[0], m, replace=False)]
+        y = real_features[rng.choice(real_features.shape[0], m, replace=False)]
+        a = (x @ x.T / n + 1) ** 3 + (y @ y.T / n + 1) ** 3
+        b = (x @ y.T / n + 1) ** 3
+        t += (a.sum() - np.diag(a).sum()) / (m - 1) - b.sum() * 2 / m
+    return float(t / num_subsets / m)
+
+
+def compute_kid(
+    opts, max_real, num_gen, num_subsets, max_subset_size,
+    random_seed=None, detector_url=None,
+):
     # Direct TorchScript translation of http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz
-    detector_url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/inception-2015-12-05.pt'
+    detector_url = detector_url or 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/inception-2015-12-05.pt'
     detector_kwargs = dict(return_features=True) # Return raw features before the softmax layer.
 
     real_features = metric_utils.compute_feature_stats_for_dataset(
@@ -31,17 +51,12 @@ def compute_kid(opts, max_real, num_gen, num_subsets, max_subset_size, random_se
     if opts.rank != 0:
         return float('nan')
 
-    n = real_features.shape[1]
-    m = min(min(real_features.shape[0], gen_features.shape[0]), max_subset_size)
-    rng = np.random if random_seed is None else np.random.RandomState(random_seed)
-    t = 0
-    for _subset_idx in range(num_subsets):
-        x = gen_features[rng.choice(gen_features.shape[0], m, replace=False)]
-        y = real_features[rng.choice(real_features.shape[0], m, replace=False)]
-        a = (x @ x.T / n + 1) ** 3 + (y @ y.T / n + 1) ** 3
-        b = (x @ y.T / n + 1) ** 3
-        t += (a.sum() - np.diag(a).sum()) / (m - 1) - b.sum() * 2 / m
-    kid = t / num_subsets / m
-    return float(kid)
+    return compute_kid_from_features(
+        real_features,
+        gen_features,
+        num_subsets=num_subsets,
+        max_subset_size=max_subset_size,
+        random_seed=random_seed,
+    )
 
 #----------------------------------------------------------------------------
