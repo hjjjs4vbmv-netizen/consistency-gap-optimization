@@ -7,9 +7,15 @@ import dnnlib
 from torch_utils import distributed as dist
 from training import ct_training_loop as training_loop
 from training.loss import (
+    Q128_MATCHED_SPACING_PROTOCOL,
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
     resolve_target_weight_factorial,
 )
+
+STRICT_FACTORIAL_PROTOCOLS = {
+    TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+    Q128_MATCHED_SPACING_PROTOCOL,
+}
 
 import warnings
 warnings.filterwarnings('ignore', 'Grad strides do not match bucket view strides') # False warning printed by PyTorch 1.12.
@@ -165,7 +171,7 @@ def make_loss_kwargs(opts):
               type=click.FloatRange(min=0, min_open=True), default=1.0, show_default=True)
 @click.option(
     '--factorial-protocol',
-    type=click.Choice(['none', TARGET_WEIGHT_FACTORIAL_PROTOCOL]),
+    type=click.Choice(['none', *sorted(STRICT_FACTORIAL_PROTOCOLS)]),
     default='none',
     show_default=True,
     help='Enable the frozen q256 target-geometry x denominator protocol',
@@ -350,7 +356,7 @@ def main(**kwargs):
         resume_token = parse_resume_state_token(opts.resume)
         if resume_token is None or not os.path.isfile(opts.resume):
             raise click.ClickException('--resume must point to training-state-*.pt from a previous training run')
-        if opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+        if opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS:
             # The versioned factorial training-state is self-contained (net +
             # EMA + optimizer + scaler + RNG + sampler). Depending on a
             # separately replaced `latest` snapshot creates a crash window in
@@ -421,7 +427,7 @@ def main(**kwargs):
         options_path = os.path.join(c.run_dir, 'training_options.json')
         strict_factorial_resume = (
             opts.resume is not None
-            and opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL
+            and opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
         )
         if strict_factorial_resume:
             if not os.path.isfile(options_path):
@@ -431,7 +437,7 @@ def main(**kwargs):
                 )
         else:
             mode = 'xt' if (
-                opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL
+                opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
             ) else 'wt'
             with open(options_path, mode) as f:
                 json.dump(c, f, indent=2)

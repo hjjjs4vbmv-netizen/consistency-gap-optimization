@@ -22,7 +22,10 @@ from training import reproducibility
 
 from metrics import metric_main
 
-_STRICT_FACTORIAL_PROTOCOL = 'q256_target_weight_v1'
+_STRICT_FACTORIAL_PROTOCOLS = {
+    'q256_target_weight_v1',
+    'q128_matched_spacing_v1',
+}
 _AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
     'schema': 'ect.q256.authoritative-transfer-source-policy/v1',
     'required_target_coverage': 'all_parameters_and_buffers',
@@ -873,7 +876,7 @@ def training_loop(
     # Initialize.
     start_time = time.time()
     strict_reproducibility = (
-        loss_kwargs.get('factorial_protocol') == _STRICT_FACTORIAL_PROTOCOL
+        loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
     )
     if strict_reproducibility and dist.get_world_size() != 1:
         raise ValueError(
