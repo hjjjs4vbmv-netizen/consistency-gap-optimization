@@ -14,7 +14,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = (101, 102, 103)
 GAP_SCALES = {"IA": 1.0, "IB": 1.1}
-MILESTONES_KIMG = (2560, 5120, 7680, 10240, 12800)
+MILESTONES_KIMG = tuple(range(1280, 12801, 1280))
 
 
 def parse_gpus(value: str) -> tuple[str, str]:
@@ -54,10 +54,14 @@ def training_command(args: argparse.Namespace) -> list[str]:
         "--schedule=global_sigmoid",
         f"--global-gap-scale={GAP_SCALES[args.method]}",
         "--wt=snrpk",
-        "-q=4",
-        "-k=8",
-        "-b=1",
-        "-c=0.06",
+        "-q",
+        "4",
+        "-k",
+        "8",
+        "-b",
+        "1",
+        "-c",
+        "0.06",
         "--double=500",
         "--duration=12.8",
         "--tick=6.4",

@@ -55,6 +55,52 @@ class CommaSeparatedList(click.ParamType):
 
 #----------------------------------------------------------------------------
 
+def validate_imagenet64_feature_contract(
+    opts, sample_seeds, world_size, resolution, num_channels, label_dim,
+):
+    if opts.arch != 'edm2' or opts.preset != 'edm2-img64-s':
+        raise click.ClickException(
+            '--feature-only requires --arch=edm2 --preset=edm2-img64-s'
+        )
+    if not opts.resume:
+        raise click.ClickException('--feature-only requires --resume=CHECKPOINT')
+    if (
+        resolution != 64
+        or num_channels != 3
+        or not opts.cond
+        or label_dim != IMAGENET64_CLASS_COUNT
+    ):
+        raise click.ClickException(
+            '--feature-only requires a conditional ImageNet-64 dataset with '
+            f'{IMAGENET64_CLASS_COUNT} classes'
+        )
+    if opts.fp16:
+        raise click.ClickException('--feature-only requires --fp16=False')
+    if world_size != 1:
+        raise click.ClickException('--feature-only requires exactly one GPU')
+    feature_count = getattr(opts, 'engineering_feature_count', None)
+    feature_count = IMAGENET64_FEATURE_COUNT if feature_count is None else feature_count
+    if sample_seeds != list(range(feature_count)):
+        raise click.ClickException(
+            f'--feature-only requires --sample-seeds=0-{feature_count - 1}'
+        )
+    if opts.metrics:
+        raise click.ClickException('--feature-only requires --metrics=none')
+    if opts.retain_generated_artifacts:
+        raise click.ClickException(
+            '--feature-only does not permit retained generated samples'
+        )
+    if opts.seed is not None and opts.seed != IMAGENET64_METRIC_SEED:
+        raise click.ClickException(
+            f'--feature-only requires --seed={IMAGENET64_METRIC_SEED}'
+        )
+    if opts.nfe == '2' and tuple(opts.mid_t) != (IMAGENET64_NFE2_MID_T,):
+        raise click.ClickException(
+            f'ImageNet-64 NFE=2 requires --mid_t={IMAGENET64_NFE2_MID_T}'
+        )
+
+#----------------------------------------------------------------------------
+
 @click.command()
 
 # Main options.
@@ -111,51 +157,6 @@ class CommaSeparatedList(click.ParamType):
 @click.option('--feature-only', help='Extract formal ImageNet-64 Inception features without images or quality metrics', is_flag=True)
 @click.option('--feature-output', help='Output .npy path for --feature-only', metavar='NPY', type=str)
 @click.option('--engineering-feature-count', help='Engineering-only feature extraction count below 50000', metavar='INT', type=click.IntRange(min=2, max=IMAGENET64_FEATURE_COUNT - 1))
-
-
-def validate_imagenet64_feature_contract(
-    opts, sample_seeds, world_size, resolution, num_channels, label_dim,
-):
-    if opts.arch != 'edm2' or opts.preset != 'edm2-img64-s':
-        raise click.ClickException(
-            '--feature-only requires --arch=edm2 --preset=edm2-img64-s'
-        )
-    if not opts.resume:
-        raise click.ClickException('--feature-only requires --resume=CHECKPOINT')
-    if (
-        resolution != 64
-        or num_channels != 3
-        or not opts.cond
-        or label_dim != IMAGENET64_CLASS_COUNT
-    ):
-        raise click.ClickException(
-            '--feature-only requires a conditional ImageNet-64 dataset with '
-            f'{IMAGENET64_CLASS_COUNT} classes'
-        )
-    if opts.fp16:
-        raise click.ClickException('--feature-only requires --fp16=False')
-    if world_size != 1:
-        raise click.ClickException('--feature-only requires exactly one GPU')
-    feature_count = getattr(opts, 'engineering_feature_count', None)
-    feature_count = IMAGENET64_FEATURE_COUNT if feature_count is None else feature_count
-    if sample_seeds != list(range(feature_count)):
-        raise click.ClickException(
-            f'--feature-only requires --sample-seeds=0-{feature_count - 1}'
-        )
-    if opts.metrics:
-        raise click.ClickException('--feature-only requires --metrics=none')
-    if opts.retain_generated_artifacts:
-        raise click.ClickException(
-            '--feature-only does not permit retained generated samples'
-        )
-    if opts.seed is not None and opts.seed != IMAGENET64_METRIC_SEED:
-        raise click.ClickException(
-            f'--feature-only requires --seed={IMAGENET64_METRIC_SEED}'
-        )
-    if opts.nfe == '2' and tuple(opts.mid_t) != (IMAGENET64_NFE2_MID_T,):
-        raise click.ClickException(
-            f'ImageNet-64 NFE=2 requires --mid_t={IMAGENET64_NFE2_MID_T}'
-        )
 
 
 def main(**kwargs):

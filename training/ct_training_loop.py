@@ -574,7 +574,7 @@ def select_local_reproducibility_state(states):
 @torch.no_grad()
 def copy_module_state_exact(
     src_module, dst_module, *, label, allowed_source_extras=None,
-    allow_unlisted_source_extras=False,
+    allow_unlisted_source_extras=False, allow_float_dtype_conversion=False,
 ):
     """Copy every destination tensor after fail-closed source validation."""
     if not isinstance(src_module, torch.nn.Module):
@@ -632,7 +632,12 @@ def copy_module_state_exact(
                 f'{label} tensor shape mismatch for {name}: '
                 f'{tuple(source.shape)} != {tuple(target.shape)}'
             )
-        if source.dtype != target.dtype:
+        dtype_conversion_allowed = (
+            allow_float_dtype_conversion
+            and source.is_floating_point()
+            and target.is_floating_point()
+        )
+        if source.dtype != target.dtype and not dtype_conversion_allowed:
             raise RuntimeError(
                 f'{label} tensor dtype mismatch for {name}: '
                 f'{source.dtype} != {target.dtype}'
@@ -1201,10 +1206,12 @@ def training_loop(
             copy_module_state_exact(
                 data.get('ema'), net, label='EDM2 donor transfer -> net',
                 allow_unlisted_source_extras=True,
+                allow_float_dtype_conversion=True,
             )
             copy_module_state_exact(
                 data.get('ema'), ema, label='EDM2 donor transfer -> EMA',
                 allow_unlisted_source_extras=True,
+                allow_float_dtype_conversion=True,
             )
         else:
             misc.copy_params_and_buffers(

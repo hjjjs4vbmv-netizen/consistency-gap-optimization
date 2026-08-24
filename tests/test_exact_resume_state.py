@@ -114,6 +114,22 @@ class ExactModuleTransferTest(unittest.TestCase):
                 allow_unlisted_source_extras=True,
             )
 
+    def test_donor_float_conversion_is_explicit(self):
+        source = TinyStateModule(dtype=torch.float16)
+        destination = TinyStateModule(dtype=torch.float32)
+        with torch.no_grad():
+            source.weight.fill_(1.5)
+            source.running.fill_(2.5)
+        copy_module_state_exact(
+            source,
+            destination,
+            label='donor',
+            allow_float_dtype_conversion=True,
+        )
+        self.assertEqual(destination.weight.dtype, torch.float32)
+        self.assertTrue(torch.equal(destination.weight, source.weight.float()))
+        self.assertTrue(torch.equal(destination.running, source.running.float()))
+
 
 class ProcessedNimgContractTest(unittest.TestCase):
     def test_integral_float_is_canonicalized_for_csv_and_resume(self):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Score the complete 60-job ImageNet-64 feature matrix in one shot."""
+"""Score the complete 108-job ImageNet-64 feature matrix in one shot."""
 
 from __future__ import annotations
 
@@ -19,14 +19,12 @@ if str(REPO_ROOT) not in sys.path:
 
 SEEDS = (101, 102, 103)
 METHODS = ('IA', 'IB')
-MILESTONES = (
-    (20_000, 2_560),
-    (40_000, 5_120),
-    (60_000, 7_680),
-    (80_000, 10_240),
-    (100_000, 12_800),
+MILESTONES = tuple(
+    (iteration, iteration * 128 // 1000)
+    for iteration in range(20_000, 100_001, 10_000)
 )
 NFES = (1, 2)
+JOB_COUNT = len(SEEDS) * len(METHODS) * len(MILESTONES) * len(NFES)
 REAL_COUNT = 1_281_167
 GENERATED_COUNT = 50_000
 FEATURE_DIM = 2_048
@@ -87,7 +85,8 @@ def require_complete_matrix(feature_root):
     if missing:
         preview = ', '.join(str(path) for path in missing[:3])
         raise FileNotFoundError(
-            f'feature matrix is incomplete: missing {len(missing)}/60; {preview}'
+            f'feature matrix is incomplete: '
+            f'missing {len(missing)}/{JOB_COUNT}; {preview}'
         )
     return jobs
 
@@ -163,7 +162,7 @@ def score_matrix(feature_root, real_features_path, real_stats_path):
         'feature_dim': FEATURE_DIM,
         'kid_num_subsets': 100,
         'kid_subset_size': 1000,
-        'jobs_expected': 60,
+        'jobs_expected': JOB_COUNT,
         'jobs_scored': len(rows),
         'results': rows,
     }
@@ -197,10 +196,10 @@ def main():
         args.real_features.resolve(),
         args.real_stats.resolve(),
     )
-    if payload['jobs_scored'] != 60:
+    if payload['jobs_scored'] != JOB_COUNT:
         raise RuntimeError('refusing to publish a partial scoring result')
     atomic_write_json(output_path, payload)
-    print(f'scored=60 output={output_path}')
+    print(f'scored={JOB_COUNT} output={output_path}')
 
 
 if __name__ == '__main__':

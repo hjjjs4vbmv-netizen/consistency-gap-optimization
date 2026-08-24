@@ -64,16 +64,16 @@ class ImageNet64FeaturePipelineTests(unittest.TestCase):
             covariance, np.cov(features, rowvar=False, bias=False),
         )
 
-    def test_matrix_gate_requires_all_sixty_feature_files(self):
+    def test_matrix_gate_requires_all_one_hundred_eight_feature_files(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
-            with self.assertRaisesRegex(FileNotFoundError, 'missing 60/60'):
+            with self.assertRaisesRegex(FileNotFoundError, 'missing 108/108'):
                 scorer.require_complete_matrix(root)
             for job in scorer.feature_jobs(root):
                 job['path'].parent.mkdir(parents=True, exist_ok=True)
                 job['path'].touch()
             jobs = scorer.require_complete_matrix(root)
-        self.assertEqual(len(jobs), 60)
+        self.assertEqual(len(jobs), 108)
 
     def test_local_official_reference_is_shape_checked_and_hashed(self):
         reference = {

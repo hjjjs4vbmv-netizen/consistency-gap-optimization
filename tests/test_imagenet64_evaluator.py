@@ -167,14 +167,13 @@ class ImageNet64EvaluatorTests(unittest.TestCase):
                     balanced_class_labels=4,
                     device=torch.device('cpu'),
                 )
-
-        extract.assert_called_once()
-        self.assertEqual(
-            extract.call_args.kwargs['detector_url'],
-            ct_eval.metric_utils.OFFICIAL_EDM2_INCEPTION_URL,
-        )
-        retained = np.load(output, allow_pickle=False)
-        np.testing.assert_array_equal(retained, features)
+            extract.assert_called_once()
+            self.assertEqual(
+                extract.call_args.kwargs['detector_url'],
+                ct_eval.metric_utils.OFFICIAL_EDM2_INCEPTION_URL,
+            )
+            retained = np.load(output, allow_pickle=False)
+            np.testing.assert_array_equal(retained, features)
 
 
 if __name__ == '__main__':

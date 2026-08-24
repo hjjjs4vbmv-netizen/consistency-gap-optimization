@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a deterministic shard of the 60-job ImageNet-64 feature matrix."""
+"""Run a deterministic shard of the 108-job ImageNet-64 feature matrix."""
 
 from __future__ import annotations
 
@@ -20,9 +20,10 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = (101, 102, 103)
 METHODS = ("IA", "IB")
-MILESTONES_KIMG = (2560, 5120, 7680, 10240, 12800)
+MILESTONES_KIMG = tuple(range(2560, 12801, 1280))
 NFES = (1, 2)
 FEATURE_SHAPE = (50_000, 2_048)
+JOB_COUNT = len(SEEDS) * len(METHODS) * len(MILESTONES_KIMG) * len(NFES)
 
 
 @dataclass(frozen=True)
@@ -208,10 +209,12 @@ def main() -> None:
     ):
         parser.error("timeouts must be positive")
     full_matrix = jobs()
-    if len(full_matrix) != 60:
-        raise RuntimeError("internal feature matrix must contain exactly 60 jobs")
+    if len(full_matrix) != JOB_COUNT:
+        raise RuntimeError(
+            f"internal feature matrix must contain exactly {JOB_COUNT} jobs"
+        )
     if not 1 <= args.shard_count <= len(full_matrix):
-        parser.error("--shard-count must be between 1 and 60")
+        parser.error(f"--shard-count must be between 1 and {JOB_COUNT}")
     if not 0 <= args.shard_index < args.shard_count:
         parser.error("--shard-index must be in [0, shard-count)")
     if (
@@ -230,7 +233,7 @@ def main() -> None:
                 + shlex.join(evaluation_command(args, job, worker_index))
             )
         print(
-            f"total=60 shard={len(matrix)} "
+            f"total={JOB_COUNT} shard={len(matrix)} "
             f"shard_index={args.shard_index} shard_count={args.shard_count} "
             f"workers={worker_count} retries=0 outputs=features-only"
         )
@@ -306,7 +309,7 @@ def main() -> None:
             f"{len(failures)} feature jobs failed; no jobs were retried automatically"
         )
     print(
-        f"COMPLETE total=60 shard={len(matrix)} "
+        f"COMPLETE total={JOB_COUNT} shard={len(matrix)} "
         f"shard_index={args.shard_index} shard_count={args.shard_count} "
         f"workers={worker_count} retries=0",
         flush=True,

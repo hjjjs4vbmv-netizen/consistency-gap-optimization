@@ -50,7 +50,7 @@ class ImmutableCheckpointMilestoneTests(unittest.TestCase):
         )
 
     def test_imagenet_milestones_map_to_20k_iteration_steps(self):
-        milestones = (2560, 5120, 7680, 10240, 12800)
+        milestones = tuple(range(1280, 12801, 1280))
         nimg = ct_training_loop.normalize_immutable_checkpoint_nimg(
             milestones,
             total_kimg=12800,
@@ -58,7 +58,7 @@ class ImmutableCheckpointMilestoneTests(unittest.TestCase):
         )
         self.assertEqual(
             tuple(value // 128 for value in nimg),
-            (20000, 40000, 60000, 80000, 100000),
+            tuple(range(10000, 100001, 10000)),
         )
 
     def test_unreachable_budget_is_rejected(self):

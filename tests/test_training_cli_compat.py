@@ -8,6 +8,7 @@ import torch
 from click.testing import CliRunner
 
 import ct_train
+from torch_utils import misc
 from training.loss import ECMLoss, TARGET_WEIGHT_FACTORIAL_PROTOCOL
 from training.networks_edm2 import MPConv
 
@@ -19,6 +20,12 @@ def parse_train_args(*extra_args):
 
 
 class TrainingCliCompatibilityTest(unittest.TestCase):
+    def test_edm2_constant_inherits_reference_dtype_and_device(self):
+        reference = torch.empty(1, dtype=torch.float64)
+        value = misc.const_like(reference, [1, 2])
+        self.assertEqual(value.dtype, reference.dtype)
+        self.assertEqual(value.device, reference.device)
+
     def test_no_new_option_keeps_legacy_sigmoid_default(self):
         params = parse_train_args()
         self.assertEqual(params['mapping'], 'sigmoid')
