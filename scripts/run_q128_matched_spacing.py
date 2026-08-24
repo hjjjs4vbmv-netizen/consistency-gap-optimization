@@ -143,7 +143,7 @@ def runtime_environment(args: argparse.Namespace) -> dict[str, str]:
     env = os.environ.copy()
     env.update({
         "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
-        "CUDA_VISIBLE_DEVICES": "0",
+        "CUDA_VISIBLE_DEVICES": str(args.gpu_id),
         "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
         "CUDA_CACHE_DISABLE": "1",
         "CUDA_MODULE_LOADING": "LAZY",
@@ -296,6 +296,7 @@ def execute_cell(args: argparse.Namespace, config: dict[str, Any], seed: int,
         "schema": "ect.q128-matched-spacing-launch/v1",
         "seed": seed,
         "arm": arm,
+        "gpu_id": args.gpu_id,
         "smoke": smoke,
         "command": command,
         "scientific_identity": config["training"]["arms"][arm],
@@ -349,6 +350,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--preflight-receipt", type=Path)
     parser.add_argument("--seed", type=int)
     parser.add_argument("--arm", choices=("A", "Bsame", "Bmatch", "Cmatch", "Dmatch"))
+    parser.add_argument("--gpu-id", type=int, default=0)
     parser.add_argument("--master-port", type=int, default=29641)
     return parser.parse_args()
 

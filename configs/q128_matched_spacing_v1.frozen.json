@@ -5,6 +5,15 @@
   "status": "FROZEN_READY_FOR_TECHNICAL_PREFLIGHT",
   "quality_unblinded_before_freeze": false,
   "scientific_rescue_forbidden": true,
+  "runtime_amendment_20260824": {
+    "created_utc": "2026-08-24T04:58:06Z",
+    "reason": "Seven additional GPUs were supplied on one multi-GPU node after the five seed3 cells had started.",
+    "training_started_before_amendment": true,
+    "quality_results_observed_before_amendment": false,
+    "scientific_math_changed": false,
+    "training_matrix_changed": false,
+    "change": "Expose a fail-closed --gpu-id runtime selector; every process remains one seed-by-arm cell on one exclusive A100."
+  },
   "historical_q128_policy": "The completed canonical A/B block remains history and does not replace any cell in this fresh five-arm matrix.",
   "calibration": {
     "quality_blind": true,
@@ -38,7 +47,7 @@
       "training/networks.py": "980f2200ecf61e1a56e60d529b814c84c416e645030986e2264ed894e04e17ae",
       "training/dataset.py": "f46fe15ecd66206819e416ffca6ea22a06610405d6954ccc0fffc53092ab81c2",
       "training/reproducibility.py": "e414aeeb7390db74570bb9fbc6dc5751ed3153b248e8d66433e50b6a55df470d",
-      "scripts/run_q128_matched_spacing.py": "d797f2e31623a78b639531863dd4082bd41de97fe317410d6ea3b3baa081a688",
+      "scripts/run_q128_matched_spacing.py": "437f6e23368052e9b824aa45f6acfd62e90b2ca343d8d7a26f70381af5a7972d",
       "scripts/export_second_q_ab_snapshots.py": "26f6fdcf02b3c96d9721718ded4c0e2110166eb571044761c8fad71890539930",
       "scripts/calibrate_q128_matched_spacing.py": "edea5685ba58f4c8d8f69d9c464e372bd047d8c920f103397827d48fb3bc34fc"
     }
