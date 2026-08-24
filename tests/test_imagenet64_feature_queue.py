@@ -13,7 +13,7 @@ class ImageNet64FeatureQueueTests(unittest.TestCase):
     def test_three_shards_are_disjoint_and_complete(self):
         matrix = queue.jobs()
         shards = [queue.shard_jobs(matrix, index, 3) for index in range(3)]
-        self.assertEqual([len(shard) for shard in shards], [20, 20, 20])
+        self.assertEqual([len(shard) for shard in shards], [40, 40, 40])
         self.assertEqual(set().union(*map(set, shards)), set(matrix))
         for left in range(3):
             for right in range(left + 1, 3):
