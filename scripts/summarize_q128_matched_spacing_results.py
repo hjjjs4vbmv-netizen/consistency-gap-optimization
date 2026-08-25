@@ -97,7 +97,7 @@ def ttq(rows, seed, arm, nfe):
 
 def write_csv(path, fieldnames, rows):
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 

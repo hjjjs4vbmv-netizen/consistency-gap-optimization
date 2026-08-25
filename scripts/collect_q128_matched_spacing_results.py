@@ -200,7 +200,7 @@ def main():
 
     results_path = os.path.join(args.outdir, "evaluation_results.csv")
     with open(results_path, "w", newline="") as handle:
-        writer = csv.writer(handle)
+        writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(
             [
                 "job_id", "seed", "arm", "kimg", "nfe", "mid_t",
