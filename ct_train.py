@@ -41,6 +41,36 @@ class CommaSeparatedList(click.ParamType):
         return value.split(',')
 
 
+def parse_immutable_checkpoint_kimg(_ctx, _param, value):
+    """Parse a frozen comma-separated list of exact integer kimg budgets."""
+    if value is None or value == '':
+        return ()
+    result = []
+    for token in value.split(','):
+        token = token.strip()
+        if not token or not token.isdigit():
+            raise click.BadParameter(
+                'expected comma-separated positive integer kimg values'
+            )
+        budget = int(token)
+        if budget <= 0:
+            raise click.BadParameter('checkpoint kimg values must be positive')
+        result.append(budget)
+    if len(set(result)) != len(result):
+        raise click.BadParameter('checkpoint kimg values must be unique')
+    if result != sorted(result):
+        raise click.BadParameter('checkpoint kimg values must be increasing')
+    return tuple(result)
+
+
+def parse_resume_state_token(path):
+    match = re.fullmatch(
+        r'training-state-(\d+|latest|kimg\d+)\.pt',
+        os.path.basename(path),
+    )
+    return None if match is None else match.group(1)
+
+
 def normalize_schedule_name(_ctx, _param, value):
     aliases = {
         'adaptive-v1': 'adaptive_v1',
@@ -208,6 +238,14 @@ def make_loss_kwargs(opts):
 @click.option('--snap',          help='How often to save numbered snapshots; 0 disables them', metavar='TICKS', type=click.IntRange(min=0), default=500, show_default=True)
 @click.option('--dump',          help='How often to save numbered state dumps; 0 disables them', metavar='TICKS', type=click.IntRange(min=0), default=500, show_default=True)
 @click.option('--ckpt',          help='How often to save latest checkpoints', metavar='TICKS',      type=click.IntRange(min=1), default=50, show_default=True)
+@click.option(
+    '--immutable-checkpoint-kimg',
+    help='Comma-separated exact kimg budgets for immutable full-state saves',
+    metavar='KIMG[,KIMG...]',
+    type=str,
+    callback=parse_immutable_checkpoint_kimg,
+    default='',
+)
 @click.option('--seed',          help='Random seed  [default: random]', metavar='INT',              type=int)
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
@@ -289,6 +327,7 @@ def main(**kwargs):
              snapshot_ticks=None if opts.snap == 0 else opts.snap,
              state_dump_ticks=None if opts.dump == 0 else opts.dump,
              ckpt_ticks=opts.ckpt,
+             immutable_checkpoint_kimg=opts.immutable_checkpoint_kimg,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
              stop_after_attempts=opts.stop_after_attempts)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
@@ -308,8 +347,8 @@ def main(**kwargs):
         c.resume_pkl = opts.transfer
         c.ema_rampup_ratio = None
     elif opts.resume is not None:
-        match = re.fullmatch(r'training-state-(\d+|latest).pt', os.path.basename(opts.resume))
-        if not match or not os.path.isfile(opts.resume):
+        resume_token = parse_resume_state_token(opts.resume)
+        if resume_token is None or not os.path.isfile(opts.resume):
             raise click.ClickException('--resume must point to training-state-*.pt from a previous training run')
         if opts.factorial_protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL:
             # The versioned factorial training-state is self-contained (net +
@@ -320,17 +359,17 @@ def main(**kwargs):
         else:
             c.resume_pkl = os.path.join(
                 os.path.dirname(opts.resume),
-                f'network-snapshot-{match.group(1)}.pkl',
+                f'network-snapshot-{resume_token}.pkl',
             )
         # Prefer explicit --resume-tick; otherwise parse numeric tick from the filename.
         # training-state-latest.pt cannot be converted with int(); the training loop
         # restores the authoritative cur_tick / cur_nimg from the serialized state.
         if opts.resume_tick is not None:
             c.resume_tick = opts.resume_tick
-        elif match.group(1) == 'latest':
+        elif resume_token == 'latest' or resume_token.startswith('kimg'):
             c.resume_tick = 0
         else:
-            c.resume_tick = int(match.group(1))
+            c.resume_tick = int(resume_token)
         c.resume_state_dump = opts.resume
 
     # Description string.
