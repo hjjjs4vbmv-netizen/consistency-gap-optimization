@@ -100,6 +100,8 @@ class MetricArtifactRetentionTests(unittest.TestCase):
                 device=torch.device('cpu'),
                 generated_features_path=destination_path,
                 precomputed_generated_features_path=source_path,
+                metric_name='fid50k_full',
+                precomputed_generated_features_source_metric='kid50k_full',
             )
             with mock.patch.object(
                 metric_utils.dnnlib.util,
@@ -124,6 +126,29 @@ class MetricArtifactRetentionTests(unittest.TestCase):
             np.testing.assert_allclose(mean, features.astype(np.float64).mean(axis=0))
             self.assertEqual(covariance.shape, (8, 8))
 
+    def test_reuse_fails_closed_for_unapproved_metric_pair(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source_path = os.path.join(tmpdir, 'features.npy')
+            metric_utils._atomic_save_npy(
+                source_path,
+                np.zeros((3, 8), dtype=np.float32),
+            )
+            opts = metric_utils.MetricOptions(
+                G=None,
+                dataset_kwargs={},
+                device=torch.device('cpu'),
+                precomputed_generated_features_path=source_path,
+                metric_name='fid50k_full',
+                precomputed_generated_features_source_metric='is50k',
+            )
+            with self.assertRaisesRegex(ValueError, 'restricted'):
+                metric_utils.compute_feature_stats_for_generator(
+                    opts,
+                    detector_url='unused',
+                    detector_kwargs={},
+                    max_items=3,
+                )
+
     def test_reuse_rejects_wrong_shape_or_non_float32(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             path = os.path.join(tmpdir, 'features.npy')
@@ -133,6 +158,8 @@ class MetricArtifactRetentionTests(unittest.TestCase):
                 dataset_kwargs={},
                 device=torch.device('cpu'),
                 precomputed_generated_features_path=path,
+                metric_name='fid50k_full',
+                precomputed_generated_features_source_metric='kid50k_full',
             )
             np.save(path, np.zeros((2, 8), dtype=np.float32), allow_pickle=False)
             with self.assertRaisesRegex(ValueError, 'expected'):

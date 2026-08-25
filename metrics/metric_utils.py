@@ -17,6 +17,12 @@ import numpy as np
 import torch
 import dnnlib
 
+# KID-50k and FID-50k use the same audited Inception detector and feature
+# schema.  No other metric pair may reuse an array without a new identity gate.
+ALLOWED_PRECOMPUTED_FEATURE_REUSE = {
+    ('kid50k_full', 'fid50k_full'),
+}
+
 #----------------------------------------------------------------------------
 
 class MetricOptions:
@@ -26,6 +32,7 @@ class MetricOptions:
         sample_seeds=None, metric_seed=None,
         generated_features_path=None, generated_samples_path=None,
         generator_batch_size=None, precomputed_generated_features_path=None,
+        metric_name=None, precomputed_generated_features_source_metric=None,
     ):
         assert 0 <= rank < num_gpus
 
@@ -44,6 +51,10 @@ class MetricOptions:
         self.generated_samples_path = generated_samples_path
         self.generator_batch_size = generator_batch_size
         self.precomputed_generated_features_path = precomputed_generated_features_path
+        self.metric_name = metric_name
+        self.precomputed_generated_features_source_metric = (
+            precomputed_generated_features_source_metric
+        )
 
 #----------------------------------------------------------------------------
 
@@ -281,6 +292,16 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
     if opts.generated_features_path is not None:
         stats_kwargs['capture_all'] = True
     if opts.precomputed_generated_features_path is not None:
+        reuse_pair = (
+            opts.precomputed_generated_features_source_metric,
+            opts.metric_name,
+        )
+        if reuse_pair not in ALLOWED_PRECOMPUTED_FEATURE_REUSE:
+            raise ValueError(
+                'precomputed generated features are restricted to the audited '
+                'kid50k_full -> fid50k_full reuse path; got '
+                f'{reuse_pair[0]!r} -> {reuse_pair[1]!r}'
+            )
         if opts.num_gpus != 1:
             raise ValueError('precomputed generated features currently require num_gpus=1')
         if opts.generated_samples_path is not None:
