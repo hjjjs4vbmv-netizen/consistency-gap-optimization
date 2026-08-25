@@ -45,5 +45,6 @@ the post-start multi-GPU scheduling amendment.
 
 The version-1 preflight schema did **not** record GPU UUID. The released nodes
 cannot be queried retrospectively, so UUID values are reported as
-`not_recorded_in_preflight_v1`, not reconstructed. The launcher now records
-`index,name,memory.total,uuid` in future preflight receipts.
+`not_recorded_in_preflight_v1`, not reconstructed. Any future rerun should use
+an amended preflight schema that records `index,name,memory.total,uuid`; the
+historical frozen launcher is intentionally left unchanged.
