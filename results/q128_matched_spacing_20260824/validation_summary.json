@@ -1,9 +1,12 @@
 {
+  "aulc_evidence_status": "post_unblind_deterministic_descriptive",
+  "aulc_preregistered": false,
   "fallacy_scan_coverage": "11/11",
   "jobs": 210,
   "limitations": [
     "Only three training seeds; paired outcomes are descriptive.",
-    "The primary Bmatch-Bsame AULC direction is seed-sensitive.",
+    "AULC and its contrasts were defined after metric unblinding; they are deterministic descriptive summaries, not preregistered primary outcomes.",
+    "The Bmatch-Bsame AULC direction is seed-sensitive.",
     "q128 TTQ was not preregistered and is exploratory.",
     "Redundant attempts were resolved by frozen partition ownership, never quality."
   ],

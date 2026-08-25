@@ -1,0 +1,30 @@
+{
+  "analytic_identity": {
+    "candidate": "delta_128,0.55(t) = (0.55 / 128) * t * (1 + 8 * sigmoid(-t))",
+    "equality": "0.55 / 128 = 1.10 / 256",
+    "reference": "delta_256,1.10(t) = (1.10 / 256) * t * (1 + 8 * sigmoid(-t))",
+    "scope": "stage=0, c=0, official sigmoid schedule, no realized-gap clipping"
+  },
+  "calibration_manifest_sha256": "08b84aa61c3cf9949944f038f40fda66ccc34f5dce182b5493b49ae653908825",
+  "calibration_source_sha256": "edea5685ba58f4c8d8f69d9c464e372bd047d8c920f103397827d48fb3bc34fc",
+  "clipping_statistics": {
+    "candidate_fraction": 0.0,
+    "reference_fraction": 0.0
+  },
+  "created_utc": "2026-08-24T02:56:55.697462Z",
+  "diagnostics": {
+    "all_log_gap_residual_quantiles": 0.0,
+    "candidate_and_reference_spacing_quantiles_equal": true,
+    "golden_section_solution": 0.5499999999999939,
+    "selected_objective": 0.0
+  },
+  "evidence_status": "analytic_exact_match_confirmed_by_quality_blind_numerical_diagnostics",
+  "formal_trajectory_stage_audit": "training_integrity_summary.json#stage0_only",
+  "objective": "mean((log(delta_128_g(t)) - log(delta_256_1.10(t)))**2)",
+  "original_literal_shell_invocation_recorded": false,
+  "protocol_freeze_commit_after_rebase": "da3d9798e59a675d601ac174989657daca1f2e1e",
+  "reproduction_command": "python3 scripts/calibrate_q128_matched_spacing.py --output-dir q128_matched_spacing_calibration_v1 --seed 20260824 --sample-count 1000000 --search-lower 0.25 --search-upper 1.5 --tolerance 1e-13",
+  "schema": "ect.q128-matched-spacing-calibration-exact-match/v1",
+  "selected_g128_star": 0.55,
+  "status": "PASS"
+}

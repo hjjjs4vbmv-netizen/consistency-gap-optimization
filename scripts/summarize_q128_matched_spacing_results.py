@@ -287,13 +287,16 @@ def main():
         "schema": "ect.q128-matched-spacing-validation/v1",
         "verification_status": "ANALYZED",
         "overall_confidence": "CAUTION",
+        "aulc_evidence_status": "post_unblind_deterministic_descriptive",
+        "aulc_preregistered": False,
         "jobs": 210,
         "metric_values": 420,
         "fallacy_scan_coverage": "11/11",
         "reproducibility": "not rerun; sealed artifact and matrix audit only",
         "limitations": [
             "Only three training seeds; paired outcomes are descriptive.",
-            "The primary Bmatch-Bsame AULC direction is seed-sensitive.",
+            "AULC and its contrasts were defined after metric unblinding; they are deterministic descriptive summaries, not preregistered primary outcomes.",
+            "The Bmatch-Bsame AULC direction is seed-sensitive.",
             "q128 TTQ was not preregistered and is exploratory.",
             "Redundant attempts were resolved by frozen partition ownership, never quality.",
         ],
@@ -323,6 +326,26 @@ def main():
         "- FP32, 50,000 samples, sample seeds 0-49999, metric seed 20260730.",
         "- NFE2 uses `mid_t=0.821`; invalidated/pre-reuse directories are excluded.",
         "- Preassigned server/data partitions override redundant attempts without quality selection.",
+        "- The deployed evaluator is bound by full source SHA256 in `audit.json`.",
+        "",
+        "## Evidence status and blindness chronology",
+        "",
+        "Historical canonical q128 `A/Bsame` quality was known before the matched-spacing calibration and five-arm freeze. The matched-arm outcomes were unknown, and the fresh 210-job matrix was not unblinded until all jobs were sealed. The exact first-unblind wall-clock time was not independently logged; `provenance/blindness_chronology.json` records a bounded interval rather than inventing a timestamp.",
+        "",
+        "AULC was first defined in the post-unblind analysis commit. It is therefore deterministic descriptive evidence, not a frozen, preregistered, or primary outcome.",
+        "",
+        "## Calibration identity",
+        "",
+        "At stage 0 with `c=0` and no clipping, the sigmoid gap is proportional to `g/q`. Therefore `0.55/128 = 1.10/256`, making the selected q128 scale an analytic exact match to the q256 `g=1.10` reference, not merely a numerical distribution fit. The quality-blind million-sample calibration independently reports objective 0, zero clipping, and zero residual quantiles. All 15 formal trajectories remained at stage 0.",
+        "",
+        "## Training integrity",
+        "",
+        "- 15/15 fresh trajectories and 105/105 immutable state/snapshot pairs pass.",
+        "- 120,000 attempts produced 119,825 accepted optimizer steps and 175 AMP skips.",
+        "- All state and snapshot SHA256 values were recomputed against their receipts.",
+        "- Within each seed, initialization, optimizer, GradScaler, RNG, sampler/minibatch order, and normalized non-arm configuration hashes match across all five arms.",
+        "- Every preflight records the same A100-40GB model, runtime, dataset, and transfer hashes. The v1 schema did not record GPU UUID; this is disclosed and not reconstructed.",
+        "- All three `A` and all three `Bsame` runs are fresh five-arm cells, not historical-output reuse.",
         "",
         "## Arm summaries",
         "",
@@ -349,9 +372,9 @@ def main():
     report.extend(
         [
             "",
-            "## Frozen AULC contrasts",
+            "## Post-unblind deterministic AULC contrasts",
             "",
-            "Negative values favor the first named arm because lower AULC is better.",
+            "AULC was not present in the immutable pre-unblind protocol. It is reported as a deterministic, full-curve descriptive summary, not a frozen or preregistered primary outcome. Negative values favor the first named arm because lower AULC is better.",
             "",
             "| Contrast | NFE | Mean | Median | Range | Negative seeds |",
             "| --- | ---: | ---: | ---: | ---: | ---: |",
@@ -376,7 +399,7 @@ def main():
             "",
             "## Interpretation",
             "",
-            "- The primary `Bmatch-Bsame` AULC contrast is not directionally stable: NFE1 is negative for 1/3 seeds and NFE2 for 2/3 seeds. Seed 3 has a large early-curve penalty.",
+            "- The descriptive `Bmatch-Bsame` AULC contrast is not directionally stable: NFE1 is negative for 1/3 seeds and NFE2 for 2/3 seeds. Seed 3 has a large early-curve penalty.",
             "- At 1024 kimg, `Bmatch` has lower FID and KID than `Bsame` for all three seeds at both NFEs.",
             "- `Cmatch-A` improves NFE1 AULC for 3/3 seeds and NFE2 for 2/3 seeds.",
             "- `Dmatch-A` is worse for 3/3 seeds at both NFEs.",
@@ -393,7 +416,7 @@ def main():
             "## Limitations and fallacy scan",
             "",
             "- Three seeds are insufficient for population-level significance claims; no p-value is used as the primary narrative.",
-            "- The look-elsewhere and forking-path risks are mitigated by the frozen AULC contrasts; TTQ is explicitly labeled exploratory.",
+            "- AULC and its contrasts were defined after unblinding, so they do not mitigate researcher-degrees-of-freedom or look-elsewhere risk. Their value is deterministic complete-curve summarization, not confirmatory status.",
             "- Structural and causal fallacies are not indicated by this paired controlled design, but the 11/11 statistical fallacy checklist was reviewed.",
             "- Verification status is `ANALYZED`, not `VERIFIED`, because metrics were not independently rerun in this report step.",
             "",
@@ -401,23 +424,29 @@ def main():
             "",
             "- `evaluation_results.csv`: authoritative 210-job raw matrix.",
             "- `audit.json` and `duplicate_attempts.json`: matrix/protocol audit and redundant-attempt record.",
-            "- `per_seed_aulc.csv`, `per_seed_aulc_contrasts.csv`, `contrast_summary.csv`: frozen AULC analysis.",
+            "- `per_seed_aulc.csv`, `per_seed_aulc_contrasts.csv`, `contrast_summary.csv`: post-unblind deterministic descriptive AULC analysis.",
             "- `arm_summary.csv` and `direction_consistency.csv`: arm-level and FID/KID summaries.",
             "- `a_bsame_bmatch_trajectories.csv`: requested per-seed, per-checkpoint comparison.",
             "- `ttq_exploratory.csv`: non-preregistered descriptive TTQ.",
             "- `validation_summary.json`: machine-readable validation status and limitations.",
+            "- `provenance/calibration_manifest.json` and `calibration_exact_match.json`: compact quality-blind calibration and analytic equality audit.",
+            "- `provenance/blindness_chronology.json` / `.md`: historical-vs-fresh blindness chronology.",
+            "- `provenance/training/`: 15-trajectory integrity, hardware assignment, and 210-file hash audit.",
+            "- `provenance/INTEGRITY_REVIEW.md`: data checks, seven-mode failure audit, and residual limitations.",
         ]
     )
     (args.outdir / "REPORT.md").write_text("\n".join(report) + "\n")
 
-    artifact_names = sorted(
-        path.name
-        for path in args.outdir.iterdir()
-        if path.is_file() and path.name != "SHA256SUMS.txt"
+    artifact_paths = sorted(
+        path
+        for path in args.outdir.rglob("*")
+        if path.is_file() and path != args.outdir / "SHA256SUMS.txt"
     )
     with (args.outdir / "SHA256SUMS.txt").open("w") as handle:
-        for name in artifact_names:
-            handle.write("{}  {}\n".format(sha256(args.outdir / name), name))
+        for path in artifact_paths:
+            handle.write(
+                "{}  {}\n".format(sha256(path), path.relative_to(args.outdir))
+            )
 
 
 if __name__ == "__main__":
