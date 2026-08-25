@@ -53,6 +53,13 @@ effective pair spacing is the joint law
 $\mathcal P_{q,g}=\operatorname{Law}(J,T,\Delta_{q,g}(T,J))$ under the frozen
 curriculum and time sampler; it is not the mean gap or either nominal scalar.
 
+The merged q128 matched-spacing arm obeys the same stage-0 identity:
+$0.55/128=1.10/256$. Its within-cohort five-arm contrasts remain valid. A
+comparison between that arm and the historical q256 enlarged-spacing run,
+however, compares different executions, source revisions, hardware assignments,
+AMP histories, and stochastic trajectories. Their quality difference therefore
+does not identify an independent effect of nominal $q$.
+
 For the ECT loss
 
 $$
@@ -106,4 +113,7 @@ training is separately authorized later, its primary estimand must therefore be
 paired parameter/EMA trajectory equivalence under a frozen equivalence margin,
 not FID/KID superiority or an independent $g$ mechanism.
 
-**Decision today:** specification only. Do not start this control.
+**Current decision:** do not start full training. A separately frozen, low-cost
+production parity audit now evaluates the schedule grid, target tensors, explicit
+weights, losses, and one-sided gradients at a common checkpoint; see
+`analysis/Q_G_PRODUCTION_PARITY_AUDIT_PROTOCOL.md`.
