@@ -10,11 +10,20 @@ from training import reproducibility
 
 
 TARGET_WEIGHT_FACTORIAL_PROTOCOL = 'q256_target_weight_v1'
+Q128_MATCHED_SPACING_PROTOCOL = 'q128_matched_spacing_v1'
+Q128_MATCHED_SPACING_GAP_SCALE = 0.55
 TARGET_WEIGHT_FACTORIAL_ARMS = {
     (1.0, 1.0): 'A',
     (1.1, 1.1): 'B',
     (1.1, 1.0): 'C',
     (1.0, 1.1): 'D',
+}
+Q128_MATCHED_SPACING_ARMS = {
+    (1.0, 1.0): 'A',
+    (1.1, 1.1): 'Bsame',
+    (Q128_MATCHED_SPACING_GAP_SCALE, Q128_MATCHED_SPACING_GAP_SCALE): 'Bmatch',
+    (Q128_MATCHED_SPACING_GAP_SCALE, 1.0): 'Cmatch',
+    (1.0, Q128_MATCHED_SPACING_GAP_SCALE): 'Dmatch',
 }
 
 
@@ -48,7 +57,11 @@ def resolve_target_weight_factorial(
             'target_gap_scale': None,
             'denominator_gap_scale': None,
         }
-    if protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+    supported_protocols = {
+        TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+        Q128_MATCHED_SPACING_PROTOCOL,
+    }
+    if protocol not in supported_protocols:
         raise ValueError(f'unsupported factorial_protocol: {protocol!r}')
     if adj != 'sigmoid':
         raise ValueError(
@@ -60,8 +73,14 @@ def resolve_target_weight_factorial(
             f'{protocol} requires legacy global_gap_scale=1.0, got '
             f'{global_gap_scale}; use the two explicit factors'
         )
-    if float(q) not in (128.0, 256.0):
-        raise ValueError(f'{protocol} requires q in {{128, 256}}, got {q}')
+    if protocol == TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+        if float(q) not in (128.0, 256.0):
+            raise ValueError(f'{protocol} requires q in {{128, 256}}, got {q}')
+        frozen_arms = TARGET_WEIGHT_FACTORIAL_ARMS
+    else:
+        if float(q) != 128.0:
+            raise ValueError(f'{protocol} requires q=128, got {q}')
+        frozen_arms = Q128_MATCHED_SPACING_ARMS
     if float(c) != 0.0:
         raise ValueError(f'{protocol} requires c=0, got {c}')
     if target_gap_scale is None or denominator_gap_scale is None:
@@ -73,7 +92,7 @@ def resolve_target_weight_factorial(
     denominator = float(denominator_gap_scale)
     if not math.isfinite(target) or not math.isfinite(denominator):
         raise ValueError('factorial gap scales must be finite')
-    arm = TARGET_WEIGHT_FACTORIAL_ARMS.get((target, denominator))
+    arm = frozen_arms.get((target, denominator))
     if arm is None:
         raise ValueError(
             'factorial scales must define exactly one frozen arm: '
@@ -394,7 +413,12 @@ class ECMLoss:
             )
             with torch.no_grad():
                 self._runtime_factorial_metrics = {
-                    'schema': 'ect.q256.target-weight-runtime/v1',
+                    'schema': (
+                        'ect.q128.matched-spacing-runtime/v1'
+                        if self.factorial['protocol']
+                        == Q128_MATCHED_SPACING_PROTOCOL
+                        else 'ect.q256.target-weight-runtime/v1'
+                    ),
                     'protocol': self.factorial['protocol'],
                     'arm': self.factorial['arm'],
                     'target_gap_scale': self.factorial['target_gap_scale'],

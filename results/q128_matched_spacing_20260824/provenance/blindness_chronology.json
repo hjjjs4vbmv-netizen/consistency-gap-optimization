@@ -1,0 +1,79 @@
+{
+  "blindness_scope": {
+    "fresh_210_job_matrix_unblinded_after_completion": true,
+    "historical_a_bsame_quality_known_before_calibration_and_protocol_freeze": true,
+    "matched_arm_quality_known_before_freeze": false,
+    "note_on_legacy_boolean": "quality_unblinded_before_freeze=false in the frozen config refers to the fresh matched-arm extension, not to all historical q128 evidence."
+  },
+  "events": [
+    {
+      "event": "historical_q128_a_bsame_results_committed",
+      "evidence": "commit 659ae76992de37cc29d827d9c62d1e630085b269",
+      "timestamp_utc": "2026-08-23T16:52:37Z"
+    },
+    {
+      "event": "quality_blind_matched_spacing_calibration_frozen",
+      "evidence": "provenance/calibration_manifest.json; SHA256 08b84aa61c3cf9949944f038f40fda66ccc34f5dce182b5493b49ae653908825",
+      "timestamp_utc": "2026-08-24T02:56:55.697462Z"
+    },
+    {
+      "event": "five_arm_protocol_artifact_frozen",
+      "evidence": "configs/q128_matched_spacing_v1.frozen.json#frozen_utc",
+      "timestamp_utc": "2026-08-24T02:58:36Z"
+    },
+    {
+      "event": "five_arm_protocol_commit",
+      "evidence": "rebased commit da3d9798e59a675d601ac174989657daca1f2e1e; original commit 7c7b05ddc93e97c7ccc5bc6266a6b562c4808df0",
+      "timestamp_utc": "2026-08-24T03:01:49Z"
+    },
+    {
+      "event": "first_formal_training_launch",
+      "evidence": "provenance/training/training_integrity.csv preserved launch-record mtime",
+      "timestamp_utc": "2026-08-24T03:14:22.229256Z"
+    },
+    {
+      "event": "multi_gpu_runtime_amendment",
+      "evidence": "configs/q128_matched_spacing_v1.frozen.json#runtime_amendment_20260824; rebased commit bfd5f6738a7917ddd23d503dd0b0e361b7c593cd",
+      "timestamp_utc": "2026-08-24T04:58:06Z"
+    },
+    {
+      "event": "checkpoint_streaming_amendment",
+      "evidence": "configs/q128_matched_spacing_v1.frozen.json#artifact_streaming_amendment_20260824; rebased commit 1618f9c243102db8ae223fac3ddd3a7317faf3fc",
+      "timestamp_utc": "2026-08-24T05:04:00Z"
+    },
+    {
+      "event": "last_formal_training_completion",
+      "evidence": "provenance/training/training_integrity.csv preserved log mtime",
+      "timestamp_utc": "2026-08-24T08:24:37.812337Z"
+    },
+    {
+      "event": "first_fresh_matrix_evaluation_log",
+      "evidence": "server archive earliest jobs/*/log.txt mtime",
+      "timestamp_utc": "2026-08-24T08:28:35.045375Z"
+    },
+    {
+      "event": "first_fresh_matrix_metric_written",
+      "evidence": "minimum embedded metric JSONL timestamp",
+      "timestamp_utc": "2026-08-24T08:30:47.150041Z"
+    },
+    {
+      "event": "fresh_matrix_210_of_210_sealed",
+      "evidence": "server archive maximum done/*.SEALED_PASS mtime",
+      "timestamp_utc": "2026-08-24T11:45:02.527241Z"
+    },
+    {
+      "event": "first_metric_unblind",
+      "evidence": "conversation authorization was not independently timestamped; bounded after 210/210 sealing and before the first immutable analysis/result commit",
+      "timestamp_status": "bounded_not_exact",
+      "timestamp_utc_lower_exclusive": "2026-08-24T11:45:02.527241Z",
+      "timestamp_utc_upper_inclusive": "2026-08-24T15:58:00Z"
+    },
+    {
+      "event": "analysis_code_and_result_package_first_committed",
+      "evidence": "rebased commit 1b5be425d0ce49d846837bf91a49e5bc015c7fd9; original commit b95380964f3f0c20dfff0af861e48e994db71354",
+      "timestamp_utc": "2026-08-24T15:58:00Z"
+    }
+  ],
+  "schema": "ect.q128-matched-spacing-blindness-chronology/v1",
+  "status": "PASS_WITH_DISCLOSED_TIMESTAMP_LIMITATION"
+}

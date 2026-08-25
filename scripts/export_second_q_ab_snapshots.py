@@ -21,13 +21,10 @@ from training import reproducibility
 
 
 DEFAULT_BUDGETS = (256, 384, 512, 640, 768, 896, 1024)
-DEFAULT_CELLS = (
-    (3, "A"),
-    (3, "B"),
-    (4, "A"),
-    (4, "B"),
-    (5, "A"),
-    (5, "B"),
+DEFAULT_SEEDS = (3, 4, 5)
+DEFAULT_ARMS = ("A", "Bsame", "Bmatch", "Cmatch", "Dmatch")
+DEFAULT_CELLS = tuple(
+    (seed, arm) for seed in DEFAULT_SEEDS for arm in DEFAULT_ARMS
 )
 
 
@@ -60,6 +57,18 @@ def parse_cells(value: str) -> tuple[tuple[int, str], ...]:
     if not cells or len(set(cells)) != len(cells):
         raise argparse.ArgumentTypeError("cells must be non-empty and unique")
     return tuple(cells)
+
+
+def parse_budgets(value: str) -> tuple[int, ...]:
+    try:
+        budgets = tuple(int(token.strip()) for token in value.split(","))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("budgets must be comma-separated integers") from exc
+    if not budgets or len(set(budgets)) != len(budgets):
+        raise argparse.ArgumentTypeError("budgets must be non-empty and unique")
+    if any(budget not in DEFAULT_BUDGETS for budget in budgets):
+        raise argparse.ArgumentTypeError(f"budgets must be drawn from {DEFAULT_BUDGETS}")
+    return budgets
 
 
 def wait_for_state(
@@ -143,6 +152,12 @@ def main() -> None:
         help="Comma-separated SEED:ARM cells",
     )
     parser.add_argument("--wait", action="store_true")
+    parser.add_argument(
+        "--budgets",
+        type=parse_budgets,
+        default=DEFAULT_BUDGETS,
+        help="Comma-separated immutable budgets to export",
+    )
     parser.add_argument("--timeout-seconds", type=float, default=5 * 60 * 60)
     parser.add_argument("--poll-seconds", type=float, default=2.0)
     parser.add_argument("--summary-out", type=Path)
@@ -152,7 +167,7 @@ def main() -> None:
         raise SystemExit("timeouts must be positive")
     deadline = time.monotonic() + args.timeout_seconds
     receipts = []
-    for budget in DEFAULT_BUDGETS:
+    for budget in args.budgets:
         for seed, arm in args.cells:
             state_path = (
                 args.run_root
@@ -173,7 +188,7 @@ def main() -> None:
         "status": "PASS",
         "run_root": str(args.run_root),
         "cell_count": len(args.cells),
-        "budget_count": len(DEFAULT_BUDGETS),
+        "budget_count": len(args.budgets),
         "snapshot_count": len(receipts),
         "receipts": receipts,
     }
