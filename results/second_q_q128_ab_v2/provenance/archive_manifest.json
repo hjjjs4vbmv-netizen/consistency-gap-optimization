@@ -1,0 +1,883 @@
+{
+  "file_count": 175,
+  "files": [
+    {
+      "bytes": 30722,
+      "path": "artifacts/ema_export_summary.json",
+      "sha256": "20dd0fea75d8af6c1786765df1050260f7206a6688f218b2a13a999ade2a2f7f"
+    },
+    {
+      "bytes": 912,
+      "path": "evaluation/final/SHA256SUMS.txt",
+      "sha256": "219d2f79da86f2eb6d65a8a6aa7fc60dde56de0d4ef049829f166c12b2a51956"
+    },
+    {
+      "bytes": 412,
+      "path": "evaluation/final/completion_receipt.json",
+      "sha256": "cfdf72acd0c7074b76b1a954ec60b189eb985cc94d8fb2c14f39afa59d64e859"
+    },
+    {
+      "bytes": 3150,
+      "path": "evaluation/final/evaluation_results.csv",
+      "sha256": "02dc8477479097cfafbb26c9683c2c52e0dc71325351fb2d2c2b0ccdc00cbd55"
+    },
+    {
+      "bytes": 8953,
+      "path": "evaluation/final/evaluation_results.json",
+      "sha256": "a765f07afd70f480e178e4fe353cc2c423ba1e31c0bb07de4c9c10f612b344b7"
+    },
+    {
+      "bytes": 3249,
+      "path": "evaluation/final/paired_results.csv",
+      "sha256": "a5ca90790773800b9a4ab7128db3f61ed4173d8484c15d20d3340e0b54352aff"
+    },
+    {
+      "bytes": 7102,
+      "path": "evaluation/final/paired_results.json",
+      "sha256": "fa8c7693bdd5e44cd747d120e7a39414b9bcc543288625b26428cf1d8364552c"
+    },
+    {
+      "bytes": 1572,
+      "path": "evaluation/final/paired_summary.csv",
+      "sha256": "b729a06d910a14424003b871b826495b126b2ed2ad56cd74c4f249905f4029c8"
+    },
+    {
+      "bytes": 3519,
+      "path": "evaluation/final/paired_summary.json",
+      "sha256": "7d94f89d22127e48ed42325970baedb1bffbfd35654e52b2f81211f6ceb59181"
+    },
+    {
+      "bytes": 28325,
+      "path": "evaluation/frozen_manifest.csv",
+      "sha256": "27d63e219cdda3d20e0c0644235de4e03bf3fcbc805a491cdf8dfb1cc2b44ff2"
+    },
+    {
+      "bytes": 59888,
+      "path": "evaluation/frozen_manifest.json",
+      "sha256": "dcfcbb02013fd6a1d9da7dbfb96805c832fe9c84077931da8071a5a96bdf37e0"
+    },
+    {
+      "bytes": 3100,
+      "path": "preflight/GO_CANONICAL_DATASET.json",
+      "sha256": "8d11cd179c06456cdf59cb3004723fb854c0791a69d3ce061cb86d5150a47192"
+    },
+    {
+      "bytes": 92,
+      "path": "preflight/GO_CANONICAL_DATASET.json.sha256",
+      "sha256": "c5f4572af272a2cb73495d2f8475da3aae5f961837ebee57a5c2063b61752e42"
+    },
+    {
+      "bytes": 7142157,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/factorial_training_telemetry_v1.csv",
+      "sha256": "13015daff46c022b9f9aa943d48c879de4aab8d6efd91cfabef476f5dd3c08a0"
+    },
+    {
+      "bytes": 5021,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/initial_state_receipt_v1.json",
+      "sha256": "23baa78e1da74924b39f6d99174ec634ed2814976017d5e83bc9aa259487fe1e"
+    },
+    {
+      "bytes": 1757,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/launch_record.json",
+      "sha256": "c06262524a5225a3de80bed1e25cebbedc54b50cc1397c6cb3ba0809a18c856e"
+    },
+    {
+      "bytes": 26193,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/log.txt",
+      "sha256": "40836b4d63e1d6fec99049ff606caa3f4b1a792eacd11d8e47fc6cf50f535895"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000256.pkl",
+      "sha256": "5ba60d8c5e59d8b049c3588a72ceff7559cda4994496e843b094c99f3d408a9e"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000256.receipt.json",
+      "sha256": "18f60b1479174e7ed721feb9ecddb9f2505d6121058735c10d795273b2b02453"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000384.pkl",
+      "sha256": "150f6d35b0843967c89988c6755be383cfa4cca8265d21580da7d0d501e478ba"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000384.receipt.json",
+      "sha256": "12a388c6388749cdd98ac7ab15292be1d6f4245f11a5258ec4f25ad828760bc9"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000512.pkl",
+      "sha256": "5eef71e6b362f92ecf8a478dc573beceffbf5db0d39387ef6b016df7f7298f17"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000512.receipt.json",
+      "sha256": "0b2d7fbe0011fe772cb6d060bede296de71f084538a5722c489f31c0a9397ac0"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000640.pkl",
+      "sha256": "c5a6a84d24e393e57214edcca82e50ea1f454e84fbc779792beaafc7842ec3db"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000640.receipt.json",
+      "sha256": "8d18af22bdffe1d726264b08b5c4d685564efb835bac2b78bac9548565c769a1"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000768.pkl",
+      "sha256": "a6029c9372cc92b9cc2168cef7fd2cb65a3c4fdf18acb0a4c6dfea22caa69c6c"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000768.receipt.json",
+      "sha256": "c3f3c6faa888df1d76f4640c620c74c5bb81d94606574584b2bdfb73694c1b76"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000896.pkl",
+      "sha256": "7f3ce932c816b60e592505baa6382b1f5512e77e198d4cc50de59c96e2c19eae"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg000896.receipt.json",
+      "sha256": "8d973d662969d6dd63a7689b1d7ce742e1ddc71842458955424ff7348837fef6"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg001024.pkl",
+      "sha256": "43975aab012ed8d9363acd8b6bd67dce891c65c8c751cba7c9f97f06cae5d30d"
+    },
+    {
+      "bytes": 670,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/network-snapshot-kimg001024.receipt.json",
+      "sha256": "f2104d1755d94666540c88d3c86bace16c1525eea5ccf3d22906b4221e8eb7ea"
+    },
+    {
+      "bytes": 1002376,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/train_summary.csv",
+      "sha256": "12b30d912b56bcf28ec382b65487d4ac2ff469e4dc67dc180a4dacb0a0b373f4"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training-state-kimg000256.pt",
+      "sha256": "758dadb309daefa9555a534f0b089959ca82da2b2ea549237fdcfadd3b6dccbf"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training-state-kimg000384.pt",
+      "sha256": "dac8d884f8375d53cef83298c5022003effb3fe0894f42b06735fa806b2a4b4b"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training-state-kimg000512.pt",
+      "sha256": "c4de3d9455dae8d0a1bdeee00bb94cd1f2d65454fde401f51ba1efb2fe437893"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training-state-kimg000640.pt",
+      "sha256": "054d6c00da5bd80ee4ae44689b90f9e524be2669414058c2a97f770f314b2c70"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training-state-kimg000768.pt",
+      "sha256": "3d3be5e25012935595a49b8ed26756c69e04481b28f1b4613cd4beaae0464dde"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training-state-kimg000896.pt",
+      "sha256": "cf5bbb3684efc4c76d8b6649c19c3c980b835bdbb04e31fb3eac81538ac016bc"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training-state-kimg001024.pt",
+      "sha256": "72366e3ef95d150b51de1b3fd06e110ebb72453cc62b51d9e4d5185ef2d83de7"
+    },
+    {
+      "bytes": 2456,
+      "path": "runs/second-q-q128-ab-v2/seed3/armA/training_options.json",
+      "sha256": "48a99e8dd8988ff40a488e63fb92f2bfc7963031d5a845b8515a4ad9ee33b488"
+    },
+    {
+      "bytes": 7413168,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/factorial_training_telemetry_v1.csv",
+      "sha256": "7294a2c253eaed2e8e9dad61c7bc81fac471c4edea3dfdafda642b3d6b486e56"
+    },
+    {
+      "bytes": 5021,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/initial_state_receipt_v1.json",
+      "sha256": "fb62264f8dc7f8104c4998acc82f6a34d8fb3691ba266a8eed75e05683fc2347"
+    },
+    {
+      "bytes": 1779,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/launch_record.json",
+      "sha256": "ce8dc6988847bdc70f4c14f8c9a5baaeb6a05c39eba61f0ac3f1dc3cf2ae4b5b"
+    },
+    {
+      "bytes": 26193,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/log.txt",
+      "sha256": "13b1e660a73f2b4c8a205f9a2cbe16421ef246f1ddad0cccf1c8506934706dc5"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000256.pkl",
+      "sha256": "a2c675cb220dc8a7c4689c45448b60826c8dcc44aff96a05b3729614bf30dd44"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000256.receipt.json",
+      "sha256": "43852184e75615749ffbe4c0e407f97f34cf61c87f254f073cbf0b35d8a87ce5"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000384.pkl",
+      "sha256": "b6d8efe2fcf4a72906c527866c7a2d327fb2d30f24e3dd7c5b9d49fb3f3a67c1"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000384.receipt.json",
+      "sha256": "1893e1418c411e9de7e7376c87a5518c87aacc260b0b820c07aabc59be0817c7"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000512.pkl",
+      "sha256": "00a80962c0db11867e91652d49b683df29490a669489b5daa868c56d62903893"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000512.receipt.json",
+      "sha256": "f9eac7eddc6d0cf646a7bedb356947d0276113b0280001f8779990a155bcd9de"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000640.pkl",
+      "sha256": "1a1034356676e9e40ef4d25c8f482c01154a2d161ef2edd5afcf70eed8fde48d"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000640.receipt.json",
+      "sha256": "5ef20024a35f51bd418213c18148744daabab1842815c84df76dba73c8eba47e"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000768.pkl",
+      "sha256": "508a953429f2b418aeb818cd4a8324576416144391eb6af900e3adaa81ca7c46"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000768.receipt.json",
+      "sha256": "03eae1a44585de1bf19c4514debad3a7908e961ff6a316219b017c1c9ec9a69d"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000896.pkl",
+      "sha256": "4d5620863749132c49b0e283b828f6975076e1be1651b74d9b8c0e7d8ba530f1"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg000896.receipt.json",
+      "sha256": "11baa72d30399579bde596e546d1969d52cebf880f81d1d544320e9dcd372400"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg001024.pkl",
+      "sha256": "b5c852102c795c59a3e4d06c98ccf0eb41394a2aa1bf8a957cf6fb002b298414"
+    },
+    {
+      "bytes": 670,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/network-snapshot-kimg001024.receipt.json",
+      "sha256": "1bd5415b9ee3a6cf24c9a7a33b36395b7ba826af8c0496deb3d0d86aa31990e9"
+    },
+    {
+      "bytes": 1002074,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/train_summary.csv",
+      "sha256": "f68924bc913387da8eb0762e5d8c35de6e348ce529cfed241b86f4d1c37916fa"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training-state-kimg000256.pt",
+      "sha256": "d1dc89010b37c6e707e2ca5e020696c80352216bddfff2bee658b98d46d12c21"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training-state-kimg000384.pt",
+      "sha256": "4aa10df55ec0f1dc052490aaa2bd20dcb6de6a9ddc1b134a006507d82060ac70"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training-state-kimg000512.pt",
+      "sha256": "13a2e2f6727adfb7db9c1378d1c1320702b550a30c0275595c1a36c17e6668f7"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training-state-kimg000640.pt",
+      "sha256": "3d6cb402c58726696c129a0e0c476ebf0e813990c5cecca8fa612b3842ca1faf"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training-state-kimg000768.pt",
+      "sha256": "f31eb404316efae70435c85cbf99b2c85d92c8835b65f8509d696f7ece7971f9"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training-state-kimg000896.pt",
+      "sha256": "cb29cca70ef99bd04904d816777c1cb6ddcab9873389923b3dddc87df1b26e26"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training-state-kimg001024.pt",
+      "sha256": "dbeb2b7a6f3e3e98232c1b285bc96a1bae83eafa669731d19315dd9e10e20fbb"
+    },
+    {
+      "bytes": 2456,
+      "path": "runs/second-q-q128-ab-v2/seed3/armB/training_options.json",
+      "sha256": "c7bc45cf98a516ab94799953d42324c817716bce2fb1b286b79ab5ebaf28ef98"
+    },
+    {
+      "bytes": 7142026,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/factorial_training_telemetry_v1.csv",
+      "sha256": "8a1d099cb4f6dc12b60849af9745249a759deb2f70e5d3a6e85dc9647c5f6a5f"
+    },
+    {
+      "bytes": 5021,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/initial_state_receipt_v1.json",
+      "sha256": "ad537e486ece0b2748b2bce046f52532cec029671ad3bf79de461d52cceeb3a7"
+    },
+    {
+      "bytes": 1757,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/launch_record.json",
+      "sha256": "995c989d808123504cf39dfe21562f084db4939e298bab8c5644b2f1adb12113"
+    },
+    {
+      "bytes": 26193,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/log.txt",
+      "sha256": "ab0ff05399cd387eb71ea0917ac1bbf5dd16ab0bc882cc74594c1eea15cce9b3"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000256.pkl",
+      "sha256": "6a582da84fbf56d4904798ec4e563e05217d85ced65a8c78923a6adc0f559fe9"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000256.receipt.json",
+      "sha256": "7b9603b54ac660133a9a31f3ad710057166cad186da221e0a4a559dabb426986"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000384.pkl",
+      "sha256": "8af57690ffd9302814d0f5b495c90ed25de49ff8dba64ef2a00c4dda6654d506"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000384.receipt.json",
+      "sha256": "f4b3a08ff626ca3a3717bc5bb86a9ec84b91ae04734a1927ed25501b41ae6ad7"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000512.pkl",
+      "sha256": "69769b135bb936caf0b7f58912e80f5ed8e3d813d9bd83d902a05bd3257992bf"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000512.receipt.json",
+      "sha256": "42d4a0e368ada6d2445d1e7a6fd8eec60cba82868e9a7c4dd4ffbfd52ab61bb1"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000640.pkl",
+      "sha256": "6c850c64678b029c328195bf3bcf45338260c231ad6d2ee05a8de053ba842fcf"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000640.receipt.json",
+      "sha256": "2a265a4d6414da6ee1276c7707b91d148b3853d44dee2eb59e8fe3fb929398e2"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000768.pkl",
+      "sha256": "0ac95dc38c89eee429bbf4dc8533a6cab78a2c1e03a8e46786ef9c2bc21aeb63"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000768.receipt.json",
+      "sha256": "0e959aeb97f89b8ba51552f233140b07a51dc0a63aff8a7faee7984b7ff7f443"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000896.pkl",
+      "sha256": "cc5e26339623b76d2b8d091508e1907407f51e769a767ecdef2dda7dda30b6ab"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg000896.receipt.json",
+      "sha256": "7901c2f5d52db29a1bd8f042bd2ee5dea19e813456472addfade2d257a768326"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg001024.pkl",
+      "sha256": "c7ec3458d6e17818e76c0fa0370a9b1efce9b9596c293b1cc4f61aeb45230239"
+    },
+    {
+      "bytes": 670,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/network-snapshot-kimg001024.receipt.json",
+      "sha256": "b189c52d25a1b22e1988095ecc24206da5e4f86f74cf97719c81399dedf92cf5"
+    },
+    {
+      "bytes": 1002145,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/train_summary.csv",
+      "sha256": "d2fbabf485458a0d87ea47b401f0398709a74bf65ddc7ae2cc92a9130c8d4364"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training-state-kimg000256.pt",
+      "sha256": "43a5808d5398296acc51e9709909d941d027379b7fb59b77d440361ff2e9eaf8"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training-state-kimg000384.pt",
+      "sha256": "252565af0028d23bf6135185e35cfa3e5fbae47e5d7e8283b118a0d0ec40fa9d"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training-state-kimg000512.pt",
+      "sha256": "8ad61d7905e012ebe69cfc88209cc44d6b858020f051e15f7b0d702a9ae08b3f"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training-state-kimg000640.pt",
+      "sha256": "67be7bfcd730beed59f5074aab4b83e84d9852fcd373da73db4f861b1a058da4"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training-state-kimg000768.pt",
+      "sha256": "0724e2e019881b9c54b6b52f6fab32318be9d1c8f33a5419612d3dea62d1a304"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training-state-kimg000896.pt",
+      "sha256": "804b7e545135f94da9fa6c09740c47effd84bc1a9fb1b99d17d593aafa71d49a"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training-state-kimg001024.pt",
+      "sha256": "2f0fab15618904f641c7e6d3f4b67ddfa23393c238e7de2a61bb6c2b99690239"
+    },
+    {
+      "bytes": 2456,
+      "path": "runs/second-q-q128-ab-v2/seed4/armA/training_options.json",
+      "sha256": "9a9e6c2ea3ce43c4e85417133c7bc4be95a9382babf8464c91c34fdf4a7f440c"
+    },
+    {
+      "bytes": 7413389,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/factorial_training_telemetry_v1.csv",
+      "sha256": "7bb404553cb154699c4664ed4276e9d2dff75aef1ea87643942c477bf0f96ed4"
+    },
+    {
+      "bytes": 5021,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/initial_state_receipt_v1.json",
+      "sha256": "efdb0f76181bbe16a6e6aa1f166f7327486f25d54eb7c899103c08e8448196a2"
+    },
+    {
+      "bytes": 1779,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/launch_record.json",
+      "sha256": "5e43b6302aabac460c759f3ec6b43eb61305332f18294c354304f3bdc02a1a5e"
+    },
+    {
+      "bytes": 26193,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/log.txt",
+      "sha256": "f4e8e3044c31fd498380cf6bced410b025b5e22138e498307f8c642dac0fac62"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000256.pkl",
+      "sha256": "22fb2dd13ebc0278c282a7aca6af1bc5d9e86507f1b48dc7277da2ced35626b4"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000256.receipt.json",
+      "sha256": "367de1056b764422734a93c37731978801546bfabe896a55c38a2a73bf3938e3"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000384.pkl",
+      "sha256": "bb2a033861988a2f52f9b15f5bf963c119e92c7622c00d395882587d9381a722"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000384.receipt.json",
+      "sha256": "a97661cf5cb27c447547a0374757bc82245cdec0bab500122b8b2120d58de59d"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000512.pkl",
+      "sha256": "8f6561f3946e417c023b8e029d2cd0c90730edb3852949f1e23cbce08e935aee"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000512.receipt.json",
+      "sha256": "094f70ae03230c1346cecb8f833921c944454ae321a3aaccb502971b7b4cdd0f"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000640.pkl",
+      "sha256": "ea95baba5e1f78fcdf5631a131a4a7b1245f07def836d274d1b56a97ba7bc7d0"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000640.receipt.json",
+      "sha256": "bdf655547c077c702506db8dbd12b7bef26f74710f45ac3158b3307fe7cbd566"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000768.pkl",
+      "sha256": "c845c6b62b241ef99bf06b44b5f849e401b82ca67593a0607edd3f46ab21fde9"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000768.receipt.json",
+      "sha256": "63df92ee0f31cdf1a45776de237e795fd799c38092cdda371e6d9296fd2f8f6a"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000896.pkl",
+      "sha256": "829fe3933cf64728aa729d4c3dcd7cb6bee5114f7be9dc57b8f32d83a47ddb05"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg000896.receipt.json",
+      "sha256": "e4b8d3bcfdc4f07f389ae42cb13eb24f26ff9b57541e08cf3c4e602903f87b4d"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg001024.pkl",
+      "sha256": "1168f99521eed72bf19e66f9268efba3f1bfe5c58a2f5e4ab42f41f81d5e465c"
+    },
+    {
+      "bytes": 670,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/network-snapshot-kimg001024.receipt.json",
+      "sha256": "d0b2df0b758570fdc7969aee0398092ac12d362ec2d9cb88693cfaca11e175e9"
+    },
+    {
+      "bytes": 1002563,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/train_summary.csv",
+      "sha256": "13dff80220a66e1d83b7d8196b5ce75062481caf28f14c6e408c6625e5515bc4"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training-state-kimg000256.pt",
+      "sha256": "cf1467c9946f0f0bcb1811691b04387a567bda8ae093f987c1591d6672762fb2"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training-state-kimg000384.pt",
+      "sha256": "4f1eea7bbcced6de95549ca06048816d26040b3be7f8c18843ae303f77edf5d9"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training-state-kimg000512.pt",
+      "sha256": "d88242bfe63d4f6a230015b75bdc908fb624758b8e1f11884c558b6b7aaa65a6"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training-state-kimg000640.pt",
+      "sha256": "72a5879a71984e226b19d520e4f39e5ea500fbe738c96625e155fe2acc306add"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training-state-kimg000768.pt",
+      "sha256": "f61c89507984cc151c3b44a025d23c6cf3ed2c51b6bb8534a895702f316a9181"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training-state-kimg000896.pt",
+      "sha256": "0c65133178dc1a87e9051e565a56cd6f155f7dd9cca1bd57d58327b705834359"
+    },
+    {
+      "bytes": 895724728,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training-state-kimg001024.pt",
+      "sha256": "5ee3a4cb02fbd07af8e3059bb08ee4a3c99d5abaa9161979b909e03fd13996a4"
+    },
+    {
+      "bytes": 2456,
+      "path": "runs/second-q-q128-ab-v2/seed4/armB/training_options.json",
+      "sha256": "6c6cc889e6056f6faec0cd588e348b55657643ee94600c12b4c8b6cc9f3670af"
+    },
+    {
+      "bytes": 7141686,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/factorial_training_telemetry_v1.csv",
+      "sha256": "d4c7683efd64596c56c4eb99c46aebad5a7ca83b29c434f912bb2f88cfc9bd74"
+    },
+    {
+      "bytes": 5021,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/initial_state_receipt_v1.json",
+      "sha256": "74c03c0fd28dd4350ba316d7bc56e0f53f6cceb9503ce0ab11f321f41d7f348d"
+    },
+    {
+      "bytes": 1757,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/launch_record.json",
+      "sha256": "1b9e74e943dba69a5968da4ac1a938a2ff07fc4be0e47941b47fe04084570307"
+    },
+    {
+      "bytes": 26193,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/log.txt",
+      "sha256": "2047d026b243a0ea57d3196c0fddae7962bc2e91f3bd41e0410e9f3232ebc412"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000256.pkl",
+      "sha256": "09b3b5ebfe0b63e94b901542c8803845935c4117f1077cfce2b65079262dc015"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000256.receipt.json",
+      "sha256": "a6b01a01db33e63da9aa07c06c82015ddb317210ebca812366a4031fa38422e0"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000384.pkl",
+      "sha256": "2e7db6e7b50a7f2fc7b3970ac56ac17e0f4bf5bde40a0dcd4edbe85fd5d3860f"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000384.receipt.json",
+      "sha256": "32d033ed018c1724f7f2afa82b08ee9af75ab3b69bb14ee7758d363ec26e1322"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000512.pkl",
+      "sha256": "22d7013c203ff9463a1e71b43ff1377dc542c5facc38fd15c4bd4dc15c166526"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000512.receipt.json",
+      "sha256": "9827e0b9eb906f646cdb4dbabc6a94a315f2a709f348642fec1d5be517f23ffe"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000640.pkl",
+      "sha256": "bf1ac510fe676f09ed1c976b9303377530d5dd6ba68be497125b5b030a1fc9e6"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000640.receipt.json",
+      "sha256": "72faf6aa621004f8d0dc28b0d8a011153680042a06350540c71205bb2e9b9315"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000768.pkl",
+      "sha256": "5d7be6e6c5c6d481db7386dc1c058fbbb6a5a865d5a178e07b653761bf3ce1c1"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000768.receipt.json",
+      "sha256": "da73d0f65416cb1b8452c49a5d2f6f38e8314f108e6739d7654e7cae4a44c317"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000896.pkl",
+      "sha256": "65f46ebc16d8dd531470bc5075192d9b9fe56dc8ce54cd2e55ff3943102cba0e"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg000896.receipt.json",
+      "sha256": "7cdb4d7fcbc4740287dbb8942c997cebfb6b991c4cd3b5dff81d26f1f1aea89f"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg001024.pkl",
+      "sha256": "8d33970682dd1eda05ee45f24e7d2467e9d0d39f45e68859b9ca042eb1a37b17"
+    },
+    {
+      "bytes": 670,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/network-snapshot-kimg001024.receipt.json",
+      "sha256": "1fde06b0ca2dc859fc1efbd855e7ba74046e9bb08675a2d43baa7f73b2ed796c"
+    },
+    {
+      "bytes": 1002267,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/train_summary.csv",
+      "sha256": "119d32bef7cdfffdbe90627967594167d97ce4d035a730f5bb11df80795221f2"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training-state-kimg000256.pt",
+      "sha256": "23dc29fe1ebc18bdb49d501f4bd7aee010ad1a757bc9342a63e7ba2ddbbd5958"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training-state-kimg000384.pt",
+      "sha256": "1088dc032b31ad9f0ff53bc7256a777b817140cbcdd3a26dde3e15b284486a84"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training-state-kimg000512.pt",
+      "sha256": "db394eb8c005f38c87173ccf57d4b7594cf581caf461f98f4e1148547e3d4a98"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training-state-kimg000640.pt",
+      "sha256": "80db1a479bf65e1e6de0cb0349aa24704bda806e4ed5e6eacd765e3585804859"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training-state-kimg000768.pt",
+      "sha256": "67f838dd7afb1856255aebcb7aa4767f899fc1b8dadbcc5d8ae6274a2a04096d"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training-state-kimg000896.pt",
+      "sha256": "7b30e672a9e9092bd34e6928883d5fab695300a1631232b6a96e49673ee8ce30"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training-state-kimg001024.pt",
+      "sha256": "b800134972b23b81f881a45f369adf75bedbce5171504839ce51ed6652ffb189"
+    },
+    {
+      "bytes": 2456,
+      "path": "runs/second-q-q128-ab-v2/seed5/armA/training_options.json",
+      "sha256": "d589b031b8959d3406d45a30bc9ad3bd3b221e22b0d76f1c606d6daec6283b0d"
+    },
+    {
+      "bytes": 7413867,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/factorial_training_telemetry_v1.csv",
+      "sha256": "11229d3ae6ae68549647bc52fd9dbf6a7eea9dbecd14e27a2ad9b34462448c17"
+    },
+    {
+      "bytes": 5021,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/initial_state_receipt_v1.json",
+      "sha256": "aaeea8ea59b1e027a3f3c6be266eb862a4b251f5710c3a89858b2d5df6660beb"
+    },
+    {
+      "bytes": 1779,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/launch_record.json",
+      "sha256": "0951510588f53747426dbee9413d585f20a7172a15b5ebf2a6ede30d307fdc33"
+    },
+    {
+      "bytes": 26193,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/log.txt",
+      "sha256": "2ccb3b2216e6def591bde405a67ddb893adbca2d46777bf02b3cebda9775eabd"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000256.pkl",
+      "sha256": "0346a2fb5e08fbe315b4e5cd3e189314ddf0f76bbbd2341e782d214d418a0cc1"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000256.receipt.json",
+      "sha256": "5bdf58d181a2ca883fc767e58df0ea616cb628961c9d8205c2a3822e8ef0d1e3"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000384.pkl",
+      "sha256": "a77a4afe1e3f4b1d497b62cf8d8fbfe07f636a1964c619209a8710603030e128"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000384.receipt.json",
+      "sha256": "a9c0d7b16c9fce5021b5979a5209736a3f53d50598d204a9cdf0275e2090399f"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000512.pkl",
+      "sha256": "129360057991a4d3723e309c0e7bd0caca69aab598c538c153b8c6c3e06e7eb0"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000512.receipt.json",
+      "sha256": "ef9b89fbc4a6c465dcca4fdefd7df7bcd1e12be197bdcbc08bc15c3e91e0a959"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000640.pkl",
+      "sha256": "504c0461a1b6a73952c272c46fc92df917b354b6649eb8bf51b2d429275b574e"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000640.receipt.json",
+      "sha256": "08b03d4127a5cc125712fc8527dea463bad001a2c950e29384e1ae7a3bd92f71"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000768.pkl",
+      "sha256": "c08d50df433686edf23bdafe652fd6fb2e8b1a0415d9197db5acdf02d66e3be2"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000768.receipt.json",
+      "sha256": "c0fac202261caef343b111a1f011f4f2d2b592ac258b9b0bc81f3ed8c98acb59"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000896.pkl",
+      "sha256": "4f91eca8822408e84e38508b09fe51033b3486729f413ded591348563a667780"
+    },
+    {
+      "bytes": 669,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg000896.receipt.json",
+      "sha256": "117f8e6334f4484d8932fa68a6441ea84e1732579d025f96987afa6824e5f64b"
+    },
+    {
+      "bytes": 223162525,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg001024.pkl",
+      "sha256": "0ce84ca631df59b569b6160ce2dca97e651d0138293840790264ea2cf6bba66d"
+    },
+    {
+      "bytes": 670,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/network-snapshot-kimg001024.receipt.json",
+      "sha256": "0672976b3feb79ab33b1f9b7f14b7f569576f70913868ff541d06816dd7ad452"
+    },
+    {
+      "bytes": 1002262,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/train_summary.csv",
+      "sha256": "3c1f04db7d78b2bc99f4bb17cca8a9c24bebb3b8d20893e7fb624eaacb81917a"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training-state-kimg000256.pt",
+      "sha256": "451cfbd3ecfb68cff5566d31a1019cb0263e31a3cffa996e32b53c9a234c5265"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training-state-kimg000384.pt",
+      "sha256": "63f342bcca4f4b0ec1e506eedc136755523430f4be0fb5ca607d987a02dabe28"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training-state-kimg000512.pt",
+      "sha256": "fcf0bacc7d8ed6ca327b51b42a55885d6afa07b12480b3655af849f35eba79a9"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training-state-kimg000640.pt",
+      "sha256": "5a593d1084984f4b502ebd79b8e36ff1e316e58f8ebf308c3c1815abf4e4c58a"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training-state-kimg000768.pt",
+      "sha256": "19c7d9409f08e02cff0549ba3632e72fc43dbd0336b30129f6b9a460220509a5"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training-state-kimg000896.pt",
+      "sha256": "93ca91182ade7b85a6eda459e61605f64b2139d0c2c58d0ed47d1ed36f9b662c"
+    },
+    {
+      "bytes": 895724792,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training-state-kimg001024.pt",
+      "sha256": "cb61f9a3e37c1c70c15dd67df26b90706ba7d1061a434cc3dd04e0c5ccc3f4df"
+    },
+    {
+      "bytes": 2456,
+      "path": "runs/second-q-q128-ab-v2/seed5/armB/training_options.json",
+      "sha256": "cec4180f69e83b3acf8561ef5267c85e1e1c208143f23a9c618b3df99ec1a3b4"
+    }
+  ],
+  "schema": "ect.second-q.essential-archive/v1",
+  "status": "PASS",
+  "total_bytes": 47043338126
+}

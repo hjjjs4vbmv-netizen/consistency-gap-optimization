@@ -1,0 +1,60 @@
+{
+  "arms": [
+    "A",
+    "Bsame",
+    "Bmatch",
+    "Cmatch",
+    "Dmatch"
+  ],
+  "authoritative_job_counts": {
+    "data-card-partition": 7,
+    "server-main": 187,
+    "server-partition": 16
+  },
+  "budgets_kimg": [
+    256,
+    384,
+    512,
+    640,
+    768,
+    896,
+    1024
+  ],
+  "differing_metric_values": 24,
+  "invalidated_directories_included": false,
+  "jobs": 210,
+  "matrix_extra_jobs": 0,
+  "matrix_missing_jobs": 0,
+  "max_duplicate_fid_abs_difference": 8.830906750745271e-05,
+  "max_duplicate_kid_abs_difference": 2.2550550538014136e-07,
+  "metric_values": 420,
+  "nfes": [
+    1,
+    2
+  ],
+  "overlap_jobs": 23,
+  "protocol": {
+    "deployed_evaluator_source_sha256": {
+      "ct_eval.py": "8e17e4cd4e12097e12659a9c8849d42554f24efb25e5255261383d952d878c95",
+      "metrics/frechet_inception_distance.py": "efab16b0e42ea551fd9141dd80750075425429771ed85b4200fc1da97b018ecc",
+      "metrics/kernel_inception_distance.py": "cb9456b183bfa40b098dfc13720d27f95d29a2ebfddc9fc537165b5a02655248",
+      "metrics/metric_main.py": "c312c1d4217036e36738692a6efe88bd6cdc70f7bccc797b1faf68b795f1069c",
+      "metrics/metric_utils.py": "8ae7cf341288a79a77aec845487ff9a7742fe91ee5aa98c52b5af5e0a52d5a20",
+      "scripts/run_q128_stream_eval_worker.sh": "a357a0ab2bd1f30bd5466add8b1ec1a31a9e9cc28890cc736339399e22fa765a"
+    },
+    "feature_reuse_scope": "kid50k_full -> fid50k_full",
+    "metric_seed": 20260730,
+    "nfe2_mid_t": 0.821,
+    "precision": "fp32",
+    "sample_seeds": "0-49999",
+    "samples": 50000
+  },
+  "schema": "ect.q128-matched-spacing-results-audit/v1",
+  "seeds": [
+    3,
+    4,
+    5
+  ],
+  "selection_rule": "Use preassigned data/server partitions for their disjoint jobs; never choose by metric quality.",
+  "status": "PASS"
+}

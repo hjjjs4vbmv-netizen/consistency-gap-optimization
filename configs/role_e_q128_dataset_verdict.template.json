@@ -1,0 +1,14 @@
+{
+  "schema": "ect.role-e.dataset-semantic-equivalence-verdict/v1",
+  "audit_id": "REPLACE_WITH_ROLE_E_AUDIT_ID",
+  "role": "Role E",
+  "verdict": "UNRESOLVED",
+  "legacy_q128_dataset_sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+  "q256_canonical_training_dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+  "semantic_manifest_algorithm": "REPLACE_WITH_ALGORITHM_AND_VERSION",
+  "legacy_semantic_manifest_sha256": "REPLACE_WITH_64_HEX",
+  "canonical_semantic_manifest_sha256": "REPLACE_WITH_64_HEX",
+  "evidence_manifest_sha256": "REPLACE_WITH_64_HEX",
+  "signed_off_utc": "REPLACE_WITH_ISO_8601_UTC",
+  "notes": "UNRESOLVED is intentionally rejected by the launcher. Role E must return SEMANTIC_EQUIVALENT or NOT_EQUIVALENT with immutable evidence hashes."
+}

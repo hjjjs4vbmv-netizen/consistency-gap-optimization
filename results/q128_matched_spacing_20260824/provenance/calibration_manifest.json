@@ -1,0 +1,115 @@
+{
+  "calibration_rng": {
+    "algorithm": "NumPy PCG64",
+    "numpy_version": "2.5.1",
+    "seed": 20260824
+  },
+  "calibration_source": "/Users/wpb/Desktop/01/recurrence_of_ect_q256_results_pr/scripts/calibrate_q128_matched_spacing.py",
+  "calibration_source_sha256": "edea5685ba58f4c8d8f69d9c464e372bd047d8c920f103397827d48fb3bc34fc",
+  "clipping_statistics": {
+    "candidate_fraction": 0.0,
+    "reference_fraction": 0.0
+  },
+  "created_utc": "2026-08-24T02:56:55.697462Z",
+  "objective": "mean((log(delta_128_g(t)) - log(delta_256_1.10(t)))**2)",
+  "quality_blind": true,
+  "quality_metrics_read": [],
+  "reference": {
+    "g": 1.1,
+    "q": 256.0
+  },
+  "sample_count": 1000000,
+  "schema": "ect.q128-matched-spacing-calibration/v1",
+  "search": {
+    "algorithm": "bounded golden-section plus exact-ratio candidate",
+    "exact_ratio_candidate": 0.55,
+    "golden_section_solution": 0.5499999999999939,
+    "interval": [
+      0.25,
+      1.5
+    ],
+    "iterations": 63,
+    "optimum_on_boundary": false,
+    "tolerance": 1e-13
+  },
+  "selected_g128_star": 0.55,
+  "selected_objective": 0.0,
+  "spacing_definition": {
+    "b": 1.0,
+    "base_r": "clamp(t * (1 - (1 + k*sigmoid(-b*t))/q^(stage+1)), min=0)",
+    "clipping_rule": "r_g = t - min(t, g*(t-base_r)); 0 <= r_g <= t",
+    "k": 8.0,
+    "realized_gap": "min(t, g * (t - base_r))",
+    "schedule": "official sigmoid",
+    "stage": 0
+  },
+  "spacing_quantiles": {
+    "candidate_delta": {
+      "p00": 4.3842512536989663e-07,
+      "p01": 6.822552706291239e-05,
+      "p05": 0.00026638476667617387,
+      "p100": 49.753433113909736,
+      "p25": 0.0017903344073472614,
+      "p50": 0.006206270840053863,
+      "p75": 0.015103060713918799,
+      "p95": 0.03843519358777763,
+      "p99": 0.14985888864927563
+    },
+    "candidate_delta_over_t": {
+      "p00": 0.0042968749999999995,
+      "p01": 0.004296875000000025,
+      "p05": 0.004301399213281698,
+      "p100": 0.021484199628518347,
+      "p25": 0.011732859221801109,
+      "p50": 0.01865080395370318,
+      "p75": 0.02074310995866368,
+      "p95": 0.02137728871337617,
+      "p99": 0.021457050058891272
+    },
+    "log_gap_residual": {
+      "p00": 0.0,
+      "p01": 0.0,
+      "p05": 0.0,
+      "p100": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p95": 0.0,
+      "p99": 0.0
+    },
+    "reference_delta": {
+      "p00": 4.3842512536989663e-07,
+      "p01": 6.822552706291239e-05,
+      "p05": 0.00026638476667617387,
+      "p100": 49.753433113909736,
+      "p25": 0.0017903344073472614,
+      "p50": 0.006206270840053863,
+      "p75": 0.015103060713918799,
+      "p95": 0.03843519358777763,
+      "p99": 0.14985888864927563
+    },
+    "reference_delta_over_t": {
+      "p00": 0.0042968749999999995,
+      "p01": 0.004296875000000025,
+      "p05": 0.004301399213281698,
+      "p100": 0.021484199628518347,
+      "p25": 0.011732859221801109,
+      "p50": 0.01865080395370318,
+      "p75": 0.02074310995866368,
+      "p95": 0.02137728871337617,
+      "p99": 0.021457050058891272
+    }
+  },
+  "status": "FROZEN_PASS",
+  "t_distribution": {
+    "P_mean": -1.1,
+    "P_std": 2.0,
+    "construction": "exp(N(0,1) * P_std + P_mean)",
+    "dtype": "little-endian float64",
+    "family": "lognormal"
+  },
+  "t_sample_file": "t_samples_f64.npy",
+  "t_sample_file_sha256": "667a14733afb783fa3d4570e38fcbac858a0580e13e19cd7eab08f5eab68b28a",
+  "t_sample_raw_sha256": "e05bddede0ded61f3834e91749d3dc21ea8e5274bcdae1c549eef1ebdd553a45",
+  "target_q": 128.0
+}

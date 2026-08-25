@@ -175,11 +175,12 @@ def run_loss(loss_fn, seed=20260819):
     }
 
 
-def factorized(arm):
+def factorized(arm, q=256):
     factors = {
         derived: pair for pair, derived in TARGET_WEIGHT_FACTORIAL_ARMS.items()
     }[arm]
     return make_loss(
+        q=q,
         factorial_protocol=TARGET_WEIGHT_FACTORIAL_PROTOCOL,
         target_gap_scale=factors[0],
         denominator_gap_scale=factors[1],
@@ -318,6 +319,21 @@ class FactorialConfigurationTest(unittest.TestCase):
                 self.assertTrue(resolved['enabled'])
                 self.assertEqual(resolved['arm'], expected_arm)
 
+    def test_second_q_A_and_B_are_admitted_without_C_D_expansion(self):
+        for factors, expected_arm in [((1.0, 1.0), 'A'), ((1.1, 1.1), 'B')]:
+            with self.subTest(arm=expected_arm):
+                resolved = resolve_target_weight_factorial(
+                    TARGET_WEIGHT_FACTORIAL_PROTOCOL,
+                    factors[0],
+                    factors[1],
+                    adj='sigmoid',
+                    global_gap_scale=1.0,
+                    q=128,
+                    c=0,
+                )
+                self.assertTrue(resolved['enabled'])
+                self.assertEqual(resolved['arm'], expected_arm)
+
     def test_protocol_fails_closed_on_partial_or_off_protocol_config(self):
         invalid = [
             dict(protocol='none', target_gap_scale=1.0),
@@ -326,7 +342,7 @@ class FactorialConfigurationTest(unittest.TestCase):
             dict(protocol=TARGET_WEIGHT_FACTORIAL_PROTOCOL,
                  target_gap_scale=1.2, denominator_gap_scale=1.0),
             dict(protocol=TARGET_WEIGHT_FACTORIAL_PROTOCOL,
-                 target_gap_scale=1.0, denominator_gap_scale=1.0, q=128),
+                 target_gap_scale=1.0, denominator_gap_scale=1.0, q=64),
             dict(protocol=TARGET_WEIGHT_FACTORIAL_PROTOCOL,
                  target_gap_scale=1.0, denominator_gap_scale=1.0,
                  adj='global_sigmoid'),
@@ -455,6 +471,20 @@ class CanonicalParityTest(unittest.TestCase):
         self.assertEqual(factorial['schedule_metadata']['name'], 'sigmoid')
         self.assertEqual(factorial['telemetry']['target_gap_scale'], 1.1)
         self.assertEqual(factorial['telemetry']['denominator_gap_scale'], 1.1)
+        self.assert_factorial_denominator_is_bound(factorial)
+
+    def test_q128_A_is_bitwise_equal_to_native_sigmoid(self):
+        canonical = run_loss(make_loss(q=128))
+        factorial = run_loss(factorized('A', q=128))
+        self.assert_run_equal(canonical, factorial)
+        self.assert_factorial_denominator_is_bound(factorial)
+
+    def test_q128_B_is_bitwise_equal_to_native_global_sigmoid_g110(self):
+        canonical = run_loss(
+            make_loss(q=128, adj='global_sigmoid', global_gap_scale=1.1)
+        )
+        factorial = run_loss(factorized('B', q=128))
+        self.assert_run_equal(canonical, factorial)
         self.assert_factorial_denominator_is_bound(factorial)
 
     def test_same_target_factorial_identities_are_elementwise_exact(self):
