@@ -13,6 +13,14 @@ formal cells. Formal execution starts from a new directory with deterministic
 algorithms, cuDNN flags, TF32 flags, reduced-precision-reduction flag, and
 `CUBLAS_WORKSPACE_CONFIG=:4096:8` recorded in each manifest.
 
+The first matched-rollout launch stopped at horizon 1 before writing a rollout
+receipt because `torch.quantile` rejects the full concatenated RAdam-moment
+vector at this model size. The retained failed manifest proves source-file
+preservation. The compatibility fix keeps count/mean/std/L2 exact over every
+coordinate and computes p05/p50/p95 from a deterministic fixed-stride sample
+of at most 1,000,000 coordinates, with method, sample count, and stride written
+in every summary. No horizon output was inspected or replaced.
+
 Retained field attempts:
 
 - `[0.01, 0.003, 0.001, 0.0003]`: finest adjacent change 2.81245;

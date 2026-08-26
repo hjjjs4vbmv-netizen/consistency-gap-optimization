@@ -7,6 +7,7 @@ import torch
 
 from analysis.operator_clock_gate.core import (
     AuditBatch,
+    _distribution,
     central_difference_map,
     fd_convergence,
     field_jvp,
@@ -25,6 +26,17 @@ def differentiable_momentum_step(state):
 
 
 class OperatorGateFDConvergenceTests(unittest.TestCase):
+    def test_large_distribution_quantiles_use_declared_deterministic_stride(self):
+        values = torch.arange(100, dtype=torch.float64)
+        first = _distribution(values, max_quantile_elements=10)
+        second = _distribution(values, max_quantile_elements=10)
+        self.assertEqual(first, second)
+        self.assertEqual(first["count"], 100)
+        self.assertEqual(first["quantile_sample_count"], 10)
+        self.assertEqual(first["quantile_stride"], 10)
+        self.assertEqual(first["quantile_method"], "deterministic_stride_sample")
+        self.assertEqual(first["mean"], 49.5)
+
     def test_toy_differentiable_optimizer_fd_matches_autograd_jvp(self):
         point = tuple(torch.tensor(value, dtype=torch.float64, requires_grad=True)
                       for value in (0.4, -0.2, 0.1))

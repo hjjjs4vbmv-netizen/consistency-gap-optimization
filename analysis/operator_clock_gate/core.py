@@ -965,14 +965,24 @@ def algorithmic_jvp(
     return selected, receipt
 
 
-def _distribution(values: torch.Tensor) -> dict[str, float]:
+def _distribution(values: torch.Tensor, *,
+                  max_quantile_elements: int = 1_000_000) -> dict[str, Any]:
     values = values.detach().double().cpu().flatten()
-    quantiles = torch.quantile(values, torch.tensor(
+    if max_quantile_elements < 1:
+        raise ValueError("max_quantile_elements must be positive")
+    stride = max(1, math.ceil(values.numel() / max_quantile_elements))
+    quantile_values = values[::stride][:max_quantile_elements]
+    quantiles = torch.quantile(quantile_values, torch.tensor(
         [0.05, 0.5, 0.95], dtype=torch.float64))
     return {
+        "count": int(values.numel()),
         "mean": float(values.mean()), "std": float(values.std(unbiased=False)),
         "p05": float(quantiles[0]), "p50": float(quantiles[1]),
         "p95": float(quantiles[2]), "l2": float(values.norm()),
+        "quantile_method": ("exact" if stride == 1
+                            else "deterministic_stride_sample"),
+        "quantile_sample_count": int(quantile_values.numel()),
+        "quantile_stride": stride,
     }
 
 
