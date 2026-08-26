@@ -56,8 +56,8 @@ def fixture():
     optimizer.zero_grad(set_to_none=True)
     ema = copy.deepcopy(net).eval().requires_grad_(False)
     state = AlgorithmicState(net, optimizer, ema, TinyLoss(), ema_beta=0.9)
-    images = torch.linspace(-0.9, 0.9, 8, dtype=torch.float64).reshape(8, 1, 1, 1)
-    labels = torch.empty(8, 0, dtype=torch.float64)
+    images = torch.linspace(-0.9, 0.9, 16, dtype=torch.float64).reshape(16, 1, 1, 1)
+    labels = torch.empty(16, 0, dtype=torch.float64)
     batches = freeze_batches([(images, labels)] * 4, state.loss_fn,
                              (2026082601, 2026082602, 2026082603, 2026082604))
     return state, batches

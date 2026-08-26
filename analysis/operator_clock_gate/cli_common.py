@@ -12,7 +12,12 @@ from typing import Any, Sequence
 
 import torch
 
-from .core import AlgorithmicState, AuditBatch, freeze_batches, write_json
+from .core import (
+    AlgorithmicState,
+    AuditBatchGroup,
+    freeze_batch_groups,
+    write_json,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -190,14 +195,17 @@ def _raw_batches(value: Any, device: torch.device) -> list[tuple[torch.Tensor, t
     return result
 
 
-def load_frozen_batches(args, loss_fn: Any) -> list[AuditBatch]:
+def load_frozen_batches(args, loss_fn: Any) -> list[AuditBatchGroup]:
     value = torch.load(args.batch_file, map_location="cpu", weights_only=False)
     raw = _raw_batches(value, torch.device(args.device))
     audit_ids = protocol()["audit_minibatch_ids"]
     if len(raw) != len(audit_ids):
         raise RuntimeError(
             f"formal protocol requires exactly {len(audit_ids)} minibatches, got {len(raw)}")
-    return freeze_batches(raw, loss_fn, audit_ids)
+    return freeze_batch_groups(
+        raw, loss_fn, audit_ids,
+        microbatch_size=int(protocol()["batch_construction"]["microbatch_size"]),
+    )
 
 
 def write_run_manifest(out: Path, kind: str, assets: dict[str, Any],

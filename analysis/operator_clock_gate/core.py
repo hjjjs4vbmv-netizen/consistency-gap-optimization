@@ -166,6 +166,30 @@ class AuditBatch:
         )
 
 
+@dataclass(frozen=True)
+class AuditBatchGroup:
+    """One optimizer batch represented by production-sized microbatches."""
+
+    microbatches: tuple[AuditBatch, ...]
+    audit_id: int
+
+    def __post_init__(self):
+        if not self.microbatches:
+            raise ValueError("an audit batch group must contain microbatches")
+        if any(item.audit_id != self.audit_id for item in self.microbatches):
+            raise ValueError("all microbatches must share the group audit_id")
+
+
+def _microbatches(batch: AuditBatch | AuditBatchGroup) -> tuple[AuditBatch, ...]:
+    return batch.microbatches if isinstance(batch, AuditBatchGroup) else (batch,)
+
+
+def _flatten_batches(
+    batches: Sequence[AuditBatch | AuditBatchGroup],
+) -> list[AuditBatch]:
+    return [micro for batch in batches for micro in _microbatches(batch)]
+
+
 def freeze_batches(
     raw_batches: Sequence[tuple[torch.Tensor, torch.Tensor]],
     loss_template: Any,
@@ -196,6 +220,47 @@ def freeze_batches(
     finally:
         _restore_rng(original)
     return frozen
+
+
+def freeze_batch_groups(
+    raw_batches: Sequence[tuple[torch.Tensor, torch.Tensor]],
+    loss_template: Any,
+    audit_ids: Sequence[int],
+    *,
+    microbatch_size: int,
+) -> list[AuditBatchGroup]:
+    """Freeze four optimizer batches as sequential accumulation microbatches."""
+    if microbatch_size < 1:
+        raise ValueError("microbatch_size must be positive")
+    groups = []
+    original = _capture_rng()
+    try:
+        for (images, labels), audit_id in zip(raw_batches, audit_ids):
+            if images.shape[0] % microbatch_size:
+                raise ValueError("batch size must be divisible by microbatch_size")
+            torch.manual_seed(int(audit_id))
+            if images.device.type == "cuda":
+                torch.cuda.manual_seed_all(int(audit_id))
+            micros = []
+            for start in range(0, images.shape[0], microbatch_size):
+                image_micro = images[start:start + microbatch_size]
+                label_micro = labels[start:start + microbatch_size]
+                t = (torch.randn(
+                    image_micro.shape[0], 1, 1, 1, device=images.device,
+                    dtype=images.dtype,
+                ) * float(loss_template.P_std) + float(loss_template.P_mean)).exp()
+                noise = torch.randn_like(image_micro)
+                micros.append(AuditBatch(
+                    images=image_micro.detach().clone(),
+                    labels=label_micro.detach().clone(),
+                    t=t.detach().clone(), noise=noise.detach().clone(),
+                    dropout_rng_state=get_device_rng_state(images.device),
+                    audit_id=int(audit_id),
+                ))
+            groups.append(AuditBatchGroup(tuple(micros), int(audit_id)))
+    finally:
+        _restore_rng(original)
+    return groups
 
 
 def _schedule(loss_template: Any, scale: float):
@@ -281,15 +346,17 @@ def _named_parameters(net: torch.nn.Module) -> dict[str, torch.nn.Parameter]:
 def _gradient_field(
     net: torch.nn.Module,
     loss_template: Any,
-    batches: Sequence[AuditBatch],
+    batches: Sequence[AuditBatch | AuditBatchGroup],
     arm: str,
 ) -> tuple[dict[str, torch.Tensor], dict[str, Any]]:
     """Evaluate g_G(theta) by complete recomputation on a disposable model."""
     net.zero_grad(set_to_none=True)
     details = []
-    for batch in batches:
+    microbatches = _flatten_batches(batches)
+    total_samples = sum(batch.images.shape[0] for batch in microbatches)
+    for batch in microbatches:
         loss, detail = ect_pair(net, loss_template, batch, arm, detach_target=True)
-        (loss.mean() / len(batches)).backward()
+        (loss.sum() / total_samples).backward()
         details.append(detail)
     field = {}
     for name, parameter in net.named_parameters():
@@ -298,8 +365,8 @@ def _gradient_field(
     if not field or not all(bool(torch.isfinite(value).all()) for value in field.values()):
         raise RuntimeError("gradient field is empty or non-finite")
     return field, {
-        "forward_count": 2 * len(batches),
-        "target_recompute_count": len(batches),
+        "forward_count": 2 * len(microbatches),
+        "target_recompute_count": len(microbatches),
         "all_targets_detached": all(not item["target_requires_grad"] for item in details),
         "target_hashes": [item["target_sha256"] for item in details],
     }
@@ -449,7 +516,7 @@ def fd_convergence(estimates: Mapping[float, Mapping[str, torch.Tensor]],
 def field_jvp(
     source_net: torch.nn.Module,
     loss_template: Any,
-    batches: Sequence[AuditBatch],
+    batches: Sequence[AuditBatch | AuditBatchGroup],
     direction: Mapping[str, torch.Tensor],
     *,
     arm: str = "A",
@@ -482,7 +549,8 @@ def field_jvp(
                 "minus": minus_detail,
                 "paired_target_recomputation": (
                     plus_detail["target_recompute_count"]
-                    == minus_detail["target_recompute_count"] == len(batches)),
+                    == minus_detail["target_recompute_count"]
+                    == len(_flatten_batches(batches))),
             })
     convergence = fd_convergence(estimates, tolerance=convergence_tolerance)
     selected_epsilon = min(float(item) for item in epsilons)
@@ -521,7 +589,7 @@ def field_jvp(
 def squared_gn_operator_jvp(
     source_net: torch.nn.Module,
     loss_template: Any,
-    batches: Sequence[AuditBatch],
+    batches: Sequence[AuditBatch | AuditBatchGroup],
     direction: Mapping[str, torch.Tensor],
     *,
     arm: str = "A",
@@ -540,7 +608,9 @@ def squared_gn_operator_jvp(
         _perturb_parameters(plus, direction, output_fd_epsilon)
         _perturb_parameters(minus, direction, -output_fd_epsilon)
         live = copy.deepcopy(source_net).train().requires_grad_(True)
-        for batch in batches:
+        microbatches = _flatten_batches(batches)
+        total_samples = sum(batch.images.shape[0] for batch in microbatches)
+        for batch in microbatches:
             # Live target here is intentional: only its output directional
             # derivative enters (J_i-J_j)u.  The VJP below is through J_i only.
             _, plus_detail = ect_pair(
@@ -577,8 +647,7 @@ def squared_gn_operator_jvp(
                     batch.t, stage=int(loss_template.stage))
             weights = (1.0 / denominator).reshape(
                 (batch.images.shape[0],) + (1,) * (online_live.ndim - 1))
-            scalar = (online_live * jdiff_u * weights).sum() / (
-                len(batches) * batch.images.shape[0])
+            scalar = (online_live * jdiff_u * weights).sum() / total_samples
             grads = torch.autograd.grad(
                 scalar, tuple(live.parameters()), allow_unused=True)
             for (name, parameter), grad in zip(live.named_parameters(), grads):
@@ -731,7 +800,7 @@ def _optimizer_discrete_signature(state: AlgorithmicState) -> dict[str, Any]:
 
 def transition_step(
     state: AlgorithmicState,
-    batch: AuditBatch,
+    batch: AuditBatch | AuditBatchGroup,
     *,
     arm: str,
     clone_input: bool = True,
@@ -746,15 +815,24 @@ def transition_step(
     result.net.train().requires_grad_(True)
     result.optimizer.zero_grad(set_to_none=True)
     before_params = parameter_vector(result.net)
-    loss, detail = ect_pair(result.net, result.loss_fn, batch, arm, detach_target=True)
-    objective = loss.mean()
+    micros = _microbatches(batch)
+    total_samples = sum(item.images.shape[0] for item in micros)
+    loss_sum = 0.0
+    details = []
+    scale_before = (float(result.scaler.get_scale())
+                    if result.scaler is not None else 1.0)
+    for micro in micros:
+        loss, detail = ect_pair(
+            result.net, result.loss_fn, micro, arm, detach_target=True)
+        objective = loss.sum() / total_samples
+        if result.scaler is not None:
+            result.scaler.scale(objective).backward()
+        else:
+            objective.backward()
+        loss_sum += float(loss.detach().double().sum().cpu())
+        details.append(detail)
     if result.scaler is not None:
-        scale_before = float(result.scaler.get_scale())
-        result.scaler.scale(objective).backward()
         result.scaler.unscale_(result.optimizer)
-    else:
-        scale_before = 1.0
-        objective.backward()
     raw_grad_sq = 0.0
     for parameter in result.net.parameters():
         if parameter.grad is not None:
@@ -779,21 +857,25 @@ def transition_step(
     return result, {
         "audit_id": batch.audit_id,
         "arm": arm,
-        "loss_mean": float(loss.detach().double().mean().cpu()),
+        "loss_mean": loss_sum / total_samples,
+        "microbatch_count": len(micros),
+        "optimizer_batch_size": total_samples,
         "raw_gradient_l2": math.sqrt(raw_grad_sq),
         "raw_update_l2": vector_l2(update),
         "amp_enabled": result.scaler is not None,
         "grad_scale_before": scale_before,
         "grad_scale_after": scale_after,
         "step_skipped": bool(step_skipped),
-        "target_recomputed": detail["target_recomputed"],
-        "target_detached_in_this_forward": detail["target_detached_in_this_forward"],
+        "target_recomputed": all(item["target_recomputed"] for item in details),
+        "target_recompute_count": len(details),
+        "target_detached_in_this_forward": all(
+            item["target_detached_in_this_forward"] for item in details),
     }
 
 
 def algorithmic_jvp(
     source: AlgorithmicState,
-    batch: AuditBatch,
+    batch: AuditBatch | AuditBatchGroup,
     direction: Mapping[str, torch.Tensor],
     *,
     arm: str = "A",
@@ -906,8 +988,9 @@ def _moment_summary(state: AlgorithmicState) -> dict[str, Any]:
     return {key: _distribution(torch.cat(values)) for key, values in sorted(by_key.items())}
 
 
-def _fixed_outputs(state: AlgorithmicState, batch: AuditBatch,
+def _fixed_outputs(state: AlgorithmicState, batch: AuditBatch | AuditBatchGroup,
                    latent: torch.Tensor | None) -> dict[str, Any]:
+    batch = _microbatches(batch)[0]
     state.ema.eval()
     with torch.no_grad(), preserved_rng(batch.audit_id):
         set_device_rng_state(batch.dropout_rng_state, batch.images.device)
@@ -930,15 +1013,19 @@ def _fixed_outputs(state: AlgorithmicState, batch: AuditBatch,
 
 
 def _residual_profile(state: AlgorithmicState, loss_template: Any,
-                      batch: AuditBatch, arm: str) -> dict[str, float]:
+                      batch: AuditBatch | AuditBatchGroup, arm: str) -> dict[str, float]:
+    residuals = []
     with preserved_rng(batch.audit_id), torch.no_grad():
-        _, detail = ect_pair(state.net, loss_template, batch, arm, detach_target=True)
-    return _distribution(detail["residual_l2"])
+        for micro in _microbatches(batch):
+            _, detail = ect_pair(
+                state.net, loss_template, micro, arm, detach_target=True)
+            residuals.append(detail["residual_l2"])
+    return _distribution(torch.cat(residuals))
 
 
 def matched_micro_rollout(
     source: AlgorithmicState,
-    batches: Sequence[AuditBatch],
+    batches: Sequence[AuditBatch | AuditBatchGroup],
     *,
     horizons: Sequence[int] = (1, 4, 16, 64),
     projection_seeds: Sequence[int] = tuple(range(2026082101, 2026082109)),
