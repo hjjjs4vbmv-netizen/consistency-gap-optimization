@@ -57,6 +57,18 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
 
 
+def add_shard_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--shard-index", type=int, default=0)
+    parser.add_argument("--num-shards", type=int, default=1)
+
+
+def select_shard(tasks: Sequence[Any], *, shard_index: int,
+                 num_shards: int) -> list[Any]:
+    if num_shards < 1 or shard_index < 0 or shard_index >= num_shards:
+        raise ValueError("require num_shards >= 1 and 0 <= shard_index < num_shards")
+    return [task for index, task in enumerate(tasks) if index % num_shards == shard_index]
+
+
 def _check_expected(path: Path, expected: str | None) -> dict[str, Any]:
     if not path.is_file():
         raise FileNotFoundError(path)
@@ -81,6 +93,7 @@ def source_assets(args) -> dict[str, Any]:
             path.name: sha256_file(path)
             for path in (
                 HERE / "core.py", HERE / "cli_common.py",
+                HERE / "prepare_frozen_batches.py",
                 HERE / "run_field_jvp.py", HERE / "run_algorithmic_jvp.py",
                 HERE / "run_matched_micro_rollout.py",
             )

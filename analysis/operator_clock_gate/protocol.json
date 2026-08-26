@@ -1,6 +1,25 @@
 {
   "schema_version": 1,
   "status": "FROZEN_BEFORE_FORMAL_RESULTS",
+  "source_selection": {
+    "policy": "lowest eligible training seed in the archived verified q256 fixed-baseline 256-kimg source manifest",
+    "training_seed": 3,
+    "state_kimg": 256,
+    "q": 256,
+    "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+    "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+  },
+  "dataset": {
+    "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "size_bytes": 166000134
+  },
+  "batch_construction": {
+    "batch_size": 128,
+    "shuffle": true,
+    "drop_last": true,
+    "num_workers": 0,
+    "generator": "direct torch.randperm with one CPU torch.Generator manually seeded by audit_minibatch_id per batch"
+  },
   "arms": {
     "A": {"target_scale": 1.0, "denominator_scale": 1.0, "meaning": "native_baseline"},
     "B": {"target_scale": 1.1, "denominator_scale": 1.1, "meaning": "native_probe"},
