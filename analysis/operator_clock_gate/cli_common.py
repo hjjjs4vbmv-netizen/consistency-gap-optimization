@@ -5,6 +5,7 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import pickle
 import re
 from pathlib import Path
@@ -23,6 +24,31 @@ from .core import (
 HERE = Path(__file__).resolve().parent
 PROTOCOL_PATH = HERE / "protocol.json"
 DEFAULT_OUT = HERE / "results" / "raw_receipts"
+
+
+def configure_determinism() -> dict[str, Any]:
+    expected_workspace = ":4096:8"
+    actual_workspace = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+    if actual_workspace != expected_workspace:
+        raise RuntimeError(
+            "CUBLAS_WORKSPACE_CONFIG must be set to :4096:8 before Python starts; "
+            f"got {actual_workspace!r}")
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False
+    return {
+        "CUBLAS_WORKSPACE_CONFIG": actual_workspace,
+        "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+        "cudnn_benchmark": torch.backends.cudnn.benchmark,
+        "cudnn_deterministic": torch.backends.cudnn.deterministic,
+        "cudnn_allow_tf32": torch.backends.cudnn.allow_tf32,
+        "cuda_matmul_allow_tf32": torch.backends.cuda.matmul.allow_tf32,
+        "cuda_matmul_allow_fp16_reduced_precision_reduction": (
+            torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction),
+    }
 
 
 def protocol() -> dict[str, Any]:

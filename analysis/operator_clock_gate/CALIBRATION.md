@@ -5,6 +5,14 @@ this calibration. The only calibration cell was fixed in advance as arm A,
 audit minibatch `2026082601`, projection direction index 0, on the verified
 seed-3 q256/256-kimg source.
 
+The first attempted formal launch was stopped after 4/64 field receipts per
+shard and 1/64 algorithmic receipt per shard because the runner had not yet
+made deterministic CUDA kernels an explicit fail-closed runtime gate. Those
+receipts are retained as `attempt-v1-nondeterminism-gate-failed` and are not
+formal cells. Formal execution starts from a new directory with deterministic
+algorithms, cuDNN flags, TF32 flags, reduced-precision-reduction flag, and
+`CUBLAS_WORKSPACE_CONFIG=:4096:8` recorded in each manifest.
+
 Retained field attempts:
 
 - `[0.01, 0.003, 0.001, 0.0003]`: finest adjacent change 2.81245;

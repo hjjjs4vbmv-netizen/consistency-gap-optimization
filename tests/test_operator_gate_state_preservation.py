@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest import mock
 
 import torch
 
@@ -64,6 +65,17 @@ def fixture():
 
 
 class OperatorGateStatePreservationTests(unittest.TestCase):
+    def test_deterministic_runtime_gate_is_explicit(self):
+        with mock.patch.dict("os.environ", {
+                "CUBLAS_WORKSPACE_CONFIG": ":4096:8"}):
+            receipt = cli_common.configure_determinism()
+        self.assertTrue(receipt["deterministic_algorithms"])
+        self.assertFalse(receipt["cudnn_benchmark"])
+        self.assertFalse(receipt["cuda_matmul_allow_tf32"])
+        with mock.patch.dict("os.environ", {}, clear=True):
+            with self.assertRaisesRegex(RuntimeError, "CUBLAS_WORKSPACE_CONFIG"):
+                cli_common.configure_determinism()
+
     def test_formal_task_sharding_is_disjoint_and_complete(self):
         tasks = list(range(128))
         shards = [
