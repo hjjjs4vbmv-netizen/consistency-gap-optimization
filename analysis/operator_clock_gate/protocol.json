@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_FORMAL_RESULTS",
+  "arms": {
+    "A": {"target_scale": 1.0, "denominator_scale": 1.0, "meaning": "native_baseline"},
+    "B": {"target_scale": 1.1, "denominator_scale": 1.1, "meaning": "native_probe"},
+    "C": {"target_scale": 1.1, "denominator_scale": 1.0, "meaning": "target_geometry_only"},
+    "D": {"target_scale": 1.0, "denominator_scale": 1.1, "meaning": "loss_weighting_only"}
+  },
+  "audit_minibatch_ids": [2026082601, 2026082602, 2026082603, 2026082604],
+  "projection_direction_seeds": [2026082611, 2026082612, 2026082613, 2026082614, 2026082615, 2026082616, 2026082617, 2026082618],
+  "horizons": [1, 4, 16, 64],
+  "finite_difference_epsilons": [0.01, 0.003, 0.001, 0.0003],
+  "jvp_direction_convention": "per-tensor Gaussian with RMS=max(state RMS,1e-3); positive-state coordinates are elementwise clipped to remain positive under the largest frozen epsilon",
+  "matrix": "4 arms x 4 fixed audit minibatches x 8 fixed random projection directions x 4 horizons",
+  "replacement_after_results": "PROHIBITED"
+}
