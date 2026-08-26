@@ -1,0 +1,157 @@
+{
+  "assets_after": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "77c081e5633cdac176c95e05a27712a236384dd1b494eb6c6ccdc856102c069b",
+      "core.py": "ac7eb71113f851ece0343c5ff17fd4257f07bf3bf2ff0762a163788d6211d624",
+      "prepare_frozen_batches.py": "62804efba2397003c069a4beb9de4bef1f19a643a12c772c02932de6d4b6d416",
+      "run_algorithmic_jvp.py": "ee3baf6ee3607512d0b287e29f1db8eab6dbad918ba172645509551eac07c176",
+      "run_field_jvp.py": "4f5836f22b7f071a0f96eff20eb301c02cc70e77e52420505d45a5e77a6e5fb3",
+      "run_matched_micro_rollout.py": "4a8ac8f2251e23ad1ba480e0e637d6ea73b5e1cdb72c9413e7718a0570c74f27"
+    },
+    "protocol": {
+      "path": "/root/operator-clock-audit-v1/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "b4ad1fde058f23141d9114ae9386363ed8f69e229c9acf8f3f047c00e6c1cdee"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    }
+  },
+  "assets_before": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "77c081e5633cdac176c95e05a27712a236384dd1b494eb6c6ccdc856102c069b",
+      "core.py": "ac7eb71113f851ece0343c5ff17fd4257f07bf3bf2ff0762a163788d6211d624",
+      "prepare_frozen_batches.py": "62804efba2397003c069a4beb9de4bef1f19a643a12c772c02932de6d4b6d416",
+      "run_algorithmic_jvp.py": "ee3baf6ee3607512d0b287e29f1db8eab6dbad918ba172645509551eac07c176",
+      "run_field_jvp.py": "4f5836f22b7f071a0f96eff20eb301c02cc70e77e52420505d45a5e77a6e5fb3",
+      "run_matched_micro_rollout.py": "4a8ac8f2251e23ad1ba480e0e637d6ea73b5e1cdb72c9413e7718a0570c74f27"
+    },
+    "protocol": {
+      "path": "/root/operator-clock-audit-v1/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "b4ad1fde058f23141d9114ae9386363ed8f69e229c9acf8f3f047c00e6c1cdee"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    }
+  },
+  "kind": "field_jvp",
+  "protocol": {
+    "algorithmic_finite_difference_epsilons": [
+      0.001,
+      0.0007,
+      0.0005,
+      0.0003
+    ],
+    "arms": {
+      "A": {
+        "denominator_scale": 1.0,
+        "meaning": "native_baseline",
+        "target_scale": 1.0
+      },
+      "B": {
+        "denominator_scale": 1.1,
+        "meaning": "native_probe",
+        "target_scale": 1.1
+      },
+      "C": {
+        "denominator_scale": 1.0,
+        "meaning": "target_geometry_only",
+        "target_scale": 1.1
+      },
+      "D": {
+        "denominator_scale": 1.1,
+        "meaning": "loss_weighting_only",
+        "target_scale": 1.0
+      }
+    },
+    "audit_minibatch_ids": [
+      2026082601,
+      2026082602,
+      2026082603,
+      2026082604
+    ],
+    "batch_construction": {
+      "accumulation_rounds": 8,
+      "batch_size": 128,
+      "drop_last": true,
+      "generator": "direct torch.randperm with one CPU torch.Generator manually seeded by audit_minibatch_id per batch",
+      "microbatch_size": 16,
+      "num_workers": 0,
+      "shuffle": true
+    },
+    "convergence_relative_tolerance": 0.05,
+    "dataset": {
+      "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "size_bytes": 166000134
+    },
+    "field_finite_difference_epsilons": [
+      0.03,
+      0.02,
+      0.015,
+      0.01
+    ],
+    "finite_difference_calibration_boundary": "epsilon grids were revised using only arm A, audit batch 2026082601, direction 0 correctness smokes before the formal matrix; the 5% gate was not relaxed and all failed smokes are retained",
+    "horizons": [
+      1,
+      4,
+      16,
+      64
+    ],
+    "jvp_direction_convention": "per-tensor Gaussian with RMS=max(state RMS,1e-3); positive-state coordinates are elementwise clipped to remain positive under the largest frozen epsilon",
+    "matrix": "4 arms x 4 fixed audit minibatches x 8 fixed random projection directions x 4 horizons",
+    "projection_direction_seeds": [
+      2026082611,
+      2026082612,
+      2026082613,
+      2026082614,
+      2026082615,
+      2026082616,
+      2026082617,
+      2026082618
+    ],
+    "replacement_after_results": "PROHIBITED",
+    "schema_version": 1,
+    "source_selection": {
+      "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "policy": "lowest eligible training seed in the archived verified q256 fixed-baseline 256-kimg source manifest",
+      "q": 256,
+      "state_kimg": 256,
+      "training_seed": 3,
+      "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    },
+    "status": "FROZEN_BEFORE_FORMAL_RESULTS"
+  },
+  "receipts": [],
+  "schema_version": 1,
+  "source_files_preserved": true,
+  "status": "RUNNING"
+}
