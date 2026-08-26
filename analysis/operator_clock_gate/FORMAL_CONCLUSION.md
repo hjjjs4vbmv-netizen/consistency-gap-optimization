@@ -1,6 +1,6 @@
 # Operator-clock Jacobian audit: formal conclusion
 
-Date: 2026-08-26  
+Date: 2026-08-26
 Status: **execution complete; smooth-Jacobian claims fail closed**
 
 ## Decision
