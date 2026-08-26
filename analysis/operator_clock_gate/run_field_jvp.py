@@ -28,9 +28,12 @@ def parse_args(argv=None):
     cli_common.add_common_args(parser)
     cli_common.add_shard_args(parser)
     parser.add_argument("--epsilons", type=cli_common.parse_epsilons,
-                        default=tuple(cli_common.protocol()["finite_difference_epsilons"]))
+                        default=tuple(cli_common.protocol()[
+                            "field_finite_difference_epsilons"]))
     parser.add_argument("--learning-rate", type=float, default=None)
-    parser.add_argument("--convergence-tolerance", type=float, default=0.05)
+    parser.add_argument("--convergence-tolerance", type=float,
+                        default=cli_common.protocol()[
+                            "convergence_relative_tolerance"])
     return parser.parse_args(argv)
 
 

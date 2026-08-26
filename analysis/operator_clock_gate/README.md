@@ -22,6 +22,11 @@ JVP directions use a state-relative per-tensor RMS convention so perturbations
 remain resolvable in a large FP32 model; positive second-moment/scaler
 coordinates are clipped before any result is observed so both FD branches stay
 inside the valid state space.
+The field and algorithmic maps use separate frozen epsilon grids after a
+single pre-formal correctness calibration cell. The strict 5% adjacent-change
+gate remains unchanged. AMP `+/-` skip equality and a constant AMP regime
+across the full epsilon sweep are both required; a discontinuity is retained
+as `FAIL_CLOSED`, not coerced into a Jacobian.
 The runners require trusted, matching artifacts:
 
 ```bash
