@@ -932,6 +932,11 @@ def algorithmic_jvp(
     selected = estimates[selected_epsilon]
     after_hash = source.sha256()
     after_rng = rng_sha256()
+    skip_patterns = [
+        (item["plus"]["step_skipped"], item["minus"]["step_skipped"])
+        for item in branches
+    ]
+    amp_regime_identical = len(set(skip_patterns)) == 1
     receipt = {
         "schema_version": 1,
         "predictor": "full_algorithmic_state_transition_jacobian",
@@ -944,6 +949,7 @@ def algorithmic_jvp(
         "branches": branches,
         "jvp_l2": vector_l2(selected),
         "amp_skip_behavior_identical_all_eps": amp_pairing,
+        "amp_regime_identical_across_eps": amp_regime_identical,
         "discrete_state_behavior_identical_all_eps": discrete_pairing,
         "source_state_sha256_before": source_hash,
         "source_state_sha256_after": after_hash,
@@ -953,7 +959,8 @@ def algorithmic_jvp(
         "no_in_place_source_pollution": source_hash == after_hash,
     }
     receipt["status"] = (
-        "PASS" if receipt["source_preserved"] and amp_pairing and discrete_pairing
+        "PASS" if receipt["source_preserved"] and amp_pairing
+        and amp_regime_identical and discrete_pairing
         and convergence["passed"] else "FAIL_CLOSED")
     return selected, receipt
 

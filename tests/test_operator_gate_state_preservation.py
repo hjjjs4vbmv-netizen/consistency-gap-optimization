@@ -131,6 +131,7 @@ class OperatorGateStatePreservationTests(unittest.TestCase):
             epsilons=(1e-5, 3e-6, 1e-6), convergence_tolerance=1.0)
         self.assertTrue(algorithmic_receipt["source_preserved"])
         self.assertTrue(algorithmic_receipt["no_in_place_source_pollution"])
+        self.assertTrue(algorithmic_receipt["amp_regime_identical_across_eps"])
         self.assertEqual(state.sha256(), state_before)
         self.assertEqual(rng_sha256(), rng_before)
 
