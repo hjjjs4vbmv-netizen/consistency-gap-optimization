@@ -15,6 +15,9 @@ This directory implements three deliberately distinct predictors:
 
 `protocol.json` freezes the four A/B/C/D arms, four minibatch IDs, eight
 projection seeds, four horizons, and the epsilon sweep before formal results.
+It also freezes seed 3 at q256/256 kimg by the result-independent rule
+"lowest eligible seed in the archived verified fixed-baseline source manifest"
+and records the source/dataset SHA256 values.
 JVP directions use a state-relative per-tensor RMS convention so perturbations
 remain resolvable in a large FP32 model; positive second-moment/scaler
 coordinates are clipped before any result is observed so both FD branches stay
@@ -42,6 +45,19 @@ The batch file is a trusted `torch.save` artifact with a `batches` list. Each
 entry is either `(images, labels)` or `{"images": ..., "labels": ...}`. The
 runners hash all source files and fail before compute when an explicitly
 provided `--expected-*-sha256` does not match.
+
+Create that file without inspecting model results using:
+
+```bash
+python analysis/operator_clock_gate/prepare_frozen_batches.py \
+  --data /path/cifar10-32x32.zip \
+  --expected-data-sha256 a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1 \
+  --out /path/four-frozen-batches.pt
+```
+
+The field and algorithmic runners accept `--shard-index i --num-shards n`.
+Assignment is the frozen lexicographic A/B/C/D, batch, direction order modulo
+`n`; sharding changes execution placement only, not scientific selection.
 
 Formal outputs go to `results/raw_receipts/` by default. JSON receipts contain
 the state/RNG preservation checks, epsilon convergence table, AMP skip pairing,

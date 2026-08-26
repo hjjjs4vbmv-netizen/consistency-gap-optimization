@@ -26,6 +26,7 @@ from analysis.operator_clock_gate.core import (
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     cli_common.add_common_args(parser)
+    cli_common.add_shard_args(parser)
     parser.add_argument("--epsilons", type=cli_common.parse_epsilons,
                         default=tuple(cli_common.protocol()["finite_difference_epsilons"]))
     parser.add_argument("--learning-rate", type=float, default=None)
@@ -46,40 +47,47 @@ def run(args) -> int:
             for name, value in state.net.named_parameters()}
     receipt_paths = []
     all_pass = True
-    for arm in ARM_SPECS:
-        for batch_index, batch in enumerate(batches):
-            for direction_index, seed in enumerate(seeds):
-                direction = state_relative_direction_like(base, seed)
-                square, square_receipt = squared_gn_operator_jvp(
-                    state.net, state.loss_fn, [batch], direction, arm=arm,
-                    learning_rate=learning_rate)
-                field, field_receipt = field_jvp(
-                    state.net, state.loss_fn, [batch], direction, arm=arm,
-                    epsilons=args.epsilons, learning_rate=learning_rate,
-                    convergence_tolerance=args.convergence_tolerance)
-                payload = {
-                    "schema_version": 1, "arm": arm,
-                    "audit_minibatch_id": batch.audit_id,
-                    "projection_direction_seed": seed,
-                    "projection_direction_index": direction_index,
-                    "audit_minibatch_index": batch_index,
-                    "squared_baseline": square_receipt,
-                    "recompute_detach_field": field_receipt,
-                    "vector_hashes": {
-                        "direction": tensor_map_sha256(direction),
-                        "squared_operator_jvp": tensor_map_sha256(square),
-                        "field_operator_jvp": tensor_map_sha256(field),
-                    },
-                }
-                payload["status"] = (
-                    "PASS" if square_receipt["status"] == "PASS"
-                    and field_receipt["status"] == "PASS" else "FAIL_CLOSED")
-                all_pass &= payload["status"] == "PASS"
-                name = f"field_arm{arm}_batch{batch.audit_id}_dir{direction_index}.json"
-                write_json(args.out / name, payload)
-                torch.save({"squared_operator_jvp": square,
-                            "field_operator_jvp": field}, args.out / name.replace(".json", ".pt"))
-                receipt_paths.append(name)
+    tasks = [
+        (arm, batch_index, direction_index, seed)
+        for arm in ARM_SPECS
+        for batch_index, _batch in enumerate(batches)
+        for direction_index, seed in enumerate(seeds)
+    ]
+    tasks = cli_common.select_shard(
+        tasks, shard_index=args.shard_index, num_shards=args.num_shards)
+    for arm, batch_index, direction_index, seed in tasks:
+        batch = batches[batch_index]
+        direction = state_relative_direction_like(base, seed)
+        square, square_receipt = squared_gn_operator_jvp(
+            state.net, state.loss_fn, [batch], direction, arm=arm,
+            learning_rate=learning_rate)
+        field, field_receipt = field_jvp(
+            state.net, state.loss_fn, [batch], direction, arm=arm,
+            epsilons=args.epsilons, learning_rate=learning_rate,
+            convergence_tolerance=args.convergence_tolerance)
+        payload = {
+            "schema_version": 1, "arm": arm,
+            "audit_minibatch_id": batch.audit_id,
+            "projection_direction_seed": seed,
+            "projection_direction_index": direction_index,
+            "audit_minibatch_index": batch_index,
+            "squared_baseline": square_receipt,
+            "recompute_detach_field": field_receipt,
+            "vector_hashes": {
+                "direction": tensor_map_sha256(direction),
+                "squared_operator_jvp": tensor_map_sha256(square),
+                "field_operator_jvp": tensor_map_sha256(field),
+            },
+        }
+        payload["status"] = (
+            "PASS" if square_receipt["status"] == "PASS"
+            and field_receipt["status"] == "PASS" else "FAIL_CLOSED")
+        all_pass &= payload["status"] == "PASS"
+        name = f"field_arm{arm}_batch{batch.audit_id}_dir{direction_index}.json"
+        write_json(args.out / name, payload)
+        torch.save({"squared_operator_jvp": square,
+                    "field_operator_jvp": field}, args.out / name.replace(".json", ".pt"))
+        receipt_paths.append(name)
     status = "PASS" if all_pass else "FAIL_CLOSED"
     assets_after = cli_common.source_assets(args)
     preserved = assets_after == assets

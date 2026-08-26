@@ -64,6 +64,18 @@ def fixture():
 
 
 class OperatorGateStatePreservationTests(unittest.TestCase):
+    def test_formal_task_sharding_is_disjoint_and_complete(self):
+        tasks = list(range(128))
+        shards = [
+            cli_common.select_shard(tasks, shard_index=index, num_shards=4)
+            for index in range(4)
+        ]
+        self.assertEqual(sorted(item for shard in shards for item in shard), tasks)
+        self.assertEqual(sum(len(shard) for shard in shards), 128)
+        self.assertTrue(all(set(left).isdisjoint(right)
+                            for i, left in enumerate(shards)
+                            for right in shards[i + 1:]))
+
     def test_trusted_artifact_loader_reconstructs_complete_state(self):
         state, batches = fixture()
         with tempfile.TemporaryDirectory() as directory:
