@@ -67,3 +67,7 @@ Assignment is the frozen lexicographic A/B/C/D, batch, direction order modulo
 Formal outputs go to `results/raw_receipts/` by default. JSON receipts contain
 the state/RNG preservation checks, epsilon convergence table, AMP skip pairing,
 and hashes of raw JVP tensors; the JVP tensors are stored beside them as `.pt`.
+
+After all shards and the rollout finish, validate the exact 128+128 coverage,
+JSON/PT pairing, source preservation, and matched horizons with
+`summarize_formal_results.py --results ... --out formal_summary.json`.
