@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
+
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
@@ -25,7 +28,9 @@ def parse_args(argv=None):
 
 
 def run(args) -> int:
+    determinism = cli_common.configure_determinism()
     assets = cli_common.source_assets(args)
+    assets["runtime_determinism"] = determinism
     cli_common.write_run_manifest(
         args.out, "matched_micro_rollout", assets, [], "RUNNING")
     state = cli_common.load_algorithmic_state(args)
@@ -51,6 +56,7 @@ def run(args) -> int:
     output = args.out / "matched_micro_rollout.json"
     write_json(output, receipt)
     assets_after = cli_common.source_assets(args)
+    assets_after["runtime_determinism"] = determinism
     if args.fixed_latent_file is not None:
         assets_after["fixed_latent"] = {
             "path": str(args.fixed_latent_file.resolve()),

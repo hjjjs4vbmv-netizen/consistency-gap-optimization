@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
+
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
@@ -36,7 +39,9 @@ def parse_args(argv=None):
 
 
 def run(args) -> int:
+    determinism = cli_common.configure_determinism()
     assets = cli_common.source_assets(args)
+    assets["runtime_determinism"] = determinism
     cli_common.write_run_manifest(
         args.out, "algorithmic_jvp", assets, [], "RUNNING")
     state = cli_common.load_algorithmic_state(args)
@@ -75,6 +80,7 @@ def run(args) -> int:
         receipt_paths.append(name)
     status = "PASS" if all_pass else "FAIL_CLOSED"
     assets_after = cli_common.source_assets(args)
+    assets_after["runtime_determinism"] = determinism
     preserved = assets_after == assets
     cli_common.write_run_manifest(
         args.out, "algorithmic_jvp", assets, receipt_paths, status,

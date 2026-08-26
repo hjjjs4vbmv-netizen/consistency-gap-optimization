@@ -34,6 +34,14 @@
   "field_finite_difference_epsilons": [0.03, 0.02, 0.015, 0.01],
   "algorithmic_finite_difference_epsilons": [0.001, 0.0007, 0.0005, 0.0003],
   "convergence_relative_tolerance": 0.05,
+  "runtime_determinism": {
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "torch_deterministic_algorithms": true,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "tf32": false,
+    "fp16_reduced_precision_reduction": false
+  },
   "finite_difference_calibration_boundary": "epsilon grids were revised using only arm A, audit batch 2026082601, direction 0 correctness smokes before the formal matrix; the 5% gate was not relaxed and all failed smokes are retained",
   "jvp_direction_convention": "per-tensor Gaussian with RMS=max(state RMS,1e-3); positive-state coordinates are elementwise clipped to remain positive under the largest frozen epsilon",
   "matrix": "4 arms x 4 fixed audit minibatches x 8 fixed random projection directions x 4 horizons",
