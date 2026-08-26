@@ -1,0 +1,48 @@
+{
+  "assets": {
+    "checkpoint": {
+      "path": "assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "dataset": {
+      "path": "assets/cifar10-32x32.zip",
+      "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1"
+    },
+    "frozen_batches": {
+      "path": "assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "training_state": {
+      "path": "assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    }
+  },
+  "created_utc": "2026-08-26T12:28:38.355616+00:00",
+  "cuda": "12.6",
+  "cudnn": 91002,
+  "formal_jvp_execution_commit": "6e0ac3469b2e4d33591a45c908513aa42349318d",
+  "formal_results": "results",
+  "gpus": [
+    "0, NVIDIA A100-PCIE-40GB, 40960 MiB",
+    "1, NVIDIA A100-PCIE-40GB, 40960 MiB",
+    "2, NVIDIA A100-PCIE-40GB, 40960 MiB",
+    "3, NVIDIA A100-PCIE-40GB, 40960 MiB"
+  ],
+  "hostname": "PY7xYv",
+  "matched_execution_commit": "73e78e5564b6d4075a14ef69f17617d5990cc1c1",
+  "python": "3.13.5",
+  "raw_tensor_sha256_manifest": {
+    "entry_count": 256,
+    "path": "results/raw_tensor_sha256.txt",
+    "sha256": "62270c70a06ce61c9c6cf0802d74a00c0cd4243bba167be0d915086250b13bfc"
+  },
+  "raw_tensor_storage": "remote_only",
+  "retained_failed_attempts": [
+    "attempt-v1-nondeterminism-gate-failed",
+    "attempt-matched-quantile-failed",
+    "smoke"
+  ],
+  "schema_version": 1,
+  "summary_commit": "dd95ae5481f9a88d62db93ecb0841224b6f2ddf3",
+  "torch": "2.13.0+cu126"
+}

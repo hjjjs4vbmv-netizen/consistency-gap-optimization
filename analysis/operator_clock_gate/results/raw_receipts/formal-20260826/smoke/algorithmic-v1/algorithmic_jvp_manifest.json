@@ -1,0 +1,151 @@
+{
+  "assets_after": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "77c081e5633cdac176c95e05a27712a236384dd1b494eb6c6ccdc856102c069b",
+      "core.py": "adb7a575c0c1b65b44d5f80dca0ca21a33e15ef7c61fa0f4f471058b7e0f413c",
+      "prepare_frozen_batches.py": "62804efba2397003c069a4beb9de4bef1f19a643a12c772c02932de6d4b6d416",
+      "run_algorithmic_jvp.py": "92a6370c81bba2837c253e15416c3f02c300447f0c95aeeb46eb6aeb06b7167a",
+      "run_field_jvp.py": "d83771012172a49673cf4455a371ab2b7ac6b4541334eef18a86c93cc21bbbc0",
+      "run_matched_micro_rollout.py": "4a8ac8f2251e23ad1ba480e0e637d6ea73b5e1cdb72c9413e7718a0570c74f27"
+    },
+    "protocol": {
+      "path": "/root/operator-clock-audit-v1/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "cb0fd669df2ecf3778a0fa825c852d1d4a97f4f0fad6daae15e182f53ededdba"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    }
+  },
+  "assets_before": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "77c081e5633cdac176c95e05a27712a236384dd1b494eb6c6ccdc856102c069b",
+      "core.py": "adb7a575c0c1b65b44d5f80dca0ca21a33e15ef7c61fa0f4f471058b7e0f413c",
+      "prepare_frozen_batches.py": "62804efba2397003c069a4beb9de4bef1f19a643a12c772c02932de6d4b6d416",
+      "run_algorithmic_jvp.py": "92a6370c81bba2837c253e15416c3f02c300447f0c95aeeb46eb6aeb06b7167a",
+      "run_field_jvp.py": "d83771012172a49673cf4455a371ab2b7ac6b4541334eef18a86c93cc21bbbc0",
+      "run_matched_micro_rollout.py": "4a8ac8f2251e23ad1ba480e0e637d6ea73b5e1cdb72c9413e7718a0570c74f27"
+    },
+    "protocol": {
+      "path": "/root/operator-clock-audit-v1/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "cb0fd669df2ecf3778a0fa825c852d1d4a97f4f0fad6daae15e182f53ededdba"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/root/operator-clock-audit-v1/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    }
+  },
+  "kind": "algorithmic_jvp",
+  "protocol": {
+    "arms": {
+      "A": {
+        "denominator_scale": 1.0,
+        "meaning": "native_baseline",
+        "target_scale": 1.0
+      },
+      "B": {
+        "denominator_scale": 1.1,
+        "meaning": "native_probe",
+        "target_scale": 1.1
+      },
+      "C": {
+        "denominator_scale": 1.0,
+        "meaning": "target_geometry_only",
+        "target_scale": 1.1
+      },
+      "D": {
+        "denominator_scale": 1.1,
+        "meaning": "loss_weighting_only",
+        "target_scale": 1.0
+      }
+    },
+    "audit_minibatch_ids": [
+      2026082601,
+      2026082602,
+      2026082603,
+      2026082604
+    ],
+    "batch_construction": {
+      "accumulation_rounds": 8,
+      "batch_size": 128,
+      "drop_last": true,
+      "generator": "direct torch.randperm with one CPU torch.Generator manually seeded by audit_minibatch_id per batch",
+      "microbatch_size": 16,
+      "num_workers": 0,
+      "shuffle": true
+    },
+    "dataset": {
+      "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "size_bytes": 166000134
+    },
+    "finite_difference_epsilons": [
+      0.01,
+      0.003,
+      0.001,
+      0.0003
+    ],
+    "horizons": [
+      1,
+      4,
+      16,
+      64
+    ],
+    "jvp_direction_convention": "per-tensor Gaussian with RMS=max(state RMS,1e-3); positive-state coordinates are elementwise clipped to remain positive under the largest frozen epsilon",
+    "matrix": "4 arms x 4 fixed audit minibatches x 8 fixed random projection directions x 4 horizons",
+    "projection_direction_seeds": [
+      2026082611,
+      2026082612,
+      2026082613,
+      2026082614,
+      2026082615,
+      2026082616,
+      2026082617,
+      2026082618
+    ],
+    "replacement_after_results": "PROHIBITED",
+    "schema_version": 1,
+    "source_selection": {
+      "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "policy": "lowest eligible training seed in the archived verified q256 fixed-baseline 256-kimg source manifest",
+      "q": 256,
+      "state_kimg": 256,
+      "training_seed": 3,
+      "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    },
+    "status": "FROZEN_BEFORE_FORMAL_RESULTS"
+  },
+  "receipts": [
+    "algorithmic_armA_batch2026082601_dir0.json"
+  ],
+  "schema_version": 1,
+  "source_files_preserved": true,
+  "status": "FAIL_CLOSED"
+}
