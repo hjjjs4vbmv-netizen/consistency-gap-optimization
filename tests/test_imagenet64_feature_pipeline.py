@@ -12,6 +12,7 @@ import torch
 from metrics import metric_utils
 from scripts import build_imagenet64_real_features as real_builder
 from scripts import score_imagenet64_feature_matrix as scorer
+from scripts import summarize_imagenet64_gap_ab_results as summarizer
 
 
 class _PickledDetector(torch.nn.Module):
@@ -74,6 +75,18 @@ class ImageNet64FeaturePipelineTests(unittest.TestCase):
                 job['path'].touch()
             jobs = scorer.require_complete_matrix(root)
         self.assertEqual(len(jobs), 120)
+
+    def test_revised_w2_scope_contains_exactly_seventy_eight_jobs(self):
+        jobs = scorer.w2_revised_jobs(Path('features'))
+        keys = {
+            (job['kimg'], job['seed'], job['method'], job['nfe'])
+            for job in jobs
+        }
+        self.assertEqual(len(keys), 78)
+        self.assertIn((8_960, 101, 'IA', 1), keys)
+        self.assertIn((8_960, 102, 'IB', 2), keys)
+        self.assertNotIn((8_960, 101, 'IB', 1), keys)
+        self.assertNotIn((8_960, 103, 'IA', 1), keys)
 
     def test_local_official_reference_is_shape_checked_and_hashed(self):
         reference = {
@@ -156,6 +169,22 @@ class ImageNet64FeaturePipelineTests(unittest.TestCase):
         self.assertEqual(result['real_stats']['sha256'], 'stats-sha')
         self.assertIs(compute_mean_cov.call_args.args[0], generated)
         self.assertIs(compute_kid.call_args.args[1], generated)
+
+    def test_paired_difference_is_ia_minus_ib_for_fid_and_kid(self):
+        results = {
+            (7_680, 101, 'IA', 1): {
+                'kimg': 7_680, 'seed': 101, 'method': 'IA', 'nfe': 1,
+                'fid50k': 9.0, 'kid50k': 0.005,
+            },
+            (7_680, 101, 'IB', 1): {
+                'kimg': 7_680, 'seed': 101, 'method': 'IB', 'nfe': 1,
+                'fid50k': 10.0, 'kid50k': 0.006,
+            },
+        }
+        paired = summarizer.paired_differences(results)
+        self.assertEqual(len(paired), 1)
+        self.assertAlmostEqual(paired[0]['delta_fid50k_ia_minus_ib'], -1.0)
+        self.assertAlmostEqual(paired[0]['delta_kid50k_ia_minus_ib'], -0.001)
 
 
 if __name__ == '__main__':
