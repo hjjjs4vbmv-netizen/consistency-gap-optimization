@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "mode": "correctness_gate",
+  "complete": true,
+  "expected_cell_count": 1,
+  "observed_cell_count": 1,
+  "row_count": 4,
+  "missing_cells": [],
+  "unexpected_cells": [],
+  "formal_expected_cell_count": 160,
+  "formal_observed_cell_count": 0,
+  "formal_not_run_by_design": true,
+  "correctness_gate_evidence": {
+    "gate_status": "NO_GO",
+    "formal_admissible": false,
+    "cell_status": "FAIL_CLOSED",
+    "finite": true,
+    "source_preserved": true,
+    "epsilon_grid": [
+      0.03,
+      0.02,
+      0.015,
+      0.01
+    ],
+    "convergence_tolerance": 0.05,
+    "finest_adjacent_relative_change": 0.10665712476398169,
+    "finest_adjacent_coarse_epsilon": 0.015,
+    "finest_adjacent_fine_epsilon": 0.01,
+    "finest_adjacent_cosine": 0.9945608319866657,
+    "gate_receipt": "shard0/correctness_gate.json"
+  },
+  "verdict": "NO-GO",
+  "bounded_conclusion": "the squared-GN correctness baseline failed the frozen convergence gate; the formal factorial was not run by design",
+  "by_regime": {
+    "A_squared_gn_fp32": {
+      "expected_cells": 1,
+      "observed_cells": 1,
+      "status_counts": {
+        "FAIL_CLOSED": 1
+      },
+      "state": "FAIL"
+    },
+    "B_real_loss_gn_fp32": {
+      "expected_cells": 0,
+      "observed_cells": 0,
+      "status_counts": {},
+      "state": "NOT_RUN_BY_GATE"
+    },
+    "C_full_field_fp32": {
+      "expected_cells": 0,
+      "observed_cells": 0,
+      "status_counts": {},
+      "state": "NOT_RUN_BY_GATE"
+    },
+    "D_production_algorithmic": {
+      "expected_cells": 0,
+      "observed_cells": 0,
+      "status_counts": {},
+      "state": "NOT_RUN_BY_GATE"
+    },
+    "E_full_field_pseudohuber_fp32": {
+      "expected_cells": 0,
+      "observed_cells": 0,
+      "status_counts": {},
+      "state": "NOT_RUN_BY_GATE"
+    }
+  },
+  "claim_ceiling": "One state, one frozen batch, one paired direction, and the squared-GN correctness regime only; the source-localization factorial was not run, and no FID, training-quality, population, or global-clock claim follows."
+}

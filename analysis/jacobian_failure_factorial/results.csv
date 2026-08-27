@@ -1,0 +1,5 @@
+arm,batch_id,direction_id,regime,epsilon,jvp_norm,relative_error,cosine,finite,amp_scale_plus,amp_scale_minus,step_executed_plus,step_executed_minus,same_amp_regime,pass_convergence_gate,norm_ratio,coarse_epsilon,cell_status,source_preserved,amp_scale_before_plus,amp_scale_before_minus,overflow_detected_plus,overflow_detected_minus,same_discrete_state,error_type,error
+A,2026082601,2026082611,A_squared_gn_fp32,0.03,10.527203269082342,,,True,,,,,,False,,,FAIL_CLOSED,True,,,,,,,
+A,2026082601,2026082611,A_squared_gn_fp32,0.02,12.922520948412464,0.30947256026993997,0.9820776595138231,True,,,,,,False,1.2275359958484893,0.03,FAIL_CLOSED,True,,,,,,,
+A,2026082601,2026082611,A_squared_gn_fp32,0.015,13.638912604509796,0.12611791424515642,0.9939208064948907,True,,,,,,False,1.055437453648341,0.02,FAIL_CLOSED,True,,,,,,,
+A,2026082601,2026082611,A_squared_gn_fp32,0.01,13.877826962045116,0.10665712476398169,0.9945608319866657,True,,,,,,False,1.0175171118448492,0.015,FAIL_CLOSED,True,,,,,,,

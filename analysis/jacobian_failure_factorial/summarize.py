@@ -59,12 +59,26 @@ def load_cells(root: Path) -> dict[tuple[str, int, int, str], dict[str, Any]]:
     return cells
 
 
+def load_correctness_gate(root: Path) -> dict[str, Any] | None:
+    paths = sorted(root.rglob("correctness_gate.json"))
+    if len(paths) > 1:
+        raise RuntimeError(f"multiple correctness gates under {root}: {paths}")
+    if not paths:
+        return None
+    value = json.loads(paths[0].read_text(encoding="utf-8"))
+    value["_path"] = paths[0].relative_to(root).as_posix()
+    return value
+
+
 def rows_for_cell(cell: dict[str, Any]) -> list[dict[str, Any]]:
     detail = cell.get("detail", {})
     convergence = detail.get("convergence", {})
     metrics = convergence.get("epsilon_metrics", [])
-    branches = {float(item["epsilon"]): item
-                for item in detail.get("branches", [])}
+    branches = {}
+    for item in detail.get("branches", []):
+        branch_epsilon = item.get("epsilon", item.get("output_fd_epsilon"))
+        if branch_epsilon is not None:
+            branches[float(branch_epsilon)] = item
     if not metrics:
         metrics = [{"epsilon": epsilon, "jvp_norm": None, "finite": False,
                     "relative_error": None, "cosine": None,
@@ -155,10 +169,21 @@ def main() -> None:
     args = parse_args()
     protocol = load_protocol()
     cells = load_cells(args.receipt_root)
-    expected = expected_keys(protocol)
-    missing = sorted(expected - set(cells))
-    unexpected = sorted(set(cells) - expected)
-    complete = not missing and not unexpected
+    correctness_gate = load_correctness_gate(args.receipt_root)
+    formal_expected = expected_keys(protocol)
+    stopped_by_gate = bool(
+        correctness_gate is not None
+        and not correctness_gate.get("formal_admissible", False))
+    if correctness_gate is not None:
+        expected = set(cells)
+        missing = []
+        unexpected = []
+        complete = len(cells) == 1
+    else:
+        expected = formal_expected
+        missing = sorted(expected - set(cells))
+        unexpected = sorted(set(cells) - expected)
+        complete = not missing and not unexpected
     rows = [row for key in sorted(cells) for row in rows_for_cell(cells[key])]
     args.out.mkdir(parents=True, exist_ok=True)
     with (args.out / "results.csv").open("w", newline="", encoding="utf-8") as handle:
@@ -166,7 +191,12 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-    if complete:
+    if stopped_by_gate:
+        verdict = "NO-GO"
+        conclusion = (
+            "the squared-GN correctness baseline failed the frozen convergence "
+            "gate; the formal factorial was not run by design")
+    elif complete:
         verdict, conclusion = decide(cells, protocol)
     else:
         verdict, conclusion = "NO-GO", "formal factorial is incomplete"
@@ -174,36 +204,102 @@ def main() -> None:
     for regime in protocol["regimes"]:
         subset = [cell for cell in cells.values() if cell["regime"] == regime]
         by_regime[regime] = {
-            "expected_cells": 32,
+            "expected_cells": (1 if correctness_gate is not None and subset
+                               else 0 if correctness_gate is not None else 32),
             "observed_cells": len(subset),
             "status_counts": dict(Counter(cell["status"] for cell in subset)),
-            "state": regime_state(subset) if subset else "MISSING",
+            "state": regime_state(subset) if subset else (
+                "NOT_RUN_BY_GATE" if stopped_by_gate else "MISSING"),
+        }
+    gate_evidence = None
+    if correctness_gate is not None and cells:
+        gate_cell = next(iter(cells.values()))
+        detail = gate_cell.get("detail", {})
+        convergence = detail.get("convergence", {})
+        finest = convergence.get("finest_adjacent_pair", {})
+        metrics = convergence.get("epsilon_metrics", [])
+        finest_metric = metrics[-1] if metrics else {}
+        gate_evidence = {
+            "gate_status": correctness_gate.get("status"),
+            "formal_admissible": correctness_gate.get("formal_admissible"),
+            "cell_status": gate_cell.get("status"),
+            "finite": detail.get("finite"),
+            "source_preserved": detail.get("source_preserved"),
+            "epsilon_grid": gate_cell.get("epsilon_grid"),
+            "convergence_tolerance": convergence.get("tolerance"),
+            "finest_adjacent_relative_change": finest.get("relative_change"),
+            "finest_adjacent_coarse_epsilon": finest.get("coarse_epsilon"),
+            "finest_adjacent_fine_epsilon": finest.get("fine_epsilon"),
+            "finest_adjacent_cosine": finest_metric.get("cosine"),
+            "gate_receipt": correctness_gate.get("_path"),
         }
     summary = {
         "schema_version": 1,
+        "mode": "correctness_gate" if correctness_gate is not None else "formal_factorial",
         "complete": complete,
         "expected_cell_count": len(expected),
         "observed_cell_count": len(cells),
         "row_count": len(rows),
         "missing_cells": missing,
         "unexpected_cells": unexpected,
+        "formal_expected_cell_count": len(formal_expected),
+        "formal_observed_cell_count": (
+            0 if correctness_gate is not None else len(cells)),
+        "formal_not_run_by_design": stopped_by_gate,
+        "correctness_gate_evidence": gate_evidence,
         "verdict": verdict,
         "bounded_conclusion": conclusion,
         "by_regime": by_regime,
         "claim_ceiling": (
-            "One state, two frozen batches, four paired directions, and four "
-            "diagnostic arms; no FID, training-quality, population, or global-clock claim."),
+            ("One state, one frozen batch, one paired direction, and the squared-GN "
+             "correctness regime only; the source-localization factorial was not run, "
+             "and no FID, training-quality, population, or global-clock claim follows.")
+            if correctness_gate is not None else
+            ("One state, two frozen batches, four paired directions, and four "
+             "diagnostic arms; no FID, training-quality, population, or global-clock claim.")),
     }
     (args.out / "summary.json").write_text(
         json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    lines = [
-        "# Jacobian failure factorial report", "",
-        f"**{verdict}: {conclusion}.**", "",
+    lines = ["# Jacobian failure factorial report", "",
+             f"**{verdict}: {conclusion}.**", ""]
+    if stopped_by_gate and gate_evidence is not None:
+        lines.extend([
+            ("The preregistered correctness stage is complete. The 160-cell "
+             "formal factorial was not run, as required by the frozen stop rule."),
+            "", "## Correctness-gate evidence", "",
+            "| Quantity | Value |", "|---|---:|",
+            f"| Finite | {gate_evidence['finite']} |",
+            f"| Source state preserved | {gate_evidence['source_preserved']} |",
+            ("| Finest adjacent epsilon pair | "
+             f"{gate_evidence['finest_adjacent_coarse_epsilon']} to "
+             f"{gate_evidence['finest_adjacent_fine_epsilon']} |"),
+            ("| Finest adjacent relative change | "
+             f"{gate_evidence['finest_adjacent_relative_change']:.12g} |"),
+            ("| Frozen relative-change tolerance | "
+             f"{gate_evidence['convergence_tolerance']:.12g} |"),
+            ("| Finest-pair cosine | "
+             f"{gate_evidence['finest_adjacent_cosine']:.12g} |"),
+            "", "## Interpretation boundary", "",
+            ("The baseline finite-difference field is finite and highly aligned "
+             "across the finest pair, but it does not satisfy the frozen relative-"
+             "change threshold. This audit therefore cannot localize the PR #87 "
+             "failure to loss non-smoothness, network curvature, FP16/AMP, or the "
+             "production transition."),
+            "",
+            ("This result is not evidence that the training process is globally "
+             "non-differentiable. A new, separately frozen harness-calibration "
+             "protocol is required before any source-localization factorial."),
+            "",
+        ])
+        (args.out / "REPORT.md").write_text(
+            "\n".join(lines), encoding="utf-8")
+        return
+    lines.extend([
         ("The frozen matrix is complete." if complete else
          f"The matrix is incomplete: {len(missing)} cells are missing."), "",
         "## Regime-level result", "",
         "| Regime | Pass | Fail | State |", "|---|---:|---:|---|",
-    ]
+    ])
     for regime, item in by_regime.items():
         counts = item["status_counts"]
         lines.append(
