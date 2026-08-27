@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_CALIBRATION_RESULTS",
+  "purpose": "Calibrate the squared-GN output finite difference against an autograd directional-derivative oracle after the original correctness gate failed.",
+  "parent": {
+    "pr": 87,
+    "head": "8405df82f6b38661f2db4d5d247a856c7272fdf8",
+    "failed_gate_commit": "3756b42",
+    "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+    "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+    "batch_file_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+  },
+  "cell": {
+    "arm": "A",
+    "audit_minibatch_id": 2026082601,
+    "projection_direction_seed": 2026082611
+  },
+  "direction_convention": "Identical PR87 state-relative per-parameter-tensor Gaussian direction with RMS=max(parameter RMS,1e-3).",
+  "oracle": "Reverse-over-reverse autograd directional derivative of the paired online-minus-target residual on the executed FP32 graph, followed by an online-branch VJP.",
+  "epsilon_grid": [
+    0.0625,
+    0.03125,
+    0.015625,
+    0.0078125,
+    0.00390625,
+    0.001953125,
+    0.0009765625,
+    0.00048828125
+  ],
+  "primary_relative_error_tolerance": 0.05,
+  "plateau_minimum_consecutive_scales": 3,
+  "primary_gate": "At least three consecutive frozen scales must have both residual-tangent and squared-GN-action relative error no greater than 0.05 versus the autograd oracle; all values must be finite and the source state/RNG must be preserved.",
+  "diagnostics": [
+    "oracle-relative error, cosine, and norm ratio for the residual tangent",
+    "oracle-relative error, cosine, and norm ratio for the squared-GN action",
+    "fraction of FP32 parameter coordinates changed in each branch and distinguishable between branches",
+    "realized central parameter direction relative error, cosine, and norm ratio"
+  ],
+  "outcomes": {
+    "PASS_CALIBRATED": "A three-scale oracle-accurate plateau exists. A separate v2 factorial protocol may subsequently freeze one plateau scale; this result does not reopen the old protocol.",
+    "NO_PLATEAU": "The fixed sweep does not identify an oracle-accurate plateau. Do not run the source-localization factorial.",
+    "ORACLE_UNAVAILABLE": "The autograd oracle is non-finite, unsupported, or cannot be evaluated within the frozen runtime. No finite-difference conclusion follows."
+  },
+  "claim_ceiling": "One checkpoint state, one frozen batch, one direction, one arm, and the squared-GN harness only. This is measurement calibration, not evidence about FID, training quality, population behavior, global differentiability, or a schedule mechanism.",
+  "automatic_reuse_of_old_factorial": "PROHIBITED",
+  "replacement_after_results": "PROHIBITED"
+}
+
