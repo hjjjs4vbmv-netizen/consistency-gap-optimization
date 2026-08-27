@@ -1,0 +1,56 @@
+{
+  "schema_version": 2,
+  "status": "FROZEN_BEFORE_V2_RESULTS",
+  "parent_audit": {
+    "pr": 87,
+    "head": "8405df82f6b38661f2db4d5d247a856c7272fdf8",
+    "source_training_seed": 3,
+    "state_kimg": 256,
+    "q": 256,
+    "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+    "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+    "batch_file_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+  },
+  "calibration": {
+    "protocol_commit": "4ff41da",
+    "result_commit": "70588a7",
+    "receipt_sha256": "9a3925cf20d15a232d820d95b2a468443855378e4723d23ae3d395d776de82d0",
+    "verdict": "PASS_CALIBRATED",
+    "admitted_plateau": [0.00390625, 0.001953125, 0.0009765625, 0.00048828125],
+    "selection_rule": "Use the first three consecutive plateau scales and reserve the smallest boundary scale as a calibration diagnostic rather than a v2 endpoint."
+  },
+  "arms": ["A", "B", "C", "D"],
+  "audit_minibatch_ids": [2026082601, 2026082602],
+  "projection_direction_seeds": [2026082611, 2026082612, 2026082613, 2026082614],
+  "epsilon_grid": [0.00390625, 0.001953125, 0.0009765625],
+  "convergence_relative_tolerance": 0.05,
+  "pseudo_huber_c": 0.06,
+  "direction_convention": "PR87 state-relative per-parameter-tensor Gaussian direction with RMS=max(parameter RMS,1e-3); the identical parameter direction is used in regimes A-E.",
+  "perturbation_scope": "Network parameters only; optimizer, EMA, scaler, buffers, and all discrete input-state coordinates are fixed at the common baseline in regime D.",
+  "regimes": [
+    "A_squared_gn_fp32",
+    "B_real_loss_gn_fp32",
+    "C_full_field_fp32",
+    "D_production_algorithmic",
+    "E_full_field_pseudohuber_fp32"
+  ],
+  "correctness_gate": {
+    "cell": {
+      "arm": "A",
+      "audit_minibatch_id": 2026082601,
+      "projection_direction_seed": 2026082611
+    },
+    "requirements": [
+      "regime A passes the frozen five-percent adjacent convergence gate on the calibrated three-scale grid",
+      "all outputs are finite",
+      "RNG and source state are preserved",
+      "the protocol and implementation hashes match this v2 receipt"
+    ],
+    "failure_action": "NO_GO_DO_NOT_RUN_V2_FORMAL_FACTORIAL"
+  },
+  "formal_matrix": "4 arms x 2 audit minibatches x 4 directions x 5 regimes = 160 paired local cells",
+  "independent_unit_note": "Arms, batches, directions, epsilon values, and regimes are paired local repeated measurements, not independent training replicates.",
+  "claim_ceiling": "This factorial can localize numerical stability patterns at one training state. It cannot establish a population rate, optimizer causality, FID mediation, global differentiability, or a universal clock.",
+  "replacement_after_results": "PROHIBITED"
+}
+
