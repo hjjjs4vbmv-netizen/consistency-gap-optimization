@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "verdict": "PASS_CALIBRATED",
+  "oracle": {
+    "action_norm": 13.931427710397864,
+    "finite": true,
+    "method": "reverse_over_reverse_autograd_executed_graph",
+    "microbatch_count": 8,
+    "source_preserved": true,
+    "tangent_norm": 17.672521368136103
+  },
+  "source_preserved": true,
+  "assets_preserved": true,
+  "epsilon_grid": [
+    0.0625,
+    0.03125,
+    0.015625,
+    0.0078125,
+    0.00390625,
+    0.001953125,
+    0.0009765625,
+    0.00048828125
+  ],
+  "plateaus": [
+    {
+      "end_index": 7,
+      "epsilons": [
+        0.00390625,
+        0.001953125,
+        0.0009765625,
+        0.00048828125
+      ],
+      "start_index": 4
+    }
+  ],
+  "best_tangent_scale": {
+    "epsilon": 0.001953125,
+    "relative_error": 0.010429520137689902
+  },
+  "best_action_scale": {
+    "epsilon": 0.0009765625,
+    "relative_error": 0.00929992323863555
+  },
+  "bounded_conclusion": "The original 0.03--0.01 squared-GN output finite-difference range was too coarse for this frozen cell. Four consecutive smaller binary scales match the executed-graph autograd tangent and action within the preregistered five-percent tolerance.",
+  "claim_ceiling": "One checkpoint state, one frozen batch, one direction, one arm, and the squared-GN harness only. This is measurement calibration, not evidence about FID, training quality, population behavior, global differentiability, or a schedule mechanism.",
+  "old_factorial_reopened": false
+}

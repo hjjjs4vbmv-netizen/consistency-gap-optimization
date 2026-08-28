@@ -1,0 +1,417 @@
+{
+  "admissible_by_scale": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+  ],
+  "assets_after": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/data/raw/ECT/ect_runs/operator-clock-audit-20260826/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "calibration_implementation": {
+      "core.py": "b6a8e5ce04c62ed23423669c8f74199581ef4e95d5477c3654ab47f20d8473dc",
+      "run_calibration.py": "3fa156dab9e3cc216a3492b0ec74a69e27f2e81477cd73a899597ff8f85a6b36"
+    },
+    "calibration_protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/jvp_harness_calibration/protocol.json",
+      "sha256": "dc3769c68031a9763892090b029ad83b8858c1ed5411fa64717bb3c27c746e56"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "280afb3dd5f79546245e47e970abefba434e39af5bb24a4c412a6dca08b6bb18",
+      "core.py": "1f92fa9a64244bab0651a617e473969300e430e525d3b0862300a9313b813d69",
+      "prepare_frozen_batches.py": "653e166ee34c163072784411251126b6c333df1f2813309068142264f2026773",
+      "run_algorithmic_jvp.py": "1348428fb926f06569da9953b9e6e22fed51e4a3108800cff844296db2288247",
+      "run_field_jvp.py": "a648013b9ed6ac211ea577cdae0e80a4de34668a417309726c2c16283f0f9508",
+      "run_matched_micro_rollout.py": "381a077133d65cf4d5e25f04f765b827037eb4294993cd371c8d579253e1275d"
+    },
+    "protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "cfb4649a88951b9a62b06f10d981a80f6af1376b26801042a3b47a2e2c02ac3a"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    }
+  },
+  "assets_before": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/data/raw/ECT/ect_runs/operator-clock-audit-20260826/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "calibration_implementation": {
+      "core.py": "b6a8e5ce04c62ed23423669c8f74199581ef4e95d5477c3654ab47f20d8473dc",
+      "run_calibration.py": "3fa156dab9e3cc216a3492b0ec74a69e27f2e81477cd73a899597ff8f85a6b36"
+    },
+    "calibration_protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/jvp_harness_calibration/protocol.json",
+      "sha256": "dc3769c68031a9763892090b029ad83b8858c1ed5411fa64717bb3c27c746e56"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "280afb3dd5f79546245e47e970abefba434e39af5bb24a4c412a6dca08b6bb18",
+      "core.py": "1f92fa9a64244bab0651a617e473969300e430e525d3b0862300a9313b813d69",
+      "prepare_frozen_batches.py": "653e166ee34c163072784411251126b6c333df1f2813309068142264f2026773",
+      "run_algorithmic_jvp.py": "1348428fb926f06569da9953b9e6e22fed51e4a3108800cff844296db2288247",
+      "run_field_jvp.py": "a648013b9ed6ac211ea577cdae0e80a4de34668a417309726c2c16283f0f9508",
+      "run_matched_micro_rollout.py": "381a077133d65cf4d5e25f04f765b827037eb4294993cd371c8d579253e1275d"
+    },
+    "protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "cfb4649a88951b9a62b06f10d981a80f6af1376b26801042a3b47a2e2c02ac3a"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    }
+  },
+  "assets_preserved": true,
+  "determinism": {
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "cuda_matmul_allow_fp16_reduced_precision_reduction": false,
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "deterministic_algorithms": true
+  },
+  "direction_l2": 3962.7040403470132,
+  "direction_sha256": "54f31f6550b955202ab59a7182b66e78815f82ec6b9434f1f4be6e5c370da609",
+  "oracle": {
+    "action_norm": 13.931427710397864,
+    "finite": true,
+    "method": "reverse_over_reverse_autograd_executed_graph",
+    "microbatch_count": 8,
+    "source_preserved": true,
+    "tangent_norm": 17.672521368136103
+  },
+  "plateaus": [
+    {
+      "end_index": 7,
+      "epsilons": [
+        0.00390625,
+        0.001953125,
+        0.0009765625,
+        0.00048828125
+      ],
+      "start_index": 4
+    }
+  ],
+  "protocol": {
+    "automatic_reuse_of_old_factorial": "PROHIBITED",
+    "cell": {
+      "arm": "A",
+      "audit_minibatch_id": 2026082601,
+      "projection_direction_seed": 2026082611
+    },
+    "claim_ceiling": "One checkpoint state, one frozen batch, one direction, one arm, and the squared-GN harness only. This is measurement calibration, not evidence about FID, training quality, population behavior, global differentiability, or a schedule mechanism.",
+    "diagnostics": [
+      "oracle-relative error, cosine, and norm ratio for the residual tangent",
+      "oracle-relative error, cosine, and norm ratio for the squared-GN action",
+      "fraction of FP32 parameter coordinates changed in each branch and distinguishable between branches",
+      "realized central parameter direction relative error, cosine, and norm ratio"
+    ],
+    "direction_convention": "Identical PR87 state-relative per-parameter-tensor Gaussian direction with RMS=max(parameter RMS,1e-3).",
+    "epsilon_grid": [
+      0.0625,
+      0.03125,
+      0.015625,
+      0.0078125,
+      0.00390625,
+      0.001953125,
+      0.0009765625,
+      0.00048828125
+    ],
+    "oracle": "Reverse-over-reverse autograd directional derivative of the paired online-minus-target residual on the executed FP32 graph, followed by an online-branch VJP.",
+    "outcomes": {
+      "NO_PLATEAU": "The fixed sweep does not identify an oracle-accurate plateau. Do not run the source-localization factorial.",
+      "ORACLE_UNAVAILABLE": "The autograd oracle is non-finite, unsupported, or cannot be evaluated within the frozen runtime. No finite-difference conclusion follows.",
+      "PASS_CALIBRATED": "A three-scale oracle-accurate plateau exists. A separate v2 factorial protocol may subsequently freeze one plateau scale; this result does not reopen the old protocol."
+    },
+    "parent": {
+      "batch_file_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "failed_gate_commit": "3756b42",
+      "head": "8405df82f6b38661f2db4d5d247a856c7272fdf8",
+      "pr": 87,
+      "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    },
+    "plateau_minimum_consecutive_scales": 3,
+    "primary_gate": "At least three consecutive frozen scales must have both residual-tangent and squared-GN-action relative error no greater than 0.05 versus the autograd oracle; all values must be finite and the source state/RNG must be preserved.",
+    "primary_relative_error_tolerance": 0.05,
+    "purpose": "Calibrate the squared-GN output finite difference against an autograd directional-derivative oracle after the original correctness gate failed.",
+    "replacement_after_results": "PROHIBITED",
+    "schema_version": 1,
+    "status": "FROZEN_BEFORE_CALIBRATION_RESULTS"
+  },
+  "protocol_sha256": "dc3769c68031a9763892090b029ad83b8858c1ed5411fa64717bb3c27c746e56",
+  "rows": [
+    {
+      "action_vs_oracle": {
+        "cosine": 0.6606456822320147,
+        "finite": true,
+        "norm": 6.144278009467549,
+        "norm_ratio": 0.44103721005433694,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.7821605740513964
+      },
+      "epsilon": 0.0625,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999994078884227,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999994078884227,
+        "plus_changed_fraction": 0.9999994078884227,
+        "realized_direction_cosine": 0.9999999999999223,
+        "realized_direction_norm_ratio": 1.0000000000321603,
+        "realized_direction_relative_error": 3.9353056051178903e-07
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.4244920697496478,
+        "finite": true,
+        "norm": 7.5002286228388,
+        "norm_ratio": 0.424400597209737,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.9054316600864395
+      }
+    },
+    {
+      "action_vs_oracle": {
+        "cosine": 0.8964170148061567,
+        "finite": true,
+        "norm": 10.2020623912162,
+        "norm_ratio": 0.7323055901587023,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.472619397894157
+      },
+      "epsilon": 0.03125,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999987619485201,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999987619485201,
+        "plus_changed_fraction": 0.9999987619485201,
+        "realized_direction_cosine": 0.9999999999996819,
+        "realized_direction_norm_ratio": 1.0000000000734437,
+        "realized_direction_relative_error": 7.965716728457191e-07
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.7582328799546983,
+        "finite": true,
+        "norm": 11.34091213838454,
+        "norm_ratio": 0.6417257561692598,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.6623117163755746
+      }
+    },
+    {
+      "action_vs_oracle": {
+        "cosine": 0.9776582148543128,
+        "finite": true,
+        "norm": 13.584454764088957,
+        "norm_ratio": 0.9750942291399228,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.21021652872840793
+      },
+      "epsilon": 0.015625,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999980621802923,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999980621802923,
+        "plus_changed_fraction": 0.9999980621802923,
+        "realized_direction_cosine": 0.9999999999987096,
+        "realized_direction_norm_ratio": 1.000000000065862,
+        "realized_direction_relative_error": 1.606473433540198e-06
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.9466976844333806,
+        "finite": true,
+        "norm": 14.863137833392882,
+        "norm_ratio": 0.8410309725352154,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.3390117229416193
+      }
+    },
+    {
+      "action_vs_oracle": {
+        "cosine": 0.9981224892937044,
+        "finite": true,
+        "norm": 13.875135420803685,
+        "norm_ratio": 0.9959593308909642,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.06128764655633285
+      },
+      "epsilon": 0.0078125,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999964293877608,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999964293877608,
+        "plus_changed_fraction": 0.9999964293877608,
+        "realized_direction_cosine": 0.9999999999947943,
+        "realized_direction_norm_ratio": 0.9999999997424099,
+        "realized_direction_relative_error": 3.2266625317203377e-06
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.9938238091559858,
+        "finite": true,
+        "norm": 16.80212153864525,
+        "norm_ratio": 0.9507484070122444,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.11903666084250027
+      }
+    },
+    {
+      "action_vs_oracle": {
+        "cosine": 0.9998617685500147,
+        "finite": true,
+        "norm": 13.864685651604756,
+        "norm_ratio": 0.995209244868472,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.01726527638479559
+      },
+      "epsilon": 0.00390625,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999934150015487,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999934150015487,
+        "plus_changed_fraction": 0.9999934150015487,
+        "realized_direction_cosine": 0.9999999999790963,
+        "realized_direction_norm_ratio": 1.0000000000701545,
+        "realized_direction_relative_error": 6.465842832997419e-06
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.9995014709796752,
+        "finite": true,
+        "norm": 17.431185160751994,
+        "norm_ratio": 0.9863439855379526,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.034204223900201815
+      }
+    },
+    {
+      "action_vs_oracle": {
+        "cosine": 0.9999485550108399,
+        "finite": true,
+        "norm": 13.920505339546962,
+        "norm_ratio": 0.9992159905590479,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.010169758227728412
+      },
+      "epsilon": 0.001953125,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999868120603224,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999868120603224,
+        "plus_changed_fraction": 0.9999868120603224,
+        "realized_direction_cosine": 0.9999999999161885,
+        "realized_direction_norm_ratio": 0.9999999962382083,
+        "realized_direction_relative_error": 1.294687973495165e-05
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.9999507600805572,
+        "finite": true,
+        "norm": 17.614940618063653,
+        "norm_ratio": 0.9967417920242966,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.010429520137689902
+      }
+    },
+    {
+      "action_vs_oracle": {
+        "cosine": 0.9999567572733005,
+        "finite": true,
+        "norm": 13.9318092721876,
+        "norm_ratio": 1.0000273885633029,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.00929992323863555
+      },
+      "epsilon": 0.0009765625,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999737138345202,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999737138345202,
+        "plus_changed_fraction": 0.9999737138345202,
+        "realized_direction_cosine": 0.9999999996644175,
+        "realized_direction_norm_ratio": 1.0000000099142181,
+        "realized_direction_relative_error": 2.5906839841740263e-05
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.9999425473392042,
+        "finite": true,
+        "norm": 17.65994979050026,
+        "norm_ratio": 0.9992886370103075,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.010739162886455475
+      }
+    },
+    {
+      "action_vs_oracle": {
+        "cosine": 0.9989738039358524,
+        "finite": true,
+        "norm": 13.932213632714022,
+        "norm_ratio": 1.000056413623392,
+        "oracle_norm": 13.931427710397855,
+        "relative_error": 0.04530464759457865
+      },
+      "epsilon": 0.00048828125,
+      "finite": true,
+      "parameter_resolution": {
+        "branch_distinct_fraction": 0.9999474097262652,
+        "coordinate_count": 55732739,
+        "minus_changed_fraction": 0.9999474097262652,
+        "plus_changed_fraction": 0.9999474097262652,
+        "realized_direction_cosine": 0.9999999986572599,
+        "realized_direction_norm_ratio": 0.9999999954663852,
+        "realized_direction_relative_error": 5.1821593529805894e-05
+      },
+      "source_preserved": true,
+      "tangent_vs_oracle": {
+        "cosine": 0.9997194488851601,
+        "finite": true,
+        "norm": 17.659889543786736,
+        "norm_ratio": 0.9992852279487328,
+        "oracle_norm": 17.672521368136103,
+        "relative_error": 0.023689914912767424
+      }
+    }
+  ],
+  "schema_version": 1,
+  "source_preserved": true,
+  "verdict": "PASS_CALIBRATED"
+}

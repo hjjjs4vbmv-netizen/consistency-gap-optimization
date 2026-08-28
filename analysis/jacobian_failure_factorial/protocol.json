@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_NEW_FACTORIAL_RESULTS",
+  "parent_audit": {
+    "pr": 87,
+    "head": "8405df82f6b38661f2db4d5d247a856c7272fdf8",
+    "source_training_seed": 3,
+    "state_kimg": 256,
+    "q": 256,
+    "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+    "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+    "batch_file_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+  },
+  "arms": ["A", "B", "C", "D"],
+  "audit_minibatch_ids": [2026082601, 2026082602],
+  "projection_direction_seeds": [2026082611, 2026082612, 2026082613, 2026082614],
+  "epsilon_grid": [0.03, 0.02, 0.015, 0.01],
+  "convergence_relative_tolerance": 0.05,
+  "pseudo_huber_c": 0.06,
+  "direction_convention": "PR87 state-relative per-parameter-tensor Gaussian direction with RMS=max(parameter RMS,1e-3); the identical parameter direction is used in regimes A-E",
+  "perturbation_scope": "network parameters only; optimizer, EMA, scaler and all discrete input-state coordinates are held at the common baseline in regime D",
+  "regimes": {
+    "A_squared_gn_fp32": "J_i^T (J_i-J_j) u; squared-loss Gauss-Newton harness baseline",
+    "B_real_loss_gn_fp32": "J_i^T H_rho0(r) (J_i-J_j) u; c=0 and zero-residual cells fail closed",
+    "C_full_field_fp32": "complete recompute-and-detach c=0 gradient field with network force_fp32=True",
+    "D_production_algorithmic": "parameter-direction partial finite difference of internal-FP16 plus GradScaler/RAdam/EMA transition",
+    "E_full_field_pseudohuber_fp32": "complete recompute-and-detach FP32 field with fixed c=0.06 diagnostic smoothing"
+  },
+  "correctness_gate": {
+    "cell": {
+      "arm": "A",
+      "audit_minibatch_id": 2026082601,
+      "projection_direction_seed": 2026082611
+    },
+    "requirements": [
+      "regime A passes the frozen 5 percent convergence gate",
+      "all outputs are finite",
+      "RNG is replayed and restored",
+      "source parameters and algorithmic state are preserved",
+      "positive and negative branches start from the same base state"
+    ],
+    "failure_action": "NO_GO_DO_NOT_RUN_FORMAL_FACTORIAL"
+  },
+  "matrix": "4 arms x 2 audit minibatches x 4 directions x 5 regimes",
+  "independent_unit_note": "batch, direction, epsilon and regime are paired local repeated measurements, not independent training replicates",
+  "replacement_after_results": "PROHIBITED"
+}
