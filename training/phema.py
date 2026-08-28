@@ -116,4 +116,3 @@ class PowerFunctionEMA:
             raise ValueError('PowerEMA profiles do not match current config')
         for ema, ema_state in zip(self.emas, saved_emas):
             ema.load_state_dict(ema_state)
-
