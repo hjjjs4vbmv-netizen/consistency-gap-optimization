@@ -22,6 +22,7 @@ from . import inception_score
 #----------------------------------------------------------------------------
 
 _metric_dict = dict() # name => fn
+IMAGENET64_METRIC_SEED = 20260730
 
 def register_metric(fn):
     assert callable(fn)
@@ -76,6 +77,32 @@ def report_metric(result_dict, run_dir=None, snapshot_pkl=None):
         with open(os.path.join(run_dir, f'metric-{metric}.jsonl'), 'at') as f:
             f.write(jsonl_line + '\n')
 
+
+def calc_imagenet64_fid_kid_from_features(
+    generated_features_path,
+    real_features_path,
+    metric_seed=IMAGENET64_METRIC_SEED,
+):
+    """Score one retained 50k feature file against the full real feature bank."""
+    if metric_seed != IMAGENET64_METRIC_SEED:
+        raise ValueError(
+            f'ImageNet-64 scoring requires metric_seed={IMAGENET64_METRIC_SEED}'
+        )
+    common = dict(
+        G=None,
+        dataset_kwargs={},
+        num_gpus=1,
+        rank=0,
+        device=torch.device('cpu'),
+        metric_seed=metric_seed,
+        precomputed_generated_features_path=generated_features_path,
+        precomputed_real_features_path=real_features_path,
+    )
+    return dnnlib.EasyDict(
+        fid=calc_metric('imagenet64_fid50k_full', **common),
+        kid=calc_metric('imagenet64_kid50k_full', **common),
+    )
+
 #----------------------------------------------------------------------------
 # Primary metrics.
 
@@ -103,6 +130,40 @@ def kid50k_full(opts):
         random_seed=opts.metric_seed,
     )
     return dict(kid50k_full=kid)
+
+
+@register_metric
+def imagenet64_fid50k_full(opts):
+    """Formal ImageNet-64 FID from 50k generated and all real features."""
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    fid = frechet_inception_distance.compute_fid(
+        opts,
+        max_real=None,
+        num_gen=50000,
+        unbiased=True,
+        detector_url=metric_utils.OFFICIAL_EDM2_INCEPTION_URL,
+    )
+    return dict(imagenet64_fid50k_full=fid)
+
+
+@register_metric
+def imagenet64_kid50k_full(opts):
+    """Formal ImageNet-64 KID from 50k generated and all real features."""
+    if opts.metric_seed != IMAGENET64_METRIC_SEED:
+        raise ValueError(
+            f'imagenet64_kid50k_full requires metric_seed={IMAGENET64_METRIC_SEED}'
+        )
+    opts.dataset_kwargs.update(max_size=None, xflip=False)
+    kid = kernel_inception_distance.compute_kid(
+        opts,
+        max_real=None,
+        num_gen=50000,
+        num_subsets=100,
+        max_subset_size=1000,
+        random_seed=IMAGENET64_METRIC_SEED,
+        detector_url=metric_utils.OFFICIAL_EDM2_INCEPTION_URL,
+    )
+    return dict(imagenet64_kid50k_full=kid)
 
 @register_metric
 def fid5k_full(opts):

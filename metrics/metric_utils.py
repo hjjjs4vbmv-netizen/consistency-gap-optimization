@@ -33,6 +33,7 @@ class MetricOptions:
         generated_features_path=None, generated_samples_path=None,
         generator_batch_size=None, precomputed_generated_features_path=None,
         metric_name=None, precomputed_generated_features_source_metric=None,
+        precomputed_real_features_path=None, balanced_class_labels=None,
     ):
         assert 0 <= rank < num_gpus
 
@@ -55,10 +56,16 @@ class MetricOptions:
         self.precomputed_generated_features_source_metric = (
             precomputed_generated_features_source_metric
         )
+        self.precomputed_real_features_path = precomputed_real_features_path
+        self.balanced_class_labels = balanced_class_labels
 
 #----------------------------------------------------------------------------
 
 _feature_detector_cache = dict()
+OFFICIAL_EDM2_INCEPTION_URL = (
+    'https://api.ngc.nvidia.com/v2/models/nvidia/research/stylegan3/'
+    'versions/1/files/metrics/inception-2015-12-05.pkl'
+)
 
 def get_feature_detector_name(url):
     return os.path.splitext(url.split('/')[-1])[0]
@@ -71,7 +78,11 @@ def get_feature_detector(url, device=torch.device('cpu'), num_gpus=1, rank=0, ve
         if not is_leader and num_gpus > 1:
             torch.distributed.barrier() # leader goes first
         with dnnlib.util.open_url(url, verbose=(verbose and is_leader)) as f:
-            _feature_detector_cache[key] = torch.jit.load(f).eval().to(device)
+            if url == OFFICIAL_EDM2_INCEPTION_URL:
+                detector = pickle.load(f).eval().requires_grad_(False).to(device)
+            else:
+                detector = torch.jit.load(f).eval().to(device)
+            _feature_detector_cache[key] = detector
         if is_leader and num_gpus > 1:
             torch.distributed.barrier() # others follow
     return _feature_detector_cache[key]
@@ -132,16 +143,22 @@ class FeatureStats:
 
     def get_all(self):
         assert self.capture_all
+        if len(self.all_features) == 1:
+            return np.asarray(self.all_features[0], dtype=np.float32)
         return np.concatenate(self.all_features, axis=0)
 
     def get_all_torch(self):
         return torch.from_numpy(self.get_all())
 
-    def get_mean_cov(self):
+    def get_mean_cov(self, unbiased=False):
         assert self.capture_mean_cov
         mean = self.raw_mean / self.num_items
-        cov = self.raw_cov / self.num_items
-        cov = cov - np.outer(mean, mean)
+        if unbiased:
+            centered = self.raw_cov - np.outer(mean, mean) * self.num_items
+            cov = centered / (self.num_items - 1)
+        else:
+            cov = self.raw_cov / self.num_items
+            cov = cov - np.outer(mean, mean)
         return mean, cov
 
     def save(self, pkl_file):
@@ -203,7 +220,60 @@ class ProgressMonitor:
 
 #----------------------------------------------------------------------------
 
+def _load_precomputed_features(path, *, expected_items=None, max_items=None):
+    features = np.load(path, allow_pickle=False, mmap_mode='r')
+    if features.ndim != 2 or features.shape[0] == 0:
+        raise ValueError(f'precomputed features must be a non-empty 2D array: {path}')
+    if expected_items is not None and features.shape[0] != expected_items:
+        raise ValueError(
+            f'precomputed features have shape {features.shape}, '
+            f'expected ({expected_items}, feature_dim)'
+        )
+    if features.dtype != np.float32:
+        raise ValueError('precomputed features must be finite float32')
+    features = features if max_items is None else features[:max_items]
+    for start in range(0, features.shape[0], 4096):
+        if not np.isfinite(features[start:start + 4096]).all():
+            raise ValueError('precomputed features must be finite float32')
+    return features
+
+
+def _stats_from_precomputed_features(features, **stats_kwargs):
+    stats_kwargs = dict(stats_kwargs)
+    declared_max_items = stats_kwargs.pop('max_items', None)
+    if declared_max_items is not None and declared_max_items != features.shape[0]:
+        raise ValueError(
+            f'precomputed features contain {features.shape[0]} items, '
+            f'expected {declared_max_items}'
+        )
+    stats = FeatureStats(max_items=features.shape[0], **stats_kwargs)
+    if stats.capture_all and not stats.capture_mean_cov:
+        stats.set_num_features(features.shape[1])
+        stats.num_items = features.shape[0]
+        stats.all_features = [features]
+        return stats
+    for start in range(0, features.shape[0], 4096):
+        stats.append(features[start:start + 4096])
+    return stats
+
+
+def compute_feature_mean_cov(features, unbiased=False):
+    stats = _stats_from_precomputed_features(
+        features, capture_mean_cov=True,
+    )
+    return stats.get_mean_cov(unbiased=unbiased)
+
+
 def compute_feature_stats_for_dataset(opts, detector_url, detector_kwargs, rel_lo=0, rel_hi=1, batch_size=128, data_loader_kwargs=None, max_items=None, **stats_kwargs):
+    if opts.precomputed_real_features_path is not None:
+        if opts.num_gpus != 1:
+            raise ValueError('precomputed real features currently require num_gpus=1')
+        features = _load_precomputed_features(
+            opts.precomputed_real_features_path,
+            max_items=max_items,
+        )
+        return _stats_from_precomputed_features(features, **stats_kwargs)
+
     dataset = dnnlib.util.construct_class_by_name(**opts.dataset_kwargs)
     if data_loader_kwargs is None:
         data_loader_kwargs = dict(pin_memory=True, num_workers=3, prefetch_factor=2)
@@ -269,8 +339,12 @@ def _atomic_save_npy(path, array):
     """Save an array without pickle, then atomically publish the final path."""
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     temp_path = path + '.' + uuid.uuid4().hex + '.npy'
-    np.save(temp_path, array, allow_pickle=False)
-    os.replace(temp_path, path)
+    try:
+        np.save(temp_path, array, allow_pickle=False)
+        os.replace(temp_path, path)
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 def _atomic_copy_file(source_path, destination_path):
     """Copy a file byte-for-byte, then atomically publish the final path."""
@@ -309,15 +383,11 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
         stats = FeatureStats(**stats_kwargs)
         if stats.max_items is None:
             raise ValueError('precomputed generated features require max_items')
-        features = np.load(opts.precomputed_generated_features_path, allow_pickle=False)
-        if features.ndim != 2 or features.shape[0] != stats.max_items:
-            raise ValueError(
-                f'precomputed generated features have shape {features.shape}, '
-                f'expected ({stats.max_items}, feature_dim)'
-            )
-        if features.dtype != np.float32 or not np.isfinite(features).all():
-            raise ValueError('precomputed generated features must be finite float32')
-        stats.append(features)
+        features = _load_precomputed_features(
+            opts.precomputed_generated_features_path,
+            expected_items=stats.max_items,
+        )
+        stats = _stats_from_precomputed_features(features, **stats_kwargs)
         if opts.generated_features_path is not None:
             _atomic_copy_file(
                 opts.precomputed_generated_features_path,
@@ -334,7 +404,21 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
     G = copy.deepcopy(opts.G).eval().requires_grad_(False).to(opts.device)
     generator_fn = opts.generator_fn
 
-    dataset = dnnlib.util.construct_class_by_name(**opts.dataset_kwargs)
+    balanced_class_count = opts.balanced_class_labels
+    if balanced_class_count is not None:
+        balanced_class_count = int(balanced_class_count)
+        if balanced_class_count <= 0:
+            raise ValueError('balanced_class_labels must be positive')
+        if opts.sample_seeds is None:
+            raise ValueError('balanced class labels require explicit sample_seeds')
+        if G.label_dim != balanced_class_count:
+            raise ValueError(
+                f'balanced class count {balanced_class_count} does not match '
+                f'network label_dim {G.label_dim}'
+            )
+        dataset = None
+    else:
+        dataset = dnnlib.util.construct_class_by_name(**opts.dataset_kwargs)
 
     # Image generation func.
     def run_generator(z, c, sample_seeds=None):
@@ -388,10 +472,18 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
                     batch_sample_seeds,
                     [G.img_channels, G.img_resolution, G.img_resolution],
                 ).to(opts.device)
-                label_indices = [int(seed) % len(dataset) for seed in batch_sample_seeds]
                 seed_offset += current_batch
-            c = [dataset.get_label(index) for index in label_indices]
-            c = torch.from_numpy(np.stack(c)).pin_memory().to(opts.device)
+            if balanced_class_count is None:
+                if batch_sample_seeds is not None:
+                    label_indices = [int(seed) % len(dataset) for seed in batch_sample_seeds]
+                c = [dataset.get_label(index) for index in label_indices]
+                c = torch.from_numpy(np.stack(c)).pin_memory().to(opts.device)
+            else:
+                label_indices = [int(seed) % balanced_class_count for seed in batch_sample_seeds]
+                c = torch.nn.functional.one_hot(
+                    torch.as_tensor(label_indices, device=opts.device),
+                    num_classes=balanced_class_count,
+                ).to(torch.float32)
             images.append(run_generator(z, c, sample_seeds=batch_sample_seeds))
         images = torch.cat(images)
         if images.shape[1] == 1:

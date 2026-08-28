@@ -522,12 +522,19 @@ def globally_average_runtime_pairs(metric_batches, device):
     return result
 
 
-def gather_rank_reproducibility_state(dataset_sampler, consumed_samples):
+def gather_rank_reproducibility_state(
+    dataset_sampler, consumed_samples, *, device=None
+):
     """Collect ordered, logical per-rank state before any preview/evaluation RNG."""
+    rng_state = (
+        reproducibility.capture_rng_state()
+        if device is None
+        else reproducibility.capture_current_device_rng_state(device)
+    )
     local_state = {
         'rank': dist.get_rank(),
         'world_size': dist.get_world_size(),
-        'rng_state': reproducibility.capture_rng_state(),
+        'rng_state': rng_state,
         'sampler_state': dataset_sampler.state_dict(
             consumed_samples=consumed_samples
         ),
@@ -566,7 +573,8 @@ def select_local_reproducibility_state(states):
 
 @torch.no_grad()
 def copy_module_state_exact(
-    src_module, dst_module, *, label, allowed_source_extras=None
+    src_module, dst_module, *, label, allowed_source_extras=None,
+    allow_unlisted_source_extras=False, allow_float_dtype_conversion=False,
 ):
     """Copy every destination tensor after fail-closed source validation."""
     if not isinstance(src_module, torch.nn.Module):
@@ -584,13 +592,17 @@ def copy_module_state_exact(
     allowed_source_extras = (
         {} if allowed_source_extras is None else dict(allowed_source_extras)
     )
-    if missing or set(extra) != set(allowed_source_extras):
+    extras_mismatch = (
+        not allow_unlisted_source_extras
+        and set(extra) != set(allowed_source_extras)
+    )
+    if missing or extras_mismatch:
         raise RuntimeError(
             f'{label} parameter/buffer key mismatch: '
             f'missing={missing}, extra={extra}, '
             f'allowed_source_extras={sorted(allowed_source_extras)}'
         )
-    for name in extra:
+    for name in (() if allow_unlisted_source_extras else extra):
         record = allowed_source_extras[name]
         if not isinstance(record, dict) or set(record) != {
             'shape', 'dtype', 'tensor_bytes_sha256', 'reason'
@@ -620,7 +632,12 @@ def copy_module_state_exact(
                 f'{label} tensor shape mismatch for {name}: '
                 f'{tuple(source.shape)} != {tuple(target.shape)}'
             )
-        if source.dtype != target.dtype:
+        dtype_conversion_allowed = (
+            allow_float_dtype_conversion
+            and source.is_floating_point()
+            and target.is_floating_point()
+        )
+        if source.dtype != target.dtype and not dtype_conversion_allowed:
             raise RuntimeError(
                 f'{label} tensor dtype mismatch for {name}: '
                 f'{source.dtype} != {target.dtype}'
@@ -657,6 +674,50 @@ def tensor_collection_diagnostics(tensors):
     finite_norm = math.sqrt(float(packed[1]))
     norm = float('inf') if count else finite_norm
     return count, norm, finite_norm
+
+
+@torch.no_grad()
+def tensor_collection_nonfinite_count(tensors):
+    """Count non-finite values without the strict protocol's norm telemetry."""
+    iterator = iter(tensors)
+    first = next(iterator, None)
+    if first is None:
+        return 0
+    count = torch.zeros([], dtype=torch.int64, device=first.device)
+    count += (~torch.isfinite(first.detach())).sum()
+    for tensor in iterator:
+        count += (~torch.isfinite(tensor.detach())).sum()
+    return int(count.cpu())
+
+
+def globally_sum_counts(values, device):
+    counts = torch.tensor(tuple(int(value) for value in values), dtype=torch.int64, device=device)
+    if dist.get_world_size() > 1:
+        torch.distributed.all_reduce(counts)
+    return tuple(int(value) for value in counts.cpu())
+
+
+def enforce_generic_exact_finite(stage, diagnostics):
+    failures = [name for name, count in diagnostics.items() if int(count)]
+    if failures:
+        raise FloatingPointError(
+            f'generic exact non-finite {stage}: {", ".join(failures)}'
+        )
+
+
+def enforce_generic_exact_finite_before_sanitization(losses, parameters, device):
+    loss_count = tensor_collection_nonfinite_count(losses)
+    gradient_count = tensor_collection_nonfinite_count(
+        param.grad for param in parameters if param.grad is not None
+    )
+    loss_count, gradient_count = globally_sum_counts(
+        (loss_count, gradient_count), device
+    )
+    enforce_generic_exact_finite(
+        'loss/gradient before sanitization',
+        {'loss': loss_count, 'raw gradient': gradient_count},
+    )
+    return loss_count, gradient_count
 
 
 def aggregate_factorial_runtime_metrics(metric_batches):
@@ -796,6 +857,39 @@ def normalize_immutable_checkpoint_nimg(
     return tuple(result)
 
 
+def resolve_batch_layout(batch_size, batch_gpu, world_size):
+    """Return per-rank microbatch layout without silently dropping samples."""
+    if world_size <= 0 or batch_size <= 0:
+        raise ValueError('batch_size and world_size must be positive')
+    if batch_size % world_size != 0:
+        raise ValueError(
+            f'batch_size={batch_size} is not divisible by world_size={world_size}'
+        )
+    per_rank = batch_size // world_size
+    if batch_gpu is None or batch_gpu > per_rank:
+        batch_gpu = per_rank
+    if batch_gpu <= 0 or per_rank % batch_gpu != 0:
+        raise ValueError(
+            f'per-rank batch {per_rank} is not divisible by batch_gpu={batch_gpu}'
+        )
+    return batch_gpu, per_rank // batch_gpu
+
+
+def learning_rate_schedule(
+    cur_nimg, batch_size, ref_lr=100e-4, ref_batches=70e3,
+    rampup_kimg=None,
+):
+    """Inverse-square-root schedule used by the EDM2 ImageNet recipe."""
+    learning_rate = float(ref_lr)
+    if ref_batches > 0:
+        learning_rate /= math.sqrt(
+            max(cur_nimg / (ref_batches * batch_size), 1)
+        )
+    if rampup_kimg:
+        learning_rate *= min(cur_nimg / (rampup_kimg * 1000), 1)
+    return learning_rate
+
+
 def immutable_training_state_path(run_dir, cur_nimg):
     if int(cur_nimg) != cur_nimg or int(cur_nimg) <= 0:
         raise ValueError('immutable checkpoint image count must be positive')
@@ -843,6 +937,7 @@ def training_loop(
     network_kwargs      = {},       # Options for model and preconditioning.
     loss_kwargs         = {},       # Options for loss function.
     optimizer_kwargs    = {},       # Options for optimizer.
+    lr_kwargs           = None,     # Optional inverse-square-root LR schedule.
     augment_kwargs      = None,     # Options for augmentation pipeline, None = disable.
     seed                = 0,        # Global random seed.
     batch_size          = 512,      # Total batch size for one training iteration.
@@ -870,6 +965,10 @@ def training_loop(
     cudnn_benchmark     = True,     # Enable torch.backends.cudnn.benchmark?
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
+    exact_resume        = False,    # Topology-bound full-state exact replay.
+    global_batch_mean   = False,    # Normalize gradients across microbatches.
+    power_ema_stds      = (),       # Optional PowerEMA relative std profiles.
+    startup_preview     = True,     # Write initial data/model image grids.
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
     device              = torch.device('cuda'),
 ):
@@ -878,6 +977,8 @@ def training_loop(
     strict_reproducibility = (
         loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
     )
+    generic_exact_resume = bool(exact_resume and not strict_reproducibility)
+    exact_reproducibility = strict_reproducibility or generic_exact_resume
     if strict_reproducibility and dist.get_world_size() != 1:
         raise ValueError(
             'formal q256 target-weight arms require one process and one '
@@ -887,10 +988,14 @@ def training_loop(
         raise ValueError(
             'formal q256 target-weight arms require AMP/GradScaler enabled'
         )
+    if generic_exact_resume and not global_batch_mean:
+        raise ValueError(
+            'generic exact resume requires global_batch_mean=True'
+        )
     if stop_after_attempts is not None:
-        if not strict_reproducibility:
+        if not exact_reproducibility:
             raise ValueError(
-                'stop_after_attempts is reserved for strict factorial resume gates'
+                'stop_after_attempts is reserved for exact resume gates'
             )
         if (
             isinstance(stop_after_attempts, bool)
@@ -906,25 +1011,30 @@ def training_loop(
         total_kimg=total_kimg,
         batch_size=batch_size,
     )
-    if immutable_checkpoint_nimg and not strict_reproducibility:
+    if immutable_checkpoint_nimg and not exact_reproducibility:
         raise ValueError(
-            'immutable checkpoint milestones are reserved for strict factorial runs'
+            'immutable checkpoint milestones require exact resume'
         )
     rank_seed = (seed * dist.get_world_size() + dist.get_rank()) % (1 << 31)
     np.random.seed(rank_seed)
-    if strict_reproducibility:
+    if exact_reproducibility:
         random.seed(rank_seed)
     torch.manual_seed(np.random.randint(1 << 31))
-    if strict_reproducibility:
+    if exact_reproducibility:
         if cudnn_benchmark:
-            raise ValueError(
-                'formal q256 target-weight arms require cudnn_benchmark=False '
-                'for exact replay'
+            message = (
+                'formal q256 target-weight arms'
+                if strict_reproducibility else 'generic exact resume'
             )
+            raise ValueError(f'{message} require cudnn_benchmark=False for exact replay')
         if os.environ.get('CUBLAS_WORKSPACE_CONFIG') != ':4096:8':
+            message = (
+                'formal q256 target-weight arms'
+                if strict_reproducibility else 'generic exact resume'
+            )
             raise ValueError(
-                'formal q256 target-weight arms require '
-                'CUBLAS_WORKSPACE_CONFIG=:4096:8 for exact replay'
+                f'{message} require CUBLAS_WORKSPACE_CONFIG=:4096:8 '
+                'for exact replay'
             )
         torch.backends.cudnn.deterministic = True
         torch.use_deterministic_algorithms(True)
@@ -937,16 +1047,18 @@ def training_loop(
     torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = enable_tf32
 
     # Select batch size per GPU.
-    batch_gpu_total = batch_size // dist.get_world_size()
-    if batch_gpu is None or batch_gpu > batch_gpu_total:
-        batch_gpu = batch_gpu_total
-    num_accumulation_rounds = batch_gpu_total // batch_gpu
-    assert batch_size == batch_gpu * num_accumulation_rounds * dist.get_world_size()
+    batch_gpu, num_accumulation_rounds = resolve_batch_layout(
+        batch_size, batch_gpu, dist.get_world_size()
+    )
     strict_trajectory_config = None
     strict_trajectory_config_sha256 = None
-    if strict_reproducibility:
-        strict_trajectory_config = reproducibility.canonical_json_data({
-            'schema': reproducibility.TRAJECTORY_CONFIG_SCHEMA,
+    if exact_reproducibility:
+        trajectory_data = {
+            'schema': (
+                reproducibility.TRAJECTORY_CONFIG_SCHEMA
+                if strict_reproducibility
+                else reproducibility.EXACT_TRAJECTORY_CONFIG_SCHEMA
+            ),
             'seed': seed,
             'rank_seed': rank_seed,
             'world_size': dist.get_world_size(),
@@ -991,7 +1103,24 @@ def training_loop(
             'authoritative_transfer_source_policy': copy.deepcopy(
                 _AUTHORITATIVE_TRANSFER_SOURCE_POLICY
             ),
-        })
+        }
+        if generic_exact_resume:
+            trajectory_data.pop('rank_seed')
+            trajectory_data.update(
+                exact_resume=True,
+                rank_seeds=[
+                    (seed * dist.get_world_size() + rank) % (1 << 31)
+                    for rank in range(dist.get_world_size())
+                ],
+                global_batch_mean=global_batch_mean,
+                lr_kwargs=(None if lr_kwargs is None else dict(lr_kwargs)),
+                power_ema_stds=tuple(power_ema_stds),
+                immutable_checkpoint_kimg=tuple(immutable_checkpoint_kimg),
+                startup_preview=startup_preview,
+            )
+        strict_trajectory_config = reproducibility.canonical_json_data(
+            trajectory_data
+        )
         strict_trajectory_config_sha256 = reproducibility.state_sha256(
             strict_trajectory_config
         )
@@ -1003,7 +1132,7 @@ def training_loop(
     # A strict resume must load the logical sampler cursor before creating the
     # iterator; otherwise DataLoader prefetch would enqueue examples from zero.
     dataset_iterator = None
-    if not (strict_reproducibility and resume_state_dump):
+    if not (exact_reproducibility and resume_state_dump):
         dataset_iterator = iter(torch.utils.data.DataLoader(
             dataset=dataset_obj,
             sampler=dataset_sampler,
@@ -1039,7 +1168,7 @@ def training_loop(
     
     # Stats
     if dist.get_rank() == 0 and not (
-        strict_reproducibility and resume_state_dump
+        exact_reproducibility and resume_state_dump
     ):
         with torch.no_grad():
             images = torch.zeros([batch_gpu, net.img_channels, net.img_resolution, net.img_resolution], device=device)
@@ -1073,6 +1202,17 @@ def training_loop(
                     ]
                 ),
             )
+        elif network_kwargs.get('class_name') == 'training.networks_edm2.Precond':
+            copy_module_state_exact(
+                data.get('ema'), net, label='EDM2 donor transfer -> net',
+                allow_unlisted_source_extras=True,
+                allow_float_dtype_conversion=True,
+            )
+            copy_module_state_exact(
+                data.get('ema'), ema, label='EDM2 donor transfer -> EMA',
+                allow_unlisted_source_extras=True,
+                allow_float_dtype_conversion=True,
+            )
         else:
             misc.copy_params_and_buffers(
                 src_module=data['ema'], dst_module=net, require_all=False
@@ -1081,6 +1221,14 @@ def training_loop(
                 src_module=data['ema'], dst_module=ema, require_all=False
             )
         del data # conserve memory
+    power_ema = None
+    if power_ema_stds:
+        power_ema = dnnlib.util.construct_class_by_name(
+            class_name='training.phema.PowerFunctionEMA',
+            net=net,
+            stds=tuple(power_ema_stds),
+        )
+        power_ema.reset()
     attempted_iteration = 0
     successful_optimizer_steps = 0
     resumed_cur_nimg = None
@@ -1101,27 +1249,36 @@ def training_loop(
             map_location=torch.device('cpu'),
             weights_only=False,
         )
-        if strict_reproducibility:
-            if data.get('reproducibility_schema') != reproducibility.TRAINING_STATE_SCHEMA:
+        if exact_reproducibility:
+            expected_schema = (
+                reproducibility.TRAINING_STATE_SCHEMA
+                if strict_reproducibility
+                else reproducibility.EXACT_TRAINING_STATE_SCHEMA
+            )
+            if data.get('reproducibility_schema') != expected_schema:
                 raise RuntimeError(
-                    'strict factorial resume requires a complete versioned '
+                    'exact resume requires a complete versioned '
                     'training-state; legacy state is not replayable'
                 )
-            required = (
+            required = [
                 'net', 'ema', 'optimizer_state', 'loss_fn_state',
-                'rank_states', 'factorial', 'gradscaler_state',
+                'rank_states',
                 'attempted_iteration', 'successful_optimizer_steps',
                 'cur_nimg', 'cur_tick', 'tick_start_nimg',
                 'snapshot_grid_z', 'snapshot_grid_c', 'snapshot_grid_size',
                 'trajectory_config', 'trajectory_config_sha256',
-            )
+            ]
+            if strict_reproducibility:
+                required.extend(('factorial', 'gradscaler_state'))
+            if power_ema is not None:
+                required.append('power_ema_state')
             missing = [name for name in required if name not in data]
             if missing:
                 raise RuntimeError(
-                    'strict factorial training-state missing fields: '
+                    'exact training-state missing fields: '
                     + ', '.join(missing)
                 )
-            if data['factorial'] != loss_fn.factorial:
+            if strict_reproducibility and data['factorial'] != loss_fn.factorial:
                 raise RuntimeError(
                     'factorial factors in training-state do not match current config'
                 )
@@ -1161,22 +1318,24 @@ def training_loop(
                         'training-state trajectory config does not match current run'
                     )
                 dist.print0(
-                    'Extending completed strict training budget from '
+                    'Extending completed exact training budget from '
                     f'{saved_total_kimg} to {current_total_kimg} kimg; '
                     'all other trajectory settings match exactly.'
                 )
-        if strict_reproducibility:
+        if exact_reproducibility:
             copy_module_state_exact(
-                data.get('net'), net, label='strict training-state -> net'
+                data.get('net'), net, label='exact training-state -> net'
             )
         else:
             misc.copy_params_and_buffers(
                 src_module=data['net'], dst_module=net, require_all=True
             )
-        if strict_reproducibility:
+        if exact_reproducibility:
             copy_module_state_exact(
-                data.get('ema'), ema, label='strict training-state -> EMA'
+                data.get('ema'), ema, label='exact training-state -> EMA'
             )
+        if power_ema is not None and 'power_ema_state' in data:
+            power_ema.load_state_dict(data['power_ema_state'])
         optimizer.load_state_dict(data['optimizer_state'])
         if 'cur_nimg' not in data:
             raise RuntimeError(
@@ -1186,7 +1345,7 @@ def training_loop(
         attempted_iteration = int(data.get('attempted_iteration', 0))
         successful_optimizer_steps = int(data.get('successful_optimizer_steps', 0))
         resumed_cur_nimg = int(data['cur_nimg'])
-        if strict_reproducibility:
+        if exact_reproducibility:
             local_rank_state = select_local_reproducibility_state(
                 data['rank_states']
             )
@@ -1196,7 +1355,7 @@ def training_loop(
             )
             if resumed_cur_nimg % dist.get_world_size() != 0:
                 raise RuntimeError(
-                    'strict factorial cur_nimg is not divisible by world size'
+                    'exact cur_nimg is not divisible by world size'
                 )
             expected_consumed = resumed_cur_nimg // dist.get_world_size()
             if local_consumed_samples != expected_consumed:
@@ -1215,9 +1374,9 @@ def training_loop(
         elapsed_base_sec = float(data.get('elapsed_sec', 0.0))
         if hasattr(loss_fn, 'load_schedule_state_dict') and 'loss_fn_state' in data:
             loaded = loss_fn.load_schedule_state_dict(data['loss_fn_state'])
-            if strict_reproducibility and loaded is not True:
+            if exact_reproducibility and loaded is not True:
                 raise RuntimeError(
-                    'strict factorial loss schedule state is incompatible'
+                    'exact loss schedule state is incompatible'
                 )
         if 'adaptive_signal_window_state' in data:
             resumed_adaptive_signal_window_state = data['adaptive_signal_window_state']
@@ -1228,15 +1387,15 @@ def training_loop(
                 dist.print0(f'Loading GradScaler state from "{resume_state_dump}"...')
                 scaler.load_state_dict(data['gradscaler_state'])
             else:
-                if strict_reproducibility:
+                if exact_reproducibility:
                     raise RuntimeError(
-                        'strict factorial training-state is missing GradScaler state'
+                        'exact training-state is missing GradScaler state'
                     )
                 dist.print0(f'GradScaler state is not found in "{resume_state_dump}", using the default state.')
         del data # conserve memory
 
     if dataset_iterator is None:
-        if not (strict_reproducibility and resume_state_dump):
+        if not (exact_reproducibility and resume_state_dump):
             raise RuntimeError('dataset iterator was not initialized')
         dataset_iterator = iter(torch.utils.data.DataLoader(
             dataset=dataset_obj,
@@ -1252,8 +1411,8 @@ def training_loop(
         
     if dist.get_rank() == 0:
         write_startup_preview = not (
-            strict_reproducibility and resume_state_dump
-        )
+            exact_reproducibility and resume_state_dump
+        ) and startup_preview
         if write_startup_preview:
             dist.print0('Exporting sample images...')
         grid_size, images, labels = setup_snapshot_image_grid(training_set=dataset_obj)
@@ -1286,7 +1445,12 @@ def training_loop(
     if resumed_rng_state is not None:
         if dist.get_world_size() > 1:
             torch.distributed.barrier()
-        reproducibility.restore_rng_state(resumed_rng_state)
+        if generic_exact_resume:
+            reproducibility.restore_current_device_rng_state(
+                resumed_rng_state, device
+            )
+        else:
+            reproducibility.restore_rng_state(resumed_rng_state)
         if dist.get_world_size() > 1:
             torch.distributed.barrier()
 
@@ -1529,10 +1693,12 @@ def training_loop(
             data['adaptive_signal_window_state'] = adaptive_signal_window_state
         if enable_amp:
             data['gradscaler_state'] = scaler.state_dict()
-        if strict_reproducibility:
+        if power_ema is not None:
+            data['power_ema_state'] = power_ema.state_dict()
+        if exact_reproducibility:
             if rank_states is None:
                 raise RuntimeError(
-                    'strict factorial state requires every rank RNG/sampler state'
+                    'exact state requires every rank RNG/sampler state'
                 )
             next_cur_tick = cur_tick + int(advance_tick)
             next_stage = max((next_cur_tick - 1) // double_ticks, 0)
@@ -1542,10 +1708,13 @@ def training_loop(
                 ratio=1 - 1 / loss_fn.q ** (next_stage + 1),
             )
             data.update(
-                reproducibility_schema=reproducibility.TRAINING_STATE_SCHEMA,
+                reproducibility_schema=(
+                    reproducibility.TRAINING_STATE_SCHEMA
+                    if strict_reproducibility
+                    else reproducibility.EXACT_TRAINING_STATE_SCHEMA
+                ),
                 ema=ema,
                 rank_states=rank_states,
-                factorial=dict(loss_fn.factorial),
                 trajectory_config=strict_trajectory_config,
                 trajectory_config_sha256=strict_trajectory_config_sha256,
                 loss_fn_state=strict_loss_state,
@@ -1553,15 +1722,17 @@ def training_loop(
                 snapshot_grid_c=[value.detach().cpu() for value in grid_c],
                 snapshot_grid_size=tuple(grid_size),
             )
+            if strict_reproducibility:
+                data['factorial'] = dict(loss_fn.factorial)
         return data
         
     # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
     # updates its stage from (cur_tick - 1) after natural maintenance.
     stage = max((cur_tick - 1) // double_ticks, 0)
-    if strict_reproducibility and resume_state_dump:
+    if exact_reproducibility and resume_state_dump:
         if loss_fn.stage != stage:
             raise RuntimeError(
-                'strict factorial restored loss stage does not match tick state'
+                'exact restored loss stage does not match tick state'
             )
     update_scheduler(loss_fn)
 
@@ -1696,9 +1867,19 @@ def training_loop(
                     local_signal_batches.append(signal)
                 training_stats.report('Loss/loss', loss)
                 if enable_amp:
-                    scaler.scale(loss.mean()).backward()
+                    if global_batch_mean:
+                        scaler.scale(
+                            loss.mean() / num_accumulation_rounds
+                        ).backward()
+                    else:
+                        scaler.scale(loss.mean()).backward()
                 else:
-                    loss.mul(loss_scaling).mean().backward()
+                    if global_batch_mean:
+                        loss.mul(
+                            loss_scaling / num_accumulation_rounds
+                        ).mean().backward()
+                    else:
+                        loss.mul(loss_scaling).mean().backward()
 
         # Unscale first so GradScaler can detect non-finite gradients before
         # they are sanitized below. scaler.step() will still skip the update
@@ -1721,6 +1902,12 @@ def training_loop(
             parameters_before_step = [
                 param.detach().clone() for param in net.parameters()
             ]
+        elif generic_exact_resume:
+            loss_nonfinite_count, raw_grad_nonfinite_count = (
+                enforce_generic_exact_finite_before_sanitization(
+                    loss_batches, net.parameters(), device
+                )
+            )
 
         # NOTE(aiihn & Gsunshine): This should be further tested for AMP.
         for param in net.parameters():
@@ -1737,9 +1924,15 @@ def training_loop(
                 if param.grad is not None
             )
 
-        # LR scheduler (if needed in the future)
-        # for g in optimizer.param_groups:
-        #     g['lr'] = optimizer_kwargs['lr'] * min(cur_nimg / max(lr_rampup_kimg * 1000, 1e-8), 1)
+        if lr_kwargs is not None:
+            learning_rate = learning_rate_schedule(
+                cur_nimg=cur_nimg,
+                batch_size=batch_size,
+                rampup_kimg=lr_rampup_kimg,
+                **lr_kwargs,
+            )
+            for group in optimizer.param_groups:
+                group['lr'] = learning_rate
 
         # Update weights. Record GradScaler scale / skip for train_summary.csv.
         # scale_before is the scale applied to this step; a drop after update()
@@ -1774,6 +1967,10 @@ def training_loop(
                 model_norm,
                 _,
             ) = tensor_collection_diagnostics(net.parameters())
+        elif generic_exact_resume:
+            model_nonfinite_count = tensor_collection_nonfinite_count(
+                tensor for _, tensor in misc.named_params_and_buffers(net)
+            )
 
         attempted_iteration += 1
         if not step_skipped:
@@ -1807,10 +2004,45 @@ def training_loop(
                 ema_norm,
                 _,
             ) = tensor_collection_diagnostics(ema.parameters())
+        elif generic_exact_resume:
+            ema_nonfinite_count = tensor_collection_nonfinite_count(
+                tensor for _, tensor in misc.named_params_and_buffers(ema)
+            )
 
         # Advance iteration-local state. Adaptive updates intentionally happen
         # here, before the maintenance early-continue below.
         cur_nimg += batch_size
+        power_ema_nonfinite_count = 0
+        if power_ema is not None:
+            power_ema.update(cur_nimg=cur_nimg, batch_size=batch_size)
+            if generic_exact_resume:
+                power_ema_nonfinite_count = tensor_collection_nonfinite_count(
+                    tensor
+                    for profile in power_ema.emas
+                    for _, tensor in misc.named_params_and_buffers(profile)
+                )
+        if generic_exact_resume:
+            (
+                model_nonfinite_count,
+                ema_nonfinite_count,
+                power_ema_nonfinite_count,
+            ) = globally_sum_counts(
+                (
+                    model_nonfinite_count,
+                    ema_nonfinite_count,
+                    power_ema_nonfinite_count,
+                ),
+                device,
+            )
+            exact_state_diagnostics = {
+                'optimizer update/model': model_nonfinite_count,
+                'EMA': ema_nonfinite_count,
+            }
+            if power_ema is not None:
+                exact_state_diagnostics['PowerEMA'] = power_ema_nonfinite_count
+            enforce_generic_exact_finite(
+                'state update', exact_state_diagnostics
+            )
         if adaptive_signal_window is not None:
             if isinstance(adaptive_signal_window, LocalTBinSignalWindow):
                 local_sums = torch.stack(
@@ -1956,7 +2188,8 @@ def training_loop(
             invariant_failures = []
             if factorial_metrics['sample_count'] != batch_size:
                 invariant_failures.append('factorial sample_count != batch_size')
-            if local_consumed_samples != cur_nimg:
+            expected_local_consumed = cur_nimg // dist.get_world_size()
+            if local_consumed_samples != expected_local_consumed:
                 invariant_failures.append('sampler consumption != processed_nimg')
             if loss_nonfinite_count:
                 invariant_failures.append('non-finite loss')
@@ -2045,14 +2278,17 @@ def training_loop(
                     )
                 )
             immutable_rank_states = None
-            if strict_reproducibility:
-                if local_consumed_samples != cur_nimg:
+            if exact_reproducibility:
+                expected_local_consumed = cur_nimg // dist.get_world_size()
+                if local_consumed_samples != expected_local_consumed:
                     raise RuntimeError(
                         'immutable checkpoint sampler consumption does not '
-                        'match processed images'
+                        'match per-rank processed images'
                     )
                 immutable_rank_states = gather_rank_reproducibility_state(
-                    dataset_sampler, local_consumed_samples
+                    dataset_sampler,
+                    local_consumed_samples,
+                    device=(device if generic_exact_resume else None),
                 )
             if dist.get_rank() == 0:
                 immutable_path = save_immutable_training_state(
@@ -2122,10 +2358,10 @@ def training_loop(
                         adaptive_signal_window, device
                     )
                 )
-            if strict_reproducibility:
+            if exact_reproducibility:
                 if cur_nimg % dist.get_world_size() != 0:
                     raise RuntimeError(
-                        'strict factorial cur_nimg is not divisible by world size'
+                        'exact cur_nimg is not divisible by world size'
                     )
                 expected_local_consumed = cur_nimg // dist.get_world_size()
                 if local_consumed_samples != expected_local_consumed:
@@ -2135,7 +2371,9 @@ def training_loop(
                         f'{expected_local_consumed}'
                     )
                 checkpoint_rank_states = gather_rank_reproducibility_state(
-                    dataset_sampler, local_consumed_samples
+                    dataset_sampler,
+                    local_consumed_samples,
+                    device=(device if generic_exact_resume else None),
                 )
 
         # Save network snapshot.
@@ -2264,21 +2502,22 @@ def training_loop(
     # Few-step Evaluation.
     few_step_fn = functools.partial(generator_fn, mid_t=mid_t)
     
-    if dist.get_rank() == 0:
+    if sample_ticks is not None and dist.get_rank() == 0:
         dist.print0('Exporting final sample images...')
         images = [few_step_fn(ema, z, c).cpu() for z, c in zip(grid_z, grid_c)]
         images = torch.cat(images).numpy()
         save_image_grid(images, os.path.join(run_dir, 'final.png'), drange=[-1,1], grid_size=grid_size)
         del images
 
-    dist.print0('Evaluating few-step generation...')
-    for _ in range(3):
-        for metric in metrics:
-            result_dict = metric_main.calc_metric(metric=metric, 
-                generator_fn=few_step_fn, G=ema, G_kwargs={},
-                dataset_kwargs=dataset_kwargs, num_gpus=dist.get_world_size(), rank=dist.get_rank(), device=device)
-            if dist.get_rank() == 0:
-                metric_main.report_metric(result_dict, run_dir=run_dir, snapshot_pkl='network-snapshot-latest.pkl')
+    if metrics:
+        dist.print0('Evaluating few-step generation...')
+        for _ in range(3):
+            for metric in metrics:
+                result_dict = metric_main.calc_metric(metric=metric,
+                    generator_fn=few_step_fn, G=ema, G_kwargs={},
+                    dataset_kwargs=dataset_kwargs, num_gpus=dist.get_world_size(), rank=dist.get_rank(), device=device)
+                if dist.get_rank() == 0:
+                    metric_main.report_metric(result_dict, run_dir=run_dir, snapshot_pkl='network-snapshot-latest.pkl')
 
     # Done.
     if train_summary_csv is not None:

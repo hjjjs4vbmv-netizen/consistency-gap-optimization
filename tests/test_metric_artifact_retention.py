@@ -7,7 +7,8 @@ from unittest import mock
 import numpy as np
 import torch
 
-from metrics import metric_utils
+from metrics import metric_main, metric_utils
+from metrics import frechet_inception_distance, kernel_inception_distance
 
 
 class _DummyDataset:
@@ -22,6 +23,10 @@ class _DummyNet(torch.nn.Module):
     img_channels = 3
     img_resolution = 2
     label_dim = 0
+
+
+class _ConditionalDummyNet(_DummyNet):
+    label_dim = 4
 
 
 class _DummyDetector:
@@ -177,6 +182,144 @@ class MetricArtifactRetentionTests(unittest.TestCase):
                     detector_kwargs={},
                     max_items=3,
                 )
+
+    def test_balanced_labels_are_direct_one_hot_without_dataset_lookup(self):
+        observed_labels = []
+
+        def generator(_net, latents, labels, **_kwargs):
+            observed_labels.append(labels.cpu())
+            return torch.tanh(latents / 80)
+
+        opts = metric_utils.MetricOptions(
+            generator_fn=generator,
+            G=_ConditionalDummyNet(),
+            dataset_kwargs={},
+            device=torch.device('cpu'),
+            sample_seeds=[0, 1, 4, 7],
+            balanced_class_labels=4,
+        )
+        with mock.patch.object(
+            metric_utils.dnnlib.util,
+            'construct_class_by_name',
+            side_effect=AssertionError('balanced labels must not load dataset rows'),
+        ), mock.patch.object(
+            metric_utils,
+            'get_feature_detector',
+            return_value=_DummyDetector(),
+        ):
+            metric_utils.compute_feature_stats_for_generator(
+                opts,
+                detector_url='unused',
+                detector_kwargs={},
+                batch_size=2,
+                batch_gen=1,
+                capture_all=True,
+                max_items=4,
+            )
+
+        labels = torch.cat(observed_labels)
+        self.assertEqual(labels.shape, (4, 4))
+        self.assertEqual(labels.dtype, torch.float32)
+        self.assertEqual(labels.argmax(dim=1).tolist(), [0, 1, 0, 3])
+        torch.testing.assert_close(labels.sum(dim=1), torch.ones(4))
+
+    def test_fid_and_kid_score_only_precomputed_feature_files(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            rng = np.random.RandomState(17)
+            real = rng.normal(size=(12, 8)).astype(np.float32)
+            generated = rng.normal(size=(6, 8)).astype(np.float32)
+            real_path = os.path.join(tmpdir, 'real.npy')
+            generated_path = os.path.join(tmpdir, 'generated.npy')
+            np.save(real_path, real, allow_pickle=False)
+            np.save(generated_path, generated, allow_pickle=False)
+            opts = metric_utils.MetricOptions(
+                G=None,
+                dataset_kwargs={},
+                rank=0,
+                num_gpus=1,
+                device=torch.device('cpu'),
+                precomputed_real_features_path=real_path,
+                precomputed_generated_features_path=generated_path,
+            )
+            with mock.patch.object(
+                metric_utils.dnnlib.util,
+                'construct_class_by_name',
+                side_effect=AssertionError('scoring must not load a dataset'),
+            ), mock.patch.object(
+                metric_utils,
+                'get_feature_detector',
+                side_effect=AssertionError('scoring must not load a detector'),
+            ):
+                fid = frechet_inception_distance.compute_fid(
+                    opts, max_real=None, num_gen=6
+                )
+                kid = kernel_inception_distance.compute_kid(
+                    opts,
+                    max_real=None,
+                    num_gen=6,
+                    num_subsets=5,
+                    max_subset_size=4,
+                    random_seed=20260730,
+                )
+
+            self.assertTrue(np.isfinite(fid))
+            self.assertTrue(np.isfinite(kid))
+
+    def test_formal_scorer_passes_one_generated_feature_path_to_both_metrics(self):
+        with mock.patch.object(
+            metric_main,
+            'calc_metric',
+            side_effect=[{'fid': 1.0}, {'kid': 2.0}],
+        ) as calc_metric:
+            result = metric_main.calc_imagenet64_fid_kid_from_features(
+                'generated.npy', 'real.npy', metric_seed=20260730
+            )
+
+        self.assertEqual(result.fid, {'fid': 1.0})
+        self.assertEqual(result.kid, {'kid': 2.0})
+        self.assertEqual(calc_metric.call_count, 2)
+        for call in calc_metric.call_args_list:
+            self.assertEqual(
+                call.kwargs['precomputed_generated_features_path'],
+                'generated.npy',
+            )
+            self.assertEqual(
+                call.kwargs['precomputed_real_features_path'],
+                'real.npy',
+            )
+            self.assertEqual(call.kwargs['metric_seed'], 20260730)
+
+        with self.assertRaisesRegex(ValueError, 'metric_seed=20260730'):
+            metric_main.calc_imagenet64_fid_kid_from_features(
+                'generated.npy', 'real.npy', metric_seed=17
+            )
+
+    def test_formal_imagenet_fid_uses_official_unbiased_covariance(self):
+        opts = metric_utils.MetricOptions(G=None, dataset_kwargs={})
+        with mock.patch.object(
+            frechet_inception_distance, 'compute_fid', return_value=1.0,
+        ) as compute_fid:
+            result = metric_main.imagenet64_fid50k_full(opts)
+        self.assertEqual(result, {'imagenet64_fid50k_full': 1.0})
+        self.assertTrue(compute_fid.call_args.kwargs['unbiased'])
+        self.assertEqual(
+            compute_fid.call_args.kwargs['detector_url'],
+            metric_utils.OFFICIAL_EDM2_INCEPTION_URL,
+        )
+
+    def test_formal_imagenet_kid_uses_official_detector(self):
+        opts = metric_utils.MetricOptions(
+            G=None, dataset_kwargs={}, metric_seed=20260730,
+        )
+        with mock.patch.object(
+            kernel_inception_distance, 'compute_kid', return_value=2.0,
+        ) as compute_kid:
+            result = metric_main.imagenet64_kid50k_full(opts)
+        self.assertEqual(result, {'imagenet64_kid50k_full': 2.0})
+        self.assertEqual(
+            compute_kid.call_args.kwargs['detector_url'],
+            metric_utils.OFFICIAL_EDM2_INCEPTION_URL,
+        )
 
 if __name__ == '__main__':
     unittest.main()
