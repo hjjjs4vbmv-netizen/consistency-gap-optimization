@@ -21,17 +21,45 @@ NEW_LABEL = "persistent_state_feedback_dominance"
 
 def relabel(summary: Mapping[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(dict(summary))
-    result["schema_version"] = 2
+    result["schema_version"] = max(2, int(result.get("schema_version", 1)))
+    migrated = False
     for item in result["mechanism_by_arm_and_block"].values():
         if item["classification"] == OLD_LABEL:
             item["classification"] = NEW_LABEL
+            migrated = True
     rules = result["mechanism_decision_rules"]
-    rules[NEW_LABEL] = rules.pop(OLD_LABEL)
-    result["interpretation_guard"] = (
-        "R_over_b is a scale diagnostic, never a contribution percentage; "
-        "large state-block values identify history-dominated state propagation, "
-        "not a dynamical gain or quality mechanism."
-    )
+    if OLD_LABEL in rules:
+        rules[NEW_LABEL] = rules.pop(OLD_LABEL)
+        migrated = True
+    if migrated:
+        result["interpretation_guard"] = (
+            "R_over_b is a scale diagnostic, never a contribution percentage; "
+            "large state-block values identify history-dominated state propagation, "
+            "not a dynamical gain or quality mechanism."
+        )
+    old_gate = result.pop("amplification_claim_gate", None)
+    if old_gate is not None:
+        result["strong_expansion_claim_gate"] = old_gate
+    for item in result["mechanism_by_arm_and_block"].values():
+        if "amplification_term_allowed" in item:
+            item["strong_expansion_claim_allowed"] = item.pop(
+                "amplification_term_allowed")
+        if "amplification_gate_reason" in item:
+            item["strong_expansion_gate_reason"] = item.pop(
+                "amplification_gate_reason")
+    dominance = result["mechanism_decision_rules"].get(NEW_LABEL)
+    if isinstance(dominance, str):
+        result["mechanism_decision_rules"][NEW_LABEL] = dominance.replace(
+            "not an amplification claim", "not a stronger expansion claim")
+    propagation = result.get("pre_transition_propagation_interpretation", {})
+    if "G_gt_1_and_alignment_approximately_1" in propagation:
+        propagation["G_gt_1_and_alignment_approximately_1"] = (
+            "possible same-direction expansion, subject to the stronger causal claim gate"
+        )
+    if "low_alignment" in propagation:
+        propagation["low_alignment"] = (
+            "rotation or complex deformation rather than simple same-direction expansion"
+        )
     return result
 
 

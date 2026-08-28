@@ -3,6 +3,7 @@
 
 For X in {B,C,D}, this runner evaluates, at every k,
 
+    Delta_k^X = psi(z_k^X) - psi(z_k^A)
     b_k^X = Phi_X(z_k^A, xi_k) - Phi_A(z_k^A, xi_k)
     R_k^X = Phi_X(z_k^X, xi_k) - Phi_X(z_k^A, xi_k)
 
@@ -10,9 +11,11 @@ and checks the telescoping identity
 
     z_{k+1}^X - z_{k+1}^A = b_k^X + R_k^X.
 
-The same three-point subtraction is applied to two common observables: a
-signed residual vector and fixed-latent EMA features.  No norm ratio is
-reported as a contribution percentage because b and R can cancel.
+The same separation is applied to two common observables: a signed residual
+vector and fixed-latent EMA features.  State-block rows additionally remove
+the transition's actual carryover rule from R wherever that rule is declared.
+No norm ratio is reported as a contribution percentage because vector terms
+can reinforce, rotate, or cancel.
 """
 from __future__ import annotations
 
@@ -60,15 +63,24 @@ FORMAL_HASHES = {
     "training_state": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
     "checkpoint": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
     "batch_file": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+    "batch_tensor_receipts": (
+        "b1eb60e44bdd7f4e6648d2af1439cf36a3873de20b6009d963295ab3abb804e9"
+    ),
 }
 LEGACY_ROLLOUT = (
     REPO_ROOT / "analysis/operator_clock_gate/results/raw_receipts/formal-20260826/"
     "results/matched/matched_micro_rollout.json"
 )
+NORM_EPSILON = 1e-30
 CSV_FIELDS = (
     "arm", "k", "next_k", "space", "block", "coordinate_count",
-    "b_norm", "R_norm", "delta_norm", "cos_b_R", "cos_b_delta",
-    "cos_R_delta", "R_over_b_diagnostic", "closure_l2",
+    "delta_k_norm", "b_norm", "R_norm", "delta_norm",
+    "feedback_gain_G", "cos_R_delta_k", "cos_b_R", "cos_b_delta",
+    "cos_R_delta", "R_over_b_diagnostic", "carryover_rule",
+    "carryover_retention_min", "carryover_retention_max",
+    "carryover_norm", "corrected_R_norm", "corrected_R_over_delta_k",
+    "corrected_R_over_b", "cos_corrected_R_delta_k",
+    "cos_corrected_R_b", "cos_corrected_R_R", "closure_l2",
     "closure_relative", "closure_max_abs", "closure_pass",
 )
 
@@ -121,18 +133,152 @@ def _safe_cos(dot: float, left_norm: float, right_norm: float) -> float | None:
     return max(-1.0, min(1.0, dot / denominator))
 
 
+def _clone_tensor_map(
+    values: Mapping[str, torch.Tensor],
+) -> dict[str, torch.Tensor]:
+    """Freeze a coordinate map before an in-place transition mutates its state."""
+    return {name: value.detach().clone() for name, value in values.items()}
+
+
+def _optimizer_retentions(
+    state: AlgorithmicState, *, beta_index: int,
+) -> dict[str, float]:
+    """Read per-parameter RAdam retention from the actual optimizer groups."""
+    if beta_index not in (0, 1):
+        raise ValueError("beta_index must select beta1 or beta2")
+    parameter_names = {id(value): name for name, value in state.net.named_parameters()}
+    retentions: dict[str, float] = {}
+    for group in state.optimizer.param_groups:
+        betas = group.get("betas")
+        if not isinstance(betas, (tuple, list)) or len(betas) != 2:
+            raise RuntimeError("carryover correction requires optimizer betas")
+        retention = float(betas[beta_index])
+        if not 0.0 <= retention <= 1.0:
+            raise RuntimeError("optimizer retention must lie in [0,1]")
+        for parameter in group["params"]:
+            name = parameter_names.get(id(parameter))
+            if name is None:
+                raise RuntimeError("optimizer parameter is not owned by state.net")
+            if name in retentions:
+                raise RuntimeError(f"optimizer parameter {name!r} appears in two groups")
+            retentions[name] = retention
+    if set(retentions) != set(parameter_names.values()):
+        raise RuntimeError("optimizer groups do not cover the network parameter schema")
+    return retentions
+
+
+def carryover_only_map(
+    block: str,
+    pre_baseline: Mapping[str, torch.Tensor],
+    pre_actual: Mapping[str, torch.Tensor],
+    transition_state: AlgorithmicState,
+    *,
+    optimizer_step_skipped: bool = False,
+    optimizer_skip_regime_paired: bool = True,
+) -> tuple[dict[str, torch.Tensor] | None, dict[str, Any]]:
+    """Apply only the real transition retention to an incoming separation.
+
+    This deliberately does not approximate EMA with one arbitrary beta.  The
+    production transition lerps EMA parameters with ``ema_beta`` but leaves EMA
+    buffers unchanged, so those coordinates receive different retention maps.
+    """
+    if set(pre_baseline) != set(pre_actual):
+        raise RuntimeError("pre-transition coordinate schemas differ")
+    if block == "theta":
+        retentions = {name: 1.0 for name in pre_baseline}
+        rule = "identity_parameter_carryover"
+        source = "theta_next=theta_prev+optimizer_update"
+    elif block in {"m", "v"}:
+        if not optimizer_skip_regime_paired:
+            return None, {
+                "rule": "undefined_across_optimizer_skip_regime_mismatch",
+                "retention_source": "paired transition telemetry.step_skipped",
+                "retention_values": [],
+            }
+        beta_index = 0 if block == "m" else 1
+        optimizer_retentions = (
+            {name: 1.0 for name in pre_baseline}
+            if optimizer_step_skipped else
+            _optimizer_retentions(transition_state, beta_index=beta_index)
+        )
+        if set(optimizer_retentions) != set(pre_baseline):
+            raise RuntimeError(f"{block} coordinates do not match optimizer groups")
+        retentions = optimizer_retentions
+        rule = (
+            "optimizer_step_skipped_identity_carryover"
+            if optimizer_step_skipped else
+            f"radam_beta{beta_index + 1}_per_parameter_group"
+        )
+        source = (
+            "paired transition telemetry.step_skipped"
+            if optimizer_step_skipped else
+            f"optimizer.param_groups[*].betas[{beta_index}]"
+        )
+    elif block == "EMA":
+        ema_beta = float(transition_state.ema_beta)
+        if not 0.0 <= ema_beta <= 1.0:
+            raise RuntimeError("EMA retention must lie in [0,1]")
+        retentions = {}
+        for name in pre_baseline:
+            if name.startswith("parameter."):
+                retentions[name] = ema_beta
+            elif name.startswith("buffer."):
+                # transition_step updates EMA parameters only; buffers persist.
+                retentions[name] = 1.0
+            else:
+                raise RuntimeError(f"unknown EMA coordinate {name!r}")
+        rule = "ema_transition_carryover_counterfactual_map"
+        source = (
+            "transition_step parameter lerp with AlgorithmicState.ema_beta; "
+            "EMA buffers unchanged"
+        )
+    else:
+        return None, {
+            "rule": "not_declared_for_this_readout",
+            "retention_source": None,
+            "retention_values": [],
+        }
+    carryover = {
+        name: (pre_actual[name].detach() - pre_baseline[name].detach())
+        * retentions[name]
+        for name in pre_baseline
+    }
+    return carryover, {
+        "rule": rule,
+        "retention_source": source,
+        "retention_values": sorted(set(retentions.values())),
+    }
+
+
 def exact_three_point_metrics(
     baseline: Mapping[str, torch.Tensor],
     counterfactual: Mapping[str, torch.Tensor],
     actual: Mapping[str, torch.Tensor],
     *,
+    pre_baseline: Mapping[str, torch.Tensor] | None = None,
+    pre_actual: Mapping[str, torch.Tensor] | None = None,
+    carryover: Mapping[str, torch.Tensor] | None = None,
+    norm_epsilon: float = NORM_EPSILON,
     closure_atol: float = 1e-12,
     closure_rtol: float = 1e-12,
 ) -> dict[str, Any]:
-    """Compute b, R and delta metrics without materializing a flat vector."""
+    """Compute forcing, propagation and corrected-feedback vector metrics."""
     if set(baseline) != set(counterfactual) or set(baseline) != set(actual):
         raise RuntimeError("three-point coordinate schemas differ")
-    sums = {key: 0.0 for key in ("b2", "R2", "d2", "bR", "bd", "Rd", "c2")}
+    if (pre_baseline is None) != (pre_actual is None):
+        raise ValueError("pre_baseline and pre_actual must be supplied together")
+    if pre_baseline is not None and (
+        set(pre_baseline) != set(baseline) or set(pre_actual) != set(baseline)
+    ):
+        raise RuntimeError("pre/post coordinate schemas differ")
+    if carryover is not None and set(carryover) != set(baseline):
+        raise RuntimeError("carryover coordinate schema differs")
+    if not math.isfinite(float(norm_epsilon)) or norm_epsilon <= 0:
+        raise ValueError("norm_epsilon must be positive and finite")
+    sums = {key: 0.0 for key in (
+        "b2", "R2", "d2", "dk2", "bR", "bd", "Rd", "Rdk", "c2",
+        "carry2", "corrected2", "corrected_dk", "corrected_b", "corrected_R",
+    )}
     closure_max = 0.0
     coordinate_count = 0
     with torch.no_grad():
@@ -146,6 +292,13 @@ def exact_three_point_metrics(
             feedback = x - c
             delta = x - a
             closure = b + feedback - delta
+            delta_k = None
+            if pre_baseline is not None and pre_actual is not None:
+                pre_a = pre_baseline[name].detach().double()
+                pre_x = pre_actual[name].detach().double()
+                if pre_a.shape != a.shape or pre_x.shape != a.shape:
+                    raise RuntimeError(f"pre/post shape mismatch for {name}")
+                delta_k = pre_x - pre_a
             sums["b2"] += float(b.square().sum())
             sums["R2"] += float(feedback.square().sum())
             sums["d2"] += float(delta.square().sum())
@@ -153,23 +306,72 @@ def exact_three_point_metrics(
             sums["bd"] += float((b * delta).sum())
             sums["Rd"] += float((feedback * delta).sum())
             sums["c2"] += float(closure.square().sum())
+            if delta_k is not None:
+                sums["dk2"] += float(delta_k.square().sum())
+                sums["Rdk"] += float((feedback * delta_k).sum())
+            if carryover is not None:
+                retained = carryover[name].detach().double()
+                if retained.shape != a.shape:
+                    raise RuntimeError(f"carryover shape mismatch for {name}")
+                corrected = feedback - retained
+                sums["carry2"] += float(retained.square().sum())
+                sums["corrected2"] += float(corrected.square().sum())
+                sums["corrected_b"] += float((corrected * b).sum())
+                sums["corrected_R"] += float((corrected * feedback).sum())
+                if delta_k is None:
+                    raise ValueError("carryover metrics require pre-transition separation")
+                sums["corrected_dk"] += float((corrected * delta_k).sum())
             if closure.numel():
                 closure_max = max(closure_max, float(closure.abs().max()))
             coordinate_count += int(a.numel())
     b_norm = math.sqrt(sums["b2"])
     feedback_norm = math.sqrt(sums["R2"])
     delta_norm = math.sqrt(sums["d2"])
+    delta_k_norm = math.sqrt(sums["dk2"]) if pre_baseline is not None else None
     closure_l2 = math.sqrt(sums["c2"])
     closure_limit = float(closure_atol) + float(closure_rtol) * delta_norm
+    carryover_norm = math.sqrt(sums["carry2"]) if carryover is not None else None
+    corrected_norm = math.sqrt(sums["corrected2"]) if carryover is not None else None
     return {
         "coordinate_count": coordinate_count,
+        "delta_k_norm": delta_k_norm,
         "b_norm": b_norm,
         "R_norm": feedback_norm,
         "delta_norm": delta_norm,
+        "feedback_gain_G": (
+            feedback_norm / max(float(delta_k_norm), float(norm_epsilon))
+            if delta_k_norm is not None else None
+        ),
+        "cos_R_delta_k": (
+            _safe_cos(sums["Rdk"], feedback_norm, delta_k_norm)
+            if delta_k_norm is not None else None
+        ),
         "cos_b_R": _safe_cos(sums["bR"], b_norm, feedback_norm),
         "cos_b_delta": _safe_cos(sums["bd"], b_norm, delta_norm),
         "cos_R_delta": _safe_cos(sums["Rd"], feedback_norm, delta_norm),
         "R_over_b_diagnostic": (feedback_norm / b_norm if b_norm else None),
+        "carryover_norm": carryover_norm,
+        "corrected_R_norm": corrected_norm,
+        "corrected_R_over_delta_k": (
+            corrected_norm / max(float(delta_k_norm), float(norm_epsilon))
+            if corrected_norm is not None and delta_k_norm is not None else None
+        ),
+        "corrected_R_over_b": (
+            corrected_norm / max(b_norm, float(norm_epsilon))
+            if corrected_norm is not None else None
+        ),
+        "cos_corrected_R_delta_k": (
+            _safe_cos(sums["corrected_dk"], corrected_norm, delta_k_norm)
+            if corrected_norm is not None and delta_k_norm is not None else None
+        ),
+        "cos_corrected_R_b": (
+            _safe_cos(sums["corrected_b"], corrected_norm, b_norm)
+            if corrected_norm is not None else None
+        ),
+        "cos_corrected_R_R": (
+            _safe_cos(sums["corrected_R"], corrected_norm, feedback_norm)
+            if corrected_norm is not None else None
+        ),
         "closure_l2": closure_l2,
         "closure_relative": closure_l2 / max(delta_norm, torch.finfo(torch.float64).tiny),
         "closure_max_abs": closure_max,
@@ -295,11 +497,25 @@ def _row(
     baseline: Mapping[str, torch.Tensor],
     counterfactual: Mapping[str, torch.Tensor],
     actual: Mapping[str, torch.Tensor],
+    *,
+    pre_baseline: Mapping[str, torch.Tensor],
+    pre_actual: Mapping[str, torch.Tensor],
+    carryover: Mapping[str, torch.Tensor] | None = None,
+    carryover_metadata: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
+    metadata = dict(carryover_metadata or {})
+    retentions = [float(value) for value in metadata.get("retention_values", [])]
     return {
         "arm": arm, "k": k, "next_k": k + 1,
         "space": space, "block": block,
-        **exact_three_point_metrics(baseline, counterfactual, actual),
+        "carryover_rule": metadata.get("rule"),
+        "carryover_retention_min": min(retentions) if retentions else None,
+        "carryover_retention_max": max(retentions) if retentions else None,
+        **exact_three_point_metrics(
+            baseline, counterfactual, actual,
+            pre_baseline=pre_baseline, pre_actual=pre_actual,
+            carryover=carryover,
+        ),
     }
 
 
@@ -348,12 +564,21 @@ def run_exact_decomposition(
     branches = {arm: source.clone() for arm in "ABCD"}
     rows: list[dict[str, Any]] = []
     step_receipts = []
+    carryover_rules: dict[str, list[dict[str, Any]]] = {}
     state_hashes = [{"k": 0, "by_arm": {arm: branches[arm].sha256() for arm in "ABCD"}}]
     with preserved_rng():
         for k in range(steps):
             batch = batches[k % len(batches)]
             pairing_seed = int(batch.audit_id) + k
             z_a = branches["A"]
+            a_pre_blocks = {
+                block: _clone_tensor_map(values)
+                for block, values in _state_tensor_blocks(z_a).items()
+            }
+            a_pre_observables = (
+                observable_vectors(z_a, batches[0], latent)
+                if include_observables else {}
+            )
             a_after, a_telemetry = _transition(
                 z_a, batch, "A", pairing_seed, clone_input=True)
             a_blocks = _state_tensor_blocks(a_after)
@@ -361,6 +586,14 @@ def run_exact_decomposition(
                              if include_observables else {})
             arm_receipts = {}
             for arm in "BCD":
+                x_pre_blocks = {
+                    block: _clone_tensor_map(values)
+                    for block, values in _state_tensor_blocks(branches[arm]).items()
+                }
+                x_pre_observables = (
+                    observable_vectors(branches[arm], batches[0], latent)
+                    if include_observables else {}
+                )
                 # Both Phi_A(zA) and Phi_X(zA) receive clones of exactly zA,
                 # so optimizer moments, optimizer step and AMP state are paired.
                 counterfactual, cf_telemetry = _transition(
@@ -369,19 +602,44 @@ def run_exact_decomposition(
                     branches[arm], batch, arm, pairing_seed, clone_input=False)
                 cf_blocks = _state_tensor_blocks(counterfactual)
                 actual_blocks = _state_tensor_blocks(actual_after)
-                if set(a_blocks) != set(cf_blocks) or set(a_blocks) != set(actual_blocks):
+                if (set(a_blocks) != set(cf_blocks)
+                        or set(a_blocks) != set(actual_blocks)
+                        or set(a_blocks) != set(a_pre_blocks)
+                        or set(a_blocks) != set(x_pre_blocks)):
                     raise RuntimeError("augmented state block schemas differ")
                 for block in a_blocks:
+                    carryover, carryover_metadata = carryover_only_map(
+                        block, a_pre_blocks[block], x_pre_blocks[block], actual_after,
+                        optimizer_step_skipped=bool(
+                            actual_telemetry["step_skipped"]),
+                        optimizer_skip_regime_paired=(
+                            bool(actual_telemetry["step_skipped"])
+                            == bool(cf_telemetry["step_skipped"])),
+                    )
+                    observed_rules = carryover_rules.setdefault(block, [])
+                    if carryover_metadata not in observed_rules:
+                        observed_rules.append(dict(carryover_metadata))
                     rows.append(_row(
                         arm, k, "state", block, a_blocks[block],
-                        cf_blocks[block], actual_blocks[block]))
+                        cf_blocks[block], actual_blocks[block],
+                        pre_baseline=a_pre_blocks[block],
+                        pre_actual=x_pre_blocks[block],
+                        carryover=carryover,
+                        carryover_metadata=carryover_metadata))
                 if include_observables:
                     cf_observables = observable_vectors(counterfactual, batches[0], latent)
                     actual_observables = observable_vectors(actual_after, batches[0], latent)
                     for block in ("residual", "feature"):
                         rows.append(_row(
                             arm, k, "observable", block, a_observables[block],
-                            cf_observables[block], actual_observables[block]))
+                            cf_observables[block], actual_observables[block],
+                            pre_baseline=a_pre_observables[block],
+                            pre_actual=x_pre_observables[block],
+                            carryover_metadata={
+                                "rule": "not_declared_for_this_readout",
+                                "retention_source": None,
+                                "retention_values": [],
+                            }))
                 forcing_input = a_telemetry["input_augmented_state"]
                 forcing_input_cf = cf_telemetry["input_augmented_state"]
                 if forcing_input_cf != forcing_input:
@@ -412,12 +670,27 @@ def run_exact_decomposition(
     observed_blocks = {row["block"] for row in rows if row["space"] == "state"}
     closure_pass = all(row["closure_pass"] for row in rows)
     receipt = {
-        "schema_version": 1,
+        "schema_version": 2,
         "kind": "exact_nonlinear_forcing_feedback",
         "definition": {
+            "pre_transition_separation": "psi(z_k^X)-psi(z_k^A)",
             "forcing": "Phi_X(z_k^A,xi_k)-Phi_A(z_k^A,xi_k)",
             "feedback": "Phi_X(z_k^X,xi_k)-Phi_X(z_k^A,xi_k)",
             "closure": "z_{k+1}^X-z_{k+1}^A=b_k^X+R_k^X",
+            "feedback_gain": "||R_k||/max(||Delta_k||,epsilon)",
+            "feedback_alignment": "cos(R_k,Delta_k)",
+            "incremental_feedback": "R_tilde_k=R_k-carryover_only(Delta_k)",
+        },
+        "norm_epsilon": NORM_EPSILON,
+        "carryover_correction": {
+            "rules_by_state_block": carryover_rules,
+            "theta_formula": "R_tilde_k^theta=R_k^theta-Delta_k^theta",
+            "m_formula": "R_tilde_k^m=R_k^m-beta1*Delta_k^m",
+            "v_formula": "R_tilde_k^v=R_k^v-beta2*Delta_k^v",
+            "ema_formula": (
+                "R_tilde_k^EMA=R_k^EMA-"
+                "carryover_only_transition_map(Delta_k^EMA)"
+            ),
         },
         "steps": steps,
         "arms": {arm: ARM_SPECS[arm] for arm in "ABCD"},
@@ -473,6 +746,22 @@ def _mechanism_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         early_ratio = _median(item["R_over_b_diagnostic"] for item in items[:split])
         late_ratio = _median(item["R_over_b_diagnostic"] for item in late)
         late_alignment = _median(item["cos_R_delta"] for item in late)
+        gains = [item.get("feedback_gain_G") for item in items]
+        aligned_expansion_fraction = sum(
+            item.get("feedback_gain_G") is not None
+            and item["feedback_gain_G"] > 1.0
+            and item.get("cos_R_delta_k") is not None
+            and item["cos_R_delta_k"] >= 0.8
+            for item in items
+        ) / len(items)
+        contraction_fraction = sum(
+            value is not None and value < 1.0 for value in gains
+        ) / len(items)
+        low_alignment_fraction = sum(
+            item.get("cos_R_delta_k") is not None
+            and item["cos_R_delta_k"] < 0.8
+            for item in items
+        ) / len(items)
         if cancellation_fraction >= 0.5:
             label = "forcing_feedback_cancellation"
         elif forcing_fraction >= 0.8:
@@ -493,6 +782,29 @@ def _mechanism_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
             "early_quarter_median_R_over_b": early_ratio,
             "late_quarter_median_R_over_b": late_ratio,
             "late_quarter_median_cos_R_delta": late_alignment,
+            "early_quarter_median_feedback_gain_G": _median(
+                item.get("feedback_gain_G") for item in items[:split]),
+            "late_quarter_median_feedback_gain_G": _median(
+                item.get("feedback_gain_G") for item in late),
+            "late_quarter_median_cos_R_delta_k": _median(
+                item.get("cos_R_delta_k") for item in late),
+            "contraction_fraction_G_lt_1": contraction_fraction,
+            "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": (
+                aligned_expansion_fraction),
+            "low_alignment_fraction_cos_R_delta_k_lt_0p8": (
+                low_alignment_fraction),
+            "median_corrected_R_over_delta_k": _median(
+                item.get("corrected_R_over_delta_k") for item in items),
+            "median_corrected_R_over_b": _median(
+                item.get("corrected_R_over_b") for item in items),
+            "median_cos_corrected_R_delta_k": _median(
+                item.get("cos_corrected_R_delta_k") for item in items),
+            "median_cos_corrected_R_b": _median(
+                item.get("cos_corrected_R_b") for item in items),
+            "strong_expansion_claim_allowed": False,
+            "strong_expansion_gate_reason": (
+                "second independent state replication is not part of this audit"
+            ),
         }
     return output
 
@@ -533,7 +845,7 @@ def build_summary(
     if include_full_receipt:
         replay_receipt["step_replay_receipts"] = step_receipts
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "status": receipt["status"],
         "task_1_existing_rollout_state_audit": dict(legacy_audit),
         "instrumentation": {
@@ -547,6 +859,7 @@ def build_summary(
             "max_l2": receipt["max_closure_l2"],
             "max_relative": receipt["max_closure_relative"],
         },
+        "carryover_correction": receipt["carryover_correction"],
         "mechanism_by_arm_and_block": _mechanism_summary(rows),
         "mechanism_decision_rules": {
             "persistent_forcing_accumulation": (
@@ -554,17 +867,42 @@ def build_summary(
             ),
             "persistent_state_feedback_dominance": (
                 "in the last quarter R>b on at least 75% of steps, median R/b>1, "
-                "median cos(R,delta)>=0.8, and late median R/b exceeds early median"
+                "median cos(R,Delta_next)>=0.8, and late median R/b exceeds early median; "
+                "this is a propagation/persistence label, not a stronger expansion claim"
             ),
             "forcing_feedback_cancellation": (
                 "cos(b,R)<=-0.9 and both ||b|| and ||R|| >= ||delta|| on at least "
                 "50% of steps"
             ),
         },
+        "pre_transition_propagation_interpretation": {
+            "G_approximately_1_and_alignment_approximately_1": (
+                "state persistence is the main observed propagation component"
+            ),
+            "G_lt_1": "contractive propagation",
+            "G_gt_1_and_alignment_approximately_1": (
+                "possible same-direction expansion, subject to the stronger causal claim gate"
+            ),
+            "low_alignment": (
+                "rotation or complex deformation rather than simple same-direction expansion"
+            ),
+        },
+        "strong_expansion_claim_gate": {
+            "required_facts": [
+                "G_k>1",
+                "R_k highly aligned with Delta_k",
+                "carryover-corrected R_tilde_k is non-trivial",
+                "direction is consistent in a second independent state replication",
+            ],
+            "second_state_replication_available": False,
+            "status": "WITHHELD",
+            "allowed_wording": "propagation / persistence",
+        },
         "interpretation_guard": (
             "R_over_b is a scale diagnostic, never a contribution percentage; "
             "large state-block values identify history-dominated state "
-            "propagation, not a dynamical gain or quality mechanism."
+            "propagation, not a quality mechanism. G is a measured propagation "
+            "gain only when paired with its direction cosine."
         ),
         "run_receipt": run_receipt,
     }
@@ -573,7 +911,10 @@ def build_summary(
 def write_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=CSV_FIELDS, extrasaction="ignore")
+        writer = csv.DictWriter(
+            handle, fieldnames=CSV_FIELDS, extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -582,7 +923,7 @@ def write_report(path: Path, summary: Mapping[str, Any]) -> None:
     legacy = summary["task_1_existing_rollout_state_audit"]
     closure = summary["exact_closure"]
     lines = [
-        "# Exact nonlinear forcing–feedback decomposition",
+        "# Forcing–feedback decomposition v2",
         "",
         f"Status: **{summary['status']}**",
         "",
@@ -601,29 +942,52 @@ def write_report(path: Path, summary: Mapping[str, Any]) -> None:
         f"All block/observable closures pass: **{closure['all_pass']}**; maximum relative "
         f"closure error: `{closure['max_relative']:.6g}`.",
         "",
-        "## Mechanism diagnostics",
+        "The CSV also records the pre-transition separation `Delta_k`, measured "
+        "propagation gain `G_k=||R_k||/max(||Delta_k||,epsilon)`, and "
+        "`cos(R_k,Delta_k)` for every state block and observable.",
         "",
-        "| arm | space | block | classification | early median R/b | late median R/b | late cos(R,Δ) |",
-        "|---|---|---|---|---:|---:|---:|",
+        "## Propagation and incremental-feedback diagnostics",
+        "",
+        "| arm | space | block | classification | late G | late cos(R,Delta_k) | median corrected R/Delta_k | median corrected R/b | median cos(corrected R,Delta_k) |",
+        "|---|---|---|---|---:|---:|---:|---:|---:|",
     ]
     for item in summary["mechanism_by_arm_and_block"].values():
         def fmt(value: Any) -> str:
             return "NA" if value is None else f"{float(value):.4g}"
         lines.append(
             f"| {item['arm']} | {item['space']} | {item['block']} | "
-            f"{item['classification']} | {fmt(item['early_quarter_median_R_over_b'])} | "
-            f"{fmt(item['late_quarter_median_R_over_b'])} | "
-            f"{fmt(item['late_quarter_median_cos_R_delta'])} |"
+            f"{item['classification']} | "
+            f"{fmt(item['late_quarter_median_feedback_gain_G'])} | "
+            f"{fmt(item['late_quarter_median_cos_R_delta_k'])} | "
+            f"{fmt(item['median_corrected_R_over_delta_k'])} | "
+            f"{fmt(item['median_corrected_R_over_b'])} | "
+            f"{fmt(item['median_cos_corrected_R_delta_k'])} |"
         )
     lines += [
+        "",
+        "`G≈1` with alignment near one indicates persistence; `G<1` indicates "
+        "contractive propagation. `G>1` with high alignment is only possible "
+        "same-direction expansion. Low alignment indicates rotation or more "
+        "complex deformation.",
+        "",
+        "For `theta`, corrected feedback subtracts `Delta_k`. For RAdam `m` and "
+        "`v`, it subtracts the actual per-parameter-group `beta1*Delta_k` and "
+        "`beta2*Delta_k`. EMA uses the implemented transition map: parameters "
+        "retain `AlgorithmicState.ema_beta`, while EMA buffers are unchanged and "
+        "therefore retain their full incoming separation. No arbitrary EMA beta "
+        "is introduced. The CSV additionally records corrected alignment against "
+        "the incoming separation, current forcing, and raw propagation term.",
+        "",
+        "No mechanism winner is selected. Only propagation/persistence wording is "
+        "used: this audit has no second independent state replication, so the "
+        "stronger causal claim gate is not satisfied.",
         "",
         "## Interpretation boundary",
         "",
         "`R/b` is reported only as a scale diagnostic. It is not a contribution "
         "percentage: large forcing and feedback terms can be nearly antiparallel and cancel.",
         "For persistent state blocks, the dominance label means that accumulated state "
-        "history is larger than the current common-state forcing. It is not an amplification "
-        "factor because R contains retained parameter, EMA, and optimizer-state differences.",
+        "history is larger than the current common-state forcing; it is a propagation label.",
         "Residual closure uses a common signed arm-A validation residual map for all three "
         "post-transition states; feature closure uses the same fixed-latent EMA map.",
         "",
@@ -646,6 +1010,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
                         help="Debug only; formal runs must include observables")
     parser.add_argument("--legacy-rollout", type=Path, default=LEGACY_ROLLOUT)
     parser.add_argument(
+        "--expected-batch-tensor-receipts-sha256",
+        default=FORMAL_HASHES["batch_tensor_receipts"],
+        help=(
+            "Canonical SHA256 of all frozen microbatch image/label/t/noise/"
+            "dropout tensor receipts; validates content across container rebuilds"
+        ),
+    )
+    parser.add_argument(
         "--full-summary", action="store_true",
         help="Include full per-step replay telemetry; intended for external archives",
     )
@@ -660,6 +1032,27 @@ def run(args: argparse.Namespace) -> int:
     assets["implementation"][Path(__file__).name] = cli_common.sha256_file(Path(__file__))
     source = cli_common.load_algorithmic_state(args)
     batches = cli_common.load_frozen_batches(args, source.loss_fn)
+    batch_tensor_receipts = [_batch_receipt(item) for item in batches]
+    batch_tensor_receipts_sha256 = _canonical_sha256(batch_tensor_receipts)
+    if (args.expected_batch_tensor_receipts_sha256 is not None
+            and batch_tensor_receipts_sha256
+            != args.expected_batch_tensor_receipts_sha256):
+        raise RuntimeError(
+            "frozen batch tensor receipt SHA256 mismatch: "
+            f"{batch_tensor_receipts_sha256} != "
+            f"{args.expected_batch_tensor_receipts_sha256}")
+    assets["batch_tensor_receipts"] = {
+        "microbatch_count": sum(
+            item["microbatch_count"] for item in batch_tensor_receipts),
+        "canonical_sha256": batch_tensor_receipts_sha256,
+        "expected_canonical_sha256": (
+            args.expected_batch_tensor_receipts_sha256),
+        "matched": (
+            args.expected_batch_tensor_receipts_sha256 is None
+            or batch_tensor_receipts_sha256
+            == args.expected_batch_tensor_receipts_sha256),
+        "scope": "images, labels, t, noise, and dropout RNG state",
+    }
     latent = None
     if args.fixed_latent_file is not None:
         latent = torch.load(args.fixed_latent_file, map_location=args.device,
@@ -682,9 +1075,9 @@ def run(args: argparse.Namespace) -> int:
         rows, receipt, legacy, assets,
         include_full_receipt=args.full_summary,
     )
-    write_csv(args.out / "forcing_feedback_per_step.csv", rows)
-    write_json(args.out / "forcing_feedback_summary.json", summary)
-    write_report(args.out / "FORCING_FEEDBACK_REPORT.md", summary)
+    write_csv(args.out / "forcing_feedback_per_step_v2.csv", rows)
+    write_json(args.out / "forcing_feedback_summary_v2.json", summary)
+    write_report(args.out / "FORCING_FEEDBACK_REPORT_V2.md", summary)
     return 0 if receipt["status"] in {"PASS", "DEBUG_ONLY"} else 3
 
 

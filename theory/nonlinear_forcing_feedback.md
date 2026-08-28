@@ -148,6 +148,29 @@ dependence, and the looseness of the local Lipschitz constants.
 
 ## 4. Directional interaction
 
+The propagation diagnostic must use the separation that exists before the
+transition,
+
+\[
+\Delta_k^\psi=\psi(z_k^B)-\psi(z_k^A),
+\]
+
+not the post-transition separation.  We therefore report
+
+\[
+G_k^\psi=
+\frac{\|R_k^\psi\|}
+{\max(\|\Delta_k^\psi\|,\epsilon)},
+\qquad
+a_k^\psi=\cos(R_k^\psi,\Delta_k^\psi).
+\]
+
+`G` is inseparable from its alignment: `G≈1` and `a≈1` indicates state
+persistence, `G<1` indicates contractive propagation, and `G>1` with `a≈1`
+is possible same-direction expansion.  Low alignment instead indicates
+rotation or more complex deformation.  None of these regimes identifies a
+scientifically preferable schedule.
+
 The exact identity gives
 
 \[
@@ -178,6 +201,55 @@ distinguishes three descriptive regimes:
 The ratio \(\|b_k\|/\|\Delta_{k+1}\|\) is not a contribution percentage.
 Vector terms can reinforce or cancel, and both terms depend on the chosen state
 readout and norm.
+
+### 4.1 Carryover-corrected incremental feedback
+
+Raw \(R_k\) includes the part of the incoming separation retained by a
+persistent state coordinate.  For parameters,
+
+\[
+\widetilde R_k^\theta=R_k^\theta-\Delta_k^\theta.
+\]
+
+For RAdam moments, the implemented parameter-group retentions give
+
+\[
+\widetilde R_k^m=R_k^m-\beta_1\Delta_k^m,
+\qquad
+\widetilde R_k^v=R_k^v-\beta_2\Delta_k^v.
+\]
+
+The implementation reads each parameter group's actual `betas`; it does not
+assume that all groups share one scalar.  EMA is also derived from the actual
+transition.  Its parameter update is
+
+\[
+e_{k+1}=\beta_{\rm EMA}e_k+(1-\beta_{\rm EMA})\theta_{k+1},
+\]
+
+while the audited transition leaves EMA buffers unchanged.  The EMA
+carryover-only counterfactual map consequently applies \(\beta_{\rm EMA}\) to
+parameter separation and identity retention to buffer separation.  This map,
+including its observed retention values and implementation source, is recorded
+in the output schema.
+
+For every corrected state block the audit reports
+
+\[
+\frac{\|\widetilde R_k\|}{\max(\|\Delta_k\|,\epsilon)},
+\qquad
+\frac{\|\widetilde R_k\|}{\max(\|b_k\|,\epsilon)},
+\]
+
+together with alignment against \(\Delta_k\), \(b_k\), and raw \(R_k\).
+This measures the new effect of trajectory separation on the current optimizer
+update after declared carryover is removed.
+
+A stronger causal expansion claim is withheld unless all of the following are
+observed: \(G_k>1\), strong alignment of \(R_k\) with \(\Delta_k\),
+non-trivial \(\widetilde R_k\), and directionally consistent evidence in a
+second independent state replication.  Otherwise the permitted descriptions
+are propagation and persistence.
 
 ## 5. Clock equivalence
 

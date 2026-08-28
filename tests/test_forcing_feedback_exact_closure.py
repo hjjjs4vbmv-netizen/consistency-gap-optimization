@@ -91,6 +91,18 @@ class ExactClosureTests(unittest.TestCase):
             self.assertTrue({("observable", "residual"), ("observable", "feature")}
                             .issubset(blocks))
             self.assertTrue(all(row["closure_pass"] for row in arm_rows))
+            self.assertTrue(all(row["delta_k_norm"] is not None for row in arm_rows))
+            self.assertTrue(all(row["feedback_gain_G"] is not None for row in arm_rows))
+            corrected = [row for row in arm_rows
+                         if row["space"] == "state"
+                         and row["block"] in {"theta", "EMA", "m", "v"}]
+            self.assertTrue(all(row["corrected_R_norm"] is not None
+                                for row in corrected))
+        rules = receipt["carryover_correction"]["rules_by_state_block"]
+        self.assertEqual(rules["theta"][0]["retention_values"], [1.0])
+        self.assertEqual(rules["m"][0]["retention_values"], [0.9])
+        self.assertEqual(rules["v"][0]["retention_values"], [0.999])
+        self.assertEqual(rules["EMA"][0]["retention_values"], [0.9])
 
     def test_state_blocks_are_not_collapsed_to_one_augmented_norm(self):
         state, _ = fixture()

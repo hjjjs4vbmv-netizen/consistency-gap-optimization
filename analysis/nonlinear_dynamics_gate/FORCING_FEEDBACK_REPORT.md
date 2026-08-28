@@ -44,5 +44,5 @@ All block/observable closures pass: **True**; maximum relative closure error: `0
 ## Interpretation boundary
 
 `R/b` is reported only as a scale diagnostic. It is not a contribution percentage: large forcing and feedback terms can be nearly antiparallel and cancel.
-For persistent state blocks, the dominance label means that accumulated state history is larger than the current common-state forcing. It is not an amplification factor because R contains retained parameter, EMA, and optimizer-state differences.
+For persistent state blocks, the dominance label means that accumulated state history is larger than the current common-state forcing; it is a propagation/persistence label.
 Residual closure uses a common signed arm-A validation residual map for all three post-transition states; feature closure uses the same fixed-latent EMA map.
