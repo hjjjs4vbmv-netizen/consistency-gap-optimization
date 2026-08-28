@@ -1,0 +1,112 @@
+{
+  "arm": "C",
+  "batch_id": 2026082601,
+  "detail": {
+    "arm": "C",
+    "branches": [
+      {
+        "finite": true,
+        "force_fp32": true,
+        "output_fd_epsilon": 0.00390625,
+        "predictor": "squared_loss_gauss_newton_action",
+        "residual_min_l2": 0.001841926836012465,
+        "source_preserved": true
+      },
+      {
+        "finite": true,
+        "force_fp32": true,
+        "output_fd_epsilon": 0.001953125,
+        "predictor": "squared_loss_gauss_newton_action",
+        "residual_min_l2": 0.001841926836012465,
+        "source_preserved": true
+      },
+      {
+        "finite": true,
+        "force_fp32": true,
+        "output_fd_epsilon": 0.0009765625,
+        "predictor": "squared_loss_gauss_newton_action",
+        "residual_min_l2": 0.001841926836012465,
+        "source_preserved": true
+      }
+    ],
+    "convergence": {
+      "best_adjacent_pair": {
+        "coarse_epsilon": 0.001953125,
+        "fine_epsilon": 0.0009765625,
+        "relative_change": 0.012625923217622022
+      },
+      "comparisons": [
+        {
+          "coarse_epsilon": 0.00390625,
+          "fine_epsilon": 0.001953125,
+          "relative_change": 0.045389459033270435
+        },
+        {
+          "coarse_epsilon": 0.001953125,
+          "fine_epsilon": 0.0009765625,
+          "relative_change": 0.012625923217622022
+        }
+      ],
+      "epsilon_metrics": [
+        {
+          "coarse_epsilon": null,
+          "cosine": null,
+          "epsilon": 0.00390625,
+          "finite": true,
+          "jvp_norm": 24.88269145358264,
+          "norm_ratio": null,
+          "relative_error": null
+        },
+        {
+          "coarse_epsilon": 0.00390625,
+          "cosine": 0.9995073337758825,
+          "epsilon": 0.001953125,
+          "finite": true,
+          "jvp_norm": 25.68630916697183,
+          "norm_ratio": 1.0322962535981406,
+          "relative_error": 0.045389459033270435
+        },
+        {
+          "coarse_epsilon": 0.001953125,
+          "cosine": 0.9999331697827849,
+          "epsilon": 0.0009765625,
+          "finite": true,
+          "jvp_norm": 25.81495649599567,
+          "norm_ratio": 1.0050084007082363,
+          "relative_error": 0.012625923217622022
+        }
+      ],
+      "epsilons": [
+        0.00390625,
+        0.001953125,
+        0.0009765625
+      ],
+      "finest_adjacent_pair": {
+        "coarse_epsilon": 0.001953125,
+        "fine_epsilon": 0.0009765625,
+        "relative_change": 0.012625923217622022
+      },
+      "passed": true,
+      "selection_rule": "smallest preregistered epsilon; convergence is the adjacent change from the next-smallest epsilon",
+      "tolerance": 0.05
+    },
+    "finite": true,
+    "predictor": "squared_loss_gauss_newton_action",
+    "selected_epsilon": 0.0009765625,
+    "source_preserved": true,
+    "status": "PASS"
+  },
+  "direction_id": 2026082613,
+  "direction_l2": 3962.7040403470132,
+  "direction_sha256": "83ccd7315db2bd62ceeedaf27a0a3156c3129dd0e87fd81eda63ad32df6bc369",
+  "epsilon_grid": [
+    0.00390625,
+    0.001953125,
+    0.0009765625
+  ],
+  "regime": "A_squared_gn_fp32",
+  "schema_version": 2,
+  "selected_jvp_l2": 25.81495649599567,
+  "selected_jvp_sha256": "62fe0275a59470c2410d76fe8e010358bc6b86e853379d9d8a9be7936695d119",
+  "status": "PASS"
+}

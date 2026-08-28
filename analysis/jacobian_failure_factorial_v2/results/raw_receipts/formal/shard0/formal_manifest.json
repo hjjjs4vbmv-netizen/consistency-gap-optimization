@@ -1,0 +1,273 @@
+{
+  "assets_after": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/data/raw/ECT/ect_runs/operator-clock-audit-20260826/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "280afb3dd5f79546245e47e970abefba434e39af5bb24a4c412a6dca08b6bb18",
+      "core.py": "1f92fa9a64244bab0651a617e473969300e430e525d3b0862300a9313b813d69",
+      "prepare_frozen_batches.py": "653e166ee34c163072784411251126b6c333df1f2813309068142264f2026773",
+      "run_algorithmic_jvp.py": "1348428fb926f06569da9953b9e6e22fed51e4a3108800cff844296db2288247",
+      "run_field_jvp.py": "a648013b9ed6ac211ea577cdae0e80a4de34668a417309726c2c16283f0f9508",
+      "run_matched_micro_rollout.py": "381a077133d65cf4d5e25f04f765b827037eb4294993cd371c8d579253e1275d"
+    },
+    "protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "cfb4649a88951b9a62b06f10d981a80f6af1376b26801042a3b47a2e2c02ac3a"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    },
+    "v2_implementation": {
+      "core.py": "40d82c0f12e8a04729c6b0cfbbf34151fc728490aefd9e0076d6fa32da0fc2e1",
+      "run_factorial.py": "86ba132e9645d8d358137fe9296281ee1f9be0cbc703d563aa018b5fe5722190"
+    },
+    "v2_protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/jacobian_failure_factorial_v2/protocol.json",
+      "sha256": "6df3ac6137e79880e40202c240b8e134b88ef327ba3618f1827f89e9a804aeb3"
+    }
+  },
+  "assets_before": {
+    "batch_file": {
+      "expected_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "matched": true,
+      "path": "/data/raw/ECT/ect_runs/operator-clock-audit-20260826/assets/four-frozen-batches.pt",
+      "sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929"
+    },
+    "checkpoint": {
+      "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/network-snapshot-latest.pkl",
+      "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+    },
+    "implementation": {
+      "cli_common.py": "280afb3dd5f79546245e47e970abefba434e39af5bb24a4c412a6dca08b6bb18",
+      "core.py": "1f92fa9a64244bab0651a617e473969300e430e525d3b0862300a9313b813d69",
+      "prepare_frozen_batches.py": "653e166ee34c163072784411251126b6c333df1f2813309068142264f2026773",
+      "run_algorithmic_jvp.py": "1348428fb926f06569da9953b9e6e22fed51e4a3108800cff844296db2288247",
+      "run_field_jvp.py": "a648013b9ed6ac211ea577cdae0e80a4de34668a417309726c2c16283f0f9508",
+      "run_matched_micro_rollout.py": "381a077133d65cf4d5e25f04f765b827037eb4294993cd371c8d579253e1275d"
+    },
+    "protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/operator_clock_gate/protocol.json",
+      "sha256": "cfb4649a88951b9a62b06f10d981a80f6af1376b26801042a3b47a2e2c02ac3a"
+    },
+    "training_state": {
+      "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+      "matched": true,
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/assets/training-state-latest.pt",
+      "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    },
+    "v2_implementation": {
+      "core.py": "40d82c0f12e8a04729c6b0cfbbf34151fc728490aefd9e0076d6fa32da0fc2e1",
+      "run_factorial.py": "86ba132e9645d8d358137fe9296281ee1f9be0cbc703d563aa018b5fe5722190"
+    },
+    "v2_protocol": {
+      "path": "/home/ECT002/role_c_jacobian_factorial_20260827/source/analysis/jacobian_failure_factorial_v2/protocol.json",
+      "sha256": "6df3ac6137e79880e40202c240b8e134b88ef327ba3618f1827f89e9a804aeb3"
+    }
+  },
+  "correctness_receipt": {
+    "cell_receipt": "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/correctness/shard0/armA_batch2026082601_dir2026082611_A_squared_gn_fp32.json",
+    "failure_action": null,
+    "formal_admissible": true,
+    "manifest": "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/correctness/shard0/correctness_manifest.json",
+    "protocol_sha256": "6df3ac6137e79880e40202c240b8e134b88ef327ba3618f1827f89e9a804aeb3",
+    "schema_version": 2,
+    "status": "PASS"
+  },
+  "determinism": {
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "cuda_matmul_allow_fp16_reduced_precision_reduction": false,
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "deterministic_algorithms": true
+  },
+  "mode": "formal",
+  "num_shards": 2,
+  "protocol": {
+    "arms": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "audit_minibatch_ids": [
+      2026082601,
+      2026082602
+    ],
+    "calibration": {
+      "admitted_plateau": [
+        0.00390625,
+        0.001953125,
+        0.0009765625,
+        0.00048828125
+      ],
+      "protocol_commit": "4ff41da",
+      "receipt_sha256": "9a3925cf20d15a232d820d95b2a468443855378e4723d23ae3d395d776de82d0",
+      "result_commit": "70588a7",
+      "selection_rule": "Use the first three consecutive plateau scales and reserve the smallest boundary scale as a calibration diagnostic rather than a v2 endpoint.",
+      "verdict": "PASS_CALIBRATED"
+    },
+    "claim_ceiling": "This factorial can localize numerical stability patterns at one training state. It cannot establish a population rate, optimizer causality, FID mediation, global differentiability, or a universal clock.",
+    "convergence_relative_tolerance": 0.05,
+    "correctness_gate": {
+      "cell": {
+        "arm": "A",
+        "audit_minibatch_id": 2026082601,
+        "projection_direction_seed": 2026082611
+      },
+      "failure_action": "NO_GO_DO_NOT_RUN_V2_FORMAL_FACTORIAL",
+      "requirements": [
+        "regime A passes the frozen five-percent adjacent convergence gate on the calibrated three-scale grid",
+        "all outputs are finite",
+        "RNG and source state are preserved",
+        "the protocol and implementation hashes match this v2 receipt"
+      ]
+    },
+    "direction_convention": "PR87 state-relative per-parameter-tensor Gaussian direction with RMS=max(parameter RMS,1e-3); the identical parameter direction is used in regimes A-E.",
+    "epsilon_grid": [
+      0.00390625,
+      0.001953125,
+      0.0009765625
+    ],
+    "formal_matrix": "4 arms x 2 audit minibatches x 4 directions x 5 regimes = 160 paired local cells",
+    "independent_unit_note": "Arms, batches, directions, epsilon values, and regimes are paired local repeated measurements, not independent training replicates.",
+    "parent_audit": {
+      "batch_file_sha256": "6751e98fcc6c91bff83fe96976453535256c2de940b3e4a5fc8b3384e7c24929",
+      "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "head": "8405df82f6b38661f2db4d5d247a856c7272fdf8",
+      "pr": 87,
+      "q": 256,
+      "source_training_seed": 3,
+      "state_kimg": 256,
+      "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    },
+    "perturbation_scope": "Network parameters only; optimizer, EMA, scaler, buffers, and all discrete input-state coordinates are fixed at the common baseline in regime D.",
+    "projection_direction_seeds": [
+      2026082611,
+      2026082612,
+      2026082613,
+      2026082614
+    ],
+    "pseudo_huber_c": 0.06,
+    "regimes": [
+      "A_squared_gn_fp32",
+      "B_real_loss_gn_fp32",
+      "C_full_field_fp32",
+      "D_production_algorithmic",
+      "E_full_field_pseudohuber_fp32"
+    ],
+    "replacement_after_results": "PROHIBITED",
+    "schema_version": 2,
+    "status": "FROZEN_BEFORE_V2_RESULTS"
+  },
+  "protocol_sha256": "6df3ac6137e79880e40202c240b8e134b88ef327ba3618f1827f89e9a804aeb3",
+  "receipts": [
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082601_dir2026082614_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armA_batch2026082602_dir2026082614_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082601_dir2026082614_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armB_batch2026082602_dir2026082614_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082601_dir2026082614_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armC_batch2026082602_dir2026082614_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082601_dir2026082614_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082611_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082611_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082611_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082612_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082612_D_production_algorithmic.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082613_A_squared_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082613_C_full_field_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082613_E_full_field_pseudohuber_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082614_B_real_loss_gn_fp32.json",
+    "/home/ECT002/role_c_jacobian_factorial_20260827/results/factorial_v2/formal/shard0/armD_batch2026082602_dir2026082614_D_production_algorithmic.json"
+  ],
+  "schema_version": 2,
+  "scientific_cell_status_counts": {
+    "FAIL_CLOSED": 18,
+    "PASS": 62
+  },
+  "shard_index": 0,
+  "source_preserved": true,
+  "source_state_sha256_after": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+  "source_state_sha256_before": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+  "status": "COMPLETE",
+  "task_count": 80
+}

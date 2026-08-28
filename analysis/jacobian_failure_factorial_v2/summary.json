@@ -1,0 +1,147 @@
+{
+  "schema_version": 2,
+  "complete": true,
+  "integrity_passed": true,
+  "expected_cell_count": 160,
+  "observed_cell_count": 160,
+  "unique_cell_count": 160,
+  "missing_cells": [],
+  "unexpected_cells": [],
+  "protocol_sha256": "6df3ac6137e79880e40202c240b8e134b88ef327ba3618f1827f89e9a804aeb3",
+  "manifests": {
+    "manifest_count": 2,
+    "all_complete": true,
+    "task_counts": [
+      80,
+      80
+    ],
+    "all_source_preserved": true,
+    "all_assets_preserved": true,
+    "all_protocol_hashes_match": true,
+    "manifest_paths": [
+      "formal/shard0/formal_manifest.json",
+      "formal/shard1/formal_manifest.json"
+    ],
+    "passed": true
+  },
+  "transition_level_verdict": "GO_PRODUCTION_TRANSITION_SEPARATION",
+  "internal_component_verdict": "HOLD_INTERNAL_COMPONENT_ATTRIBUTION",
+  "by_regime": {
+    "A_squared_gn_fp32": {
+      "cell_count": 32,
+      "status_counts": {
+        "PASS": 30,
+        "FAIL_CLOSED": 2
+      },
+      "relative_change": {
+        "minimum": 0.003776051157848222,
+        "mean": 0.01869137635706047,
+        "maximum": 0.05177662303066486
+      }
+    },
+    "B_real_loss_gn_fp32": {
+      "cell_count": 32,
+      "status_counts": {
+        "PASS": 32
+      },
+      "relative_change": {
+        "minimum": 0.007513583257523057,
+        "mean": 0.024717392455059283,
+        "maximum": 0.04496876609343472
+      }
+    },
+    "C_full_field_fp32": {
+      "cell_count": 32,
+      "status_counts": {
+        "PASS": 32
+      },
+      "relative_change": {
+        "minimum": 0.002884450872801189,
+        "mean": 0.005495956563007969,
+        "maximum": 0.010257104780988577
+      }
+    },
+    "D_production_algorithmic": {
+      "cell_count": 32,
+      "status_counts": {
+        "FAIL_CLOSED": 32
+      },
+      "relative_change": {
+        "minimum": 0.5160744461922743,
+        "mean": 0.9398652037642814,
+        "maximum": 1.3320382921561162
+      },
+      "production_pairing": {
+        "finite": {
+          "true": 32
+        },
+        "source_preserved": {
+          "true": 32
+        },
+        "amp_branch_pairing": {
+          "true": 32
+        },
+        "amp_sweep_pairing": {
+          "true": 32
+        },
+        "discrete_state_pairing": {
+          "true": 32
+        }
+      }
+    },
+    "E_full_field_pseudohuber_fp32": {
+      "cell_count": 32,
+      "status_counts": {
+        "PASS": 32
+      },
+      "relative_change": {
+        "minimum": 0.0035464114013166884,
+        "mean": 0.007286603303929093,
+        "maximum": 0.014944536942064185
+      }
+    }
+  },
+  "a_status_counts": {
+    "PASS": 30,
+    "FAIL_CLOSED": 2
+  },
+  "duplicated_a_boundary_condition": true,
+  "a_boundary_cells": [
+    {
+      "arm": "A",
+      "batch_id": 2026082602,
+      "direction_id": 2026082611,
+      "regime": "A_squared_gn_fp32",
+      "status": "FAIL_CLOSED",
+      "finest_relative_change": 0.05177662303066486,
+      "finest_cosine": 0.998660511859685,
+      "finest_norm_ratio": 0.9967535141381916,
+      "selected_jvp_l2": 6.209998633412785,
+      "finite": true,
+      "source_preserved": true,
+      "amp_branch_pairing": null,
+      "amp_sweep_pairing": null,
+      "discrete_state_pairing": null,
+      "receipt": "formal/shard0/armA_batch2026082602_dir2026082611_A_squared_gn_fp32.json"
+    },
+    {
+      "arm": "D",
+      "batch_id": 2026082602,
+      "direction_id": 2026082611,
+      "regime": "A_squared_gn_fp32",
+      "status": "FAIL_CLOSED",
+      "finest_relative_change": 0.05177662303066486,
+      "finest_cosine": 0.998660511859685,
+      "finest_norm_ratio": 0.9967535141381916,
+      "selected_jvp_l2": 6.209998633412785,
+      "finite": true,
+      "source_preserved": true,
+      "amp_branch_pairing": null,
+      "amp_sweep_pairing": null,
+      "discrete_state_pairing": null,
+      "receipt": "formal/shard0/armD_batch2026082602_dir2026082611_A_squared_gn_fp32.json"
+    }
+  ],
+  "claim": "At the audited state and calibrated scales, the FP32 objective-field controls admit stable local linearizations, whereas the complete production algorithmic transition does not.",
+  "claim_ceiling": "This factorial can localize numerical stability patterns at one training state. It cannot establish a population rate, optimizer causality, FID mediation, global differentiability, or a universal clock."
+}

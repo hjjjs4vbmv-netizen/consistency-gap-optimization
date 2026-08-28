@@ -1,0 +1,211 @@
+{
+  "arm": "C",
+  "batch_id": 2026082602,
+  "detail": {
+    "arm": "C",
+    "branches": [
+      {
+        "epsilon": 0.00390625,
+        "minus": {
+          "all_targets_detached": true,
+          "c_override": 0.0,
+          "finite": true,
+          "force_fp32": true,
+          "residual_min_l2": 0.001507543376646936,
+          "target_hashes": [
+            "35440b9592ba181670a12bdcbd05ae164acb17edd50c23e585539e453cb13365",
+            "73b4a3faf6f53af27634fd613b1ae5b29182592276670084dc50c2efe1f9c5a7",
+            "15b123c828a9cb42f7e5afd2794037c0b7eecaf0585c60d2b61536a57e670ef5",
+            "1df2a16354bb6cec23407e441ef3e102d9e56cb884412d233991af56eb67abbf",
+            "7b5d337eb89e6991eb237032ae3b477d01d35223ec5226bcbb78acfb4c088c00",
+            "0812af0924cb34c4af39232866a44a97ba5d52ebeb89316224457a6ff5aef1ff",
+            "6da3d424f919cd40610bf61f0d15dce734c965f3c80a211788b899ba817f8a72",
+            "bde972588268b6da4e9705659705bfc930a690cfaccedf59fd58749b9c162e35"
+          ],
+          "target_recompute_count": 8
+        },
+        "paired_target_recomputation": true,
+        "plus": {
+          "all_targets_detached": true,
+          "c_override": 0.0,
+          "finite": true,
+          "force_fp32": true,
+          "residual_min_l2": 0.0015084263868629932,
+          "target_hashes": [
+            "3f37316f44767eb3acf9ec347138f718cf95beacadd1794fbee05baf3cfdfbd2",
+            "10111869f2f051407c3281a5d7a409bb356ccd32daa51ed055540adc3df2a011",
+            "38af17a35e674d083a868bd78be9ea9b5a7b3b648adb426178ebb0df02a56906",
+            "902e91776b50dbaa8d5354195b9443c2e39ef310cabb847add73ac4f1a39f235",
+            "48c644443ea5afd1a5a0ed4f30afdb6aab510986f7871a93ddc4fcfd2dcbc571",
+            "325aeec9df62a15489c6b28c3c4831f83b58e13d8fdc6ba7a5c3da4e3921cd52",
+            "789b55746c8e36e4436763ec90c017549bed0ad434e3baaa7ea1ec59acb0934d",
+            "c8bc63586cef885a3a53e38e3eff610ce7ccf051c61fb2108659a4a1fc0869e4"
+          ],
+          "target_recompute_count": 8
+        }
+      },
+      {
+        "epsilon": 0.001953125,
+        "minus": {
+          "all_targets_detached": true,
+          "c_override": 0.0,
+          "finite": true,
+          "force_fp32": true,
+          "residual_min_l2": 0.0015076813288033009,
+          "target_hashes": [
+            "11e891e65416da3afff5629cceae94b70213a74b29d1abb41a2bfe2b360dca91",
+            "81d30db7d6033c21fa30ad565f34860516ba770c5930e854167e9108daa9fa28",
+            "9bdcae000c340faebbf9b2ce48587e578dca0fce490a16df8df9b71ac28565f7",
+            "3cd5d5b6cba7fb21fa498641b6a34dbf2fbb6bfd36685d44c9520c8f4b2d9946",
+            "0f817f5021e598d2e07d7436dc32eb0f47ec5c54e66fcf80ff2308ff63226cc1",
+            "44a6b99eeacf3e546f04bc886ccb58a99f4fffbae137664fe9100ac6c747a274",
+            "ed8db6df2ca9f72b3479d3647b51c2af6c49de513116895e537d7a99052f73f0",
+            "804ed8f134f59f33bd242c8d36a198e9b238f52d0e9a9ba564b4c83f307c65e1"
+          ],
+          "target_recompute_count": 8
+        },
+        "paired_target_recomputation": true,
+        "plus": {
+          "all_targets_detached": true,
+          "c_override": 0.0,
+          "finite": true,
+          "force_fp32": true,
+          "residual_min_l2": 0.0015081517631188035,
+          "target_hashes": [
+            "2af31eaf6022792d0d410983e0dcb2ac2fc9b08d6c571b25807fbc5f7180632c",
+            "e1c7b3f7eb58f6694c12d5838664655e40f4edc84221610b8e4ee7656371e39d",
+            "daaddc556c485c3e4f6887a2b79994b285cbf52b83edccffe36b8077b84d7a9b",
+            "1f56e488b75a8cc66fc047190a02a1b1a75bc26fbe2bb672abf670d328e8bcb0",
+            "083e731b95f0ace3a5b3dcba1f93ef07ec09308bea501dc245b0edaa5c1f9572",
+            "7010f7c23c090118b1caba418d7141d72093625dc0549110a375f8f826b715ea",
+            "f612c250ab811a035558c74b9d2930feae06d6d423082d13da911609b8908378",
+            "6e5ada43b55bcc040c30dc594708a777c643de6554fafdd8f8cb9eec43143166"
+          ],
+          "target_recompute_count": 8
+        }
+      },
+      {
+        "epsilon": 0.0009765625,
+        "minus": {
+          "all_targets_detached": true,
+          "c_override": 0.0,
+          "finite": true,
+          "force_fp32": true,
+          "residual_min_l2": 0.0015077758580446243,
+          "target_hashes": [
+            "6a2680d3ffdd0ab18215d8b0a18e49737ce75db1ee0d212d3c1ba051784af357",
+            "db0329396dd71019aebced9337243d356130b3f41de5b105ce35025fe44050b8",
+            "35e121f5598b259d37e172c106cbd1ea70415bf415268c6845ee9fa38ce10639",
+            "3b7a666a0ebe39c7ddc4ea470d9a671133bd1756f24271459bd0970adb08bdb4",
+            "21ef0b1763a5df36515a37a9f5cf86db669fcc2f69f613cbc97f55728c7eb9e7",
+            "00fe875859c4dbd7128a0859f4519c00e1f0c2846ced19be3a6f8a9027e3df04",
+            "4bbf00a1aa3eb9126374eeccd4a63e17d8d812b35f1f24514e1c6d9cbe0fb384",
+            "77f95b2cb4467c23b6a3d9b3863db2aad2fc2275f10e8c0b6ea84e8ed9d67e45"
+          ],
+          "target_recompute_count": 8
+        },
+        "paired_target_recomputation": true,
+        "plus": {
+          "all_targets_detached": true,
+          "c_override": 0.0,
+          "finite": true,
+          "force_fp32": true,
+          "residual_min_l2": 0.0015079553704708815,
+          "target_hashes": [
+            "8baa02dd4a4e0d54fa3a270e998aba444e45cea98a975e58a0287d4a586a484e",
+            "d71e24a1c199d0f1fbd045c56a0862d2e0f40e16ad89cde3dfa67a6785b46db6",
+            "73f0270bdbaa4bee7cd3e55df68f75f742f61d56662750c601cc19b697401183",
+            "895eccded070622deaa980719df020678508fd9077a6b5fa2bac6c004ce9b8d7",
+            "67836f07e3a8730bb093dae80085246e3ce1fd8b93b85b3c9067e04720091177",
+            "3b78b7f4d078a3bbba6ae4f1a2eef7a655ef2cc7dc911061fa905d2a5d6d7395",
+            "e875485da76ee83b0abcd72a5757b01e88428de5dbfcedbf21d2a42ac324bb0a",
+            "a6e63164592ece9fb4b2305df645dd51b38aabd29386b2ca57565c93f097be8a"
+          ],
+          "target_recompute_count": 8
+        }
+      }
+    ],
+    "c_override": 0.0,
+    "convergence": {
+      "best_adjacent_pair": {
+        "coarse_epsilon": 0.001953125,
+        "fine_epsilon": 0.0009765625,
+        "relative_change": 0.008056463014437545
+      },
+      "comparisons": [
+        {
+          "coarse_epsilon": 0.00390625,
+          "fine_epsilon": 0.001953125,
+          "relative_change": 0.012603530670750436
+        },
+        {
+          "coarse_epsilon": 0.001953125,
+          "fine_epsilon": 0.0009765625,
+          "relative_change": 0.008056463014437545
+        }
+      ],
+      "epsilon_metrics": [
+        {
+          "coarse_epsilon": null,
+          "cosine": null,
+          "epsilon": 0.00390625,
+          "finite": true,
+          "jvp_norm": 16990.520753230627,
+          "norm_ratio": null,
+          "relative_error": null
+        },
+        {
+          "coarse_epsilon": 0.00390625,
+          "cosine": 0.9999205889339687,
+          "epsilon": 0.001953125,
+          "finite": true,
+          "jvp_norm": 16992.265445629622,
+          "norm_ratio": 1.000102686222767,
+          "relative_error": 0.012603530670750436
+        },
+        {
+          "coarse_epsilon": 0.001953125,
+          "cosine": 0.9999678583294005,
+          "epsilon": 0.0009765625,
+          "finite": true,
+          "jvp_norm": 16978.29337237181,
+          "norm_ratio": 0.99917773923068,
+          "relative_error": 0.008056463014437545
+        }
+      ],
+      "epsilons": [
+        0.00390625,
+        0.001953125,
+        0.0009765625
+      ],
+      "finest_adjacent_pair": {
+        "coarse_epsilon": 0.001953125,
+        "fine_epsilon": 0.0009765625,
+        "relative_change": 0.008056463014437545
+      },
+      "passed": true,
+      "selection_rule": "smallest preregistered epsilon; convergence is the adjacent change from the next-smallest epsilon",
+      "tolerance": 0.05
+    },
+    "definition_guard": "Every branch reruns online and target forwards, detaches the fresh target inside the branch, and forces the production network FP32 path.",
+    "finite": true,
+    "force_fp32": true,
+    "predictor": "full_recompute_detach_field_fp32",
+    "selected_epsilon": 0.0009765625,
+    "source_preserved": true,
+    "status": "PASS"
+  },
+  "direction_id": 2026082614,
+  "direction_l2": 3962.7040403470132,
+  "direction_sha256": "73ed1265e9e5eed64b3f5b1bb6985529fee0324ec6796b11652cf00686c1db2c",
+  "epsilon_grid": [
+    0.00390625,
+    0.001953125,
+    0.0009765625
+  ],
+  "regime": "C_full_field_fp32",
+  "schema_version": 2,
+  "selected_jvp_l2": 16978.29337237181,
+  "selected_jvp_sha256": "7c6fa1dcc3aed197110aecdc52b0e34bbf352d1f90bbf8650ba3d90ce27eaa17",
+  "status": "PASS"
+}
