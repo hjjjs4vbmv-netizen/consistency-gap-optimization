@@ -44,4 +44,3 @@ def test_summary_preserves_pass_without_reopening_old_factorial(tmp_path: Path):
     assert summary["verdict"] == "PASS_CALIBRATED"
     assert summary["old_factorial_reopened"] is False
     assert "one-cell" in summary["claim_ceiling"]
-

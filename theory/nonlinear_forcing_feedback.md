@@ -1,6 +1,6 @@
 # Nonlinear schedule forcing and trajectory feedback
 
-Status: theory frozen before the Jacobian-source factorial  
+Status: theory frozen before the Jacobian-source factorial
 Scope: one-step coupled training transitions and finite-horizon propagation
 
 ## 1. Algorithmic state and coordinate scope
@@ -249,4 +249,3 @@ the statement:
 
 It does not reduce all schedule effects to the spectrum of one global smooth
 operator.
-

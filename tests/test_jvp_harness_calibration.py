@@ -73,4 +73,3 @@ def test_two_good_scales_do_not_form_a_plateau():
     decision = core.classify(
         rows, tolerance=0.05, minimum_consecutive=3, oracle_ok=True)
     assert decision["verdict"] == "NO_PLATEAU"
-

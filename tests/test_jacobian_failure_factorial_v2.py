@@ -29,4 +29,3 @@ def test_v2_rejects_correctness_receipt_from_another_protocol(tmp_path: Path):
     }), encoding="utf-8")
     with pytest.raises(RuntimeError, match="another protocol"):
         run_factorial.load_correctness(receipt)
-

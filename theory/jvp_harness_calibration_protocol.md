@@ -45,4 +45,3 @@ Regardless of the result, the calibration cannot retroactively change the old
 gate. A passing plateau permits only a separately frozen v2 correctness
 protocol. It does not admit the old factorial, explain FID, or establish a
 schedule mechanism.
-

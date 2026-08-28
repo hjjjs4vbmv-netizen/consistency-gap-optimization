@@ -18,4 +18,3 @@ def test_transition_separation_is_not_internal_component_attribution():
     """
     assert "GO at the production-transition level" in source
     assert "does not assign" in source
-

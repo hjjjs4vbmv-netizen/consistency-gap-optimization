@@ -1,6 +1,6 @@
 # Jacobian failure source: frozen factorial decision tree
 
-Status: frozen before new factorial results  
+Status: frozen before new factorial results
 Base evidence: PR #87 operator-clock audit at seed 3, q256, 256 kimg
 
 ## 1. Question
@@ -150,4 +150,3 @@ remain appendix evidence and narrow the smooth-operator narrative.
 
 The audit cannot support claims about FID, optimizer causality, improved training
 from smoothing, population differentiability, or a universal schedule operator.
-

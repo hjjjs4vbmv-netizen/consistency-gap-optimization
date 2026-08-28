@@ -277,4 +277,3 @@ def classify(rows: Sequence[Mapping[str, Any]], *, tolerance: float,
         "plateaus": plateaus,
         "admissible_by_scale": admissible,
     }
-
