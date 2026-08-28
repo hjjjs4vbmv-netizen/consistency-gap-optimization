@@ -16,7 +16,7 @@ assets.
 | A: squared-GN FP32 | 30 | 2 | 0.0038 / 0.0187 / 0.0518 |
 | B: real-loss GN FP32 | 32 | 0 | 0.0075 / 0.0247 / 0.0450 |
 | C: full recompute-detach FP32 | 32 | 0 | 0.0029 / 0.0055 / 0.0103 |
-| D: production algorithmic transition | 0 | 32 | 0.5161 / 0.9399 / 1.3320 |
+| D: parameter-partial production transition | 0 | 32 | 0.5161 / 0.9399 / 1.3320 |
 | E: pseudo-Huber FP32 field | 32 | 0 | 0.0035 / 0.0073 / 0.0149 |
 
 The two A failures are one identical marginal batch/direction condition repeated
@@ -25,7 +25,9 @@ preserves the source state, pairs plus/minus AMP behavior, remains in one AMP
 regime across the epsilon sweep, and pairs the tracked discrete state.
 
 At this audited state and scale range, the FP32 objective-field controls admit
-stable local linearizations while the complete production transition does not.
-Attribution *within* that transition remains HOLD because D jointly contains the
-internal FP16/autocast path, GradScaler, RAdam, and EMA. The audit does not
-establish global nondifferentiability, optimizer causality, or a link to FID.
+stable local linearizations while the local parameter-to-augmented-state
+production transition does not. D perturbs parameters while fixing all other
+incoming state coordinates and jointly applies the internal FP16/autocast path,
+GradScaler, RAdam, and EMA. Attribution within that transition remains HOLD.
+The result characterizes this audited parameter partial; it does not characterize
+the full augmented-state derivative or connect the separation to FID.

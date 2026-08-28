@@ -1,6 +1,6 @@
 # Nonlinear schedule forcing and trajectory feedback
 
-Status: theory frozen before the Jacobian-source factorial
+Status: theory updated after the calibrated Jacobian-source factorial
 Scope: one-step coupled training transitions and finite-horizon propagation
 
 ## 1. Algorithmic state and coordinate scope
@@ -236,6 +236,14 @@ ReLU activation changes and the \(c=0\) residual norm can also invalidate a
 classical Jacobian at specific points.  These failures affect smooth
 linearization, not the exact forcing--feedback identity.
 
+In the calibrated audit, the full recompute-and-detach FP32 field passes all 32
+formal cells. The earlier coarse-grid field failure is therefore a harness-scale
+failure, not evidence that the audited FP32 field lacks a local linearization.
+The production audit perturbs parameters while holding incoming optimizer, EMA,
+scaler, buffer, and discrete coordinates fixed; it measures a local
+parameter-to-augmented-state transition rather than the full derivative
+\(D_z\Phi\).
+
 ## 6. Claim boundary
 
 The theory establishes an exact, measurable decomposition of paired one-step
@@ -244,8 +252,9 @@ the statement:
 
 > Schedule changes generate common-state forcing.  Finite-horizon separation
 > combines repeated forcing, state-dependent feedback, and their directional
-> interaction, even when the production transition lacks a numerically stable
-> classical Jacobian.
+> interaction. At the audited state, the smooth FP32 objective field admits a
+> stable local linearization, while the parameter-partial production transition
+> does not at the calibrated scales.
 
 It does not reduce all schedule effects to the spectrum of one global smooth
 operator.

@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import os
@@ -480,7 +481,7 @@ def _mechanism_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
               and late_ratio > 1.0 and late_alignment is not None
               and late_alignment >= 0.8
               and (early_ratio is None or late_ratio > early_ratio)):
-            label = "trajectory_feedback_amplification"
+            label = "persistent_state_feedback_dominance"
         else:
             label = "mixed_or_inconclusive"
         output[f"{arm}:{space}:{block}"] = {
@@ -496,23 +497,50 @@ def _mechanism_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     return output
 
 
+def _canonical_sha256(value: Any) -> str:
+    payload = json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _compact_run_receipt(receipt: Mapping[str, Any]) -> dict[str, Any]:
+    compact = {
+        key: value for key, value in receipt.items()
+        if key != "step_replay_receipts"
+    }
+    step_receipts = receipt["step_replay_receipts"]
+    compact["step_replay_receipt_count"] = len(step_receipts)
+    compact["step_replay_receipts_sha256"] = _canonical_sha256(step_receipts)
+    return compact
+
+
 def build_summary(
     rows: Sequence[Mapping[str, Any]], receipt: Mapping[str, Any],
     legacy_audit: Mapping[str, Any], assets: Mapping[str, Any],
+    *, include_full_receipt: bool = False,
 ) -> dict[str, Any]:
+    step_receipts = receipt["step_replay_receipts"]
+    replay_receipt = {
+        "state_hashes_k_0_through_horizon": receipt[
+            "state_hashes_k_0_through_horizon"],
+        "step_replay_receipt_count": len(step_receipts),
+        "step_replay_receipts_sha256": _canonical_sha256(step_receipts),
+    }
+    run_receipt = (
+        dict(receipt) if include_full_receipt else _compact_run_receipt(receipt)
+    )
+    if include_full_receipt:
+        replay_receipt["step_replay_receipts"] = step_receipts
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": receipt["status"],
         "task_1_existing_rollout_state_audit": dict(legacy_audit),
         "instrumentation": {
             "kind": "64-step matched continuation from frozen source",
             "scientific_scope": "local counterfactual instrumentation; not a new experiment",
             "assets": dict(assets),
-            "replay_receipt": {
-                "state_hashes_k_0_through_horizon": receipt[
-                    "state_hashes_k_0_through_horizon"],
-                "step_replay_receipts": receipt["step_replay_receipts"],
-            },
+            "replay_receipt": replay_receipt,
         },
         "exact_closure": {
             "all_pass": receipt["all_exact_closures_pass"],
@@ -524,7 +552,7 @@ def build_summary(
             "persistent_forcing_accumulation": (
                 "R/b <= 0.25 on at least 80% of steps"
             ),
-            "trajectory_feedback_amplification": (
+            "persistent_state_feedback_dominance": (
                 "in the last quarter R>b on at least 75% of steps, median R/b>1, "
                 "median cos(R,delta)>=0.8, and late median R/b exceeds early median"
             ),
@@ -535,9 +563,10 @@ def build_summary(
         },
         "interpretation_guard": (
             "R_over_b is a scale diagnostic, never a contribution percentage; "
-            "forcing and feedback may cancel."
+            "large state-block values identify history-dominated state "
+            "propagation, not a dynamical gain or quality mechanism."
         ),
-        "run_receipt": dict(receipt),
+        "run_receipt": run_receipt,
     }
 
 
@@ -592,6 +621,9 @@ def write_report(path: Path, summary: Mapping[str, Any]) -> None:
         "",
         "`R/b` is reported only as a scale diagnostic. It is not a contribution "
         "percentage: large forcing and feedback terms can be nearly antiparallel and cancel.",
+        "For persistent state blocks, the dominance label means that accumulated state "
+        "history is larger than the current common-state forcing. It is not an amplification "
+        "factor because R contains retained parameter, EMA, and optimizer-state differences.",
         "Residual closure uses a common signed arm-A validation residual map for all three "
         "post-transition states; feature closure uses the same fixed-latent EMA map.",
         "",
@@ -613,6 +645,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--skip-observables", action="store_true",
                         help="Debug only; formal runs must include observables")
     parser.add_argument("--legacy-rollout", type=Path, default=LEGACY_ROLLOUT)
+    parser.add_argument(
+        "--full-summary", action="store_true",
+        help="Include full per-step replay telemetry; intended for external archives",
+    )
     return parser.parse_args(argv)
 
 
@@ -642,7 +678,10 @@ def run(args: argparse.Namespace) -> int:
     )
     if args.steps != 64 or args.skip_observables:
         receipt["status"] = "DEBUG_ONLY"
-    summary = build_summary(rows, receipt, legacy, assets)
+    summary = build_summary(
+        rows, receipt, legacy, assets,
+        include_full_receipt=args.full_summary,
+    )
     write_csv(args.out / "forcing_feedback_per_step.csv", rows)
     write_json(args.out / "forcing_feedback_summary.json", summary)
     write_report(args.out / "FORCING_FEEDBACK_REPORT.md", summary)

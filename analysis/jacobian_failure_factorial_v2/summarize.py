@@ -199,8 +199,8 @@ def main() -> None:
         "a_boundary_cells": a_failures,
         "claim": (
             "At the audited state and calibrated scales, the FP32 objective-field "
-            "controls admit stable local linearizations, whereas the complete "
-            "production algorithmic transition does not."),
+            "controls admit stable local linearizations, whereas the local "
+            "parameter-to-augmented-state production transition does not."),
         "claim_ceiling": frozen["claim_ceiling"],
     }
     (args.out / "summary.json").write_text(
@@ -224,7 +224,7 @@ change 0.0517766 against the frozen 0.05 threshold.
 | A: squared-GN FP32 | 30 | 2 | {change['A_squared_gn_fp32']['minimum']:.4f} / {change['A_squared_gn_fp32']['mean']:.4f} / {change['A_squared_gn_fp32']['maximum']:.4f} |
 | B: real-loss GN FP32 | 32 | 0 | {change['B_real_loss_gn_fp32']['minimum']:.4f} / {change['B_real_loss_gn_fp32']['mean']:.4f} / {change['B_real_loss_gn_fp32']['maximum']:.4f} |
 | C: full recompute-detach FP32 | 32 | 0 | {change['C_full_field_fp32']['minimum']:.4f} / {change['C_full_field_fp32']['mean']:.4f} / {change['C_full_field_fp32']['maximum']:.4f} |
-| D: production algorithmic transition | 0 | 32 | {change['D_production_algorithmic']['minimum']:.4f} / {change['D_production_algorithmic']['mean']:.4f} / {change['D_production_algorithmic']['maximum']:.4f} |
+| D: parameter-partial production transition | 0 | 32 | {change['D_production_algorithmic']['minimum']:.4f} / {change['D_production_algorithmic']['mean']:.4f} / {change['D_production_algorithmic']['maximum']:.4f} |
 | E: pseudo-Huber FP32 field | 32 | 0 | {change['E_full_field_pseudohuber_fp32']['minimum']:.4f} / {change['E_full_field_pseudohuber_fp32']['mean']:.4f} / {change['E_full_field_pseudohuber_fp32']['maximum']:.4f} |
 
 The D failures are not process crashes or mismatched central-difference branches.
@@ -237,11 +237,14 @@ large (0.516--1.332; mean 0.940), while the complete FP32 field C remains below
 ## Interpretation
 
 At this checkpoint, the smooth FP32 objective fields admit stable local
-linearizations across the frozen factorial. The complete production transition
-does not exhibit a numerically stable classical Jacobian at the calibrated
-scales. This establishes separation at the transition level. Regime D combines
-autocast/FP16, the stateful RAdam update, EMA, and scaler state; the factorial
-does not assign the instability to one internal component.
+linearizations across the frozen factorial. The local parameter-to-augmented-state
+production transition does not exhibit a numerically stable parameter-partial
+Jacobian at the calibrated scales. This establishes separation at the transition
+level. Regime D perturbs network parameters while holding the incoming optimizer,
+EMA, scaler, buffers, and discrete state fixed; the output transition jointly
+contains autocast/FP16, RAdam, EMA, and scaler updates. The factorial therefore
+does not assign the instability to one internal component or characterize the
+complete augmented-state derivative.
 
 The result supports the bounded training-dynamics statement that instantaneous
 objective structure need not survive the production optimizer transition. It

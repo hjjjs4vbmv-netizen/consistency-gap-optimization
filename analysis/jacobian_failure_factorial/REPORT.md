@@ -1,5 +1,11 @@
 # Jacobian failure factorial report
 
+**Historical status:** this coarse-grid correctness outcome is superseded for
+field-level interpretation by the calibrated v2 audit. The calibrated full
+recompute-and-detach FP32 field passes 32/32 formal cells. This report remains as
+protocol provenance for the original stop decision, not as evidence that the
+audited FP32 field lacks a local Jacobian.
+
 **NO-GO: the squared-GN correctness baseline failed the frozen convergence gate; the formal factorial was not run by design.**
 
 The preregistered correctness stage is complete. The 160-cell formal factorial was not run, as required by the frozen stop rule.
