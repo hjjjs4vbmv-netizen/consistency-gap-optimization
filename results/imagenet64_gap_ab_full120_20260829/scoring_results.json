@@ -1,0 +1,1581 @@
+{
+  "feature_dim": 2048,
+  "generated_count_per_job": 50000,
+  "inception_detector": "https://api.ngc.nvidia.com/v2/models/nvidia/research/stylegan3/versions/1/files/metrics/inception-2015-12-05.pkl",
+  "jobs_expected": 120,
+  "jobs_scored": 120,
+  "kid_num_subsets": 100,
+  "kid_subset_size": 1000,
+  "metric_seed": 20260730,
+  "real_count": 1281167,
+  "real_features": {
+    "path": "/workspace/eval/reference/imagenet64-real-features.npy",
+    "sha256": "8f30c3858f6112aa369a2749e3f7b12d567b56ca81be59d14790d4fb77a17c9f"
+  },
+  "real_stats": {
+    "path": "/workspace/assets/img64.pkl",
+    "sha256": "8508eaa4dd7570e67d6939064269f1e4a9d2ef198ca50a906e9673b9c5131fc7"
+  },
+  "results": [
+    {
+      "fid50k": 70.73031097763548,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg001280/nfe1/features.final.npy",
+        "sha256": "75ee9b9666d84ac0e5dec33d0049e91ed63e069842ea3024dbc6737cbce86f30"
+      },
+      "iteration": 10000,
+      "kid50k": 0.05125663686436437,
+      "kimg": 1280,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 29.678752630191816,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg001280/nfe2/features.final.npy",
+        "sha256": "847ea1fa4efffe1b5e1f0c5b4f29c7903a3625ab29dbb8ed84e856e705e73089"
+      },
+      "iteration": 10000,
+      "kid50k": 0.018063945462962954,
+      "kimg": 1280,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 75.48348514511821,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg001280/nfe1/features.final.npy",
+        "sha256": "976fd1f03fac32e21d25639f42addd1abcf9ddae79f1410caf49f53e4d90cdba"
+      },
+      "iteration": 10000,
+      "kid50k": 0.05536432891891893,
+      "kimg": 1280,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 32.61339094581709,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg001280/nfe2/features.final.npy",
+        "sha256": "5666627d8a144aa08daf7a64eaa6f13d0bc43e7e14f4325c62da839ef830f13b"
+      },
+      "iteration": 10000,
+      "kid50k": 0.020052735635635643,
+      "kimg": 1280,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 71.74671151430977,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg001280/nfe1/features.final.npy",
+        "sha256": "99805d8c99b056946d75a9dbf18c99dc0683de76e1a82c20f0dbd75b5ab69d30"
+      },
+      "iteration": 10000,
+      "kid50k": 0.051683633821321344,
+      "kimg": 1280,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 29.263978935225676,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg001280/nfe2/features.final.npy",
+        "sha256": "564a10bcbe396219d4c6acb003f40b68b04cd7e82a360f415e6d51cbccd485c4"
+      },
+      "iteration": 10000,
+      "kid50k": 0.01743058304554555,
+      "kimg": 1280,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 75.67294424579032,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg001280/nfe1/features.final.npy",
+        "sha256": "d0815a4bc83b5f00b786f8662fb5fd9ef289660dc6a4608cb8dd0b0856702ebc"
+      },
+      "iteration": 10000,
+      "kid50k": 0.05489723762262263,
+      "kimg": 1280,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 32.093208953814354,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg001280/nfe2/features.final.npy",
+        "sha256": "a1104d379bdef314b16bb11b4db4df6c79bcd3167b86e9eae5bfe7e63f55dbbd"
+      },
+      "iteration": 10000,
+      "kid50k": 0.019245594559559532,
+      "kimg": 1280,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 70.7725237650599,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg001280/nfe1/features.final.npy",
+        "sha256": "6572b38d0055b86671becb0d70eea95cbc201608435d7b73f9e48e48d19eb6cd"
+      },
+      "iteration": 10000,
+      "kid50k": 0.05097263941191189,
+      "kimg": 1280,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 29.108033843375956,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg001280/nfe2/features.final.npy",
+        "sha256": "1853e410934b4e026c91f484a470f63499e1604351ee882005fb3a5cc953ed61"
+      },
+      "iteration": 10000,
+      "kid50k": 0.017628399862362337,
+      "kimg": 1280,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 75.44204279545005,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg001280/nfe1/features.final.npy",
+        "sha256": "a48dce37a2f1cb506e8de86a5bae195c28c7974543fe8d383d1fd62ed4a093fd"
+      },
+      "iteration": 10000,
+      "kid50k": 0.0549059203828829,
+      "kimg": 1280,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 32.158333696908215,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg001280/nfe2/features.final.npy",
+        "sha256": "98a39a2bd02d8773ab9afe0cf09fb51351141a7d6ba4bf5397e4caee3ab0c223"
+      },
+      "iteration": 10000,
+      "kid50k": 0.01949375862612612,
+      "kimg": 1280,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 64.72784129450761,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg002560/nfe1/features.final.npy",
+        "sha256": "83a63846059b36556f0c329fa9788e528f78bf1fb6c2859869ec10402f34bb9a"
+      },
+      "iteration": 20000,
+      "kid50k": 0.04603015238738739,
+      "kimg": 2560,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 27.958620974528806,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg002560/nfe2/features.final.npy",
+        "sha256": "b46eca3f27c34c3307b955f5034bda8323a375991bcfdd6bc586ba63fedf123e"
+      },
+      "iteration": 20000,
+      "kid50k": 0.016715285810810783,
+      "kimg": 2560,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 68.78009689587891,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg002560/nfe1/features.final.npy",
+        "sha256": "043528efc5a356580fc9ae11cc26dc9c9504ab5536754cc4561c532411c05d37"
+      },
+      "iteration": 20000,
+      "kid50k": 0.0492220706081081,
+      "kimg": 2560,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 30.697283736525222,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg002560/nfe2/features.final.npy",
+        "sha256": "68de5686afb06d9d015da4de201e7d8e4d6dadb0f0f1478012ab29df11bf050b"
+      },
+      "iteration": 20000,
+      "kid50k": 0.018423617357357366,
+      "kimg": 2560,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 64.70449124647583,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg002560/nfe1/features.final.npy",
+        "sha256": "01bd56363d265e432f25e94c1033acd6f0594c07d34e64c5227cc422aabb604b"
+      },
+      "iteration": 20000,
+      "kid50k": 0.046583200983483466,
+      "kimg": 2560,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 27.874003449788066,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg002560/nfe2/features.final.npy",
+        "sha256": "fea6c08278c67a88e1179ac12bb9525318a77e1ccefb8eb9d049cf8e9f48d4de"
+      },
+      "iteration": 20000,
+      "kid50k": 0.016808965813313297,
+      "kimg": 2560,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 69.87748560348564,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg002560/nfe1/features.final.npy",
+        "sha256": "f0faf6e7612df7ca906868087cbd9d309145711d1bcb19bd11e40ef92cb46cca"
+      },
+      "iteration": 20000,
+      "kid50k": 0.0507266023773774,
+      "kimg": 2560,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 31.012573354806655,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg002560/nfe2/features.final.npy",
+        "sha256": "3a0a95a53f149c0ba7bfedcc04a401e94d8cc33501699610be9ec542ffe82764"
+      },
+      "iteration": 20000,
+      "kid50k": 0.018869918220720736,
+      "kimg": 2560,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 66.80498909216361,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg002560/nfe1/features.final.npy",
+        "sha256": "568d8106e66858ba1a18e0956e176ff5247406b04d1a47f9e9d75acc971b6015"
+      },
+      "iteration": 20000,
+      "kid50k": 0.04845988207457455,
+      "kimg": 2560,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 28.727505514930744,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg002560/nfe2/features.final.npy",
+        "sha256": "e5102127ce161c0f7639228d014d1758340bbb1ae522009bda442559e4d190f0"
+      },
+      "iteration": 20000,
+      "kid50k": 0.01742167602352354,
+      "kimg": 2560,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 71.88925153395047,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg002560/nfe1/features.final.npy",
+        "sha256": "095e2bd67ae248e76edb144fa233be773e078c060f47ce320e099cbb5e81d809"
+      },
+      "iteration": 20000,
+      "kid50k": 0.05268009166916918,
+      "kimg": 2560,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 32.00874173785822,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg002560/nfe2/features.final.npy",
+        "sha256": "488be66ce6f6c5a2cbb53d8d1f7c76d6c075b4237a0b91ca6cd2e7d1c60785ba"
+      },
+      "iteration": 20000,
+      "kid50k": 0.019482967317317336,
+      "kimg": 2560,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 29.126933057102807,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg003840/nfe1/features.final.npy",
+        "sha256": "1690bd1def39cf759050b90f55977c7eed047aad72fa07b46fef3b8015aa9d01"
+      },
+      "iteration": 30000,
+      "kid50k": 0.018730082412412412,
+      "kimg": 3840,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 8.911826972101004,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg003840/nfe2/features.final.npy",
+        "sha256": "00a247a79996f85b02ef20a15fc24f4241668a4f13891041888f861a65f0c415"
+      },
+      "iteration": 30000,
+      "kid50k": 0.004889073443443454,
+      "kimg": 3840,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 32.64323497520537,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg003840/nfe1/features.final.npy",
+        "sha256": "3ea634877ee517af27d241d7ed870765875ad92a75ee7bad137d7b43b21a120e"
+      },
+      "iteration": 30000,
+      "kid50k": 0.021242044319319326,
+      "kimg": 3840,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 9.981184898478379,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg003840/nfe2/features.final.npy",
+        "sha256": "b6bae83f66834e894b4cd363348247ecf7296b32cd9b758c497b20efa33e9d4d"
+      },
+      "iteration": 30000,
+      "kid50k": 0.005582174404404427,
+      "kimg": 3840,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 27.29971120843923,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg003840/nfe1/features.final.npy",
+        "sha256": "efd9ae5d0721089630dda7968047a048f195db7fb7cf4bbcc7b91bd143127640"
+      },
+      "iteration": 30000,
+      "kid50k": 0.01755021902152152,
+      "kimg": 3840,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 8.547023901655116,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg003840/nfe2/features.final.npy",
+        "sha256": "221d97e7698809fdbc0d21f38542de88bc9c8822b977eeac716cbee675ef7317"
+      },
+      "iteration": 30000,
+      "kid50k": 0.004791820162662625,
+      "kimg": 3840,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 30.89619320838368,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg003840/nfe1/features.final.npy",
+        "sha256": "9beb5fbe455a8990fab7843f8483ee1ae8ca361f9e98f1bf6cbed8fa1d80ce2d"
+      },
+      "iteration": 30000,
+      "kid50k": 0.020043464166666677,
+      "kimg": 3840,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 9.62678770617315,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg003840/nfe2/features.final.npy",
+        "sha256": "079aad3381a4e29399bd051129f0c8372bf5f7dd534fa8bdd9a47536be2f6544"
+      },
+      "iteration": 30000,
+      "kid50k": 0.005486683215715716,
+      "kimg": 3840,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 28.388787723758877,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg003840/nfe1/features.final.npy",
+        "sha256": "0662a74bdd33594e14760121ec32f6fdc99a17caa82a0464c75683a53e409497"
+      },
+      "iteration": 30000,
+      "kid50k": 0.018023594547047068,
+      "kimg": 3840,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 8.784021499275326,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg003840/nfe2/features.final.npy",
+        "sha256": "7fa9040a1196cf21aaa4591135cee5edad83b082a667402921fc2bb596df11b1"
+      },
+      "iteration": 30000,
+      "kid50k": 0.004766796929429411,
+      "kimg": 3840,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 31.3667995444957,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg003840/nfe1/features.final.npy",
+        "sha256": "7f6e2f60d612c7cba587963b4dadb66d8eb54a1ccba8545f8c426e03c6ff2644"
+      },
+      "iteration": 30000,
+      "kid50k": 0.0199572692117117,
+      "kimg": 3840,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 9.703019254328083,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg003840/nfe2/features.final.npy",
+        "sha256": "9006b1ed216d5e66ea54dd5289d50952261a020eacf0bc90b0f52f6577594221"
+      },
+      "iteration": 30000,
+      "kid50k": 0.005308130292792807,
+      "kimg": 3840,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 21.857627717038678,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg005120/nfe1/features.final.npy",
+        "sha256": "dcc4cf5c0480db74626b0b73184732783d19c7933d7ead61e497680bde2dd80a"
+      },
+      "iteration": 40000,
+      "kid50k": 0.013709454396896886,
+      "kimg": 5120,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 7.5784569336446825,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg005120/nfe2/features.final.npy",
+        "sha256": "5d6134f9ed9454e31979b731759e815ed22298fafcd5f785e68f98a1f525a0cd"
+      },
+      "iteration": 40000,
+      "kid50k": 0.004091566844344352,
+      "kimg": 5120,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 24.503179033975133,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg005120/nfe1/features.final.npy",
+        "sha256": "05473783ab3c9f60d4bd44e79c13bc8a2e8322be847966c01770ac80e1f469a5"
+      },
+      "iteration": 40000,
+      "kid50k": 0.015542871936936925,
+      "kimg": 5120,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 8.476530038513458,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg005120/nfe2/features.final.npy",
+        "sha256": "3ff4b8c52188dfb00c452b6d4515e603fe9550ae9a57cf3e1da92f5706006c3f"
+      },
+      "iteration": 40000,
+      "kid50k": 0.004620845725725704,
+      "kimg": 5120,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 22.011821792655315,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg005120/nfe1/features.final.npy",
+        "sha256": "ba5250765a4a44593a82836fc10fb6257d0321f386eb2ec89daa089d82ee8d6f"
+      },
+      "iteration": 40000,
+      "kid50k": 0.013799968618618623,
+      "kimg": 5120,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 7.546402284527539,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg005120/nfe2/features.final.npy",
+        "sha256": "c8f28d4c5dfd0370b3ade5cd5a9f3f02daa47da9985989694ec003ffa8561017"
+      },
+      "iteration": 40000,
+      "kid50k": 0.004140532112112133,
+      "kimg": 5120,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 24.11863729122765,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg005120/nfe1/features.final.npy",
+        "sha256": "892ee141cab6e0ee2385842dda66768df0221d8770eb20d07a6c6bb24e28d96f"
+      },
+      "iteration": 40000,
+      "kid50k": 0.01518135605355355,
+      "kimg": 5120,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 8.256395235098969,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg005120/nfe2/features.final.npy",
+        "sha256": "531b78fac15a120526de9441a9a4e79b2f95bf758c4cba67883cf976d1221434"
+      },
+      "iteration": 40000,
+      "kid50k": 0.004520051899399378,
+      "kimg": 5120,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 22.575880013284152,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg005120/nfe1/features.final.npy",
+        "sha256": "d13352aef5a02f4508b1de24bb2aaac0985db8432331f810689ede5cfc53fccc"
+      },
+      "iteration": 40000,
+      "kid50k": 0.01423244022022022,
+      "kimg": 5120,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 7.67863223178481,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg005120/nfe2/features.final.npy",
+        "sha256": "9e650afdaa07870adceceda7d9da28feea13ed4977f1ca45b1aa03fc0feb5b71"
+      },
+      "iteration": 40000,
+      "kid50k": 0.0042347059084083954,
+      "kimg": 5120,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 24.981360026788998,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg005120/nfe1/features.final.npy",
+        "sha256": "475d8c6dda32114e94ac9643ab0991001b83e6cac10d1acfb6353fecb1e30283"
+      },
+      "iteration": 40000,
+      "kid50k": 0.01586297002502501,
+      "kimg": 5120,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 8.516388266266649,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg005120/nfe2/features.final.npy",
+        "sha256": "ed161b0736bac139fe518e47fcd77cbcdbb4bef9bfd548de7a779fae27220f35"
+      },
+      "iteration": 40000,
+      "kid50k": 0.004768740067567579,
+      "kimg": 5120,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 20.356795875991708,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg006400/nfe1/features.final.npy",
+        "sha256": "6c9d1d58f5b247b84a55998166c5a14b9de5f9865866ccd97405205feee22bb4"
+      },
+      "iteration": 50000,
+      "kid50k": 0.01268709327327328,
+      "kimg": 6400,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 7.256471516247709,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg006400/nfe2/features.final.npy",
+        "sha256": "9fba9cc8c330a553868d652fa4d33bd27221f0d7a9a967ffe6a5210bb1a0f234"
+      },
+      "iteration": 50000,
+      "kid50k": 0.003944825963463472,
+      "kimg": 6400,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 26.653084618864753,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg006400/nfe1/features.final.npy",
+        "sha256": "b4944298d9edac80cd71cf604bf91b35224255d6945bbcde400d403a83b56583"
+      },
+      "iteration": 50000,
+      "kid50k": 0.016985938243243258,
+      "kimg": 6400,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 8.998441803912504,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg006400/nfe2/features.final.npy",
+        "sha256": "a5bbbad7c86dc16c6e0d5dcb3fe476cb7d44b23a78d4823f7251c6488c25c626"
+      },
+      "iteration": 50000,
+      "kid50k": 0.0048254352652652545,
+      "kimg": 6400,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 20.09813355128054,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg006400/nfe1/features.final.npy",
+        "sha256": "cc68fc3b0b494b0e7b253c2b853221536eb1549f85ad1395636c23dfe597e86f"
+      },
+      "iteration": 50000,
+      "kid50k": 0.012503255925925895,
+      "kimg": 6400,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 7.18563008989346,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg006400/nfe2/features.final.npy",
+        "sha256": "aca2c1863fa04f2d1866c51ee1874c653be220e3299158204c24a1665db65c41"
+      },
+      "iteration": 50000,
+      "kid50k": 0.0038636683083083287,
+      "kimg": 6400,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 22.246142478031206,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg006400/nfe1/features.final.npy",
+        "sha256": "1cc620ae9db3a714c561bbae02a84306dd51d16867b9bb596f792aa8fd455ae6"
+      },
+      "iteration": 50000,
+      "kid50k": 0.013844861986986994,
+      "kimg": 6400,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 7.89524572197781,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg006400/nfe2/features.final.npy",
+        "sha256": "cc758e76ae08aafc8ff2106d8687ff0353c80a5b149518325bbd9d807b18b1cb"
+      },
+      "iteration": 50000,
+      "kid50k": 0.004194974677177174,
+      "kimg": 6400,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 24.187858671817555,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg006400/nfe1/features.final.npy",
+        "sha256": "018c55559803cf7525caf966bc040783f8064606738519e35c370d839c66624e"
+      },
+      "iteration": 50000,
+      "kid50k": 0.015249196363863885,
+      "kimg": 6400,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 8.107833146748018,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg006400/nfe2/features.final.npy",
+        "sha256": "36be50a6a313de2f1393f8dd4188e5930e4b6838aee7786b489e8592ccc3e029"
+      },
+      "iteration": 50000,
+      "kid50k": 0.0043414189364364255,
+      "kimg": 6400,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 26.282740049705396,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg006400/nfe1/features.final.npy",
+        "sha256": "3032fbc3e8ca446e2ea3b42080b0b5680063209f9458ad9ca46aae9e53f7a803"
+      },
+      "iteration": 50000,
+      "kid50k": 0.01661660064814815,
+      "kimg": 6400,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 8.892791968527478,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg006400/nfe2/features.final.npy",
+        "sha256": "c4522cbc0b17921d5a4bcf439333cc321b1281c4f65347016e0d594b0e167cbc"
+      },
+      "iteration": 50000,
+      "kid50k": 0.0047928355280280315,
+      "kimg": 6400,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 9.070529262301255,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg007680/nfe1/features.final.npy",
+        "sha256": "3cf80773d6a0f2d41a375ba4d72029b5278d024b2c7d6818bff80d966e56803a"
+      },
+      "iteration": 60000,
+      "kid50k": 0.005805299999999975,
+      "kimg": 7680,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.733922431762826,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg007680/nfe2/features.final.npy",
+        "sha256": "fdb0485058426b1c92df78fe163530bae498137e14df48b4b4704380044330da"
+      },
+      "iteration": 60000,
+      "kid50k": 0.0021588227952952957,
+      "kimg": 7680,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 9.822996284925804,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg007680/nfe1/features.final.npy",
+        "sha256": "7556bc44cde7bc60f4720eb0053a0a439bf27b63c0ebddf9b8b1467d243c5d91"
+      },
+      "iteration": 60000,
+      "kid50k": 0.006199620765765721,
+      "kimg": 7680,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.882828744725219,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg007680/nfe2/features.final.npy",
+        "sha256": "d3f2b17b12eac4655c3c5436181fc22aedffa4ebc738287948b32e20dc6897ec"
+      },
+      "iteration": 60000,
+      "kid50k": 0.002231094019019029,
+      "kimg": 7680,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 9.101112053907348,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg007680/nfe1/features.final.npy",
+        "sha256": "e8e92f0d030b34c995353c85ef15b70dce21a5f6669655c5f734b90de344e71b"
+      },
+      "iteration": 60000,
+      "kid50k": 0.005429765382882897,
+      "kimg": 7680,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.7174184913871993,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg007680/nfe2/features.final.npy",
+        "sha256": "ba7da0122f32b537e50aa9d23ef06c9dad2b31165ee01376c0a7a1064444308e"
+      },
+      "iteration": 60000,
+      "kid50k": 0.002035743345845858,
+      "kimg": 7680,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 9.414786261923615,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg007680/nfe1/features.final.npy",
+        "sha256": "24ff1664d6f879fd47a75e67902ef956dd5a4790024bcfbcd463ffb92f728e91"
+      },
+      "iteration": 60000,
+      "kid50k": 0.0056284145420420735,
+      "kimg": 7680,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.7151590169095416,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg007680/nfe2/features.final.npy",
+        "sha256": "ed9ef11887912b3fb921eb988b65468e1a161ac1fb454749cb339167ef7ed80b"
+      },
+      "iteration": 60000,
+      "kid50k": 0.0019766588388388344,
+      "kimg": 7680,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 9.883501181164807,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg007680/nfe1/features.final.npy",
+        "sha256": "81df3fe5207672894dd5e47f949d3b897ec9e1730c22eb8196aba6f91ae5324a"
+      },
+      "iteration": 60000,
+      "kid50k": 0.006193499642142174,
+      "kimg": 7680,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 4.673906735931386,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg007680/nfe2/features.final.npy",
+        "sha256": "6af5099664e8f9da62986db8fb4fb341bf946d7d7c53d786aed2a60696104967"
+      },
+      "iteration": 60000,
+      "kid50k": 0.002523121251251214,
+      "kimg": 7680,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 9.583912059451364,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg007680/nfe1/features.final.npy",
+        "sha256": "c36c0bff2cb61646aeee5faf0598fa21b4c370d79a3af42688b9ecd902ac3bc5"
+      },
+      "iteration": 60000,
+      "kid50k": 0.005945200180180186,
+      "kimg": 7680,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 3.7667301527666934,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg007680/nfe2/features.final.npy",
+        "sha256": "d8f777c6023f9502020a4551dd7c63a404c54f239fc06a8f315d6666b95aa95c"
+      },
+      "iteration": 60000,
+      "kid50k": 0.002119668666166185,
+      "kimg": 7680,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 8.218996390568906,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg008960/nfe1/features.final.npy",
+        "sha256": "b001436d19a7f85deb55dbf1fb6fae97bcced75f0d9b278304dbea12b30437c9"
+      },
+      "iteration": 70000,
+      "kid50k": 0.00520689372872871,
+      "kimg": 8960,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.7947930918745865,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg008960/nfe2/features.final.npy",
+        "sha256": "6e15c9f097e8292c68f015a8488a28ec66c3061d6a689cab43ed2aa866bd20fc"
+      },
+      "iteration": 70000,
+      "kid50k": 0.0022420592792793057,
+      "kimg": 8960,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 8.840799222951917,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg008960/nfe1/features.final.npy",
+        "sha256": "1a377ebe61cf728e88e4b4a16643bfc4baf57ae710c70f9e3c397906b9153ef6"
+      },
+      "iteration": 70000,
+      "kid50k": 0.005527475625625625,
+      "kimg": 8960,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.8521051233879504,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg008960/nfe2/features.final.npy",
+        "sha256": "cf94f56c5a52f7dfe387d4bf03b196b92879d2a71ef7e1e8d1bdb1f2383aea83"
+      },
+      "iteration": 70000,
+      "kid50k": 0.00219273807057054,
+      "kimg": 8960,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 8.480842104083028,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg008960/nfe1/features.final.npy",
+        "sha256": "35310812dc8772c455050581d395badc17c421f4d6c5b416df20f64850462118"
+      },
+      "iteration": 70000,
+      "kid50k": 0.005446223360860904,
+      "kimg": 8960,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.8191670740607098,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg008960/nfe2/features.final.npy",
+        "sha256": "b73e77b1e9a23e6fb2645ed44c946a80cd3d2fa1433f6e69e1fe43e139e1ce74"
+      },
+      "iteration": 70000,
+      "kid50k": 0.0023419965690690925,
+      "kimg": 8960,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 8.74037880605094,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg008960/nfe1/features.final.npy",
+        "sha256": "34a2dd222f2a9470d7df372ddc600706a0fd89ab8b2dba91b0a738b771f75006"
+      },
+      "iteration": 70000,
+      "kid50k": 0.0055296354079078765,
+      "kimg": 8960,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.862143460541142,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg008960/nfe2/features.final.npy",
+        "sha256": "b5411baaaf4446189bda04193e7692117ad7be5e228350f3e5878ebf18453735"
+      },
+      "iteration": 70000,
+      "kid50k": 0.002308221629129148,
+      "kimg": 8960,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 21.773378890677943,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg008960/nfe1/features.final.npy",
+        "sha256": "67eb148dfc5840c049468ef2b5fb39430ff55f0f84c7d167ac6c6e32969de5c4"
+      },
+      "iteration": 70000,
+      "kid50k": 0.01732221225225223,
+      "kimg": 8960,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 44.714700264701904,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg008960/nfe2/features.final.npy",
+        "sha256": "9228e2829dded1d6f36f6ef7fd0b83dec2cde1805fb0b3b9730b9ac7926feb28"
+      },
+      "iteration": 70000,
+      "kid50k": 0.04286033992742741,
+      "kimg": 8960,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 331.36768114617564,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg008960/nfe1/features.final.npy",
+        "sha256": "7996862760950d5d14421ad897f7dad19105c53d678ec5b1640f6bd5d6c63a67"
+      },
+      "iteration": 70000,
+      "kid50k": 0.38472405734985,
+      "kimg": 8960,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 282.8137856435987,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg008960/nfe2/features.final.npy",
+        "sha256": "ad7773579c523c1695564b7e0bc1da3acf5963c5b5b5ad39e4458615740b934b"
+      },
+      "iteration": 70000,
+      "kid50k": 0.28750500705705706,
+      "kimg": 8960,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 6.373092409678185,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg010240/nfe1/features.final.npy",
+        "sha256": "a9d429a3a301f6730360a353c50a12e9b2467eeab0ad2f1caec25492ac39dabd"
+      },
+      "iteration": 80000,
+      "kid50k": 0.003887524329329358,
+      "kimg": 10240,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.3453035278643206,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg010240/nfe2/features.final.npy",
+        "sha256": "2890d6ee83eb98465a11f9d0b14a01a6cf8c07b8196a4b286d2f9c0d9c6959ea"
+      },
+      "iteration": 80000,
+      "kid50k": 0.0018948855030029971,
+      "kimg": 10240,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 6.716101457939498,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg010240/nfe1/features.final.npy",
+        "sha256": "629b6f32a0d82747b0bbbb4322639796115922a5677bc131224c0425a7922d2e"
+      },
+      "iteration": 80000,
+      "kid50k": 0.004144900695695705,
+      "kimg": 10240,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.3940443605831567,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg010240/nfe2/features.final.npy",
+        "sha256": "e6e36f4b97f67013900911e28c4fbc3bca8bb2386ee2f62e6a3316ad495fcbe2"
+      },
+      "iteration": 80000,
+      "kid50k": 0.001969950510510489,
+      "kimg": 10240,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 6.447032584132756,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg010240/nfe1/features.final.npy",
+        "sha256": "b63666977561bb00b43c9105da4ee967341bdf07e54f8ec741a7f5ad2af76676"
+      },
+      "iteration": 80000,
+      "kid50k": 0.004015855988488475,
+      "kimg": 10240,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.368347368261374,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg010240/nfe2/features.final.npy",
+        "sha256": "f2cfe6eec7a7ef2f1c0e084d99ce52a20878d8c5379819c4667a7eb2bddfffe0"
+      },
+      "iteration": 80000,
+      "kid50k": 0.0020355805155154987,
+      "kimg": 10240,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 6.548984162313153,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg010240/nfe1/features.final.npy",
+        "sha256": "9c2cd5f8268066aac79a073c9982695596494d0db6f2eb84d6d62ff7b7069a7e"
+      },
+      "iteration": 80000,
+      "kid50k": 0.004035098443443481,
+      "kimg": 10240,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.361356688385871,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg010240/nfe2/features.final.npy",
+        "sha256": "d3e2a82c21f1af2f3331379abf47f508d6d820d909e1579800a9ee7c41bf5013"
+      },
+      "iteration": 80000,
+      "kid50k": 0.001987803616116107,
+      "kimg": 10240,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 269.538279316143,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg010240/nfe1/features.final.npy",
+        "sha256": "fda4a85571168fba06fd6cc2a27d44d67f3eeb2a5eace628b1c05a2218855534"
+      },
+      "iteration": 80000,
+      "kid50k": 0.26849034150900897,
+      "kimg": 10240,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 253.03935938517617,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg010240/nfe2/features.final.npy",
+        "sha256": "2c1643dd7db85756d38197e899c9052f6fa0ff88937edccf0fefd9930fa68079"
+      },
+      "iteration": 80000,
+      "kid50k": 0.22787292528778785,
+      "kimg": 10240,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 317.86715440280284,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg010240/nfe1/features.final.npy",
+        "sha256": "4858f7f621fbf2be44c197b9ece11f126534a70e4f00ea029c049ea50e0c1840"
+      },
+      "iteration": 80000,
+      "kid50k": 0.3521956035685684,
+      "kimg": 10240,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 213.5777375615947,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg010240/nfe2/features.final.npy",
+        "sha256": "10cee76b8b722379e3712b285f4d054770a200cd22a37834c5e744e551e4c22f"
+      },
+      "iteration": 80000,
+      "kid50k": 0.2244270255330329,
+      "kimg": 10240,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 5.567043589300424,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg011520/nfe1/features.final.npy",
+        "sha256": "7b05a71a19cb5cf2613b63bfe402ee1b77d87f56c43fd57661b3065405fe378e"
+      },
+      "iteration": 90000,
+      "kid50k": 0.0033455911661661774,
+      "kimg": 11520,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.29778835337802,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg011520/nfe2/features.final.npy",
+        "sha256": "320252936c3a33cf7a670f321a6b575cfa1bd2cae82e6e80e9f88af9cae5f3f4"
+      },
+      "iteration": 90000,
+      "kid50k": 0.0019790699274274174,
+      "kimg": 11520,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 5.713624336527676,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg011520/nfe1/features.final.npy",
+        "sha256": "155dd7f360d6612f08c469fb49b8a43c57fa00b0c41bb2caa324eb821b4610e0"
+      },
+      "iteration": 90000,
+      "kid50k": 0.003463479882382389,
+      "kimg": 11520,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.349468870267767,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg011520/nfe2/features.final.npy",
+        "sha256": "6033dc17e5a46b1f52c664a5c6e66846258d7c618b97e579978d174ba54f2b8b"
+      },
+      "iteration": 90000,
+      "kid50k": 0.002017831321321314,
+      "kimg": 11520,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 5.652257890296202,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg011520/nfe1/features.final.npy",
+        "sha256": "eb341cbb0be4aa503208f45a1c6d3ab62b1a9e5156ed005dcbf78f23d4617d50"
+      },
+      "iteration": 90000,
+      "kid50k": 0.0035535451551551474,
+      "kimg": 11520,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.3382015745240965,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg011520/nfe2/features.final.npy",
+        "sha256": "dc492e7f21e947cce634244fe68e0ccb5df2206e0e3fa5a974d05aa42143c8b6"
+      },
+      "iteration": 90000,
+      "kid50k": 0.0020908602377377153,
+      "kimg": 11520,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 5.71112036990476,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg011520/nfe1/features.final.npy",
+        "sha256": "d0f0b70473e00ecf875d0ef5ae2eb81321306577834a2eef7224d8eb52a9fb8e"
+      },
+      "iteration": 90000,
+      "kid50k": 0.0035298796771771734,
+      "kimg": 11520,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.36058790957782,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg011520/nfe2/features.final.npy",
+        "sha256": "f84c96a9425f7591656e12cae4af469b71be59276c8295a28a14413c6a90d000"
+      },
+      "iteration": 90000,
+      "kid50k": 0.002101395763263258,
+      "kimg": 11520,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 371.02606768694613,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg011520/nfe1/features.final.npy",
+        "sha256": "9d253238e53109245efddd92928a1ebf28caacab72a25530e0aaa49ea9f745d0"
+      },
+      "iteration": 90000,
+      "kid50k": 0.45381756199199186,
+      "kimg": 11520,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 237.16583458658488,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg011520/nfe2/features.final.npy",
+        "sha256": "eb8c65126b00f7bdf5dc1d1af630c4ee828409826d50fa6b7be71b2019feba6f"
+      },
+      "iteration": 90000,
+      "kid50k": 0.27935094949949946,
+      "kimg": 11520,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 319.57166972489836,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg011520/nfe1/features.final.npy",
+        "sha256": "6c5f7016952cd936dab5afae14c3e6efef0c9be93280cd875a1b013f6ce4eee4"
+      },
+      "iteration": 90000,
+      "kid50k": 0.35963753251001,
+      "kimg": 11520,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 204.16599422780067,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg011520/nfe2/features.final.npy",
+        "sha256": "1d2c55acf546591160b8a62a2785d87df7107d0a703e5ff689e6ac0fff4d9155"
+      },
+      "iteration": 90000,
+      "kid50k": 0.24253846680180177,
+      "kimg": 11520,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 5.248718572923762,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg012800/nfe1/features.final.npy",
+        "sha256": "564bf5755948075924fc4ab7b0fb6aaa0e154a25dbd68288cf6e121a2e3045e3"
+      },
+      "iteration": 100000,
+      "kid50k": 0.003131490950950947,
+      "kimg": 12800,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.2551848494668394,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IA/kimg012800/nfe2/features.final.npy",
+        "sha256": "09f6f1b5b0eb7717198318a693b80aed78ab473441b84a4385f74a2a7b1e9a8b"
+      },
+      "iteration": 100000,
+      "kid50k": 0.00195866142892894,
+      "kimg": 12800,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 5.375351240451324,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg012800/nfe1/features.final.npy",
+        "sha256": "c80e816f397ece64701b6c57229c0374d8eb9d00a641a0369928d72ed66dda4b"
+      },
+      "iteration": 100000,
+      "kid50k": 0.0032045794019018876,
+      "kimg": 12800,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 101
+    },
+    {
+      "fid50k": 3.2546323677901774,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed101/IB/kimg012800/nfe2/features.final.npy",
+        "sha256": "1220dd2838e6cf2b1c0567f8e91e18fc12420ee406000a8a5587ee404ac4d36c"
+      },
+      "iteration": 100000,
+      "kid50k": 0.001893474767267221,
+      "kimg": 12800,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 101
+    },
+    {
+      "fid50k": 5.4321979296262795,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg012800/nfe1/features.final.npy",
+        "sha256": "9fe80bb0d41c7bd4561a6ae3bf89929133fd8313ca59ace10496cafc2d0d3bc6"
+      },
+      "iteration": 100000,
+      "kid50k": 0.003357399702202174,
+      "kimg": 12800,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.3012174516886232,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IA/kimg012800/nfe2/features.final.npy",
+        "sha256": "c5fb97eff3f44e640dfcc7eb9836330822b2492d94ed05af659f9e6524ff810f"
+      },
+      "iteration": 100000,
+      "kid50k": 0.0020577277152152144,
+      "kimg": 12800,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 5.536642094130197,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg012800/nfe1/features.final.npy",
+        "sha256": "d9cc62725edf4041d803b44df627b427fe630111603f08339019537f72850ac0"
+      },
+      "iteration": 100000,
+      "kid50k": 0.0033832961186186276,
+      "kimg": 12800,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 102
+    },
+    {
+      "fid50k": 3.308902860371518,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed102/IB/kimg012800/nfe2/features.final.npy",
+        "sha256": "e7f19fa37ab7f9b1600de9fbd5ae0b6b9d9837251ec02e0eb3deb7c1d0f0f627"
+      },
+      "iteration": 100000,
+      "kid50k": 0.0019989525125124964,
+      "kimg": 12800,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 102
+    },
+    {
+      "fid50k": 282.5018621948152,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg012800/nfe1/features.final.npy",
+        "sha256": "153b30fbe4f191a6c565036b12c8e55b386abc647ab365d4c746ec2d6553ede3"
+      },
+      "iteration": 100000,
+      "kid50k": 0.30822995168668677,
+      "kimg": 12800,
+      "method": "IA",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 254.73600120162428,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IA/kimg012800/nfe2/features.final.npy",
+        "sha256": "44bf2e111ef0be42c4b1a1bdd207882c695abd8ddd4bc8c564d501e3db404b98"
+      },
+      "iteration": 100000,
+      "kid50k": 0.29864265360110115,
+      "kimg": 12800,
+      "method": "IA",
+      "nfe": 2,
+      "seed": 103
+    },
+    {
+      "fid50k": 244.95487718288092,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg012800/nfe1/features.final.npy",
+        "sha256": "e4a67aac42d7fce439a04d2e581cc83ee718e618f33f4215bf59d12ce1b19da2"
+      },
+      "iteration": 100000,
+      "kid50k": 0.2608777627002001,
+      "kimg": 12800,
+      "method": "IB",
+      "nfe": 1,
+      "seed": 103
+    },
+    {
+      "fid50k": 218.59709598333512,
+      "generated_features": {
+        "path": "/workspace/eval/features/seed103/IB/kimg012800/nfe2/features.final.npy",
+        "sha256": "b9f64beea04a59ca840c3c916ebc129704d36a6b42563d5044eba3c056cdaa18"
+      },
+      "iteration": 100000,
+      "kid50k": 0.26975562995996,
+      "kimg": 12800,
+      "method": "IB",
+      "nfe": 2,
+      "seed": 103
+    }
+  ]
+}
