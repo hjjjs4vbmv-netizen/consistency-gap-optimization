@@ -513,6 +513,15 @@ class ECMLoss:
             rng_state = torch.cuda.get_rng_state()
         else:
             rng_state = torch.get_rng_state()
+        if self._runtime_factorial_metrics is not None:
+            with torch.no_grad():
+                self._runtime_factorial_metrics.update(
+                    input_noise_sha256=reproducibility.state_sha256(eps),
+                    dropout_rng_sha256=reproducibility.state_sha256(rng_state),
+                    augmentation_rng_sha256=reproducibility.state_sha256(
+                        None if augment_pipe is None else augment_labels
+                    ),
+                )
         D_yt = net(y + eps_t, t, labels, augment_labels=augment_labels)
         
         if r_target.max() > 0:

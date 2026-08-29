@@ -116,6 +116,28 @@ def parse_immutable_checkpoint_kimg(_ctx, _param, value):
     return tuple(result)
 
 
+def parse_immutable_checkpoint_attempts(_ctx, _param, value):
+    """Parse exact global attempted-iteration checkpoints."""
+    if value is None or value == '':
+        return ()
+    result = []
+    for token in value.split(','):
+        token = token.strip()
+        if not token or not token.isdigit():
+            raise click.BadParameter(
+                'expected comma-separated positive attempted iterations'
+            )
+        attempt = int(token)
+        if attempt <= 0:
+            raise click.BadParameter('checkpoint attempts must be positive')
+        result.append(attempt)
+    if len(set(result)) != len(result):
+        raise click.BadParameter('checkpoint attempts must be unique')
+    if result != sorted(result):
+        raise click.BadParameter('checkpoint attempts must be increasing')
+    return tuple(result)
+
+
 def parse_resume_state_token(path):
     match = re.fullmatch(
         r'training-state-(\d+|latest|kimg\d+)\.pt',
@@ -310,6 +332,32 @@ def make_loss_kwargs(opts):
     callback=parse_immutable_checkpoint_kimg,
     default='',
 )
+@click.option(
+    '--immutable-checkpoint-attempts',
+    help='Comma-separated exact global attempted iterations for immutable full-state saves',
+    metavar='ATTEMPT[,ATTEMPT...]',
+    type=str,
+    callback=parse_immutable_checkpoint_attempts,
+    default='',
+)
+@click.option(
+    '--same-state-fork',
+    is_flag=True,
+    help='Start an immutable protocol-bound continuation fork in a new output directory',
+)
+@click.option(
+    '--same-state-origin-arm',
+    type=click.Choice(['B']),
+    default=None,
+    help='Frozen historical arm for --same-state-fork',
+)
+@click.option(
+    '--same-state-protocol-sha256',
+    type=str,
+    default=None,
+    metavar='SHA256',
+    help='Frozen protocol SHA256 for --same-state-fork',
+)
 @click.option('--seed',          help='Random seed  [default: random]', metavar='INT',              type=int)
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
@@ -330,6 +378,32 @@ def main(**kwargs):
     blog "Consistency Models Made Easy".
     """
     opts = dnnlib.EasyDict(kwargs)
+    same_state_fork = None
+    if opts.same_state_fork:
+        if opts.resume is None:
+            raise click.ClickException('--same-state-fork requires --resume')
+        if opts.factorial_protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+            raise click.ClickException(
+                '--same-state-fork requires factorial_protocol=q256_target_weight_v1'
+            )
+        if opts.same_state_origin_arm != 'B':
+            raise click.ClickException(
+                '--same-state-fork requires --same-state-origin-arm=B'
+            )
+        if re.fullmatch(r'[0-9a-f]{64}', opts.same_state_protocol_sha256 or '') is None:
+            raise click.ClickException(
+                '--same-state-fork requires a lowercase 64-character protocol SHA256'
+            )
+        same_state_fork = {
+            'schema': 'ect.q256.same-state-fork/v1',
+            'origin_arm': 'B',
+            'source_kimg': 384,
+            'protocol_sha256': opts.same_state_protocol_sha256,
+        }
+    elif opts.same_state_origin_arm is not None or opts.same_state_protocol_sha256 is not None:
+        raise click.ClickException(
+            '--same-state-origin-arm/--same-state-protocol-sha256 require --same-state-fork'
+        )
     torch.multiprocessing.set_start_method('spawn')
     dist.init()
     apply_config_preset(opts)
@@ -444,8 +518,10 @@ def main(**kwargs):
              state_dump_ticks=None if opts.dump == 0 else opts.dump,
              ckpt_ticks=opts.ckpt,
              immutable_checkpoint_kimg=opts.immutable_checkpoint_kimg,
+             immutable_checkpoint_attempts=opts.immutable_checkpoint_attempts,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
-             stop_after_attempts=opts.stop_after_attempts)
+             stop_after_attempts=opts.stop_after_attempts,
+             same_state_fork=same_state_fork)
     if not opts.startup_preview:
         c.startup_preview = False
     c.update(
@@ -552,13 +628,13 @@ def main(**kwargs):
                 or opts.exact_resume
             )
         )
-        if exact_state_resume:
+        if exact_state_resume and not opts.same_state_fork:
             if not os.path.isfile(options_path):
                 raise click.ClickException(
                     'exact resume requires the immutable original '
                     'training_options.json in the same run directory'
                 )
-        else:
+        elif not os.path.isfile(options_path):
             mode = 'xt' if (
                 opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
                 or opts.exact_resume
