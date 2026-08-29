@@ -114,6 +114,12 @@ class ScheduleSwitchTests(unittest.TestCase):
             current = copy.deepcopy(state["trajectory_config"])
             current["loss_kwargs"]["target_gap_scale"] = 1.1
             current["loss_kwargs"]["denominator_gap_scale"] = 1.1
+            state["trajectory_config"]["dataset_kwargs"] = {
+                "path": "/data/raw/canonical.zip", "resolution": 32
+            }
+            current["dataset_kwargs"] = {
+                "path": "/mnt/canonical.zip", "resolution": 32
+            }
             self.assertTrue(schedule_switch.trajectory_configs_compatible(
                 state["trajectory_config"], current, manifest
             ))
