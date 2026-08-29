@@ -177,6 +177,7 @@ def main() -> int:
         protocol["protocol"] not in {
             schedule_switch.SEED3_7_PROTOCOL,
             schedule_switch.SEED3_7_PROTOCOL_V2,
+            schedule_switch.SEED3_7_PROTOCOL_V3,
         }
         or tuple(protocol["seeds"]) != SEEDS
     ):
