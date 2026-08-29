@@ -56,6 +56,7 @@ timeout --signal=TERM --kill-after=30s 24h \
       CUDA_CACHE_DISABLE=1 CUBLAS_WORKSPACE_CONFIG=:4096:8 \
       MASTER_ADDR=127.0.0.1 MASTER_PORT="${master_port}" \
       RANK=0 LOCAL_RANK=0 WORLD_SIZE=1 PYTHONNOUSERSITE=1 PYTHONUNBUFFERED=1 \
+      PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
       LD_LIBRARY_PATH="${Q256_RUNTIME_LD_LIBRARY_PATH}" PATH="${Q256_RUNTIME_PATH}" \
     "${Q256_RUNTIME_PYTHON}" -m torch.distributed.run --standalone --nproc_per_node=1 \
       --master_port="${master_port}" "${repo}/ct_train.py" \
