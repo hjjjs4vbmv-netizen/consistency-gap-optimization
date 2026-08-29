@@ -72,10 +72,12 @@ def parse_immutable_checkpoint_kimg(_ctx, _param, value):
 
 def parse_resume_state_token(path):
     match = re.fullmatch(
-        r'training-state-(\d+|latest|kimg\d+)\.pt',
+        r'training-state(?:-(\d+|latest|kimg\d+))?\.pt',
         os.path.basename(path),
     )
-    return None if match is None else match.group(1)
+    if match is None:
+        return None
+    return 'source' if match.group(1) is None else match.group(1)
 
 
 def normalize_schedule_name(_ctx, _param, value):
@@ -365,6 +367,11 @@ def main(**kwargs):
         resume_token = parse_resume_state_token(opts.resume)
         if resume_token is None or not os.path.isfile(opts.resume):
             raise click.ClickException('--resume must point to training-state-*.pt from a previous training run')
+        if resume_token == 'source' and opts.schedule_switch_manifest is None:
+            raise click.ClickException(
+                'unsuffixed training-state.pt is reserved for a frozen '
+                'schedule-switch source manifest'
+            )
         if opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS:
             # The versioned factorial training-state is self-contained (net +
             # EMA + optimizer + scaler + RNG + sampler). Depending on a
@@ -381,7 +388,7 @@ def main(**kwargs):
         # restores the authoritative cur_tick / cur_nimg from the serialized state.
         if opts.resume_tick is not None:
             c.resume_tick = opts.resume_tick
-        elif resume_token == 'latest' or resume_token.startswith('kimg'):
+        elif resume_token in ('latest', 'source') or resume_token.startswith('kimg'):
             c.resume_tick = 0
         else:
             c.resume_tick = int(resume_token)
