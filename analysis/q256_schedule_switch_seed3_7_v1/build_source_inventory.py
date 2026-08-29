@@ -57,6 +57,30 @@ def state_record(prefix: Path, original_path: str) -> dict:
     )
 
 
+def optional_manifest_record(
+    prefix: Path, original_path: str, *, manifest_path: str,
+    manifest_bytes: int | None, manifest_sha256: str,
+    source_manifest_sha256: str,
+) -> dict:
+    candidate = prefix / original_path.lstrip("/")
+    if candidate.is_file() and not candidate.is_symlink():
+        record = file_record(candidate, original_path=original_path)
+        if record["sha256"] != manifest_sha256 or (
+            manifest_bytes is not None and record["bytes"] != manifest_bytes
+        ):
+            raise RuntimeError("staged control artifact differs from PASS manifest")
+        record["staged"] = True
+        return record
+    return {
+        "path": manifest_path,
+        "original_path": original_path,
+        "bytes": manifest_bytes,
+        "sha256": manifest_sha256,
+        "staged": False,
+        "verified_via_source_manifest": source_manifest_sha256,
+    }
+
+
 def source_manifest_path(prefix: Path, cohort: dict, seed: int) -> tuple[Path, str]:
     root = Path(cohort["canonical_root"])
     if seed <= 5:
@@ -244,12 +268,15 @@ def main() -> int:
                 _, manifest_snapshot_bytes, manifest_snapshot_sha = (
                     row_snapshot_identity(control_manifest_row, seed=seed)
                 )
-                control_snapshot = state_record(prefix, control_snapshot_original)
-                if control_snapshot["sha256"] != manifest_snapshot_sha or (
-                    manifest_snapshot_bytes is not None
-                    and control_snapshot["bytes"] != manifest_snapshot_bytes
-                ):
-                    raise RuntimeError("control snapshot differs from PASS manifest")
+                control_snapshot = optional_manifest_record(
+                    prefix, control_snapshot_original,
+                    manifest_path=row_snapshot_identity(
+                        control_manifest_row, seed=seed
+                    )[0],
+                    manifest_bytes=manifest_snapshot_bytes,
+                    manifest_sha256=manifest_snapshot_sha,
+                    source_manifest_sha256=manifest_record["sha256"],
+                )
                 if budget == 640:
                     control_state = state_record(prefix, control_state_original)
                     if control_state["sha256"] != manifest_state_sha or (
