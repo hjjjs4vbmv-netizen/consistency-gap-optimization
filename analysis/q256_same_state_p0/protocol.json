@@ -1,8 +1,10 @@
 {
-  "schema": "ect.q256.b384-same-state-p0-protocol/v1",
+  "schema": "ect.q256.b384-same-state-p0-protocol/v2",
+  "supersedes_prelaunch_protocol_sha256": "6c74a3dc24083dc0c75a91c5dabf82432aad896896799b57fe7962a8ab9b3cb6",
+  "supersession_reason": "prelaunch-only compatibility fix for legacy Git without git -C; no optimizer step or formal run directory existed",
   "classification": "post-hoc mechanism replication, not a new confirmatory quality experiment",
   "origin_main_sha": "8d4844c293a75ce26a360e9907e39abaa1b87b77",
-  "implementation_commit": "7ee0b43f2ce599b2ef0791e52ed322a0175afe66",
+  "implementation_commit": "f755fa62323b373dc2178a5de8c2c56dd39d99ab",
   "pr79_replay_execution_commit": "c8721a05227f3ff171f8dc1f559a64d58281c0ae",
   "source_selection": {
     "formal_cohort": [3, 4, 5],
