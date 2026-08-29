@@ -1,0 +1,208 @@
+{
+  "schema": "ect.q256.schedule-switch-source-inventory/v1",
+  "status": "FAIL_CLOSED",
+  "observed_at": "2026-08-29T16:16:06+08:00",
+  "host": "gpu0003",
+  "endpoint": "ECT001@172.16.30.17:22",
+  "protocol_sha256": "484c115fc83878e9d6b7da1b0cfba356fb17cd69da5352d42835efd8cf56912e",
+  "source_training_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "source_replay_commit": "f4115a89c764081e01be4290f0868cb8f625825e",
+  "canonical_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2",
+  "canonical_source_states_expected": 10,
+  "canonical_source_states_present": 0,
+  "archive_evidence": {
+    "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/release_archive_v1/q256_seed14_18_network_snapshots_and_evidence_v1.tar",
+    "bytes": 26952376320,
+    "entries": 427,
+    "network_snapshot_entries": 120,
+    "checkpoint_manifest_entries": 20,
+    "training_state_entries": 0
+  },
+  "cells": [
+    {
+      "seed": 14,
+      "origin_arm": "A",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed14/armA/kimg0512/training-state.pt",
+      "expected_bytes": 895724856,
+      "expected_sha256": "abf7117fbea162b2d223616df18c17859567f67608995b02e81363ddd6b9c8d2",
+      "source_checkpoint_manifest_sha256": "9e0d24783613eaa76754d048ee4b24d70a32efc59878318134575ad2b22e9a12",
+      "expected_internal_state_sha256": {
+        "net": "67255834da7fbabb9026f5200dc222ea369e4c5232cf08738c8e0484f32ae61b",
+        "ema": "cb1cd228f4372eda96b762c87a890c2f5a441f801c5f8d8d8f8b7aa0903b8ff0",
+        "optimizer": "c82295074df3f20d1fcc8c9aa791f2d5977110921bc42db1a09c9136782e6c48",
+        "gradscaler": "0f932654b671e20cf1d231a849d171aa3191ac9c425d6b93aa1151fcef6b2498",
+        "rank_rng": ["f1670863790fc16d74eada67b126958bcb62d9249ccdfd36c9a6d371b788254b"],
+        "rank_sampler": ["78b366a5c1fd4e4f06785074c770f3c7caf6538f329c050d52264fe1a2628b7d"]
+      }
+    },
+    {
+      "seed": 14,
+      "origin_arm": "B",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed14/armB/kimg0512/training-state.pt",
+      "expected_bytes": 895724856,
+      "expected_sha256": "8420577e5748db1c152317a60d178a4a6e6d7eb4de0c3296dedf1075b0f1f2c4",
+      "source_checkpoint_manifest_sha256": "562feb7b87c3236b02f99fbade8ac6ac93f6f2ea8b0c4eab8f5da1cf9ababe46",
+      "expected_internal_state_sha256": {
+        "net": "b457f3a93ef6b341e42f12e5ad74913b6a0da46f82b9dc88a44383ef69c4799d",
+        "ema": "4192a20b045f71e8878dc26cfa3f88f67878ce5f0ab206cef5ebe58611940ed5",
+        "optimizer": "7367c58044dcb93d2d71dc82beab21662c3beac3733cce14f9cd57a967eab1f7",
+        "gradscaler": "10559663909c4b08eb2702ac5712c85c89a1c81a3ef4107e7ff53cf5bd2c93a9",
+        "rank_rng": ["f1670863790fc16d74eada67b126958bcb62d9249ccdfd36c9a6d371b788254b"],
+        "rank_sampler": ["78b366a5c1fd4e4f06785074c770f3c7caf6538f329c050d52264fe1a2628b7d"]
+      }
+    },
+    {
+      "seed": 15,
+      "origin_arm": "A",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed15/armA/kimg0512/training-state.pt",
+      "expected_bytes": 895724728,
+      "expected_sha256": "df56152e51e9b98dedf3ff575ac6645b56f9f5648a2e92a3e16418b55485e548",
+      "source_checkpoint_manifest_sha256": "a8ae923370d9484c8b76b51fb26587914387f33146706b4ce786498023e2c353",
+      "expected_internal_state_sha256": {
+        "net": "b44399a4a8ada0fe495dc9d043bad58af19b8942fd27d47d255d2ac0335b3c6b",
+        "ema": "e2550f1825a9a0b0c37d78b8db57e777489be01892b1bab719c128221cd9f7cf",
+        "optimizer": "247b6bf86cbf77099bf01330ccacf0de7cf21cd59dc9100fa7ccc7cb64de6fb9",
+        "gradscaler": "00c0f99ad8f75ef498fe8bae929cc9f102a6e7bf9155125c77115ed6312f8429",
+        "rank_rng": ["92e57e502e299f7abb8694c52bbf9876d258a24f8861042d2ba2078df0a66999"],
+        "rank_sampler": ["9db9fbf8c753d5025dc8499988ce24c32e7e6933dc307970bcc2c3c7bf0577af"]
+      }
+    },
+    {
+      "seed": 15,
+      "origin_arm": "B",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed15/armB/kimg0512/training-state.pt",
+      "expected_bytes": 895724728,
+      "expected_sha256": "63f324c4a4d970e4b93a0432718fafcbd52d0a545a0b773f47e4b593fac31b97",
+      "source_checkpoint_manifest_sha256": "4a237c8f80f57d4b9a6ffb46d35857166ecd508ac070ce1e4182aac6bb279cc2",
+      "expected_internal_state_sha256": {
+        "net": "6b8e3375be2a57b8bc83cc3f59264ae6b1f1ed3d7f98d23e71065a6a386351ff",
+        "ema": "17abd94c1103e1fb84801241d9be915ffbca73e6ca2006b3bddfa2fcc4698343",
+        "optimizer": "e91168ae5c7fe03a515285abc6bc5c0f968a3437b3efaa20c17ab4acd79831bf",
+        "gradscaler": "91c959c45ef710ebc9e96a5a99c6dd749c44b3372ca689070a6753038dd4bd68",
+        "rank_rng": ["92e57e502e299f7abb8694c52bbf9876d258a24f8861042d2ba2078df0a66999"],
+        "rank_sampler": ["9db9fbf8c753d5025dc8499988ce24c32e7e6933dc307970bcc2c3c7bf0577af"]
+      }
+    },
+    {
+      "seed": 16,
+      "origin_arm": "A",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed16/armA/kimg0512/training-state.pt",
+      "expected_bytes": 895724792,
+      "expected_sha256": "db68a6251c266059861356c4af7495eef1ca06e0830d48cebb2c21151ad9ce2c",
+      "source_checkpoint_manifest_sha256": "7161e42109d4203e692637d74698033c9419dabc1fef4e5b8ec1f9d78ecf1141",
+      "expected_internal_state_sha256": {
+        "net": "962d5ba21c09e16fa3a66fadc5ae6a47136a85e9d3426e63cde4133fcaa45281",
+        "ema": "c932a827afe6c1cde29a1d57a16eae22554c2ec9cf37f155763e2387c021f5c3",
+        "optimizer": "092886d218031828eab7c3fc8ebbbd8b91870f6b7ebbbd7877266a3a10fe2c6c",
+        "gradscaler": "a2fca9ed7d23fd22152f3dc43add9180031af18e3d4ae68ae7cdf4cdbd32557a",
+        "rank_rng": ["7a0e3fe31f39dbd781e48f70e87c1a12d2d2e5cf230a388eaed3585a0d129b17"],
+        "rank_sampler": ["4500ee44d5ed858ab131dc96a269461f74dd0ba310151e7cb9f847a47296b0cd"]
+      }
+    },
+    {
+      "seed": 16,
+      "origin_arm": "B",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed16/armB/kimg0512/training-state.pt",
+      "expected_bytes": 895724792,
+      "expected_sha256": "5b0f443b69a6d40087455e3bdc47e02d2cf291526cb2c3a6a5a3dcfa7c0c5a0a",
+      "source_checkpoint_manifest_sha256": "64905df09623c78d1a87a06bf5835fb8c49979692386058ac593e994a538e954",
+      "expected_internal_state_sha256": {
+        "net": "16d826de6bf480a771e864194393a3ac55f7a7c49ed5a38bad8a32c393a1b265",
+        "ema": "10fb9f7087121559e8b7a84578d476c854b7e31204fa3bed55e08c93e96cd26f",
+        "optimizer": "59b77fb26bf26d762a7187b78c5a41b11458ab3d6839f834993a5494c52a3c73",
+        "gradscaler": "b82fd6f5b130c0a93423361957986f5e9916b0149f60936b76afba0f2b085faa",
+        "rank_rng": ["7a0e3fe31f39dbd781e48f70e87c1a12d2d2e5cf230a388eaed3585a0d129b17"],
+        "rank_sampler": ["4500ee44d5ed858ab131dc96a269461f74dd0ba310151e7cb9f847a47296b0cd"]
+      }
+    },
+    {
+      "seed": 17,
+      "origin_arm": "A",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed17/armA/kimg0512/training-state.pt",
+      "expected_bytes": 895724792,
+      "expected_sha256": "3b0d1c309382c4fe2ac1e9cbc62e13a7c4f3661522ebb2d01fd92a17c32efb73",
+      "source_checkpoint_manifest_sha256": "34709b4772a4429d06631fd0c6ff0a2ca3e47855fdc1d33248dace8abf50a267",
+      "expected_internal_state_sha256": {
+        "net": "b5c054652882d87c1db30d94169873debad1ca6bfe7643d12b199497b11267e9",
+        "ema": "dc02dc1dd4d255e1d9dbaab1f8720ce48f73ff0f440805f8163864917b506cf1",
+        "optimizer": "d0f7497998be5f4e34dddf345722fc52e9d1f6ef13650c47fb157ab553708c5d",
+        "gradscaler": "252af955bc75bdacae0130df1cc509ac99e5c19ee196eb4eaa9364db96a7b674",
+        "rank_rng": ["2cf08163e1b3d96461c1c762fbb1a7a3adc2342c15e146b023980aba104e16a5"],
+        "rank_sampler": ["ce161f8359f4b517d54a3e7ebc8235a86be88f28424b7361bc7c7d921b5559a9"]
+      }
+    },
+    {
+      "seed": 17,
+      "origin_arm": "B",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed17/armB/kimg0512/training-state.pt",
+      "expected_bytes": 895724792,
+      "expected_sha256": "58e3e92bbe32521b9a2eddc726eb4eca7ff4fc0ce8b906f57a38af9a4812cda6",
+      "source_checkpoint_manifest_sha256": "98d2ad389d1accbbf19f9b7d03c7e9b2c575f3e9968be7d519f0081145f61535",
+      "expected_internal_state_sha256": {
+        "net": "c74f60e53c7bcc4e8cfc4582a9eb7ce818c0f2940c1a892a61aea7a1271963c8",
+        "ema": "6c0eeca39f9804cdb1713206c944f49743526c8e5ead8aca5941d2ad18cb1666",
+        "optimizer": "ef9bff6683c412c0f493f966c1626e7b54e5d5aff0b6e60d2901ebec1f0fba44",
+        "gradscaler": "2ee84cde03ce5416d17e7eb05d289fba560eadff4f747b0067faf3091808697d",
+        "rank_rng": ["2cf08163e1b3d96461c1c762fbb1a7a3adc2342c15e146b023980aba104e16a5"],
+        "rank_sampler": ["ce161f8359f4b517d54a3e7ebc8235a86be88f28424b7361bc7c7d921b5559a9"]
+      }
+    },
+    {
+      "seed": 18,
+      "origin_arm": "A",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed18/armA/kimg0512/training-state.pt",
+      "expected_bytes": 895724792,
+      "expected_sha256": "9bc4d7c9b597659dd6d9a7a7f40ad5f14a0bfb4232210898d3f47e7e3eeb7f92",
+      "source_checkpoint_manifest_sha256": "6f0dcff280923e4bf36b68d3363e8cc07ca079ae5c95750da0911f22058e066c",
+      "expected_internal_state_sha256": {
+        "net": "17de49fb76f9e18566778368e0e9c750636d1c70b1e89c7db75f124394566990",
+        "ema": "99aa984240acffd4f96cb8f51bf8f4945a317570c8fbcd48b03ec2be03d40272",
+        "optimizer": "33c8b386093e130452a7431488f8fd4561b7a67fbab3053f69c4ef9478dc6cf7",
+        "gradscaler": "c9f45040ebf5102de0c15f0de6401570cd57b34c2bcfcc81cc6d2ed5a0105eb2",
+        "rank_rng": ["c38ff9a202532ef3f428c144543ec71d21e5b271e46f8a2b9b36a5c1a2b58c89"],
+        "rank_sampler": ["5f8f547ee83593198b7c5d2245ae8d68617f82c58fcc0b62f5e20f89f0bbe576"]
+      }
+    },
+    {
+      "seed": 18,
+      "origin_arm": "B",
+      "actual_exists": false,
+      "expected_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260821/secondary-precision-extension/seed14-18-256to1024-learning-curve-replay-recovery-v2/seed18/armB/kimg0512/training-state.pt",
+      "expected_bytes": 895724792,
+      "expected_sha256": "482b933b51e4acba4f1ebcc8d8e1bd8289eb43a433745a2ce3e4e5b4351ce8d5",
+      "source_checkpoint_manifest_sha256": "b8e0d153bb515650dab97acb657c29326288798af23f28ef3f3fea0ede34f343",
+      "expected_internal_state_sha256": {
+        "net": "b4dbb62859f01854042dc3e68d00d30f9d1de033fdef2bd3475d3a8e3f565143",
+        "ema": "448fdb0254cabcd7c8a3485026f584a768842d9d7794bd58b5f5fa33d5155b44",
+        "optimizer": "8bf39607fada69b9374a4c6eb439a2f941a56cf1144611bfbcc6188f7d6249fb",
+        "gradscaler": "47fe0945758b4a225b298ea1689a2aa0fe5222d7033f0d6eb91b5395f25cc529",
+        "rank_rng": ["c38ff9a202532ef3f428c144543ec71d21e5b271e46f8a2b9b36a5c1a2b58c89"],
+        "rank_sampler": ["5f8f547ee83593198b7c5d2245ae8d68617f82c58fcc0b62f5e20f89f0bbe576"]
+      }
+    }
+  ],
+  "blocked_gates": {
+    "source_inventory": "FAIL_CLOSED",
+    "no_op_parity": "NOT_STARTED",
+    "formal_switch_training": "NOT_STARTED",
+    "formal_evaluation": "NOT_STARTED",
+    "analysis": "NOT_STARTED"
+  },
+  "prohibited_substitutions": [
+    "parameter-only resume from network-snapshot.pkl",
+    "optimizer-state fabrication",
+    "replacement seeds",
+    "result-dependent branch or budget changes",
+    "silent deterministic replay presented as the missing canonical state"
+  ],
+  "failure_reason": "All ten canonical 512-kimg full training states are absent from the server filesystem, and the retained release archive intentionally contains snapshots/evidence but no training states."
+}
