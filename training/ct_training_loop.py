@@ -169,6 +169,14 @@ _FACTORIAL_TELEMETRY_FIELDS = (
     'gpu_hours_cumulative',
 )
 
+_SAME_STATE_TELEMETRY_FIELDS = (
+    *_FACTORIAL_TELEMETRY_FIELDS[:27],
+    'input_noise_sha256',
+    'dropout_rng_sha256',
+    'augmentation_rng_sha256',
+    *_FACTORIAL_TELEMETRY_FIELDS[27:],
+)
+
 #----------------------------------------------------------------------------
 
 def canonical_processed_nimg(value):
@@ -683,11 +691,19 @@ def aggregate_factorial_runtime_metrics(metric_batches):
     result = {field: first[field] for field in identity_fields}
     for field in count_fields:
         result[field] = sum(int(metrics[field]) for metrics in metric_batches)
-    for field in (
+    hash_fields = [
         't_sha256', 'base_r_sha256', 'target_r_sha256',
         'denominator_r_sha256', 'target_delta_sha256',
         'denominator_delta_sha256',
-    ):
+    ]
+    optional_hash_fields = (
+        'input_noise_sha256', 'dropout_rng_sha256',
+        'augmentation_rng_sha256',
+    )
+    if all(all(field in metrics for field in optional_hash_fields)
+           for metrics in metric_batches):
+        hash_fields.extend(optional_hash_fields)
+    for field in hash_fields:
         result[field] = reproducibility.state_sha256(
             [metrics[field] for metrics in metric_batches]
         )
@@ -812,6 +828,49 @@ def save_immutable_training_state(state, run_dir, cur_nimg):
     reproducibility.atomic_torch_save(state, path, overwrite=False)
     return path
 
+
+def normalize_immutable_checkpoint_attempts(values, *, total_kimg, batch_size):
+    values = tuple(values or ())
+    if len(set(values)) != len(values) or values != tuple(sorted(values)):
+        raise ValueError('immutable checkpoint attempts must be unique and increasing')
+    max_attempt = (
+        int(total_kimg) * 1000 + int(batch_size) - 1
+    ) // int(batch_size)
+    for value in values:
+        if isinstance(value, bool) or int(value) != value or not (0 < int(value) <= max_attempt):
+            raise ValueError(
+                f'immutable checkpoint attempt {value!r} is outside 1..{max_attempt}'
+            )
+    return tuple(int(value) for value in values)
+
+
+def save_immutable_attempt_state(state, run_dir, attempted_iteration):
+    path = os.path.join(
+        run_dir, f'training-state-attempt{int(attempted_iteration):06d}.pt'
+    )
+    reproducibility.atomic_torch_save(state, path, overwrite=False)
+    return path
+
+
+def save_immutable_ema_snapshot(ema, loss_fn, augment_pipe, dataset_kwargs,
+                                run_dir, cur_nimg):
+    if int(cur_nimg) != cur_nimg or int(cur_nimg) % 1000:
+        raise ValueError('immutable EMA snapshot requires an exact whole-kimg budget')
+    data = {
+        'ema': copy.deepcopy(ema).eval().requires_grad_(False).cpu(),
+        'loss_fn': copy.deepcopy(loss_fn),
+        'augment_pipe': (
+            None if augment_pipe is None
+            else copy.deepcopy(augment_pipe).eval().requires_grad_(False).cpu()
+        ),
+        'dataset_kwargs': dict(dataset_kwargs),
+    }
+    path = os.path.join(
+        run_dir, f'network-snapshot-kimg{int(cur_nimg) // 1000:06d}.pkl'
+    )
+    reproducibility.atomic_pickle_dump(data, path, overwrite=False)
+    return path
+
 #----------------------------------------------------------------------------
 
 @torch.no_grad()
@@ -858,6 +917,7 @@ def training_loop(
     state_dump_ticks    = 500,      # How often to dump training state, None = disable.
     ckpt_ticks          = 100,      # How often to save latest checkpoints, None = disable.
     immutable_checkpoint_kimg = (), # Exact I/O-only full-state milestones.
+    immutable_checkpoint_attempts = (), # Exact global attempted-iteration milestones.
     sample_ticks        = 50,       # How often to sample images, None = disable.
     eval_ticks          = 500,      # How often to evaluate models, None = disable.
     double_ticks        = 500,      # How often to evaluate models, None = disable.
@@ -871,6 +931,7 @@ def training_loop(
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
+    same_state_fork     = None,     # Protocol-bound B-history continuation metadata.
     device              = torch.device('cuda'),
 ):
     # Initialize.
@@ -878,6 +939,18 @@ def training_loop(
     strict_reproducibility = (
         loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
     )
+    if same_state_fork is not None:
+        if not strict_reproducibility or not resume_state_dump:
+            raise ValueError('same_state_fork requires a strict training-state resume')
+        if same_state_fork != {
+            'schema': 'ect.q256.same-state-fork/v1',
+            'origin_arm': 'B',
+            'source_kimg': 384,
+            'protocol_sha256': same_state_fork.get('protocol_sha256'),
+        }:
+            raise ValueError('same_state_fork metadata is not canonical')
+        if not isinstance(same_state_fork['protocol_sha256'], str) or len(same_state_fork['protocol_sha256']) != 64:
+            raise ValueError('same_state_fork protocol SHA256 is invalid')
     if strict_reproducibility and dist.get_world_size() != 1:
         raise ValueError(
             'formal q256 target-weight arms require one process and one '
@@ -906,7 +979,12 @@ def training_loop(
         total_kimg=total_kimg,
         batch_size=batch_size,
     )
-    if immutable_checkpoint_nimg and not strict_reproducibility:
+    immutable_checkpoint_attempts = normalize_immutable_checkpoint_attempts(
+        immutable_checkpoint_attempts,
+        total_kimg=total_kimg,
+        batch_size=batch_size,
+    )
+    if (immutable_checkpoint_nimg or immutable_checkpoint_attempts) and not strict_reproducibility:
         raise ValueError(
             'immutable checkpoint milestones are reserved for strict factorial runs'
         )
@@ -1088,6 +1166,7 @@ def training_loop(
     resumed_tick_start_nimg = None
     resumed_adaptive_signal_window_state = None
     resumed_rng_state = None
+    restored_same_state_fork = None
     resumed_snapshot_grid_z = None
     resumed_snapshot_grid_c = None
     resumed_snapshot_grid_size = None
@@ -1121,7 +1200,36 @@ def training_loop(
                     'strict factorial training-state missing fields: '
                     + ', '.join(missing)
                 )
-            if data['factorial'] != loss_fn.factorial:
+            saved_factorial = data['factorial']
+            restored_same_state_fork = copy.deepcopy(data.get('same_state_fork'))
+            initial_same_state_fork = same_state_fork is not None and restored_same_state_fork is None
+            if initial_same_state_fork:
+                if (
+                    saved_factorial.get('protocol') != 'q256_target_weight_v1'
+                    or saved_factorial.get('arm') != same_state_fork['origin_arm']
+                    or int(data['cur_nimg']) != int(same_state_fork['source_kimg']) * 1000
+                ):
+                    raise RuntimeError(
+                        'same-state fork source is not the frozen canonical B@384 state'
+                    )
+                restored_same_state_fork = {
+                    **copy.deepcopy(same_state_fork),
+                    'continuation_arm': loss_fn.factorial['arm'],
+                    'branch_label': f"B384_to_{loss_fn.factorial['arm']}",
+                    'source_attempted_iteration': int(data['attempted_iteration']),
+                    'source_cur_nimg': int(data['cur_nimg']),
+                }
+            elif restored_same_state_fork is not None:
+                expected_fork = {
+                    **copy.deepcopy(same_state_fork),
+                    'continuation_arm': loss_fn.factorial['arm'],
+                    'branch_label': f"B384_to_{loss_fn.factorial['arm']}",
+                    'source_attempted_iteration': 3000,
+                    'source_cur_nimg': 384000,
+                }
+                if restored_same_state_fork != expected_fork:
+                    raise RuntimeError('same-state fork metadata changed across resume')
+            if saved_factorial != loss_fn.factorial and not initial_same_state_fork:
                 raise RuntimeError(
                     'factorial factors in training-state do not match current config'
                 )
@@ -1156,15 +1264,35 @@ def training_loop(
                     and current_total_kimg > saved_total_kimg
                     and completed_saved_budget
                 )
+                if initial_same_state_fork:
+                    saved_loss = saved_trajectory_config.get('loss_kwargs', {})
+                    current_loss = current_trajectory_config.get('loss_kwargs', {})
+                    for field in ('target_gap_scale', 'denominator_gap_scale'):
+                        saved_loss.pop(field, None)
+                        current_loss.pop(field, None)
+                    valid_budget_extension = (
+                        saved_trajectory_config == current_trajectory_config
+                        and isinstance(current_total_kimg, int)
+                        and current_total_kimg > int(same_state_fork['source_kimg'])
+                        and int(data['cur_nimg']) == int(same_state_fork['source_kimg']) * 1000
+                    )
                 if not valid_budget_extension:
                     raise RuntimeError(
                         'training-state trajectory config does not match current run'
                     )
-                dist.print0(
-                    'Extending completed strict training budget from '
-                    f'{saved_total_kimg} to {current_total_kimg} kimg; '
-                    'all other trajectory settings match exactly.'
-                )
+                if initial_same_state_fork:
+                    dist.print0(
+                        'Forking frozen strict state at '
+                        f"{same_state_fork['source_kimg']} kimg to the "
+                        f'{current_total_kimg}-kimg continuation budget; '
+                        'only the protocol-authorized factorial factors differ.'
+                    )
+                else:
+                    dist.print0(
+                        'Extending completed strict training budget from '
+                        f'{saved_total_kimg} to {current_total_kimg} kimg; '
+                        'all other trajectory settings match exactly.'
+                    )
         if strict_reproducibility:
             copy_module_state_exact(
                 data.get('net'), net, label='strict training-state -> net'
@@ -1322,6 +1450,20 @@ def training_loop(
                 'future immutable checkpoint already exists before replay '
                 f'reaches it: {milestone_path}'
             )
+    for milestone_attempt in immutable_checkpoint_attempts:
+        milestone_path = os.path.join(
+            run_dir, f'training-state-attempt{milestone_attempt:06d}.pt'
+        )
+        if milestone_attempt <= attempted_iteration and not os.path.isfile(milestone_path):
+            raise RuntimeError(
+                'past immutable attempt checkpoint is missing before continuation: '
+                f'{milestone_path}'
+            )
+        if milestone_attempt > attempted_iteration and os.path.exists(milestone_path):
+            raise RuntimeError(
+                'future immutable attempt checkpoint already exists: '
+                f'{milestone_path}'
+            )
     tick_start_time = time.time()
     maintenance_time = tick_start_time - start_time
     dist.update_progress(cur_nimg / 1000, total_kimg)
@@ -1437,23 +1579,27 @@ def training_loop(
     factorial_telemetry_csv = None
     factorial_telemetry_writer = None
     if strict_reproducibility and dist.get_rank() == 0:
+        telemetry_fields = (
+            _SAME_STATE_TELEMETRY_FIELDS
+            if restored_same_state_fork is not None
+            else _FACTORIAL_TELEMETRY_FIELDS
+        )
         telemetry_path = os.path.join(
-            run_dir, 'factorial_training_telemetry_v1.csv'
+            run_dir,
+            'matched_training_telemetry_v1.csv'
+            if restored_same_state_fork is not None
+            else 'factorial_training_telemetry_v1.csv',
         )
         telemetry_exists = (
             os.path.isfile(telemetry_path)
             and os.path.getsize(telemetry_path) > 0
         )
-        if resume_state_dump:
-            if not telemetry_exists:
-                raise RuntimeError(
-                    'strict factorial resume requires existing versioned telemetry'
-                )
+        if resume_state_dump and telemetry_exists:
             with open(telemetry_path, 'rt', newline='') as handle:
                 reader = csv.DictReader(handle)
-                if tuple(reader.fieldnames or ()) != _FACTORIAL_TELEMETRY_FIELDS:
+                if tuple(reader.fieldnames or ()) != telemetry_fields:
                     raise RuntimeError(
-                        'factorial telemetry schema does not match v1 exactly'
+                        'factorial telemetry schema does not match exactly'
                     )
                 rows = list(reader)
             if not rows:
@@ -1471,9 +1617,13 @@ def training_loop(
                 raise RuntimeError(
                     'factorial telemetry arm does not match current config'
                 )
-            factorial_telemetry_csv = open(
-                telemetry_path, 'at', newline=''
-            )
+            factorial_telemetry_csv = open(telemetry_path, 'at', newline='')
+        elif resume_state_dump:
+            if restored_same_state_fork is None:
+                raise RuntimeError(
+                    'strict factorial resume requires existing versioned telemetry'
+                )
+            factorial_telemetry_csv = open(telemetry_path, 'xt', newline='')
         else:
             if telemetry_exists:
                 raise RuntimeError(
@@ -1484,9 +1634,9 @@ def training_loop(
             )
         factorial_telemetry_writer = csv.DictWriter(
             factorial_telemetry_csv,
-            fieldnames=_FACTORIAL_TELEMETRY_FIELDS,
+            fieldnames=telemetry_fields,
         )
-        if not resume_state_dump:
+        if not telemetry_exists:
             factorial_telemetry_writer.writeheader()
             factorial_telemetry_csv.flush()
 
@@ -1553,6 +1703,8 @@ def training_loop(
                 snapshot_grid_c=[value.detach().cpu() for value in grid_c],
                 snapshot_grid_size=tuple(grid_size),
             )
+            if restored_same_state_fork is not None:
+                data['same_state_fork'] = copy.deepcopy(restored_same_state_fork)
         return data
         
     # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
@@ -1569,12 +1721,12 @@ def training_loop(
         os.path.join(run_dir, 'initial_state_receipt_v1.json')
         if dist.get_rank() == 0 else None
     )
-    if strict_reproducibility and resume_state_dump:
+    if strict_reproducibility and resume_state_dump and restored_same_state_fork is None:
         if dist.get_rank() == 0 and not os.path.isfile(initial_receipt_path):
             raise RuntimeError(
                 'strict factorial resume requires the original initial-state receipt'
             )
-    elif strict_reproducibility:
+    elif strict_reproducibility and not os.path.isfile(initial_receipt_path):
         initial_rank_states = gather_rank_reproducibility_state(
             dataset_sampler, local_consumed_samples
         )
@@ -1632,6 +1784,7 @@ def training_loop(
                         reproducibility.state_sha256(common_hashes)
                     ),
                     'rank_states': rank_receipts,
+                    'same_state_fork': copy.deepcopy(restored_same_state_fork),
                 },
                 initial_receipt_path,
                 overwrite=False,
@@ -1892,7 +2045,11 @@ def training_loop(
                 else 'ect.q256.target-weight-training-telemetry/v1'
             )
             telemetry_row = {
-                'schema': telemetry_schema,
+                'schema': (
+                    'ect.q256.same-state-production-telemetry/v1'
+                    if restored_same_state_fork is not None
+                    else telemetry_schema
+                ),
                 'protocol': factorial_metrics['protocol'],
                 'arm': factorial_metrics['arm'],
                 'target_gap_scale': f"{factorial_metrics['target_gap_scale']:.17g}",
@@ -1949,6 +2106,14 @@ def training_loop(
                 'elapsed_sec': f'{elapsed_sec:.6f}',
                 'gpu_hours_cumulative': f'{elapsed_sec / 3600:.9f}',
             }
+            if restored_same_state_fork is not None:
+                telemetry_row.update(
+                    input_noise_sha256=factorial_metrics['input_noise_sha256'],
+                    dropout_rng_sha256=factorial_metrics['dropout_rng_sha256'],
+                    augmentation_rng_sha256=(
+                        factorial_metrics['augmentation_rng_sha256']
+                    ),
+                )
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)
                 factorial_telemetry_csv.flush()
@@ -2030,7 +2195,8 @@ def training_loop(
             train_summary_csv.flush()
 
         immutable_checkpoint_due = cur_nimg in immutable_checkpoint_nimg
-        if immutable_checkpoint_due:
+        immutable_attempt_due = attempted_iteration in immutable_checkpoint_attempts
+        if immutable_checkpoint_due or immutable_attempt_due:
             if train_summary_csv is not None:
                 train_summary_csv.flush()
                 os.fsync(train_summary_csv.fileno())
@@ -2055,19 +2221,36 @@ def training_loop(
                     dataset_sampler, local_consumed_samples
                 )
             if dist.get_rank() == 0:
-                immutable_path = save_immutable_training_state(
-                    build_training_state(
-                        immutable_adaptive_state,
-                        immutable_rank_states,
-                        advance_tick=natural_maintenance_due,
-                    ),
-                    run_dir,
-                    cur_nimg,
+                immutable_state = build_training_state(
+                    immutable_adaptive_state,
+                    immutable_rank_states,
+                    advance_tick=natural_maintenance_due,
                 )
-                dist.print0(
-                    'Saved immutable full-state milestone at '
-                    f'{cur_nimg / 1000:.3f} kimg: {immutable_path}'
-                )
+                if immutable_checkpoint_due:
+                    immutable_path = save_immutable_training_state(
+                        immutable_state, run_dir, cur_nimg,
+                    )
+                    dist.print0(
+                        'Saved immutable full-state milestone at '
+                        f'{cur_nimg / 1000:.3f} kimg: {immutable_path}'
+                    )
+                    if restored_same_state_fork is not None:
+                        snapshot_path = save_immutable_ema_snapshot(
+                            ema, loss_fn, augment_pipe, dataset_kwargs,
+                            run_dir, cur_nimg,
+                        )
+                        dist.print0(
+                            'Saved immutable EMA snapshot at '
+                            f'{cur_nimg / 1000:.3f} kimg: {snapshot_path}'
+                        )
+                if immutable_attempt_due:
+                    attempt_path = save_immutable_attempt_state(
+                        immutable_state, run_dir, attempted_iteration,
+                    )
+                    dist.print0(
+                        'Saved immutable full-state attempt milestone at '
+                        f'{attempted_iteration}: {attempt_path}'
+                    )
 
         # Perform maintenance tasks once per tick.
         if not maintenance_due:
