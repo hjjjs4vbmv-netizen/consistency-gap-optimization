@@ -14,10 +14,12 @@ from training import reproducibility
 PROTOCOL = "q256_ab_crossed_switch_v1"
 SEED3_7_PROTOCOL = "q256_ab_crossed_switch_seed3_7_v1"
 SEED3_7_PROTOCOL_V2 = "q256_ab_crossed_switch_seed3_7_v2"
+SEED3_7_PROTOCOL_V3 = "q256_ab_crossed_switch_seed3_7_v3"
 SUPPORTED_PROTOCOL_SEEDS = {
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V2: tuple(range(3, 8)),
+    SEED3_7_PROTOCOL_V3: tuple(range(3, 8)),
 }
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
 STATE_SCHEMA = "ect.q256.schedule-switch-state/v1"

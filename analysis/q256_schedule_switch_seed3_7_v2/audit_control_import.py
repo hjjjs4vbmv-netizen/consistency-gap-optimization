@@ -100,7 +100,10 @@ def main() -> int:
     repo = args.repo.resolve(strict=True)
     protocol_path = args.protocol.resolve(strict=True)
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
-    if protocol["protocol"] != "q256_ab_crossed_switch_seed3_7_v2":
+    if protocol["protocol"] not in {
+        "q256_ab_crossed_switch_seed3_7_v2",
+        "q256_ab_crossed_switch_seed3_7_v3",
+    }:
         raise RuntimeError("wrong protocol")
     protocol_sha = sha256_file(protocol_path)
     frozen35 = json.loads(args.seed3_5_frozen_manifest.read_text(encoding="utf-8"))
