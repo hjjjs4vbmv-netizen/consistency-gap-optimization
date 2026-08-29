@@ -35,8 +35,8 @@ job_cache="${eval_root}/job_caches/${job_id}"
 [[ -f "${checkpoint}" && ! -L "${checkpoint}" ]] || { echo "missing checkpoint" >&2; exit 3; }
 [[ "$(sha256sum "${checkpoint}" | awk '{print $1}')" == "${checkpoint_sha}" ]] || { echo "checkpoint hash mismatch" >&2; exit 3; }
 [[ ! -e "${target}" && ! -e "${receipt}" ]] || { echo "refuse existing evaluation output" >&2; exit 4; }
-mkdir -p "${eval_root}/jobs" "${eval_root}/receipts" "${eval_root}/logs" "${job_cache}/downloads"
-cp -a "${cache_root}/downloads/." "${job_cache}/downloads/"
+mkdir -p "${eval_root}/jobs" "${eval_root}/receipts" "${eval_root}/logs" "${job_cache}"
+cp -a "${cache_root}/." "${job_cache}/"
 
 gpu_uuid=$(nvidia-smi --query-gpu=index,uuid,name --format=csv,noheader | awk -F', ' -v index="${gpu_id}" '$1 == index && $3 ~ /A100/ {print $2}')
 [[ -n "${gpu_uuid}" ]] || { echo "cannot resolve assigned A100 UUID" >&2; exit 4; }
@@ -62,7 +62,7 @@ timeout --signal=TERM --kill-after=30s 6h \
       --resume "${checkpoint}" --outdir "${target}" --nosubdir \
       --data "${dataset}" --cond=False --arch=ddpmpp --precond=ct \
       --dropout=0.2 --augment=0 --xflip=False --fp16=False \
-      --cache=True --workers=3 --eval-batch=512 --metric-generator-batch=128 \
+      --cache=True --workers=1 --eval-batch=512 --metric-generator-batch=128 \
       --nfe="${nfe}" "${mid_args[@]}" \
       --metrics=kid50k_full,fid50k_full --metric-repeats=1 \
       --sample-seeds=0-49999 --seed=20260730 --retain-generated-artifacts \
