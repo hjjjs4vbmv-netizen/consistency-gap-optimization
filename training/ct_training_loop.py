@@ -2136,7 +2136,9 @@ def training_loop(
             if switch_manifest is not None:
                 telemetry_row.update({
                     'schema': 'ect.q256.schedule-switch-training-telemetry/v1',
-                    'experiment_protocol': schedule_switch.PROTOCOL,
+                    'experiment_protocol': switch_manifest[
+                        'experiment_protocol'
+                    ],
                     'branch': switch_manifest['branch'],
                     'origin_arm': switch_manifest['origin_arm'],
                     'continuation_arm': switch_manifest['continuation_arm'],

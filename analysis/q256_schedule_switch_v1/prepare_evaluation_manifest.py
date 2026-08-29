@@ -42,10 +42,14 @@ def main() -> int:
     protocol_path = args.protocol.resolve(strict=True)
     dataset = args.dataset.resolve(strict=True)
     protocol_sha = sha256_file(protocol_path)
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    seeds = tuple(int(value) for value in protocol["seeds"])
+    if len(seeds) != 5 or len(set(seeds)) != 5:
+        raise RuntimeError("protocol must freeze exactly five unique seeds")
     if sha256_file(dataset) != DATASET_SHA256:
         raise RuntimeError("canonical evaluation dataset SHA256 mismatch")
     jobs = []
-    for seed in SEEDS:
+    for seed in seeds:
         for branch in BRANCHES:
             run_dir = formal_root / f"seed{seed}" / branch
             completion_path = run_dir / "trajectory_completion_receipt.json"
@@ -88,7 +92,7 @@ def main() -> int:
                     })
     expected = {
         (seed, branch, budget, nfe)
-        for seed in SEEDS for branch in BRANCHES
+        for seed in seeds for branch in BRANCHES
         for budget in BUDGETS for nfe in (1, 2)
     }
     actual = {

@@ -70,7 +70,7 @@ def main() -> int:
     parser.add_argument("--implementation-commit", required=True)
     parser.add_argument("--run-kind", choices=("parity", "formal"), required=True)
     parser.add_argument("--branch", required=True)
-    parser.add_argument("--seed", type=int, choices=range(14, 19), required=True)
+    parser.add_argument("--seed", type=int, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
 
@@ -85,6 +85,9 @@ def main() -> int:
     inventory_path = args.inventory.resolve(strict=True)
     protocol_path = args.protocol.resolve(strict=True)
     inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    if args.seed not in protocol.get("seeds", []):
+        raise RuntimeError("seed is outside the frozen protocol cohort")
     protocol_sha = sha256_file(protocol_path)
     if inventory.get("status") != "PASS" or inventory.get("protocol_sha256") != protocol_sha:
         raise RuntimeError("source inventory is not PASS or protocol-bound")
@@ -120,7 +123,7 @@ def main() -> int:
     final_kimg = 640 if args.run_kind == "parity" else 1024
     manifest = {
         "schema": schedule_switch.RUN_MANIFEST_SCHEMA,
-        "experiment_protocol": schedule_switch.PROTOCOL,
+        "experiment_protocol": protocol["protocol"],
         "run_kind": args.run_kind,
         "branch": args.branch,
         "seed": args.seed,
