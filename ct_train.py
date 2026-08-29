@@ -341,22 +341,19 @@ def make_loss_kwargs(opts):
     default='',
 )
 @click.option(
-    '--same-state-fork',
+    '--q256-b384-same-state-fork',
     is_flag=True,
-    help='Start an immutable protocol-bound continuation fork in a new output directory',
+    help=(
+        'Start the frozen q256 B@384 same-state continuation fork in a new '
+        'output directory'
+    ),
 )
 @click.option(
-    '--same-state-origin-arm',
-    type=click.Choice(['B']),
-    default=None,
-    help='Frozen historical arm for --same-state-fork',
-)
-@click.option(
-    '--same-state-protocol-sha256',
+    '--q256-b384-protocol-sha256',
     type=str,
     default=None,
     metavar='SHA256',
-    help='Frozen protocol SHA256 for --same-state-fork',
+    help='Frozen protocol SHA256 for --q256-b384-same-state-fork',
 )
 @click.option('--seed',          help='Random seed  [default: random]', metavar='INT',              type=int)
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
@@ -379,30 +376,33 @@ def main(**kwargs):
     """
     opts = dnnlib.EasyDict(kwargs)
     same_state_fork = None
-    if opts.same_state_fork:
+    if opts.q256_b384_same_state_fork:
         if opts.resume is None:
-            raise click.ClickException('--same-state-fork requires --resume')
+            raise click.ClickException(
+                '--q256-b384-same-state-fork requires --resume'
+            )
         if opts.factorial_protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
             raise click.ClickException(
-                '--same-state-fork requires factorial_protocol=q256_target_weight_v1'
+                '--q256-b384-same-state-fork requires '
+                'factorial_protocol=q256_target_weight_v1'
             )
-        if opts.same_state_origin_arm != 'B':
+        if re.fullmatch(
+            r'[0-9a-f]{64}', opts.q256_b384_protocol_sha256 or ''
+        ) is None:
             raise click.ClickException(
-                '--same-state-fork requires --same-state-origin-arm=B'
-            )
-        if re.fullmatch(r'[0-9a-f]{64}', opts.same_state_protocol_sha256 or '') is None:
-            raise click.ClickException(
-                '--same-state-fork requires a lowercase 64-character protocol SHA256'
+                '--q256-b384-same-state-fork requires a lowercase '
+                '64-character --q256-b384-protocol-sha256'
             )
         same_state_fork = {
             'schema': 'ect.q256.same-state-fork/v1',
             'origin_arm': 'B',
             'source_kimg': 384,
-            'protocol_sha256': opts.same_state_protocol_sha256,
+            'protocol_sha256': opts.q256_b384_protocol_sha256,
         }
-    elif opts.same_state_origin_arm is not None or opts.same_state_protocol_sha256 is not None:
+    elif opts.q256_b384_protocol_sha256 is not None:
         raise click.ClickException(
-            '--same-state-origin-arm/--same-state-protocol-sha256 require --same-state-fork'
+            '--q256-b384-protocol-sha256 requires '
+            '--q256-b384-same-state-fork'
         )
     torch.multiprocessing.set_start_method('spawn')
     dist.init()
@@ -628,7 +628,7 @@ def main(**kwargs):
                 or opts.exact_resume
             )
         )
-        if exact_state_resume and not opts.same_state_fork:
+        if exact_state_resume and not opts.q256_b384_same_state_fork:
             if not os.path.isfile(options_path):
                 raise click.ClickException(
                     'exact resume requires the immutable original '

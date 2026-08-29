@@ -81,7 +81,10 @@ def load_state(path: Path, arm: str, device: torch.device) -> tuple[AlgorithmicS
     loss_fn = dnnlib.util.construct_class_by_name(**loss_kwargs)
     if not loss_fn.load_schedule_state_dict(copy.deepcopy(raw["loss_fn_state"])):
         raise RuntimeError(f"loss state is incompatible: {path}")
-    scaler = torch.amp.GradScaler("cuda")
+    try:
+        scaler = torch.amp.GradScaler("cuda")
+    except AttributeError:  # PyTorch 2.2 deterministic runtime.
+        scaler = torch.cuda.amp.GradScaler()
     scaler.load_state_dict(copy.deepcopy(raw["gradscaler_state"]))
     return AlgorithmicState(
         net=net, optimizer=optimizer, ema=ema, loss_fn=loss_fn,

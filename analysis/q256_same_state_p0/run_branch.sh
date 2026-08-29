@@ -92,8 +92,8 @@ apptainer exec --nv --bind /data:/data --pwd "${repo}" "${runtime}" python ct_tr
   --mid_t=0.821 --adaptive-update-kimg=0.5 \
   --immutable-checkpoint-kimg="${immutable_kimg}" \
   --immutable-checkpoint-attempts="${immutable_attempts}" \
-  --same-state-fork --same-state-origin-arm=B \
-  --same-state-protocol-sha256="${protocol_sha}" --resume="${source_state}" \
+  --q256-b384-same-state-fork \
+  --q256-b384-protocol-sha256="${protocol_sha}" --resume="${source_state}" \
   2>&1 | tee "${output_root}/logs/seed${seed}-B384_to_${arm}.log"
 
 [[ "$(sha256sum "${source_state}" | cut -d' ' -f1)" == "${expected_source[${seed}]}" ]] || { echo "source mutated" >&2; exit 4; }
