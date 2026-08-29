@@ -237,4 +237,11 @@ def trajectory_configs_compatible(source: dict, current: dict, manifest: dict) -
     for key in ("arm", "target_gap_scale", "denominator_gap_scale"):
         source_loss.pop(key, None)
         current_loss.pop(key, None)
+    source_dataset = source.get("dataset_kwargs")
+    current_dataset = current.get("dataset_kwargs")
+    if isinstance(source_dataset, dict) and isinstance(current_dataset, dict):
+        # The v3 protocol separately binds both paths to the same canonical
+        # archive SHA256. Filesystem location is not trajectory semantics.
+        source_dataset.pop("path", None)
+        current_dataset.pop("path", None)
     return source == current
