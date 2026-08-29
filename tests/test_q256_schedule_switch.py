@@ -156,13 +156,17 @@ class ScheduleSwitchTests(unittest.TestCase):
                 state["trajectory_config"]
             )
             manifest = self.make_manifest(source_path, state)
-            manifest["experiment_protocol"] = schedule_switch.SEED3_7_PROTOCOL
-            manifest["seed"] = 3
             manifest_path = Path(directory) / "manifest.json"
-            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
-            loaded = schedule_switch.load_run_manifest(manifest_path)
-            self.assertEqual(loaded["seed"], 3)
-            schedule_switch.verify_source_state(state, loaded)
+            for protocol in (
+                schedule_switch.SEED3_7_PROTOCOL,
+                schedule_switch.SEED3_7_PROTOCOL_V2,
+            ):
+                manifest["experiment_protocol"] = protocol
+                manifest["seed"] = 3
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                loaded = schedule_switch.load_run_manifest(manifest_path)
+                self.assertEqual(loaded["seed"], 3)
+                schedule_switch.verify_source_state(state, loaded)
             manifest["seed"] = 8
             manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
             with self.assertRaisesRegex(RuntimeError, "outside the frozen"):
