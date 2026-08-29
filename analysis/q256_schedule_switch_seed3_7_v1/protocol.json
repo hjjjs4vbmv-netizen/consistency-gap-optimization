@@ -1,0 +1,207 @@
+{
+  "schema": "ect.q256.schedule-switch-protocol/v1",
+  "protocol": "q256_ab_crossed_switch_seed3_7_v1",
+  "frozen_before_switch_results": true,
+  "cohort_amendment": {
+    "superseded_protocol": "q256_ab_crossed_switch_v1",
+    "superseded_protocol_sha256": "484c115fc83878e9d6b7da1b0cfba356fb17cd69da5352d42835efd8cf56912e",
+    "only_scientific_change": "seeds [14,15,16,17,18] -> [3,4,5,6,7]",
+    "reason": "the original ten A/B 512-kimg full states are absent; seeds 3-7 were selected solely because their canonical full states remain available",
+    "selection_used_switch_results": false,
+    "classification": "new post hoc recovery-cohort protocol; not the original seed14-18 experiment"
+  },
+  "origin_main_sha": "8d4844c293a75ce26a360e9907e39abaa1b87b77",
+  "source_training_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "frozen_evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+  "dataset": {
+    "name": "canonical CIFAR-10 32x32",
+    "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "training_execution_archive": {
+      "path": "/mnt/ect_project/datasets/cifar10-32x32.zip",
+      "sha256": "2d4056e80de1a96fe16f2f58945c6c4710ecd9fc02e3cc7aa5b50513b7cdf389",
+      "semantic_exact_to_canonical": true,
+      "reason": "preserve each source trajectory's dataset identity and data order"
+    }
+  },
+  "source_inventory": {
+    "expected_cells": 10,
+    "source_kimg": 512,
+    "seeds": [3, 4, 5, 6, 7],
+    "origin_arms": ["A", "B"],
+    "cohorts": [
+      {
+        "seeds": [3, 4, 5],
+        "canonical_root": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1",
+        "source_state_pattern": "seed{seed}/arm{arm}/training-state-kimg000512.pt",
+        "source_snapshot_pattern": "seed{seed}/arm{arm}/network-snapshot-kimg000512.pkl",
+        "archived_control_state_pattern": "seed{seed}/arm{arm}/training-state-kimg{budget:06d}.pt",
+        "archived_control_snapshot_pattern": "seed{seed}/arm{arm}/network-snapshot-kimg{budget:06d}.pkl",
+        "recorded_replay_execution_commit": "c8721a05227f3ff171f8dc1f559a64d58281c0ae"
+      },
+      {
+        "seeds": [6, 7],
+        "canonical_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1",
+        "source_state_pattern": "seed{seed}/arm{arm}/checkpoints/512k/training-state.pt",
+        "source_snapshot_pattern": "seed{seed}/arm{arm}/checkpoints/512k/network-snapshot.pkl",
+        "archived_control_state_pattern": "seed{seed}/arm{arm}/checkpoints/{budget}k/training-state.pt",
+        "archived_control_snapshot_pattern": "seed{seed}/arm{arm}/checkpoints/{budget}k/network-snapshot.pkl",
+        "recorded_training_execution_commit": "12b0036fee8ef09a72a6d40c9ba3e699cfd15759"
+      }
+    ],
+    "required_state_fields": [
+      "net",
+      "ema",
+      "optimizer_state",
+      "gradscaler_state",
+      "attempted_iteration",
+      "successful_optimizer_steps",
+      "cur_nimg",
+      "rank_states",
+      "factorial",
+      "trajectory_config",
+      "trajectory_config_sha256"
+    ],
+    "required_source_counters": {
+      "cur_nimg": 512000,
+      "attempted_iteration": 4000,
+      "sampler_consumed_samples": 512000
+    },
+    "required_hashes": [
+      "file_sha256",
+      "online_net_internal_sha256",
+      "ema_internal_sha256",
+      "optimizer_state_sha256",
+      "gradscaler_state_sha256",
+      "rank_rng_sha256",
+      "sampler_state_sha256",
+      "trajectory_config_sha256",
+      "source_manifest_sha256"
+    ],
+    "cross_cohort_compatibility_gate": {
+      "status_required_before_parity": "PASS",
+      "compare_normalized_trajectory_config": true,
+      "allowed_differences": ["seed", "rank_seed", "source_path", "execution_commit"],
+      "required_equal_fields": [
+        "dataset_semantics",
+        "q",
+        "architecture",
+        "precondition",
+        "optimizer",
+        "learning_rate",
+        "dropout",
+        "augment",
+        "xflip",
+        "global_batch",
+        "batch_gpu",
+        "ema_beta",
+        "fp16",
+        "amp",
+        "tf32",
+        "world_size",
+        "loss_schedule",
+        "factorial_arm_definition"
+      ],
+      "on_mismatch": "FAIL_CLOSED"
+    }
+  },
+  "training": {
+    "q": 256,
+    "architecture": "ddpmpp",
+    "precondition": "ect",
+    "optimizer": "RAdam",
+    "learning_rate": 0.0001,
+    "dropout": 0.2,
+    "augment": 0,
+    "xflip": false,
+    "global_batch": 128,
+    "batch_gpu": 16,
+    "ema_beta": 0.9993,
+    "fp16": true,
+    "amp": true,
+    "tf32": false,
+    "world_size": 1,
+    "cublas_workspace_config": ":4096:8",
+    "deterministic_pytorch": true,
+    "source_kimg": 512,
+    "final_kimg": 1024,
+    "additional_attempted_iterations": 4000,
+    "formal_milestones_kimg": [640, 768, 896, 1024]
+  },
+  "arms": {
+    "A": {
+      "target_gap_scale": 1.0,
+      "denominator_gap_scale": 1.0
+    },
+    "B": {
+      "target_gap_scale": 1.1,
+      "denominator_gap_scale": 1.1
+    }
+  },
+  "seeds": [3, 4, 5, 6, 7],
+  "formal_new_branches": ["A_to_B", "B_to_A"],
+  "archived_controls": ["A_to_A", "B_to_B"],
+  "parity_gate": {
+    "branches": ["A_to_A", "B_to_B"],
+    "target_kimg": 640,
+    "cells": 10,
+    "required_verdict": "10/10 COMPUTATIONAL_STATE_MATCH",
+    "paired_telemetry_fields": ["attempted_iteration", "batch_sha256", "t_sha256", "base_r_sha256"]
+  },
+  "formal_training_matrix": {
+    "trajectories": 10,
+    "milestones_per_trajectory": 4,
+    "expected_milestones": 40
+  },
+  "evaluation": {
+    "new_trajectories_only": true,
+    "budgets_kimg": [640, 768, 896, 1024],
+    "nfe": [1, 2],
+    "nfe2_mid_t": 0.821,
+    "samples": 50000,
+    "sample_seeds": {
+      "start": 0,
+      "end": 49999
+    },
+    "metric_seed": 20260730,
+    "metrics_in_order": ["kid50k_full", "fid50k_full"],
+    "precision": "FP32",
+    "shared_generated_features_required": true,
+    "expected_jobs": 80,
+    "archived_control_import": {
+      "expected_cells": 100,
+      "require_checkpoint_sha_match": true,
+      "require_dataset_identity": true,
+      "require_evaluator_semantic_identity": true,
+      "seed3_5_recorded_evidence": "PR #79 verified receipts",
+      "seed6_7_recorded_evidence": "seed6_7_ab_128k consolidated verified receipts",
+      "on_evaluator_incompatibility": "report before use; re-evaluate controls with the frozen evaluator rather than silently mixing receipts"
+    }
+  },
+  "analysis": {
+    "statistical_unit": "training seed",
+    "n_training_seeds": 5,
+    "metrics": ["kid50k_full", "fid50k_full"],
+    "contrasts": ["S_A", "S_B", "H_A", "H_B", "I_switch"],
+    "aulc": {
+      "range_kimg": [512, 1024],
+      "method": "trapezoidal_normalized"
+    },
+    "summaries": ["mean", "median"],
+    "paired_bootstrap": "descriptive_only"
+  },
+  "governance": {
+    "no_result_dependent_stopping": true,
+    "no_result_dependent_branch_selection": true,
+    "no_seed_deletion": true,
+    "no_proxy_evaluation": true,
+    "immutable_no_overwrite_outputs": true,
+    "technical_failures_may_only_rerun_identical_jobs": true,
+    "claim_scope": "conditional post-switch intervention over the availability-selected descriptive seed3-7 cohort",
+    "forbidden_claims": [
+      "universal schedule ranking",
+      "target/weight causal percentage",
+      "equivalence to the unavailable seed14-18 cohort",
+      "global extrapolation beyond these five training seeds"
+    ]
+  }
+}
