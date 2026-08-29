@@ -24,6 +24,14 @@ The temporary overlap audit used PR #91 head
 `training/loss.py` auto-merges. The audit does not substitute for integration
 against the actual merge commit on `main`.
 
+The resolved temporary preview commit was `aefef803f6cbf668caf7ee726a2386c8d080fa27`.
+Its selected combined gate produced `109 passed, 4 skipped` under local
+PyTorch 2.12 after a process-local compatibility shim restored the legacy
+`Sampler(data_source)` constructor expected by PR #91's frozen PyTorch 2.2
+runtime. Without that environment shim, four sampler-constructor tests fail
+before exercising integration logic. These preview results are advisory; the
+post-merge frozen-runtime gate below remains mandatory.
+
 ## Required post-merge resolution
 
 1. Fetch the new `origin/main` after PR #91 merges.
