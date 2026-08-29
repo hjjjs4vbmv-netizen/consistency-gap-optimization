@@ -166,6 +166,7 @@ class ScheduleSwitchTests(unittest.TestCase):
             for protocol in (
                 schedule_switch.SEED3_7_PROTOCOL,
                 schedule_switch.SEED3_7_PROTOCOL_V2,
+                schedule_switch.SEED3_7_PROTOCOL_V3,
             ):
                 manifest["experiment_protocol"] = protocol
                 manifest["seed"] = 3
