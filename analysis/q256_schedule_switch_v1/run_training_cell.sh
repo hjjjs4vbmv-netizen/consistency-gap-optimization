@@ -43,7 +43,7 @@ else
 fi
 duration=$(python -c 'import sys; print(f"{int(sys.argv[1])/1000:.3f}")' "${final_kimg}")
 master_port=$((47000 + gpu_id * 100 + seed))
-gpu_uuid=$(nvidia-smi --query-gpu=index,uuid --format=csv,noheader | awk -F', ' -v index="${gpu_id}" '$1 == index {print $2}')
+gpu_uuid=$(nvidia-smi --query-gpu=index,uuid --format=csv,noheader | awk -F', ' -v wanted="${gpu_id}" '$1 == wanted {print $2}')
 [[ -n "${gpu_uuid}" ]] || { echo "cannot resolve GPU UUID" >&2; exit 3; }
 
 python -c 'import json,os,subprocess,sys; p=sys.argv[1]; payload={"schema":"ect.q256.schedule-switch-compute-start/v1","status":"START","seed":int(sys.argv[2]),"branch":sys.argv[3],"gpu_index":int(sys.argv[4]),"gpu_uuid":sys.argv[5],"runtime_sif":sys.argv[6],"runtime_sif_sha256":sys.argv[7],"implementation_commit":sys.argv[8]}; f=open(p,"x"); json.dump(payload,f,indent=2,sort_keys=True); f.write("\n"); f.flush(); os.fsync(f.fileno())' \
