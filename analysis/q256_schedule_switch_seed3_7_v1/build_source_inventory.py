@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import csv
 import hashlib
 import json
 import os
@@ -66,6 +67,42 @@ def source_manifest_path(prefix: Path, cohort: dict, seed: int) -> tuple[Path, s
             / "checkpoint_inventory_seed6_7_ab_128k.csv"
         )
     return staged_path(prefix, original), original
+
+
+def load_manifest_rows(path: Path) -> list[dict]:
+    with path.open("rt", newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    if not rows:
+        raise RuntimeError(f"empty source manifest: {path}")
+    return rows
+
+
+def manifest_row(rows: list[dict], *, seed: int, arm: str, budget: int) -> dict:
+    matches = [
+        row for row in rows
+        if int(row["seed"]) == seed and row["arm"] == arm
+        and int(row["budget_kimg"]) == budget
+    ]
+    if len(matches) != 1 or matches[0].get("status") != "PASS":
+        raise RuntimeError(
+            f"missing unique PASS manifest row: seed={seed} arm={arm} budget={budget}"
+        )
+    return matches[0]
+
+
+def row_state_identity(row: dict, *, seed: int) -> tuple[str, int | None, str]:
+    if seed <= 5:
+        return row["replay_state_path"], None, row["replay_state_sha256"]
+    return (
+        row["training_state"], int(row["training_state_bytes"]),
+        row["training_state_sha256"],
+    )
+
+
+def row_snapshot_identity(row: dict, *, seed: int) -> tuple[str, int | None, str]:
+    if seed <= 5:
+        return row["ema_snapshot_path"], None, row["ema_snapshot_sha256"]
+    return row["snapshot"], int(row["snapshot_bytes"]), row["snapshot_sha256"]
 
 
 def canonical_cell_dir(prefix: Path, cohort: dict, seed: int, arm: str) -> tuple[Path, str]:
@@ -152,12 +189,32 @@ def main() -> int:
         cohort = next(item for item in cohorts if seed in item["seeds"])
         manifest_path, manifest_original = source_manifest_path(prefix, cohort, seed)
         manifest_record = file_record(manifest_path, original_path=manifest_original)
+        manifest_rows = load_manifest_rows(manifest_path)
         for arm in ARMS:
             cell_dir, cell_original = canonical_cell_dir(prefix, cohort, seed, arm)
             source_state_original = format_pattern(cohort, "source_state_pattern", seed=seed, arm=arm)
             source_snapshot_original = format_pattern(cohort, "source_snapshot_pattern", seed=seed, arm=arm)
             source_state = state_record(prefix, source_state_original)
             source_snapshot = state_record(prefix, source_snapshot_original)
+            source_manifest_row = manifest_row(
+                manifest_rows, seed=seed, arm=arm, budget=512
+            )
+            _, expected_source_bytes, expected_source_sha = row_state_identity(
+                source_manifest_row, seed=seed
+            )
+            _, expected_snapshot_bytes, expected_snapshot_sha = row_snapshot_identity(
+                source_manifest_row, seed=seed
+            )
+            if source_state["sha256"] != expected_source_sha or (
+                expected_source_bytes is not None
+                and source_state["bytes"] != expected_source_bytes
+            ):
+                raise RuntimeError("source state differs from archived PASS manifest")
+            if source_snapshot["sha256"] != expected_snapshot_sha or (
+                expected_snapshot_bytes is not None
+                and source_snapshot["bytes"] != expected_snapshot_bytes
+            ):
+                raise RuntimeError("source snapshot differs from archived PASS manifest")
             state = torch.load(source_state["path"], map_location="cpu", weights_only=False)
             internal = validate_state(state, seed=seed, arm=arm)
             with open(source_snapshot["path"], "rb") as handle:
@@ -177,10 +234,41 @@ def main() -> int:
                     cohort, "archived_control_snapshot_pattern",
                     seed=seed, arm=arm, budget=budget,
                 )
+                control_manifest_row = manifest_row(
+                    manifest_rows, seed=seed, arm=arm, budget=budget
+                )
+                original_manifest_state, manifest_state_bytes, manifest_state_sha = (
+                    row_state_identity(control_manifest_row, seed=seed)
+                )
+                _, manifest_snapshot_bytes, manifest_snapshot_sha = (
+                    row_snapshot_identity(control_manifest_row, seed=seed)
+                )
+                control_snapshot = state_record(prefix, control_snapshot_original)
+                if control_snapshot["sha256"] != manifest_snapshot_sha or (
+                    manifest_snapshot_bytes is not None
+                    and control_snapshot["bytes"] != manifest_snapshot_bytes
+                ):
+                    raise RuntimeError("control snapshot differs from PASS manifest")
+                if budget == 640:
+                    control_state = state_record(prefix, control_state_original)
+                    if control_state["sha256"] != manifest_state_sha or (
+                        manifest_state_bytes is not None
+                        and control_state["bytes"] != manifest_state_bytes
+                    ):
+                        raise RuntimeError("640 control state differs from PASS manifest")
+                else:
+                    control_state = {
+                        "path": original_manifest_state,
+                        "original_path": control_state_original,
+                        "bytes": manifest_state_bytes,
+                        "sha256": manifest_state_sha,
+                        "staged": False,
+                        "verified_via_source_manifest": manifest_record["sha256"],
+                    }
                 controls.append({
                     "kimg": budget,
-                    "training_state": state_record(prefix, control_state_original),
-                    "network_snapshot": state_record(prefix, control_snapshot_original),
+                    "training_state": control_state,
+                    "network_snapshot": control_snapshot,
                 })
             required_history = {}
             for name in (
