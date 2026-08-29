@@ -38,7 +38,7 @@ job_cache="${eval_root}/job_caches/${job_id}"
 mkdir -p "${eval_root}/jobs" "${eval_root}/receipts" "${eval_root}/logs" "${job_cache}"
 cp -a "${cache_root}/." "${job_cache}/"
 
-gpu_uuid=$(nvidia-smi --query-gpu=index,uuid,name --format=csv,noheader | awk -F', ' -v index="${gpu_id}" '$1 == index && $3 ~ /A100/ {print $2}')
+gpu_uuid=$(nvidia-smi --query-gpu=index,uuid,name --format=csv,noheader | awk -F', ' -v wanted="${gpu_id}" '$1 == wanted && $3 ~ /A100/ {print $2}')
 [[ -n "${gpu_uuid}" ]] || { echo "cannot resolve assigned A100 UUID" >&2; exit 4; }
 master_port=$((52000 + gpu_id * 100 + job_index))
 mid_args=()
