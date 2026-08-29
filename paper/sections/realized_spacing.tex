@@ -38,18 +38,28 @@ mechanism.  Across multiple stages or at a clipping boundary, equality
 requires matching the full law $\mathcal{P}_{q,g}$ rather than one scalar
 setting.
 
-Realized spacing is a composite intervention in the evaluated ECT objective.
-For online output $D_t=f_\theta(x_t,t)$ and detached target
-$T_r=\operatorname{sg}[f_\theta(x_r,r)]$, the per-sample loss is
+The objective-level channels of a spacing intervention depend on the weighting
+regime.  For online output $D_t=f_\theta(x_t,t)$, detached target
+$T_r=\operatorname{sg}[f_\theta(x_r,r)]$, and residual $e_r=D_t-T_r$, write
+the per-sample loss as
 \begin{equation}
   \ell(\theta;t,r)
-  =\frac{1}{\Delta}\,
-    \rho\!\left(D_t-T_r\right).
+  =w(t,\Delta)\,\rho_c(e_r),
+  \qquad
+  \rho_c(e)=\sqrt{\lVert e\rVert_2^2+c^2}-c.
   \label{eq:spacing-objective}
 \end{equation}
-Changing $\Delta$ moves the target endpoint $r$ and changes the explicit
-inverse-spacing weight.  IA and IB instantiate this intervention by holding
-the paired training configuration fixed and changing
-\texttt{global\_gap\_scale} from $1.0$ to $1.1$.  Their comparison identifies
-the effect of that realized-spacing intervention under the evaluated
-construction.  An effect of $g$ independent of $q$ remains untested.
+Here $w$ includes all explicit weighting factors; no common time-dependent
+factor is silently dropped.  In the legacy CIFAR setting,
+$c=0$ and $w(t,\Delta)=1/\Delta$, so changing spacing moves the detached
+target endpoint and changes the explicit weight.  In the ImageNet-64 setting
+of PR~\#91, $c=0.06$ and
+$w(t,\Delta)=\omega_{\mathrm{snr}+k}(t)
+=(t^2+\sigma_{\mathrm{data}}^2)/(t\sigma_{\mathrm{data}})^2$ is independent of
+$r$ and $\Delta$ at matched $t$.  The IA--IB intervention therefore moves
+the detached target endpoint without introducing an inverse-spacing
+rescaling.  IA and IB hold the remaining paired training configuration fixed
+and change \texttt{global\_gap\_scale} from $1.0$ to $1.1$; their comparison
+identifies the effect of that realized-spacing target intervention under the
+evaluated ImageNet construction.  An effect of $g$ independent of $q$ remains
+untested.

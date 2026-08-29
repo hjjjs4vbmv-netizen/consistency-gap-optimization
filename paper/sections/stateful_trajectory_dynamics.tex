@@ -44,7 +44,8 @@ The frozen CIFAR transition audit measures non-trivial corrected feedback for
 parameters, EMA, and RAdam moments at one audited state.  It establishes that
 mechanical carryover and state-dependent incremental feedback can be measured
 separately.  The recursion provides an attribution boundary for finite
-training: local objective identities do not determine later states once
-forcing, retained history, and corrected feedback coexist.  Its scope is
-state-level attribution.  Mapping a term to FID or to a trajectory-collapse
-mechanism requires separate, outcome-aligned evidence.
+training: local objective identities are insufficient by themselves to
+determine later states or outcomes once forcing, retained history, and
+corrected feedback coexist.  Its scope is state-level attribution.  Mapping a
+term to FID or to a trajectory-collapse mechanism requires separate,
+outcome-aligned evidence.

@@ -11,10 +11,14 @@ The manuscript uses three bounded objects.
    `global_gap_scale=g` jointly construct the law of realized pairs. The
    scientific intervention is that realized pair-spacing law, not an
    independent mechanism attributed to nominal `g`.
-2. **Exact local objective structure.** For the evaluated one-sided
-   stop-gradient ECT objective, changing spacing moves the detached target and
-   changes the explicit inverse-spacing weight. The matched-state factorial
-   identities are exact at fixed parameters, sample, and RNG.
+2. **Exact local objective structure.** Write the one-sided stop-gradient ECT
+   objective as $w(t,\Delta)\rho_c(e_r)$. The matched-state decomposition and
+   target-by-weight factorial identities are exact at fixed parameters,
+   sample, and RNG. In legacy CIFAR ECT, $c=0$ and $w=1/\Delta$, so spacing
+   changes both target endpoint and explicit weight. In the PR #91 ImageNet
+   configuration, $c=0.06$ and the SNR-style weight is independent of
+   $\Delta$ at matched $t$, so the local scalar ratio is one and IA--IB changes
+   the target endpoint without inverse-gap rescaling.
 3. **Carryover-corrected state recursion.** For a block with a shared declared
    carryover operator,
 
@@ -54,8 +58,9 @@ They are distinct empirical statements.
 
 | Statement | Status | Reason |
 |---|---|---|
-| Realized spacing changes the detached target and explicit inverse-gap weight in the evaluated ECT objective. | Exact | Follows from the implemented objective. |
-| The target-by-denominator identities hold at a matched one-sided-SG objective state. | Exact | Algebraic finite-spacing identity under matched inputs and parameters. |
+| In legacy $c=0$ inverse-gap ECT, realized spacing changes the detached target and explicit weight. | Exact for the legacy CIFAR objective | Here $w(t,\Delta)=1/\Delta$. |
+| In PR #91 ImageNet training, realized spacing changes the detached target while the SNR-style weight is gap-independent at matched $t$. | Exact for the evaluated PR #91 objective | Here $c=0.06$ and $w(t,\Delta)=\omega_{\mathrm{snr}+k}(t)$, so $s=1$. |
+| The target-by-weight identities hold at a matched one-sided-SG objective state. | Exact | Algebraic finite-spacing identity for parameter-independent $w(t,\Delta)$ and differentiable $\rho_c$ at the evaluated residual. |
 | The carryover-corrected recursion separates forcing, retention, and incremental feedback. | Exact under shared declared carryover | No differentiability assumption is needed. |
 | IA has a consistent transient advantage through 6,400 kimg in the frozen PR #91 matrix. | Supported in the evaluated matrix | All 30 paired comparisons favor IA for each metric. |
 | Seed 103 exhibits late trajectory instability in both IA and IB. | Supported descriptively | Both arms deteriorate after 7,680 kimg. |
@@ -67,7 +72,7 @@ They are distinct empirical statements.
 
 ## 4. Main-text wording licensed by the evidence
 
-> The realized-spacing intervention produces a consistent transient IA
+> The realized-spacing target intervention produces a consistent transient IA
 > advantage through 6,400 kimg in the frozen ImageNet-64 matrix. Late training
 > exposes a separate stability phenomenon: seed 103 degrades in both arms,
 > causing the three-seed endpoint mean to conflate intervention contrast with
