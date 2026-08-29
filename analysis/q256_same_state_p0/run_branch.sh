@@ -34,6 +34,10 @@ protocol="${repo}/analysis/q256_same_state_p0/protocol.json"
 run_dir="${output_root}/runs/seed${seed}/B384_to_${arm}"
 source_state="${source_root}/seed${seed}/armB/training-state-kimg000384.pt"
 
+repo_git() {
+  (cd "${repo}" && git "$@")
+}
+
 declare -A expected_source=(
   [3]=5173a6b1532c3589c8dd1e6095ab3fca4fffd77331c08932688d11df5e7cf7b8
   [4]=724d47531a8ded39af61cd98265efa8dc1dc6ed03e2e080886a243ad9650d210
@@ -43,10 +47,10 @@ declare -A expected_source=(
 [[ -s "${source_state}" && -s "${runtime}" && -s "${dataset}" && -s "${protocol}" ]] || { echo "missing frozen input" >&2; exit 3; }
 [[ "$(sha256sum "${source_state}" | cut -d' ' -f1)" == "${expected_source[${seed}]}" ]] || { echo "source SHA mismatch" >&2; exit 3; }
 [[ "$(sha256sum "${dataset}" | cut -d' ' -f1)" == 08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372 ]] || { echo "dataset SHA mismatch" >&2; exit 3; }
-git -C "${repo}" diff --quiet && git -C "${repo}" diff --cached --quiet || { echo "repository is dirty" >&2; exit 3; }
+repo_git diff --quiet && repo_git diff --cached --quiet || { echo "repository is dirty" >&2; exit 3; }
 protocol_sha="$(sha256sum "${protocol}" | cut -d' ' -f1)"
 implementation_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["implementation_commit"])' "${protocol}")"
-[[ "$(git -C "${repo}" rev-parse HEAD^)" == "${implementation_commit}" ]] || { echo "protocol implementation binding mismatch" >&2; exit 3; }
+[[ "$(repo_git rev-parse HEAD^)" == "${implementation_commit}" ]] || { echo "protocol implementation binding mismatch" >&2; exit 3; }
 
 mkdir -p "${output_root}/runs/seed${seed}" "${output_root}/logs"
 mkdir "${run_dir}"
@@ -57,7 +61,7 @@ start_utc="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "hostname=$(hostname)"
   echo "physical_gpu=${gpu}"
   echo "gpu_uuid=${gpu_uuid}"
-  echo "git_commit=$(git -C "${repo}" rev-parse HEAD)"
+  echo "git_commit=$(repo_git rev-parse HEAD)"
   echo "implementation_commit=${implementation_commit}"
   echo "protocol_sha256=${protocol_sha}"
   echo "source_state=${source_state}"
