@@ -1,0 +1,50 @@
+% Role C / kangw24. Main-text dynamics are limited to the exact
+% carryover-corrected recursion and its blockwise interpretation.
+\subsection{Stateful trajectory dynamics}
+\label{sec:stateful-trajectory-dynamics}
+
+Let $z_k^S$ denote the complete algorithmic state of schedule
+$S\in\{A,B\}$ before step $k$, including parameters, optimizer moments, EMA,
+and any discrete state that affects the next transition.  Both counterfactual
+evaluations consume the same exogenous randomness $\xi_k$.  For a continuous
+state block $x_k^S$, suppose the implemented update separates into a declared
+linear carryover $C_k x_k^S$ and a newly written increment
+$U_{S,k}(z_k^S,\xi_k)$, with the same $C_k$ across the paired evaluations.
+
+Define $\Delta x_k=x_k^B-x_k^A$.  The common-state forcing $b_k^x$ is the
+difference between the B and A increments evaluated at $z_k^A$.  The corrected
+feedback $\widetilde R_k^x$ is the difference between B increments evaluated
+at $z_k^B$ and $z_k^A$.  Adding and subtracting the common-state B increment
+gives the exact recursion
+\begin{equation}
+  \boxed{
+  \Delta x_{k+1}
+  =b_k^x+C_k\Delta x_k+\widetilde R_k^x.
+  }
+  \label{eq:carryover-corrected-recursion}
+\end{equation}
+The three terms distinguish current schedule forcing, mechanical retention of
+an existing state difference, and the state dependence of the newly written
+update.  This decomposition is algebraic: it requires neither differentiability
+of the production transition nor a small trajectory separation.  A mismatch
+in optimizer-step execution or another discrete regime violates the shared
+$C_k$ premise and must be represented explicitly rather than absorbed into
+corrected feedback.
+
+The carryover operator is block-specific.  It is the identity for parameter
+retention, the implemented $\beta_1$ and $\beta_2$ retentions for executed
+RAdam moment updates, and the actual EMA transition for the joint
+parameter--EMA block.  Subtracting these known terms prevents ordinary state
+memory from being mislabeled as dynamical expansion.  Expansion is a
+directional empirical statement about how $\widetilde R_k^x$ changes the
+retained separation; it does not follow from a large raw feedback-to-forcing
+norm ratio.
+
+The frozen CIFAR transition audit measures non-trivial corrected feedback for
+parameters, EMA, and RAdam moments at one audited state.  It establishes that
+mechanical carryover and state-dependent incremental feedback can be measured
+separately.  The recursion provides an attribution boundary for finite
+training: local objective identities do not determine later states once
+forcing, retained history, and corrected feedback coexist.  Its scope is
+state-level attribution.  Mapping a term to FID or to a trajectory-collapse
+mechanism requires separate, outcome-aligned evidence.

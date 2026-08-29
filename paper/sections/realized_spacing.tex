@@ -1,0 +1,55 @@
+% Role C / kangw24. Theory source: PR #81 q--g audit and production ECT
+% pair construction. Keep q and g as implementation parameters; the scientific
+% object is the realized pair-spacing intervention.
+\subsection{Realized pair spacing is the intervention}
+\label{sec:realized-spacing}
+
+ECT constructs a coupled pair by sampling an online time $t$ and selecting an
+earlier target time $r<t$.  Write the realized separation as
+$\Delta=t-r$.  In the implementation studied here, curriculum parameter $q$,
+stage $j$, and global multiplier $g$ jointly determine
+\begin{align}
+  r_q(t,j)
+  &=\max\!\left\{0,
+      t\left(1-\frac{n(t)}{q^{j+1}}\right)\right\},
+  \\
+  \Delta_{q,g}(t,j)
+  &=\min\!\left\{t,\,g\bigl(t-r_q(t,j)\bigr)\right\},
+  \qquad
+  r_{q,g}(t,j)=t-\Delta_{q,g}(t,j),
+  \label{eq:realized-spacing-construction}
+\end{align}
+where $n(t)$ is the fixed schedule-shape function.  The effective training
+object is therefore the joint law
+\begin{equation}
+  \mathcal{P}_{q,g}
+  =\operatorname{Law}\!\left(J,T,\Delta_{q,g}(T,J)\right)
+  \label{eq:effective-spacing-law}
+\end{equation}
+under the frozen stage and time samplers.  Neither nominal $q$, nominal $g$,
+nor the mean of $\Delta$ alone specifies this law.
+
+At a fixed unclipped stage, multiplying the separation by $g$ can be written
+as a reparameterization of $q$.  For reference parameters $(q_0,g_0)$, the
+same pair coordinates are obtained with $g'=1$ and
+$q_{\mathrm{eff}}(j)=q_0/g_0^{1/(j+1)}$.  This identity makes $g$ a controlled
+implementation probe of realized spacing, rather than an independent
+mechanism.  Across multiple stages or at a clipping boundary, equality
+requires matching the full law $\mathcal{P}_{q,g}$ rather than one scalar
+setting.
+
+Realized spacing is a composite intervention in the evaluated ECT objective.
+For online output $D_t=f_\theta(x_t,t)$ and detached target
+$T_r=\operatorname{sg}[f_\theta(x_r,r)]$, the per-sample loss is
+\begin{equation}
+  \ell(\theta;t,r)
+  =\frac{1}{\Delta}\,
+    \rho\!\left(D_t-T_r\right).
+  \label{eq:spacing-objective}
+\end{equation}
+Changing $\Delta$ moves the target endpoint $r$ and changes the explicit
+inverse-spacing weight.  IA and IB instantiate this intervention by holding
+the paired training configuration fixed and changing
+\texttt{global\_gap\_scale} from $1.0$ to $1.1$.  Their comparison identifies
+the effect of that realized-spacing intervention under the evaluated
+construction.  An effect of $g$ independent of $q$ remains untested.

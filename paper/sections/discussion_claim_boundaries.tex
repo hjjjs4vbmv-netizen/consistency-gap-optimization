@@ -1,0 +1,31 @@
+% Role C / kangw24. Evidence source: PR #91 full 120-job ImageNet-64 matrix.
+% Keep frozen all-seed results separate from any stable-seed sensitivity view.
+\subsection{Transient intervention effects and trajectory stability are distinct}
+\label{sec:transient-intervention-vs-stability}
+
+The IA--IB contrast and the stability of either trajectory answer different
+questions.  At a matched seed and budget, IA--IB measures the realized-spacing
+intervention under the frozen pair construction.  In PR~\#91, IA has lower
+FID and KID in every one of the 30 same-seed comparisons through 6,400 kimg,
+covering three seeds, five checkpoints, and NFE1/2.  This is a consistent
+transient intervention effect over the evaluated early-to-middle horizon.
+
+Trajectory stability asks whether a run continues to preserve or improve its
+quality as training proceeds.  Seed 103 reaches useful quality in both arms at
+7,680 kimg and then degrades in both IA and IB.  The first post-7,680 checkpoint
+is especially severe for IB, but IA also deteriorates and reaches comparably
+collapsed quality at later checkpoints.  Seeds 101 and 102 do not show this
+pattern and continue to improve through 12,800 kimg.  The post-8,960
+three-seed endpoint means are consequently dominated by one unstable paired
+seed rather than describing a common late-training response.
+
+An endpoint mean can therefore mix two estimands: the within-seed schedule
+contrast and the between-trajectory incidence of instability.  We retain seed
+103 in the frozen analysis, report its two arms separately, and interpret the
+IA--IB contrast only at matched seed and budget.  Stable-seed summaries are
+descriptive sensitivity analyses, not replacements for the frozen cohort.
+The paired instability identifies a shared late-trajectory failure rather than
+a treatment-specific cause or prevention effect.  Locating that mechanism
+requires diagnostics taken on the ImageNet
+trajectories before and during the transition, rather than an endpoint FID
+comparison alone.

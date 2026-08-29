@@ -1,0 +1,58 @@
+% Role C / kangw24. This section is strictly one-sided stop-gradient theory.
+% All identities compare cells at the same parameters, sample, and RNG state.
+\subsection{Exact local structure under one-sided stop-gradient training}
+\label{sec:exact-local-structure}
+
+The detached target must be represented in the training derivative.  Let
+$\widetilde\ell(\theta,\bar\theta)$ denote a lifted loss whose target branch
+uses $\bar\theta$.  Its one-sided stop-gradient derivative is
+\begin{equation}
+  \mathcal{D}^{\mathrm{sg}}_\theta\ell
+  :=\left.\partial_\theta
+  \widetilde\ell(\theta,\bar\theta)
+  \right|_{\bar\theta=\theta},
+  \label{eq:one-sided-sg-derivative}
+\end{equation}
+which differs from the ordinary total derivative along the diagonal
+$\bar\theta=\theta$.
+
+For the Euclidean residual in Equation~\eqref{eq:spacing-objective}, define
+$e_r=D_t-T_r$, $u_r=e_r/\lVert e_r\rVert_2$, and
+$J_t=\partial_\theta D_t$.  Away from $e_r=0$, the implemented training field
+at a common state is exactly
+\begin{equation}
+  g(r,\Delta)
+  :=\mathcal{D}^{\mathrm{sg}}_\theta\ell(r,\Delta)
+  =\frac{1}{\Delta}J_t^\top u_r.
+  \label{eq:one-sided-ect-field}
+\end{equation}
+Compare a reference pair $(r_1,\Delta_1)$ with an intervened pair
+$(r_g,\Delta_g)$ at the same online parameters, data, noise, and stochastic
+realization.  With $s=\Delta_1/\Delta_g$, direct substitution gives
+\begin{equation}
+  g_g
+  =s g_1
+   +\frac{1}{\Delta_g}J_t^\top
+     \bigl(u_{r_g}-u_{r_1}\bigr).
+  \label{eq:exact-local-composite}
+\end{equation}
+The first term is explicit weight rescaling.  The second is the complete
+target-endpoint correction at that state.  The identity is finite-spacing and
+uses no small-gap or optimizer approximation.
+
+The target-by-denominator factorial makes the two channels operational.  Let
+A use the reference target and denominator, B use the intervened target and
+denominator, C use the intervened target with the reference denominator, and
+D use the reference target with the intervened denominator.  At a matched
+state and sample,
+\begin{equation}
+  g_B=s g_C,
+  \qquad
+  g_D=s g_A,
+  \qquad
+  g_B-g_D=s(g_C-g_A).
+  \label{eq:exact-factorial-identities}
+\end{equation}
+These identities factorize the intervention at the objective-gradient level.
+They do not imply an additive, seed-invariant, or endpoint-quality
+factorization after the arms follow separate training trajectories.
