@@ -11,6 +11,7 @@ from training.loss import (
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
     resolve_target_weight_factorial,
 )
+from training import schedule_switch
 
 STRICT_FACTORIAL_PROTOCOLS = {
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
@@ -359,6 +360,13 @@ def make_loss_kwargs(opts):
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
 @click.option('--resume-tick',   help='Number of tick from previous training state', metavar='INT', type=int)
+@click.option(
+    '--schedule-switch-manifest',
+    help='Frozen q256 512-kimg schedule-switch run manifest',
+    metavar='JSON',
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    default=None,
+)
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
 @click.option('--startup-preview', help='Write data.png and model_init.png', metavar='BOOL', type=bool, default=True, show_default=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
@@ -521,7 +529,8 @@ def main(**kwargs):
              immutable_checkpoint_attempts=opts.immutable_checkpoint_attempts,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
              stop_after_attempts=opts.stop_after_attempts,
-             same_state_fork=same_state_fork)
+             same_state_fork=same_state_fork,
+             schedule_switch_manifest=opts.schedule_switch_manifest)
     if not opts.startup_preview:
         c.startup_preview = False
     c.update(
@@ -573,6 +582,43 @@ def main(**kwargs):
         else:
             c.resume_tick = int(resume_token)
         c.resume_state_dump = opts.resume
+
+    if opts.schedule_switch_manifest is not None:
+        if opts.resume is None:
+            raise click.ClickException(
+                '--schedule-switch-manifest requires --resume'
+            )
+        if opts.factorial_protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+            raise click.ClickException(
+                'schedule switch requires q256_target_weight_v1'
+            )
+        manifest = schedule_switch.load_run_manifest(
+            opts.schedule_switch_manifest
+        )
+        expected = schedule_switch.continuation_factorial(manifest)
+        actual = resolve_target_weight_factorial(
+            opts.factorial_protocol,
+            opts.target_gap_scale,
+            opts.denominator_gap_scale,
+            adj=opts.mapping,
+            global_gap_scale=opts.global_gap_scale,
+            q=opts.q,
+            c=opts.c,
+        )
+        if actual != expected:
+            raise click.ClickException(
+                'CLI factorial scales do not match frozen continuation arm'
+            )
+        if c.seed != manifest['seed']:
+            raise click.ClickException('CLI seed does not match switch manifest')
+        if c.total_kimg != manifest['final_kimg']:
+            raise click.ClickException(
+                'CLI duration does not match switch manifest final budget'
+            )
+        if c.batch_size != 128 or c.batch_gpu != 16:
+            raise click.ClickException(
+                'schedule switch requires batch=128 and batch-gpu=16'
+            )
 
     # Description string.
     cond_str = 'cond' if c.dataset_kwargs.use_labels else 'uncond'
@@ -628,7 +674,14 @@ def main(**kwargs):
                 or opts.exact_resume
             )
         )
-        if exact_state_resume and not opts.q256_b384_same_state_fork:
+        if opts.schedule_switch_manifest is not None:
+            if not os.path.isfile(options_path):
+                with open(options_path, 'x') as f:
+                    json.dump(c, f, indent=2)
+                    f.write('\n')
+                    f.flush()
+                    os.fsync(f.fileno())
+        elif exact_state_resume and not opts.q256_b384_same_state_fork:
             if not os.path.isfile(options_path):
                 raise click.ClickException(
                     'exact resume requires the immutable original '
