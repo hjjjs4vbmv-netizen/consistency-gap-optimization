@@ -1,0 +1,332 @@
+{
+  "actual_a100_gpu_hours_training": 3.952444893,
+  "all_exact_closures_pass": true,
+  "claim_boundary": {
+    "allowed": [
+      "exact same-state forcing identity",
+      "mechanical carryover separated from corrected feedback",
+      "conditional replication across three B-history states"
+    ],
+    "withheld": [
+      "feedback causes FID improvement",
+      "RAdam is the unique mechanism",
+      "ImageNet extrapolation",
+      "universal amplification",
+      "norm ratios as causal percentages"
+    ]
+  },
+  "cross_seed_classifications": {
+    "B:observable:feature": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "B:observable:residual": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "B:state:EMA": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "B:state:m": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "B:state:net_buffer": {
+      "by_seed": {
+        "3": "mixed_or_inconclusive",
+        "4": "mixed_or_inconclusive",
+        "5": "mixed_or_inconclusive"
+      },
+      "counts": {
+        "mixed_or_inconclusive": 3
+      },
+      "replicated_classification": null,
+      "replication_status": "mixed"
+    },
+    "B:state:scaler": {
+      "by_seed": {
+        "3": "mixed_or_inconclusive",
+        "4": "mixed_or_inconclusive",
+        "5": "mixed_or_inconclusive"
+      },
+      "counts": {
+        "mixed_or_inconclusive": 3
+      },
+      "replicated_classification": null,
+      "replication_status": "mixed"
+    },
+    "B:state:theta": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "B:state:v": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "C:observable:feature": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "C:observable:residual": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "C:state:EMA": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "C:state:m": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "C:state:net_buffer": {
+      "by_seed": {
+        "3": "mixed_or_inconclusive",
+        "4": "mixed_or_inconclusive",
+        "5": "mixed_or_inconclusive"
+      },
+      "counts": {
+        "mixed_or_inconclusive": 3
+      },
+      "replicated_classification": null,
+      "replication_status": "mixed"
+    },
+    "C:state:scaler": {
+      "by_seed": {
+        "3": "mixed_or_inconclusive",
+        "4": "mixed_or_inconclusive",
+        "5": "mixed_or_inconclusive"
+      },
+      "counts": {
+        "mixed_or_inconclusive": 3
+      },
+      "replicated_classification": null,
+      "replication_status": "mixed"
+    },
+    "C:state:theta": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "C:state:v": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "D:observable:feature": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "D:observable:residual": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "D:state:EMA": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "D:state:m": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "D:state:net_buffer": {
+      "by_seed": {
+        "3": "mixed_or_inconclusive",
+        "4": "mixed_or_inconclusive",
+        "5": "mixed_or_inconclusive"
+      },
+      "counts": {
+        "mixed_or_inconclusive": 3
+      },
+      "replicated_classification": null,
+      "replication_status": "mixed"
+    },
+    "D:state:scaler": {
+      "by_seed": {
+        "3": "mixed_or_inconclusive",
+        "4": "mixed_or_inconclusive",
+        "5": "mixed_or_inconclusive"
+      },
+      "counts": {
+        "mixed_or_inconclusive": 3
+      },
+      "replicated_classification": null,
+      "replication_status": "mixed"
+    },
+    "D:state:theta": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    },
+    "D:state:v": {
+      "by_seed": {
+        "3": "persistent_state_feedback_dominance",
+        "4": "persistent_state_feedback_dominance",
+        "5": "persistent_state_feedback_dominance"
+      },
+      "counts": {
+        "persistent_state_feedback_dominance": 3
+      },
+      "replicated_classification": "persistent_state_feedback_dominance",
+      "replication_status": "cross-seed replicated"
+    }
+  },
+  "formal_branches_12_of_12": true,
+  "max_closure_relative": 0.0,
+  "p1_started": false,
+  "p1_worthwhile": true,
+  "parity_3_of_3": true,
+  "production_exogenous_pairing_500_steps": true,
+  "protocol_sha256": "3bfb184c8f28015e813aedcb5d3864882a52bfb71ccae764fbc7ec298daed77f",
+  "replicated_core_entries": [
+    "B:state:EMA",
+    "B:state:m",
+    "B:state:theta",
+    "B:state:v",
+    "C:state:EMA",
+    "C:state:m",
+    "C:state:theta",
+    "C:state:v",
+    "D:state:EMA",
+    "D:state:m",
+    "D:state:theta",
+    "D:state:v"
+  ],
+  "residual_features_mixed": false,
+  "schema": "ect.q256.b384-same-state-p0-summary/v1",
+  "status": "PASS"
+}
