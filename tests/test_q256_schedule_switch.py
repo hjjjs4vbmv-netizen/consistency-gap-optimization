@@ -146,6 +146,28 @@ class ScheduleSwitchTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "invalid schedule-switch branch"):
                 schedule_switch.load_run_manifest(manifest_path)
 
+    def test_seed3_7_protocol_uses_its_frozen_cohort(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "training-state.pt"
+            source_path.write_bytes(b"immutable-source")
+            state = self.make_state()
+            state["trajectory_config"]["seed"] = 3
+            state["trajectory_config_sha256"] = reproducibility.state_sha256(
+                state["trajectory_config"]
+            )
+            manifest = self.make_manifest(source_path, state)
+            manifest["experiment_protocol"] = schedule_switch.SEED3_7_PROTOCOL
+            manifest["seed"] = 3
+            manifest_path = Path(directory) / "manifest.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            loaded = schedule_switch.load_run_manifest(manifest_path)
+            self.assertEqual(loaded["seed"], 3)
+            schedule_switch.verify_source_state(state, loaded)
+            manifest["seed"] = 8
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            with self.assertRaisesRegex(RuntimeError, "outside the frozen"):
+                schedule_switch.load_run_manifest(manifest_path)
+
 
 if __name__ == "__main__":
     unittest.main()

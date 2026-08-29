@@ -12,6 +12,13 @@ from training import reproducibility
 
 
 PROTOCOL = "q256_ab_crossed_switch_v1"
+SEED3_7_PROTOCOL = "q256_ab_crossed_switch_seed3_7_v1"
+SEED3_7_PROTOCOL_V2 = "q256_ab_crossed_switch_seed3_7_v2"
+SUPPORTED_PROTOCOL_SEEDS = {
+    PROTOCOL: tuple(range(14, 19)),
+    SEED3_7_PROTOCOL: tuple(range(3, 8)),
+    SEED3_7_PROTOCOL_V2: tuple(range(3, 8)),
+}
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
 STATE_SCHEMA = "ect.q256.schedule-switch-state/v1"
 SWITCH_KIMG = 512
@@ -72,7 +79,8 @@ def load_run_manifest(path: str) -> dict:
         manifest = json.load(handle)
     _require(manifest.get("schema") == RUN_MANIFEST_SCHEMA,
              "unsupported schedule-switch manifest schema")
-    _require(manifest.get("experiment_protocol") == PROTOCOL,
+    experiment_protocol = manifest.get("experiment_protocol")
+    _require(experiment_protocol in SUPPORTED_PROTOCOL_SEEDS,
              "schedule-switch protocol identity mismatch")
     run_kind = manifest.get("run_kind")
     _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
@@ -84,8 +92,8 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch origin arm mismatch")
     _require(manifest.get("continuation_arm") == continuation,
              "schedule-switch continuation arm mismatch")
-    _require(manifest.get("seed") in range(14, 19),
-             "schedule-switch seed must be 14..18")
+    _require(manifest.get("seed") in SUPPORTED_PROTOCOL_SEEDS[experiment_protocol],
+             "schedule-switch seed is outside the frozen protocol cohort")
     _require(manifest.get("switch_kimg") == SWITCH_KIMG,
              "schedule-switch point must be 512 kimg")
     expected_final = 640 if run_kind == "parity" else 1024
@@ -140,7 +148,7 @@ def state_metadata(manifest: dict) -> dict:
     source = manifest["source_state"]
     return {
         "schema": STATE_SCHEMA,
-        "experiment_protocol": PROTOCOL,
+        "experiment_protocol": manifest["experiment_protocol"],
         "run_kind": manifest["run_kind"],
         "branch": manifest["branch"],
         "origin_arm": manifest["origin_arm"],
