@@ -66,6 +66,10 @@ groups.
 - `paired_differences.csv`: 60 same-seed `IA - IB` comparisons.
 - `paired_summary.csv`: three-seed means, sample standard deviations, and win
   counts for each checkpoint and NFE.
+- `training_provenance.csv`: verified parent-resume and 10,240-kimg full-state
+  identities, counters, schema, RNG/sampler presence, and pair-config checks.
+- `TRAINING_PROVENANCE.md`: provenance interpretation, receipt basis, and the
+  IA/IB configuration-equality audit.
 
 The results are descriptive estimates from three seeds. The observed seed 103
 instability is part of the frozen result and has not been filtered or used to
