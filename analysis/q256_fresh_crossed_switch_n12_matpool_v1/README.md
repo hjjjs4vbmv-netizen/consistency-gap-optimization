@@ -13,6 +13,12 @@ The gate order is fixed:
 5. commit the protocol, require a clean worktree, and run preflight;
 6. launch the single fail-closed tmux pipeline.
 
+On the current node, `start_after_parity.sh` implements steps 4--6 as one
+fail-closed gatekeeper after the exact parity tmux session ends. It also requires
+the frozen 147-test PASS log, waits without killing anything until all six GPUs
+are exclusive, commits the generated protocol, and then replaces itself with the
+formal pipeline.
+
 The formal pipeline performs training, training-integrity audit, blind manifest
 preparation, 264 evaluations, full-matrix sealing, decoding, frozen statistics,
 and final reporting. It contains no retry loop. A failed formal cell or evaluation
