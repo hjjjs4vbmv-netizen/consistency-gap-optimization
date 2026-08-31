@@ -11,6 +11,7 @@ import torch
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import experiment
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import evaluation
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import monitor
+from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import parity
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import statistics as frozen_statistics
 from training import reproducibility, schedule_switch
 from training import ct_training_loop
@@ -136,6 +137,17 @@ class MonitorPidNamespaceTests(unittest.TestCase):
         owned, foreign = monitor.classify_gpu_apps(
             rows, "GPU-x", {123}, alive=True, owned_cuda_context=True)
         self.assertEqual(owned, []); self.assertEqual(foreign, rows)
+
+
+class EngineeringParityLauncherTests(unittest.TestCase):
+    def test_four_gpu_indices_can_be_shifted_without_changing_science(self):
+        args = parity.parser().parse_args([
+            "launch", "--runtime-manifest", "/runtime.json",
+            "--dataset", "/data.zip", "--transfer", "/transfer.pkl",
+            "--implementation-commit", "1" * 40, "--output-root", "/out",
+            "--gpu-indices", "2", "3", "4", "5",
+        ])
+        self.assertEqual(args.gpu_indices, [2, 3, 4, 5])
 
 
 class FreshManifestTests(unittest.TestCase):

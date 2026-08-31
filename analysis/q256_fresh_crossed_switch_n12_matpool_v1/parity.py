@@ -142,8 +142,15 @@ def launch(args: argparse.Namespace) -> None:
     engineering_path = root / "engineering_protocol.json"
     experiment.atomic_json(engineering_path, frozen)
     python = str(Path(runtime["environment_prefix"]) / "bin" / "python")
-    plans = (("A", "continuous", 0), ("B", "continuous", 1),
-             ("A", "segmented", 2), ("B", "segmented", 3))
+    if len(args.gpu_indices) != 4 or len(set(args.gpu_indices)) != 4:
+        raise RuntimeError("engineering parity requires four unique GPU indices")
+    plans = tuple(
+        (arm, mode, gpu) for (arm, mode), gpu in zip(
+            (("A", "continuous"), ("B", "continuous"),
+             ("A", "segmented"), ("B", "segmented")),
+            args.gpu_indices,
+        )
+    )
     processes = []
     for arm, mode, gpu in plans:
         log = (root / f"{mode}_{arm}.launcher.log").open("xb")
@@ -222,6 +229,8 @@ def parser() -> argparse.ArgumentParser:
     launch_parser.add_argument("--transfer", type=Path, required=True)
     launch_parser.add_argument("--implementation-commit", required=True)
     launch_parser.add_argument("--output-root", type=Path, required=True)
+    launch_parser.add_argument("--gpu-indices", type=int, choices=range(6), nargs=4,
+                               default=(0, 1, 2, 3))
     launch_parser.set_defaults(func=launch)
     worker_parser = sub.add_parser("worker")
     worker_parser.add_argument("--engineering-protocol", type=Path, required=True)
