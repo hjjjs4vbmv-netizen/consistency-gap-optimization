@@ -1,7 +1,7 @@
 {
   "schema": "ect.q256.p2-b384-pulse-chase-protocol/v1",
   "status": "FROZEN_BEFORE_FRESH_FORMAL_TRAINING_AND_EVALUATION",
-  "implementation_commit": "0ac800dc5bf8696e41656cfba9205b73a023e02e",
+  "implementation_commit": "ed748dbe10857ea72c9c956cf17477c8d87dab45",
   "experiment_id": "q256_p2_b384_pulse_chase_v1",
   "question": "Does a temporary 384-512 kimg A/B pair-spacing pulse, from identical full B@384 state, leave a practically material NFE1 quality contrast after both branches chase the identical A objective from 512-640 kimg?",
   "claim_ceiling": "Full-state effect of temporary spacing history on common-A finite-horizon quality evolution; no history-by-current interaction and no optimizer/EMA mediation claim.",
@@ -105,7 +105,7 @@
     "metric_seed": 20260730,
     "metrics": ["FID50k", "KID50k"],
     "shared_generated_features_per_job": true,
-    "hash_binding": ["checkpoint", "evaluator_commit", "evaluator_code", "real_features", "dataset", "runtime_sif", "protocol"],
+    "hash_binding": ["checkpoint", "evaluator_commit", "evaluator_code", "feature_detector", "real_features", "dataset", "runtime_sif", "protocol"],
     "blinding": "NO_NUMERIC_RESULTS_OR_SUMMARY_UNTIL_ALL_60_SEALED_PASS",
     "forbidden": ["5k_proxy", "checkpoint_selection", "extra_NFE", "post_hoc_1024_extension"]
   },
