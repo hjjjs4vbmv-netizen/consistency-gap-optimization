@@ -42,6 +42,43 @@ _AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
     },
 }
 
+
+def validate_planned_pause(
+    *, stop_after_attempts, planned_pause_protocol, strict_reproducibility,
+    seed, total_kimg, resume_state_dump, schedule_switch_manifest,
+):
+    """Authorize only the legacy 16-step gate or the frozen fresh 512-kimg fork."""
+    if stop_after_attempts is None:
+        if planned_pause_protocol is not None:
+            raise ValueError('planned_pause_protocol requires stop_after_attempts')
+        return None
+    if not strict_reproducibility:
+        raise ValueError(
+            'stop_after_attempts is reserved for strict factorial resume gates'
+        )
+    if isinstance(stop_after_attempts, bool) or int(stop_after_attempts) != stop_after_attempts:
+        raise ValueError('stop_after_attempts must be an exact integer')
+    attempts = int(stop_after_attempts)
+    if attempts == 16 and planned_pause_protocol is None:
+        return attempts
+    allowed = {
+        schedule_switch.FRESH_N12_PROTOCOL: tuple(range(31, 43)),
+        schedule_switch.FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
+    }
+    if (
+        attempts != schedule_switch.SWITCH_ATTEMPT
+        or planned_pause_protocol not in allowed
+        or seed not in allowed.get(planned_pause_protocol, ())
+        or total_kimg != 1024
+        or resume_state_dump is not None
+        or schedule_switch_manifest is not None
+    ):
+        raise ValueError(
+            'long planned pause requires the frozen fresh q256 prefix contract '
+            '(attempt=4000, total_kimg=1024, fresh state, authorized seed)'
+        )
+    return attempts
+
 # Per-attempted-iteration CSV for paired fixed/adaptive comparisons.
 # Schedule telemetry comes exclusively from loss_fn.schedule_runtime_metrics().
 _LEGACY_TRAIN_SUMMARY_FIELDS = (
@@ -885,6 +922,7 @@ def training_loop(
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
+    planned_pause_protocol = None,  # Explicit authorization for a frozen long pause.
     schedule_switch_manifest = None,# Frozen 512-kimg A/B continuation manifest.
     device              = torch.device('cuda'),
 ):
@@ -931,20 +969,15 @@ def training_loop(
         raise ValueError(
             'formal q256 target-weight arms require AMP/GradScaler enabled'
         )
-    if stop_after_attempts is not None:
-        if not strict_reproducibility:
-            raise ValueError(
-                'stop_after_attempts is reserved for strict factorial resume gates'
-            )
-        if (
-            isinstance(stop_after_attempts, bool)
-            or int(stop_after_attempts) != stop_after_attempts
-            or int(stop_after_attempts) != 16
-        ):
-            raise ValueError(
-                'stop_after_attempts is frozen to 16 for the exact 16+16 gate'
-            )
-        stop_after_attempts = int(stop_after_attempts)
+    stop_after_attempts = validate_planned_pause(
+        stop_after_attempts=stop_after_attempts,
+        planned_pause_protocol=planned_pause_protocol,
+        strict_reproducibility=strict_reproducibility,
+        seed=seed,
+        total_kimg=total_kimg,
+        resume_state_dump=resume_state_dump,
+        schedule_switch_manifest=schedule_switch_manifest,
+    )
     immutable_checkpoint_nimg = normalize_immutable_checkpoint_nimg(
         immutable_checkpoint_kimg,
         total_kimg=total_kimg,

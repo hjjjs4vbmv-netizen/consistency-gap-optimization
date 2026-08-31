@@ -524,6 +524,7 @@ def training_command(
         milestones = "512" if arm == "A" else "384,512"
         command.extend([
             f"--immutable-checkpoint-kimg={milestones}", "--stop-after-attempts=4000",
+            f"--planned-pause-protocol={'q256_fresh_crossed_switch_n12_matpool_engineering_v1' if seed == 20260831 else EXPERIMENT_ID}",
             f"--transfer={protocol['assets']['transfer']['path']}",
         ])
     else:

@@ -12,6 +12,7 @@ from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import experiment
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import evaluation
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import statistics as frozen_statistics
 from training import reproducibility, schedule_switch
+from training import ct_training_loop
 
 
 class AssignmentTests(unittest.TestCase):
@@ -83,6 +84,39 @@ class ProtocolTests(unittest.TestCase):
                 protocol["gpu_assignment"][0]["gpu_index"] = 5
             with self.subTest(mutation=mutation), self.assertRaises(RuntimeError):
                 experiment.validate_protocol(protocol)
+
+
+class PlannedPauseAuthorizationTests(unittest.TestCase):
+    def call(self, **changes):
+        values = {"stop_after_attempts": 4000,
+                  "planned_pause_protocol": schedule_switch.FRESH_N12_PROTOCOL,
+                  "strict_reproducibility": True, "seed": 31, "total_kimg": 1024,
+                  "resume_state_dump": None, "schedule_switch_manifest": None}
+        values.update(changes)
+        return ct_training_loop.validate_planned_pause(**values)
+
+    def test_fresh_formal_and_engineering_pauses_are_exactly_authorized(self):
+        self.assertEqual(self.call(), 4000)
+        self.assertEqual(self.call(
+            planned_pause_protocol=schedule_switch.FRESH_N12_ENGINEERING_PROTOCOL,
+            seed=20260831), 4000)
+        self.assertEqual(self.call(stop_after_attempts=16,
+                                   planned_pause_protocol=None), 16)
+
+    def test_long_pause_rejects_any_contract_drift(self):
+        mutations = (
+            {"stop_after_attempts": 3999}, {"planned_pause_protocol": None},
+            {"seed": 30}, {"total_kimg": 640}, {"resume_state_dump": "/state.pt"},
+            {"schedule_switch_manifest": "/manifest.json"},
+            {"strict_reproducibility": False},
+        )
+        for mutation in mutations:
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                self.call(**mutation)
+
+    def test_protocol_without_pause_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.call(stop_after_attempts=None)
 
 
 class FreshManifestTests(unittest.TestCase):

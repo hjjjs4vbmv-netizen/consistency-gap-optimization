@@ -28,7 +28,9 @@ def continuous_command(protocol: dict, run_dir: Path, arm: str, gpu: int) -> lis
     )
     command = [
         item for item in command
-        if item != "--stop-after-attempts=4000" and not item.startswith("--immutable-checkpoint-kimg=")
+        if item != "--stop-after-attempts=4000"
+        and not item.startswith("--planned-pause-protocol=")
+        and not item.startswith("--immutable-checkpoint-kimg=")
     ]
     command.append("--immutable-checkpoint-kimg=512,640")
     return command
