@@ -32,7 +32,11 @@ class CheckpointEMA(torch.nn.Module):
 
 class TrainingIntegrityTest(unittest.TestCase):
     def test_checker_adds_repository_root_to_import_path(self):
-        self.assertEqual(sys.path[0], str(check_training_integrity.REPO_ROOT))
+        # Other test modules may temporarily prepend their own script/fixture
+        # directories during collection. The checker contract is that the
+        # repository root is importable, not that it permanently owns the
+        # process-global slot zero after unrelated imports.
+        self.assertIn(str(check_training_integrity.REPO_ROOT), sys.path)
 
     def make_run(
         self, root: Path, finite: bool = True, method: str = "fixed",

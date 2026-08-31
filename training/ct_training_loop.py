@@ -19,6 +19,7 @@ from torch_utils import distributed as dist
 from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
+from training import pulse_chase, schedule_switch
 
 from metrics import metric_main
 
@@ -167,6 +168,26 @@ _FACTORIAL_TELEMETRY_FIELDS = (
     'step_skipped',
     'elapsed_sec',
     'gpu_hours_cumulative',
+)
+
+_SCHEDULE_SWITCH_TELEMETRY_FIELDS = (
+    'schema',
+    'experiment_protocol',
+    'branch',
+    'origin_arm',
+    'continuation_arm',
+    'switch_relative_step',
+    *_FACTORIAL_TELEMETRY_FIELDS[1:],
+    'online_ema_distance',
+    'radam_first_moment_norm',
+    'radam_second_moment_norm',
+)
+
+_P2_TAPE_TELEMETRY_FIELDS = (
+    *_FACTORIAL_TELEMETRY_FIELDS[:27],
+    'cuda_rng_before_loss_sha256',
+    'cuda_rng_after_loss_sha256',
+    *_FACTORIAL_TELEMETRY_FIELDS[27:],
 )
 
 #----------------------------------------------------------------------------
@@ -683,11 +704,18 @@ def aggregate_factorial_runtime_metrics(metric_batches):
     result = {field: first[field] for field in identity_fields}
     for field in count_fields:
         result[field] = sum(int(metrics[field]) for metrics in metric_batches)
-    for field in (
+    hash_fields = [
         't_sha256', 'base_r_sha256', 'target_r_sha256',
         'denominator_r_sha256', 'target_delta_sha256',
         'denominator_delta_sha256',
-    ):
+    ]
+    optional_hash_fields = (
+        'cuda_rng_before_loss_sha256', 'cuda_rng_after_loss_sha256',
+    )
+    if all(all(field in metrics for field in optional_hash_fields)
+           for metrics in metric_batches):
+        hash_fields.extend(optional_hash_fields)
+    for field in hash_fields:
         result[field] = reproducibility.state_sha256(
             [metrics[field] for metrics in metric_batches]
         )
@@ -812,6 +840,26 @@ def save_immutable_training_state(state, run_dir, cur_nimg):
     reproducibility.atomic_torch_save(state, path, overwrite=False)
     return path
 
+
+def save_immutable_ema_snapshot(ema, loss_fn, augment_pipe, dataset_kwargs,
+                                run_dir, cur_nimg):
+    if int(cur_nimg) != cur_nimg or int(cur_nimg) % 1000:
+        raise ValueError('immutable EMA snapshot requires exact whole kimg')
+    data = {
+        'ema': copy.deepcopy(ema).eval().requires_grad_(False).cpu(),
+        'loss_fn': copy.deepcopy(loss_fn),
+        'augment_pipe': (
+            None if augment_pipe is None
+            else copy.deepcopy(augment_pipe).eval().requires_grad_(False).cpu()
+        ),
+        'dataset_kwargs': dict(dataset_kwargs),
+    }
+    path = os.path.join(
+        run_dir, f'network-snapshot-kimg{int(cur_nimg) // 1000:06d}.pkl'
+    )
+    reproducibility.atomic_pickle_dump(data, path, overwrite=False)
+    return path
+
 #----------------------------------------------------------------------------
 
 @torch.no_grad()
@@ -871,6 +919,9 @@ def training_loop(
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
+    schedule_switch_manifest = None,# Frozen 512-kimg A/B continuation manifest.
+    pulse_chase_manifest = None,    # Frozen B@384 pulse/chase branch manifest.
+    matched_randomness_audit = False, # Smoke-only exogenous tape hashing.
     device              = torch.device('cuda'),
 ):
     # Initialize.
@@ -878,6 +929,68 @@ def training_loop(
     strict_reproducibility = (
         loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
     )
+    switch_manifest = (
+        schedule_switch.load_run_manifest(schedule_switch_manifest)
+        if schedule_switch_manifest is not None else None
+    )
+    switch_metadata = (
+        schedule_switch.state_metadata(switch_manifest)
+        if switch_manifest is not None else None
+    )
+    p2_manifest = (
+        pulse_chase.load_run_manifest(pulse_chase_manifest)
+        if pulse_chase_manifest is not None else None
+    )
+    if switch_manifest is not None and p2_manifest is not None:
+        raise ValueError('legacy schedule switch and P2 pulse/chase are exclusive')
+    if switch_manifest is not None:
+        if not strict_reproducibility or resume_state_dump is None:
+            raise ValueError(
+                'schedule switch requires a strict full-state resume'
+            )
+        if loss_kwargs.get('factorial_protocol') != 'q256_target_weight_v1':
+            raise ValueError('schedule switch requires q256 target-weight loss')
+        expected_factorial = schedule_switch.continuation_factorial(
+            switch_manifest
+        )
+        actual_factorial = {
+            'enabled': True,
+            'protocol': loss_kwargs.get('factorial_protocol'),
+            'arm': expected_factorial['arm'],
+            'target_gap_scale': float(loss_kwargs.get('target_gap_scale')),
+            'denominator_gap_scale': float(
+                loss_kwargs.get('denominator_gap_scale')
+            ),
+        }
+        if actual_factorial != expected_factorial:
+            raise ValueError('loss factors do not match switch continuation arm')
+    if p2_manifest is not None:
+        if not strict_reproducibility or resume_state_dump is None:
+            raise ValueError('P2 pulse/chase requires a strict full-state resume')
+        if loss_kwargs.get('factorial_protocol') != 'q256_target_weight_v1':
+            raise ValueError('P2 pulse/chase requires q256 target-weight loss')
+        expected_arm = (
+            p2_manifest['pulse_arm']
+            if int(total_kimg) == pulse_chase.PULSE_END_KIMG
+            else 'A' if int(total_kimg) == pulse_chase.CHASE_END_KIMG
+            else None
+        )
+        if expected_arm is None:
+            raise ValueError('P2 phase must end at 512 or 640 kimg')
+        expected_factorial = pulse_chase.factorial_for_arm(expected_arm)
+        actual_factorial = {
+            'enabled': True,
+            'protocol': loss_kwargs.get('factorial_protocol'),
+            'arm': expected_arm,
+            'target_gap_scale': float(loss_kwargs.get('target_gap_scale')),
+            'denominator_gap_scale': float(
+                loss_kwargs.get('denominator_gap_scale')
+            ),
+        }
+        if actual_factorial != expected_factorial:
+            raise ValueError('P2 loss factors do not match frozen phase')
+    if matched_randomness_audit and p2_manifest is None:
+        raise ValueError('matched-randomness tape audit is P2 smoke-only')
     if strict_reproducibility and dist.get_world_size() != 1:
         raise ValueError(
             'formal q256 target-weight arms require one process and one '
@@ -979,6 +1092,7 @@ def training_loop(
             ),
             'enable_tf32': enable_tf32,
             'enable_amp': enable_amp,
+            'matched_randomness_audit': bool(matched_randomness_audit),
             'device': str(device),
             'dataset_kwargs': dict(dataset_kwargs),
             'data_loader_kwargs': dict(data_loader_kwargs),
@@ -1092,8 +1206,19 @@ def training_loop(
     resumed_snapshot_grid_c = None
     resumed_snapshot_grid_size = None
     elapsed_base_sec = 0.0
+    persisted_factorial_identity = None
+    p2_phase = None
     if resume_state_dump:
         dist.print0(f'Loading training state from "{resume_state_dump}"...')
+        starting_schedule_switch = (
+            switch_manifest is not None
+            and os.path.realpath(resume_state_dump)
+            == os.path.realpath(switch_manifest['source_state']['path'])
+        )
+        if starting_schedule_switch:
+            schedule_switch.verify_resume_state_file(
+                resume_state_dump, switch_manifest
+            )
         # The training-state contains optimizer and persistent module objects.
         # Only load trusted checkpoints produced by this repository.
         data = torch.load(
@@ -1101,6 +1226,14 @@ def training_loop(
             map_location=torch.device('cpu'),
             weights_only=False,
         )
+        if p2_manifest is not None:
+            p2_phase = pulse_chase.phase_for_resume_state(data, p2_manifest)
+            if int(total_kimg) != p2_phase['end_kimg']:
+                raise RuntimeError('P2 resume boundary does not match phase budget')
+            pulse_chase.verify_resume_state_file(
+                resume_state_dump, p2_manifest, p2_phase
+            )
+            pulse_chase.verify_resume_state(data, p2_manifest, p2_phase)
         if strict_reproducibility:
             if data.get('reproducibility_schema') != reproducibility.TRAINING_STATE_SCHEMA:
                 raise RuntimeError(
@@ -1121,10 +1254,19 @@ def training_loop(
                     'strict factorial training-state missing fields: '
                     + ', '.join(missing)
                 )
-            if data['factorial'] != loss_fn.factorial:
-                raise RuntimeError(
-                    'factorial factors in training-state do not match current config'
-                )
+            if p2_manifest is not None:
+                pass  # Verified above by the dedicated two-boundary state contract.
+            elif switch_manifest is None:
+                if data['factorial'] != loss_fn.factorial:
+                    raise RuntimeError(
+                        'factorial factors in training-state do not match current config'
+                    )
+            elif starting_schedule_switch:
+                schedule_switch.verify_source_state(data, switch_manifest)
+                persisted_factorial_identity = copy.deepcopy(data['factorial'])
+            else:
+                schedule_switch.verify_switched_state(data, switch_manifest)
+                persisted_factorial_identity = copy.deepcopy(data['factorial'])
             saved_trajectory_sha256 = reproducibility.state_sha256(
                 data['trajectory_config']
             )
@@ -1132,7 +1274,27 @@ def training_loop(
                 raise RuntimeError(
                     'training-state trajectory config hash is internally invalid'
                 )
-            if saved_trajectory_sha256 != strict_trajectory_config_sha256:
+            if p2_manifest is not None:
+                if not pulse_chase.trajectory_configs_compatible(
+                    data['trajectory_config'], strict_trajectory_config,
+                    p2_manifest, p2_phase,
+                ):
+                    raise RuntimeError(
+                        'P2 trajectory differs beyond the frozen arm and budget'
+                    )
+            elif (
+                switch_manifest is not None
+                and starting_schedule_switch
+            ):
+                if not schedule_switch.trajectory_configs_compatible(
+                    data['trajectory_config'], strict_trajectory_config,
+                    switch_manifest,
+                ):
+                    raise RuntimeError(
+                        'source trajectory config differs beyond the frozen '
+                        'schedule intervention and final budget'
+                    )
+            elif saved_trajectory_sha256 != strict_trajectory_config_sha256:
                 saved_trajectory_config = reproducibility.canonical_json_data(
                     data['trajectory_config']
                 )
@@ -1165,6 +1327,11 @@ def training_loop(
                     f'{saved_total_kimg} to {current_total_kimg} kimg; '
                     'all other trajectory settings match exactly.'
                 )
+            if switch_manifest is not None and not starting_schedule_switch:
+                if saved_trajectory_sha256 != strict_trajectory_config_sha256:
+                    raise RuntimeError(
+                        'resumed switched trajectory config does not match current run'
+                    )
         if strict_reproducibility:
             copy_module_state_exact(
                 data.get('net'), net, label='strict training-state -> net'
@@ -1233,6 +1400,10 @@ def training_loop(
                         'strict factorial training-state is missing GradScaler state'
                     )
                 dist.print0(f'GradScaler state is not found in "{resume_state_dump}", using the default state.')
+        if starting_schedule_switch:
+            schedule_switch.verify_resume_state_file(
+                resume_state_dump, switch_manifest
+            )
         del data # conserve memory
 
     if dataset_iterator is None:
@@ -1438,13 +1609,79 @@ def training_loop(
     factorial_telemetry_writer = None
     if strict_reproducibility and dist.get_rank() == 0:
         telemetry_path = os.path.join(
-            run_dir, 'factorial_training_telemetry_v1.csv'
+            run_dir,
+            (
+                f"p2_{p2_phase['name']}_training_telemetry_v1.csv"
+                if p2_manifest is not None
+                else 'schedule_switch_training_telemetry_v1.csv'
+                if switch_manifest is not None
+                else 'factorial_training_telemetry_v1.csv'
+            ),
         )
         telemetry_exists = (
             os.path.isfile(telemetry_path)
             and os.path.getsize(telemetry_path) > 0
         )
-        if resume_state_dump:
+        if p2_manifest is not None:
+            if telemetry_exists:
+                raise RuntimeError('P2 phase refuses existing telemetry output')
+            factorial_telemetry_csv = open(telemetry_path, 'xt', newline='')
+        elif switch_manifest is not None:
+            source_telemetry_path = os.path.join(
+                run_dir, 'source_factorial_training_telemetry_v1.csv'
+            )
+            if not os.path.isfile(source_telemetry_path):
+                raise RuntimeError(
+                    'schedule switch requires immutable source telemetry copy'
+                )
+            with open(source_telemetry_path, 'rt', newline='') as handle:
+                source_reader = csv.DictReader(handle)
+                if tuple(source_reader.fieldnames or ()) != _FACTORIAL_TELEMETRY_FIELDS:
+                    raise RuntimeError('source factorial telemetry schema mismatch')
+                source_rows = list(source_reader)
+            if not source_rows:
+                raise RuntimeError('source factorial telemetry is empty')
+            source_last = source_rows[-1]
+            if (
+                int(source_last['attempted_iteration'])
+                != schedule_switch.SWITCH_ATTEMPT
+                or int(source_last['processed_nimg'])
+                != schedule_switch.SWITCH_NIMG
+                or source_last['arm'] != switch_manifest['origin_arm']
+            ):
+                raise RuntimeError('source factorial telemetry boundary mismatch')
+            if attempted_iteration == schedule_switch.SWITCH_ATTEMPT:
+                if telemetry_exists:
+                    raise RuntimeError(
+                        'fresh switch refuses existing post-switch telemetry'
+                    )
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'xt', newline=''
+                )
+            else:
+                if not telemetry_exists:
+                    raise RuntimeError(
+                        'switched resume requires existing post-switch telemetry'
+                    )
+                with open(telemetry_path, 'rt', newline='') as handle:
+                    reader = csv.DictReader(handle)
+                    if tuple(reader.fieldnames or ()) != _SCHEDULE_SWITCH_TELEMETRY_FIELDS:
+                        raise RuntimeError('schedule-switch telemetry schema mismatch')
+                    rows = list(reader)
+                if not rows:
+                    raise RuntimeError('schedule-switch telemetry has no rows')
+                last = rows[-1]
+                if (
+                    int(last['attempted_iteration']) != attempted_iteration
+                    or int(last['processed_nimg']) != cur_nimg
+                    or last['continuation_arm']
+                    != switch_manifest['continuation_arm']
+                ):
+                    raise RuntimeError('schedule-switch telemetry/state mismatch')
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'at', newline=''
+                )
+        elif resume_state_dump:
             if not telemetry_exists:
                 raise RuntimeError(
                     'strict factorial resume requires existing versioned telemetry'
@@ -1484,9 +1721,19 @@ def training_loop(
             )
         factorial_telemetry_writer = csv.DictWriter(
             factorial_telemetry_csv,
-            fieldnames=_FACTORIAL_TELEMETRY_FIELDS,
+            fieldnames=(
+                _P2_TAPE_TELEMETRY_FIELDS
+                if p2_manifest is not None and matched_randomness_audit
+                else _FACTORIAL_TELEMETRY_FIELDS
+                if p2_manifest is not None
+                else _SCHEDULE_SWITCH_TELEMETRY_FIELDS
+                if switch_manifest is not None else _FACTORIAL_TELEMETRY_FIELDS
+            ),
         )
-        if not resume_state_dump:
+        if p2_manifest is not None or not resume_state_dump or (
+            switch_manifest is not None
+            and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+        ):
             factorial_telemetry_writer.writeheader()
             factorial_telemetry_csv.flush()
 
@@ -1545,7 +1792,11 @@ def training_loop(
                 reproducibility_schema=reproducibility.TRAINING_STATE_SCHEMA,
                 ema=ema,
                 rank_states=rank_states,
-                factorial=dict(loss_fn.factorial),
+                factorial=(
+                    copy.deepcopy(persisted_factorial_identity)
+                    if switch_manifest is not None
+                    else dict(loss_fn.factorial)
+                ),
                 trajectory_config=strict_trajectory_config,
                 trajectory_config_sha256=strict_trajectory_config_sha256,
                 loss_fn_state=strict_loss_state,
@@ -1553,6 +1804,12 @@ def training_loop(
                 snapshot_grid_c=[value.detach().cpu() for value in grid_c],
                 snapshot_grid_size=tuple(grid_size),
             )
+            if switch_manifest is not None:
+                data['schedule_switch'] = copy.deepcopy(switch_metadata)
+            if p2_manifest is not None:
+                data['pulse_chase'] = pulse_chase.state_metadata(
+                    p2_manifest, phase=p2_phase['name']
+                )
         return data
         
     # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
@@ -1569,12 +1826,23 @@ def training_loop(
         os.path.join(run_dir, 'initial_state_receipt_v1.json')
         if dist.get_rank() == 0 else None
     )
-    if strict_reproducibility and resume_state_dump:
+    create_initial_receipt = (
+        strict_reproducibility
+        and (
+            not resume_state_dump
+            or (
+                p2_manifest is not None
+                and p2_phase['name'] == 'pulse'
+                and not os.path.isfile(initial_receipt_path)
+            )
+        )
+    )
+    if strict_reproducibility and resume_state_dump and not create_initial_receipt:
         if dist.get_rank() == 0 and not os.path.isfile(initial_receipt_path):
             raise RuntimeError(
                 'strict factorial resume requires the original initial-state receipt'
             )
-    elif strict_reproducibility:
+    elif create_initial_receipt:
         initial_rank_states = gather_rank_reproducibility_state(
             dataset_sampler, local_consumed_samples
         )
@@ -1632,6 +1900,12 @@ def training_loop(
                         reproducibility.state_sha256(common_hashes)
                     ),
                     'rank_states': rank_receipts,
+                    'pulse_chase': (
+                        None if p2_manifest is None
+                        else pulse_chase.state_metadata(
+                            p2_manifest, phase='pulse'
+                        )
+                    ),
                 },
                 initial_receipt_path,
                 overwrite=False,
@@ -1680,13 +1954,26 @@ def training_loop(
                 images = images.to(device).to(torch.float32) / 127.5 - 1
                 labels = labels.to(device)
 
+                audit_rng_before = None
+                if matched_randomness_audit:
+                    audit_rng_before = reproducibility.state_sha256(
+                        torch.cuda.get_rng_state(device) if images.is_cuda
+                        else torch.get_rng_state()
+                    )
                 loss = loss_fn(net=ddp, images=images, labels=labels, augment_pipe=augment_pipe)
                 loss_batches.append(loss.detach())
                 schedule_metric_batches.append(loss_fn.schedule_runtime_metrics())
                 if strict_reproducibility:
-                    factorial_metric_batches.append(
-                        loss_fn.factorial_runtime_metrics()
-                    )
+                    factorial_metrics = loss_fn.factorial_runtime_metrics()
+                    if matched_randomness_audit:
+                        factorial_metrics.update(
+                            cuda_rng_before_loss_sha256=audit_rng_before,
+                            cuda_rng_after_loss_sha256=reproducibility.state_sha256(
+                                torch.cuda.get_rng_state(device) if images.is_cuda
+                                else torch.get_rng_state()
+                            ),
+                        )
+                    factorial_metric_batches.append(factorial_metrics)
                 if schedule_name in ('local_tbin_v1', 'local_tbin_v2', 'local_tbin_v3'):
                     signal = loss_fn.local_training_signal()
                     if signal is None:
@@ -1774,6 +2061,25 @@ def training_loop(
                 model_norm,
                 _,
             ) = tensor_collection_diagnostics(net.parameters())
+            radam_first_moment_norm = 0.0
+            radam_second_moment_norm = 0.0
+            if switch_manifest is not None:
+                first_moments = [
+                    item['exp_avg'] for item in optimizer.state.values()
+                    if 'exp_avg' in item
+                ]
+                second_moments = [
+                    item['exp_avg_sq'] for item in optimizer.state.values()
+                    if 'exp_avg_sq' in item
+                ]
+                first_nonfinite, radam_first_moment_norm, _ = (
+                    tensor_collection_diagnostics(first_moments)
+                )
+                second_nonfinite, radam_second_moment_norm, _ = (
+                    tensor_collection_diagnostics(second_moments)
+                )
+                if first_nonfinite or second_nonfinite:
+                    raise FloatingPointError('non-finite RAdam moment state')
 
         attempted_iteration += 1
         if not step_skipped:
@@ -1807,6 +2113,18 @@ def training_loop(
                 ema_norm,
                 _,
             ) = tensor_collection_diagnostics(ema.parameters())
+            online_ema_distance = 0.0
+            if switch_manifest is not None:
+                distance_nonfinite, online_ema_distance, _ = (
+                    tensor_collection_diagnostics(
+                        p_net.detach() - p_ema.detach()
+                        for p_net, p_ema in zip(
+                            net.parameters(), ema.parameters()
+                        )
+                    )
+                )
+                if distance_nonfinite:
+                    raise FloatingPointError('non-finite online-EMA distance')
 
         # Advance iteration-local state. Adaptive updates intentionally happen
         # here, before the maintenance early-continue below.
@@ -1949,6 +2267,33 @@ def training_loop(
                 'elapsed_sec': f'{elapsed_sec:.6f}',
                 'gpu_hours_cumulative': f'{elapsed_sec / 3600:.9f}',
             }
+            if switch_manifest is not None:
+                telemetry_row.update({
+                    'schema': 'ect.q256.schedule-switch-training-telemetry/v1',
+                    'experiment_protocol': schedule_switch.PROTOCOL,
+                    'branch': switch_manifest['branch'],
+                    'origin_arm': switch_manifest['origin_arm'],
+                    'continuation_arm': switch_manifest['continuation_arm'],
+                    'switch_relative_step': (
+                        attempted_iteration - schedule_switch.SWITCH_ATTEMPT
+                    ),
+                    'online_ema_distance': f'{online_ema_distance:.17g}',
+                    'radam_first_moment_norm': (
+                        f'{radam_first_moment_norm:.17g}'
+                    ),
+                    'radam_second_moment_norm': (
+                        f'{radam_second_moment_norm:.17g}'
+                    ),
+                })
+            if p2_manifest is not None and matched_randomness_audit:
+                telemetry_row.update({
+                    'cuda_rng_before_loss_sha256': (
+                        factorial_metrics['cuda_rng_before_loss_sha256']
+                    ),
+                    'cuda_rng_after_loss_sha256': (
+                        factorial_metrics['cuda_rng_after_loss_sha256']
+                    ),
+                })
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)
                 factorial_telemetry_csv.flush()
@@ -2068,6 +2413,15 @@ def training_loop(
                     'Saved immutable full-state milestone at '
                     f'{cur_nimg / 1000:.3f} kimg: {immutable_path}'
                 )
+                if p2_manifest is not None:
+                    snapshot_path = save_immutable_ema_snapshot(
+                        ema, loss_fn, augment_pipe, dataset_kwargs,
+                        run_dir, cur_nimg,
+                    )
+                    dist.print0(
+                        'Saved immutable P2 EMA snapshot at '
+                        f'{cur_nimg / 1000:.3f} kimg: {snapshot_path}'
+                    )
 
         # Perform maintenance tasks once per tick.
         if not maintenance_due:

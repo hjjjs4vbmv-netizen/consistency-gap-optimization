@@ -391,7 +391,10 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
                 label_indices = [int(seed) % len(dataset) for seed in batch_sample_seeds]
                 seed_offset += current_batch
             c = [dataset.get_label(index) for index in label_indices]
-            c = torch.from_numpy(np.stack(c)).pin_memory().to(opts.device)
+            c = torch.from_numpy(np.stack(c))
+            if torch.device(opts.device).type == 'cuda':
+                c = c.pin_memory()
+            c = c.to(opts.device)
             images.append(run_generator(z, c, sample_seeds=batch_sample_seeds))
         images = torch.cat(images)
         if images.shape[1] == 1:

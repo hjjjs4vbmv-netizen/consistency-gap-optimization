@@ -16,8 +16,10 @@ from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
+repo_root_text = str(REPO_ROOT)
+while repo_root_text in sys.path:
+    sys.path.remove(repo_root_text)
+sys.path.insert(0, repo_root_text)
 
 import torch
 

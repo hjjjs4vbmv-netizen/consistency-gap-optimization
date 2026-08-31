@@ -86,7 +86,7 @@
       "path": "training/loss.py",
       "reference_behavior": "q must equal 256",
       "amended_behavior": "q must be one of 128 or 256",
-      "amended_file_sha256": "f34a514161ec2aed8c5ee4381198f2e82da93c9dcf6d6da837c57e5e6c3fc9b8",
+      "amended_file_sha256": "49b4b1dad10077a69130099e63bf3f96733ca6c80dec42ac3106af8c18502262",
       "required_parity_tests": [
         "q256 A equals native sigmoid bitwise",
         "q256 B equals native global_sigmoid g=1.10 bitwise",

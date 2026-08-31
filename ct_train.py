@@ -11,6 +11,7 @@ from training.loss import (
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
     resolve_target_weight_factorial,
 )
+from training import pulse_chase, schedule_switch
 
 STRICT_FACTORIAL_PROTOCOLS = {
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
@@ -256,6 +257,25 @@ def make_loss_kwargs(opts):
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
 @click.option('--resume-tick',   help='Number of tick from previous training state', metavar='INT', type=int)
+@click.option(
+    '--schedule-switch-manifest',
+    help='Frozen q256 512-kimg schedule-switch run manifest',
+    metavar='JSON',
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    default=None,
+)
+@click.option(
+    '--p2-pulse-chase-manifest',
+    help='Frozen q256 B@384 pulse/chase branch manifest',
+    metavar='JSON',
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    default=None,
+)
+@click.option(
+    '--p2-matched-randomness-audit',
+    is_flag=True,
+    help='Smoke-only noise/dropout tape hashing for the P2 randomness gate',
+)
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
 
@@ -335,7 +355,10 @@ def main(**kwargs):
              ckpt_ticks=opts.ckpt,
              immutable_checkpoint_kimg=opts.immutable_checkpoint_kimg,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
-             stop_after_attempts=opts.stop_after_attempts)
+             stop_after_attempts=opts.stop_after_attempts,
+             schedule_switch_manifest=opts.schedule_switch_manifest,
+             pulse_chase_manifest=opts.p2_pulse_chase_manifest,
+             matched_randomness_audit=opts.p2_matched_randomness_audit)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
 
     # Random seed.
@@ -377,6 +400,91 @@ def main(**kwargs):
         else:
             c.resume_tick = int(resume_token)
         c.resume_state_dump = opts.resume
+
+    if opts.schedule_switch_manifest is not None:
+        if opts.resume is None:
+            raise click.ClickException(
+                '--schedule-switch-manifest requires --resume'
+            )
+        if opts.factorial_protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+            raise click.ClickException(
+                'schedule switch requires q256_target_weight_v1'
+            )
+        manifest = schedule_switch.load_run_manifest(
+            opts.schedule_switch_manifest
+        )
+        expected = schedule_switch.continuation_factorial(manifest)
+        actual = resolve_target_weight_factorial(
+            opts.factorial_protocol,
+            opts.target_gap_scale,
+            opts.denominator_gap_scale,
+            adj=opts.mapping,
+            global_gap_scale=opts.global_gap_scale,
+            q=opts.q,
+            c=opts.c,
+        )
+        if actual != expected:
+            raise click.ClickException(
+                'CLI factorial scales do not match frozen continuation arm'
+            )
+        if c.seed != manifest['seed']:
+            raise click.ClickException('CLI seed does not match switch manifest')
+        if c.total_kimg != manifest['final_kimg']:
+            raise click.ClickException(
+                'CLI duration does not match switch manifest final budget'
+            )
+        if c.batch_size != 128 or c.batch_gpu != 16:
+            raise click.ClickException(
+                'schedule switch requires batch=128 and batch-gpu=16'
+            )
+
+    if opts.p2_pulse_chase_manifest is not None:
+        if opts.schedule_switch_manifest is not None:
+            raise click.ClickException(
+                'P2 pulse/chase and legacy schedule-switch manifests are exclusive'
+            )
+        if opts.resume is None:
+            raise click.ClickException('--p2-pulse-chase-manifest requires --resume')
+        if opts.factorial_protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+            raise click.ClickException('P2 pulse/chase requires q256_target_weight_v1')
+        manifest = pulse_chase.load_run_manifest(opts.p2_pulse_chase_manifest)
+        if bool(opts.p2_matched_randomness_audit) != bool(
+            manifest.get('matched_randomness_audit')
+        ):
+            raise click.ClickException(
+                'P2 matched-randomness audit flag differs from manifest'
+            )
+        expected_arm = (
+            manifest['pulse_arm'] if c.total_kimg == pulse_chase.PULSE_END_KIMG
+            else 'A' if c.total_kimg == pulse_chase.CHASE_END_KIMG
+            else None
+        )
+        if expected_arm is None:
+            raise click.ClickException('P2 duration must end at 512 or 640 kimg')
+        expected = pulse_chase.factorial_for_arm(expected_arm)
+        actual = resolve_target_weight_factorial(
+            opts.factorial_protocol,
+            opts.target_gap_scale,
+            opts.denominator_gap_scale,
+            adj=opts.mapping,
+            global_gap_scale=opts.global_gap_scale,
+            q=opts.q,
+            c=opts.c,
+        )
+        if actual != expected:
+            raise click.ClickException('CLI factors do not match frozen P2 phase')
+        if c.seed != manifest['seed']:
+            raise click.ClickException('CLI seed does not match P2 manifest')
+        if c.batch_size != 128 or c.batch_gpu != 16:
+            raise click.ClickException('P2 requires batch=128 and batch-gpu=16')
+        if os.path.realpath(opts.outdir) != os.path.realpath(
+            manifest['immutable_output_root']
+        ):
+            raise click.ClickException('P2 output directory differs from manifest')
+    elif opts.p2_matched_randomness_audit:
+        raise click.ClickException(
+            '--p2-matched-randomness-audit requires --p2-pulse-chase-manifest'
+        )
 
     # Description string.
     cond_str = 'cond' if c.dataset_kwargs.use_labels else 'uncond'
@@ -429,7 +537,34 @@ def main(**kwargs):
             opts.resume is not None
             and opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
         )
-        if strict_factorial_resume:
+        if opts.p2_pulse_chase_manifest is not None:
+            if c.total_kimg == pulse_chase.PULSE_END_KIMG:
+                if os.path.exists(options_path):
+                    raise click.ClickException(
+                        'fresh P2 branch refuses existing training_options.json'
+                    )
+                target_options_path = options_path
+            else:
+                if not os.path.isfile(options_path):
+                    raise click.ClickException(
+                        'P2 chase requires immutable pulse training_options.json'
+                    )
+                target_options_path = os.path.join(
+                    c.run_dir, 'training_options_chase.json'
+                )
+            with open(target_options_path, 'x') as f:
+                json.dump(c, f, indent=2)
+                f.write('\n')
+                f.flush()
+                os.fsync(f.fileno())
+        elif opts.schedule_switch_manifest is not None:
+            if not os.path.isfile(options_path):
+                with open(options_path, 'x') as f:
+                    json.dump(c, f, indent=2)
+                    f.write('\n')
+                    f.flush()
+                    os.fsync(f.fileno())
+        elif strict_factorial_resume:
             if not os.path.isfile(options_path):
                 raise click.ClickException(
                     'strict factorial resume requires the immutable original '
