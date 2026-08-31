@@ -53,3 +53,7 @@ temperature/power, foreign processes, log growth, disk availability, progress,
 accepted steps, and ETA every 30 seconds. They never kill a job. Evaluation
 receipts omit FID/KID values; decoding is impossible through the supplied command
 until 264 individual `SEALED_PASS` receipts and the matrix seal exist.
+
+Every runtime gate rehashes the frozen artifacts and compares a live
+`pip freeze --all` snapshot against the manifest, so package mutation after the
+runtime archive was created fails closed before formal compute.

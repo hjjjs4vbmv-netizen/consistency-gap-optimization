@@ -239,6 +239,12 @@ def validate_runtime(runtime: dict) -> None:
     prefix = Path(runtime["environment_prefix"])
     if not (prefix / "bin" / "python").is_file():
         raise RuntimeError("runtime environment Python is missing")
+    live_freeze = subprocess.run(
+        [str(prefix / "bin" / "python"), "-m", "pip", "freeze", "--all"],
+        check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    ).stdout
+    if hashlib.sha256(live_freeze).hexdigest() != runtime["pip_freeze"]["sha256"]:
+        raise RuntimeError("live runtime package set differs from frozen pip manifest")
 
 
 def validate_protocol(protocol: dict, protocol_path: Path | None = None) -> None:
