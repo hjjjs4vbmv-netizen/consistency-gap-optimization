@@ -88,11 +88,11 @@ def main() -> int:
         env = dict(os.environ)
         env.update(CUDA_VISIBLE_DEVICES=str(gpu), PYTHONNOUSERSITE="1")
         try:
-            payload = run(
-                "apptainer", "exec", "--nv", "--bind", "/data:/data",
-                str(args.runtime_sif.resolve(strict=True)), "python", "-c", snippet,
-                env=env,
-            )
+            # This preflight itself runs inside the frozen SIF. Spawn a fresh
+            # interpreter per physical GPU so CUDA visibility is fixed before
+            # torch initializes, without relying on unsupported nested
+            # Apptainer execution.
+            payload = run(sys.executable, "-c", snippet, env=env)
             runtime.append(json.loads(payload.splitlines()[-1]))
         except Exception as exc:
             failures.append(f"runtime probe GPU{gpu} failed: {exc}")
