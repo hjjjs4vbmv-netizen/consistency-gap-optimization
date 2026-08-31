@@ -38,7 +38,8 @@ bash "$REPO/analysis/q256_fresh_crossed_switch_n12_matpool_v1/build_runtime.sh" 
 
 # Freeze protocol, commit it, then create a PASS preflight receipt. The exact
 # freeze command is recorded with the protocol commit because evaluator cache
-# paths are resolved from the current node.
+# paths are resolved from the current node. The freeze command requires and
+# hash-binds the first-attempt PASS parity_report.json.
 
 tmux new-session -d -s q256_fresh_n12_formal \
   "bash '$REPO/analysis/q256_fresh_crossed_switch_n12_matpool_v1/formal_pipeline.sh' \

@@ -271,6 +271,29 @@ def validate_protocol(protocol: dict, protocol_path: Path | None = None) -> None
             raise RuntimeError("protocol companion SHA256 mismatch")
 
 
+def validate_runtime_parity(report: dict, implementation_commit: str,
+                            runtime_manifest_sha256: str) -> None:
+    if report.get("schema") != "ect.q256.fresh-crossed-switch-runtime-parity/v1":
+        raise RuntimeError("runtime parity schema mismatch")
+    if report.get("status") != "PASS" or report.get("automatic_retry_count") != 0:
+        raise RuntimeError("runtime parity did not pass on its first attempt")
+    if report.get("implementation_commit") != implementation_commit:
+        raise RuntimeError("runtime parity implementation commit mismatch")
+    if report.get("runtime_manifest_sha256") != runtime_manifest_sha256:
+        raise RuntimeError("runtime parity manifest mismatch")
+    comparisons = report.get("comparisons")
+    if not isinstance(comparisons, list) or len(comparisons) != 2:
+        raise RuntimeError("runtime parity must contain exactly A and B comparisons")
+    if {item.get("arm") for item in comparisons} != {"A", "B"}:
+        raise RuntimeError("runtime parity arm coverage mismatch")
+    required = ("parameters", "ema", "optimizer", "gradscaler", "rng",
+                "sampler", "counters", "complete_state")
+    if any(item.get("status") != "PASS" or
+           any(item.get(key) is not True for key in required)
+           for item in comparisons):
+        raise RuntimeError("runtime parity subsystem comparison mismatch")
+
+
 def freeze_protocol(args: argparse.Namespace) -> None:
     if not HEX40.fullmatch(args.implementation_commit):
         raise RuntimeError("invalid implementation commit")
@@ -285,6 +308,10 @@ def freeze_protocol(args: argparse.Namespace) -> None:
         "runtime_manifest": {
             "path": str(args.runtime_manifest.resolve(strict=True)),
             "sha256": sha256_file(args.runtime_manifest),
+        },
+        "runtime_parity": {
+            "path": str(args.runtime_parity.resolve(strict=True)),
+            "sha256": sha256_file(args.runtime_parity),
         },
         "evaluator_source": {
             "path": str(args.evaluator_source.resolve(strict=True)),
@@ -305,6 +332,10 @@ def freeze_protocol(args: argparse.Namespace) -> None:
                              "sha256": sha256_file(args.storage_sample_snapshot)},
         },
     }
+    validate_runtime_parity(
+        load_json(args.runtime_parity), args.implementation_commit,
+        assets["runtime_manifest"]["sha256"],
+    )
     if assets["dataset"]["sha256"] != sha256_file(args.dataset):
         raise RuntimeError("canonical dataset SHA256 mismatch")
     if assets["transfer"]["sha256"] != sha256_file(args.transfer):
@@ -445,6 +476,14 @@ def preflight(args: argparse.Namespace) -> None:
     if sha256_file(runtime_manifest_path) != protocol["assets"]["runtime_manifest"]["sha256"]:
         raise RuntimeError("runtime manifest SHA mismatch")
     validate_runtime(load_json(runtime_manifest_path))
+    parity_record = protocol["assets"]["runtime_parity"]
+    parity_path = Path(parity_record["path"])
+    if sha256_file(parity_path) != parity_record["sha256"]:
+        raise RuntimeError("runtime parity receipt mismatch")
+    validate_runtime_parity(
+        load_json(parity_path), protocol["implementation_commit"],
+        protocol["assets"]["runtime_manifest"]["sha256"],
+    )
     for label in ("dataset", "transfer", "evaluator_source", "detector"):
         record = protocol["assets"][label]
         if sha256_file(Path(record["path"])) != record["sha256"]:
@@ -876,6 +915,7 @@ def build_parser() -> argparse.ArgumentParser:
     freeze = sub.add_parser("freeze-protocol")
     freeze.add_argument("--implementation-commit", required=True)
     freeze.add_argument("--runtime-manifest", type=Path, required=True)
+    freeze.add_argument("--runtime-parity", type=Path, required=True)
     freeze.add_argument("--dataset", type=Path, required=True)
     freeze.add_argument("--transfer", type=Path, required=True)
     freeze.add_argument("--evaluator-source", type=Path, required=True)

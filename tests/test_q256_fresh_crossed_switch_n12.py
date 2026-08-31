@@ -87,6 +87,35 @@ class ProtocolTests(unittest.TestCase):
             with self.subTest(mutation=mutation), self.assertRaises(RuntimeError):
                 experiment.validate_protocol(protocol)
 
+    def test_runtime_parity_binding_requires_two_complete_first_attempt_passes(self):
+        comparison = {
+            "parameters": True, "ema": True, "optimizer": True,
+            "gradscaler": True, "rng": True, "sampler": True,
+            "counters": True, "complete_state": True, "status": "PASS",
+        }
+        report = {
+            "schema": "ect.q256.fresh-crossed-switch-runtime-parity/v1",
+            "status": "PASS", "automatic_retry_count": 0,
+            "implementation_commit": "1" * 40,
+            "runtime_manifest_sha256": "2" * 64,
+            "comparisons": [dict(comparison, arm="A"), dict(comparison, arm="B")],
+        }
+        experiment.validate_runtime_parity(report, "1" * 40, "2" * 64)
+        for mutation in ("retry", "commit", "runtime", "subsystem", "arm"):
+            changed = copy.deepcopy(report)
+            if mutation == "retry":
+                changed["automatic_retry_count"] = 1
+            elif mutation == "commit":
+                changed["implementation_commit"] = "3" * 40
+            elif mutation == "runtime":
+                changed["runtime_manifest_sha256"] = "4" * 64
+            elif mutation == "subsystem":
+                changed["comparisons"][0]["rng"] = False
+            else:
+                changed["comparisons"][1]["arm"] = "A"
+            with self.subTest(mutation=mutation), self.assertRaises(RuntimeError):
+                experiment.validate_runtime_parity(changed, "1" * 40, "2" * 64)
+
 
 class PlannedPauseAuthorizationTests(unittest.TestCase):
     def call(self, **changes):
