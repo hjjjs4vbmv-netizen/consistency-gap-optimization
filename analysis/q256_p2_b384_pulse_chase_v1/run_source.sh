@@ -21,9 +21,13 @@ expected_gpu=1; (( seed <= 23 )) && expected_gpu=0
 [[ -d "${repo}/.git" && -f "${protocol}" && -f "${dataset}" && -f "${transfer}" && -f "${runtime_sif}" ]] || { echo "missing frozen input" >&2; exit 2; }
 [[ ! -e "${source_dir}" ]] || { echo "refuse existing source cell" >&2; exit 3; }
 
+repo_git() {
+  (cd "${repo}" && git "$@")
+}
+
 implementation_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["implementation_commit"])' "${protocol}")"
-[[ "$(git -C "${repo}" rev-parse HEAD^)" == "${implementation_commit}" ]] || { echo "protocol implementation binding mismatch" >&2; exit 3; }
-[[ -z "$(git -C "${repo}" status --porcelain)" ]] || { echo "implementation worktree is dirty" >&2; exit 3; }
+[[ "$(repo_git rev-parse HEAD^)" == "${implementation_commit}" ]] || { echo "protocol implementation binding mismatch" >&2; exit 3; }
+[[ -z "$(repo_git status --porcelain)" ]] || { echo "implementation worktree is dirty" >&2; exit 3; }
 [[ "$(sha256sum "${dataset}" | awk '{print $1}')" == 08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372 ]] || { echo "dataset hash mismatch" >&2; exit 3; }
 [[ "$(sha256sum "${transfer}" | awk '{print $1}')" == 4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da ]] || { echo "transfer hash mismatch" >&2; exit 3; }
 [[ "$(sha256sum "${runtime_sif}" | awk '{print $1}')" == 9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea ]] || { echo "runtime hash mismatch" >&2; exit 3; }
@@ -47,7 +51,7 @@ trap on_failure ERR
 
 python3 -c 'import json,os,sys,time; d={"schema":"ect.q256.p2-source-start/v1","status":"START","seed":int(sys.argv[2]),"gpu_index":int(sys.argv[3]),"gpu_uuid":sys.argv[4],"protocol_sha256":sys.argv[5],"implementation_commit":sys.argv[6],"execution_commit":sys.argv[7],"started_unix":int(time.time())}; f=open(sys.argv[1],"x"); json.dump(d,f,indent=2,sort_keys=True); f.write("\n"); f.flush(); os.fsync(f.fileno())' \
   "${source_dir}/compute_start_receipt.json" "${seed}" "${gpu}" "${gpu_uuid}" \
-  "$(sha256sum "${protocol}" | awk '{print $1}')" "${implementation_commit}" "$(git -C "${repo}" rev-parse HEAD)"
+  "$(sha256sum "${protocol}" | awk '{print $1}')" "${implementation_commit}" "$(repo_git rev-parse HEAD)"
 
 master_port=$((43000 + gpu * 100 + seed))
 env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="${gpu}" \

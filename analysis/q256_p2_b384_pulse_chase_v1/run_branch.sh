@@ -16,8 +16,9 @@ case "${branch}" in Early-switch) pulse=A;; Late-switch) pulse=B;; *) echo "inva
 expected_gpu=1; (( seed <= 23 )) && expected_gpu=0
 [[ "${run_kind}" == smoke || "${gpu}" == "${expected_gpu}" ]] || { echo "seed/GPU assignment mismatch" >&2; exit 2; }
 [[ ! -e "${branch_dir}" ]] || { echo "refuse existing branch cell" >&2; exit 3; }
+repo_git() { (cd "${repo}" && git "$@"); }
 implementation_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["implementation_commit"])' "${protocol}")"
-[[ "$(git -C "${repo}" rev-parse HEAD^)" == "${implementation_commit}" && -z "$(git -C "${repo}" status --porcelain)" ]] || { echo "unclean or unbound implementation" >&2; exit 3; }
+[[ "$(repo_git rev-parse HEAD^)" == "${implementation_commit}" && -z "$(repo_git status --porcelain)" ]] || { echo "unclean or unbound implementation" >&2; exit 3; }
 gpu_uuid="$(nvidia-smi --id="${gpu}" --query-gpu=uuid --format=csv,noheader | tr -d '[:space:]')"
 if [[ "${P2_ALLOW_COTENANCY:-0}" != 1 ]] && nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then echo "assigned GPU is occupied" >&2; exit 3; fi
 
