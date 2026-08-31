@@ -15,7 +15,7 @@ receipt="${eval_root}/receipts/${job_id}.json"; log="${eval_root}/logs/${job_id}
 [[ ! -e "${job_dir}" && ! -e "${job_cache}" && ! -e "${receipt}" ]] || { echo "refuse existing evaluation job" >&2; exit 3; }
 [[ "$(sha256sum "${checkpoint}" | awk '{print $1}')" == "${checkpoint_sha}" ]] || { echo "checkpoint hash mismatch" >&2; exit 3; }
 gpu_uuid="$(nvidia-smi --id="${gpu}" --query-gpu=uuid --format=csv,noheader | tr -d '[:space:]')"
-if nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then echo "evaluation GPU occupied" >&2; exit 3; fi
+if [[ "${P2_ALLOW_COTENANCY:-0}" != 1 ]] && nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then echo "evaluation GPU occupied" >&2; exit 3; fi
 mkdir -p "${eval_root}/jobs" "${eval_root}/job_caches" "${eval_root}/receipts" "${eval_root}/logs"
 mkdir "${job_cache}"
 cp -a "${cache_root}/." "${job_cache}/"

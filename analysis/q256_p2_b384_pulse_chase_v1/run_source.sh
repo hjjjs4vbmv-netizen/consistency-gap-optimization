@@ -30,7 +30,7 @@ implementation_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.a
 
 gpu_uuid="$(nvidia-smi --id="${gpu}" --query-gpu=uuid --format=csv,noheader | tr -d '[:space:]')"
 [[ -n "${gpu_uuid}" ]] || { echo "cannot resolve GPU UUID" >&2; exit 3; }
-if nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then
+if [[ "${P2_ALLOW_COTENANCY:-0}" != 1 ]] && nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then
   echo "assigned GPU has another compute process" >&2; exit 3
 fi
 

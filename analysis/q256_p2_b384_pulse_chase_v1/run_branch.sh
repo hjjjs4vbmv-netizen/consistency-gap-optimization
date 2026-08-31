@@ -19,7 +19,7 @@ expected_gpu=1; (( seed <= 23 )) && expected_gpu=0
 implementation_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["implementation_commit"])' "${protocol}")"
 [[ "$(git -C "${repo}" rev-parse HEAD^)" == "${implementation_commit}" && -z "$(git -C "${repo}" status --porcelain)" ]] || { echo "unclean or unbound implementation" >&2; exit 3; }
 gpu_uuid="$(nvidia-smi --id="${gpu}" --query-gpu=uuid --format=csv,noheader | tr -d '[:space:]')"
-if nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then echo "assigned GPU is occupied" >&2; exit 3; fi
+if [[ "${P2_ALLOW_COTENANCY:-0}" != 1 ]] && nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then echo "assigned GPU is occupied" >&2; exit 3; fi
 
 audit_args=()
 train_audit_args=()

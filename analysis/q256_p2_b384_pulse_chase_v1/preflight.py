@@ -26,6 +26,7 @@ def main() -> int:
     parser.add_argument("--transfer", type=Path, required=True)
     parser.add_argument("--runtime-sif", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--allow-cotenancy", action="store_true")
     args = parser.parse_args()
     repo = args.repo.resolve(strict=True)
     protocol = args.protocol.resolve(strict=True)
@@ -73,7 +74,7 @@ def main() -> int:
         "--format=csv,noheader",
     ).splitlines()
     process_rows = [row for row in process_rows if row.strip()]
-    if process_rows:
+    if process_rows and not args.allow_cotenancy:
         failures.append("one or both GPUs have an active compute process")
     runtime = []
     snippet = (
@@ -109,6 +110,7 @@ def main() -> int:
         "asset_sha256": assets,
         "gpus": gpus,
         "active_compute_processes": process_rows,
+        "gpu_cotenancy_user_authorized": bool(args.allow_cotenancy),
         "runtime_probes": runtime,
         "frozen_runtime_config": {
             "global_batch": 128, "batch_gpu": 16, "fp16": True,

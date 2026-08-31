@@ -7,11 +7,13 @@ runtime_sif="${5:?missing runtime}"; formal_root="${6:?missing formal output roo
 [[ ! -e "${formal_root}" ]] || { echo "formal output root already exists" >&2; exit 3; }
 mkdir "${formal_root}"
 tool_dir="${repo}/analysis/q256_p2_b384_pulse_chase_v1"
+preflight_cotenancy=()
+[[ "${P2_ALLOW_COTENANCY:-0}" == 1 ]] && preflight_cotenancy+=(--allow-cotenancy)
 apptainer exec --bind /data:/data --pwd "${repo}" "${runtime_sif}" python \
   analysis/q256_p2_b384_pulse_chase_v1/preflight.py \
     --repo "${repo}" --protocol "${protocol}" --dataset "${dataset}" \
     --transfer "${transfer}" --runtime-sif "${runtime_sif}" \
-    --output "${formal_root}/preflight.json"
+    --output "${formal_root}/preflight.json" "${preflight_cotenancy[@]}"
 
 worker() {
   local gpu="$1"; shift
