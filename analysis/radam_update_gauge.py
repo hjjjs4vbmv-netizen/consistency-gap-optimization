@@ -164,10 +164,48 @@ def fixed_ect_loss(net, loss_template, schedule, images, labels, t, eps, dropout
     return loss / (t - r).flatten()
 
 
+class _CPUGradScaler:
+    """Minimal deterministic scaler for CPU-only audit tests on Torch 2.2a0."""
+
+    def __init__(self, enabled: bool, initial_scale: float):
+        self._enabled = bool(enabled)
+        self._scale = float(initial_scale)
+        self._optimizer = None
+
+    def state_dict(self):
+        return {"enabled": self._enabled, "scale": self._scale}
+
+    def get_scale(self):
+        return self._scale
+
+    def scale(self, loss):
+        return loss * self._scale if self._enabled else loss
+
+    def unscale_(self, optimizer):
+        self._optimizer = optimizer
+        if self._enabled:
+            reciprocal = 1.0 / self._scale
+            for group in optimizer.param_groups:
+                for param in group["params"]:
+                    if param.grad is not None:
+                        param.grad.mul_(reciprocal)
+
+    def step(self, optimizer):
+        optimizer.step()
+
+    def update(self):
+        return None
+
+
 def _new_scaler(device: torch.device, enabled: bool, initial_scale: float):
-    # torch.amp is available in supported PyTorch versions and also permits a
-    # CPU unit-test path; production runs use the CUDA branch.
-    return torch.amp.GradScaler(device.type, enabled=enabled, init_scale=initial_scale)
+    modern = getattr(torch.amp, "GradScaler", None)
+    if modern is not None:
+        return modern(device.type, enabled=enabled, init_scale=initial_scale)
+    if device.type == "cuda":
+        return torch.cuda.amp.GradScaler(
+            enabled=enabled, init_scale=initial_scale
+        )
+    return _CPUGradScaler(enabled=enabled, initial_scale=initial_scale)
 
 
 def _delta_by_name(before: torch.nn.Module, after: torch.nn.Module) -> dict[str, torch.Tensor]:
