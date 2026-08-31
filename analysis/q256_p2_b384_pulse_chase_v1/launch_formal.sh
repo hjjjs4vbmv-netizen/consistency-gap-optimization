@@ -9,7 +9,7 @@ mkdir "${formal_root}"
 tool_dir="${repo}/analysis/q256_p2_b384_pulse_chase_v1"
 preflight_cotenancy=()
 [[ "${P2_ALLOW_COTENANCY:-0}" == 1 ]] && preflight_cotenancy+=(--allow-cotenancy)
-apptainer exec --bind /data:/data --pwd "${repo}" "${runtime_sif}" python \
+apptainer exec --nv --bind /data:/data --pwd "${repo}" "${runtime_sif}" python \
   analysis/q256_p2_b384_pulse_chase_v1/preflight.py \
     --repo "${repo}" --protocol "${protocol}" --dataset "${dataset}" \
     --transfer "${transfer}" --runtime-sif "${runtime_sif}" \
