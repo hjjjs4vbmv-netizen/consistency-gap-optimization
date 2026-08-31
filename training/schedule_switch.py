@@ -15,11 +15,17 @@ PROTOCOL = "q256_ab_crossed_switch_v1"
 SEED3_7_PROTOCOL = "q256_ab_crossed_switch_seed3_7_v1"
 SEED3_7_PROTOCOL_V2 = "q256_ab_crossed_switch_seed3_7_v2"
 SEED3_7_PROTOCOL_V3 = "q256_ab_crossed_switch_seed3_7_v3"
+FRESH_N12_PROTOCOL = "q256_fresh_crossed_switch_n12_matpool_v1"
+FRESH_N12_ENGINEERING_PROTOCOL = (
+    "q256_fresh_crossed_switch_n12_matpool_engineering_v1"
+)
 SUPPORTED_PROTOCOL_SEEDS = {
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V2: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V3: tuple(range(3, 8)),
+    FRESH_N12_PROTOCOL: tuple(range(31, 43)),
+    FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
 }
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
 STATE_SCHEMA = "ect.q256.schedule-switch-state/v1"
@@ -37,6 +43,12 @@ FORMAL_BRANCHES = {
 PARITY_BRANCHES = {
     "A_to_A": ("A", "A"),
     "B_to_B": ("B", "B"),
+}
+CROSSED_BRANCHES = {
+    "AA": ("A", "A"),
+    "AB": ("A", "B"),
+    "BA": ("B", "A"),
+    "BB": ("B", "B"),
 }
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
@@ -86,7 +98,12 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch protocol identity mismatch")
     run_kind = manifest.get("run_kind")
     _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
-    branches = PARITY_BRANCHES if run_kind == "parity" else FORMAL_BRANCHES
+    if run_kind == "parity":
+        branches = PARITY_BRANCHES
+    elif experiment_protocol == FRESH_N12_PROTOCOL:
+        branches = CROSSED_BRANCHES
+    else:
+        branches = FORMAL_BRANCHES
     branch = manifest.get("branch")
     _require(branch in branches, "invalid schedule-switch branch")
     origin, continuation = branches[branch]

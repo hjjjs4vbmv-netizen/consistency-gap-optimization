@@ -58,6 +58,12 @@ def main() -> int:
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     args = parser.parse_args()
+    # Export runs in a fresh process; re-assert the frozen deterministic runtime
+    # policy before recording its receipt instead of inheriting PyTorch defaults.
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
     run_dir = args.run_dir.resolve(strict=True)
     manifest_path = args.manifest.resolve(strict=True)
     manifest = schedule_switch.load_run_manifest(manifest_path)
