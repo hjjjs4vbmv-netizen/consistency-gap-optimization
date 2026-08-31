@@ -58,6 +58,8 @@ env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="${gpu}" \
     CUBLAS_WORKSPACE_CONFIG=:4096:8 CUDA_CACHE_DISABLE=1 \
     PYTHONNOUSERSITE=1 PYTHONUNBUFFERED=1 MASTER_ADDR=127.0.0.1 \
     MASTER_PORT="${master_port}" RANK=0 LOCAL_RANK=0 WORLD_SIZE=1 \
+    APPTAINERENV_MASTER_ADDR=127.0.0.1 APPTAINERENV_MASTER_PORT="${master_port}" \
+    APPTAINERENV_RANK=0 APPTAINERENV_LOCAL_RANK=0 APPTAINERENV_WORLD_SIZE=1 \
   timeout --signal=TERM --kill-after=30s 24h \
   apptainer exec --nv --bind /data:/data --pwd "${repo}" "${runtime_sif}" \
   python ct_train.py \

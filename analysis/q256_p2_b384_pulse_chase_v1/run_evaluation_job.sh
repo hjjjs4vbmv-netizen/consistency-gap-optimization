@@ -33,6 +33,9 @@ env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="${gpu}" \
     PYTHONNOUSERSITE=1 PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     DNNLIB_CACHE_DIR="${job_cache}" MASTER_ADDR=127.0.0.1 \
     MASTER_PORT="${master_port}" RANK=0 LOCAL_RANK=0 WORLD_SIZE=1 \
+    APPTAINERENV_MASTER_ADDR=127.0.0.1 APPTAINERENV_MASTER_PORT="${master_port}" \
+    APPTAINERENV_RANK=0 APPTAINERENV_LOCAL_RANK=0 APPTAINERENV_WORLD_SIZE=1 \
+    APPTAINERENV_DNNLIB_CACHE_DIR="${job_cache}" \
   timeout --signal=TERM --kill-after=30s 6h \
   apptainer exec --nv --bind /data:/data --pwd "${evaluator_repo}" "${runtime_sif}" \
   python ct_eval.py --resume "${checkpoint}" --outdir "${job_dir}" --nosubdir \
