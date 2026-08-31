@@ -8,7 +8,14 @@ feature_detector="${9:?missing feature detector}"; root="${10:?missing experimen
 [[ ! -e "${root}" ]] || { echo "experiment root already exists" >&2; exit 3; }
 mkdir "${root}"
 tool_dir="${repo}/analysis/q256_p2_b384_pulse_chase_v1"
-python3 -c 'import os,shlex,sys; f=open(sys.argv[1],"x"); f.write(shlex.join(sys.argv[2:])+"\n"); f.flush(); os.fsync(f.fileno())' \
+on_failure() {
+  code=$?
+  python3 -c 'import json,os,sys,time; d={"schema":"ect.q256.p2-pipeline-failure/v1","status":"FAILED","exit_code":int(sys.argv[2]),"ended_unix":int(time.time()),"training_started":os.path.isdir(os.path.join(sys.argv[3],"training","seeds"))}; f=open(sys.argv[1],"x"); json.dump(d,f,indent=2,sort_keys=True); f.write("\n"); f.flush(); os.fsync(f.fileno())' \
+    "${root}/PIPELINE_FAILED_RECEIPT.json" "${code}" "${root}" || true
+  exit "${code}"
+}
+trap on_failure ERR
+python3 -c 'import os,shlex,sys; f=open(sys.argv[1],"x"); f.write(" ".join(shlex.quote(value) for value in sys.argv[2:])+"\n"); f.flush(); os.fsync(f.fileno())' \
   "${root}/REPRODUCE_COMMAND.txt" bash "${tool_dir}/run_formal_pipeline.sh" \
   "${repo}" "${protocol}" "${dataset}" "${transfer}" "${runtime_sif}" \
   "${cache_root}" "${kid_real}" "${fid_real}" "${feature_detector}" "${root}"
@@ -33,4 +40,5 @@ apptainer exec --bind /data:/data --pwd "${repo}" "${runtime_sif}" python \
 apptainer exec --bind /data:/data --pwd "${repo}" "${runtime_sif}" python \
   analysis/q256_p2_b384_pulse_chase_v1/finalize_artifacts.py \
     --root "${root}" --repo "${repo}" --protocol "${protocol}"
+trap - ERR
 echo "[P2 pipeline] COMPLETE root=${root}"
