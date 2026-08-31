@@ -149,6 +149,24 @@ class EngineeringParityLauncherTests(unittest.TestCase):
         ])
         self.assertEqual(args.gpu_indices, [2, 3, 4, 5])
 
+    def test_only_selected_gpu_processes_block_parity(self):
+        gpus = [{"uuid": f"GPU-{index}"} for index in range(6)]
+        apps = [
+            {"gpu_uuid": "GPU-0", "pid": 100},
+            {"gpu_uuid": "GPU-1", "pid": 101},
+        ]
+        self.assertEqual(parity.selected_gpu_apps(gpus, [2, 3, 4, 5], apps), [])
+        apps.append({"gpu_uuid": "GPU-4", "pid": 104})
+        self.assertEqual(
+            parity.selected_gpu_apps(gpus, [2, 3, 4, 5], apps), [apps[-1]])
+
+    def test_selected_gpu_indices_must_be_unique_and_available(self):
+        gpus = [{"uuid": f"GPU-{index}"} for index in range(6)]
+        with self.assertRaises(RuntimeError):
+            parity.selected_gpu_apps(gpus, [2, 2, 4, 5], [])
+        with self.assertRaises(RuntimeError):
+            parity.selected_gpu_apps(gpus, [2, 3, 4, 6], [])
+
 
 class FreshManifestTests(unittest.TestCase):
     def make_state(self, arm):

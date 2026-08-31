@@ -22,6 +22,17 @@ from training import reproducibility, schedule_switch  # noqa: E402
 ENGINEERING_SEED = 20260831
 
 
+def selected_gpu_apps(gpus: list[dict], gpu_indices: list[int] | tuple[int, ...],
+                      apps: list[dict]) -> list[dict]:
+    """Return compute applications attached to the explicitly selected GPUs."""
+    if len(gpu_indices) != 4 or len(set(gpu_indices)) != 4:
+        raise RuntimeError("engineering parity requires four unique GPU indices")
+    if any(index < 0 or index >= len(gpus) for index in gpu_indices):
+        raise RuntimeError("engineering parity GPU index is unavailable")
+    selected_uuids = {gpus[index]["uuid"] for index in gpu_indices}
+    return [row for row in apps if row["gpu_uuid"] in selected_uuids]
+
+
 def continuous_command(protocol: dict, run_dir: Path, arm: str, gpu: int) -> list[str]:
     command = experiment.training_command(
         protocol, run_dir, ENGINEERING_SEED, arm, gpu, prefix=True, final_kimg=640
@@ -112,8 +123,10 @@ def launch(args: argparse.Namespace) -> None:
     runtime = experiment.load_json(args.runtime_manifest.resolve(strict=True))
     experiment.validate_runtime(runtime)
     gpus = experiment.query_gpus()
-    if len(gpus) != 6 or experiment.compute_apps():
-        raise RuntimeError("engineering parity requires six idle A100 GPUs")
+    if len(gpus) != 6:
+        raise RuntimeError("engineering parity requires six visible A100 GPUs")
+    if selected_gpu_apps(gpus, args.gpu_indices, experiment.compute_apps()):
+        raise RuntimeError("engineering parity requires the four selected GPUs to be idle")
     root = args.output_root.absolute()
     root.mkdir(parents=True, exist_ok=False)
     protocol = {
@@ -142,8 +155,6 @@ def launch(args: argparse.Namespace) -> None:
     engineering_path = root / "engineering_protocol.json"
     experiment.atomic_json(engineering_path, frozen)
     python = str(Path(runtime["environment_prefix"]) / "bin" / "python")
-    if len(args.gpu_indices) != 4 or len(set(args.gpu_indices)) != 4:
-        raise RuntimeError("engineering parity requires four unique GPU indices")
     plans = tuple(
         (arm, mode, gpu) for (arm, mode), gpu in zip(
             (("A", "continuous"), ("B", "continuous"),
