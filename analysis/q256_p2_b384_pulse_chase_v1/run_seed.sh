@@ -23,10 +23,10 @@ for branch in "${order[@]}"; do
     "${protocol}" "${dataset}" "${runtime_sif}" \
     "${seed_dir}/source/source_inventory.json" "${seed_dir}/${branch}" "${tape_audit}" "${run_kind}"
 done
-pair_args=()
-[[ "${tape_audit}" == 1 ]] && pair_args+=(--require-full-tape)
+pair_arg=""
+[[ "${tape_audit}" == 1 ]] && pair_arg=--require-full-tape
 apptainer exec --bind /data:/data --pwd "${repo}" "${runtime_sif}" python \
   analysis/q256_p2_b384_pulse_chase_v1/verify_pair.py \
     --seed-dir "${seed_dir}" --output "${seed_dir}/pair_integrity_receipt.json" \
-    "${pair_args[@]}"
+    ${pair_arg}
 echo "[P2 seed] PASS seed=${seed} gpu=${gpu}"

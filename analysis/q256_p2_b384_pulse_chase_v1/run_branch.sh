@@ -22,15 +22,15 @@ implementation_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.a
 gpu_uuid="$(nvidia-smi --id="${gpu}" --query-gpu=uuid --format=csv,noheader | tr -d '[:space:]')"
 if [[ "${P2_ALLOW_COTENANCY:-0}" != 1 ]] && nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader | grep -q "^${gpu_uuid},"; then echo "assigned GPU is occupied" >&2; exit 3; fi
 
-audit_args=()
-train_audit_args=()
-if [[ "${tape_audit}" == 1 ]]; then audit_args+=(--matched-randomness-audit); train_audit_args+=(--p2-matched-randomness-audit); fi
+audit_arg=""
+train_audit_arg=""
+if [[ "${tape_audit}" == 1 ]]; then audit_arg=--matched-randomness-audit; train_audit_arg=--p2-matched-randomness-audit; fi
 apptainer exec --bind /data:/data --pwd "${repo}" "${runtime_sif}" python \
   analysis/q256_p2_b384_pulse_chase_v1/prepare_branch_manifest.py \
     --source-inventory "${source_inventory}" --protocol "${protocol}" \
     --implementation-commit "${implementation_commit}" --seed "${seed}" --run-kind "${run_kind}" \
     --branch "${branch}" --gpu-index "${gpu}" --gpu-uuid "${gpu_uuid}" \
-    --output-dir "${branch_dir}" "${audit_args[@]}"
+    --output-dir "${branch_dir}" ${audit_arg}
 manifest="${branch_dir}/formal_run_manifest.json"
 source_state="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["source_state"]["path"])' "${manifest}")"
 failure_receipt="${branch_dir}/FAILED_RECEIPT.json"
@@ -67,7 +67,7 @@ run_phase() {
       --duration="0.${end_kimg}" --tick=10 --snap=0 --dump=0 --ckpt=10 \
       --sample_every=26 --eval_every=50 --mid_t=0.821 \
       --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg="${end_kimg}" \
-      --p2-pulse-chase-manifest="${manifest}" "${train_audit_args[@]}" \
+      --p2-pulse-chase-manifest="${manifest}" ${train_audit_arg} \
       --resume="${resume_state}" \
     2>&1 | tee "${branch_dir}/${phase_name}.process.log"
 }

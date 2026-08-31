@@ -26,7 +26,7 @@ on_failure() {
   exit "${code}"
 }
 trap on_failure ERR
-mid_args=(); [[ "${nfe}" == 2 ]] && mid_args+=(--mid_t=0.821)
+mid_arg=""; [[ "${nfe}" == 2 ]] && mid_arg=--mid_t=0.821
 master_port=$((51000 + gpu * 100 + job_index))
 started="$(date +%s)"
 env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="${gpu}" \
@@ -39,7 +39,7 @@ env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="${gpu}" \
     --data "${dataset}" --cond=False --arch=ddpmpp --precond=ct \
     --dropout=0.2 --augment=0 --xflip=False --fp16=False \
     --cache=True --workers=3 --eval-batch=512 --metric-generator-batch=128 \
-    --nfe="${nfe}" "${mid_args[@]}" --metrics=kid50k_full,fid50k_full \
+    --nfe="${nfe}" ${mid_arg} --metrics=kid50k_full,fid50k_full \
     --metric-repeats=1 --sample-seeds=0-49999 --seed=20260730 \
     --retain-generated-artifacts --desc="q256-p2-${job_id}" \
   >"${log}" 2>&1
