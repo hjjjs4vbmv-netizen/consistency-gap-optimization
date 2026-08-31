@@ -23,6 +23,7 @@ def main() -> int:
     parser.add_argument("--evaluator-repo", type=Path, required=True)
     parser.add_argument("--kid-real-features", type=Path, required=True)
     parser.add_argument("--fid-real-features", type=Path, required=True)
+    parser.add_argument("--feature-detector", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     root = args.formal_root.resolve(strict=True)
@@ -75,6 +76,7 @@ def main() -> int:
             ),
         },
     }
+    feature_detector = args.feature_detector.resolve(strict=True)
     jobs = []
     for seed in pulse_chase.SEEDS:
         for branch in pulse_chase.BRANCHES:
@@ -127,6 +129,10 @@ def main() -> int:
         "evaluator": {"repo": str(evaluator), "commit": evaluator_commit,
                       "code_sha256": evaluator_hashes},
         "real_features": real_features,
+        "feature_detector": {
+            "path": str(feature_detector),
+            "sha256": pulse_chase.sha256_file(feature_detector),
+        },
         "jobs": jobs,
     }
     reproducibility.atomic_json_dump(payload, args.output, overwrite=False)

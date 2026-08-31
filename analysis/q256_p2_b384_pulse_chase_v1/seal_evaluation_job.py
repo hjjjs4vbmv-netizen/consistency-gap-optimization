@@ -65,6 +65,14 @@ def main() -> int:
         matches = list(job_cache.rglob(source.name))
         if len(matches) != 1 or pulse_chase.sha256_file(matches[0]) != record["sha256"]:
             raise RuntimeError("job real-feature cache hash mismatch")
+    detector = frozen["feature_detector"]
+    detector_source = Path(detector["path"]).resolve(strict=True)
+    detector_matches = list(job_cache.rglob(detector_source.name))
+    if (
+        len(detector_matches) != 1
+        or pulse_chase.sha256_file(detector_matches[0]) != detector["sha256"]
+    ):
+        raise RuntimeError("job feature-detector hash mismatch")
     job_dir = args.job_dir.resolve(strict=True)
     required = [
         "training_options.json", "generated-samples.npy",
@@ -113,6 +121,7 @@ def main() -> int:
         "evaluator_commit": head,
         "runtime_sif_sha256": frozen["runtime_sif"]["sha256"],
         "real_features": frozen["real_features"],
+        "feature_detector": frozen["feature_detector"],
         "gpu_index": args.gpu_index, "gpu_uuid": args.gpu_uuid,
         "elapsed_seconds": args.elapsed_seconds,
         "job_dir": str(job_dir),
