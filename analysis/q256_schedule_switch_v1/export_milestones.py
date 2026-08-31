@@ -34,16 +34,17 @@ def sha256_file(path: Path) -> str:
 
 def runtime_receipt() -> dict:
     cuda_visible = torch.cuda.is_available()
+    gpu_uuid = None
+    if cuda_visible:
+        raw_uuid = getattr(torch.cuda.get_device_properties(0), "uuid", None)
+        gpu_uuid = None if raw_uuid is None else str(raw_uuid)
     return {
         "python": platform.python_version(),
         "torch": torch.__version__,
         "torch_cuda": torch.version.cuda,
         "cudnn": torch.backends.cudnn.version(),
         "cuda_available": cuda_visible,
-        "gpu_uuid": (
-            getattr(torch.cuda.get_device_properties(0), "uuid", None)
-            if cuda_visible else None
-        ),
+        "gpu_uuid": gpu_uuid,
         "gpu_name": torch.cuda.get_device_name(0) if cuda_visible else None,
         "tf32_cudnn": torch.backends.cudnn.allow_tf32,
         "tf32_matmul": torch.backends.cuda.matmul.allow_tf32,
@@ -57,6 +58,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument(
+        "--recover-partial-export", action="store_true",
+        help="resume only a strictly validated partial milestone export",
+    )
     args = parser.parse_args()
     # Export runs in a fresh process; re-assert the frozen deterministic runtime
     # policy before recording its receipt instead of inheriting PyTorch defaults.
@@ -82,11 +87,23 @@ def main() -> int:
         if not source_path.is_file() or source_path.is_symlink():
             raise RuntimeError(f"missing immutable training milestone: {source_path}")
         milestone_dir = run_dir / f"kimg{kimg:04d}"
-        milestone_dir.mkdir(exist_ok=False)
+        partial = milestone_dir.exists()
+        if partial and not args.recover_partial_export:
+            raise RuntimeError(f"milestone directory already exists: {milestone_dir}")
+        milestone_dir.mkdir(exist_ok=args.recover_partial_export)
         state_path = milestone_dir / "training-state.pt"
         snapshot_path = milestone_dir / "network-snapshot.pkl"
         receipt_path = milestone_dir / "milestone_receipt.json"
-        os.link(source_path, state_path)
+        if state_path.exists():
+            if (not args.recover_partial_export or state_path.is_symlink()
+                    or not state_path.is_file()
+                    or os.stat(source_path).st_ino != os.stat(state_path).st_ino
+                    or os.stat(source_path).st_dev != os.stat(state_path).st_dev):
+                raise RuntimeError(f"invalid pre-existing milestone state: {state_path}")
+        else:
+            if partial:
+                raise RuntimeError(f"partial milestone lacks state hardlink: {milestone_dir}")
+            os.link(source_path, state_path)
         state = torch.load(state_path, map_location="cpu", weights_only=False)
         if int(state.get("cur_nimg", -1)) != kimg * 1000:
             raise RuntimeError(f"state processed-image mismatch at {kimg} kimg")
@@ -106,7 +123,11 @@ def main() -> int:
             "augment_pipe": None,
             "dataset_kwargs": dict(state["trajectory_config"]["dataset_kwargs"]),
         }
-        reproducibility.atomic_pickle_dump(snapshot, snapshot_path, overwrite=False)
+        if snapshot_path.exists():
+            if not args.recover_partial_export or snapshot_path.is_symlink():
+                raise RuntimeError(f"invalid pre-existing snapshot: {snapshot_path}")
+        else:
+            reproducibility.atomic_pickle_dump(snapshot, snapshot_path, overwrite=False)
         with snapshot_path.open("rb") as handle:
             snapshot_check = pickle.load(handle)
         if reproducibility.module_state_sha256(snapshot_check["ema"]) != internal["ema"]:
@@ -142,7 +163,20 @@ def main() -> int:
             "implementation_commit": manifest["implementation_commit"],
             "runtime": runtime,
         }
-        reproducibility.atomic_json_dump(receipt, receipt_path, overwrite=False)
+        if receipt_path.exists():
+            if not args.recover_partial_export or receipt_path.is_symlink():
+                raise RuntimeError(f"invalid pre-existing receipt: {receipt_path}")
+            prior = json.loads(receipt_path.read_text(encoding="utf-8"))
+            for key in ("schema", "status", "seed", "branch", "milestone_kimg",
+                        "protocol_sha256", "formal_run_manifest_sha256"):
+                if prior.get(key) != receipt.get(key):
+                    raise RuntimeError(f"pre-existing receipt mismatch ({key}): {receipt_path}")
+            for artifact in ("training_state", "network_snapshot"):
+                if prior.get(artifact, {}).get("sha256") != receipt[artifact]["sha256"]:
+                    raise RuntimeError(f"pre-existing receipt artifact mismatch: {receipt_path}")
+            receipt = prior
+        else:
+            reproducibility.atomic_json_dump(receipt, receipt_path, overwrite=False)
         records.append({
             "kimg": kimg,
             "directory": str(milestone_dir),
@@ -170,6 +204,8 @@ def main() -> int:
         "formal_run_manifest_sha256": manifest_sha,
         "runtime": runtime,
     }
+    if (run_dir / "checkpoint_manifest.json").exists():
+        raise RuntimeError("checkpoint manifest already exists before completion write")
     reproducibility.atomic_json_dump(
         completion, run_dir / "checkpoint_manifest.json", overwrite=False
     )

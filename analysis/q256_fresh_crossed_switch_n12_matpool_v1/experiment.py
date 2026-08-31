@@ -799,6 +799,41 @@ def suffix_manifest(protocol: dict, protocol_path: Path, seed: int, cell: str,
     return path
 
 
+def validate_completed_compute(run_dir: Path, label: str) -> None:
+    receipt = load_json((run_dir / "compute_completion_receipt.json").resolve(strict=True))
+    if (receipt.get("status") != "PASS" or receipt.get("label") != label
+            or receipt.get("exit_code") != 0 or receipt.get("hard_timeout") is not False):
+        raise RuntimeError(f"recovery refused non-PASS compute receipt: {run_dir}")
+
+
+def validate_prefix_source(run_dir: Path, seed: int, arm: str,
+                           protocol_sha: str) -> dict:
+    validate_completed_compute(run_dir, f"seed{seed}:prefix_{arm}")
+    receipt_path = (run_dir / "source_state_receipt.json").resolve(strict=True)
+    receipt = load_json(receipt_path)
+    if (receipt.get("status") != "PASS" or receipt.get("seed") != seed
+            or receipt.get("arm") != arm
+            or receipt.get("source_kimg") != 512
+            or receipt.get("protocol_sha256") != protocol_sha):
+        raise RuntimeError(f"recovery refused prefix source receipt: {receipt_path}")
+    state = receipt.get("training_state", {})
+    state_path = Path(state.get("path", ""))
+    if (not state_path.is_file() or state_path.is_symlink()
+            or sha256_file(state_path) != state.get("sha256")):
+        raise RuntimeError(f"recovery refused prefix source state: {state_path}")
+    milestone = run_dir / "kimg0512" / "milestone_receipt.json"
+    if (not milestone.is_file()
+            or sha256_file(milestone) != receipt.get("milestone_receipt_sha256")):
+        raise RuntimeError(f"recovery refused prefix milestone binding: {milestone}")
+    return receipt
+
+
+def validate_pass_receipt(path: Path, protocol_sha: str) -> None:
+    receipt = load_json(path.resolve(strict=True))
+    if receipt.get("status") != "PASS" or receipt.get("protocol_sha256") != protocol_sha:
+        raise RuntimeError(f"recovery refused receipt: {path}")
+
+
 def worker(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol = load_json(protocol_path)
@@ -812,35 +847,67 @@ def worker(args: argparse.Namespace) -> None:
     output_root = Path(protocol["paths"]["formal_output_root"])
     protocol_sha = sha256_file(protocol_path)
     protocol["protocol_sha256_runtime"] = protocol_sha
+    recovery = bool(getattr(args, "recovery", False))
     for seed in expected_seeds:
         plan = assignment(seed)
         seed_root = output_root / "training" / f"seed{seed}"
-        seed_root.mkdir(parents=True, exist_ok=False)
+        existing_seed = seed_root.exists()
+        if existing_seed and not recovery:
+            raise RuntimeError(f"seed root already exists: {seed_root}")
+        seed_root.mkdir(parents=True, exist_ok=recovery)
         sources = {}
-        for arm in plan["prefix_order"]:
-            run_dir = seed_root / f"prefix_{arm}"
-            command = training_command(protocol, run_dir, seed, arm, gpu, prefix=True)
-            run_cell(protocol, run_dir, gpu, command, f"seed{seed}:prefix_{arm}")
-            sources[arm] = export_prefix(run_dir, seed, arm, protocol_sha)
-        compare_tapes(
-            [seed_root / "prefix_A" / "factorial_training_telemetry_v1.csv",
-             seed_root / "prefix_B" / "factorial_training_telemetry_v1.csv"],
-            ["prefix_A", "prefix_B"], seed_root / "prefix_matched_randomness_receipt.json", protocol_sha,
-            first_attempt=1, last_attempt=4000,
-        )
+        if existing_seed:
+            if (seed_root / "seed_completion_receipt.json").exists():
+                validate_pass_receipt(seed_root / "seed_completion_receipt.json", protocol_sha)
+                continue
+            for arm in ("A", "B"):
+                sources[arm] = validate_prefix_source(
+                    seed_root / f"prefix_{arm}", seed, arm, protocol_sha)
+            validate_pass_receipt(
+                seed_root / "prefix_matched_randomness_receipt.json", protocol_sha)
+        else:
+            for arm in plan["prefix_order"]:
+                run_dir = seed_root / f"prefix_{arm}"
+                command = training_command(protocol, run_dir, seed, arm, gpu, prefix=True)
+                run_cell(protocol, run_dir, gpu, command, f"seed{seed}:prefix_{arm}")
+                sources[arm] = export_prefix(run_dir, seed, arm, protocol_sha)
+            compare_tapes(
+                [seed_root / "prefix_A" / "factorial_training_telemetry_v1.csv",
+                 seed_root / "prefix_B" / "factorial_training_telemetry_v1.csv"],
+                ["prefix_A", "prefix_B"], seed_root / "prefix_matched_randomness_receipt.json", protocol_sha,
+                first_attempt=1, last_attempt=4000,
+            )
         for cell in plan["suffix_order"]:
             origin, continuation = CELLS[cell]
             run_dir = seed_root / cell
-            run_dir.mkdir(exist_ok=False)
-            manifest = suffix_manifest(protocol, protocol_path, seed, cell, sources[origin], run_dir)
-            source = Path(sources[origin]["training_state"]["path"])
-            command = training_command(protocol, run_dir, seed, continuation, gpu, prefix=False,
-                                       manifest=manifest, source=source)
-            run_cell(protocol, run_dir, gpu, command, f"seed{seed}:{cell}")
+            partial = run_dir.exists()
+            if partial:
+                if not recovery:
+                    raise RuntimeError(f"suffix root already exists: {run_dir}")
+                validate_completed_compute(run_dir, f"seed{seed}:{cell}")
+                manifest = (run_dir / "formal_run_manifest.json").resolve(strict=True)
+                loaded = schedule_switch.load_run_manifest(manifest)
+                if (loaded.get("seed") != seed or loaded.get("branch") != cell
+                        or loaded.get("protocol_sha256") != protocol_sha):
+                    raise RuntimeError(f"recovery refused suffix manifest: {manifest}")
+            else:
+                run_dir.mkdir(exist_ok=False)
+                manifest = suffix_manifest(protocol, protocol_path, seed, cell, sources[origin], run_dir)
+                source = Path(sources[origin]["training_state"]["path"])
+                command = training_command(protocol, run_dir, seed, continuation, gpu, prefix=False,
+                                           manifest=manifest, source=source)
+                run_cell(protocol, run_dir, gpu, command, f"seed{seed}:{cell}")
             export = [str(Path(runtime["environment_prefix"]) / "bin" / "python"),
                       str(REPO_ROOT / "analysis/q256_schedule_switch_v1/export_milestones.py"),
                       "--run-dir", str(run_dir), "--manifest", str(manifest)]
-            subprocess.run(export, cwd=REPO_ROOT, env=cell_environment(gpu, runtime), check=True)
+            trajectory = run_dir / "trajectory_completion_receipt.json"
+            if trajectory.exists():
+                validate_pass_receipt(trajectory, protocol_sha)
+            else:
+                if partial:
+                    export.append("--recover-partial-export")
+                subprocess.run(export, cwd=REPO_ROOT, env=cell_environment(gpu, runtime), check=True)
+                validate_pass_receipt(trajectory, protocol_sha)
         compare_tapes(
             [seed_root / cell / "schedule_switch_training_telemetry_v1.csv" for cell in ("AA", "AB", "BA", "BB")],
             ["AA", "AB", "BA", "BB"], seed_root / "suffix_matched_randomness_receipt.json", protocol_sha,
@@ -852,6 +919,101 @@ def worker(args: argparse.Namespace) -> None:
             "prefix_order": plan["prefix_order"], "suffix_order": plan["suffix_order"],
             "protocol_sha256": protocol_sha,
         })
+
+
+def authorize_recovery(args: argparse.Namespace) -> None:
+    protocol_path = args.protocol.resolve(strict=True)
+    validate_protocol(load_json(protocol_path), protocol_path)
+    failure_path = args.original_failure.resolve(strict=True)
+    failure = load_json(failure_path)
+    if (failure.get("status") != "FAIL" or failure.get("automatic_retry_count") != 0
+            or failure.get("protocol_sha256") != sha256_file(protocol_path)):
+        raise RuntimeError("manual recovery authorization requires the canonical first-attempt FAIL receipt")
+    if not HEX40.fullmatch(args.repair_commit):
+        raise RuntimeError("invalid repair commit")
+    archive_path = args.archive.resolve()
+    archive_path.parent.mkdir(parents=True, exist_ok=True)
+    copy_exclusive(failure_path, archive_path)
+    atomic_json(args.destination.resolve(), {
+        "schema": "ect.q256.fresh-crossed-switch-manual-recovery-authorization/v1",
+        "status": "AUTHOR_APPROVED", "authorized_at": utc_now(),
+        "scope": "repair receipt serialization, finish partial exports, and continue missing cells",
+        "completed_compute_must_not_be_rerun": True,
+        "automatic_retry_count": 0, "manual_recovery_index": 1,
+        "protocol_sha256": sha256_file(protocol_path),
+        "repair_commit": args.repair_commit,
+        "original_failure_receipt": {"path": str(archive_path),
+                                     "sha256": sha256_file(archive_path)},
+    })
+
+
+def recovery_launch(args: argparse.Namespace) -> None:
+    protocol_path = args.protocol.resolve(strict=True)
+    protocol = load_json(protocol_path)
+    validate_protocol(protocol, protocol_path)
+    protocol_sha = sha256_file(protocol_path)
+    preflight_receipt = load_json(args.preflight_receipt.resolve(strict=True))
+    if (preflight_receipt.get("status") != "PASS"
+            or preflight_receipt.get("protocol_sha256") != protocol_sha):
+        raise RuntimeError("manual recovery requires the original PASS preflight receipt")
+    authorization = load_json(args.authorization.resolve(strict=True))
+    current_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True).strip()
+    archived = authorization.get("original_failure_receipt", {})
+    if (authorization.get("status") != "AUTHOR_APPROVED"
+            or authorization.get("protocol_sha256") != protocol_sha
+            or authorization.get("repair_commit") != current_commit
+            or authorization.get("manual_recovery_index") != 1
+            or authorization.get("completed_compute_must_not_be_rerun") is not True
+            or sha256_file(Path(archived.get("path", ""))) != archived.get("sha256")):
+        raise RuntimeError("manual recovery authorization binding mismatch")
+    output_root = Path(protocol["paths"]["formal_output_root"])
+    if not output_root.is_dir():
+        raise RuntimeError("formal output root is missing")
+    logs = output_root / "logs"
+    runtime = load_json(Path(protocol["assets"]["runtime_manifest"]["path"]))
+    python = str(Path(runtime["environment_prefix"]) / "bin" / "python")
+    processes = []
+    registry = []
+    for gpu in range(6):
+        command = [python, str(Path(__file__).resolve()), "recovery-worker",
+                   "--protocol", str(protocol_path), "--gpu-index", str(gpu),
+                   "--seeds", str(31 + gpu), str(37 + gpu)]
+        log_path = logs / f"gpu{gpu}.recovery1.log"
+        log_handle = log_path.open("xb")
+        process = subprocess.Popen(command, cwd=REPO_ROOT, env=os.environ.copy(),
+                                   stdout=log_handle, stderr=subprocess.STDOUT,
+                                   start_new_session=True)
+        processes.append((gpu, process, log_handle, log_path))
+        registry.append({"gpu_index": gpu, "gpu_uuid": protocol["gpus"][gpu]["uuid"],
+                         "seeds": [31 + gpu, 37 + gpu], "pid": process.pid,
+                         "log_path": str(log_path), "command": command})
+    atomic_json(logs / "recovery1_worker_registry.json", {
+        "schema": "ect.q256.fresh-crossed-switch-recovery-worker-registry/v1",
+        "status": "STARTED", "started_at": utc_now(), "workers": registry,
+        "protocol_sha256": protocol_sha, "repair_commit": current_commit,
+    })
+    failures = []
+    for gpu, process, log_handle, log_path in processes:
+        returncode = process.wait(); log_handle.close()
+        if returncode != 0:
+            failures.append({"gpu_index": gpu, "exit_code": returncode,
+                             "log_path": str(log_path)})
+    completed = len(list((output_root / "training").glob("seed*/seed_completion_receipt.json")))
+    receipt = {
+        "schema": "ect.q256.fresh-crossed-switch-training-matrix-completion/v1",
+        "status": "PASS" if not failures and completed == 12 else "FAIL",
+        "ended_at": utc_now(), "worker_failures": failures,
+        "completed_seed_receipts": completed, "expected_seed_receipts": 12,
+        "protocol_sha256": protocol_sha, "automatic_retry_count": 0,
+        "manual_recovery_count": 1, "repair_commit": current_commit,
+        "original_failure_receipt_sha256": archived["sha256"],
+    }
+    atomic_json(output_root / "training_matrix_recovery1_completion_receipt.json", receipt)
+    atomic_json(output_root / "training_matrix_completion_receipt.json", receipt, overwrite=True)
+    if receipt["status"] != "PASS":
+        raise RuntimeError(f"manual recovery failed closed: {receipt}")
+    print(json.dumps(receipt, sort_keys=True))
 
 
 def launch(args: argparse.Namespace) -> None:
@@ -946,10 +1108,27 @@ def build_parser() -> argparse.ArgumentParser:
     work.add_argument("--gpu-index", type=int, choices=range(6), required=True)
     work.add_argument("--seeds", type=int, nargs="*")
     work.set_defaults(func=worker)
+    recovery_work = sub.add_parser("recovery-worker")
+    recovery_work.add_argument("--protocol", type=Path, required=True)
+    recovery_work.add_argument("--gpu-index", type=int, choices=range(6), required=True)
+    recovery_work.add_argument("--seeds", type=int, nargs="*")
+    recovery_work.set_defaults(func=worker, recovery=True)
     launch_parser = sub.add_parser("launch")
     launch_parser.add_argument("--protocol", type=Path, required=True)
     launch_parser.add_argument("--preflight-receipt", type=Path, required=True)
     launch_parser.set_defaults(func=launch)
+    authorize = sub.add_parser("authorize-recovery")
+    authorize.add_argument("--protocol", type=Path, required=True)
+    authorize.add_argument("--original-failure", type=Path, required=True)
+    authorize.add_argument("--archive", type=Path, required=True)
+    authorize.add_argument("--repair-commit", required=True)
+    authorize.add_argument("--destination", type=Path, required=True)
+    authorize.set_defaults(func=authorize_recovery)
+    recovery = sub.add_parser("recovery-launch")
+    recovery.add_argument("--protocol", type=Path, required=True)
+    recovery.add_argument("--preflight-receipt", type=Path, required=True)
+    recovery.add_argument("--authorization", type=Path, required=True)
+    recovery.set_defaults(func=recovery_launch)
     verify = sub.add_parser("verify-protocol")
     verify.add_argument("--protocol", type=Path, required=True)
     verify.set_defaults(func=lambda args: validate_protocol(load_json(args.protocol), args.protocol))

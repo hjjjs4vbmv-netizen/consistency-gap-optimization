@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from types import SimpleNamespace
 from pathlib import Path
+from unittest import mock
 
 import torch
 
@@ -13,6 +14,7 @@ from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import evaluation
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import monitor
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import parity
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import statistics as frozen_statistics
+from analysis.q256_schedule_switch_v1 import export_milestones
 from training import reproducibility, schedule_switch
 from training import ct_training_loop
 
@@ -48,6 +50,29 @@ class AssignmentTests(unittest.TestCase):
                 sorted(order[position] for order in observed),
                 ["AA"] * 3 + ["AB"] * 3 + ["BA"] * 3 + ["BB"] * 3,
             )
+
+
+class ManualRecoveryTests(unittest.TestCase):
+    def test_cuda_uuid_is_normalized_to_json_string(self):
+        class FakeUuid:
+            def __str__(self):
+                return "GPU-fake-uuid"
+
+        properties = SimpleNamespace(uuid=FakeUuid())
+        with (mock.patch.object(torch.cuda, "is_available", return_value=True),
+              mock.patch.object(torch.cuda, "get_device_properties", return_value=properties),
+              mock.patch.object(torch.cuda, "get_device_name", return_value="A100")):
+            receipt = export_milestones.runtime_receipt()
+        self.assertEqual(receipt["gpu_uuid"], "GPU-fake-uuid")
+        json.dumps(receipt)
+
+    def test_recovery_worker_parser_sets_explicit_mode(self):
+        args = experiment.build_parser().parse_args([
+            "recovery-worker", "--protocol", "/protocol.json",
+            "--gpu-index", "0", "--seeds", "31", "37",
+        ])
+        self.assertTrue(args.recovery)
+        self.assertEqual(args.seeds, [31, 37])
 
 
 class ProtocolTests(unittest.TestCase):
