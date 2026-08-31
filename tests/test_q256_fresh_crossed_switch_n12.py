@@ -10,6 +10,7 @@ import torch
 
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import experiment
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import evaluation
+from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import monitor
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import statistics as frozen_statistics
 from training import reproducibility, schedule_switch
 from training import ct_training_loop
@@ -117,6 +118,24 @@ class PlannedPauseAuthorizationTests(unittest.TestCase):
     def test_protocol_without_pause_is_rejected(self):
         with self.assertRaises(ValueError):
             self.call(stop_after_attempts=None)
+
+
+class MonitorPidNamespaceTests(unittest.TestCase):
+    def test_one_unmapped_host_pid_is_owned_only_with_cuda_evidence(self):
+        row = {"pid": 900001, "gpu_uuid": "GPU-x", "process_name": "[Not Found]"}
+        owned, foreign = monitor.classify_gpu_apps(
+            [row], "GPU-x", {123}, alive=True, owned_cuda_context=True)
+        self.assertEqual(owned, [row]); self.assertEqual(foreign, [])
+        owned, foreign = monitor.classify_gpu_apps(
+            [row], "GPU-x", {123}, alive=True, owned_cuda_context=False)
+        self.assertEqual(owned, []); self.assertEqual(foreign, [row])
+
+    def test_second_unmapped_process_remains_foreign(self):
+        rows = [{"pid": pid, "gpu_uuid": "GPU-x", "process_name": "[Not Found]"}
+                for pid in (900001, 900002)]
+        owned, foreign = monitor.classify_gpu_apps(
+            rows, "GPU-x", {123}, alive=True, owned_cuda_context=True)
+        self.assertEqual(owned, []); self.assertEqual(foreign, rows)
 
 
 class FreshManifestTests(unittest.TestCase):

@@ -66,6 +66,34 @@ def descendants(root_pid: int) -> set[int]:
         return set()
 
 
+def owns_cuda_device(pids: set[int]) -> bool:
+    for pid in pids:
+        fd_root = Path(f"/proc/{pid}/fd")
+        try:
+            for descriptor in fd_root.iterdir():
+                try:
+                    if os.readlink(descriptor).startswith("/dev/nvidia"):
+                        return True
+                except (FileNotFoundError, PermissionError, OSError):
+                    continue
+        except (FileNotFoundError, PermissionError, OSError):
+            continue
+    return False
+
+
+def classify_gpu_apps(apps: list[dict], gpu_uuid: str, owned: set[int],
+                      *, alive: bool, owned_cuda_context: bool) -> tuple[list[dict], list[dict]]:
+    selected = [row for row in apps if row["gpu_uuid"] == gpu_uuid]
+    direct_owned = [row for row in selected if row["pid"] in owned]
+    unmatched = [row for row in selected if row["pid"] not in owned]
+    namespace_owned = []
+    if (alive and owned_cuda_context and len(unmatched) == 1
+            and unmatched[0].get("process_name") == "[Not Found]"):
+        namespace_owned = unmatched
+        unmatched = []
+    return direct_owned + namespace_owned, unmatched
+
+
 def gpu_rows() -> list[dict]:
     query = (
         "index,uuid,name,memory.total,memory.used,utilization.gpu,"
@@ -203,10 +231,9 @@ def main() -> int:
         gpus = gpu_rows()
         selected = next((row for row in gpus if row["index"] == args.gpu_index), None)
         apps = compute_apps()
-        foreign = [
-            row for row in apps
-            if row["gpu_uuid"] == args.gpu_uuid and row["pid"] not in owned
-        ]
+        owned_apps, foreign = classify_gpu_apps(
+            apps, args.gpu_uuid, owned, alive=alive,
+            owned_cuda_context=owns_cuda_device(owned))
         log_path = run_dir / args.log_name
         log_size = log_path.stat().st_size if log_path.is_file() else 0
         if log_size != last_log_size:
@@ -236,6 +263,7 @@ def main() -> int:
             "process_alive": alive,
             "gpu": selected,
             "compute_apps": apps,
+            "owned_compute_apps": owned_apps,
             "foreign_compute_apps": foreign,
             "log_size_bytes": log_size,
             "log_stall_seconds": round(stall_seconds, 3),
