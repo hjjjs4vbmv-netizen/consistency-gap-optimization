@@ -123,6 +123,7 @@ def main() -> int:
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--eleven-seed-authorization", type=Path)
+    parser.add_argument("--evaluation-recovery-authorization", type=Path)
     args = parser.parse_args()
     protocol_path = args.protocol.resolve(strict=True)
     protocol = experiment.load_json(protocol_path)
@@ -130,20 +131,34 @@ def main() -> int:
     seeds = experiment.SEEDS
     expected_jobs = 264
     authorization_sha = None
+    recovery_authorization_sha = None
     if args.eleven_seed_authorization is not None:
         authorization_path = args.eleven_seed_authorization.resolve(strict=True)
         experiment.validate_eleven_seed_authorization(
-            authorization_path, protocol_path, require_commit=True
+            authorization_path, protocol_path,
+            require_commit=args.evaluation_recovery_authorization is None
         )
         seeds = experiment.ELEVEN_SEEDS
         expected_jobs = experiment.ELEVEN_JOB_COUNT
         authorization_sha = experiment.sha256_file(authorization_path)
+    if args.evaluation_recovery_authorization is not None:
+        if authorization_sha is None:
+            raise RuntimeError("evaluation recovery statistics require eleven-seed authorization")
+        recovery_path = args.evaluation_recovery_authorization.resolve(strict=True)
+        recovery = experiment.validate_evaluation_recovery1_authorization(
+            recovery_path, protocol_path, require_commit=True
+        )
+        if recovery.get("eleven_seed_authorization_sha256") != authorization_sha:
+            raise RuntimeError("evaluation recovery statistics amendment binding mismatch")
+        recovery_authorization_sha = experiment.sha256_file(recovery_path)
     decoded_path = args.decoded_results.resolve(strict=True)
     decoded = experiment.load_json(decoded_path)
     if (decoded.get("status") != "PASS" or not decoded.get("decoded_after_full_seal")
             or decoded.get("job_count") != expected_jobs
             or len(decoded.get("results", [])) != expected_jobs
-            or decoded.get("eleven_seed_authorization_sha256") != authorization_sha):
+            or decoded.get("eleven_seed_authorization_sha256") != authorization_sha
+            or decoded.get("evaluation_recovery_authorization_sha256")
+            != recovery_authorization_sha):
         raise RuntimeError("statistics require the complete post-seal decoded matrix")
     index = {}
     for row in decoded["results"]:
@@ -204,6 +219,7 @@ def main() -> int:
         "schema": "ect.q256.fresh-crossed-switch-statistics/v1", "status": "PASS",
         "protocol_sha256": experiment.sha256_file(protocol_path),
         "eleven_seed_authorization_sha256": authorization_sha,
+        "evaluation_recovery_authorization_sha256": recovery_authorization_sha,
         "included_seeds": list(seeds),
         "excluded_seed": (experiment.ELEVEN_SEED_EXCLUSION if authorization_sha else None),
         "original_n12_claim_abandoned": authorization_sha is not None,
@@ -234,6 +250,7 @@ def main() -> int:
         "category_checks": checks, "primary_only": True,
         "included_seeds": list(seeds),
         "eleven_seed_authorization_sha256": authorization_sha,
+        "evaluation_recovery_authorization_sha256": recovery_authorization_sha,
         "original_n12_claim_abandoned": authorization_sha is not None,
     })
     print(json.dumps({"status": "PASS", "primary_verdict": verdict}))

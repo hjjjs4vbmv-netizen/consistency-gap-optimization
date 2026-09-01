@@ -143,6 +143,26 @@ class ElevenSeedAmendmentTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             frozen_statistics.summarize([float(value) for value in range(10)])
 
+    def test_evaluation_recovery_parsers_are_explicit(self):
+        authorize = experiment.build_parser().parse_args([
+            "authorize-evaluation-recovery1", "--protocol", "/protocol.json",
+            "--eleven-seed-authorization", "/eleven.json",
+            "--matrix-failure", "/failure.json", "--amendment-commit", "b" * 40,
+            "--cache-source", "/mnt/cache", "--cache-destination", "/root/cache-v2",
+            "--destination", "/recovery.json",
+        ])
+        self.assertEqual(authorize.command, "authorize-evaluation-recovery1")
+        prepare = experiment.build_parser().parse_args([
+            "prepare-evaluation-recovery1", "--protocol", "/protocol.json",
+            "--authorization", "/recovery.json",
+        ])
+        self.assertEqual(prepare.command, "prepare-evaluation-recovery1")
+
+    def test_recovery_requires_eleven_seed_authorization(self):
+        with self.assertRaises(RuntimeError):
+            evaluation.evaluation_profile(Path("/missing-protocol"), None,
+                                          Path("/missing-recovery"))
+
 
 class ProtocolTests(unittest.TestCase):
     def minimal_protocol(self):

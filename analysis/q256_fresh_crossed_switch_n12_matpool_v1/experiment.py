@@ -104,6 +104,31 @@ def validate_eleven_seed_authorization(path: Path, protocol_path: Path,
     return value
 
 
+def validate_evaluation_recovery1_authorization(path: Path, protocol_path: Path,
+                                                *, require_commit: bool = False) -> dict:
+    path = path.resolve(strict=True)
+    value = load_json(path)
+    if (value.get("status") != "AUTHOR_APPROVED"
+            or value.get("protocol_sha256") != sha256_file(protocol_path)
+            or value.get("manual_evaluation_recovery_index") != 1
+            or value.get("expected_evaluation_jobs") != ELEVEN_JOB_COUNT
+            or value.get("automatic_retry_count") != 0
+            or value.get("original_failure_must_be_preserved") is not True
+            or value.get("decode_forbidden_before_full_recovery_seal") is not True):
+        raise RuntimeError("evaluation recovery1 authorization binding mismatch")
+    eleven_path = Path(value.get("eleven_seed_authorization_path", ""))
+    validate_eleven_seed_authorization(eleven_path, protocol_path)
+    if value.get("eleven_seed_authorization_sha256") != sha256_file(eleven_path):
+        raise RuntimeError("evaluation recovery1 eleven-seed authorization mismatch")
+    if require_commit:
+        head = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
+        ).strip()
+        if value.get("amendment_commit") != head:
+            raise RuntimeError("evaluation recovery1 commit mismatch")
+    return value
+
+
 def copy_exclusive(source: Path, destination: Path) -> None:
     if not source.is_file() or source.is_symlink():
         raise RuntimeError(f"missing regular source artifact: {source}")
@@ -1062,6 +1087,22 @@ def directory_manifest(root: Path) -> list[dict]:
     return records
 
 
+def directory_stat_manifest(root: Path) -> list[dict]:
+    """Identity manifest suitable for an atomic same-filesystem directory rename."""
+    if not root.is_dir() or root.is_symlink():
+        raise RuntimeError(f"regular directory required: {root}")
+    records = []
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            raise RuntimeError(f"archive refuses symlink: {path}")
+        if path.is_file():
+            stat = path.stat()
+            records.append({"path": str(path.relative_to(root)), "bytes": stat.st_size,
+                            "device": stat.st_dev, "inode": stat.st_ino,
+                            "mtime_ns": stat.st_mtime_ns})
+    return records
+
+
 def authorize_numeric_recovery2(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     validate_protocol(load_json(protocol_path), protocol_path)
@@ -1291,6 +1332,180 @@ def authorize_eleven_seed(args: argparse.Namespace) -> None:
                       "expected_evaluation_jobs": ELEVEN_JOB_COUNT}, sort_keys=True))
 
 
+def authorize_evaluation_recovery1(args: argparse.Namespace) -> None:
+    """Bind one author-approved, non-automatic recovery of the failed blind matrix."""
+    protocol_path = args.protocol.resolve(strict=True)
+    protocol = load_json(protocol_path)
+    validate_protocol(protocol, protocol_path)
+    protocol_sha = sha256_file(protocol_path)
+    eleven_path = args.eleven_seed_authorization.resolve(strict=True)
+    eleven = validate_eleven_seed_authorization(eleven_path, protocol_path)
+    head = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
+    ).strip()
+    if not HEX40.fullmatch(args.amendment_commit) or head != args.amendment_commit:
+        raise RuntimeError("evaluation recovery amendment is not current HEAD")
+    matrix_path = args.matrix_failure.resolve(strict=True)
+    matrix = load_json(matrix_path)
+    expected_failures = [{"gpu_index": gpu, "exit_code": 1} for gpu in range(6)]
+    if (matrix.get("status") != "FAIL"
+            or matrix.get("expected_receipts") != ELEVEN_JOB_COUNT
+            or matrix.get("validated_receipts") != 0
+            or matrix.get("automatic_retry_count") != 0
+            or matrix.get("worker_failures") != expected_failures):
+        raise RuntimeError("evaluation recovery requires the exact six-worker matrix failure")
+    output_root = Path(protocol["paths"]["formal_output_root"])
+    eval_source = output_root / "evaluation_11seed"
+    failure_receipts = sorted(eval_source.glob("jobs/*/failure_receipt.json"))
+    if len(failure_receipts) != 6:
+        raise RuntimeError("evaluation recovery requires six preserved job failures")
+    for receipt_path in failure_receipts:
+        receipt = load_json(receipt_path)
+        if (receipt.get("status") != "FAIL" or receipt.get("exit_code") != 1
+                or receipt.get("hard_timeout") is not False
+                or receipt.get("automatic_retry_count") != 0):
+            raise RuntimeError(f"unexpected evaluation failure receipt: {receipt_path}")
+    legacy_metric_artifacts = sorted(eval_source.glob("jobs/*/metric-*.jsonl"))
+    if len(legacy_metric_artifacts) != 6:
+        raise RuntimeError("evaluation recovery requires exactly six preserved unsealed metric artifacts")
+    if any(path.name != "metric-kid50k_full.jsonl" or path.stat().st_size <= 0
+           for path in legacy_metric_artifacts):
+        raise RuntimeError("unexpected legacy metric artifact identity; contents remain unread")
+    if list((eval_source / "receipts").glob("*.json")) \
+            or list((eval_source / "seals").glob("*.json")):
+        raise RuntimeError("evaluation recovery requires zero validated receipts and zero seals")
+    control_root = Path(protocol["paths"]["control_root"])
+    old_public = control_root / "frozen_242_job_evaluation_manifest_11seed.json"
+    old_private = control_root / "sealed_private_evaluation_map_11seed.json"
+    for path in (old_public, old_private):
+        if not path.is_file() or path.is_symlink():
+            raise RuntimeError(f"missing failed evaluation control artifact: {path}")
+    archive_root = output_root / "archive" / "manual-evaluation-recovery-1"
+    eval_archive = archive_root / "evaluation_11seed_failed_attempt1"
+    public_archive = archive_root / old_public.name
+    private_archive = archive_root / old_private.name
+    for path in (archive_root, eval_archive, public_archive, private_archive,
+                 output_root / "evaluation_11seed_recovery1",
+                 control_root / "frozen_242_job_evaluation_manifest_11seed_recovery1.json",
+                 control_root / "sealed_private_evaluation_map_11seed_recovery1.json"):
+        if path.exists():
+            raise RuntimeError(f"evaluation recovery destination already exists: {path}")
+    cache_source = args.cache_source.resolve(strict=True)
+    if not cache_source.is_dir() or cache_source.is_symlink():
+        raise RuntimeError("regular source evaluator cache required")
+    cache_destination = args.cache_destination.resolve()
+    if cache_destination.exists():
+        raise RuntimeError("fresh evaluator cache destination required")
+    free = shutil.disk_usage(cache_destination.parent.resolve(strict=True)).free
+    if free < 400 * 1024**3:
+        raise RuntimeError("evaluation recovery requires at least 400 GiB free")
+    payload = {
+        "schema": "ect.q256.eleven-seed-evaluation-recovery/v1",
+        "status": "AUTHOR_APPROVED", "authorized_at": utc_now(),
+        "manual_evaluation_recovery_index": 1,
+        "protocol_sha256": protocol_sha, "amendment_commit": head,
+        "expected_evaluation_jobs": ELEVEN_JOB_COUNT, "automatic_retry_count": 0,
+        "original_failure_must_be_preserved": True,
+        "decode_forbidden_before_full_recovery_seal": True,
+        "quality_metrics_observed_before_amendment": False,
+        "legacy_unsealed_metric_artifact_count": len(legacy_metric_artifacts),
+        "legacy_unsealed_metric_artifact_names": [path.name for path in legacy_metric_artifacts],
+        "legacy_metric_artifact_contents_read": False,
+        "eleven_seed_authorization_path": str(eleven_path),
+        "eleven_seed_authorization_sha256": sha256_file(eleven_path),
+        "eleven_seed_amendment_commit": eleven["amendment_commit"],
+        "matrix_failure_path": str(matrix_path),
+        "matrix_failure_sha256": sha256_file(matrix_path),
+        "failed_evaluation_source": str(eval_source),
+        "failed_evaluation_archive": str(eval_archive),
+        "old_public_manifest_source": str(old_public),
+        "old_public_manifest_archive": str(public_archive),
+        "old_public_manifest_sha256": sha256_file(old_public),
+        "old_private_map_source": str(old_private),
+        "old_private_map_archive": str(private_archive),
+        "old_private_map_sha256": sha256_file(old_private),
+        "cache_source": str(cache_source), "cache_destination": str(cache_destination),
+        "evaluation_dir": "evaluation_11seed_recovery1",
+        "analysis_dir": "analysis_11seed_recovery1",
+        "minimum_free_gib": 400,
+    }
+    atomic_json(args.destination.resolve(), payload)
+    print(json.dumps({"status": "AUTHOR_APPROVED", "manual_evaluation_recovery_index": 1,
+                      "expected_evaluation_jobs": ELEVEN_JOB_COUNT}, sort_keys=True))
+
+
+def prepare_evaluation_recovery1(args: argparse.Namespace) -> None:
+    """Preserve the failed attempt, clone cache, and pass a non-metric storage gate."""
+    protocol_path = args.protocol.resolve(strict=True)
+    authorization_path = args.authorization.resolve(strict=True)
+    authorization = validate_evaluation_recovery1_authorization(
+        authorization_path, protocol_path, require_commit=True
+    )
+    if sha256_file(Path(authorization["matrix_failure_path"])) != authorization["matrix_failure_sha256"]:
+        raise RuntimeError("failed matrix changed after recovery authorization")
+    source = Path(authorization["failed_evaluation_source"])
+    archive = Path(authorization["failed_evaluation_archive"])
+    before = directory_stat_manifest(source)
+    archive.parent.mkdir(parents=True, exist_ok=False)
+    os.rename(source, archive)
+    after = directory_stat_manifest(archive)
+    if before != after:
+        raise RuntimeError("failed blind evaluation archive identity mismatch")
+    control_specs = (
+        (Path(authorization["old_public_manifest_source"]),
+         Path(authorization["old_public_manifest_archive"]),
+         authorization["old_public_manifest_sha256"]),
+        (Path(authorization["old_private_map_source"]),
+         Path(authorization["old_private_map_archive"]),
+         authorization["old_private_map_sha256"]),
+    )
+    for src, dst, expected_sha in control_specs:
+        if sha256_file(src) != expected_sha:
+            raise RuntimeError(f"old control artifact changed: {src}")
+        os.rename(src, dst)
+        if sha256_file(dst) != expected_sha:
+            raise RuntimeError(f"old control archive identity mismatch: {dst}")
+    cache_source = Path(authorization["cache_source"])
+    cache_destination = Path(authorization["cache_destination"])
+    source_manifest = directory_manifest(cache_source)
+    shutil.copytree(cache_source, cache_destination, copy_function=shutil.copy2)
+    destination_manifest = directory_manifest(cache_destination)
+    if source_manifest != destination_manifest:
+        raise RuntimeError("evaluator cache copy identity mismatch")
+    free_before = shutil.disk_usage(cache_destination).free
+    if free_before < authorization["minimum_free_gib"] * 1024**3:
+        raise RuntimeError("free-space gate failed after evaluator cache copy")
+    smoke = cache_destination / ".q256_recovery1_storage_smoke.tmp"
+    block = b"\0" * (8 * 1024 * 1024)
+    with smoke.open("xb") as handle:
+        for _ in range(128):
+            handle.write(block)
+        handle.flush()
+        os.fsync(handle.fileno())
+    if smoke.stat().st_size != 1024**3:
+        raise RuntimeError("storage smoke file size mismatch")
+    smoke.unlink()
+    free_after = shutil.disk_usage(cache_destination).free
+    receipt = {
+        "schema": "ect.q256.eleven-seed-evaluation-recovery-preparation/v1",
+        "status": "PASS", "prepared_at": utc_now(),
+        "protocol_sha256": authorization["protocol_sha256"],
+        "evaluation_recovery_authorization_sha256": sha256_file(authorization_path),
+        "failed_evaluation_archive": str(archive), "archived_file_count": len(after),
+        "archived_directory_manifest_sha256": canonical_sha256(after),
+        "cache_source": str(cache_source), "cache_destination": str(cache_destination),
+        "cache_file_count": len(destination_manifest),
+        "cache_directory_manifest_sha256": canonical_sha256(destination_manifest),
+        "storage_smoke_bytes_written_and_fsynced": 1024**3,
+        "storage_smoke_temp_removed": not smoke.exists(),
+        "free_bytes_after_smoke": free_after, "metrics_executed": False,
+        "metric_values_observed": False,
+    }
+    atomic_json(archive.parent / "evaluation_recovery1_preparation_receipt.json", receipt)
+    print(json.dumps({"status": "PASS", "cache_file_count": len(destination_manifest),
+                      "free_bytes_after_smoke": free_after}, sort_keys=True))
+
+
 def launch(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol = load_json(protocol_path)
@@ -1422,6 +1637,19 @@ def build_parser() -> argparse.ArgumentParser:
     eleven.add_argument("--amendment-commit", required=True)
     eleven.add_argument("--destination", type=Path, required=True)
     eleven.set_defaults(func=authorize_eleven_seed)
+    evaluation_authorize = sub.add_parser("authorize-evaluation-recovery1")
+    evaluation_authorize.add_argument("--protocol", type=Path, required=True)
+    evaluation_authorize.add_argument("--eleven-seed-authorization", type=Path, required=True)
+    evaluation_authorize.add_argument("--matrix-failure", type=Path, required=True)
+    evaluation_authorize.add_argument("--amendment-commit", required=True)
+    evaluation_authorize.add_argument("--cache-source", type=Path, required=True)
+    evaluation_authorize.add_argument("--cache-destination", type=Path, required=True)
+    evaluation_authorize.add_argument("--destination", type=Path, required=True)
+    evaluation_authorize.set_defaults(func=authorize_evaluation_recovery1)
+    evaluation_prepare = sub.add_parser("prepare-evaluation-recovery1")
+    evaluation_prepare.add_argument("--protocol", type=Path, required=True)
+    evaluation_prepare.add_argument("--authorization", type=Path, required=True)
+    evaluation_prepare.set_defaults(func=prepare_evaluation_recovery1)
     verify = sub.add_parser("verify-protocol")
     verify.add_argument("--protocol", type=Path, required=True)
     verify.set_defaults(func=lambda args: validate_protocol(load_json(args.protocol), args.protocol))

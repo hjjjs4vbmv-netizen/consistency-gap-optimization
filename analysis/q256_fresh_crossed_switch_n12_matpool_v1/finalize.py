@@ -23,6 +23,7 @@ def main() -> int:
     parser.add_argument("--public-manifest", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--eleven-seed-authorization", type=Path)
+    parser.add_argument("--evaluation-recovery-authorization", type=Path)
     args = parser.parse_args()
     protocol_path = args.protocol.resolve(strict=True)
     protocol = experiment.load_json(protocol_path)
@@ -37,10 +38,13 @@ def main() -> int:
     training_path = root / "training_matrix_completion_receipt.json"
     integrity_path = root / "training_integrity_report.json"
     authorization_sha = None
+    recovery_authorization_sha = None
+    recovery_preparation_receipt = None
     if args.eleven_seed_authorization is not None:
         authorization_path = args.eleven_seed_authorization.resolve(strict=True)
         experiment.validate_eleven_seed_authorization(
-            authorization_path, protocol_path, require_commit=True
+            authorization_path, protocol_path,
+            require_commit=args.evaluation_recovery_authorization is None
         )
         authorization_sha = experiment.sha256_file(authorization_path)
         seeds = experiment.ELEVEN_SEEDS
@@ -49,6 +53,22 @@ def main() -> int:
         analysis_root = root / "analysis_11seed"
         training_path = root / "training_matrix_11seed_completion_receipt.json"
         integrity_path = root / "training_integrity_11seed_report.json"
+    if args.evaluation_recovery_authorization is not None:
+        if authorization_sha is None:
+            raise RuntimeError("evaluation recovery finalization requires eleven-seed authorization")
+        recovery_path = args.evaluation_recovery_authorization.resolve(strict=True)
+        recovery = experiment.validate_evaluation_recovery1_authorization(
+            recovery_path, protocol_path, require_commit=True
+        )
+        if recovery.get("eleven_seed_authorization_sha256") != authorization_sha:
+            raise RuntimeError("evaluation recovery finalization amendment binding mismatch")
+        recovery_authorization_sha = experiment.sha256_file(recovery_path)
+        eval_root = root / recovery["evaluation_dir"]
+        analysis_root = root / recovery["analysis_dir"]
+        recovery_preparation_receipt = (
+            root / "archive" / "manual-evaluation-recovery-1"
+            / "evaluation_recovery1_preparation_receipt.json"
+        )
     training = experiment.load_json(training_path)
     integrity = experiment.load_json(integrity_path)
     seal = experiment.load_json(eval_root / "evaluation_matrix_seal.json")
@@ -62,6 +82,17 @@ def main() -> int:
                  analysis.get("eleven_seed_authorization_sha256")]
         if bound != [authorization_sha] * 4:
             raise RuntimeError("final eleven-seed artifacts are not amendment-bound")
+    if recovery_authorization_sha is not None:
+        bound = [seal.get("evaluation_recovery_authorization_sha256"),
+                 analysis.get("evaluation_recovery_authorization_sha256")]
+        if bound != [recovery_authorization_sha] * 2:
+            raise RuntimeError("final artifacts are not evaluation-recovery-bound")
+        preparation = experiment.load_json(recovery_preparation_receipt)
+        if (preparation.get("status") != "PASS"
+                or preparation.get("evaluation_recovery_authorization_sha256")
+                != recovery_authorization_sha
+                or preparation.get("metrics_executed") is not False):
+            raise RuntimeError("evaluation recovery preparation gate is not PASS")
     ledger = []
     for path in sorted((root / "training").glob("seed*/**/compute_completion_receipt.json")):
         if int(path.parts[-3].removeprefix("seed")) not in seeds:
@@ -89,6 +120,7 @@ def main() -> int:
 
 - Training matrix: PASS ({integrity['counts']['prefixes']}/{2 * len(seeds)} prefixes; {integrity['counts']['suffixes']}/{4 * len(seeds)} suffixes).
 - Blind evaluation: SEALED_PASS ({seal['sealed_jobs']}/{expected_jobs} jobs), decoded only after the full amended matrix seal.
+- Manual evaluation recovery: {1 if recovery_authorization_sha else 0}; the failed attempt is preserved and the replacement cache passed a non-metric storage gate.
 - Analysis population: {len(seeds)} complete seeds ({', '.join(map(str, seeds))}); seed38 excluded by explicit author amendment; the original n=12 claim is abandoned: {authorization_sha is not None}.
 - Protocol SHA256: `{experiment.sha256_file(protocol_path)}`.
 - Implementation commit: `{protocol['implementation_commit']}`; final HEAD `{head}`; clean worktree: `{not bool(status)}`.
@@ -120,6 +152,9 @@ The primary classification is determined only by seed-level H from 1024-kimg NFE
                     analysis_root / "statistics" / "AULC_diagnostic.csv", cost_path, report_path]
     if args.eleven_seed_authorization is not None:
         deliverables.insert(1, args.eleven_seed_authorization.resolve(strict=True))
+    if args.evaluation_recovery_authorization is not None:
+        deliverables.insert(2, args.evaluation_recovery_authorization.resolve(strict=True))
+        deliverables.insert(3, recovery_preparation_receipt.resolve(strict=True))
     sums = root / f"SHA256SUMS{suffix}.txt"
     with sums.open("x", encoding="utf-8") as handle:
         for path in deliverables:
@@ -130,6 +165,8 @@ The primary classification is determined only by seed-level H from 1024-kimg NFE
         "protocol_sha256": experiment.sha256_file(protocol_path), "implementation_commit": protocol["implementation_commit"],
         "final_git_head": head, "final_git_clean": not bool(status), "sha256sums": str(sums),
         "eleven_seed_authorization_sha256": authorization_sha,
+        "evaluation_recovery_authorization_sha256": recovery_authorization_sha,
+        "manual_evaluation_recovery_count": 1 if recovery_authorization_sha else 0,
         "included_seeds": list(seeds), "original_n12_claim_abandoned": authorization_sha is not None,
         "compute_ledger_rows": len(ledger),
     })

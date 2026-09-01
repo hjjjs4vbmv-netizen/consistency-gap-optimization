@@ -36,20 +36,41 @@ def sha256_file(path: Path) -> str:
     return experiment.sha256_file(path)
 
 
-def evaluation_profile(protocol_path: Path, authorization_path: Path | None) -> dict:
+def evaluation_profile(protocol_path: Path, authorization_path: Path | None,
+                       recovery_authorization_path: Path | None = None) -> dict:
     if authorization_path is None:
+        if recovery_authorization_path is not None:
+            raise RuntimeError("evaluation recovery requires the eleven-seed authorization")
+        protocol = load(protocol_path)
         return {"seeds": experiment.SEEDS, "job_count": 264,
                 "evaluation_dir": "evaluation", "matrix": "training_matrix_completion_receipt.json",
-                "integrity": "training_integrity_report.json", "authorization_sha256": None}
+                "integrity": "training_integrity_report.json", "authorization_sha256": None,
+                "recovery_authorization_sha256": None,
+                "cache_root": str(Path(protocol["paths"].get("evaluator_cache_root", ".")).resolve())}
     authorization_path = authorization_path.resolve(strict=True)
+    protocol = load(protocol_path)
     experiment.validate_eleven_seed_authorization(
-        authorization_path, protocol_path, require_commit=True
+        authorization_path, protocol_path, require_commit=recovery_authorization_path is None
     )
+    recovery_sha = None
+    evaluation_dir = "evaluation_11seed"
+    cache_root = str(Path(protocol["paths"].get("evaluator_cache_root", ".")).resolve())
+    if recovery_authorization_path is not None:
+        recovery_authorization_path = recovery_authorization_path.resolve(strict=True)
+        recovery = experiment.validate_evaluation_recovery1_authorization(
+            recovery_authorization_path, protocol_path, require_commit=True
+        )
+        if recovery.get("eleven_seed_authorization_sha256") != sha256_file(authorization_path):
+            raise RuntimeError("evaluation recovery has the wrong eleven-seed binding")
+        recovery_sha = sha256_file(recovery_authorization_path)
+        evaluation_dir = recovery["evaluation_dir"]
+        cache_root = str(Path(recovery["cache_destination"]).resolve(strict=True))
     return {"seeds": experiment.ELEVEN_SEEDS, "job_count": experiment.ELEVEN_JOB_COUNT,
-            "evaluation_dir": "evaluation_11seed",
+            "evaluation_dir": evaluation_dir,
             "matrix": "training_matrix_11seed_completion_receipt.json",
             "integrity": "training_integrity_11seed_report.json",
-            "authorization_sha256": sha256_file(authorization_path)}
+            "authorization_sha256": sha256_file(authorization_path),
+            "recovery_authorization_sha256": recovery_sha, "cache_root": cache_root}
 
 
 def metric_value(path: Path, metric: str) -> float:
@@ -104,7 +125,10 @@ def prepare(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol = load(protocol_path)
     experiment.validate_protocol(protocol, protocol_path)
-    profile = evaluation_profile(protocol_path, getattr(args, "eleven_seed_authorization", None))
+    profile = evaluation_profile(
+        protocol_path, getattr(args, "eleven_seed_authorization", None),
+        getattr(args, "evaluation_recovery_authorization", None)
+    )
     eval_root = Path(protocol["paths"]["formal_output_root"]) / profile["evaluation_dir"]
     if eval_root.exists() or args.private_map.exists() or args.public_manifest.exists():
         raise RuntimeError("blind evaluation preparation requires fresh destinations")
@@ -133,6 +157,7 @@ def prepare(args: argparse.Namespace) -> None:
             "queue_index": queue_index, "opaque_id": opaque, "gpu_index": gpu,
             **job, "source_checkpoint": str(source), "checkpoint_alias": str(alias),
             "checkpoint_sha256": checkpoint_sha,
+            "evaluation_recovery_authorization_sha256": profile["recovery_authorization_sha256"],
         })
         public_jobs.append({
             "queue_index": queue_index, "opaque_id": opaque, "gpu_index": gpu,
@@ -143,6 +168,7 @@ def prepare(args: argparse.Namespace) -> None:
         "schema": PRIVATE_SCHEMA, "status": "SEALED_PRIVATE_MAP",
         "protocol_sha256": sha256_file(protocol_path), "job_count": profile["job_count"],
         "eleven_seed_authorization_sha256": profile["authorization_sha256"],
+        "evaluation_recovery_authorization_sha256": profile["recovery_authorization_sha256"],
         "decode_forbidden_before_matrix_seal": True, "jobs": private_jobs,
     }
     args.private_map.parent.mkdir(parents=True, exist_ok=True)
@@ -153,6 +179,7 @@ def prepare(args: argparse.Namespace) -> None:
         "schema": PUBLIC_SCHEMA, "status": "FROZEN_NOT_RUN", "job_count": profile["job_count"],
         "protocol_sha256": sha256_file(protocol_path),
         "eleven_seed_authorization_sha256": profile["authorization_sha256"],
+        "evaluation_recovery_authorization_sha256": profile["recovery_authorization_sha256"],
         "private_map_sha256": private_sha,
         "shuffle_seed": protocol["evaluation"]["shuffle_seed"],
         "gpu_assignment": "queue_index modulo six after frozen shuffle",
@@ -165,6 +192,7 @@ def prepare(args: argparse.Namespace) -> None:
         "schema": "ect.q256.fresh-crossed-switch-blind-preparation/v1", "status": "PASS",
         "job_count": profile["job_count"], "protocol_sha256": sha256_file(protocol_path),
         "eleven_seed_authorization_sha256": profile["authorization_sha256"],
+        "evaluation_recovery_authorization_sha256": profile["recovery_authorization_sha256"],
         "public_manifest": str(args.public_manifest.resolve()),
         "public_manifest_sha256": sha256_file(args.public_manifest),
         "private_map": str(args.private_map.resolve()), "private_map_sha256": private_sha,
@@ -175,13 +203,14 @@ def prepare(args: argparse.Namespace) -> None:
 
 
 def validate_bindings(protocol_path: Path, public_path: Path, private_path: Path,
-                      authorization_path: Path | None = None) -> tuple[dict, dict, dict, dict]:
+                      authorization_path: Path | None = None,
+                      recovery_authorization_path: Path | None = None) -> tuple[dict, dict, dict, dict]:
     protocol = load(protocol_path)
     experiment.validate_protocol(protocol, protocol_path)
     public = load(public_path)
     private = load(private_path)
     protocol_sha = sha256_file(protocol_path)
-    profile = evaluation_profile(protocol_path, authorization_path)
+    profile = evaluation_profile(protocol_path, authorization_path, recovery_authorization_path)
     if public.get("schema") != PUBLIC_SCHEMA or public.get("job_count") != profile["job_count"]:
         raise RuntimeError("invalid public blind manifest")
     if private.get("schema") != PRIVATE_SCHEMA or private.get("job_count") != profile["job_count"]:
@@ -193,6 +222,11 @@ def validate_bindings(protocol_path: Path, public_path: Path, private_path: Path
     if (public.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]
             or private.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]):
         raise RuntimeError("blind manifests have the wrong amendment binding")
+    if (public.get("evaluation_recovery_authorization_sha256")
+            != profile["recovery_authorization_sha256"]
+            or private.get("evaluation_recovery_authorization_sha256")
+            != profile["recovery_authorization_sha256"]):
+        raise RuntimeError("blind manifests have the wrong evaluation recovery binding")
     pub = {(j["queue_index"], j["opaque_id"], j["gpu_index"], j["checkpoint_sha256"])
            for j in public["jobs"]}
     prv = {(j["queue_index"], j["opaque_id"], j["gpu_index"], j["checkpoint_sha256"])
@@ -268,6 +302,8 @@ def validate_job(job: dict, job_dir: Path, protocol: dict, evaluator_repo: Path,
         "protocol_sha256": sha256_file(Path(protocol["frozen_protocol_path"]))
             if "frozen_protocol_path" in protocol else job["protocol_sha256"],
         "result_values_disclosed": False,
+        "evaluation_recovery_authorization_sha256":
+            job.get("evaluation_recovery_authorization_sha256"),
     })
 
 
@@ -328,6 +364,8 @@ def run_one(protocol_path: Path, protocol: dict, job: dict, evaluator_repo: Path
         experiment.atomic_json(run_root / "failure_receipt.json", {
             "schema": JOB_SCHEMA, "status": "FAIL", "opaque_id": opaque,
             "exit_code": code, "hard_timeout": timed_out, "automatic_retry_count": 0,
+            "evaluation_recovery_authorization_sha256":
+                job.get("evaluation_recovery_authorization_sha256"),
         })
         raise RuntimeError(f"blind evaluation failed without retry: {opaque}")
     job = dict(job)
@@ -342,13 +380,14 @@ def worker(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol, _, private, profile = validate_bindings(
         protocol_path, args.public_manifest.resolve(strict=True),
-        args.private_map.resolve(strict=True), getattr(args, "eleven_seed_authorization", None)
+        args.private_map.resolve(strict=True), getattr(args, "eleven_seed_authorization", None),
+        getattr(args, "evaluation_recovery_authorization", None)
     )
     evaluator_repo = args.evaluator_repo.resolve(strict=True)
     evaluator_ok(evaluator_repo)
     cache_root = args.cache_root.resolve(strict=True)
-    if cache_root != Path(protocol["paths"]["evaluator_cache_root"]).resolve(strict=True):
-        raise RuntimeError("worker evaluator cache differs from frozen protocol")
+    if cache_root != Path(profile["cache_root"]):
+        raise RuntimeError("worker evaluator cache differs from authorized profile")
     eval_root = Path(protocol["paths"]["formal_output_root"]) / profile["evaluation_dir"]
     jobs = [job for job in private["jobs"] if job["gpu_index"] == args.gpu_index]
     expected_for_gpu = sum(job["gpu_index"] == args.gpu_index for job in private["jobs"])
@@ -363,13 +402,14 @@ def launch(args: argparse.Namespace) -> None:
     public_path = args.public_manifest.resolve(strict=True)
     private_path = args.private_map.resolve(strict=True)
     protocol, _, _, profile = validate_bindings(
-        protocol_path, public_path, private_path, getattr(args, "eleven_seed_authorization", None)
+        protocol_path, public_path, private_path, getattr(args, "eleven_seed_authorization", None),
+        getattr(args, "evaluation_recovery_authorization", None)
     )
     evaluator_repo = args.evaluator_repo.resolve(strict=True)
     evaluator_ok(evaluator_repo)
     cache_root = args.cache_root.resolve(strict=True)
-    if cache_root != Path(protocol["paths"]["evaluator_cache_root"]).resolve(strict=True):
-        raise RuntimeError("launcher evaluator cache differs from frozen protocol")
+    if cache_root != Path(profile["cache_root"]):
+        raise RuntimeError("launcher evaluator cache differs from authorized profile")
     runtime = load(Path(protocol["assets"]["runtime_manifest"]["path"]))
     experiment.validate_runtime(runtime)
     if experiment.compute_apps():
@@ -387,6 +427,9 @@ def launch(args: argparse.Namespace) -> None:
         if getattr(args, "eleven_seed_authorization", None) is not None:
             command += ["--eleven-seed-authorization",
                         str(args.eleven_seed_authorization.resolve(strict=True))]
+        if getattr(args, "evaluation_recovery_authorization", None) is not None:
+            command += ["--evaluation-recovery-authorization",
+                        str(args.evaluation_recovery_authorization.resolve(strict=True))]
         handle = (eval_root / "logs" / f"gpu{gpu}.queue.log").open("xb")
         process = subprocess.Popen(command, cwd=REPO_ROOT, env=os.environ.copy(),
                                    stdout=handle, stderr=subprocess.STDOUT, start_new_session=True)
@@ -398,13 +441,18 @@ def launch(args: argparse.Namespace) -> None:
         if code != 0:
             failures.append({"gpu_index": gpu, "exit_code": code})
     receipts = sorted((eval_root / "receipts").glob("*.json"))
-    validated = [path for path in receipts if load(path).get("status") == "VALIDATED_UNSEALED"]
+    validated = [path for path in receipts
+                 if load(path).get("status") == "VALIDATED_UNSEALED"
+                 and load(path).get("evaluation_recovery_authorization_sha256")
+                 == profile["recovery_authorization_sha256"]]
     if failures or len(validated) != profile["job_count"]:
         experiment.atomic_json(eval_root / "evaluation_matrix_failure_receipt.json", {
             "schema": "ect.q256.fresh-crossed-switch-evaluation-matrix/v1", "status": "FAIL",
             "worker_failures": failures, "validated_receipts": len(validated),
             "expected_receipts": profile["job_count"], "automatic_retry_count": 0,
             "eleven_seed_authorization_sha256": profile["authorization_sha256"],
+            "evaluation_recovery_authorization_sha256":
+                profile["recovery_authorization_sha256"],
         })
         raise RuntimeError("blind evaluation matrix failed closed; no decoding permitted")
     for path in validated:
@@ -413,6 +461,8 @@ def launch(args: argparse.Namespace) -> None:
             "schema": "ect.q256.fresh-crossed-switch-evaluation-job-seal/v1",
             "status": "SEALED_PASS", "opaque_id": record["opaque_id"],
             "validation_receipt_sha256": sha256_file(path), "result_values_disclosed": False,
+            "evaluation_recovery_authorization_sha256":
+                profile["recovery_authorization_sha256"],
         })
     seal = {
         "schema": "ect.q256.fresh-crossed-switch-evaluation-matrix-seal/v1",
@@ -420,6 +470,7 @@ def launch(args: argparse.Namespace) -> None:
         "expected_jobs": profile["job_count"],
         "protocol_sha256": sha256_file(protocol_path),
         "eleven_seed_authorization_sha256": profile["authorization_sha256"],
+        "evaluation_recovery_authorization_sha256": profile["recovery_authorization_sha256"],
         "public_manifest_sha256": sha256_file(public_path),
         "private_map_sha256": sha256_file(private_path), "decoded": False,
         "automatic_retry_count": 0,
@@ -433,13 +484,16 @@ def decode(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol, _, private, profile = validate_bindings(
         protocol_path, args.public_manifest.resolve(strict=True),
-        args.private_map.resolve(strict=True), getattr(args, "eleven_seed_authorization", None)
+        args.private_map.resolve(strict=True), getattr(args, "eleven_seed_authorization", None),
+        getattr(args, "evaluation_recovery_authorization", None)
     )
     eval_root = Path(protocol["paths"]["formal_output_root"]) / profile["evaluation_dir"]
     seal = load(eval_root / "evaluation_matrix_seal.json")
     if (seal.get("status") != "SEALED_PASS"
             or seal.get("sealed_jobs") != profile["job_count"]
-            or seal.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]):
+            or seal.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]
+            or seal.get("evaluation_recovery_authorization_sha256")
+            != profile["recovery_authorization_sha256"]):
         raise RuntimeError("all amended jobs must be sealed before decoding")
     decoded = []
     for job in private["jobs"]:
@@ -461,6 +515,7 @@ def decode(args: argparse.Namespace) -> None:
         "schema": "ect.q256.fresh-crossed-switch-decoded-results/v1", "status": "PASS",
         "decoded_after_full_seal": True, "job_count": profile["job_count"],
         "eleven_seed_authorization_sha256": profile["authorization_sha256"],
+        "evaluation_recovery_authorization_sha256": profile["recovery_authorization_sha256"],
         "matrix_seal_sha256": sha256_file(eval_root / "evaluation_matrix_seal.json"),
         "protocol_sha256": sha256_file(protocol_path), "results": decoded,
     }
@@ -477,12 +532,14 @@ def parser() -> argparse.ArgumentParser:
     prep.add_argument("--public-manifest", type=Path, required=True)
     prep.add_argument("--private-map", type=Path, required=True)
     prep.add_argument("--eleven-seed-authorization", type=Path)
+    prep.add_argument("--evaluation-recovery-authorization", type=Path)
     prep.set_defaults(func=prepare)
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--protocol", type=Path, required=True)
     common.add_argument("--public-manifest", type=Path, required=True)
     common.add_argument("--private-map", type=Path, required=True)
     common.add_argument("--eleven-seed-authorization", type=Path)
+    common.add_argument("--evaluation-recovery-authorization", type=Path)
     work = subs.add_parser("worker", parents=[common])
     work.add_argument("--evaluator-repo", type=Path, required=True)
     work.add_argument("--cache-root", type=Path, required=True)
