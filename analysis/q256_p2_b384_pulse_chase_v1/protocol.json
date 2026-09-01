@@ -1,0 +1,142 @@
+{
+  "schema": "ect.q256.p2-b384-pulse-chase-protocol/v1",
+  "status": "FROZEN_BEFORE_FRESH_FORMAL_TRAINING_AND_EVALUATION",
+  "implementation_commit": "9026fb930853be005b030a2d87614dfea38c5565",
+  "experiment_id": "q256_p2_b384_pulse_chase_v1",
+  "question": "Does a temporary 384-512 kimg A/B pair-spacing pulse, from identical full B@384 state, leave a practically material NFE1 quality contrast after both branches chase the identical A objective from 512-640 kimg?",
+  "claim_ceiling": "Full-state effect of temporary spacing history on common-A finite-horizon quality evolution; no history-by-current interaction and no optimizer/EMA mediation claim.",
+  "assets": {
+    "dataset": {
+      "name": "canonical CIFAR-10 32x32 ZIP",
+      "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+    },
+    "transfer_checkpoint": {
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    },
+    "runtime_sif": {
+      "sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea"
+    }
+  },
+  "independent_unit": {
+    "name": "training_seed",
+    "values": [19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    "n": 10,
+    "not_independent": ["checkpoint", "NFE", "generation_sample", "metric", "attempted_iteration"]
+  },
+  "training": {
+    "dataset": "canonical CIFAR-10 32x32",
+    "q": 256,
+    "mapping": "official_sigmoid",
+    "stage": 0,
+    "double_ticks": 10000,
+    "architecture": "ddpmpp",
+    "precondition": "ect",
+    "optimizer": {"name": "RAdam", "lr": 0.0001, "betas": [0.9, 0.999], "eps": 1e-8, "weight_decay": 0},
+    "global_batch": 128,
+    "batch_gpu": 16,
+    "dropout": 0.2,
+    "augment": 0,
+    "xflip": false,
+    "ema_beta": 0.9993,
+    "fp16": true,
+    "amp": true,
+    "tf32": false,
+    "deterministic_algorithms": true,
+    "cudnn_benchmark": false,
+    "cublas_workspace_config": ":4096:8",
+    "stop_clock": "attempted_iterations_and_processed_nimg_not_successful_steps",
+    "objective_A": {"target_gap_scale": 1.0, "denominator_gap_scale": 1.0},
+    "objective_B": {"target_gap_scale": 1.1, "denominator_gap_scale": 1.1},
+    "trajectory": {
+      "source": {"start": "canonical_transfer", "objective": "B", "end_kimg": 384},
+      "Early-switch": [
+        {"start_kimg": 384, "end_kimg": 512, "objective": "A"},
+        {"start_kimg": 512, "end_kimg": 640, "objective": "A"}
+      ],
+      "Late-switch": [
+        {"start_kimg": 384, "end_kimg": 512, "objective": "B"},
+        {"start_kimg": 512, "end_kimg": 640, "objective": "A"}
+      ]
+    },
+    "immutable_artifacts": {
+      "source": ["384_kimg_full_state"],
+      "branches": ["512_kimg_full_state", "512_kimg_ema_snapshot", "640_kimg_full_state", "640_kimg_ema_snapshot"]
+    },
+    "full_state_fields": [
+      "online_parameters", "EMA", "RAdam_m_v_step", "GradScaler", "RNG_states",
+      "sampler_state", "data_cursor", "attempted_iteration",
+      "successful_optimizer_steps", "cur_nimg", "trajectory_configuration"
+    ],
+    "formal_telemetry": "lean_existing_strict_factorial_no_P0_noise_dropout_hashing"
+  },
+  "gpu_schedule": {
+    "gpu0_seeds": [19, 20, 21, 22, 23],
+    "gpu1_seeds": [24, 25, 26, 27, 28],
+    "same_seed_source_and_branches_same_physical_gpu": true,
+    "same_seed_branches_concurrent": false,
+    "odd_seed_order": ["Early-switch", "Late-switch"],
+    "even_seed_order": ["Late-switch", "Early-switch"],
+    "exclusive_gpu": "preferred; user explicitly authorized cotenancy on 2026-08-31 when the frozen configuration still fits unchanged",
+    "existing_output_policy": "FAIL_CLOSED_NO_APPEND_NO_OVERWRITE"
+  },
+  "engineering_gates": [
+    "source_identity",
+    "segmented_resume_computational_state_match",
+    "matched_minibatch_t_noise_dropout_tape_on_nonformal_seed18",
+    "512_rng_sampler_cursor_attempt_match",
+    "both_512_to_640_objective_A",
+    "exact_resume_immutable_milestone_factorial_P0_schedule_switch_regressions",
+    "P2_tests",
+    "python_compile_shell_syntax_git_diff_check_full_suite",
+    "clean_protocol_bound_execution_commit"
+  ],
+  "evaluation": {
+    "start_gate": "20_OF_20_BRANCHES_AND_TRAINING_INTEGRITY_PASS",
+    "matrix": [
+      {"nfe": 1, "budgets_kimg": [512, 640]},
+      {"nfe": 2, "budgets_kimg": [640], "mid_t": 0.821}
+    ],
+    "branches": ["Early-switch", "Late-switch"],
+    "seeds": [19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    "job_count": 60,
+    "precision": "FP32",
+    "samples_per_job": 50000,
+    "generation_seeds": {"start": 0, "end": 49999},
+    "metric_seed": 20260730,
+    "metrics": ["FID50k", "KID50k"],
+    "shared_generated_features_per_job": true,
+    "hash_binding": ["checkpoint", "evaluator_commit", "evaluator_code", "feature_detector", "real_features", "dataset", "runtime_sif", "protocol"],
+    "blinding": "NO_NUMERIC_RESULTS_OR_SUMMARY_UNTIL_ALL_60_SEALED_PASS",
+    "forbidden": ["5k_proxy", "checkpoint_selection", "extra_NFE", "post_hoc_1024_extension"]
+  },
+  "statistics": {
+    "Y": "log(FID50k_NFE1)",
+    "D512": "Y_Late_512_minus_Y_Early_512",
+    "D640": "Y_Late_640_minus_Y_Early_640",
+    "J": "D640_minus_D512",
+    "delta": "log(1.03)",
+    "confidence_intervals": "two_sided_one_sample_t_df9",
+    "reports": ["paired_mean", "median", "sample_SD", "95pct_CI", "90pct_CI", "exact_two_sided_sign_flip", "direction_counts", "leave_one_seed_out_means", "all_seed_values"],
+    "MATERIAL": "95pct_CI_entirely_outside_plus_or_minus_delta_AND_at_least_8_of_10_same_direction_AND_leave_one_seed_out_mean_never_changes_sign",
+    "EQUIVALENT": "TOST_alpha_0.05_equivalently_90pct_CI_entirely_inside_plus_or_minus_delta",
+    "otherwise": "UNRESOLVED",
+    "primary": "D640",
+    "primary_success": "MATERIAL_D640",
+    "informative_null": "EQUIVALENT_D640",
+    "inconclusive": "neither_MATERIAL_nor_EQUIVALENT_D640",
+    "ordinary_checkpoint_quality_carryover": "MATERIAL_D512_AND_MATERIAL_D640_same_sign_AND_EQUIVALENT_J",
+    "delayed_emergent_carryover": "EQUIVALENT_D512_AND_MATERIAL_D640",
+    "chase_modified_contrast": "MATERIAL_D640_AND_MATERIAL_J",
+    "amplification": "chase_modified_AND_J_same_sign_as_D640_AND_gap_increases",
+    "mechanism_cannot_rescue_primary": true,
+    "NFE2_and_KID_secondary_cannot_rescue_primary": true,
+    "ordinary_p_greater_0.05_is_not_no_effect": true
+  },
+  "failure_and_rerun": {
+    "interim_FID_KID": "FORBIDDEN",
+    "result_driven_changes": "FORBIDDEN",
+    "infrastructure_failure": "retain_failure_receipt_and_only_exact_same_seed_cell_config_rerun",
+    "numerical_divergence_NaN_scientific_AMP_skip_difference": "RESULT_NOT_REPLACEMENT_REASON",
+    "additional_arms_or_schedules": "FORBIDDEN"
+  }
+}

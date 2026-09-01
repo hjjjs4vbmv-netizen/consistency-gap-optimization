@@ -1,0 +1,1303 @@
+{
+  "dataset": {
+    "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+    "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+  },
+  "evaluator": {
+    "code_sha256": {
+      "ct_eval.py": "40da14c579529b90a1ca5f4c880f063e831d654803512db0c87a9f434288daa9",
+      "metrics/frechet_inception_distance.py": "efab16b0e42ea551fd9141dd80750075425429771ed85b4200fc1da97b018ecc",
+      "metrics/kernel_inception_distance.py": "cb9456b183bfa40b098dfc13720d27f95d29a2ebfddc9fc537165b5a02655248",
+      "metrics/metric_utils.py": "b872bce749e6fc9cdfd771d944d0cb7c19d4ee217643d773ba92dca2fab2cc47"
+    },
+    "commit": "8741ca4d494fc124f10d05aaab9d93243003b9b7",
+    "repo": "/data/temp/ECT001/q256-p2-b384-pulse-chase-v1-0309cac"
+  },
+  "feature_detector": {
+    "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v3/evaluator_cache/downloads/a866f8d678872dcf6fcf60ddd09807ab_https___nvlabs-fi-cdn.nvidia.com_stylegan2-ada-pytorch_pretrained_metrics_inception-2015-12-05.pt",
+    "sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4"
+  },
+  "job_count": 60,
+  "jobs": [
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed19/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "9ec58513e10cec71744f0ca5e9f4a3dc533934e813696ebb591b5545932d95ef",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 0,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 19,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed19/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "f73463ec5ac68d3442975f0453dabdfef50238677f2c724a7768104034cd4a1d",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 1,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 19,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed19/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "f73463ec5ac68d3442975f0453dabdfef50238677f2c724a7768104034cd4a1d",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 2,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 19,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed19/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "4b39dda376d06bd078b15aaa77310724ca524a8065b83c61c1f829f3d10f7309",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 3,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 19,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed19/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "90bc5d2520f3b6e88e83fd74d50c17b32976bd7b0c2a803725571c921b4e32e4",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 4,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 19,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed19/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "90bc5d2520f3b6e88e83fd74d50c17b32976bd7b0c2a803725571c921b4e32e4",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 5,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 19,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed20/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "83883fbe420c823e0cf5e35181b82fe27e8ffe80bcf4119d267544a802bb52ea",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 6,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 20,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed20/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "4285012aed6f38a0b8ea67cc5f72edb1c9ab250b326fb51c774e7ef9ecc945da",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 7,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 20,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed20/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "4285012aed6f38a0b8ea67cc5f72edb1c9ab250b326fb51c774e7ef9ecc945da",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 8,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 20,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed20/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "2aa50da737eba18252d1c9faefceba1b04402d71000d1f82eadfbc7d302b7df9",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 9,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 20,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed20/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "8d751627fd218c2b6e013a99ef55b09dd985cb5ad11fc58f1238f13224454004",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 10,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 20,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed20/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "8d751627fd218c2b6e013a99ef55b09dd985cb5ad11fc58f1238f13224454004",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 11,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 20,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed21/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "aefaba2d81576bd03e93d765c882be8193527e05025cf0cca42a53b6bf682c29",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 12,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 21,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed21/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "e541f56b4c97d2f1d4bfabad47d49352396ea0092c175811de4d85affa2022c8",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 13,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 21,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed21/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "e541f56b4c97d2f1d4bfabad47d49352396ea0092c175811de4d85affa2022c8",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 14,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 21,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed21/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "e5c35c37ffe44ba77753beaf171cc2b0aef6777be6010a073fab612395975797",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 15,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 21,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed21/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "fc05d11e772fb864fdd836bdfa3724b2de79978718f57766eeb044ab6ad60f6e",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 16,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 21,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed21/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "fc05d11e772fb864fdd836bdfa3724b2de79978718f57766eeb044ab6ad60f6e",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 17,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 21,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed22/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "66ea0eeacc9067b187a4b79a7094cde1679acc04f3c1706e71fd60ff2ddfae7a",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 18,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 22,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed22/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "5e7c6448763554161353611fd61d5f1a9ef72494dcb0e1427c38576b57c10ffd",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 19,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 22,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed22/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "5e7c6448763554161353611fd61d5f1a9ef72494dcb0e1427c38576b57c10ffd",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 20,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 22,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed22/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "b0133e6bffeefe05091c87dc5980f9b3c3cae7812c608f8762025f4496e519b4",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 21,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 22,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed22/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "27c0ba0b9b6f810dc0b710027735b158b112043ba6ef5d489d8b28a30c38e4cf",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 22,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 22,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed22/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "27c0ba0b9b6f810dc0b710027735b158b112043ba6ef5d489d8b28a30c38e4cf",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 23,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 22,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed23/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "b6bd57963efa21158c200c2835baa9c892337e013e94bf81a7773f5af58e427b",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 24,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 23,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed23/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "24b242f36321fd08824dfa01b248087cf1648221fe4d993920de2f411c9c7503",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 25,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 23,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed23/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "24b242f36321fd08824dfa01b248087cf1648221fe4d993920de2f411c9c7503",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 26,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 23,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed23/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "45542bc1447a60c9b75fb32afe3e80d3a3b07ffe9a0244f36c89169b0971b1af",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 27,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 23,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed23/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "2e8d95832c53860b4f4c91273b4956e67dd724e06f87894bc5f519f2f72037c0",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 28,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 23,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed23/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "2e8d95832c53860b4f4c91273b4956e67dd724e06f87894bc5f519f2f72037c0",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 29,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 23,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed24/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "56b81c2d349fd79ad5ef4d35a1d87d3c5051a4d3fd20653ad10890db12643c6d",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 30,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 24,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed24/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "86f4de56bb64264ceb942d142dd8b7655c7f3827eb02d253ad338f0dfa61bd80",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 31,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 24,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed24/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "86f4de56bb64264ceb942d142dd8b7655c7f3827eb02d253ad338f0dfa61bd80",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 32,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 24,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed24/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "7cb51caca237ef7f406deb6e30422e800f4dd22c7b60877c85afb19e6f1da045",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 33,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 24,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed24/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "641254d3a537395174dc9f06ddbf9ac06f07a772690e4e62fd9ea1ff1e66f084",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 34,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 24,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed24/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "641254d3a537395174dc9f06ddbf9ac06f07a772690e4e62fd9ea1ff1e66f084",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 35,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 24,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed25/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "2f43c74ee8800e9ee7655f061011ec5a97066bbffa7548bd8d306ab7bd42500f",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 36,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 25,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed25/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "f61a7b952ddadf998eb96cffae167653f40ba539e554fda19c33abe90279f58a",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 37,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 25,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed25/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "f61a7b952ddadf998eb96cffae167653f40ba539e554fda19c33abe90279f58a",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 38,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 25,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed25/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "07cfb66bcfab40c8ba10a5956d4dc1c9def9d2bff119b3b4609f4e263040158e",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 39,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 25,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed25/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "d627bac7e434fced53095597e076e89b1a0b604694765fb817d4d3c85afe4b0c",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 40,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 25,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed25/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "d627bac7e434fced53095597e076e89b1a0b604694765fb817d4d3c85afe4b0c",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 41,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 25,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed26/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "0ee01bd84301c4f7a9855215b7fd079524e0b8acbe766e00d0f0ff9ed6b1f73f",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 42,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 26,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed26/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "9d7796698441eda984e382e64bfdc065211b908cecd5bec566554440f2c60c6a",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 43,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 26,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed26/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "9d7796698441eda984e382e64bfdc065211b908cecd5bec566554440f2c60c6a",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 44,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 26,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed26/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "87015825c27379290a40b6443f3ab8b38f4ded0fe1c56c9e335ef7b293137181",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 45,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 26,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed26/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "5291754e51c55fbfc027376fc3fef950bf0ed20e1415c78ead789f2ce312dfff",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 46,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 26,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed26/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "5291754e51c55fbfc027376fc3fef950bf0ed20e1415c78ead789f2ce312dfff",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 47,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 26,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed27/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "73b9f2daa8ccc28fbdcf77398ceef6089eccf879412f0a04e7c6b3c7edece2ef",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 48,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 27,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed27/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "b4e2955660ca4cd21d2f830c69ee06016edad6bcb0191ef2c3081ca728e3d9f7",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 49,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 27,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed27/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "b4e2955660ca4cd21d2f830c69ee06016edad6bcb0191ef2c3081ca728e3d9f7",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 50,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 27,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed27/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "761441d1b80295f197176c9e09812714098352281fb68c9eb3ea743ee25c4395",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 51,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 27,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed27/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "1fc58dd514ee6235deb9e66b7e9cdb1fc5c858f4250d2235d7aac8ad91ae012c",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 52,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 27,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed27/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "1fc58dd514ee6235deb9e66b7e9cdb1fc5c858f4250d2235d7aac8ad91ae012c",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 53,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 27,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed28/Early-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "9b0e03ea9e0b1eb13b62e2712fa3b147b82971043a5b0471c782f726a5153290",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 54,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 28,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed28/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "8b39df4365e2d4f77b10f737dbac426e4638e5fb4e85581558864b0f6e10c44f",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 55,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 28,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Early-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed28/Early-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "8b39df4365e2d4f77b10f737dbac426e4638e5fb4e85581558864b0f6e10c44f",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 56,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 28,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 512,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed28/Late-switch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "07be5b268d636a3696025ab7a77aed4aa72e9fcc30ada751ac01081ed01f97b9",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 57,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 28,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed28/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "d81d5868d9ec09105a5e20b853586393f248fcd1597d29cf02475dee03024731",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 58,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": null,
+      "nfe": 1,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 28,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    },
+    {
+      "branch": "Late-switch",
+      "budget_kimg": 640,
+      "checkpoint_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/seeds/seed28/Late-switch/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "d81d5868d9ec09105a5e20b853586393f248fcd1597d29cf02475dee03024731",
+      "generation_seed_end": 49999,
+      "generation_seed_start": 0,
+      "job_index": 59,
+      "metric_seed": 20260730,
+      "metrics_in_order": [
+        "kid50k_full",
+        "fid50k_full"
+      ],
+      "mid_t": 0.821,
+      "nfe": 2,
+      "precision": "fp32",
+      "sample_count": 50000,
+      "seed": 28,
+      "shared_generated_features_required": true,
+      "status": "FROZEN_NOT_RUN"
+    }
+  ],
+  "protocol_sha256": "2791223f6195d565a4f1c63758dfc91f62c4c91c6d0951304c96aa5eb9a33366",
+  "real_features": {
+    "fid50k_full": {
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v3/evaluator_cache/gan-metrics/cifar10-32x32-canonical-08c9ed1b2b1c-inception-2015-12-05-aad45a63395a8faeaad423fdcda71cb1.pkl",
+      "sha256": "7c40fa0d3ddd7f13c249dd6ef01a95fa2c5d49177a6556ef04a237e8202863de"
+    },
+    "kid50k_full": {
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-feature-reuse-primary-first-v3/evaluator_cache/gan-metrics/cifar10-32x32-canonical-08c9ed1b2b1c-inception-2015-12-05-0fa1f5d271a9ae22be4cfe13dcd2bb5d.pkl",
+      "sha256": "8478c50d243e9876a4e82d71feb0a8420036bdc16f7962fba1511d24e4a7cfde"
+    }
+  },
+  "results_unviewed": true,
+  "runtime_sif": {
+    "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runtime/ect-pytorch2401-deterministic.sif",
+    "sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea"
+  },
+  "schema": "ect.q256.p2-frozen-evaluation-manifest/v1",
+  "status": "FROZEN_NOT_RUN",
+  "training_integrity_path": "/data/raw/ECT/ect_runs/q256-p2-b384-pulse-chase-v1-formal-20260901-rerun3/training/training_integrity_report.json",
+  "training_integrity_sha256": "64aceae4d39139f15477b18af00c609e840b4e5b4dcf23857086200684e7109f"
+}

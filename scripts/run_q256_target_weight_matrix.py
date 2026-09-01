@@ -2875,12 +2875,14 @@ def validate_resume(
         fail("--outdir must be the exact parent directory of --resume")
     manifest_path = run_dir / "launch_manifest.json"
     manifest = _load_json(manifest_path, "original launch manifest")
+    manifest_run_directory = manifest.get("run_directory")
     if (
         manifest.get("schema") != LAUNCH_SCHEMA
         or manifest.get("experiment_id") != EXPERIMENT_ID
         or manifest.get("launch_kind") != "fresh_transfer"
         or manifest.get("status") != "authorized_to_start"
-        or manifest.get("run_directory") != str(run_dir)
+        or not isinstance(manifest_run_directory, str)
+        or Path(manifest_run_directory).resolve(strict=True) != run_dir
         or manifest.get("resume_state") is not None
         or manifest.get("resume_state_sha256") is not None
         or manifest.get("validated_planned_pause_completion") is not None
@@ -4202,9 +4204,12 @@ def validate_preserved_planned_pause_evidence(
     ):
         fail("exact-resume pause evidence manifest hash is stale")
     manifest = _load_json(manifest_path, "exact-resume pause evidence manifest")
+    manifest_run_directory = manifest.get("run_directory")
     if (
         manifest.get("schema") != PLANNED_PAUSE_EVIDENCE_SCHEMA
-        or manifest.get("run_directory") != str(run_dir.resolve(strict=True))
+        or not isinstance(manifest_run_directory, str)
+        or Path(manifest_run_directory).resolve(strict=True)
+        != run_dir.resolve(strict=True)
         or manifest.get("planned_pause_completion_sha256")
         != evidence.get("planned_pause_completion_sha256")
     ):
@@ -5416,7 +5421,12 @@ def validate_existing_runner_completion(run_dir: Path) -> dict[str, object]:
     launch_manifest = _load_json(
         resolved_files["launch_manifest"], "runner-bound launch manifest"
     )
-    if launch_manifest.get("run_directory") != str(run_dir.resolve(strict=True)):
+    launch_run_directory = launch_manifest.get("run_directory")
+    if (
+        not isinstance(launch_run_directory, str)
+        or Path(launch_run_directory).resolve(strict=True)
+        != run_dir.resolve(strict=True)
+    ):
         fail("runner-bound launch manifest targets another run directory")
     launch_gpu = launch_manifest.get("gpu")
     if not isinstance(launch_gpu, dict) or launch_gpu.get("uuid") != record.get(
@@ -5481,10 +5491,13 @@ def validate_exact_resume_provenance(
     uninterrupted_manifest = _load_json(
         uninterrupted_manifest_path, "uninterrupted launch manifest"
     )
+    uninterrupted_manifest_run_dir = uninterrupted_manifest.get("run_directory")
     if (
         uninterrupted_manifest.get("schema") != LAUNCH_SCHEMA
         or uninterrupted_manifest.get("launch_kind") != "fresh_transfer"
-        or uninterrupted_manifest.get("run_directory") != str(uninterrupted_dir)
+        or not isinstance(uninterrupted_manifest_run_dir, str)
+        or Path(uninterrupted_manifest_run_dir).resolve(strict=True)
+        != uninterrupted_dir
         or uninterrupted_manifest.get("training") != expected_training
         or uninterrupted_manifest.get("gate_control") != none_gate
         or uninterrupted_manifest.get("resume_state") is not None
@@ -5517,10 +5530,12 @@ def validate_exact_resume_provenance(
     original_manifest = _load_json(
         original_manifest_path, "planned exact-resume original launch manifest"
     )
+    original_manifest_run_dir = original_manifest.get("run_directory")
     if (
         original_manifest.get("schema") != LAUNCH_SCHEMA
         or original_manifest.get("launch_kind") != "fresh_transfer"
-        or original_manifest.get("run_directory") != str(resumed_dir)
+        or not isinstance(original_manifest_run_dir, str)
+        or Path(original_manifest_run_dir).resolve(strict=True) != resumed_dir
         or original_manifest.get("training") != expected_training
         or original_manifest.get("gate_control") != pause_gate
         or original_manifest.get("resume_state") is not None
@@ -5589,17 +5604,22 @@ def validate_exact_resume_provenance(
     original_manifest_sha = sha256_file(original_manifest_path)
     expected_resume_state = evidence_validation["resume_state"]
     expected_resume_state_sha = evidence_validation["resume_state_sha256"]
+    resume_manifest_run_directory = resume_manifest.get("run_directory")
+    resume_manifest_state = resume_manifest.get("resume_state")
     if (
         resume_manifest.get("schema") != LAUNCH_SCHEMA
         or resume_manifest.get("launch_kind") != "resume"
         or resume_manifest.get("status") != "authorized_to_start"
-        or resume_manifest.get("run_directory") != str(resumed_dir)
+        or not isinstance(resume_manifest_run_directory, str)
+        or Path(resume_manifest_run_directory).resolve(strict=True) != resumed_dir
         or resume_manifest.get("training") != expected_training
         or resume_manifest.get("gate_control") != none_gate
         or resume_manifest.get("original_gate_control") != pause_gate
         or resume_manifest.get("original_launch_manifest_sha256")
         != original_manifest_sha
-        or resume_manifest.get("resume_state") != expected_resume_state
+        or not isinstance(resume_manifest_state, str)
+        or Path(resume_manifest_state).resolve(strict=True)
+        != Path(expected_resume_state).resolve(strict=True)
         or resume_manifest.get("resume_state_sha256") != expected_resume_state_sha
     ):
         fail("exact-resume launch manifest does not close the pause-to-resume chain")
@@ -5626,11 +5646,13 @@ def validate_exact_resume_provenance(
         python_bin=DEFAULT_TRAINING_PYTHON,
         data=Path(str(assets["dataset"].get("resolved_path"))),
         transfer=Path(str(assets["transfer"].get("resolved_path"))),
-        outdir=resumed_dir,
+        # Preserve the manifest's lexical path spelling after its resolved
+        # identity was verified above (macOS /var -> /private/var, etc.).
+        outdir=Path(resume_manifest_run_directory),
         phase="smoke",
         arm=arm,
         seed=seed,
-        resume=Path(expected_resume_state),
+        resume=Path(resume_manifest_state),
         runtime_command=runtime_command,
     )
     if (
