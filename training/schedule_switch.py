@@ -16,6 +16,9 @@ SEED3_7_PROTOCOL = "q256_ab_crossed_switch_seed3_7_v1"
 SEED3_7_PROTOCOL_V2 = "q256_ab_crossed_switch_seed3_7_v2"
 SEED3_7_PROTOCOL_V3 = "q256_ab_crossed_switch_seed3_7_v3"
 FRESH_N12_PROTOCOL = "q256_fresh_crossed_switch_n12_matpool_v1"
+FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL = (
+    "q256_fresh_crossed_switch_n12_matpool_numeric_recovery_v2"
+)
 FRESH_N12_ENGINEERING_PROTOCOL = (
     "q256_fresh_crossed_switch_n12_matpool_engineering_v1"
 )
@@ -25,6 +28,7 @@ SUPPORTED_PROTOCOL_SEEDS = {
     SEED3_7_PROTOCOL_V2: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V3: tuple(range(3, 8)),
     FRESH_N12_PROTOCOL: tuple(range(31, 43)),
+    FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL: (38,),
     FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
 }
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
@@ -100,7 +104,9 @@ def load_run_manifest(path: str) -> dict:
     _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
     if run_kind == "parity":
         branches = PARITY_BRANCHES
-    elif experiment_protocol == FRESH_N12_PROTOCOL:
+    elif experiment_protocol in {
+        FRESH_N12_PROTOCOL, FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
+    }:
         branches = CROSSED_BRANCHES
     else:
         branches = FORMAL_BRANCHES
@@ -113,6 +119,17 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch continuation arm mismatch")
     _require(manifest.get("seed") in SUPPORTED_PROTOCOL_SEEDS[experiment_protocol],
              "schedule-switch seed is outside the frozen protocol cohort")
+    if experiment_protocol == FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL:
+        _require(branch in {"AA", "AB"},
+                 "numeric recovery v2 is restricted to missing seed38 A-origin cells")
+        amendment = manifest.get("numeric_recovery_v2")
+        _require(isinstance(amendment, dict),
+                 "numeric recovery v2 requires an amendment binding")
+        _require(amendment.get("max_recoverable_nonfinite_loss_attempts") == 1,
+                 "numeric recovery v2 permits exactly one managed loss overflow")
+        for name in ("authorization_sha256", "failed_compute_receipt_sha256"):
+            _require(_HEX64.fullmatch(str(amendment.get(name, ""))) is not None,
+                     f"numeric recovery v2 invalid {name}")
     _require(manifest.get("switch_kimg") == SWITCH_KIMG,
              "schedule-switch point must be 512 kimg")
     expected_final = 640 if run_kind == "parity" else 1024
@@ -165,7 +182,7 @@ def continuation_factorial(manifest: dict) -> dict:
 
 def state_metadata(manifest: dict) -> dict:
     source = manifest["source_state"]
-    return {
+    metadata = {
         "schema": STATE_SCHEMA,
         "experiment_protocol": manifest["experiment_protocol"],
         "run_kind": manifest["run_kind"],
@@ -184,6 +201,11 @@ def state_metadata(manifest: dict) -> dict:
         "protocol_sha256": manifest["protocol_sha256"],
         "implementation_commit": manifest["implementation_commit"],
     }
+    if manifest["experiment_protocol"] == FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL:
+        metadata["numeric_recovery_v2"] = copy.deepcopy(
+            manifest["numeric_recovery_v2"]
+        )
+    return metadata
 
 
 def verify_resume_state_file(path: str, manifest: dict) -> None:

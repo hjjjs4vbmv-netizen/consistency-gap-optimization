@@ -32,7 +32,8 @@ def verify_artifact(record: dict) -> None:
         raise RuntimeError(f"artifact SHA256 failure: {path}")
 
 
-def telemetry_integrity(path: Path, first_attempt: int, last_attempt: int) -> dict:
+def telemetry_integrity(path: Path, first_attempt: int, last_attempt: int,
+                        *, allow_numeric_recovery_v2: bool = False) -> dict:
     with path.open("rt", newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     attempts = [int(float(row["attempted_iteration"])) for row in rows]
@@ -42,26 +43,53 @@ def telemetry_integrity(path: Path, first_attempt: int, last_attempt: int) -> di
                         "model_nonfinite_count", "ema_nonfinite_count",
                         "factor_nonfinite_count", "nonpositive_denominator_count")
     totals = {field: sum(int(float(row[field])) for row in rows) for field in nonfinite_fields}
-    if any(totals.values()):
+    managed_rows = [row for row in rows if int(float(row["loss_nonfinite_count"]))]
+    managed_ok = bool(
+        allow_numeric_recovery_v2
+        and len(managed_rows) == 1
+        and totals["loss_nonfinite_count"] == 1
+        and not any(value for key, value in totals.items()
+                    if key != "loss_nonfinite_count")
+        and int(float(managed_rows[0]["raw_grad_nonfinite_count"])) > 0
+        and int(float(managed_rows[0]["sanitized_grad_nonfinite_count"])) == 0
+        and str(managed_rows[0]["step_skipped"]).strip().lower() in {"1", "true"}
+        and float(managed_rows[0]["update_norm"]) == 0
+        and float(managed_rows[0]["grad_scale_after"])
+        < float(managed_rows[0]["grad_scale_before"])
+    )
+    if any(totals.values()) and not managed_ok:
         raise RuntimeError(f"scientific nonfinite instability in {path}: {totals}")
     return {"attempts": len(rows),
             "final_successful_optimizer_steps": int(float(rows[-1]["successful_optimizer_steps"])),
             "amp_skips": sum(str(row["step_skipped"]).strip().lower() in {"1", "true"}
                              for row in rows),
-            "nonfinite_totals": totals}
+            "nonfinite_totals": totals,
+            "amp_managed_loss_overflows": len(managed_rows) if managed_ok else 0}
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--numeric-recovery2-authorization", type=Path)
     args = parser.parse_args()
     protocol_path = args.protocol.resolve(strict=True)
     protocol = experiment.load_json(protocol_path)
     experiment.validate_protocol(protocol, protocol_path)
     root = Path(protocol["paths"]["formal_output_root"])
     protocol_sha = experiment.sha256_file(protocol_path)
-    checked(root / "training_matrix_completion_receipt.json")
+    matrix = checked(root / "training_matrix_completion_receipt.json")
+    numeric_authorization = None
+    if matrix.get("manual_recovery_count") == 2:
+        if args.numeric_recovery2_authorization is None:
+            raise RuntimeError("numeric recovery v2 matrix requires its authorization")
+        numeric_authorization_path = args.numeric_recovery2_authorization.resolve(strict=True)
+        numeric_authorization = experiment.load_json(numeric_authorization_path)
+        if (numeric_authorization.get("status") != "AUTHOR_APPROVED"
+                or numeric_authorization.get("protocol_sha256") != protocol_sha
+                or matrix.get("numeric_recovery_v2_authorization_sha256")
+                != experiment.sha256_file(numeric_authorization_path)):
+            raise RuntimeError("numeric recovery v2 authorization mismatch")
     prefixes = suffixes = b384 = source512 = suffix_final_states = 0
     matched_prefix = matched_suffix = source_identity = 0
     records = []
@@ -115,7 +143,27 @@ def main() -> int:
         suffix_sampler = []
         for cell, (origin, _) in experiment.CELLS.items():
             run = seed_root / cell
-            manifest = experiment.load_json(run / "formal_run_manifest.json")
+            manifest_path = run / "formal_run_manifest.json"
+            manifest = experiment.load_json(manifest_path)
+            is_numeric_v2 = (
+                seed == 38 and cell in {"AA", "AB"}
+                and numeric_authorization is not None
+            )
+            expected_experiment_protocol = (
+                experiment.schedule_switch.FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
+                if is_numeric_v2
+                else experiment.schedule_switch.FRESH_N12_PROTOCOL
+            )
+            if manifest.get("experiment_protocol") != expected_experiment_protocol:
+                raise RuntimeError(f"suffix experiment protocol mismatch: seed{seed}/{cell}")
+            if is_numeric_v2:
+                binding = manifest.get("numeric_recovery_v2", {})
+                if (binding.get("authorization_sha256")
+                        != experiment.sha256_file(args.numeric_recovery2_authorization)
+                        or binding.get("failed_compute_receipt_sha256")
+                        != numeric_authorization.get("failed_compute_receipt_sha256")
+                        or binding.get("max_recoverable_nonfinite_loss_attempts") != 1):
+                    raise RuntimeError(f"numeric recovery v2 manifest mismatch: seed{seed}/{cell}")
             source_path = Path(manifest["source_state"]["path"])
             if (manifest.get("protocol_sha256") != protocol_sha
                     or manifest["source_state"]["sha256"] != sources[origin]["training_state"]["sha256"]
@@ -124,7 +172,13 @@ def main() -> int:
             source_identity += 1
             suffix_source = checked(run / "source_state_receipt.json")
             seed_telemetry[cell] = telemetry_integrity(
-                run / "schedule_switch_training_telemetry_v1.csv", 4001, 8000)
+                run / "schedule_switch_training_telemetry_v1.csv", 4001, 8000,
+                allow_numeric_recovery_v2=is_numeric_v2)
+            if (seed == 38 and cell == "AB" and is_numeric_v2
+                    and seed_telemetry[cell]["amp_managed_loss_overflows"] != 1):
+                raise RuntimeError(
+                    "seed38/AB did not exactly reproduce its single managed overflow"
+                )
             if suffix_source.get("source_state", {}).get("sha256") != sources[origin]["training_state"]["sha256"]:
                 raise RuntimeError(f"suffix source receipt mismatch: seed{seed}/{cell}")
             checked(run / "preparation_receipt.json")
@@ -176,7 +230,10 @@ def main() -> int:
         "schema": "ect.q256.fresh-crossed-switch-training-integrity/v1", "status": "PASS",
         "protocol_sha256": protocol_sha, "counts": counts, "expected": expected,
         "same_origin_source_identity": "PASS", "matched_randomness": "PASS",
-        "scientific_nonfinite_instability": "ABSENT",
+        "scientific_nonfinite_instability": (
+            "ONE_AMP_MANAGED_LOSS_OVERFLOW_ALLOWED_BY_NUMERIC_RECOVERY_V2"
+            if numeric_authorization is not None else "ABSENT"
+        ),
         "per_seed": records,
     }
     experiment.atomic_json(args.output, payload)

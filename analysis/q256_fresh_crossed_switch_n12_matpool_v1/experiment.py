@@ -769,23 +769,28 @@ def compare_tapes(paths: list[Path], labels: list[str], destination: Path,
 
 
 def suffix_manifest(protocol: dict, protocol_path: Path, seed: int, cell: str,
-                    source_receipt: dict, output: Path) -> Path:
+                    source_receipt: dict, output: Path, *,
+                    experiment_protocol: str = schedule_switch.FRESH_N12_PROTOCOL,
+                    implementation_commit: str | None = None,
+                    numeric_recovery_v2: dict | None = None) -> Path:
     origin, continuation = CELLS[cell]
     source = source_receipt["training_state"]
     source_receipt_path = Path(protocol["paths"]["formal_output_root"]) / "training" / f"seed{seed}" / f"prefix_{origin}" / "source_state_receipt.json"
     manifest = {
         "schema": schedule_switch.RUN_MANIFEST_SCHEMA,
-        "experiment_protocol": schedule_switch.FRESH_N12_PROTOCOL,
+        "experiment_protocol": experiment_protocol,
         "run_kind": "formal", "branch": cell, "seed": seed,
         "origin_arm": origin, "continuation_arm": continuation,
         "switch_kimg": 512, "final_kimg": 1024,
         "protocol_sha256": sha256_file(protocol_path),
-        "implementation_commit": protocol["implementation_commit"],
+        "implementation_commit": implementation_commit or protocol["implementation_commit"],
         "source_checkpoint_manifest_sha256": sha256_file(source_receipt_path),
         "source_state": source,
         "source_history_prefix": prepare_resume_history(source_receipt_path.parent, output),
         "immutable_output_root": str(output),
     }
+    if numeric_recovery_v2 is not None:
+        manifest["numeric_recovery_v2"] = numeric_recovery_v2
     path = output / "formal_run_manifest.json"
     atomic_json(path, manifest)
     atomic_json(output / "source_state_receipt.json", {
@@ -1016,6 +1021,178 @@ def recovery_launch(args: argparse.Namespace) -> None:
     print(json.dumps(receipt, sort_keys=True))
 
 
+def directory_manifest(root: Path) -> list[dict]:
+    if not root.is_dir() or root.is_symlink():
+        raise RuntimeError(f"regular directory required: {root}")
+    records = []
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            raise RuntimeError(f"archive refuses symlink: {path}")
+        if path.is_file():
+            records.append({"path": str(path.relative_to(root)),
+                            "bytes": path.stat().st_size,
+                            "sha256": sha256_file(path)})
+    return records
+
+
+def authorize_numeric_recovery2(args: argparse.Namespace) -> None:
+    protocol_path = args.protocol.resolve(strict=True)
+    validate_protocol(load_json(protocol_path), protocol_path)
+    protocol_sha = sha256_file(protocol_path)
+    matrix_path = args.recovery1_failure.resolve(strict=True)
+    matrix = load_json(matrix_path)
+    if (matrix.get("status") != "FAIL" or matrix.get("protocol_sha256") != protocol_sha
+            or matrix.get("manual_recovery_count") != 1
+            or matrix.get("automatic_retry_count") != 0
+            or matrix.get("completed_seed_receipts") != 11):
+        raise RuntimeError("numeric recovery v2 requires the completed recovery1 FAIL receipt")
+    failed_path = args.failed_compute.resolve(strict=True)
+    failed = load_json(failed_path)
+    if (failed.get("status") != "FAIL" or failed.get("label") != "seed38:AB"
+            or failed.get("exit_code") != 1 or failed.get("hard_timeout") is not False):
+        raise RuntimeError("numeric recovery v2 requires the exact seed38/AB failure")
+    if not HEX40.fullmatch(args.repair_commit):
+        raise RuntimeError("invalid numeric recovery v2 repair commit")
+    output_root = Path(load_json(protocol_path)["paths"]["formal_output_root"])
+    archive_root = output_root / "archive" / "manual-recovery-2"
+    archive_run = archive_root / "seed38_AB_failed_attempt1"
+    if archive_run.exists():
+        raise RuntimeError("numeric recovery v2 archive target already exists")
+    archived_matrix = archive_root / "training_matrix_recovery1_completion_receipt.json"
+    archive_root.mkdir(parents=True, exist_ok=True)
+    copy_exclusive(matrix_path, archived_matrix)
+    atomic_json(args.destination.resolve(), {
+        "schema": "ect.q256.fresh-crossed-switch-numeric-recovery-v2-authorization/v1",
+        "status": "AUTHOR_APPROVED", "authorized_at": utc_now(),
+        "manual_recovery_index": 2, "automatic_retry_count": 0,
+        "scope": "archive failed seed38/AB; rerun seed38/AB and missing seed38/AA only",
+        "protocol_sha256": protocol_sha, "repair_commit": args.repair_commit,
+        "max_recoverable_nonfinite_loss_attempts_per_cell": 1,
+        "managed_overflow_requirements": {
+            "amp_step_skipped": True, "sanitized_gradients_finite": True,
+            "update_norm_zero": True, "model_and_ema_finite": True,
+            "target_and_denominator_factors_finite": True,
+            "denominator_positive": True,
+        },
+        "recovery1_failure": {"path": str(archived_matrix),
+                              "sha256": sha256_file(archived_matrix)},
+        "failed_compute_receipt_sha256": sha256_file(failed_path),
+        "failed_run_dir": str(failed_path.parent),
+        "archive_run_dir": str(archive_run),
+        "original_failure_must_be_preserved": True,
+        "quality_metrics_observed_before_amendment": False,
+    })
+
+
+def numeric_recovery2(args: argparse.Namespace) -> None:
+    protocol_path = args.protocol.resolve(strict=True)
+    protocol = load_json(protocol_path)
+    validate_protocol(protocol, protocol_path)
+    protocol_sha = sha256_file(protocol_path)
+    authorization_path = args.authorization.resolve(strict=True)
+    authorization = load_json(authorization_path)
+    current_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True).strip()
+    recovery1 = authorization.get("recovery1_failure", {})
+    if (authorization.get("status") != "AUTHOR_APPROVED"
+            or authorization.get("manual_recovery_index") != 2
+            or authorization.get("protocol_sha256") != protocol_sha
+            or authorization.get("repair_commit") != current_commit
+            or authorization.get("max_recoverable_nonfinite_loss_attempts_per_cell") != 1
+            or authorization.get("original_failure_must_be_preserved") is not True
+            or sha256_file(Path(recovery1.get("path", ""))) != recovery1.get("sha256")):
+        raise RuntimeError("numeric recovery v2 authorization binding mismatch")
+    output_root = Path(protocol["paths"]["formal_output_root"])
+    seed_root = output_root / "training" / "seed38"
+    failed_run = Path(authorization["failed_run_dir"])
+    archive_run = Path(authorization["archive_run_dir"])
+    failed_receipt = failed_run / "compute_completion_receipt.json"
+    if sha256_file(failed_receipt) != authorization["failed_compute_receipt_sha256"]:
+        raise RuntimeError("seed38/AB failure changed after authorization")
+    before = directory_manifest(failed_run)
+    archive_run.parent.mkdir(parents=True, exist_ok=True)
+    os.rename(failed_run, archive_run)
+    after = directory_manifest(archive_run)
+    if before != after:
+        raise RuntimeError("failed seed38/AB archive identity mismatch")
+    archive_receipt = archive_run.parent / "seed38_AB_failed_attempt1_archive_receipt.json"
+    atomic_json(archive_receipt, {
+        "schema": "ect.q256.failed-run-archive/v1", "status": "PASS",
+        "archived_at": utc_now(), "source_path": str(failed_run),
+        "archive_path": str(archive_run), "file_count": len(after),
+        "directory_manifest_sha256": canonical_sha256(after),
+        "failed_compute_receipt_sha256": authorization["failed_compute_receipt_sha256"],
+        "protocol_sha256": protocol_sha,
+    })
+    runtime = load_json(Path(protocol["assets"]["runtime_manifest"]["path"]))
+    validate_runtime(runtime)
+    sources = {
+        arm: validate_prefix_source(seed_root / f"prefix_{arm}", 38, arm, protocol_sha)
+        for arm in ("A", "B")
+    }
+    numeric_binding = {
+        "authorization_sha256": sha256_file(authorization_path),
+        "failed_compute_receipt_sha256": authorization["failed_compute_receipt_sha256"],
+        "max_recoverable_nonfinite_loss_attempts": 1,
+    }
+    for cell in ("AB", "AA"):
+        origin, continuation = CELLS[cell]
+        run_dir = seed_root / cell
+        run_dir.mkdir(exist_ok=False)
+        manifest = suffix_manifest(
+            protocol, protocol_path, 38, cell, sources[origin], run_dir,
+            experiment_protocol=(
+                schedule_switch.FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
+            ),
+            implementation_commit=current_commit,
+            numeric_recovery_v2=numeric_binding,
+        )
+        command = training_command(
+            protocol, run_dir, 38, continuation, 1, prefix=False,
+            manifest=manifest, source=Path(sources[origin]["training_state"]["path"]),
+        )
+        run_cell(protocol, run_dir, 1, command, f"seed38:{cell}")
+        subprocess.run(
+            [str(Path(runtime["environment_prefix"]) / "bin" / "python"),
+             str(REPO_ROOT / "analysis/q256_schedule_switch_v1/export_milestones.py"),
+             "--run-dir", str(run_dir), "--manifest", str(manifest)],
+            cwd=REPO_ROOT, env=cell_environment(1, runtime), check=True,
+        )
+        validate_pass_receipt(run_dir / "trajectory_completion_receipt.json", protocol_sha)
+    compare_tapes(
+        [seed_root / cell / "schedule_switch_training_telemetry_v1.csv"
+         for cell in ("AA", "AB", "BA", "BB")],
+        ["AA", "AB", "BA", "BB"],
+        seed_root / "suffix_matched_randomness_receipt.json", protocol_sha,
+        first_attempt=4001, last_attempt=8000,
+    )
+    plan = assignment(38)
+    atomic_json(seed_root / "seed_completion_receipt.json", {
+        "schema": "ect.q256.fresh-crossed-switch-seed-completion/v1",
+        "status": "PASS", "seed": 38, "gpu_index": 1,
+        "gpu_uuid": protocol["gpus"][1]["uuid"],
+        "prefix_order": plan["prefix_order"], "suffix_order": plan["suffix_order"],
+        "protocol_sha256": protocol_sha, "numeric_recovery_v2": numeric_binding,
+    })
+    completed = len(list((output_root / "training").glob("seed*/seed_completion_receipt.json")))
+    if completed != 12:
+        raise RuntimeError(f"numeric recovery v2 completed seed count mismatch: {completed}")
+    receipt = {
+        "schema": "ect.q256.fresh-crossed-switch-training-matrix-completion/v1",
+        "status": "PASS", "ended_at": utc_now(), "worker_failures": [],
+        "completed_seed_receipts": 12, "expected_seed_receipts": 12,
+        "protocol_sha256": protocol_sha, "automatic_retry_count": 0,
+        "manual_recovery_count": 2, "manual_numeric_retry_count": 1,
+        "repair_commit": current_commit,
+        "numeric_recovery_v2_authorization_sha256": sha256_file(authorization_path),
+        "recovery1_failure_receipt_sha256": recovery1["sha256"],
+        "failed_run_archive_receipt_sha256": sha256_file(archive_receipt),
+    }
+    atomic_json(output_root / "training_matrix_recovery2_completion_receipt.json", receipt)
+    atomic_json(output_root / "training_matrix_completion_receipt.json", receipt, overwrite=True)
+    print(json.dumps(receipt, sort_keys=True))
+
+
 def launch(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol = load_json(protocol_path)
@@ -1129,6 +1306,17 @@ def build_parser() -> argparse.ArgumentParser:
     recovery.add_argument("--preflight-receipt", type=Path, required=True)
     recovery.add_argument("--authorization", type=Path, required=True)
     recovery.set_defaults(func=recovery_launch)
+    authorize_v2 = sub.add_parser("authorize-numeric-recovery2")
+    authorize_v2.add_argument("--protocol", type=Path, required=True)
+    authorize_v2.add_argument("--recovery1-failure", type=Path, required=True)
+    authorize_v2.add_argument("--failed-compute", type=Path, required=True)
+    authorize_v2.add_argument("--repair-commit", required=True)
+    authorize_v2.add_argument("--destination", type=Path, required=True)
+    authorize_v2.set_defaults(func=authorize_numeric_recovery2)
+    recovery_v2 = sub.add_parser("numeric-recovery2")
+    recovery_v2.add_argument("--protocol", type=Path, required=True)
+    recovery_v2.add_argument("--authorization", type=Path, required=True)
+    recovery_v2.set_defaults(func=numeric_recovery2)
     verify = sub.add_parser("verify-protocol")
     verify.add_argument("--protocol", type=Path, required=True)
     verify.set_defaults(func=lambda args: validate_protocol(load_json(args.protocol), args.protocol))

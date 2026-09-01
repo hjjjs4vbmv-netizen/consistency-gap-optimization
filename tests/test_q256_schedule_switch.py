@@ -179,6 +179,42 @@ class ScheduleSwitchTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "outside the frozen"):
                 schedule_switch.load_run_manifest(manifest_path)
 
+    def test_numeric_recovery_v2_is_bounded_to_seed38_a_origin_cells(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "training-state.pt"
+            source_path.write_bytes(b"immutable-source")
+            state = self.make_state()
+            manifest = self.make_manifest(source_path, state)
+            manifest.update({
+                "experiment_protocol": (
+                    schedule_switch.FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
+                ),
+                "seed": 38, "branch": "AB", "origin_arm": "A",
+                "continuation_arm": "B",
+                "numeric_recovery_v2": {
+                    "authorization_sha256": "4" * 64,
+                    "failed_compute_receipt_sha256": "5" * 64,
+                    "max_recoverable_nonfinite_loss_attempts": 1,
+                },
+            })
+            path = Path(directory) / "manifest.json"
+            path.write_text(json.dumps(manifest), encoding="utf-8")
+            loaded = schedule_switch.load_run_manifest(path)
+            self.assertEqual(loaded["seed"], 38)
+            for mutation in ("seed", "branch", "limit"):
+                changed = copy.deepcopy(manifest)
+                if mutation == "seed":
+                    changed["seed"] = 37
+                elif mutation == "branch":
+                    changed.update(branch="BB", origin_arm="B")
+                else:
+                    changed["numeric_recovery_v2"][
+                        "max_recoverable_nonfinite_loss_attempts"
+                    ] = 2
+                path.write_text(json.dumps(changed), encoding="utf-8")
+                with self.subTest(mutation=mutation), self.assertRaises(RuntimeError):
+                    schedule_switch.load_run_manifest(path)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -75,6 +75,51 @@ class ManualRecoveryTests(unittest.TestCase):
         self.assertEqual(args.seeds, [31, 37])
 
 
+class NumericRecoveryV2Tests(unittest.TestCase):
+    @staticmethod
+    def invariant(**changes):
+        values = {
+            "sample_count": 128, "batch_size": 128,
+            "consumed_samples": 621696, "processed_nimg": 621696,
+            "loss_nonfinite_count": 1, "raw_grad_nonfinite_count": 55732739,
+            "sanitized_grad_nonfinite_count": 0, "update_nonfinite_count": 0,
+            "model_nonfinite_count": 0, "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0, "nonpositive_denominator_count": 0,
+            "step_skipped": 1, "update_norm": 0,
+            "allow_managed_loss_overflow": True,
+            "prior_managed_loss_overflows": 0,
+        }
+        values.update(changes)
+        return ct_training_loop.strict_attempt_invariant_failures(**values)
+
+    def test_one_fully_managed_amp_loss_overflow_is_allowed(self):
+        failures, count, managed = self.invariant()
+        self.assertEqual(failures, [])
+        self.assertEqual(count, 1)
+        self.assertTrue(managed)
+
+    def test_second_or_unsafe_loss_overflow_fails_closed(self):
+        for mutation in (
+            {"prior_managed_loss_overflows": 1},
+            {"step_skipped": 0},
+            {"update_norm": 0.1},
+            {"model_nonfinite_count": 1},
+            {"factor_nonfinite_count": 1},
+            {"nonpositive_denominator_count": 1},
+        ):
+            with self.subTest(mutation=mutation):
+                failures, _, managed = self.invariant(**mutation)
+                self.assertIn("non-finite loss", failures)
+                self.assertFalse(managed)
+
+    def test_numeric_recovery_parser_is_explicit(self):
+        args = experiment.build_parser().parse_args([
+            "numeric-recovery2", "--protocol", "/protocol.json",
+            "--authorization", "/authorization.json",
+        ])
+        self.assertEqual(args.command, "numeric-recovery2")
+
+
 class ProtocolTests(unittest.TestCase):
     def minimal_protocol(self):
         return {

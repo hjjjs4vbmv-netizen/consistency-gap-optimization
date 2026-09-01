@@ -79,6 +79,54 @@ def validate_planned_pause(
         )
     return attempts
 
+
+def strict_attempt_invariant_failures(
+    *, sample_count, batch_size, consumed_samples, processed_nimg,
+    loss_nonfinite_count, raw_grad_nonfinite_count,
+    sanitized_grad_nonfinite_count, update_nonfinite_count,
+    model_nonfinite_count, ema_nonfinite_count, factor_nonfinite_count,
+    nonpositive_denominator_count, step_skipped, update_norm,
+    allow_managed_loss_overflow=False, prior_managed_loss_overflows=0,
+):
+    """Return failures and the audited count of v2 AMP-managed loss overflows."""
+    failures = []
+    managed = False
+    if sample_count != batch_size:
+        failures.append('factorial sample_count != batch_size')
+    if consumed_samples != processed_nimg:
+        failures.append('sampler consumption != processed_nimg')
+    if loss_nonfinite_count:
+        managed = bool(
+            allow_managed_loss_overflow
+            and prior_managed_loss_overflows < 1
+            and raw_grad_nonfinite_count
+            and step_skipped
+            and not sanitized_grad_nonfinite_count
+            and not update_nonfinite_count
+            and not model_nonfinite_count
+            and not ema_nonfinite_count
+            and not factor_nonfinite_count
+            and not nonpositive_denominator_count
+            and update_norm == 0
+        )
+        if not managed:
+            failures.append('non-finite loss')
+    if sanitized_grad_nonfinite_count:
+        failures.append('non-finite sanitized gradient')
+    if update_nonfinite_count or model_nonfinite_count or ema_nonfinite_count:
+        failures.append('non-finite update/model/EMA')
+    if factor_nonfinite_count:
+        failures.append('non-finite target/denominator factor')
+    if nonpositive_denominator_count:
+        failures.append('non-positive realized denominator')
+    if bool(raw_grad_nonfinite_count) != bool(step_skipped):
+        failures.append('raw gradient non-finite status does not match AMP skip')
+    if step_skipped and update_norm != 0:
+        failures.append('skipped optimizer attempt changed parameters')
+    if not step_skipped and (not math.isfinite(update_norm) or update_norm <= 0):
+        failures.append('successful optimizer update norm is not positive')
+    return failures, prior_managed_loss_overflows + int(managed), managed
+
 # Per-attempted-iteration CSV for paired fixed/adaptive comparisons.
 # Schedule telemetry comes exclusively from loss_fn.schedule_runtime_metrics().
 _LEGACY_TRAIN_SUMMARY_FIELDS = (
@@ -939,6 +987,12 @@ def training_loop(
         schedule_switch.state_metadata(switch_manifest)
         if switch_manifest is not None else None
     )
+    allow_managed_loss_overflow = bool(
+        switch_manifest is not None
+        and switch_manifest.get("experiment_protocol")
+        == schedule_switch.FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
+    )
+    managed_loss_overflow_count = 0
     if switch_manifest is not None:
         if not strict_reproducibility or resume_state_dump is None:
             raise ValueError(
@@ -1296,6 +1350,17 @@ def training_loop(
             )
         attempted_iteration = int(data.get('attempted_iteration', 0))
         successful_optimizer_steps = int(data.get('successful_optimizer_steps', 0))
+        if allow_managed_loss_overflow and not starting_schedule_switch:
+            if 'managed_loss_overflow_count' not in data:
+                raise RuntimeError(
+                    'numeric recovery v2 switched state is missing its managed '
+                    'loss-overflow count'
+                )
+            managed_loss_overflow_count = int(
+                data['managed_loss_overflow_count']
+            )
+            if managed_loss_overflow_count not in {0, 1}:
+                raise RuntimeError('invalid numeric recovery v2 overflow count')
         resumed_cur_nimg = int(data['cur_nimg'])
         if strict_reproducibility:
             local_rank_state = select_local_reproducibility_state(
@@ -1739,6 +1804,10 @@ def training_loop(
             )
             if switch_manifest is not None:
                 data['schedule_switch'] = copy.deepcopy(switch_metadata)
+            if allow_managed_loss_overflow:
+                data['managed_loss_overflow_count'] = (
+                    managed_loss_overflow_count
+                )
         return data
         
     # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
@@ -2190,29 +2259,33 @@ def training_loop(
                 factorial_telemetry_writer.writerow(telemetry_row)
                 factorial_telemetry_csv.flush()
 
-            invariant_failures = []
-            if factorial_metrics['sample_count'] != batch_size:
-                invariant_failures.append('factorial sample_count != batch_size')
-            if local_consumed_samples != cur_nimg:
-                invariant_failures.append('sampler consumption != processed_nimg')
-            if loss_nonfinite_count:
-                invariant_failures.append('non-finite loss')
-            if sanitized_grad_nonfinite_count:
-                invariant_failures.append('non-finite sanitized gradient')
-            if update_nonfinite_count or model_nonfinite_count or ema_nonfinite_count:
-                invariant_failures.append('non-finite update/model/EMA')
-            if factorial_metrics['nonfinite_count']:
-                invariant_failures.append('non-finite target/denominator factor')
-            if factorial_metrics['nonpositive_denominator_count']:
-                invariant_failures.append('non-positive realized denominator')
-            if bool(raw_grad_nonfinite_count) != bool(step_skipped):
-                invariant_failures.append(
-                    'raw gradient non-finite status does not match AMP skip'
+            invariant_failures, managed_loss_overflow_count, managed_overflow = (
+                strict_attempt_invariant_failures(
+                    sample_count=factorial_metrics['sample_count'],
+                    batch_size=batch_size,
+                    consumed_samples=local_consumed_samples,
+                    processed_nimg=cur_nimg,
+                    loss_nonfinite_count=loss_nonfinite_count,
+                    raw_grad_nonfinite_count=raw_grad_nonfinite_count,
+                    sanitized_grad_nonfinite_count=sanitized_grad_nonfinite_count,
+                    update_nonfinite_count=update_nonfinite_count,
+                    model_nonfinite_count=model_nonfinite_count,
+                    ema_nonfinite_count=ema_nonfinite_count,
+                    factor_nonfinite_count=factorial_metrics['nonfinite_count'],
+                    nonpositive_denominator_count=factorial_metrics[
+                        'nonpositive_denominator_count'
+                    ],
+                    step_skipped=step_skipped,
+                    update_norm=update_norm,
+                    allow_managed_loss_overflow=allow_managed_loss_overflow,
+                    prior_managed_loss_overflows=managed_loss_overflow_count,
                 )
-            if step_skipped and update_norm != 0:
-                invariant_failures.append('skipped optimizer attempt changed parameters')
-            if not step_skipped and (not math.isfinite(update_norm) or update_norm <= 0):
-                invariant_failures.append('successful optimizer update norm is not positive')
+            )
+            if managed_overflow:
+                dist.print0(
+                    'NUMERIC_RECOVERY_V2: accepted one AMP-managed non-finite '
+                    f'loss at attempted_iteration={attempted_iteration}'
+                )
             if invariant_failures:
                 if factorial_telemetry_csv is not None:
                     os.fsync(factorial_telemetry_csv.fileno())
