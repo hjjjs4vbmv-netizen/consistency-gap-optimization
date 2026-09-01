@@ -36,6 +36,22 @@ def sha256_file(path: Path) -> str:
     return experiment.sha256_file(path)
 
 
+def evaluation_profile(protocol_path: Path, authorization_path: Path | None) -> dict:
+    if authorization_path is None:
+        return {"seeds": experiment.SEEDS, "job_count": 264,
+                "evaluation_dir": "evaluation", "matrix": "training_matrix_completion_receipt.json",
+                "integrity": "training_integrity_report.json", "authorization_sha256": None}
+    authorization_path = authorization_path.resolve(strict=True)
+    experiment.validate_eleven_seed_authorization(
+        authorization_path, protocol_path, require_commit=True
+    )
+    return {"seeds": experiment.ELEVEN_SEEDS, "job_count": experiment.ELEVEN_JOB_COUNT,
+            "evaluation_dir": "evaluation_11seed",
+            "matrix": "training_matrix_11seed_completion_receipt.json",
+            "integrity": "training_integrity_11seed_report.json",
+            "authorization_sha256": sha256_file(authorization_path)}
+
+
 def metric_value(path: Path, metric: str) -> float:
     lines = [line for line in path.read_text(encoding="utf-8").splitlines() if line]
     if len(lines) != 1:
@@ -49,16 +65,20 @@ def metric_value(path: Path, metric: str) -> float:
     return value
 
 
-def training_jobs(protocol: dict, protocol_path: Path) -> list[dict]:
+def training_jobs(protocol: dict, protocol_path: Path, profile: dict) -> list[dict]:
     root = Path(protocol["paths"]["formal_output_root"])
-    completion = load(root / "training_matrix_completion_receipt.json")
+    completion = load(root / profile["matrix"])
     if completion.get("status") != "PASS" or completion.get("protocol_sha256") != sha256_file(protocol_path):
         raise RuntimeError("training matrix is not a protocol-bound PASS")
-    integrity = load(root / "training_integrity_report.json")
+    integrity = load(root / profile["integrity"])
     if integrity.get("status") != "PASS" or integrity.get("protocol_sha256") != sha256_file(protocol_path):
         raise RuntimeError("blind evaluation requires a protocol-bound training integrity PASS")
     jobs: list[dict] = []
-    for seed in experiment.SEEDS:
+    if profile["authorization_sha256"] is not None:
+        if (completion.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]
+                or integrity.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]):
+            raise RuntimeError("eleven-seed training gates are not authorization-bound")
+    for seed in profile["seeds"]:
         seed_root = root / "training" / f"seed{seed}"
         if load(seed_root / "seed_completion_receipt.json").get("status") != "PASS":
             raise RuntimeError(f"seed {seed} is not PASS")
@@ -75,8 +95,8 @@ def training_jobs(protocol: dict, protocol_path: Path) -> list[dict]:
             jobs.append({"seed": seed, "kind": "suffix", "cell": cell,
                          "budget_kimg": 1024, "nfe": 2, "checkpoint": path})
     identities = {(j["seed"], j["kind"], j["cell"], j["budget_kimg"], j["nfe"]) for j in jobs}
-    if len(jobs) != 264 or len(identities) != 264:
-        raise RuntimeError("evaluation matrix is not exactly 264 unique jobs")
+    if len(jobs) != profile["job_count"] or len(identities) != profile["job_count"]:
+        raise RuntimeError("evaluation matrix has the wrong unique job count")
     return jobs
 
 
@@ -84,13 +104,14 @@ def prepare(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol = load(protocol_path)
     experiment.validate_protocol(protocol, protocol_path)
-    eval_root = Path(protocol["paths"]["formal_output_root"]) / "evaluation"
+    profile = evaluation_profile(protocol_path, getattr(args, "eleven_seed_authorization", None))
+    eval_root = Path(protocol["paths"]["formal_output_root"]) / profile["evaluation_dir"]
     if eval_root.exists() or args.private_map.exists() or args.public_manifest.exists():
         raise RuntimeError("blind evaluation preparation requires fresh destinations")
     eval_root.mkdir(parents=True, exist_ok=False)
     aliases = eval_root / "checkpoints"
     aliases.mkdir()
-    jobs = training_jobs(protocol, protocol_path)
+    jobs = training_jobs(protocol, protocol_path, profile)
     shuffled = list(jobs)
     random.Random(protocol["evaluation"]["shuffle_seed"]).shuffle(shuffled)
     private_jobs = []
@@ -120,7 +141,8 @@ def prepare(args: argparse.Namespace) -> None:
         })
     private_payload = {
         "schema": PRIVATE_SCHEMA, "status": "SEALED_PRIVATE_MAP",
-        "protocol_sha256": sha256_file(protocol_path), "job_count": 264,
+        "protocol_sha256": sha256_file(protocol_path), "job_count": profile["job_count"],
+        "eleven_seed_authorization_sha256": profile["authorization_sha256"],
         "decode_forbidden_before_matrix_seal": True, "jobs": private_jobs,
     }
     args.private_map.parent.mkdir(parents=True, exist_ok=True)
@@ -128,8 +150,9 @@ def prepare(args: argparse.Namespace) -> None:
     os.chmod(args.private_map, 0o400)
     private_sha = sha256_file(args.private_map)
     public_payload = {
-        "schema": PUBLIC_SCHEMA, "status": "FROZEN_NOT_RUN", "job_count": 264,
+        "schema": PUBLIC_SCHEMA, "status": "FROZEN_NOT_RUN", "job_count": profile["job_count"],
         "protocol_sha256": sha256_file(protocol_path),
+        "eleven_seed_authorization_sha256": profile["authorization_sha256"],
         "private_map_sha256": private_sha,
         "shuffle_seed": protocol["evaluation"]["shuffle_seed"],
         "gpu_assignment": "queue_index modulo six after frozen shuffle",
@@ -140,37 +163,43 @@ def prepare(args: argparse.Namespace) -> None:
     experiment.atomic_json(args.public_manifest, public_payload)
     experiment.atomic_json(eval_root / "preparation_receipt.json", {
         "schema": "ect.q256.fresh-crossed-switch-blind-preparation/v1", "status": "PASS",
-        "job_count": 264, "protocol_sha256": sha256_file(protocol_path),
+        "job_count": profile["job_count"], "protocol_sha256": sha256_file(protocol_path),
+        "eleven_seed_authorization_sha256": profile["authorization_sha256"],
         "public_manifest": str(args.public_manifest.resolve()),
         "public_manifest_sha256": sha256_file(args.public_manifest),
         "private_map": str(args.private_map.resolve()), "private_map_sha256": private_sha,
-        "opaque_checkpoint_aliases": 264,
+        "opaque_checkpoint_aliases": profile["job_count"],
     })
-    print(json.dumps({"status": "FROZEN_NOT_RUN", "job_count": 264,
+    print(json.dumps({"status": "FROZEN_NOT_RUN", "job_count": profile["job_count"],
                       "public_manifest_sha256": sha256_file(args.public_manifest)}))
 
 
-def validate_bindings(protocol_path: Path, public_path: Path, private_path: Path) -> tuple[dict, dict, dict]:
+def validate_bindings(protocol_path: Path, public_path: Path, private_path: Path,
+                      authorization_path: Path | None = None) -> tuple[dict, dict, dict, dict]:
     protocol = load(protocol_path)
     experiment.validate_protocol(protocol, protocol_path)
     public = load(public_path)
     private = load(private_path)
     protocol_sha = sha256_file(protocol_path)
-    if public.get("schema") != PUBLIC_SCHEMA or public.get("job_count") != 264:
+    profile = evaluation_profile(protocol_path, authorization_path)
+    if public.get("schema") != PUBLIC_SCHEMA or public.get("job_count") != profile["job_count"]:
         raise RuntimeError("invalid public blind manifest")
-    if private.get("schema") != PRIVATE_SCHEMA or private.get("job_count") != 264:
+    if private.get("schema") != PRIVATE_SCHEMA or private.get("job_count") != profile["job_count"]:
         raise RuntimeError("invalid private blind map")
     if public.get("protocol_sha256") != protocol_sha or private.get("protocol_sha256") != protocol_sha:
         raise RuntimeError("blind evaluation protocol mismatch")
     if public.get("private_map_sha256") != sha256_file(private_path):
         raise RuntimeError("private mapping hash mismatch")
+    if (public.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]
+            or private.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]):
+        raise RuntimeError("blind manifests have the wrong amendment binding")
     pub = {(j["queue_index"], j["opaque_id"], j["gpu_index"], j["checkpoint_sha256"])
            for j in public["jobs"]}
     prv = {(j["queue_index"], j["opaque_id"], j["gpu_index"], j["checkpoint_sha256"])
            for j in private["jobs"]}
-    if len(pub) != 264 or pub != prv:
+    if len(pub) != profile["job_count"] or pub != prv:
         raise RuntimeError("public/private blind job mismatch")
-    return protocol, public, private
+    return protocol, public, private, profile
 
 
 def evaluator_ok(path: Path) -> None:
@@ -311,17 +340,20 @@ def run_one(protocol_path: Path, protocol: dict, job: dict, evaluator_repo: Path
 
 def worker(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
-    protocol, _, private = validate_bindings(protocol_path, args.public_manifest.resolve(strict=True),
-                                             args.private_map.resolve(strict=True))
+    protocol, _, private, profile = validate_bindings(
+        protocol_path, args.public_manifest.resolve(strict=True),
+        args.private_map.resolve(strict=True), getattr(args, "eleven_seed_authorization", None)
+    )
     evaluator_repo = args.evaluator_repo.resolve(strict=True)
     evaluator_ok(evaluator_repo)
     cache_root = args.cache_root.resolve(strict=True)
     if cache_root != Path(protocol["paths"]["evaluator_cache_root"]).resolve(strict=True):
         raise RuntimeError("worker evaluator cache differs from frozen protocol")
-    eval_root = Path(protocol["paths"]["formal_output_root"]) / "evaluation"
+    eval_root = Path(protocol["paths"]["formal_output_root"]) / profile["evaluation_dir"]
     jobs = [job for job in private["jobs"] if job["gpu_index"] == args.gpu_index]
-    if len(jobs) != 44:
-        raise RuntimeError("each GPU must receive exactly 44 blind jobs")
+    expected_for_gpu = sum(job["gpu_index"] == args.gpu_index for job in private["jobs"])
+    if len(jobs) != expected_for_gpu or expected_for_gpu not in {40, 41, 44}:
+        raise RuntimeError("GPU blind queue length mismatch")
     for job in sorted(jobs, key=lambda item: item["queue_index"]):
         run_one(protocol_path, protocol, job, evaluator_repo, cache_root, eval_root)
 
@@ -330,7 +362,9 @@ def launch(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     public_path = args.public_manifest.resolve(strict=True)
     private_path = args.private_map.resolve(strict=True)
-    protocol, _, _ = validate_bindings(protocol_path, public_path, private_path)
+    protocol, _, _, profile = validate_bindings(
+        protocol_path, public_path, private_path, getattr(args, "eleven_seed_authorization", None)
+    )
     evaluator_repo = args.evaluator_repo.resolve(strict=True)
     evaluator_ok(evaluator_repo)
     cache_root = args.cache_root.resolve(strict=True)
@@ -340,7 +374,7 @@ def launch(args: argparse.Namespace) -> None:
     experiment.validate_runtime(runtime)
     if experiment.compute_apps():
         raise RuntimeError("blind evaluation launch requires six exclusive GPUs")
-    eval_root = Path(protocol["paths"]["formal_output_root"]) / "evaluation"
+    eval_root = Path(protocol["paths"]["formal_output_root"]) / profile["evaluation_dir"]
     for name in ("jobs", "receipts", "seals", "logs"):
         (eval_root / name).mkdir(exist_ok=False)
     python = str(Path(runtime["environment_prefix"]) / "bin" / "python")
@@ -350,6 +384,9 @@ def launch(args: argparse.Namespace) -> None:
                    "--public-manifest", str(public_path), "--private-map", str(private_path),
                    "--evaluator-repo", str(evaluator_repo), "--cache-root", str(cache_root),
                    "--gpu-index", str(gpu)]
+        if getattr(args, "eleven_seed_authorization", None) is not None:
+            command += ["--eleven-seed-authorization",
+                        str(args.eleven_seed_authorization.resolve(strict=True))]
         handle = (eval_root / "logs" / f"gpu{gpu}.queue.log").open("xb")
         process = subprocess.Popen(command, cwd=REPO_ROOT, env=os.environ.copy(),
                                    stdout=handle, stderr=subprocess.STDOUT, start_new_session=True)
@@ -362,11 +399,12 @@ def launch(args: argparse.Namespace) -> None:
             failures.append({"gpu_index": gpu, "exit_code": code})
     receipts = sorted((eval_root / "receipts").glob("*.json"))
     validated = [path for path in receipts if load(path).get("status") == "VALIDATED_UNSEALED"]
-    if failures or len(validated) != 264:
+    if failures or len(validated) != profile["job_count"]:
         experiment.atomic_json(eval_root / "evaluation_matrix_failure_receipt.json", {
             "schema": "ect.q256.fresh-crossed-switch-evaluation-matrix/v1", "status": "FAIL",
             "worker_failures": failures, "validated_receipts": len(validated),
-            "expected_receipts": 264, "automatic_retry_count": 0,
+            "expected_receipts": profile["job_count"], "automatic_retry_count": 0,
+            "eleven_seed_authorization_sha256": profile["authorization_sha256"],
         })
         raise RuntimeError("blind evaluation matrix failed closed; no decoding permitted")
     for path in validated:
@@ -378,24 +416,31 @@ def launch(args: argparse.Namespace) -> None:
         })
     seal = {
         "schema": "ect.q256.fresh-crossed-switch-evaluation-matrix-seal/v1",
-        "status": "SEALED_PASS", "sealed_jobs": 264, "expected_jobs": 264,
+        "status": "SEALED_PASS", "sealed_jobs": profile["job_count"],
+        "expected_jobs": profile["job_count"],
         "protocol_sha256": sha256_file(protocol_path),
+        "eleven_seed_authorization_sha256": profile["authorization_sha256"],
         "public_manifest_sha256": sha256_file(public_path),
         "private_map_sha256": sha256_file(private_path), "decoded": False,
         "automatic_retry_count": 0,
     }
     experiment.atomic_json(eval_root / "evaluation_matrix_seal.json", seal)
-    print(json.dumps({"status": "SEALED_PASS", "sealed_jobs": 264, "decoded": False}))
+    print(json.dumps({"status": "SEALED_PASS", "sealed_jobs": profile["job_count"],
+                      "decoded": False}))
 
 
 def decode(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
-    protocol, _, private = validate_bindings(protocol_path, args.public_manifest.resolve(strict=True),
-                                             args.private_map.resolve(strict=True))
-    eval_root = Path(protocol["paths"]["formal_output_root"]) / "evaluation"
+    protocol, _, private, profile = validate_bindings(
+        protocol_path, args.public_manifest.resolve(strict=True),
+        args.private_map.resolve(strict=True), getattr(args, "eleven_seed_authorization", None)
+    )
+    eval_root = Path(protocol["paths"]["formal_output_root"]) / profile["evaluation_dir"]
     seal = load(eval_root / "evaluation_matrix_seal.json")
-    if seal.get("status") != "SEALED_PASS" or seal.get("sealed_jobs") != 264:
-        raise RuntimeError("all 264 jobs must be sealed before decoding")
+    if (seal.get("status") != "SEALED_PASS"
+            or seal.get("sealed_jobs") != profile["job_count"]
+            or seal.get("eleven_seed_authorization_sha256") != profile["authorization_sha256"]):
+        raise RuntimeError("all amended jobs must be sealed before decoding")
     decoded = []
     for job in private["jobs"]:
         opaque = job["opaque_id"]
@@ -414,12 +459,14 @@ def decode(args: argparse.Namespace) -> None:
         })
     payload = {
         "schema": "ect.q256.fresh-crossed-switch-decoded-results/v1", "status": "PASS",
-        "decoded_after_full_seal": True, "job_count": 264,
+        "decoded_after_full_seal": True, "job_count": profile["job_count"],
+        "eleven_seed_authorization_sha256": profile["authorization_sha256"],
         "matrix_seal_sha256": sha256_file(eval_root / "evaluation_matrix_seal.json"),
         "protocol_sha256": sha256_file(protocol_path), "results": decoded,
     }
     experiment.atomic_json(args.output, payload)
-    print(json.dumps({"status": "PASS", "decoded_jobs": 264, "output": str(args.output)}))
+    print(json.dumps({"status": "PASS", "decoded_jobs": profile["job_count"],
+                      "output": str(args.output)}))
 
 
 def parser() -> argparse.ArgumentParser:
@@ -429,11 +476,13 @@ def parser() -> argparse.ArgumentParser:
     prep.add_argument("--protocol", type=Path, required=True)
     prep.add_argument("--public-manifest", type=Path, required=True)
     prep.add_argument("--private-map", type=Path, required=True)
+    prep.add_argument("--eleven-seed-authorization", type=Path)
     prep.set_defaults(func=prepare)
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--protocol", type=Path, required=True)
     common.add_argument("--public-manifest", type=Path, required=True)
     common.add_argument("--private-map", type=Path, required=True)
+    common.add_argument("--eleven-seed-authorization", type=Path)
     work = subs.add_parser("worker", parents=[common])
     work.add_argument("--evaluator-repo", type=Path, required=True)
     work.add_argument("--cache-root", type=Path, required=True)

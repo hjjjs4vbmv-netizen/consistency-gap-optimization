@@ -56,17 +56,18 @@ def interval(values: list[float], confidence: float) -> list[float]:
 
 
 def summarize(values: list[float], *, sign_flip: bool = True) -> dict:
-    if len(values) != 12 or any(not math.isfinite(value) for value in values):
-        raise RuntimeError("summary requires twelve finite seed-level values")
+    if len(values) not in {11, 12} or any(not math.isfinite(value) for value in values):
+        raise RuntimeError("summary requires eleven or twelve finite seed-level values")
+    n = len(values)
     result = {
-        "n": 12, "mean": mean(values), "median": median(values),
+        "n": n, "mean": mean(values), "median": median(values),
         "sample_sd": sample_sd(values), "ci95_two_sided": interval(values, 0.95),
         "ci90_two_sided": interval(values, 0.90),
         "negative_count": sum(value < 0 for value in values),
         "positive_count": sum(value > 0 for value in values),
         "zero_count": sum(value == 0 for value in values),
         "range": [min(values), max(values)],
-        "leave_one_seed_out_means": [mean(values[:i] + values[i + 1:]) for i in range(12)],
+        "leave_one_seed_out_means": [mean(values[:i] + values[i + 1:]) for i in range(n)],
     }
     if sign_flip:
         result["exact_two_sided_sign_flip_p"] = exact_sign_flip(values)
@@ -121,14 +122,28 @@ def main() -> int:
     parser.add_argument("--decoded-results", type=Path, required=True)
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--eleven-seed-authorization", type=Path)
     args = parser.parse_args()
     protocol_path = args.protocol.resolve(strict=True)
     protocol = experiment.load_json(protocol_path)
     experiment.validate_protocol(protocol, protocol_path)
+    seeds = experiment.SEEDS
+    expected_jobs = 264
+    authorization_sha = None
+    if args.eleven_seed_authorization is not None:
+        authorization_path = args.eleven_seed_authorization.resolve(strict=True)
+        experiment.validate_eleven_seed_authorization(
+            authorization_path, protocol_path, require_commit=True
+        )
+        seeds = experiment.ELEVEN_SEEDS
+        expected_jobs = experiment.ELEVEN_JOB_COUNT
+        authorization_sha = experiment.sha256_file(authorization_path)
     decoded_path = args.decoded_results.resolve(strict=True)
     decoded = experiment.load_json(decoded_path)
     if (decoded.get("status") != "PASS" or not decoded.get("decoded_after_full_seal")
-            or decoded.get("job_count") != 264 or len(decoded.get("results", [])) != 264):
+            or decoded.get("job_count") != expected_jobs
+            or len(decoded.get("results", [])) != expected_jobs
+            or decoded.get("eleven_seed_authorization_sha256") != authorization_sha):
         raise RuntimeError("statistics require the complete post-seal decoded matrix")
     index = {}
     for row in decoded["results"]:
@@ -136,12 +151,12 @@ def main() -> int:
         if key in index:
             raise RuntimeError(f"duplicate decoded evaluation cell: {key}")
         index[key] = row
-    expected = 24 + 192 + 48
+    expected = expected_jobs
     if len(index) != expected:
         raise RuntimeError("decoded matrix identity count mismatch")
 
     rows = []
-    for seed in experiment.SEEDS:
+    for seed in seeds:
         y = {cell: math.log(index[(seed, "suffix", cell, 1024, 1)]["fid50k_full"])
              for cell in experiment.CELLS}
         source = {arm: math.log(index[(seed, "prefix", arm, 512, 1)]["fid50k_full"])
@@ -163,7 +178,7 @@ def main() -> int:
     checkpoint_diagnostic_count = sum(row["Q"] >= 0 and row["H_A"] < 0 for row in rows)
 
     aulc_rows = []
-    for seed in experiment.SEEDS:
+    for seed in seeds:
         for cell, (origin, _) in experiment.CELLS.items():
             points = [(512, math.log(index[(seed, "prefix", origin, 512, 1)]["fid50k_full"]))]
             points += [(budget, math.log(index[(seed, "suffix", cell, budget, 1)]["fid50k_full"]))
@@ -188,6 +203,12 @@ def main() -> int:
     analysis = {
         "schema": "ect.q256.fresh-crossed-switch-statistics/v1", "status": "PASS",
         "protocol_sha256": experiment.sha256_file(protocol_path),
+        "eleven_seed_authorization_sha256": authorization_sha,
+        "included_seeds": list(seeds),
+        "excluded_seed": (experiment.ELEVEN_SEED_EXCLUSION if authorization_sha else None),
+        "original_n12_claim_abandoned": authorization_sha is not None,
+        "analysis_population": ("AUTHOR_AMENDED_N11_COMPLETE_CASE"
+                                if authorization_sha else "FROZEN_N12"),
         "decoded_results_sha256": experiment.sha256_file(decoded_path), "delta_log_1p03": DELTA,
         "primary_outcome": "H from log FID50k at 1024 kimg, NFE1 only",
         "summaries": summaries, "primary_verdict": verdict,
@@ -211,6 +232,9 @@ def main() -> int:
         "schema": "ect.q256.fresh-crossed-switch-primary-decision/v1", "status": "PASS",
         "decision": verdict, "H_summary": summaries["H"], "delta_log_1p03": DELTA,
         "category_checks": checks, "primary_only": True,
+        "included_seeds": list(seeds),
+        "eleven_seed_authorization_sha256": authorization_sha,
+        "original_n12_claim_abandoned": authorization_sha is not None,
     })
     print(json.dumps({"status": "PASS", "primary_verdict": verdict}))
     return 0

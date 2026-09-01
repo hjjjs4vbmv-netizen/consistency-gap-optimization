@@ -120,6 +120,30 @@ class NumericRecoveryV2Tests(unittest.TestCase):
         self.assertEqual(args.command, "numeric-recovery2")
 
 
+class ElevenSeedAmendmentTests(unittest.TestCase):
+    def test_amended_population_and_job_count_are_exact(self):
+        self.assertEqual(experiment.ELEVEN_SEED_EXCLUSION, 38)
+        self.assertEqual(experiment.ELEVEN_SEEDS,
+                         (31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42))
+        self.assertEqual(experiment.ELEVEN_JOB_COUNT, 242)
+
+    def test_authorization_parser_is_explicit(self):
+        args = experiment.build_parser().parse_args([
+            "authorize-eleven-seed", "--protocol", "/protocol.json",
+            "--numeric-recovery2-authorization", "/numeric.json",
+            "--failed-compute", "/failed.json", "--amendment-commit", "a" * 40,
+            "--destination", "/authorization.json",
+        ])
+        self.assertEqual(args.command, "authorize-eleven-seed")
+
+    def test_statistics_accept_eleven_but_not_ten_values(self):
+        summary = frozen_statistics.summarize([float(value) for value in range(11)])
+        self.assertEqual(summary["n"], 11)
+        self.assertEqual(len(summary["leave_one_seed_out_means"]), 11)
+        with self.assertRaises(RuntimeError):
+            frozen_statistics.summarize([float(value) for value in range(10)])
+
+
 class ProtocolTests(unittest.TestCase):
     def minimal_protocol(self):
         return {

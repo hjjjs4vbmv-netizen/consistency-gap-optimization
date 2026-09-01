@@ -72,13 +72,30 @@ def main() -> int:
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--numeric-recovery2-authorization", type=Path)
+    parser.add_argument("--eleven-seed-authorization", type=Path)
     args = parser.parse_args()
     protocol_path = args.protocol.resolve(strict=True)
     protocol = experiment.load_json(protocol_path)
     experiment.validate_protocol(protocol, protocol_path)
     root = Path(protocol["paths"]["formal_output_root"])
     protocol_sha = experiment.sha256_file(protocol_path)
-    matrix = checked(root / "training_matrix_completion_receipt.json")
+    eleven_authorization = None
+    seeds = experiment.SEEDS
+    matrix_path = root / "training_matrix_completion_receipt.json"
+    if args.eleven_seed_authorization is not None:
+        eleven_path = args.eleven_seed_authorization.resolve(strict=True)
+        eleven_authorization = experiment.validate_eleven_seed_authorization(
+            eleven_path, protocol_path, require_commit=True
+        )
+        seeds = experiment.ELEVEN_SEEDS
+        matrix_path = root / "training_matrix_11seed_completion_receipt.json"
+    matrix = checked(matrix_path)
+    if eleven_authorization is not None:
+        if (matrix.get("eleven_seed_authorization_sha256")
+                != experiment.sha256_file(args.eleven_seed_authorization)
+                or matrix.get("included_seeds") != list(seeds)
+                or matrix.get("original_n12_claim_abandoned") is not True):
+            raise RuntimeError("eleven-seed training matrix authorization mismatch")
     numeric_authorization = None
     if matrix.get("manual_recovery_count") == 2:
         if args.numeric_recovery2_authorization is None:
@@ -93,7 +110,7 @@ def main() -> int:
     prefixes = suffixes = b384 = source512 = suffix_final_states = 0
     matched_prefix = matched_suffix = source_identity = 0
     records = []
-    for seed in experiment.SEEDS:
+    for seed in seeds:
         seed_root = root / "training" / f"seed{seed}"
         checked(seed_root / "seed_completion_receipt.json")
         checked(seed_root / "prefix_matched_randomness_receipt.json")
@@ -220,16 +237,25 @@ def main() -> int:
         "prefix_matched_randomness_receipts": matched_prefix,
         "suffix_matched_randomness_receipts": matched_suffix,
     }
-    expected = {"prefixes": 24, "suffixes": 48, "B_at_384_full_states": 12,
-                "A_or_B_at_512_source_states": 24, "suffix_at_1024_full_states": 48,
-                "same_origin_source_references": 48, "prefix_matched_randomness_receipts": 12,
-                "suffix_matched_randomness_receipts": 12}
+    n = len(seeds)
+    expected = {"prefixes": 2 * n, "suffixes": 4 * n, "B_at_384_full_states": n,
+                "A_or_B_at_512_source_states": 2 * n, "suffix_at_1024_full_states": 4 * n,
+                "same_origin_source_references": 4 * n, "prefix_matched_randomness_receipts": n,
+                "suffix_matched_randomness_receipts": n}
     if counts != expected:
         raise RuntimeError(f"training integrity counts mismatch: {counts}")
     payload = {
         "schema": "ect.q256.fresh-crossed-switch-training-integrity/v1", "status": "PASS",
         "protocol_sha256": protocol_sha, "counts": counts, "expected": expected,
         "same_origin_source_identity": "PASS", "matched_randomness": "PASS",
+        "included_seeds": list(seeds),
+        "excluded_seed": (experiment.ELEVEN_SEED_EXCLUSION
+                          if eleven_authorization is not None else None),
+        "original_n12_claim_abandoned": eleven_authorization is not None,
+        "eleven_seed_authorization_sha256": (
+            experiment.sha256_file(args.eleven_seed_authorization)
+            if eleven_authorization is not None else None
+        ),
         "scientific_nonfinite_instability": (
             "ONE_AMP_MANAGED_LOSS_OVERFLOW_ALLOWED_BY_NUMERIC_RECOVERY_V2"
             if numeric_authorization is not None else "ABSENT"

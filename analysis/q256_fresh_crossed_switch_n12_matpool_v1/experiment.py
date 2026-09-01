@@ -34,6 +34,9 @@ DATASET_SHA256 = "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f3
 TRANSFER_SHA256 = "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
 EVALUATOR_COMMIT = "d6aba02fb88e9db0993623895eb2228ed717d810"
 SEEDS = tuple(range(31, 43))
+ELEVEN_SEED_EXCLUSION = 38
+ELEVEN_SEEDS = tuple(seed for seed in SEEDS if seed != ELEVEN_SEED_EXCLUSION)
+ELEVEN_JOB_COUNT = len(ELEVEN_SEEDS) * 22
 ARMS = {"A": (1.0, 1.0), "B": (1.1, 1.1)}
 CELLS = {"AA": ("A", "A"), "AB": ("A", "B"), "BA": ("B", "A"), "BB": ("B", "B")}
 SUFFIX_ORDERS = (
@@ -74,6 +77,30 @@ def load_json(path: Path) -> dict:
         value = json.load(handle)
     if not isinstance(value, dict):
         raise RuntimeError(f"JSON object required: {path}")
+    return value
+
+
+def validate_eleven_seed_authorization(path: Path, protocol_path: Path,
+                                       *, require_commit: bool = False) -> dict:
+    path = path.resolve(strict=True)
+    value = load_json(path)
+    expected = {
+        "status": "AUTHOR_APPROVED",
+        "protocol_sha256": sha256_file(protocol_path),
+        "excluded_seed": ELEVEN_SEED_EXCLUSION,
+        "included_seeds": list(ELEVEN_SEEDS),
+        "expected_evaluation_jobs": ELEVEN_JOB_COUNT,
+        "original_n12_claim_abandoned": True,
+        "decode_forbidden_before_full_amended_seal": True,
+    }
+    if any(value.get(key) != expected_value for key, expected_value in expected.items()):
+        raise RuntimeError("eleven-seed authorization binding mismatch")
+    if require_commit:
+        head = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
+        ).strip()
+        if value.get("amendment_commit") != head:
+            raise RuntimeError("eleven-seed authorization commit mismatch")
     return value
 
 
@@ -1193,6 +1220,77 @@ def numeric_recovery2(args: argparse.Namespace) -> None:
     print(json.dumps(receipt, sort_keys=True))
 
 
+def authorize_eleven_seed(args: argparse.Namespace) -> None:
+    protocol_path = args.protocol.resolve(strict=True)
+    protocol = load_json(protocol_path)
+    validate_protocol(protocol, protocol_path)
+    protocol_sha = sha256_file(protocol_path)
+    if not HEX40.fullmatch(args.amendment_commit):
+        raise RuntimeError("invalid eleven-seed amendment commit")
+    head = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
+    ).strip()
+    if head != args.amendment_commit:
+        raise RuntimeError("eleven-seed amendment commit is not current HEAD")
+    numeric_auth_path = args.numeric_recovery2_authorization.resolve(strict=True)
+    numeric_auth = load_json(numeric_auth_path)
+    if (numeric_auth.get("status") != "AUTHOR_APPROVED"
+            or numeric_auth.get("protocol_sha256") != protocol_sha
+            or numeric_auth.get("manual_recovery_index") != 2):
+        raise RuntimeError("eleven-seed amendment requires the numeric recovery v2 authorization")
+    failed_path = args.failed_compute.resolve(strict=True)
+    failed = load_json(failed_path)
+    if (failed.get("status") != "FAIL" or failed.get("label") != "seed38:AB"
+            or failed.get("exit_code") != 1 or failed.get("hard_timeout") is not False):
+        raise RuntimeError("eleven-seed amendment requires the terminal seed38/AB v2 failure")
+    output_root = Path(protocol["paths"]["formal_output_root"])
+    if (output_root / "training" / "seed38" / "AA").exists():
+        raise RuntimeError("seed38/AA must remain absent for the eleven-seed amendment")
+    if (output_root / "evaluation").exists():
+        raise RuntimeError("eleven-seed amendment requires evaluation to be unstarted")
+    completed = []
+    seed_receipt_hashes = {}
+    for seed in ELEVEN_SEEDS:
+        receipt_path = output_root / "training" / f"seed{seed}" / "seed_completion_receipt.json"
+        receipt = load_json(receipt_path.resolve(strict=True))
+        if (receipt.get("status") != "PASS" or receipt.get("seed") != seed
+                or receipt.get("protocol_sha256") != protocol_sha):
+            raise RuntimeError(f"invalid completed seed receipt: seed{seed}")
+        completed.append(seed)
+        seed_receipt_hashes[str(seed)] = sha256_file(receipt_path)
+    payload = {
+        "schema": "ect.q256.fresh-crossed-switch-eleven-seed-amendment/v1",
+        "status": "AUTHOR_APPROVED", "authorized_at": utc_now(),
+        "protocol_sha256": protocol_sha, "amendment_commit": head,
+        "scope": "exclude terminally failed seed38 and continue with the eleven complete seeds",
+        "excluded_seed": ELEVEN_SEED_EXCLUSION, "included_seeds": completed,
+        "expected_evaluation_jobs": ELEVEN_JOB_COUNT,
+        "original_n12_claim_abandoned": True,
+        "analysis_population": "AUTHOR_AMENDED_N11_COMPLETE_CASE",
+        "minimum_negative_directions_for_strong_success": 10,
+        "decode_forbidden_before_full_amended_seal": True,
+        "automatic_retry_count": 0,
+        "quality_metrics_observed_before_amendment": False,
+        "numeric_recovery2_authorization_sha256": sha256_file(numeric_auth_path),
+        "terminal_failed_compute_receipt_sha256": sha256_file(failed_path),
+        "seed_completion_receipt_sha256": seed_receipt_hashes,
+    }
+    destination = args.destination.resolve()
+    atomic_json(destination, payload)
+    atomic_json(output_root / "training_matrix_11seed_completion_receipt.json", {
+        "schema": "ect.q256.fresh-crossed-switch-training-matrix-amended/v1",
+        "status": "PASS", "ended_at": utc_now(),
+        "protocol_sha256": protocol_sha,
+        "eleven_seed_authorization_sha256": sha256_file(destination),
+        "completed_seed_receipts": len(ELEVEN_SEEDS),
+        "expected_seed_receipts": len(ELEVEN_SEEDS),
+        "included_seeds": list(ELEVEN_SEEDS), "excluded_seed": ELEVEN_SEED_EXCLUSION,
+        "original_n12_claim_abandoned": True, "automatic_retry_count": 0,
+    })
+    print(json.dumps({"status": "PASS", "included_seeds": list(ELEVEN_SEEDS),
+                      "expected_evaluation_jobs": ELEVEN_JOB_COUNT}, sort_keys=True))
+
+
 def launch(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol = load_json(protocol_path)
@@ -1317,6 +1415,13 @@ def build_parser() -> argparse.ArgumentParser:
     recovery_v2.add_argument("--protocol", type=Path, required=True)
     recovery_v2.add_argument("--authorization", type=Path, required=True)
     recovery_v2.set_defaults(func=numeric_recovery2)
+    eleven = sub.add_parser("authorize-eleven-seed")
+    eleven.add_argument("--protocol", type=Path, required=True)
+    eleven.add_argument("--numeric-recovery2-authorization", type=Path, required=True)
+    eleven.add_argument("--failed-compute", type=Path, required=True)
+    eleven.add_argument("--amendment-commit", required=True)
+    eleven.add_argument("--destination", type=Path, required=True)
+    eleven.set_defaults(func=authorize_eleven_seed)
     verify = sub.add_parser("verify-protocol")
     verify.add_argument("--protocol", type=Path, required=True)
     verify.set_defaults(func=lambda args: validate_protocol(load_json(args.protocol), args.protocol))
