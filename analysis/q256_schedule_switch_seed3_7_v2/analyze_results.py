@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
+import math
 import os
 import statistics
 import sys
@@ -22,6 +24,7 @@ NEW_BUDGETS = BUDGETS[1:]
 NFES = (1, 2)
 METRICS = ("kid50k_full", "fid50k_full")
 TRAJECTORIES = ("AA", "AB", "BA", "BB")
+CONTRASTS = ("S_A", "S_B", "H_A", "H_B", "I_switch")
 
 
 def sha256_file(path: Path) -> str:
@@ -31,6 +34,19 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def write_post_unblind_csv(path: Path, rows: list[dict]) -> None:
+    """Write a CSV with an explicit non-confirmatory provenance marker."""
+    if not rows:
+        raise RuntimeError(f"refuse empty CSV: {path}")
+    with path.open("x", newline="", encoding="utf-8") as handle:
+        handle.write("# post-unblind descriptive\n")
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+        handle.flush()
+        os.fsync(handle.fileno())
 
 
 def load_new(root: Path, protocol_sha: str) -> dict:
@@ -157,7 +173,7 @@ def main() -> int:
                     row for row in contrasts if row["nfe"] == nfe
                     and row["metric"] == metric and row["budget_kimg"] == budget
                 ]
-                for name in ("S_A", "S_B", "H_A", "H_B", "I_switch"):
+                for name in CONTRASTS:
                     values = [row[name] for row in rows]
                     summaries.append({
                         "nfe": nfe, "metric": metric,
@@ -165,35 +181,157 @@ def main() -> int:
                         "mean": statistics.mean(values),
                         "median": statistics.median(values), "n_seeds": 5,
                     })
+
+    endpoint_rows = sorted(
+        (
+            row for row in trajectories
+            if row["nfe"] == 1 and row["metric"] == "fid50k_full"
+            and row["budget_kimg"] == 1024
+        ),
+        key=lambda row: row["seed"],
+    )
+    source_rows = {
+        row["seed"]: row for row in trajectories
+        if row["nfe"] == 1 and row["metric"] == "fid50k_full"
+        and row["budget_kimg"] == 512
+    }
+    delayed_reversals = []
+    endpoint_log_contrasts = []
+    for endpoint in endpoint_rows:
+        seed = endpoint["seed"]
+        source = source_rows[seed]
+        log_values = {name: math.log(endpoint[name]) for name in TRAJECTORIES}
+        log_contrasts = {
+            "S_A": log_values["AB"] - log_values["AA"],
+            "S_B": log_values["BB"] - log_values["BA"],
+            "H_A": log_values["BA"] - log_values["AA"],
+            "H_B": log_values["BB"] - log_values["AB"],
+            "I_switch": (
+                log_values["BB"] - log_values["BA"]
+                - log_values["AB"] + log_values["AA"]
+            ),
+        }
+        endpoint_log_contrasts.append({"seed": seed, **log_contrasts})
+        source_b_worse = source["BB"] > source["AA"]
+        b_history_better_both = (
+            endpoint["BA"] < endpoint["AA"]
+            and endpoint["BB"] < endpoint["AB"]
+        )
+        delayed_reversals.append({
+            "seed": seed,
+            "source_A_fid_nfe1_512": source["AA"],
+            "source_B_fid_nfe1_512": source["BB"],
+            "source_B_minus_A": source["BB"] - source["AA"],
+            "endpoint_AA_fid_nfe1_1024": endpoint["AA"],
+            "endpoint_AB_fid_nfe1_1024": endpoint["AB"],
+            "endpoint_BA_fid_nfe1_1024": endpoint["BA"],
+            "endpoint_BB_fid_nfe1_1024": endpoint["BB"],
+            "H_A_logfid": log_contrasts["H_A"],
+            "H_B_logfid": log_contrasts["H_B"],
+            "source_B_worse": source_b_worse,
+            "endpoint_B_history_better_under_both_current_policies": (
+                b_history_better_both
+            ),
+            "descriptive_delayed_reversal": (
+                source_b_worse and b_history_better_both
+            ),
+        })
+
+    log_summary_rows = []
+    for name in CONTRASTS:
+        values = [row[name] for row in endpoint_log_contrasts]
+        log_summary_rows.append({
+            "nfe": 1,
+            "budget_kimg": 1024,
+            "contrast": name,
+            **{
+                f"seed{row['seed']}": row[name]
+                for row in endpoint_log_contrasts
+            },
+            "mean": statistics.mean(values),
+            "median": statistics.median(values),
+            "n_negative": sum(value < 0 for value in values),
+            "n_positive": sum(value > 0 for value in values),
+            "n_zero": sum(value == 0 for value in values),
+        })
+
     common.write_csv(output / "per_seed_trajectories.csv", trajectories)
     common.write_csv(output / "per_seed_contrasts.csv", contrasts)
     common.write_csv(output / "per_seed_aulc.csv", aulc)
     common.write_csv(output / "contrast_summaries.csv", summaries)
+    write_post_unblind_csv(
+        output / "per_seed_delayed_reversal.csv", delayed_reversals
+    )
+    write_post_unblind_csv(
+        output / "contrast_summaries_logfid.csv", log_summary_rows
+    )
     common.SEEDS = SEEDS
     plots = common.create_plots(output, trajectories, contrasts)
     audit = {
-        "schema": "ect.q256.schedule-switch-seed3-7-analysis/v1",
-        "status": "PASS", "protocol_sha256": protocol_sha,
+        "schema": "ect.q256.schedule-switch-seed3-7-analysis/v2",
+        "status": "PASS",
+        "status_scope": "execution_and_analysis_pipeline_only",
+        "protocol_sha256": protocol_sha,
         "control_audit_sha256": sha256_file(control_audit_path),
         "new_evaluation_jobs": 80, "control_cells": 100,
         "trajectory_rows": 100, "contrast_rows": 100,
         "aulc_rows": len(aulc), "statistical_unit": "training seed",
+        "post_unblind_descriptive_outputs": [
+            "per_seed_delayed_reversal.csv",
+            "contrast_summaries_logfid.csv",
+        ],
         "plots": plots,
         "claim_boundary": (
-            "descriptive availability-selected five-seed conditional "
-            "post-switch evidence; no global causal percentage"
+            "pre-result-frozen recovery protocol over an availability-selected "
+            "five-seed cohort, with compatibility-audited archived controls; "
+            "finite-horizon q256/CIFAR-10 switch evidence only, with no "
+            "universal schedule ranking, confirmed interaction null, state-to-"
+            "quality mediation claim, or global causal percentage"
         ),
     }
     reproducibility.atomic_json_dump(audit, output / "analysis_audit.json", overwrite=False)
     report = [
         "# q256 seed3-7 crossed schedule-switch results", "",
-        "Status: **PASS**", "", f"Protocol SHA256: `{protocol_sha}`", "",
+        "Status: **EXECUTION AND ANALYSIS PIPELINE PASS**", "",
+        "This status records artifact completeness and validation; it is not a "
+        "scientific-hypothesis verdict.", "",
+        f"Protocol SHA256: `{protocol_sha}`", "",
         "All five training seeds, four trajectories, five budgets, two NFEs, "
         "and both KID/FID metrics are reported in the adjacent CSV files.", "",
         "Means and medians are descriptive summaries over five training seeds. "
         "Budget × NFE cells are not independent samples.", "",
-        "Claim boundary: availability-selected seed3-7 conditional intervention "
-        "evidence only; no universal schedule ranking or causal percentage.", "",
+        "## Main finite-horizon finding", "",
+        "At NFE1 and 1024 kimg, a prior B spacing produced lower FID under "
+        "both current policies in 5/5 seeds. Current A produced lower FID than "
+        "current B after A history in 5/5 seeds and after B history in 4/5 "
+        "seeds. The history-by-current interaction was smaller in its signed "
+        "mean and mixed in sign (3 negative, 2 positive). Over this audited "
+        "domain, the data therefore support a persistent prior-spacing quality "
+        "carryover plus a smaller late current-policy preference; they do not "
+        "support a strong interaction claim.", "",
+        "## Delayed source-to-future reversal", "",
+        "At the 512-kimg switch, B had worse NFE1 FID than A in seeds 5, 6, "
+        "and 7. At 1024 kimg, B history had lower NFE1 FID under both current "
+        "policies in all three of those seeds (and in all five seeds overall). "
+        "Thus, in this q256/CIFAR-10 experiment, at this switch point, future "
+        "budget, shared continuations, and NFE, current FID did not always rank "
+        "training states by their future generation quality.", "",
+        "## Sequence ranking and sensitivity", "",
+        "BA had the lowest 1024-kimg NFE1 FID in 4/5 seeds; BB was lowest in "
+        "seed 6. This pattern is consistent with coarse-then-fine temporal role "
+        "separation in the audited q256 regime, without establishing a universal "
+        "curriculum. `contrast_summaries_logfid.csv` repeats the endpoint "
+        "decomposition on log FID to reduce raw-scale sensitivity. Because this "
+        "transform was added after results were known, it is explicitly marked "
+        "post-unblind and descriptive.", "",
+        "## Evidence class and exclusions", "",
+        "This is a pre-result-frozen recovery protocol over an availability-"
+        "selected five-seed cohort, with compatibility-audited archived controls "
+        "and pre-parity operational amendments. It is not the unavailable "
+        "seed14-18 confirmatory experiment. The results do not establish a "
+        "confirmed interaction null, a universal schedule ranking, mediation by "
+        "the state blocks measured in the separate same-state audit, or a unique "
+        "optimizer mechanism.", "",
     ]
     with (output / "REPORT.md").open("x", encoding="utf-8") as handle:
         handle.write("\n".join(report)); handle.flush(); os.fsync(handle.fileno())

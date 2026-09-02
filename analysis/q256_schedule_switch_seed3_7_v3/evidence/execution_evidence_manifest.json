@@ -1,8 +1,9 @@
 {
   "analysis_artifacts": {
-    "REPORT.md": "11100049672cc557593a0b1df4003634625b99d4c23175851b893a70bc6ce19c",
-    "analysis_audit.json": "0f1fb574e592d6e4bb417157116a511492d7e99e79523b836045e649f3541cda",
+    "REPORT.md": "3dfa08316e333ad942f0d4294c78a95049e3980e1f89b2201fd21e9354fa7ad0",
+    "analysis_audit.json": "358729a12d6a0fb6bd9fda586ca3389b5919eb95e4fc9926621bbd132e44d3a7",
     "contrast_summaries.csv": "70371236692a84425bcb762246e7b384a6d44320a6b76fcf76d789bebae50aee",
+    "contrast_summaries_logfid.csv": "21d3a9bc48c1b4eeb035bc470b9d201ed9bd2d0c230686a9679038ec0ab11b15",
     "current_schedule_effects_fid50k_full_nfe1.png": "6a81e933db243ba017b7902a0cd3408b8604796099aca00a70ffa488982aaf75",
     "current_schedule_effects_fid50k_full_nfe2.png": "0890c1cb91bc53fde4382d2686d339775df2e04231931fc5afb414e4e1d4c421",
     "current_schedule_effects_kid50k_full_nfe1.png": "712b478b17122bc5c166e2267b52a6c691b35f1a5e45e720fdfcf3a6e220c6b0",
@@ -13,13 +14,23 @@
     "history_and_interaction_kid50k_full_nfe2.png": "f97af03cc5c72a7918e0682b173fa2ac4e04e13483e4df53176f60fadc25eeab",
     "per_seed_aulc.csv": "275ef09c6089ceeba61c733ce690ce49157d01b6a89d0afd91bcd2e8d79d1ee1",
     "per_seed_contrasts.csv": "3372b5bcd4656b48dbf16eb90e368e3faa6cf7a01967335649ea00b9f66c68a1",
+    "per_seed_delayed_reversal.csv": "0ae3fcc202fbdfe4f2fb78cc7d3bb900cbf562aa3b9562e304bb7f2b69808090",
     "per_seed_four_trajectories_fid50k_full_nfe1.png": "13c0ca804758db53d08fb22f46dc2d15cad3fbb91c3e77e76af3d3b033bb208b",
     "per_seed_four_trajectories_fid50k_full_nfe2.png": "70b8533d1f300b4e1c3342f28c12d2d2dfc997518ec833c6be66a9b91c3fad2e",
     "per_seed_four_trajectories_kid50k_full_nfe1.png": "fd568b162124eeb9151c4d1e9c97b84a131d591e17ae94913a6196747e4c3d4f",
     "per_seed_four_trajectories_kid50k_full_nfe2.png": "e4f06a7e25ef793863bb8eed57e4933f7b59fd4fd762200ab158349976fab729",
     "per_seed_trajectories.csv": "f435d6e9bcc3066a953c997dee18cb4a5a07c7a2a74a81a5b575bb5f7ea81ec1"
   },
-  "claim_boundary": "descriptive availability-selected five-seed conditional post-switch evidence; no global causal percentage",
+  "analysis_revision": {
+    "kind": "post_unblind_descriptive_reframing",
+    "new_outputs": [
+      "contrast_summaries_logfid.csv",
+      "per_seed_delayed_reversal.csv"
+    ],
+    "raw_training_and_evaluation_evidence_unchanged": true,
+    "source_pr_head": "77492faf7faf5ea42bd08a503d61b12c212c0f31"
+  },
+  "claim_boundary": "pre-result-frozen recovery protocol over an availability-selected five-seed cohort, with compatibility-audited archived controls; finite-horizon q256/CIFAR-10 switch evidence only, with no universal schedule ranking, confirmed interaction null, state-to-quality mediation claim, or global causal percentage",
   "control_import_audit_sha256": "85b17eb34b38bd177122bd9eed401da622e4b577e6a61fa7c2a7f04411f589bb",
   "counts": {
     "aulc_rows": 20,
@@ -28,6 +39,7 @@
     "formal_milestones": 40,
     "formal_trajectories": 10,
     "plots": 12,
+    "post_unblind_descriptive_tables": 2,
     "trajectory_rows": 100
   },
   "evaluation_jobs": [
