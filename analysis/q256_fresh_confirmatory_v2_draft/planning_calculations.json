@@ -1,0 +1,49 @@
+{
+  "schema": "ect.q256.fresh-confirmatory-v2-planning/v1",
+  "source": {
+    "csv": "results/q256_fresh_crossed_switch_n12_matpool_v1/final_11seed/H_C_I_Q_G_per_seed.csv",
+    "sha256": "4d8bc83f7e9254878294a38fc3ad2ac40c84445d497dd166cec4f37b2e197461",
+    "use": "design planning on unblinded published data; no new inference"
+  },
+  "fresh_evidence": {
+    "n": 11,
+    "mean_H_A": -0.07760331136752173,
+    "sd_H_A": 0.11289822242782793,
+    "neg_count_H_A": 8,
+    "mean_H_pooled": -0.07556640121337899,
+    "sd_H_pooled": 0.11871913355012204,
+    "corr_C1_C2": 0.9645727620618602
+  },
+  "two_arm_n24": {
+    "test": "one-sided paired t, H1 mean(H_A) < 0, alpha 0.05",
+    "power_at_fresh_point_estimate": 0.9474986428089602,
+    "power_at_pooled_effect_review_concordance": 0.9376628491250698,
+    "mde_80pct_power": 0.059065597996683816,
+    "assurance": 0.8233566923169288,
+    "assurance_method": "flat prior on delta; posterior N(mean_H_A, sd_H_A/sqrt(11)) from the fresh cohort; predictive power = Gauss-Hermite quadrature (order 200) of the exact noncentral-t power over this posterior; assumes cohort exchangeability"
+  },
+  "four_arm_n16_comparison": {
+    "test": "one-sided paired t on pooled H, alpha 0.05",
+    "power_at_fresh_point_estimate": 0.783422718941794,
+    "mde_80pct_power": 0.07736925511379983,
+    "assurance": 0.6965094859689993
+  },
+  "dose_within_seed_contrast_n8": {
+    "weights": {
+      "g1.0": -0.5,
+      "g1.1": 0.0,
+      "g1.2": 0.5
+    },
+    "endpoint": "terminal log FID at 1024 kimg",
+    "planning_effect": "E[L] = fresh mean(H_A) under a linear dose response",
+    "planning_sd_contrast": 0.07983109866262429,
+    "planning_sd_rationale": "Var(L) = 0.25*Var(Y_g1.0) + 0.25*Var(Y_g1.2); with equal independent per-arm endpoint noise this is half the variance of a two-arm difference, so SD(L) = sd(H_A)/sqrt(2). To be replaced by the Z2-upgraded noise-floor value at freeze.",
+    "test": "two-sided paired t over the 8 per-seed contrasts, alpha 0.05",
+    "power_at_linear_projection": 0.8985457588798362,
+    "mde_80pct_power": 0.07808727497184635
+  },
+  "tooling": {
+    "scipy": "1.18.0",
+    "numpy": "2.5.1"
+  }
+}

@@ -1,8 +1,8 @@
-# RUNBOOK — ICLR 2027 投稿执行手册 v1.2
+# RUNBOOK — ICLR 2027 投稿执行手册 v1.3
 
-冻结日期：2026-09-01（v1.0）。v1.1 修订：2026-09-02（PR #97 对账）。**v1.2 修订：2026-09-02（三席审查仲裁后，见"v1.2 增补"）**。本手册假定执行者没有任何背景知识与判断权：每一步给出前置条件、输入、动作、输出、二元验收标准、失败动作。**任何验收失败 = 立即停止该 Phase 并上报，禁止自行变通。**
+冻结日期：2026-09-01（v1.0）。v1.1 修订：2026-09-02（PR #97 对账）。v1.2 修订：2026-09-02（三席审查仲裁，见"v1.2 增补"）。**v1.3 修订：2026-09-02（route-3 草案外部 request-changes 审查的 8 条阻塞项落地，见"v1.3 增补"）**。本手册假定执行者没有任何背景知识与判断权：每一步给出前置条件、输入、动作、输出、二元验收标准、失败动作。**任何验收失败 = 立即停止该 Phase 并上报，禁止自行变通。**
 
-仓库：`hjjjs4vbmv-netizen/consistency-gap-optimization`。所有日期为 2026 年，UTC+8。
+仓库：`hjjjs4vbmv-netizen/consistency-gap-optimization`。所有日期为 2026 年，UTC+8，且均为**内部提前截止时间**——ICLR 官方截止为 AOE，内部日期刻意提前以留缓冲，两者不一致不是错误。
 
 ---
 
@@ -49,14 +49,15 @@ PR #97 表明 fresh 实验已在 v1.0 计划之外执行完毕，且**范围超�
 
 - **路线 1（ICLR）**：第 0 层 + 既有 Z1–Z7，**零新增训练**。会前书面承认：reject 侧概率主导且无 rebuttal 实验弹药。
 - **路线 2（TMLR）**：同上 + L1c 子集（4 个跨 Q 谱系 seeds，~32 评估 job）。把"预注册盲评复制 + 噪声地板 + 结构诊断"的方法学严谨性当卖点。当前 EV 最高路线。
-- **路线 3（顺延，目标 ICML 2027 / TMLR，不等 ICLR 2028）**：按预注册协议草案 `analysis/q256_fresh_confirmatory_v2_draft/` 执行，要点：
-  - **两臂设计**（0→512 A/B history；512→1024 均 current-A），**n=24 全新 seeds**（数据仲裁：fresh corr(C₁,C₂)=0.965，双 continuation 冗余；同预算 96 RE 下两臂 n=24 的功效 0.96 > 四臂 n=16 的 0.82，assurance 0.72→~0.83）
-  - Primary = 无调整 H_A 单侧配对 t（α=0.05），协议明写 MDE 与 assurance
-  - Gatekept 链：H_A → 剂量趋势 β₁（g∈{1.0,1.1,1.2}，嵌套 8 seeds，删 1.05）→（可选模块）H@2048 延训
-  - n=12 处 **binding futility-only 期中**（按预指定 seed 编号非完成顺序；封存脚本输出单 token；零 α 消耗）+ 盲式 SD 重估（SD>0.15 → 扩至上限 28）
-  - 缺失规则反转：**预排序替换池为 primary**，complete-case 降敏感性 + tipping-point；B 臂失稳计数 = 预注册次要终点
+- **路线 3（顺延，目标 ICML 2027 / TMLR，不等 ICLR 2028）**：按预注册协议草案 `analysis/q256_fresh_confirmatory_v2_draft/`（v2，经 2026-09-02 外部 request-changes 审查修订）执行，要点：
+  - **两臂设计**（0→512 A/B history；512→1024 均 current-A），**n=24 全新 seeds**（数据仲裁：fresh corr(C₁,C₂)=0.965，双 continuation 冗余；同预算下两臂 n=24 的功效 **0.947** > 四臂 n=16 的 **0.783**，assurance **0.823** vs **0.697**——v1.3 修正：非中心 t 精确复算，出自 `planning_calculations.py`，v1.2 的 0.96/0.82/0.83 为正态近似，作废）
+  - 设计命名 = **matched two-history continuation under a fixed current-A policy**（不得再称 crossed；identification limits 写进协议）
+  - Primary = 无调整 H_A 单侧配对 t（α=0.05），MDE(80%)=**0.0591**；**verdict 五类判定表全文写进协议**（含边角：单侧 p<0.05 但双侧 95% CI 跨零 → INCONCLUSIVE）
+  - Gatekept 链：H_A → 剂量趋势（**within-seed 线性对照** L_s=−0.5·Y₁.₀+0.5·Y₁.₂，8 seeds 配对 t 双侧 0.05，功效 0.899；v1.2 的随机截距回归模型作废）→（可选模块）H@2048 延训
+  - n=12 处 **binding futility-only 期中** + 盲式 SD 重估（SD>0.15 → 扩至上限 28）；**公式全部写死，type-I 误差经 committed Monte Carlo 验证**（无条件 0.0495 / 压力场景 0.0490，≤0.055 冻结线；`type_I_error_simulation.py`）
+  - 缺失规则：**预排序替换池 primary + completion-conditioned estimand 明文**（估计的是双臂可完成 seed 总体的均值，非无条件效应）；**硬规则：>4 替换 → EXECUTION_FAILED，不裁决**；B 臂失稳计数 = 并列报告的次要终点
   - 移植实验 15 RE（2×2 reset 对照 + sham parity gate + G0-c go/no-go），exploratory + 符号预测记分卡
-  - 预算（双列记账）：训练 127–149 RE + 评估 250–300 job ≈ **400–460 A100·h 全含**
+  - 预算 = **三命名包**（v1.3，取代一切区间表述）：MINIMAL **127 RE / 250 job / ~400 h**；WITH_HORIZON_SUBSET **149 / 300 / ~460**；WITH_HORIZON_FULL **171 / 320 / ~500**
 
 ### v1.2 处决名单（从 v1 实验方案中删除/封存）
 
@@ -77,6 +78,33 @@ PR #97 表明 fresh 实验已在 v1.0 计划之外执行完毕，且**范围超�
 
 ---
 
+## v1.3 增补（2026-09-02，route-3 草案外部 request-changes 审查落地）
+
+审查结论：方向正确但当前是设计讨论稿而非可冻结协议，8 条阻塞项。全部已落地到 `analysis/q256_fresh_confirmatory_v2_draft/`（协议 JSON v2 + PROTOCOL_DRAFT.md + `planning_calculations.py/.json` + `type_I_error_simulation.py/.json` + `protocol_lint.py`）。逐条状态：
+
+1. **PR #96 补录（runbook 级）**：PR #96（B@384 pulse-chase，seeds 19–28，60/60 sealed，**INFORMATIVE_NULL**：384→512 短 B 暴露在共享 A continuation 至 640 kimg 后无可检测质量残留，冻结 3% margin）此前被本 runbook 整体漏掉。机械后果：
+   - R1 合并顺序补入 #96（见上）。
+   - W3 Scope of Evidence 表新增一行（见 W3）。
+   - §6 更名并收编 PR96（见 W1 表）。
+   - route-3 设计理由新增时间域边界（协议 `design.temporal_regime_boundary`）："A shorter B exposure from 384 to 512 kimg leaves no detectable quality carryover after a shared A continuation to 640 kimg. The route-3 cohort therefore tests a different temporal regime: a longer 0–512-kimg history followed to 1024 kimg." PR96 从"负结果"变成机制边界：**不是任何短暂 spacing difference 都会留下可检测的未来质量效应**——两实验合并框定 carryover 的暴露时长条件。
+2. **设计命名与 claim ceiling**：两臂设计不得称 crossed（只能识别 fixed current-A 下的 H_A；不能估 current-policy 主效应、交互、跨 continuation 可迁移性）。PR95/97 仍是 crossed evidence；route 3 只是对 H_A 的独立确认。已写进协议 `design.naming_rationale` + `identification_limits`。
+3. **功效数字统一**：全部改由 committed 脚本输出——两臂 n=24 功效 **0.947**（H_A 点估计；pooled 效应变体 0.938，与审查复算一致）、四臂 n=16 **0.783**、MDE(80%) **0.0591**、assurance **0.823**（flat prior → 后验 N(−0.0776, 0.1129/√11) → 200 阶 Gauss-Hermite 积非中心 t 功效）。v1.2 的 0.96/0.82/0.058 全部作废。剂量对照 n=8 功效 **0.899**（回答"8 seeds 够不够"：在线性投影下 ~90%，MDE 0.078，诚实写入协议）。
+4. **verdict 判定表闭合**：五类判定的输入、条件、优先级、边角全部写死进协议 `verdict_decision_table`（n=11 frozen statistics.py 机制的同构放大：strong > equivalence > weak > opposite > inconclusive；equivalence 优先于 weak；单侧 p<0.05 但 hi95≥0 → **INCONCLUSIVE**，即 fresh n=11 实际发生的那一类；22/24 符号计数为 10/11 的等比适配，冻结前钉死）。gatekeeping step1 = verdict ∈ {STRONG, WEAK}。
+5. **盲式 SD 重估 alpha 声明闭合**：s12 公式、conditional power 闭式、扩样后检验规则全部写死；新增 committed Monte Carlo（200k reps/场景，seed 20260902）：**无条件 type-I = 0.0495（planning SD）/ 0.0490（压力 σ=0.20，扩样触发 86%）**，均 ≤ 0.055 冻结线。注意：given-analyzed 率 ~0.099 是"以 interim 均值≤0 为条件"的选择效应，是诊断量不是程序 type-I，JSON 已写明防误读。
+6. **informative missingness 闭合**：completion-conditioned estimand 明文化（primary 估计的是双臂可完成 seed 总体的 H_A 均值，论文必须同句陈述）；**硬终止规则：>4 替换 → EXECUTION_FAILED，不渲染任何 verdict 类别**；all-started tipping-point 保留无条件读法；B 臂失稳率并列报告。
+7. **剂量 estimand 重写**：随机截距回归 + Wald 检验作废 → **within-seed 线性对照** L_s = −0.5·Y_{g=1.0} + 0·Y_{g=1.1} + 0.5·Y_{g=1.2}（终末 log-FID），8 seeds 配对 t 双侧 0.05 + 全枚举 2⁸ sign-flip p 同报（全名）。被对照的是终末 log-FID（相对该 seed 自身两端点）；缺失 = 替换池规则同 primary，池尽 → complete-contrast + tipping-point。
+8. **预算三包命名**：MINIMAL 127 RE/250 job/~400 h；WITH_HORIZON_SUBSET 149/300/~460；WITH_HORIZON_FULL 171/320/~500。本 runbook、协议 JSON、PR body 只允许引用包名，禁止裸区间。
+
+### v1.3 论文架构修正（并入 Phase W，部分推翻 9/1 定稿，G5 议题）
+
+- **标题（W2 撤销"定稿不再讨论"）**：现冻结标题 *Mid-Training FID Misranks Training Histories…* 在 PR97 INCONCLUSIVE + PR96 INFORMATIVE_NULL 之后偏强。G5 议题新增：改用问句式、贴证据的替代标题 **"Finite-Horizon Quality Carryover from Pair-Spacing History in Consistency Training"**（方向：把"misranks"这一现象级断言降为"carryover"这一可测性质）。9/22 决定；在决定前 W 阶段所有稿面用占位标题。
+- **§6 更名**："Converging evidence" → **"Regime and scale boundaries"**（q128 与 ImageNet 并不直接验证 history carryover，不得作 converging 卖点）。§6 内容 = q128 边界 + ImageNet 规模边界 + **PR96 暴露时长边界**（新增主段落）。
+- **贡献结构恢复三条**（推翻 9/1 的两条打包）：(a) intervention/identification structure；(b) state propagation（机制侧）；(c) finite-horizon quality evidence。**不得重新缩成两条**——形式化、状态保存与质量证据不得混装。Introduction 结果段**只写已执行实验**：route-3 尚未执行，只能出现在本 runbook 与 future-work 措辞中，不得进入 §1。
+- **W1 表 §1 行与 §6 行、W2、W3 已就地改**（见下）。
+- 会前必读清单追加：`analysis/q256_fresh_confirmatory_v2_draft/PROTOCOL_DRAFT.md`（v2）与 `type_I_error_simulation.json`（若议题涉及路线 3）。
+
+---
+
 ## 全局规则（适用于所有 Phase）
 
 - R-1 ~~禁止在 Gate G1 通过前启动任何 fresh cohort 训练~~（v1.1：fresh 训练已完成，本条改为：**禁止启动任何新 GPU 实验，除非 9/22 决策会选择路线 3 并完成新预注册**）。
@@ -92,7 +120,7 @@ PR #97 表明 fresh 实验已在 v1.0 计划之外执行完毕，且**范围超�
 
 | 步 | 动作 | 验收 |
 |---|---|---|
-| R1 | 按顺序 merge：#91 → #93（按其评审修订后）→ #94（rebase 到新 main 后）→ #95（完成其评审 7 点后 rebase）→ **#97（含已并入的 #98 结构诊断；其评审 M1/M2 已由 commit `6399892`/`fb616c9` 落地，m3–m5 为 minor 可 follow-up）** | **5** 个 PR 全部 MERGED |
+| R1 | 按顺序 merge：#91 → #93（按其评审修订后）→ #94（rebase 到新 main 后）→ #95（完成其评审 7 点后 rebase）→ **#96（B@384 pulse-chase P2：10-seed 短暴露 practical-equivalence 结果，v1.3 补录——见 v1.3 增补"PR #96 补录"）** → **#97（含已并入的 #98 结构诊断；其评审 M1/M2 已由 commit `6399892`/`fb616c9` 落地，m3–m5 为 minor 可 follow-up）** | **6** 个 PR 全部 MERGED |
 | R2 | 每次 merge 后在服务器运行 `pytest tests/ -q`（#95 合入后该目录自动包含 `test_q256_schedule_switch*.py`；此前已含 `test_q256_target_weight_*.py` 共 7 个文件） | 全部 passed，0 failed |
 | R3 | 本地工作树 `git fetch origin && git checkout main && git pull`（当前本地落后 154 提交） | `git status` = up to date |
 
@@ -232,23 +260,23 @@ INCONCLUSIVE 的机械措辞后果（对应 v1.0 表的"论文措辞动作"列�
 
 | 节 | 页 | 必含元素 |
 |---|---|---|
-| §1 Intro | 1.25 | 贡献两条（identification structure / crossed decomposition）+ Fig.1 |
+| §1 Intro | 1.25 | 贡献**三条**（v1.3：identification structure / state propagation / finite-horizon quality evidence；不得缩成两条）+ Fig.1；结果段只写已执行实验，route-3 不得进入 |
 | §2 Prelim | 0.75 | ECT、pair law、A/B 与两 regime 定义 |
 | §3 Identification structure | 1.0 | regime 二分 + 跨论文比较失效实例 + attribution boundary；**无 "Proposition" 环境**；恒等式引附录 |
 | §4 Design | 1.0 | H/S/I 定义（照抄 PR#95 REPORT 公式）+ Scope of Evidence 表（见 W3）+ discovery/replication 分层 |
 | §5 Results | 2.25 | 表 T1（行=H_A,H_B,S_A,S_B,I；列=raw FID 均值、符号计数、logFID 均值、符号计数、**fresh H 列（固定：INCONCLUSIVE，−0.076 [−0.155, +0.004]，8/11，同行给子组分解指针）**）；反转表（Z4 数据 + fresh 强资格 2/3 行）；§5.3 探针表（Z3）；§5.4 BA 半页 |
-| §6 Converging evidence | 0.75 | q128 + ImageNet（带 Z6 限定） |
+| §6 Regime and scale boundaries | 0.75 | v1.3 更名（原 "Converging evidence" 撤销——q128/ImageNet 不直接验证 carryover，不得作 converging 卖点）：q128 边界 + ImageNet 规模边界（带 Z6 限定）+ **PR96 暴露时长边界**（384→512 短 B 暴露无可检测残留；与 route-3 的 0–512 全程史构成暴露时长对照） |
 | §7 Mechanism support | 0.5 | PR90/94 一图一段 |
 | §8 Related work | 0.5 | TCM 专段（划界句固定："TCM establishes stage necessity by ablation within a two-stage method whose stages differ in objective; we identify history and current-schedule effects within a single objective family via a crossed design"）+ Achille/Frankle/CCM/ADCM + LR-decay/grokking 划界句（"level improvement" vs "intervention ranking"） |
 | §9 Discussion | 0.5 | 中途 FID 选 schedule 的实践警告 + limitations |
 
-### W2 标题（定稿，不再讨论）
+### W2 标题（v1.3：撤销"定稿"，转为 G5 议题）
 
-*Mid-Training FID Misranks Training Histories: A Crossed Decomposition of Pair-Spacing Effects in Consistency Training*
+原冻结标题 *Mid-Training FID Misranks Training Histories: A Crossed Decomposition of Pair-Spacing Effects in Consistency Training* 在 PR97 INCONCLUSIVE + PR96 INFORMATIVE_NULL 后偏强。**G5 议题**：替代标题 *Finite-Horizon Quality Carryover from Pair-Spacing History in Consistency Training*（把现象级断言降为可测性质）。9/22 前所有稿面用占位标题，G5 决定后机械替换。
 
 ### W3 Scope of Evidence 表（§4，全文唯一 boundary 集中点）
 
-行：q256 crossed（status=pre-result-frozen discovery, n=5 paired）；**fresh cohort（status 固定："preregistered outcome-blind replication, n=11 complete-case (seed38/AB terminal numerical failure; informative missingness), primary verdict INCONCLUSIVE"，不随 G5 变动——G5 决定的是投稿路线，不是这一行的措辞）**；q128（replication, n=3）；ImageNet-64（exploratory panel, n=3）；same-state audit（descriptive/mechanism）；设计不变量行（"All arms share paired seeds, data ordering, and fixed budgets"）；selection rule 行（retention-based, audit: Z5）。
+行：q256 crossed（status=pre-result-frozen discovery, n=5 paired）；**fresh cohort（status 固定："preregistered outcome-blind replication, n=11 complete-case (seed38/AB terminal numerical failure; informative missingness), primary verdict INCONCLUSIVE"，不随 G5 变动——G5 决定的是投稿路线，不是这一行的措辞）**；**B@384 pulse-chase（v1.3 新增：status="preregistered pulse-chase, n=10, INFORMATIVE_NULL at frozen 3% margin; short-exposure boundary"，来源 PR #96）**；q128（replication, n=3）；ImageNet-64（exploratory panel, n=3）；same-state audit（descriptive/mechanism）；设计不变量行（"All arms share paired seeds, data ordering, and fixed budgets"）；selection rule 行（retention-based, audit: Z5）。
 
 ### W4 机械写作检查（提交前运行，返回 0 行才许提交）
 
@@ -289,5 +317,5 @@ v1.1 追加（fresh cohort 引用规则，来源 `M1_M2_DIAGNOSTIC_NOTES.md`）�
 
 1. **ICLR 全披露版**：discovery + INCONCLUSIVE replication 双 cohort 入正文；标题现象的支持形态 = discovery 3/3 + fresh 强资格 2/3（含 seed35 反例）、fresh 幅度小一个量级。风险：审稿人以"复制未确认"为由压分；无 rebuttal 实验弹药。
 2. **TMLR 版**：同一内容按 "claims match evidence" 标准重排，INCONCLUSIVE 复制作为核心贡献之一（严格预注册复制本身是卖点）。
-3. **增补 seeds 顺延**：以 fresh SD=0.119、真效应取 fresh 点估计 −0.076 计，单侧 α=0.05、80% 功效需 n≈16（再 +5 seeds，须**新预注册**且声明为 second replication，不得与 n=11 合并为单一检验）。代价：错过 9/25 全文线，顺延至下一周期。
-- 会前必读：`final_11seed/REPORT_11SEED.md`、`structure_diagnostic_v1/M1_M2_DIAGNOSTIC_NOTES.md`、`MEDIAN_CORRECTION_V1.md`（manuscript 禁用归档 median 字段）。
+3. **增补 cohort 顺延（v1.3 更新，取代 v1.1 的"n≈16 再+5 seeds"合并设想——该设想与 no-merge 规则冲突，作废）**：执行 `analysis/q256_fresh_confirmatory_v2_draft/`（v2 协议草案，经外部审查修订）：**全新两臂 cohort n=24**（seeds 51–74，非 n=11 扩充；corr(C₁,C₂)=0.965 数据仲裁），primary = 无调整 H_A 单侧配对 t，功效 0.947 / MDE 0.0591 / assurance 0.823；n=12 binding futility 期中（type-I 已 MC 验证）；预算 MINIMAL 包 127 RE ≈ 400 A100·h；目标 ICML 2027 / TMLR。代价：错过 9/25 全文线，顺延至下一周期。
+- 会前必读：`final_11seed/REPORT_11SEED.md`、`structure_diagnostic_v1/M1_M2_DIAGNOSTIC_NOTES.md`、`MEDIAN_CORRECTION_V1.md`（manuscript 禁用归档 median 字段）、PR #96 的 seed-level equivalence 报告（§6 暴露时长边界段的数据源）。若议题涉及路线 3：`analysis/q256_fresh_confirmatory_v2_draft/PROTOCOL_DRAFT.md`（v2）+ `type_I_error_simulation.json`。

@@ -1,20 +1,33 @@
 {
-  "schema": "ect.q256.fresh-confirmatory-v2-protocol-draft/v1",
+  "schema": "ect.q256.fresh-confirmatory-v2-protocol-draft/v2",
   "status": "DRAFT_PENDING_G5_AND_L1_GATES",
   "draft_date": "2026-09-02",
+  "revision_note": "v2 of this draft responds to the 2026-09-02 external design review (request-changes): PR #96 boundary integrated, design renamed and identification limits stated, power recomputed by the committed noncentral-t planning script, verdict decision table written out in full, interim formulas specified and type-I error validated by committed Monte Carlo, completion-conditioned estimand made explicit with a hard >4-replacement termination rule, dose model replaced by a within-seed linear contrast, and the budget reduced to three named packages. No experiment may start against this document; it carries no SHA freeze.",
+
   "freeze_procedure": {
     "preconditions": [
       "G5 decision meeting (2026-09-22) selects route 3",
       "Z8 cross-cohort H~Q structure analysis complete (per-cohort fits only); if the discovery-side correlation sign is bootstrap-unstable, all moderation narrative is struck from this protocol before freezing",
-      "Z2-upgraded noise floor complete: 3 checkpoints x 5 generation seeds + 1-2 same-seed retraining segments; sigma_e recorded below"
+      "Z2-upgraded noise floor complete: 3 checkpoints x 5 generation seeds + 1-2 same-seed retraining segments; sigma_e recorded in primary_endpoint.planning_assumptions",
+      "planning_calculations.py rerun with any revised sigma/sd assumptions; planning_calculations.json re-committed",
+      "type_I_error_simulation.py rerun under the frozen parameters; unconditional empirical type-I error under both null scenarios <= 0.055",
+      "protocol_lint.py passes on the final protocol.json"
     ],
-    "freeze_action": "sha256sum protocol.json analysis_plan sections > protocol.sha256; commit timestamp must precede the first line of any stage-1 training log",
+    "freeze_action": "sha256sum of the four named files -- protocol.json, interim_futility.py, planning_calculations.py, and planning_calculations.json -- written to protocol.sha256; the freeze commit timestamp must precede the first line of any stage-1 training log",
     "note": "This file is a DRAFT. No experiment may start against it. Amendments before freeze are unrestricted; after freeze, only outcome-blind amendments with authorization records (same standard as q256_fresh_crossed_switch_n12_matpool_v1)."
   },
 
   "design": {
-    "name": "two-arm crossed-history continuation, n=24",
-    "rationale_data": "fresh n=11: corr(C1,C2)=0.965 between the two continuation contrasts, so the second continuation is nearly redundant for the history effect; at equal budget (~96 RE) two-arm n=24 gives planned-effect power 0.96 vs 0.82 for four-arm n=16, assurance ~0.83 vs ~0.72. Computed from published H_C_I_Q_G_per_seed.csv (design-planning use of unblinded data; no new inference).",
+    "name": "matched two-history continuation under a fixed current-A policy (two arms per seed: AA and BA)",
+    "naming_rationale": "The earlier label 'two-arm crossed-history continuation' is retired: with only AA and BA this design is NOT crossed. It identifies exactly one contrast, H_A, under one fixed continuation policy.",
+    "identification_limits": [
+      "estimable: H_A = the effect of prior spacing history (g=1.1 vs g=1.0, 0-512 kimg) on future quality under a fixed current-A continuation (512-1024 kimg)",
+      "NOT estimable: the current-policy main effect (no current-B arm)",
+      "NOT estimable: the history x current-policy interaction",
+      "NOT estimable: whether the history effect transports across continuation policies; PR #95 and PR #97 remain the crossed evidence for H_B and I_switch; this cohort only independently confirms H_A"
+    ],
+    "temporal_regime_boundary": "PR #96 (B@384 pulse-chase, 10 seeds, sealed 60/60 evaluation) found INFORMATIVE_NULL: a shorter B exposure from 384 to 512 kimg leaves no detectable quality carryover after a shared A continuation to 640 kimg, within the frozen 3% margin. The route-3 cohort therefore tests a different temporal regime: a longer 0-512 kimg spacing history followed to 1024 kimg. Read together the two experiments bound the mechanism: not every short-lived spacing difference leaves a detectable future-quality effect; the carryover question this cohort addresses is specific to the full 0-512 kimg history scale.",
+    "rationale_data": "fresh n=11: corr(C1,C2)=0.965 between the two continuation contrasts, so the second continuation is nearly redundant for the history effect. Exact noncentral-t planning (planning_calculations.py, committed): at equal budget (~96 RE) two-arm n=24 has power 0.947 at the fresh H_A point estimate (0.938 at the pooled-H point estimate; both recorded) versus 0.783 for four-arm n=16, and assurance 0.823 versus 0.697. Computed from published H_C_I_Q_G_per_seed.csv (SHA256 4d8bc83f7e9254878294a38fc3ad2ac40c84445d497dd166cec4f37b2e197461); design-planning use of unblinded data; no new inference.",
     "arms_per_seed": {
       "stage1": "A history (g=1.0) and B history (g=1.1), 0 -> 512 kimg, full state saved at 512",
       "stage1b": "both histories continue under current-A, 512 -> 1024 kimg (AA and BA; AA passes through the same switch-resume machinery as BA, no-op verified by parity gate)"
@@ -27,31 +40,73 @@
 
   "primary_endpoint": {
     "estimand": "H_A_s = log(FID50k_NFE1(BA_s@1024)) - log(FID50k_NFE1(AA_s@1024))",
+    "estimand_population": "completion-conditioned: the mean of H_A over seeds in the completer population (seeds, including replacements, for which both arms finish and are evaluated). This is explicitly NOT the unconditional effect over the started-seed population; if B-history training terminates more often, the primary estimand conditions on that instability. The B-arm termination rate is therefore preregistered as a coprimary-reported secondary endpoint so the conditioning is always visible next to the estimate.",
     "test": "one-sided paired t-test on mean(H_A), H1: E[H_A] < 0, alpha = 0.05",
     "n": 24,
     "planning_assumptions": {
       "sd_planning": 0.1129,
-      "sd_source": "fresh n=11 SD(H_A); to be replaced by noise-floor-informed value if Z2-upgrade shows material evaluation-noise share",
-      "MDE_80pct_power": "approximately 2.49 * SD / sqrt(24) = 0.058 log-FID",
-      "assurance_at_fresh_posterior": "approximately 0.83 (Bayesian predictive power given fresh n=11 posterior)",
-      "honesty_clause": "This design has 80% power only for effects >= 0.058; the fresh point estimate is -0.078 and its 95% CI includes zero. A null or inconclusive outcome is a live possibility and its reporting is prespecified below."
+      "sd_source": "fresh n=11 SD(H_A); to be replaced by the noise-floor-informed value if Z2-upgrade shows a material evaluation-noise share",
+      "power_at_fresh_point_estimate": "0.947 (exact noncentral-t; 0.938 at the pooled-H point estimate; planning_calculations.py)",
+      "MDE_80pct_power": "0.0591 log-FID (exact root-finding; planning_calculations.py)",
+      "assurance_at_fresh_posterior": "0.823 (flat prior on the effect; posterior N(-0.0776, 0.1129/sqrt(11)) from the fresh cohort; predictive power by order-200 Gauss-Hermite quadrature of the exact noncentral-t power; planning_calculations.py; assumes cohort exchangeability)",
+      "honesty_clause": "This design has 80% power only for effects >= 0.059; the fresh point estimate is -0.078 and its 95% CI includes zero. A null or inconclusive outcome is a live possibility and its reporting is prespecified below."
     }
   },
 
+  "verdict_decision_table": {
+    "inputs": [
+      "DELTA = log(1.03) = 0.02956 (practical-equivalence band)",
+      "p1 = one-sided paired t p-value for H1 mean(H_A) < 0",
+      "lo95, hi95 = two-sided 95% t CI on mean(H_A)",
+      "lo90, hi90 = two-sided 90% t CI on mean(H_A) (TOST bounds)",
+      "neg = count of seeds with H_A_s < 0 out of the analyzed n"
+    ],
+    "categories_in_precedence_order": [
+      {
+        "name": "STRONG_SUCCESS",
+        "condition": "p1 < 0.05 AND hi95 < -DELTA AND neg >= 22 of 24",
+        "note": "22/24 is the proportional adaptation of the n=11 rule (>=10/11, i.e. >=91%); the exact cut is pinned at freeze before any data exist"
+      },
+      {
+        "name": "INFORMATIVE_PRACTICAL_NULL",
+        "condition": "lo90 > -DELTA AND hi90 < DELTA (TOST rejects at 10%)",
+        "note": "takes precedence over WEAK exactly as in the frozen n=11 rules, so a precise but tiny negative effect is read as practical equivalence, not replication"
+      },
+      {
+        "name": "WEAK_DIRECTIONAL_REPLICATION",
+        "condition": "NOT strong AND NOT equivalent AND hi95 < 0",
+        "note": "hi95 < 0 implies two-sided p < 0.05 and hence p1 < 0.025; p1 < 0.05 ALONE is deliberately insufficient. Edge case fixed by this table: if p1 < 0.05 but hi95 >= 0, the verdict is INCONCLUSIVE (this is exactly the fresh n=11 configuration)."
+      },
+      {
+        "name": "OPPOSITE_DIRECTION_FALSIFICATION",
+        "condition": "lo95 > 0"
+      },
+      {
+        "name": "INCONCLUSIVE",
+        "condition": "none of the above"
+      }
+    ],
+    "gatekeeping_link": "Gatekeeping step 1 (below) is passed iff the verdict is STRONG_SUCCESS or WEAK_DIRECTIONAL_REPLICATION. A one-sided rejection with an INCONCLUSIVE verdict does not open the chain.",
+    "provenance": "identical category mechanics to the frozen n=11 statistics.py (verified against analysis/q256_fresh_crossed_switch_n12_matpool_v1/statistics.py on the PR #97 branch): strong > equivalent > weak > opposite > inconclusive precedence, TOST band log(1.03), sign-count criterion scaled proportionally"
+  },
+
   "gatekeeping_chain": {
-    "rule": "fixed-sequence; each step tested at full alpha only if the previous step rejects",
-    "step1": "primary H_A (one-sided 0.05)",
+    "rule": "fixed-sequence; each step tested at full alpha only if the previous step passes; step 1 passes iff the verdict is STRONG_SUCCESS or WEAK_DIRECTIONAL_REPLICATION",
+    "step1": "verdict per verdict_decision_table (one-sided alpha 0.05 on H_A)",
     "step2": {
-      "name": "dose trend",
-      "design": "nested arm: g=1.2 history (0->512) + current-A continuation (512->1024) on preselected seeds [51..58]; model H_{s,g} = b0 + b1*(g-1.0) + u_s + eps with seed random intercept over g in {1.0 (AA control), 1.1, 1.2}; g=1.1 data from THIS cohort only (no reuse of unblinded n=11 results in the trend test)",
-      "test": "two-sided alpha = 0.05 on b1 (two-sided because the discovery/fresh corr(H,Q) signs conflict; no directional prior is defensible)",
+      "name": "dose trend, within-seed linear contrast",
+      "design": "nested arm on preselected seeds [51..58]: g=1.2 history (0->512) + current-A continuation (512->1024); the g=1.0 and g=1.1 endpoints are the AA and BA arms of the SAME seeds from THIS cohort (no reuse of unblinded n=11 results)",
+      "contrast": "per-seed within-seed linear contrast on terminal log-FID@1024/NFE1: L_s = -0.5*Y_{s,g=1.0} + 0*Y_{s,g=1.1} + 0.5*Y_{s,g=1.2} (equally spaced g-1.0 in {0, 0.1, 0.2}); no random effect, no cross-seed regression",
+      "test": "two-sided paired t-test on mean(L) over the 8 seeds, alpha = 0.05 (two-sided because the discovery/fresh corr(H,Q) signs conflict; no directional prior is defensible); co-reported exact two-sided sign-flip permutation p-value on the mean (full 2^8 = 256 enumeration, test named in full per reporting_rules)",
+      "power": "0.899 at the linear projection E[L] = fresh mean(H_A); MDE(80%) = 0.078; SD planning value sd(H_A)/sqrt(2) = 0.0798 (Var(L) = 0.25*Var(Y_1.0)+0.25*Var(Y_1.2), equal independent per-arm endpoint noise), to be replaced by the Z2-upgraded noise floor at freeze (planning_calculations.py)",
+      "missing_data": "a terminated g=1.2 arm is replaced from the ordered replacement pool under the same rule as the primary (replacement decided before any 1024 evaluation of that seed is decoded); if the pool is exhausted, the dose analysis falls back to complete-contrast seeds with a tipping-point sensitivity, and this fallback is reported",
       "claim_level": "spacing-schedule dose at the policy level; channel attribution (target vs weight) is explicitly out of scope and deferred to the archived stage-2 regime experiment"
     },
     "step3_optional_module": {
       "name": "horizon extension",
-      "design": "extend AA/BA of all n=24 seeds (or, if budget-bound, the preregistered first 12 by seed number) from 1024 to 2048 kimg; endpoint H_A@2048",
-      "test": "one-sided alpha = 0.05, only if steps 1 and 2 both reject",
-      "activation": "include/exclude decided at freeze time by budget; if excluded, it may be preregistered later as a same-cohort extension BEFORE any 2048 evaluation exists",
+      "design": "extend AA/BA of the preregistered first 12 seeds by seed number (or all 24 if the full package is frozen) from 1024 to 2048 kimg; endpoint H_A@2048",
+      "test": "one-sided alpha = 0.05, only if steps 1 and 2 both pass",
+      "activation": "which horizon tier (none / 12-seed subset / full cohort) is fixed at freeze time by the budget package; if excluded, it may be preregistered later as a same-cohort extension BEFORE any 2048 evaluation exists",
       "framing_rule": "decay of the effect at 2048 is reported as persistence-timescale characterization, not as refutation; prewritten reading: decay supports the mid-training-misranking thesis (rankings drift on this timescale)"
     }
   },
@@ -60,17 +115,32 @@
     "type": "binding futility-only; zero alpha spend (no efficacy stopping)",
     "timing": "after seeds [51..62] (first 12 by preassigned seed number, NOT by completion order) complete both arms and their 1024 evaluations under seal",
     "mechanism": "committed script interim_futility.py (SHA256 recorded in protocol.sha256) emits a single token {CONTINUE, STOP-FUTILITY}; sealed numerical log written to evidence/interim_sealed/, decoded only at final database lock; no effect estimate, sign, or magnitude disclosed to any author before final lock",
-    "stop_rule": "STOP-FUTILITY iff observed mean(H_A,12) > 0 OR conditional power at design effect -0.076 < 0.20",
-    "blinded_sd_reestimation": "pooled (sign-free) SD computed at interim; if SD > 0.15, n extends to the preset cap of 28 using replacement-pool-style additional seeds [83..86]; this uses no effect-direction information and does not affect alpha"
+    "sign_free_sd_definition": "s12 = sample standard deviation (ddof=1) of the 12 observed H_A values. SD is invariant to the sign of the effect, and no author sees any value: the committed script consumes sealed values and emits only the token. The same s12 is the sigma used in the conditional-power formula.",
+    "conditional_power_formula": "CP = Phi( (-t_{0.95, n_f-1} * s12 * sqrt(n_f) - S12 - (n_f - 12) * delta_design) / (s12 * sqrt(n_f - 12)) ), with S12 = sum of the 12 interim H_A values, delta_design = -0.0776 (fresh H_A point estimate; re-frozen if Z2 revises the planning assumptions), and n_f the final sample size selected in the same step (24, or 28 if the SD trigger fires). This treats s12 as known sigma; the committed script implements exactly this expression.",
+    "stop_rule": "STOP-FUTILITY iff mean(H_A,12) > 0 OR CP < 0.20. Under the null, P(mean(H_A,12) > 0) = 0.5 by construction, so half of null cohorts stop at interim; this is intended futility behavior, not a defect.",
+    "blinded_sd_reestimation": {
+      "trigger": "s12 > 0.15",
+      "action": "final sample size extends to the preset cap n_f = 28 using additional seeds [83, 84, 85, 86] in preassigned order",
+      "alpha_impact": "the final one-sided t-test runs at df = n_f - 1 with no alpha adjustment; the blinded SD trigger is a function of the data that is invariant to the sign of the effect, and under normality the sample mean and SD are independent, so the sample-size choice cannot condition the test away from the null",
+      "monte_carlo_validation": {
+        "script": "type_I_error_simulation.py (committed)",
+        "output": "type_I_error_simulation.json (committed, seed 20260902, 200k reps per scenario)",
+        "results": "unconditional empirical type-I error 0.0495 under the planning SD (extension fired 5.3%) and 0.0490 under the stress SD = 0.20 (extension fired 86.0%); both <= 0.055 acceptance bound. The diagnostic rate given continuation (~0.099) is inflated by selection on the interim mean sign and is NOT the procedure type-I error.",
+        "refreeze_rule": "any change to interim_n, cap_n, sd_trigger, cp_threshold, or the stop rule after freeze requires rerunning this simulation and re-verifying the acceptance bound before the change is authorized"
+      }
+    }
   },
 
   "missing_data": {
     "termination_criterion": "identical to n=11 protocol: second non-finite loss event in any arm, validator-enforced",
     "primary_population": "replaced cohort n=24: a terminated seed is replaced by the next seed in the ordered replacement pool, decided before any 1024-kimg evaluation of that seed is decoded; at most 4 replacements",
+    "hard_termination_rule": "if MORE than 4 replacements would be required, cohort execution STOPS: no primary verdict is rendered, the cohort is reported as EXECUTION_FAILED with the termination ledger, and any further use requires a new outcome-blind authorization record. The five verdict categories are never adjudicated on a cohort with >4 replacements",
+    "estimand_note": "the replacement rule makes the primary estimand completion-conditioned (see primary_endpoint.estimand_population); the paper must state this estimand next to the estimate",
     "secondary_instability_endpoint": "count of B-history-arm terminations, reported with arm identity (instability is itself carryover-relevant evidence)",
     "sensitivity_analyses": [
-      "all-started-seeds tipping-point: terminated seeds imputed at H_A = +/- 2*SD, report whether the primary conclusion flips",
-      "complete-case (the n=11 protocol's primary, here demoted to sensitivity)"
+      "all-started-seeds tipping-point: every terminated seed, replaced or not, imputed at H_A = +/- 2*SD, report whether the primary conclusion flips (this is the analysis that does NOT condition on completion)",
+      "complete-case on started seeds (no replacement), reported for contrast with the n=11 protocol's original primary",
+      "B-arm vs A-arm termination rates with exact two-sided binomial p-value, reported as instability evidence, not as a quality-effect claim"
     ]
   },
 
@@ -87,29 +157,39 @@
   "descriptive_analyses": {
     "persistence_regression": "H_A_s = alpha + rho * Q_s + eps with errors-in-variables correction rho_c = S_HQ / (S_QQ - 2*sigma_e^2) using sigma_e from the Z2-upgraded noise floor; alpha_c = mean(H_A) - rho_c * mean(Q); BCa bootstrap CIs; estimation only, no test",
     "moderation_clause": "No inferential claim about H-Q moderation will be made at any n achievable in this project. All Q-segment displays use sample quantiles, not preregistered thresholds.",
-    "cross_cohort_synthesis": "descriptive random-effects synthesis of the two preregistered cohorts (n=11, n=24) may be displayed, labeled 'descriptive synthesis, not a hypothesis test'; the no-merged-single-test rule stands"
+    "cross_cohort_synthesis": "descriptive random-effects synthesis of the two preregistered cohorts (n=11, n=24) may be displayed, labeled 'descriptive synthesis, not a hypothesis test'; the no-merged-single-test rule stands",
+    "pr96_junction": "PR #96's INFORMATIVE_NULL is presented adjacently as the short-exposure boundary of the mechanism (see design.temporal_regime_boundary); no pooled analysis across the two protocols is performed because the exposure and horizon definitions differ"
   },
 
   "reporting_rules": {
-    "verdict_categories": "same five frozen categories as the n=11 protocol (strong success / weak directional replication / informative practical null / opposite-direction falsification / inconclusive), applied to H_A with the equivalence band +/- log(1.03)",
+    "verdict_categories": "the five categories defined in verdict_decision_table, applied to H_A with the equivalence band +/- log(1.03); the table is normative, not 'same as previous protocol'",
     "wording": [
       "sign counts always accompanied by magnitudes",
       "reversal statements always carry eligibility definition (Q threshold), frequency, and magnitude",
       "the words 'magnitude bracket' are banned; n<6 exploratory outputs report per-seed point values only, with the preregistered sentence 'no interval or directional statement is made'",
-      "any sign-flip/permutation p-value is named in full ('exact permutation test on the mean under sign flips') with a code pointer and the 'not a decision input' qualifier where applicable"
+      "any sign-flip/permutation p-value is named in full ('exact permutation test on the mean under sign flips') with a code pointer and the 'not a decision input' qualifier where applicable",
+      "the primary estimate is always accompanied by the completion-conditioned estimand sentence and the B-arm termination count"
     ]
   },
 
-  "budget_double_ledger": {
-    "training_re": {
-      "primary_two_arm": "24 seeds x 4 RE = 96",
-      "dose_nested_g1p2": "8 seeds x 2 RE = 16",
-      "transplant": 15,
-      "horizon_optional": "22 (n=12 subset) to 44 (full cohort)",
-      "total_range": "127-171 RE"
+  "budget_packages": {
+    "note": "three named packages; every document (runbook, protocol, PR body) must reference these names and numbers only. Mixing numbers across packages is the inconsistency this v2 revision eliminates.",
+    "MINIMAL": {
+      "training_re": "127 = 96 (primary two-arm) + 16 (dose g=1.2, 8 seeds x 2 segments) + 15 (transplant)",
+      "evaluation_jobs": "250",
+      "a100_hours_all_in": "~400 (5% rerun margin per measured failure rate included)"
     },
-    "evaluation_jobs": "primary minimal set 24x4 + interim seal + dose + transplant + noise-floor ~ 250-320 jobs",
-    "a100_hours_all_in": "~400-500 (vs fresh n=11 actual ~253); 5% rerun margin included per measured failure rate",
+    "WITH_HORIZON_SUBSET": {
+      "training_re": "149 = 127 + 22 (1024->2048 extension, first 12 seeds by seed number, both arms)",
+      "evaluation_jobs": "300",
+      "a100_hours_all_in": "~460"
+    },
+    "WITH_HORIZON_FULL": {
+      "training_re": "171 = 127 + 44 (1024->2048 extension, all 24 seeds, both arms)",
+      "evaluation_jobs": "320",
+      "a100_hours_all_in": "~500"
+    },
+    "comparison": "fresh n=11 actual all-in was ~253 A100·h; the minimal package is the committed floor and fits the post-G5 calendar; the horizon tier is chosen at freeze",
     "archived_for_next_cycle_stage2": ["gap-independent-weighting crossed switch (~24 RE)", "q128 crossed (~36 RE)"]
   },
 
