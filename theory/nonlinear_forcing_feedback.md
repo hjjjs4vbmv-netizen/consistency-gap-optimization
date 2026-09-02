@@ -324,9 +324,10 @@ the statement:
 
 > Schedule changes generate common-state forcing.  Finite-horizon separation
 > combines repeated forcing, state-dependent feedback, and their directional
-> interaction. At the audited state, the smooth FP32 objective field admits a
-> stable local linearization, while the parameter-partial production transition
-> does not at the calibrated scales.
+> interaction. At the audited state, the smooth FP32 objective field passes the
+> prespecified local finite-difference stability criterion, while the
+> parameter-partial production transition fails that criterion on the audited
+> grid.
 
 It does not reduce all schedule effects to the spectrum of one global smooth
 operator.

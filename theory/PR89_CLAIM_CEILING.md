@@ -62,7 +62,8 @@ release artifact. This is reviewable in squash-merge form.
 5. Carryover-corrected diagnostics separate mechanical retention from
    incremental feedback for \(\theta\), EMA, \(m\), and \(v\) at the audited
    frozen state.
-6. Exact objective-level identities do not determine finite-training outcomes.
+6. Exact objective-level identities are insufficient by themselves to
+   determine finite-training outcomes.
 
 ## Claims requiring new evidence
 

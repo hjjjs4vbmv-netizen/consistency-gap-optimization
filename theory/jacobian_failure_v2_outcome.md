@@ -24,9 +24,10 @@ in arms A and D (0.0517766 against the frozen 0.05 gate). Every D cell is finite
 preserves the source state, pairs plus/minus AMP behavior, remains in one AMP
 regime across the epsilon sweep, and pairs the tracked discrete state.
 
-At this audited state and scale range, the FP32 objective-field controls admit
-stable local linearizations while the local parameter-to-augmented-state
-production transition does not. D perturbs parameters while fixing all other
+At this audited state and scale range, the FP32 objective-field controls pass
+the prespecified local finite-difference stability criterion while the local
+parameter-to-augmented-state production transition fails it on the audited
+grid. D perturbs parameters while fixing all other
 incoming state coordinates and jointly applies the internal FP16/autocast path,
 GradScaler, RAdam, and EMA. Attribution within that transition remains HOLD.
 The result characterizes this audited parameter partial; it does not characterize
