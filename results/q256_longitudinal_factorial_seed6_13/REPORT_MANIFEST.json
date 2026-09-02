@@ -1,0 +1,19 @@
+{
+  "schema": "ect.q256.seed6-13-longitudinal-factorial-report-manifest/v1",
+  "status": "PASS",
+  "receipt_count": 336,
+  "trajectory_count": 28,
+  "balanced_factorial_seeds": [8, 9, 10, 11, 12, 13],
+  "extension_seeds": [6, 7],
+  "extension_arms": ["C", "D"],
+  "budgets_kimg": [384, 512, 640, 768, 896, 1024],
+  "nfes": [1, 2],
+  "nfe2_mid_t": 0.821,
+  "sample_count": 50000,
+  "sample_seed_range": "0-49999",
+  "metric_seed": 20260730,
+  "metrics": ["kid50k_full", "fid50k_full"],
+  "fid_kid_share_generated_features": true,
+  "generated_artifacts_retained_in_repository": false,
+  "analysis_boundary": "AULC interactions are outcome-level statistics over separately trained arms, not objective-level causal decompositions."
+}
