@@ -337,9 +337,16 @@ def run_cell(protocol: dict, run_dir: Path, gpu: int, command: list[str], label:
         stderr=subprocess.STDOUT,
         start_new_session=True,
     )
-    total_attempts = 8000 if any(
-        item.startswith("--schedule-switch-manifest=") for item in command
-    ) else 4000
+    duration = next(
+        float(item.split("=", 1)[1])
+        for item in command
+        if item.startswith("--duration=")
+    )
+    total_attempts = (
+        4000
+        if "--stop-after-attempts=4000" in command
+        else int(duration * 1_000_000 // 128)
+    )
     monitor = subprocess.Popen(
         [
             protocol["runtime"]["python"],
