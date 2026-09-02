@@ -19,6 +19,7 @@ from torch_utils import distributed as dist
 from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
+from training import schedule_switch
 
 from metrics import metric_main
 
@@ -40,6 +41,91 @@ _AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
         },
     },
 }
+
+
+def validate_planned_pause(
+    *, stop_after_attempts, planned_pause_protocol, strict_reproducibility,
+    seed, total_kimg, resume_state_dump, schedule_switch_manifest,
+):
+    """Authorize only the legacy 16-step gate or the frozen fresh 512-kimg fork."""
+    if stop_after_attempts is None:
+        if planned_pause_protocol is not None:
+            raise ValueError('planned_pause_protocol requires stop_after_attempts')
+        return None
+    if not strict_reproducibility:
+        raise ValueError(
+            'stop_after_attempts is reserved for strict factorial resume gates'
+        )
+    if isinstance(stop_after_attempts, bool) or int(stop_after_attempts) != stop_after_attempts:
+        raise ValueError('stop_after_attempts must be an exact integer')
+    attempts = int(stop_after_attempts)
+    if attempts == 16 and planned_pause_protocol is None:
+        return attempts
+    allowed = {
+        schedule_switch.FRESH_N12_PROTOCOL: tuple(range(31, 43)),
+        schedule_switch.FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
+    }
+    if (
+        attempts != schedule_switch.SWITCH_ATTEMPT
+        or planned_pause_protocol not in allowed
+        or seed not in allowed.get(planned_pause_protocol, ())
+        or total_kimg != 1024
+        or resume_state_dump is not None
+        or schedule_switch_manifest is not None
+    ):
+        raise ValueError(
+            'long planned pause requires the frozen fresh q256 prefix contract '
+            '(attempt=4000, total_kimg=1024, fresh state, authorized seed)'
+        )
+    return attempts
+
+
+def strict_attempt_invariant_failures(
+    *, sample_count, batch_size, consumed_samples, processed_nimg,
+    loss_nonfinite_count, raw_grad_nonfinite_count,
+    sanitized_grad_nonfinite_count, update_nonfinite_count,
+    model_nonfinite_count, ema_nonfinite_count, factor_nonfinite_count,
+    nonpositive_denominator_count, step_skipped, update_norm,
+    allow_managed_loss_overflow=False, prior_managed_loss_overflows=0,
+):
+    """Return failures and the audited count of v2 AMP-managed loss overflows."""
+    failures = []
+    managed = False
+    if sample_count != batch_size:
+        failures.append('factorial sample_count != batch_size')
+    if consumed_samples != processed_nimg:
+        failures.append('sampler consumption != processed_nimg')
+    if loss_nonfinite_count:
+        managed = bool(
+            allow_managed_loss_overflow
+            and prior_managed_loss_overflows < 1
+            and raw_grad_nonfinite_count
+            and step_skipped
+            and not sanitized_grad_nonfinite_count
+            and not update_nonfinite_count
+            and not model_nonfinite_count
+            and not ema_nonfinite_count
+            and not factor_nonfinite_count
+            and not nonpositive_denominator_count
+            and update_norm == 0
+        )
+        if not managed:
+            failures.append('non-finite loss')
+    if sanitized_grad_nonfinite_count:
+        failures.append('non-finite sanitized gradient')
+    if update_nonfinite_count or model_nonfinite_count or ema_nonfinite_count:
+        failures.append('non-finite update/model/EMA')
+    if factor_nonfinite_count:
+        failures.append('non-finite target/denominator factor')
+    if nonpositive_denominator_count:
+        failures.append('non-positive realized denominator')
+    if bool(raw_grad_nonfinite_count) != bool(step_skipped):
+        failures.append('raw gradient non-finite status does not match AMP skip')
+    if step_skipped and update_norm != 0:
+        failures.append('skipped optimizer attempt changed parameters')
+    if not step_skipped and (not math.isfinite(update_norm) or update_norm <= 0):
+        failures.append('successful optimizer update norm is not positive')
+    return failures, prior_managed_loss_overflows + int(managed), managed
 
 # Per-attempted-iteration CSV for paired fixed/adaptive comparisons.
 # Schedule telemetry comes exclusively from loss_fn.schedule_runtime_metrics().
@@ -167,6 +253,19 @@ _FACTORIAL_TELEMETRY_FIELDS = (
     'step_skipped',
     'elapsed_sec',
     'gpu_hours_cumulative',
+)
+
+_SCHEDULE_SWITCH_TELEMETRY_FIELDS = (
+    'schema',
+    'experiment_protocol',
+    'branch',
+    'origin_arm',
+    'continuation_arm',
+    'switch_relative_step',
+    *_FACTORIAL_TELEMETRY_FIELDS[1:],
+    'online_ema_distance',
+    'radam_first_moment_norm',
+    'radam_second_moment_norm',
 )
 
 #----------------------------------------------------------------------------
@@ -871,6 +970,8 @@ def training_loop(
     enable_tf32         = False,    # Enable tf32 for A100/H100 GPUs?
     enable_amp          = False,    # Enable torch.cuda.amp.GradScaler
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
+    planned_pause_protocol = None,  # Explicit authorization for a frozen long pause.
+    schedule_switch_manifest = None,# Frozen 512-kimg A/B continuation manifest.
     device              = torch.device('cuda'),
 ):
     # Initialize.
@@ -878,6 +979,41 @@ def training_loop(
     strict_reproducibility = (
         loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
     )
+    switch_manifest = (
+        schedule_switch.load_run_manifest(schedule_switch_manifest)
+        if schedule_switch_manifest is not None else None
+    )
+    switch_metadata = (
+        schedule_switch.state_metadata(switch_manifest)
+        if switch_manifest is not None else None
+    )
+    allow_managed_loss_overflow = bool(
+        switch_manifest is not None
+        and switch_manifest.get("experiment_protocol")
+        == schedule_switch.FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
+    )
+    managed_loss_overflow_count = 0
+    if switch_manifest is not None:
+        if not strict_reproducibility or resume_state_dump is None:
+            raise ValueError(
+                'schedule switch requires a strict full-state resume'
+            )
+        if loss_kwargs.get('factorial_protocol') != 'q256_target_weight_v1':
+            raise ValueError('schedule switch requires q256 target-weight loss')
+        expected_factorial = schedule_switch.continuation_factorial(
+            switch_manifest
+        )
+        actual_factorial = {
+            'enabled': True,
+            'protocol': loss_kwargs.get('factorial_protocol'),
+            'arm': expected_factorial['arm'],
+            'target_gap_scale': float(loss_kwargs.get('target_gap_scale')),
+            'denominator_gap_scale': float(
+                loss_kwargs.get('denominator_gap_scale')
+            ),
+        }
+        if actual_factorial != expected_factorial:
+            raise ValueError('loss factors do not match switch continuation arm')
     if strict_reproducibility and dist.get_world_size() != 1:
         raise ValueError(
             'formal q256 target-weight arms require one process and one '
@@ -887,20 +1023,15 @@ def training_loop(
         raise ValueError(
             'formal q256 target-weight arms require AMP/GradScaler enabled'
         )
-    if stop_after_attempts is not None:
-        if not strict_reproducibility:
-            raise ValueError(
-                'stop_after_attempts is reserved for strict factorial resume gates'
-            )
-        if (
-            isinstance(stop_after_attempts, bool)
-            or int(stop_after_attempts) != stop_after_attempts
-            or int(stop_after_attempts) != 16
-        ):
-            raise ValueError(
-                'stop_after_attempts is frozen to 16 for the exact 16+16 gate'
-            )
-        stop_after_attempts = int(stop_after_attempts)
+    stop_after_attempts = validate_planned_pause(
+        stop_after_attempts=stop_after_attempts,
+        planned_pause_protocol=planned_pause_protocol,
+        strict_reproducibility=strict_reproducibility,
+        seed=seed,
+        total_kimg=total_kimg,
+        resume_state_dump=resume_state_dump,
+        schedule_switch_manifest=schedule_switch_manifest,
+    )
     immutable_checkpoint_nimg = normalize_immutable_checkpoint_nimg(
         immutable_checkpoint_kimg,
         total_kimg=total_kimg,
@@ -1092,8 +1223,18 @@ def training_loop(
     resumed_snapshot_grid_c = None
     resumed_snapshot_grid_size = None
     elapsed_base_sec = 0.0
+    persisted_factorial_identity = None
     if resume_state_dump:
         dist.print0(f'Loading training state from "{resume_state_dump}"...')
+        starting_schedule_switch = (
+            switch_manifest is not None
+            and os.path.realpath(resume_state_dump)
+            == os.path.realpath(switch_manifest['source_state']['path'])
+        )
+        if starting_schedule_switch:
+            schedule_switch.verify_resume_state_file(
+                resume_state_dump, switch_manifest
+            )
         # The training-state contains optimizer and persistent module objects.
         # Only load trusted checkpoints produced by this repository.
         data = torch.load(
@@ -1121,10 +1262,17 @@ def training_loop(
                     'strict factorial training-state missing fields: '
                     + ', '.join(missing)
                 )
-            if data['factorial'] != loss_fn.factorial:
-                raise RuntimeError(
-                    'factorial factors in training-state do not match current config'
-                )
+            if switch_manifest is None:
+                if data['factorial'] != loss_fn.factorial:
+                    raise RuntimeError(
+                        'factorial factors in training-state do not match current config'
+                    )
+            elif starting_schedule_switch:
+                schedule_switch.verify_source_state(data, switch_manifest)
+                persisted_factorial_identity = copy.deepcopy(data['factorial'])
+            else:
+                schedule_switch.verify_switched_state(data, switch_manifest)
+                persisted_factorial_identity = copy.deepcopy(data['factorial'])
             saved_trajectory_sha256 = reproducibility.state_sha256(
                 data['trajectory_config']
             )
@@ -1132,7 +1280,19 @@ def training_loop(
                 raise RuntimeError(
                     'training-state trajectory config hash is internally invalid'
                 )
-            if saved_trajectory_sha256 != strict_trajectory_config_sha256:
+            if (
+                switch_manifest is not None
+                and starting_schedule_switch
+            ):
+                if not schedule_switch.trajectory_configs_compatible(
+                    data['trajectory_config'], strict_trajectory_config,
+                    switch_manifest,
+                ):
+                    raise RuntimeError(
+                        'source trajectory config differs beyond the frozen '
+                        'schedule intervention and final budget'
+                    )
+            elif saved_trajectory_sha256 != strict_trajectory_config_sha256:
                 saved_trajectory_config = reproducibility.canonical_json_data(
                     data['trajectory_config']
                 )
@@ -1165,6 +1325,11 @@ def training_loop(
                     f'{saved_total_kimg} to {current_total_kimg} kimg; '
                     'all other trajectory settings match exactly.'
                 )
+            if switch_manifest is not None and not starting_schedule_switch:
+                if saved_trajectory_sha256 != strict_trajectory_config_sha256:
+                    raise RuntimeError(
+                        'resumed switched trajectory config does not match current run'
+                    )
         if strict_reproducibility:
             copy_module_state_exact(
                 data.get('net'), net, label='strict training-state -> net'
@@ -1185,6 +1350,17 @@ def training_loop(
             )
         attempted_iteration = int(data.get('attempted_iteration', 0))
         successful_optimizer_steps = int(data.get('successful_optimizer_steps', 0))
+        if allow_managed_loss_overflow and not starting_schedule_switch:
+            if 'managed_loss_overflow_count' not in data:
+                raise RuntimeError(
+                    'numeric recovery v2 switched state is missing its managed '
+                    'loss-overflow count'
+                )
+            managed_loss_overflow_count = int(
+                data['managed_loss_overflow_count']
+            )
+            if managed_loss_overflow_count not in {0, 1}:
+                raise RuntimeError('invalid numeric recovery v2 overflow count')
         resumed_cur_nimg = int(data['cur_nimg'])
         if strict_reproducibility:
             local_rank_state = select_local_reproducibility_state(
@@ -1233,6 +1409,10 @@ def training_loop(
                         'strict factorial training-state is missing GradScaler state'
                     )
                 dist.print0(f'GradScaler state is not found in "{resume_state_dump}", using the default state.')
+        if starting_schedule_switch:
+            schedule_switch.verify_resume_state_file(
+                resume_state_dump, switch_manifest
+            )
         del data # conserve memory
 
     if dataset_iterator is None:
@@ -1438,13 +1618,71 @@ def training_loop(
     factorial_telemetry_writer = None
     if strict_reproducibility and dist.get_rank() == 0:
         telemetry_path = os.path.join(
-            run_dir, 'factorial_training_telemetry_v1.csv'
+            run_dir,
+            'schedule_switch_training_telemetry_v1.csv'
+            if switch_manifest is not None
+            else 'factorial_training_telemetry_v1.csv',
         )
         telemetry_exists = (
             os.path.isfile(telemetry_path)
             and os.path.getsize(telemetry_path) > 0
         )
-        if resume_state_dump:
+        if switch_manifest is not None:
+            source_telemetry_path = os.path.join(
+                run_dir, 'source_factorial_training_telemetry_v1.csv'
+            )
+            if not os.path.isfile(source_telemetry_path):
+                raise RuntimeError(
+                    'schedule switch requires immutable source telemetry copy'
+                )
+            with open(source_telemetry_path, 'rt', newline='') as handle:
+                source_reader = csv.DictReader(handle)
+                if tuple(source_reader.fieldnames or ()) != _FACTORIAL_TELEMETRY_FIELDS:
+                    raise RuntimeError('source factorial telemetry schema mismatch')
+                source_rows = list(source_reader)
+            if not source_rows:
+                raise RuntimeError('source factorial telemetry is empty')
+            source_last = source_rows[-1]
+            if (
+                int(source_last['attempted_iteration'])
+                != schedule_switch.SWITCH_ATTEMPT
+                or int(source_last['processed_nimg'])
+                != schedule_switch.SWITCH_NIMG
+                or source_last['arm'] != switch_manifest['origin_arm']
+            ):
+                raise RuntimeError('source factorial telemetry boundary mismatch')
+            if attempted_iteration == schedule_switch.SWITCH_ATTEMPT:
+                if telemetry_exists:
+                    raise RuntimeError(
+                        'fresh switch refuses existing post-switch telemetry'
+                    )
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'xt', newline=''
+                )
+            else:
+                if not telemetry_exists:
+                    raise RuntimeError(
+                        'switched resume requires existing post-switch telemetry'
+                    )
+                with open(telemetry_path, 'rt', newline='') as handle:
+                    reader = csv.DictReader(handle)
+                    if tuple(reader.fieldnames or ()) != _SCHEDULE_SWITCH_TELEMETRY_FIELDS:
+                        raise RuntimeError('schedule-switch telemetry schema mismatch')
+                    rows = list(reader)
+                if not rows:
+                    raise RuntimeError('schedule-switch telemetry has no rows')
+                last = rows[-1]
+                if (
+                    int(last['attempted_iteration']) != attempted_iteration
+                    or int(last['processed_nimg']) != cur_nimg
+                    or last['continuation_arm']
+                    != switch_manifest['continuation_arm']
+                ):
+                    raise RuntimeError('schedule-switch telemetry/state mismatch')
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'at', newline=''
+                )
+        elif resume_state_dump:
             if not telemetry_exists:
                 raise RuntimeError(
                     'strict factorial resume requires existing versioned telemetry'
@@ -1484,9 +1722,16 @@ def training_loop(
             )
         factorial_telemetry_writer = csv.DictWriter(
             factorial_telemetry_csv,
-            fieldnames=_FACTORIAL_TELEMETRY_FIELDS,
+            fieldnames=(
+                _SCHEDULE_SWITCH_TELEMETRY_FIELDS
+                if switch_manifest is not None
+                else _FACTORIAL_TELEMETRY_FIELDS
+            ),
         )
-        if not resume_state_dump:
+        if not resume_state_dump or (
+            switch_manifest is not None
+            and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+        ):
             factorial_telemetry_writer.writeheader()
             factorial_telemetry_csv.flush()
 
@@ -1545,7 +1790,11 @@ def training_loop(
                 reproducibility_schema=reproducibility.TRAINING_STATE_SCHEMA,
                 ema=ema,
                 rank_states=rank_states,
-                factorial=dict(loss_fn.factorial),
+                factorial=(
+                    copy.deepcopy(persisted_factorial_identity)
+                    if switch_manifest is not None
+                    else dict(loss_fn.factorial)
+                ),
                 trajectory_config=strict_trajectory_config,
                 trajectory_config_sha256=strict_trajectory_config_sha256,
                 loss_fn_state=strict_loss_state,
@@ -1553,6 +1802,12 @@ def training_loop(
                 snapshot_grid_c=[value.detach().cpu() for value in grid_c],
                 snapshot_grid_size=tuple(grid_size),
             )
+            if switch_manifest is not None:
+                data['schedule_switch'] = copy.deepcopy(switch_metadata)
+            if allow_managed_loss_overflow:
+                data['managed_loss_overflow_count'] = (
+                    managed_loss_overflow_count
+                )
         return data
         
     # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
@@ -1774,6 +2029,25 @@ def training_loop(
                 model_norm,
                 _,
             ) = tensor_collection_diagnostics(net.parameters())
+            radam_first_moment_norm = 0.0
+            radam_second_moment_norm = 0.0
+            if switch_manifest is not None:
+                first_moments = [
+                    item['exp_avg'] for item in optimizer.state.values()
+                    if 'exp_avg' in item
+                ]
+                second_moments = [
+                    item['exp_avg_sq'] for item in optimizer.state.values()
+                    if 'exp_avg_sq' in item
+                ]
+                first_nonfinite, radam_first_moment_norm, _ = (
+                    tensor_collection_diagnostics(first_moments)
+                )
+                second_nonfinite, radam_second_moment_norm, _ = (
+                    tensor_collection_diagnostics(second_moments)
+                )
+                if first_nonfinite or second_nonfinite:
+                    raise FloatingPointError('non-finite RAdam moment state')
 
         attempted_iteration += 1
         if not step_skipped:
@@ -1807,6 +2081,18 @@ def training_loop(
                 ema_norm,
                 _,
             ) = tensor_collection_diagnostics(ema.parameters())
+            online_ema_distance = 0.0
+            if switch_manifest is not None:
+                distance_nonfinite, online_ema_distance, _ = (
+                    tensor_collection_diagnostics(
+                        p_net.detach() - p_ema.detach()
+                        for p_net, p_ema in zip(
+                            net.parameters(), ema.parameters()
+                        )
+                    )
+                )
+                if distance_nonfinite:
+                    raise FloatingPointError('non-finite online-EMA distance')
 
         # Advance iteration-local state. Adaptive updates intentionally happen
         # here, before the maintenance early-continue below.
@@ -1949,33 +2235,57 @@ def training_loop(
                 'elapsed_sec': f'{elapsed_sec:.6f}',
                 'gpu_hours_cumulative': f'{elapsed_sec / 3600:.9f}',
             }
+            if switch_manifest is not None:
+                telemetry_row.update({
+                    'schema': 'ect.q256.schedule-switch-training-telemetry/v1',
+                    'experiment_protocol': switch_manifest[
+                        'experiment_protocol'
+                    ],
+                    'branch': switch_manifest['branch'],
+                    'origin_arm': switch_manifest['origin_arm'],
+                    'continuation_arm': switch_manifest['continuation_arm'],
+                    'switch_relative_step': (
+                        attempted_iteration - schedule_switch.SWITCH_ATTEMPT
+                    ),
+                    'online_ema_distance': f'{online_ema_distance:.17g}',
+                    'radam_first_moment_norm': (
+                        f'{radam_first_moment_norm:.17g}'
+                    ),
+                    'radam_second_moment_norm': (
+                        f'{radam_second_moment_norm:.17g}'
+                    ),
+                })
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)
                 factorial_telemetry_csv.flush()
 
-            invariant_failures = []
-            if factorial_metrics['sample_count'] != batch_size:
-                invariant_failures.append('factorial sample_count != batch_size')
-            if local_consumed_samples != cur_nimg:
-                invariant_failures.append('sampler consumption != processed_nimg')
-            if loss_nonfinite_count:
-                invariant_failures.append('non-finite loss')
-            if sanitized_grad_nonfinite_count:
-                invariant_failures.append('non-finite sanitized gradient')
-            if update_nonfinite_count or model_nonfinite_count or ema_nonfinite_count:
-                invariant_failures.append('non-finite update/model/EMA')
-            if factorial_metrics['nonfinite_count']:
-                invariant_failures.append('non-finite target/denominator factor')
-            if factorial_metrics['nonpositive_denominator_count']:
-                invariant_failures.append('non-positive realized denominator')
-            if bool(raw_grad_nonfinite_count) != bool(step_skipped):
-                invariant_failures.append(
-                    'raw gradient non-finite status does not match AMP skip'
+            invariant_failures, managed_loss_overflow_count, managed_overflow = (
+                strict_attempt_invariant_failures(
+                    sample_count=factorial_metrics['sample_count'],
+                    batch_size=batch_size,
+                    consumed_samples=local_consumed_samples,
+                    processed_nimg=cur_nimg,
+                    loss_nonfinite_count=loss_nonfinite_count,
+                    raw_grad_nonfinite_count=raw_grad_nonfinite_count,
+                    sanitized_grad_nonfinite_count=sanitized_grad_nonfinite_count,
+                    update_nonfinite_count=update_nonfinite_count,
+                    model_nonfinite_count=model_nonfinite_count,
+                    ema_nonfinite_count=ema_nonfinite_count,
+                    factor_nonfinite_count=factorial_metrics['nonfinite_count'],
+                    nonpositive_denominator_count=factorial_metrics[
+                        'nonpositive_denominator_count'
+                    ],
+                    step_skipped=step_skipped,
+                    update_norm=update_norm,
+                    allow_managed_loss_overflow=allow_managed_loss_overflow,
+                    prior_managed_loss_overflows=managed_loss_overflow_count,
                 )
-            if step_skipped and update_norm != 0:
-                invariant_failures.append('skipped optimizer attempt changed parameters')
-            if not step_skipped and (not math.isfinite(update_norm) or update_norm <= 0):
-                invariant_failures.append('successful optimizer update norm is not positive')
+            )
+            if managed_overflow:
+                dist.print0(
+                    'NUMERIC_RECOVERY_V2: accepted one AMP-managed non-finite '
+                    f'loss at attempted_iteration={attempted_iteration}'
+                )
             if invariant_failures:
                 if factorial_telemetry_csv is not None:
                     os.fsync(factorial_telemetry_csv.fileno())

@@ -1,0 +1,28 @@
+{
+  "archive_run_dir": "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/archive/manual-recovery-2/seed38_AB_failed_attempt1",
+  "authorized_at": "2026-09-01T07:37:23Z",
+  "automatic_retry_count": 0,
+  "failed_compute_receipt_sha256": "279bf6c2f944ff3940eea78bdd3571474f7a1ca7eb28d25487a4c3e3200384c7",
+  "failed_run_dir": "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/training/seed38/AB",
+  "managed_overflow_requirements": {
+    "amp_step_skipped": true,
+    "denominator_positive": true,
+    "model_and_ema_finite": true,
+    "sanitized_gradients_finite": true,
+    "target_and_denominator_factors_finite": true,
+    "update_norm_zero": true
+  },
+  "manual_recovery_index": 2,
+  "max_recoverable_nonfinite_loss_attempts_per_cell": 1,
+  "original_failure_must_be_preserved": true,
+  "protocol_sha256": "df7f584c4af0017b6d655b843460033e22f8801b843859d7dbe32aa852f167b1",
+  "quality_metrics_observed_before_amendment": false,
+  "recovery1_failure": {
+    "path": "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/archive/manual-recovery-2/training_matrix_recovery1_completion_receipt.json",
+    "sha256": "d579ae5e4d3f5d9fd4326e6bc615abfa5336ca55dcbfccecff018a903411a13f"
+  },
+  "repair_commit": "0d7f45ca6486d0ac41e4b5e31cbaaabe92a7c751",
+  "schema": "ect.q256.fresh-crossed-switch-numeric-recovery-v2-authorization/v1",
+  "scope": "archive failed seed38/AB; rerun seed38/AB and missing seed38/AA only",
+  "status": "AUTHOR_APPROVED"
+}

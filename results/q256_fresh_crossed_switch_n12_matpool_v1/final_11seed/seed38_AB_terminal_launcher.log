@@ -1,0 +1,219 @@
+
+Training options:
+{
+  "dataset_kwargs": {
+    "class_name": "training.dataset.ImageFolderDataset",
+    "path": "/mnt/ect_project/q256_seed14_18_eval_assets_20260822/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+    "use_labels": false,
+    "xflip": false,
+    "cache": true,
+    "resolution": 32,
+    "max_size": 50000
+  },
+  "data_loader_kwargs": {
+    "pin_memory": true,
+    "num_workers": 1,
+    "prefetch_factor": 2
+  },
+  "network_kwargs": {
+    "model_type": "SongUNet",
+    "embedding_type": "positional",
+    "encoder_type": "standard",
+    "decoder_type": "standard",
+    "channel_mult_noise": 1,
+    "resample_filter": [
+      1,
+      1
+    ],
+    "model_channels": 128,
+    "channel_mult": [
+      2,
+      2,
+      2
+    ],
+    "class_name": "training.networks.ECMPrecond",
+    "dropout": 0.2,
+    "use_fp16": true
+  },
+  "loss_kwargs": {
+    "P_mean": -1.1,
+    "P_std": 2.0,
+    "q": 256.0,
+    "c": 0.0,
+    "k": 8.0,
+    "b": 1.0,
+    "adj": "sigmoid",
+    "adaptive_loss_ema_beta": 0.9,
+    "adaptive_warmup_updates": 2,
+    "adaptive_max_adjust": 0.05,
+    "adaptive_min_gap": 0.001,
+    "local_tbin_num_bins": 4,
+    "local_tbin_short_beta": 0.9,
+    "local_tbin_long_beta": 0.99,
+    "local_tbin_warmup_updates": 32,
+    "local_tbin_gain": 0.5,
+    "local_tbin_min_scale": 0.75,
+    "local_tbin_max_scale": 1.5,
+    "local_tbin_deadband": 0.02,
+    "local_tbin_min_gap": 0.001,
+    "global_gap_scale": 1.0,
+    "factorial_protocol": "q256_target_weight_v1",
+    "target_gap_scale": 1.1,
+    "denominator_gap_scale": 1.1,
+    "class_name": "training.loss.ECMLoss"
+  },
+  "optimizer_kwargs": {
+    "class_name": "torch.optim.RAdam",
+    "lr": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "total_kimg": 1024,
+  "ema_halflife_kimg": null,
+  "ema_beta": 0.9993,
+  "batch_size": 128,
+  "batch_gpu": 16,
+  "loss_scaling": 1.0,
+  "cudnn_benchmark": false,
+  "enable_tf32": false,
+  "enable_amp": true,
+  "kimg_per_tick": 10.0,
+  "snapshot_ticks": null,
+  "state_dump_ticks": null,
+  "ckpt_ticks": 10,
+  "immutable_checkpoint_kimg": [
+    640,
+    768,
+    896,
+    1024
+  ],
+  "double_ticks": 10000,
+  "adaptive_update_kimg": 0.5,
+  "stop_after_attempts": null,
+  "planned_pause_protocol": null,
+  "schedule_switch_manifest": "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/training/seed38/AB/formal_run_manifest.json",
+  "mid_t": [
+    0.821
+  ],
+  "metrics": [],
+  "sample_ticks": 26,
+  "eval_ticks": 50,
+  "seed": 38,
+  "resume_pkl": null,
+  "resume_tick": 0,
+  "resume_state_dump": "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/training/seed38/prefix_A/kimg0512/training-state.pt",
+  "run_dir": "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/training/seed38/AB"
+}
+
+Output directory:        /root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/training/seed38/AB
+Dataset path:            /mnt/ect_project/q256_seed14_18_eval_assets_20260822/cifar10-32x32-canonical-08c9ed1b2b1c.zip
+Class-conditional:       False
+Network architecture:    ddpmpp
+Preconditioning & loss:  ect
+Number of GPUs:          1
+Batch size:              128
+Mixed-precision:         True
+
+Creating output directory...
+Enable tf32: False
+Loading dataset...
+/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/torch/utils/data/sampler.py:68: UserWarning: `data_source` argument is not used and will be removed in 2.2.0.You may still have custom implementation that utilizes it.
+  warnings.warn(
+Constructing network...
+Setting up optimizer...
+P_mean: -1.1, P_std: 2.0, q: 256.0, k 8.0, b 1.0, c: 0.0
+GradScaler enabled: True for mixed precision training
+Setting up GradScaler...
+/root/q256_fresh_crossed_switch_n12_matpool_v1/formal_repo_v8/training/ct_training_loop.py:1164: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+Loss scaling is overwritten when GradScaler is enabled
+Setting up DDP...
+Loading training state from "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/training/seed38/prefix_A/kimg0512/training-state.pt"...
+Loading GradScaler state from "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal-output-v1/training/seed38/prefix_A/kimg0512/training-state.pt"...
+Training for 1024 kimg...
+
+Reduce dt every 10000 ticks.
+Update scheduler at 51 ticks, 512.0 kimg, ratio 0.99609375
+tick 51    kimg 515.8     loss nan       grad_scale 64        step_skipped 0       time 1m 07s       sec/tick 54.7    sec/kimg 5.41    maintenance 12.7   cpumem 2.33   gpumem 2.47   reserved 2.54  
+tick 52    kimg 526.0     loss 16.11906  grad_scale 64        step_skipped 0       time 3m 08s       sec/tick 121.0   sec/kimg 11.97   maintenance 0.0    cpumem 2.33   gpumem 2.47   reserved 2.54  
+Exporting sample images...
+tick 53    kimg 536.1     loss 16.19669  grad_scale 64        step_skipped 0       time 5m 10s       sec/tick 120.9   sec/kimg 11.96   maintenance 0.5    cpumem 2.36   gpumem 2.47   reserved 2.54  
+tick 54    kimg 546.2     loss 16.25298  grad_scale 64        step_skipped 0       time 7m 14s       sec/tick 123.8   sec/kimg 12.24   maintenance 0.0    cpumem 2.36   gpumem 2.47   reserved 2.54  
+tick 55    kimg 556.3     loss 15.99502  grad_scale 64        step_skipped 0       time 9m 28s       sec/tick 134.4   sec/kimg 13.29   maintenance 0.0    cpumem 2.36   gpumem 2.47   reserved 2.54  
+tick 56    kimg 566.4     loss 16.24283  grad_scale 64        step_skipped 0       time 11m 37s      sec/tick 128.6   sec/kimg 12.72   maintenance 0.0    cpumem 2.36   gpumem 2.47   reserved 2.54  
+tick 57    kimg 576.5     loss 16.07745  grad_scale 64        step_skipped 0       time 14m 10s      sec/tick 153.3   sec/kimg 15.16   maintenance 0.0    cpumem 2.36   gpumem 2.47   reserved 2.54  
+tick 58    kimg 586.6     loss 16.25223  grad_scale 64        step_skipped 0       time 16m 43s      sec/tick 153.2   sec/kimg 15.15   maintenance 0.0    cpumem 2.36   gpumem 2.47   reserved 2.54  
+tick 59    kimg 596.7     loss 16.11639  grad_scale 64        step_skipped 0       time 19m 16s      sec/tick 153.2   sec/kimg 15.15   maintenance 0.0    cpumem 2.36   gpumem 2.47   reserved 2.54  
+tick 60    kimg 606.8     loss 16.20165  grad_scale 64        step_skipped 0       time 21m 50s      sec/tick 153.1   sec/kimg 15.14   maintenance 0.0    cpumem 2.36   gpumem 2.47   reserved 2.54  
+Save the latest checkpoint at 000060 img...
+tick 61    kimg 617.0     loss 16.36330  grad_scale 64        step_skipped 0       time 24m 18s      sec/tick 146.4   sec/kimg 14.48   maintenance 2.2    cpumem 2.76   gpumem 2.47   reserved 2.54  
+NUMERIC_RECOVERY_V2: accepted one AMP-managed non-finite loss at attempted_iteration=4857
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal_repo_v8/ct_train.py", line 517, in <module>
+[rank0]:     main()
+[rank0]:     ~~~~^^
+[rank0]:   File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/click/core.py", line 1442, in __call__
+[rank0]:     return self.main(*args, **kwargs)
+[rank0]:            ~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/click/core.py", line 1363, in main
+[rank0]:     rv = self.invoke(ctx)
+[rank0]:   File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/click/core.py", line 1226, in invoke
+[rank0]:     return ctx.invoke(self.callback, **ctx.params)
+[rank0]:            ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/click/core.py", line 794, in invoke
+[rank0]:     return callback(*args, **kwargs)
+[rank0]:   File "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal_repo_v8/ct_train.py", line 512, in main
+[rank0]:     training_loop.training_loop(**c)
+[rank0]:     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+[rank0]:   File "/root/q256_fresh_crossed_switch_n12_matpool_v1/formal_repo_v8/training/ct_training_loop.py", line 2292, in training_loop
+[rank0]:     raise FloatingPointError(
+[rank0]:     ...<2 lines>...
+[rank0]:     )
+[rank0]: FloatingPointError: strict factorial training invariant failure: non-finite loss
+[rank0]:[W901 16:04:52.763613792 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+E0901 16:04:53.727000 112052 site-packages/torch/distributed/elastic/multiprocessing/api.py:874] failed (exitcode: 1) local_rank: 0 (pid: 112124) of binary: /root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/torch/distributed/run.py", line 905, in <module>
+    main()
+    ~~~~^^
+  File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+  File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+    ~~~^^^^^^
+  File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/q256_fresh_crossed_switch_n12_matpool_v1/runtime/env/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 277, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/root/q256_fresh_crossed_switch_n12_matpool_v1/formal_repo_v8/ct_train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-01_16:04:53
+  host      : Po408E
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 112124)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

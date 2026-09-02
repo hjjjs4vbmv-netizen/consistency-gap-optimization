@@ -1,0 +1,1157 @@
+{
+  "counts": {
+    "A_or_B_at_512_source_states": 22,
+    "B_at_384_full_states": 11,
+    "prefix_matched_randomness_receipts": 11,
+    "prefixes": 22,
+    "same_origin_source_references": 44,
+    "suffix_at_1024_full_states": 44,
+    "suffix_matched_randomness_receipts": 11,
+    "suffixes": 44
+  },
+  "eleven_seed_authorization_sha256": "a8aa4dfb4428524adb3567daf263cd6e7f358288b5b479310e569be63a6016e1",
+  "excluded_seed": 38,
+  "expected": {
+    "A_or_B_at_512_source_states": 22,
+    "B_at_384_full_states": 11,
+    "prefix_matched_randomness_receipts": 11,
+    "prefixes": 22,
+    "same_origin_source_references": 44,
+    "suffix_at_1024_full_states": 44,
+    "suffix_matched_randomness_receipts": 11,
+    "suffixes": 44
+  },
+  "included_seeds": [
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    39,
+    40,
+    41,
+    42
+  ],
+  "matched_randomness": "PASS",
+  "original_n12_claim_abandoned": true,
+  "per_seed": [
+    {
+      "prefix_order": [
+        "A",
+        "B"
+      ],
+      "prefixes": 2,
+      "seed": 31,
+      "suffix_order": [
+        "AA",
+        "AB",
+        "BA",
+        "BB"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 10,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3990,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 10,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3990,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "B",
+        "A"
+      ],
+      "prefixes": 2,
+      "seed": 32,
+      "suffix_order": [
+        "AB",
+        "BB",
+        "AA",
+        "BA"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "A",
+        "B"
+      ],
+      "prefixes": 2,
+      "seed": 33,
+      "suffix_order": [
+        "BA",
+        "AA",
+        "BB",
+        "AB"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 10,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3990,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "B",
+        "A"
+      ],
+      "prefixes": 2,
+      "seed": 34,
+      "suffix_order": [
+        "BB",
+        "BA",
+        "AB",
+        "AA"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7986,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7986,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "A",
+        "B"
+      ],
+      "prefixes": 2,
+      "seed": 35,
+      "suffix_order": [
+        "AA",
+        "AB",
+        "BA",
+        "BB"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "B",
+        "A"
+      ],
+      "prefixes": 2,
+      "seed": 36,
+      "suffix_order": [
+        "AB",
+        "BB",
+        "AA",
+        "BA"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 0,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 0,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 12,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 10,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3990,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "B",
+        "A"
+      ],
+      "prefixes": 2,
+      "seed": 37,
+      "suffix_order": [
+        "BA",
+        "AA",
+        "BB",
+        "AB"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "B",
+        "A"
+      ],
+      "prefixes": 2,
+      "seed": 39,
+      "suffix_order": [
+        "AA",
+        "AB",
+        "BA",
+        "BB"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "A",
+        "B"
+      ],
+      "prefixes": 2,
+      "seed": 40,
+      "suffix_order": [
+        "AB",
+        "BB",
+        "AA",
+        "BA"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "B",
+        "A"
+      ],
+      "prefixes": 2,
+      "seed": 41,
+      "suffix_order": [
+        "BA",
+        "AA",
+        "BB",
+        "AB"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 1,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    },
+    {
+      "prefix_order": [
+        "A",
+        "B"
+      ],
+      "prefixes": 2,
+      "seed": 42,
+      "suffix_order": [
+        "BB",
+        "BA",
+        "AB",
+        "AA"
+      ],
+      "suffixes": 4,
+      "telemetry": {
+        "AA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 3,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "AB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7988,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BA": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "BB": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 2,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 7987,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_A": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 10,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3990,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        },
+        "prefix_B": {
+          "amp_managed_loss_overflows": 0,
+          "amp_skips": 11,
+          "attempts": 4000,
+          "final_successful_optimizer_steps": 3989,
+          "nonfinite_totals": {
+            "ema_nonfinite_count": 0,
+            "factor_nonfinite_count": 0,
+            "loss_nonfinite_count": 0,
+            "model_nonfinite_count": 0,
+            "nonpositive_denominator_count": 0,
+            "update_nonfinite_count": 0
+          }
+        }
+      }
+    }
+  ],
+  "protocol_sha256": "df7f584c4af0017b6d655b843460033e22f8801b843859d7dbe32aa852f167b1",
+  "same_origin_source_identity": "PASS",
+  "schema": "ect.q256.fresh-crossed-switch-training-integrity/v1",
+  "scientific_nonfinite_instability": "ABSENT",
+  "status": "PASS"
+}

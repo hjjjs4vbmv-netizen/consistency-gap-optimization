@@ -11,6 +11,7 @@ from training.loss import (
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
     resolve_target_weight_factorial,
 )
+from training import schedule_switch
 
 STRICT_FACTORIAL_PROTOCOLS = {
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
@@ -71,10 +72,12 @@ def parse_immutable_checkpoint_kimg(_ctx, _param, value):
 
 def parse_resume_state_token(path):
     match = re.fullmatch(
-        r'training-state-(\d+|latest|kimg\d+)\.pt',
+        r'training-state(?:-(\d+|latest|kimg\d+))?\.pt',
         os.path.basename(path),
     )
-    return None if match is None else match.group(1)
+    if match is None:
+        return None
+    return 'source' if match.group(1) is None else match.group(1)
 
 
 def normalize_schedule_name(_ctx, _param, value):
@@ -256,7 +259,15 @@ def make_loss_kwargs(opts):
 @click.option('--transfer',      help='Transfer learning from network pickle', metavar='PKL|URL',   type=str)
 @click.option('--resume',        help='Resume from previous training state', metavar='PT',          type=str)
 @click.option('--resume-tick',   help='Number of tick from previous training state', metavar='INT', type=int)
+@click.option(
+    '--schedule-switch-manifest',
+    help='Frozen q256 512-kimg schedule-switch run manifest',
+    metavar='JSON',
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    default=None,
+)
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
+@click.option('--planned-pause-protocol', help='Frozen authorization for a non-legacy planned pause', metavar='ID', type=str, default=None, hidden=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
 
 # Evaluation
@@ -335,7 +346,9 @@ def main(**kwargs):
              ckpt_ticks=opts.ckpt,
              immutable_checkpoint_kimg=opts.immutable_checkpoint_kimg,
              double_ticks=opts.double, adaptive_update_kimg=opts.adaptive_update_kimg,
-             stop_after_attempts=opts.stop_after_attempts)
+             stop_after_attempts=opts.stop_after_attempts,
+             planned_pause_protocol=opts.planned_pause_protocol,
+             schedule_switch_manifest=opts.schedule_switch_manifest)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
 
     # Random seed.
@@ -356,6 +369,11 @@ def main(**kwargs):
         resume_token = parse_resume_state_token(opts.resume)
         if resume_token is None or not os.path.isfile(opts.resume):
             raise click.ClickException('--resume must point to training-state-*.pt from a previous training run')
+        if resume_token == 'source' and opts.schedule_switch_manifest is None:
+            raise click.ClickException(
+                'unsuffixed training-state.pt is reserved for a frozen '
+                'schedule-switch source manifest'
+            )
         if opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS:
             # The versioned factorial training-state is self-contained (net +
             # EMA + optimizer + scaler + RNG + sampler). Depending on a
@@ -372,11 +390,48 @@ def main(**kwargs):
         # restores the authoritative cur_tick / cur_nimg from the serialized state.
         if opts.resume_tick is not None:
             c.resume_tick = opts.resume_tick
-        elif resume_token == 'latest' or resume_token.startswith('kimg'):
+        elif resume_token in ('latest', 'source') or resume_token.startswith('kimg'):
             c.resume_tick = 0
         else:
             c.resume_tick = int(resume_token)
         c.resume_state_dump = opts.resume
+
+    if opts.schedule_switch_manifest is not None:
+        if opts.resume is None:
+            raise click.ClickException(
+                '--schedule-switch-manifest requires --resume'
+            )
+        if opts.factorial_protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+            raise click.ClickException(
+                'schedule switch requires q256_target_weight_v1'
+            )
+        manifest = schedule_switch.load_run_manifest(
+            opts.schedule_switch_manifest
+        )
+        expected = schedule_switch.continuation_factorial(manifest)
+        actual = resolve_target_weight_factorial(
+            opts.factorial_protocol,
+            opts.target_gap_scale,
+            opts.denominator_gap_scale,
+            adj=opts.mapping,
+            global_gap_scale=opts.global_gap_scale,
+            q=opts.q,
+            c=opts.c,
+        )
+        if actual != expected:
+            raise click.ClickException(
+                'CLI factorial scales do not match frozen continuation arm'
+            )
+        if c.seed != manifest['seed']:
+            raise click.ClickException('CLI seed does not match switch manifest')
+        if c.total_kimg != manifest['final_kimg']:
+            raise click.ClickException(
+                'CLI duration does not match switch manifest final budget'
+            )
+        if c.batch_size != 128 or c.batch_gpu != 16:
+            raise click.ClickException(
+                'schedule switch requires batch=128 and batch-gpu=16'
+            )
 
     # Description string.
     cond_str = 'cond' if c.dataset_kwargs.use_labels else 'uncond'
@@ -429,7 +484,14 @@ def main(**kwargs):
             opts.resume is not None
             and opts.factorial_protocol in STRICT_FACTORIAL_PROTOCOLS
         )
-        if strict_factorial_resume:
+        if opts.schedule_switch_manifest is not None:
+            if not os.path.isfile(options_path):
+                with open(options_path, 'x') as f:
+                    json.dump(c, f, indent=2)
+                    f.write('\n')
+                    f.flush()
+                    os.fsync(f.fileno())
+        elif strict_factorial_resume:
             if not os.path.isfile(options_path):
                 raise click.ClickException(
                     'strict factorial resume requires the immutable original '

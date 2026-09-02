@@ -1,0 +1,66 @@
+{
+  "H_summary": {
+    "ci90_two_sided": [
+      -0.1404437472185972,
+      -0.01068905520816077
+    ],
+    "ci95_two_sided": [
+      -0.15532300036317176,
+      0.0041901979364137865
+    ],
+    "exact_two_sided_sign_flip_p": 0.0419921875,
+    "leave_one_seed_out_means": [
+      -0.04987736533504803,
+      -0.08593501088577496,
+      -0.08094777959979642,
+      -0.07444244640157024,
+      -0.0866022859503888,
+      -0.0840119659713062,
+      -0.08039926881235866,
+      -0.08309095171027936,
+      -0.05724779781648144,
+      -0.07413522980554133,
+      -0.07454031105862342
+    ],
+    "mean": -0.07556640121337899,
+    "median": -0.05653251399225845,
+    "n": 11,
+    "negative_count": 8,
+    "positive_count": 3,
+    "range": [
+      -0.33245675999668856,
+      0.03479244615671906
+    ],
+    "sample_sd": 0.11871913355012204,
+    "zero_count": 0
+  },
+  "category_checks": {
+    "inconclusive": true,
+    "informative_practical_null": false,
+    "opposite_direction_falsification": false,
+    "strong_success": false,
+    "weak_directional_replication": false
+  },
+  "decision": "INCONCLUSIVE",
+  "delta_log_1p03": 0.02955880224154443,
+  "eleven_seed_authorization_sha256": "a8aa4dfb4428524adb3567daf263cd6e7f358288b5b479310e569be63a6016e1",
+  "evaluation_recovery_authorization_sha256": "75592402372e0713ea532a7e9b21fcb096827eda0bff2c90a2f926ec6671a50b",
+  "included_seeds": [
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    39,
+    40,
+    41,
+    42
+  ],
+  "original_n12_claim_abandoned": true,
+  "postseal_report_recovery_authorization_sha256": "13c42689c2025c4b1c64386d6842f08ff46d8e5da47512f587a2b414d7ce57b2",
+  "primary_only": true,
+  "schema": "ect.q256.fresh-crossed-switch-primary-decision/v1",
+  "status": "PASS"
+}

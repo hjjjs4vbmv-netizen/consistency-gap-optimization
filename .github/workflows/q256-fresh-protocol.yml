@@ -1,0 +1,35 @@
+name: q256 fresh protocol checks
+
+on:
+  pull_request:
+    paths:
+      - "analysis/q256_fresh_crossed_switch_n12_matpool_v1/**"
+      - "results/q256_fresh_crossed_switch_n12_matpool_v1/final_11seed/**"
+      - "tests/test_q256_eleven_seed_authorization.py"
+      - ".github/workflows/q256-fresh-protocol.yml"
+permissions:
+  contents: read
+
+jobs:
+  protocol-integrity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify frozen protocol hash
+        working-directory: analysis/q256_fresh_crossed_switch_n12_matpool_v1
+        run: sha256sum --check protocol.sha256
+      - name: Compile q256 Python sources
+        run: python -m py_compile analysis/q256_fresh_crossed_switch_n12_matpool_v1/*.py
+      - name: Parse q256 shell entry points
+        run: bash -n analysis/q256_fresh_crossed_switch_n12_matpool_v1/*.sh
+      - name: Run dependency-free amendment tampering tests
+        run: >-
+          python -m unittest discover -v -s tests
+          -p 'test_q256_eleven_seed_authorization.py'
+      - name: Verify committed public evidence bundle
+        working-directory: results/q256_fresh_crossed_switch_n12_matpool_v1/final_11seed
+        run: sha256sum --check PUBLIC_SHA256SUMS.txt
