@@ -1,0 +1,51 @@
+{
+  "schema": "ect.q256.fresh-confirmatory-v2-type-i-simulation/v1",
+  "design_parameters": {
+    "interim_n": 12,
+    "base_n": 24,
+    "cap_n": 28,
+    "sd_trigger": 0.15,
+    "cp_threshold": 0.2,
+    "delta_design": -0.07760331136752173,
+    "alpha": 0.05,
+    "n_reps": 200000,
+    "seed": 20260902
+  },
+  "scenarios": {
+    "null_planning_sd": {
+      "delta": 0.0,
+      "sigma": 0.11289822242782793,
+      "n_reps": 200000,
+      "rejection_rate_unconditional": 0.04947,
+      "rejection_rate_given_analyzed": 0.09860081320258311,
+      "stop_futility_rate": 0.49828,
+      "extension_rate": 0.05339,
+      "analyzed_rate": 0.50172
+    },
+    "null_stress_sd_0p20": {
+      "delta": 0.0,
+      "sigma": 0.2,
+      "n_reps": 200000,
+      "rejection_rate_unconditional": 0.049035,
+      "rejection_rate_given_analyzed": 0.10274812199440528,
+      "stop_futility_rate": 0.522765,
+      "extension_rate": 0.860265,
+      "analyzed_rate": 0.477235
+    },
+    "design_effect_planning_sd": {
+      "delta": -0.07760331136752173,
+      "sigma": 0.11289822242782793,
+      "n_reps": 200000,
+      "rejection_rate_unconditional": 0.94758,
+      "rejection_rate_given_analyzed": 0.955838444157521,
+      "stop_futility_rate": 0.00864,
+      "extension_rate": 0.05335,
+      "analyzed_rate": 0.99136
+    }
+  },
+  "acceptance_rule": "The design may be frozen only if the UNCONDITIONAL empirical type-I error under both null scenarios does not exceed 0.055 (alpha 0.05 + Monte Carlo margin; SE at 200k reps ~0.0005). Futility stops count as non-rejections, so the unconditional rate is bounded above by the fixed-n test's alpha by construction; the simulation confirms this including the blinded-SD extension path (stress scenario fires the trigger 86% of the time and the unconditional rate is still 0.049). rejection_rate_given_analyzed is a DIAGNOSTIC ONLY: it is inflated (~0.099) because continuation selects cohorts with non-positive interim means; it is a selection effect, not a procedure error, and must not be quoted as the procedure's type-I error.",
+  "reading": {
+    "unconditional_rate": "P(reject at final | continue) x P(continue); this is the procedure's type-I error and the quantity bound by alpha.",
+    "given_analyzed_rate": "P(reject | continued); inflated by selection on the interim mean sign; diagnostic only."
+  }
+}
