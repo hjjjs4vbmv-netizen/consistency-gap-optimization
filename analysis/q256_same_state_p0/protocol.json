@@ -1,0 +1,110 @@
+{
+  "schema": "ect.q256.b384-same-state-p0-protocol/v2",
+  "supersedes_prelaunch_protocol_sha256": "6c74a3dc24083dc0c75a91c5dabf82432aad896896799b57fe7962a8ab9b3cb6",
+  "supersession_reason": "prelaunch-only compatibility fix for legacy Git without git -C; no optimizer step or formal run directory existed",
+  "classification": "post-hoc mechanism replication, not a new confirmatory quality experiment",
+  "origin_main_sha": "8d4844c293a75ce26a360e9907e39abaa1b87b77",
+  "implementation_commit": "f755fa62323b373dc2178a5de8c2c56dd39d99ab",
+  "pr79_replay_execution_commit": "c8721a05227f3ff171f8dc1f559a64d58281c0ae",
+  "source_selection": {
+    "formal_cohort": [3, 4, 5],
+    "origin_history": "B",
+    "source_kimg": 384,
+    "reason": "正式 seeds3–5 中，所有 seed 都存在 exact full state 的最早 post-256 common milestone",
+    "no_result_dependent_replacement": true,
+    "source_state_sha256_by_seed": {
+      "3": "5173a6b1532c3589c8dd1e6095ab3fca4fffd77331c08932688d11df5e7cf7b8",
+      "4": "724d47531a8ded39af61cd98265efa8dc1dc6ed03e2e080886a243ad9650d210",
+      "5": "23805fe2eceefed7ed58006f96253d5f5fcfa32887e0833b7af7a5750a2fcb17"
+    }
+  },
+  "dataset": {
+    "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+    "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+  },
+  "formal_training": {
+    "seeds": [3, 4, 5],
+    "origin_arm": "B",
+    "source_kimg": 384,
+    "formal_end_kimg": 448,
+    "formal_additional_kimg": 64,
+    "formal_additional_attempted_iterations": 500,
+    "batch_size": 128,
+    "batch_gpu": 16,
+    "q": 256,
+    "continuation_arms": {
+      "A": {"branch_label": "B384_to_A", "target_gap_scale": 1.0, "denominator_gap_scale": 1.0},
+      "B": {"branch_label": "B384_to_B", "target_gap_scale": 1.1, "denominator_gap_scale": 1.1},
+      "C": {"branch_label": "B384_to_C", "target_gap_scale": 1.1, "denominator_gap_scale": 1.0},
+      "D": {"branch_label": "B384_to_D", "target_gap_scale": 1.0, "denominator_gap_scale": 1.1}
+    },
+    "matched_audit_horizons_completed_steps": [0, 1, 4, 16, 64, 128, 256, 500],
+    "attempted_iteration_stopping": true,
+    "successful_steps_are_observed_not_stopping": true
+  },
+  "b_noop_parity_gate": {
+    "continuation": "B384_to_B",
+    "engineering_end_kimg": 512,
+    "expected_attempted_iteration": 4000,
+    "required_result": "3/3 COMPUTATIONAL_STATE_MATCH",
+    "canonical_512_file_sha256_by_seed": {
+      "3": "207e31ab74b5759d5cbad507b5df8b4a523eca44cc6bca38413b7a8e02a572a7",
+      "4": "ecc97d6d2e3894fa693bda9bfb5f2aad9229b0c6cb54110475ff941a456b3967",
+      "5": "d4efc5a3111864bf4a0c617e16db0b6f998e1c13a91a6198f3406de6d5bc0971"
+    },
+    "fail_closed_before_acd": true
+  },
+  "production_configuration": {
+    "architecture": "ddpmpp",
+    "precondition": "ect",
+    "optimizer": "RAdam",
+    "learning_rate": 0.0001,
+    "dropout": 0.2,
+    "augment": 0,
+    "xflip": false,
+    "ema_beta": 0.9993,
+    "fp16": true,
+    "amp": true,
+    "tf32": false,
+    "world_size": 1,
+    "deterministic_algorithms": true,
+    "cudnn_benchmark": false,
+    "cublas_workspace_config": ":4096:8"
+  },
+  "runtime": {
+    "host": "gpu0003",
+    "runtime_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runtime/ect-pytorch2401-deterministic.sif",
+    "runtime_sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea",
+    "python": "3.10.12",
+    "pytorch": "2.2.0a0+81ea7a4",
+    "cuda": "12.3",
+    "gpu_assignment": {
+      "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859": [3, 5],
+      "GPU-ef9edaf6-d661-e143-efd1-154c1ad29f10": [4]
+    },
+    "one_branch_per_gpu": true,
+    "same_seed_same_physical_gpu": true
+  },
+  "output_root": "/data/raw/ECT/ect_runs/q256-b384-same-state-p0-v1",
+  "analysis": {
+    "reference_trajectory": "B384_to_A",
+    "comparison_arms": ["B", "C", "D"],
+    "three_point_transition": ["Phi_A(z_A,xi)", "Phi_X(z_A,xi)", "Phi_X(z_X,xi)"],
+    "state_blocks": ["theta", "EMA", "m", "v", "net_buffer", "scaler"],
+    "observables": ["fixed-latent EMA feature map", "common signed validation residual map"],
+    "reuse_pr89_classification_thresholds": true,
+    "reuse_pr90_carryover_operator": true,
+    "norm_ratios_are_not_causal_percentages": true,
+    "cross_seed_replication_rule": "at least 2/3 seeds share the same non-inconclusive classification",
+    "no_p_values": true
+  },
+  "quality_evaluation": {
+    "fid50k": false,
+    "kid50k": false,
+    "proxy_5k": false,
+    "nfe_sweep": false,
+    "checkpoint_selection": false,
+    "p1": false
+  },
+  "protocol_sha256_binding": "SHA256 of this exact file is recorded in every launch, state, branch receipt, manifest, and report"
+}
