@@ -1,12 +1,12 @@
-# ImageNet-64 主图与 cross-dataset empirical synthesis
+# ImageNet-64 主图与 cross-dataset trajectory illustration
 
 ## Material Passport
 
 - Origin Skill: `academic-research-suite`（experiment-agent validate + visualization）
 - Origin Date: 2026-08-29
 - Verification Status: `ANALYZED_AND_RENDER_VERIFIED`
-- Evidence class: frozen paired descriptive results；不作总体显著性或因果机制推断
-- Working branch: `results/imagenet91-paper-figures-v1`
+- Evidence class: three-seed paired descriptive results；不作总体显著性或因果机制推断
+- Integration base: PR #91 merged as `18ec62e`
 
 ## 交付物
 
@@ -15,14 +15,13 @@
 - `contraction_per_seed.csv`
 - 本文件
 
-可复现绘图入口为 `../../scripts/build_imagenet91_paper_figures.py`。本目录另保存
-`imagenet_per_trajectory_source.csv`，作为远端冻结 120-cell ImageNet 结果的逐行输入快照，避免重画依赖网络。
+可复现绘图入口为 `../../scripts/build_imagenet91_paper_figures.py`。脚本直接读取
+PR #91 已提交到 main 的 canonical 120-cell table：
+`../imagenet64_gap_ab_full120_20260829/per_trajectory.csv`，不再维护重复快照。
 
 ## ImageNet 数据与语义
 
-源结果来自仓库 `hjjjs4vbmv-netizen/consistency-gap-optimization` 的提交
-`3f0572cd1c1e1e3132b6e8a4016cbdad82240a0c`（分支
-`codex/imagenet64-gap-ab-w2-fresh-pr`），原始路径为
+源结果现已通过 PR #91 合入 main（squash commit `18ec62e`），canonical 路径为
 `results/imagenet64_gap_ab_full120_20260829/per_trajectory.csv`。
 
 - 训练 seed：101、102、103，IA/IB 同 seed 配对。
@@ -31,13 +30,13 @@
 - 每个 checkpoint 均有 NFE=1 与 NFE=2 的 FID-50k/KID-50k。
 - 图中差值定义为 `Δ = FID(IA) - FID(IB)`；负值偏向 IA。
 - 冻结矩阵包含 120/120 个唯一 cell，所有 240 个指标均为有限值。
-- 输入快照 SHA-256：`975b52a18caa186bb69929367e69d4f6f36771f31026b2044fe97f32bc06a184`。
+- canonical input SHA-256：`975b52a18caa186bb69929367e69d4f6f36771f31026b2044fe97f32bc06a184`。
 
 seed103 在 7,680 kimg 后出现 trajectory instability。它仍完整保留在冻结分析、曲线和 endpoint 表中；没有据此删除、换 seed 或改变停止规则。训练 provenance 表明六条 trajectory 的配对配置除 `global_gap_scale` 外一致，并且失稳不能由 cross-seed checkpoint mixing 解释。
 
 ## Contraction summary
 
-预先固定：
+为这张描述性图定义的两个检查点（结果已经存在后选取，未预注册）：
 
 `K_early = 6400 kimg`，`K_late = 12800 kimg`。
 
@@ -63,8 +62,8 @@ Panels A and B display IA and IB FID-50k trajectories separately for each of the
 
 ## Cross-dataset figure caption
 
-**Cross-dataset quality emergence: finite-budget effects converge, reverse, or destabilize.**
-Thin colored lines are paired differences for individual training seeds and dark lines are the explicitly labeled descriptive summaries. At q256 (NFE=2, B−A), a substantial descriptive full-curve log-FID AULC difference (`−0.181`) coexists with a small 1,024-kimg mean endpoint gap (`−0.038`). At q128 (NFE=1, B−A), B is harmful at 512 kimg (`+5.05`), approximately neutral at 640 kimg (`−0.013`), and has a small late mean effect at 1,024 kimg (`−0.280`). On ImageNet-64 (NFE=2, IA−IB), all seeds show an early IA advantage; stable seeds101/102 approach late near-equivalence (`−0.0036` mean at 12,800 kimg), whereas seed103 becomes unstable and remains displayed separately. Panels use different arm contrasts and NFE settings as labeled and therefore synthesize trajectory shape, not a pooled effect.
+**Finite-budget contrasts contract or change sign, while one ImageNet seed becomes unstable under both interventions.**
+Thin colored lines are paired differences for individual training seeds and dark lines are explicitly labeled descriptive summaries. The q256 panel is a seed3–5 replay illustration: at NFE=2 (B−A), its post hoc full-curve log-FID AULC difference (`−0.181`) coexists with a small 1,024-kimg mean endpoint gap (`−0.038`). It is not a substitute for the planned balanced q256 cohort. At q128 (NFE=1, B−A), B is harmful at 512 kimg (`+5.05`), approximately neutral at 640 kimg (`−0.013`), and has a small late mean effect at 1,024 kimg (`−0.280`). On ImageNet-64 (NFE=2, IA−IB), all seeds show an early IA advantage; stable seeds101/102 approach late near-equivalence (`−0.0036` mean at 12,800 kimg), whereas seed103 becomes unstable under both IA and IB and remains displayed separately. Panels use different arm contrasts, cohorts, and NFE settings as labeled and therefore compare trajectory shapes, not a pooled treatment effect.
 
 ## Cross-dataset provenance
 
@@ -72,7 +71,8 @@ Thin colored lines are paired differences for individual training seeds and dark
 - q128 source: `../../results/second_q_q128_ab_v2/final/paired_results.csv`, SHA-256 `b5c8271112032b7f7135cd62a60412bbaaba1b165620e3be1b7fdb1e686c0e79`.
 - q256 AULC is a deterministic normalized trapezoidal area under natural-log FID over 256–1,024 kimg, calculated per seed and then averaged; it is descriptive rather than preregistered inference.
 - q128 values use the prospective paired second-q experiment and its frozen NFE=1 checkpoints.
-- ImageNet stable mean is explicitly post hoc sensitivity; the all-seed frozen result is retained elsewhere in the same figure package.
+- The q256 seed3–5 replay and its log-FID AULC are descriptive illustration only; the figure should not be promoted to the manuscript's primary q256 evidence before the balanced cohort is available.
+- ImageNet stable mean is explicitly post hoc sensitivity; the all-seed three-seed result is retained elsewhere in the same figure package.
 
 ## Reproduction and QA
 
@@ -96,7 +96,7 @@ figure_table_trace:
   - artifact_id: fig-imagenet-per-seed-trajectories
     source_data:
       dataset_id: imagenet64-gap-ab-full120-20260829
-      file: results/imagenet91_paper_summary/imagenet_per_trajectory_source.csv
+      file: results/imagenet64_gap_ab_full120_20260829/per_trajectory.csv
     transformation:
       script: scripts/build_imagenet91_paper_figures.py
     caption_claim: Early IA/IB separation contracts toward near-equivalence for stable seeds, while seed103 becomes unstable and cannot support a contraction interpretation.
@@ -104,20 +104,21 @@ figure_table_trace:
       - claim: ImageNet shows an early uniform gap followed by stable-seed near-equivalence and one unstable seed.
         locator: Figure 4
     limitations:
-      - Only three frozen training seeds are available.
-      - The seeds101/102 endpoint mean is a post hoc descriptive sensitivity analysis, not the frozen estimand.
+      - Only three training seeds are available.
+      - The seeds101/102 endpoint mean is a post hoc descriptive sensitivity analysis, not the all-seed estimand.
       - Seed103 contraction ratios are arithmetic summaries only after instability.
   - artifact_id: fig-cross-dataset-quality-emergence
     source_data:
       dataset_id: q256-replay-q128-second-q-imagenet64-full120
-      file: results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv; results/second_q_q128_ab_v2/final/paired_results.csv; results/imagenet91_paper_summary/imagenet_per_trajectory_source.csv
+      file: results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv; results/second_q_q128_ab_v2/final/paired_results.csv; results/imagenet64_gap_ab_full120_20260829/per_trajectory.csv
     transformation:
       script: scripts/build_imagenet91_paper_figures.py
-    caption_claim: The finite-budget quality effect is trajectory-dependent across datasets: q256 contracts, q128 changes sign/regime, and ImageNet combines stable near-equivalence with one unstable seed.
+    caption_claim: Descriptive finite-budget contrasts vary across the three illustrated settings, while one ImageNet seed becomes unstable under both IA and IB.
     supported_manuscript_claims:
-      - claim: Cross-dataset evidence supports quality-regime emergence rather than a uniform endpoint treatment effect.
-        locator: cross-dataset main figure
+      - claim: The illustrated trajectories are heterogeneous enough that a single pooled endpoint narrative would discard their time structure.
+        locator: cross-dataset supplementary illustration
     limitations:
       - Panels use different arm contrasts and NFE settings and are not pooled statistically.
-      - q256 AULC and ImageNet stable-seed mean are deterministic descriptive summaries.
+      - The q256 panel uses the seed3–5 replay rather than the planned balanced cohort and must not stand in for the primary q256 result.
+      - q256 AULC and ImageNet stable-seed mean are post hoc descriptive summaries.
 ```

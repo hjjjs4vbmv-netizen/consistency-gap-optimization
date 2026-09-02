@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Build the ImageNet-64 per-seed and cross-dataset paper figures.
 
-The ImageNet source table is a versioned snapshot of the frozen 120-cell
-evaluation.  The cross-dataset figure additionally reads the repository's
-sealed q256 replay matrix and prospective q128 A/B matrix.  No inferential
+The ImageNet source table is the canonical committed 120-cell evaluation from
+PR #91.  The cross-dataset figure additionally reads the repository's q256
+seed3-5 replay matrix and prospective q128 A/B matrix.  No inferential
 statistics are performed; all summaries are deterministic and descriptive.
 """
 
@@ -29,7 +29,7 @@ from matplotlib.patches import FancyBboxPatch
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_IMAGENET = ROOT / "results/imagenet91_paper_summary/imagenet_per_trajectory_source.csv"
+DEFAULT_IMAGENET = ROOT / "results/imagenet64_gap_ab_full120_20260829/per_trajectory.csv"
 DEFAULT_Q256 = ROOT / "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv"
 DEFAULT_Q128 = ROOT / "results/second_q_q128_ab_v2/final/paired_results.csv"
 DEFAULT_OUTDIR = ROOT / "figures/main"
@@ -212,11 +212,11 @@ def plot_trajectory_panel(parent, idx, nfe: int, label: str, title: str, rows: l
             axis.axvspan(7680, 12800, color=UNSTABLE_FILL, alpha=0.95, zorder=-2)
             axis.text(
                 0.985,
-                0.88,
+                0.08,
                 "instability region",
                 transform=axis.transAxes,
                 ha="right",
-                va="top",
+                va="bottom",
                 color="#A61B1B",
                 fontsize=7.1,
             )
@@ -410,7 +410,12 @@ def render_cross_dataset(imagenet_rows: list[dict], q256_path: Path, q128_path: 
     for seed, color in zip((3, 4, 5), ("#84ADFF", "#6CE9A6", "#FDA29B")):
         axes[0].plot(budgets, [q256_seed[(seed, k)] for k in budgets], color=color, linewidth=1.1, marker="o", markersize=2.5, alpha=0.9, label=f"seed{seed}")
     axes[0].plot(budgets, [q256_mean[k] for k in budgets], color=INK, linewidth=2.4, marker="D", markersize=4.0, label="3-seed mean")
-    style_synthesis_axis(axes[0], "A  q256", "NFE=2; paired difference B − A", 0.1)
+    style_synthesis_axis(
+        axes[0],
+        "A  q256 replay illustration",
+        "seeds3-5, NFE=2; paired difference B − A",
+        0.1,
+    )
     axes[0].set_xticks((256, 640, 1024))
     axes[0].set_xlabel("Training budget (kimg)")
     axes[0].set_ylabel("Paired FID-50k difference\n(negative favors first-named arm)")
@@ -446,11 +451,11 @@ def render_cross_dataset(imagenet_rows: list[dict], q256_path: Path, q128_path: 
     axes[2].set_xticks((1280, 6400, 12800))
     axes[2].set_xlabel("Training budget (kimg)")
     axes[2].text(0.04, 0.06, f"uniform early IA advantage\nstable late near-equivalence {stable_mean[12800]:+.4f}\nseed103 unstable: {imagenet_delta[(103, 2)][12800]:+.1f}", transform=axes[2].transAxes, color=INK, fontsize=8.1, bbox={"facecolor": "white", "edgecolor": "#D0D5DD", "boxstyle": "round,pad=0.35"})
-    axes[2].legend(loc="upper right", frameon=False, fontsize=7.1, handlelength=1.8)
+    axes[2].legend(loc="upper left", frameon=False, fontsize=7.1, handlelength=1.8)
 
-    figure.suptitle("Cross-dataset quality emergence: finite-budget effects converge, reverse, or destabilize", x=0.065, y=0.95, ha="left", fontsize=14.5, weight="bold", color=INK)
+    figure.suptitle("Finite-budget contrasts contract or change sign; one ImageNet seed becomes unstable", x=0.065, y=0.95, ha="left", fontsize=14.5, weight="bold", color=INK)
     figure.text(0.065, 0.875, "Thin colored lines are individual training seeds; the dark line is the stated descriptive mean. Symlog y-scales preserve both near-zero endpoints and large early/unstable excursions.", color=MUTED, fontsize=8.5)
-    figure.text(0.065, 0.045, "Note. Panels use different arm contrasts and NFE settings, stated above each axis; the figure synthesizes trajectory shape rather than a pooled effect. q256 AULC is a deterministic normalized trapezoidal area under log FID. The ImageNet 101/102 mean is a post hoc sensitivity summary; seed103 remains displayed and is not interpreted after instability.", color=INK, fontsize=8.0, wrap=True)
+    figure.text(0.065, 0.045, "Note. Panels use different arm contrasts and NFE settings, stated above each axis; the figure compares trajectory shapes rather than a pooled effect. The q256 seed3-5 panel is a replay illustration, not the planned balanced-cohort main result; its AULC is a post hoc descriptive normalized trapezoidal area under log FID. The ImageNet 101/102 mean is a post hoc sensitivity summary; seed103 remains displayed and is not interpreted after instability.", color=INK, fontsize=8.0, wrap=True)
     path.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(path, facecolor="white")
     plt.close(figure)
