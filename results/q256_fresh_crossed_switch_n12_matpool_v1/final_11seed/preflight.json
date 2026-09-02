@@ -1,0 +1,64 @@
+{
+  "free_bytes": 1243704778752,
+  "git_clean": true,
+  "git_head": "d906bbfb7f6fee60d17d781f585906deb82e7815",
+  "gpu_exclusivity": "PASS",
+  "gpus": [
+    {
+      "driver_version": "570.211.01",
+      "index": 0,
+      "memory_total_mib": 40960,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "pci_bus_id": "00000000:40:00.0",
+      "uuid": "GPU-dbf0a977-e9bf-8469-c0f3-d9eed4bf0be4"
+    },
+    {
+      "driver_version": "570.211.01",
+      "index": 1,
+      "memory_total_mib": 40960,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "pci_bus_id": "00000000:41:00.0",
+      "uuid": "GPU-74e16478-3980-7d5d-f504-de28a8022fcd"
+    },
+    {
+      "driver_version": "570.211.01",
+      "index": 2,
+      "memory_total_mib": 40960,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "pci_bus_id": "00000000:B1:00.0",
+      "uuid": "GPU-b6d4a8cf-b094-504a-fcb2-6cc7554185d8"
+    },
+    {
+      "driver_version": "570.211.01",
+      "index": 3,
+      "memory_total_mib": 40960,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "pci_bus_id": "00000000:B2:00.0",
+      "uuid": "GPU-a30c5dfd-23c6-b2d4-0aee-5b2c87a59a13"
+    },
+    {
+      "driver_version": "570.211.01",
+      "index": 4,
+      "memory_total_mib": 40960,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "pci_bus_id": "00000000:B4:00.0",
+      "uuid": "GPU-d0834467-cb74-7998-f3fc-85a1bb472a75"
+    },
+    {
+      "driver_version": "570.211.01",
+      "index": 5,
+      "memory_total_mib": 40960,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "pci_bus_id": "00000000:B5:00.0",
+      "uuid": "GPU-f367feae-962a-c42a-98a6-2cb97a6ecfb2"
+    }
+  ],
+  "hostname": "Po408E",
+  "minimum_free_bytes": 536870912000,
+  "observed_at": "2026-08-31T10:33:40Z",
+  "output_root_absent": true,
+  "protocol_sha256": "df7f584c4af0017b6d655b843460033e22f8801b843859d7dbe32aa852f167b1",
+  "runtime_manifest_sha256": "feb0cf0d824550b0776bbc47ee220fc4d2e9489b468aa4c550a5c58a51a5e1ac",
+  "schema": "ect.q256.fresh-crossed-switch-preflight/v1",
+  "status": "PASS"
+}

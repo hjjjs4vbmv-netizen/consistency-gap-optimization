@@ -14,6 +14,15 @@ This experiment has two distinct validation layers.
 The copied final receipt and public evidence manifest preserve these bindings.
 This historical record must not be represented as a test run of later PR heads.
 
+## Frozen-runtime remediation run
+
+Source commit `31b127e42b33caff0f21b9a0fbbe9b014512f5c3` was checked in an
+isolated worktree on the formal node with the frozen runtime above. The original
+q256 file passed 29/29 tests and the new dependency-free authorization file
+passed 14/14 tests. Exact commands, log SHA256 values, and the unmodified logs
+are committed in
+`results/q256_fresh_crossed_switch_n12_matpool_v1/final_11seed/REMOTE_TEST_RECORD.md`.
+
 ## Current-source checks
 
 GitHub Actions runs `.github/workflows/q256-fresh-protocol.yml` on every PR head.

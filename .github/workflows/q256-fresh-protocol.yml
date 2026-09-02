@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "analysis/q256_fresh_crossed_switch_n12_matpool_v1/**"
+      - "results/q256_fresh_crossed_switch_n12_matpool_v1/final_11seed/**"
       - "tests/test_q256_eleven_seed_authorization.py"
       - ".github/workflows/q256-fresh-protocol.yml"
 permissions:
@@ -29,3 +30,6 @@ jobs:
         run: >-
           python -m unittest discover -v -s tests
           -p 'test_q256_eleven_seed_authorization.py'
+      - name: Verify committed public evidence bundle
+        working-directory: results/q256_fresh_crossed_switch_n12_matpool_v1/final_11seed
+        run: sha256sum --check PUBLIC_SHA256SUMS.txt
