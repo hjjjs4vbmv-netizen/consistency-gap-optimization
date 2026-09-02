@@ -1,0 +1,193 @@
+{
+  "schema_version": 2,
+  "experiment_id": "gap_lr_matched_q128_s3_v1",
+  "repository": "hjjjs4vbmv-netizen/recurrence_of_ect",
+  "branch": "role-e/gap-lr-matched",
+  "result_delivery_branch": "codex/collaborator-gap-lr-delivery",
+  "source_policy": {
+    "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
+    "protocol_commit": "2f1005b1a14446c0efdf86a95f20a2d7fb172121",
+    "protocol_commit_resolution": "at launch, audit_receipt.source.protocol_commit must equal HEAD",
+    "historical_launch_commit": "2f1005b1a14446c0efdf86a95f20a2d7fb172121",
+    "post_run_merge_advances_protocol_branch": true,
+    "validator_head_binding_unchanged": true,
+    "rerun_from_new_head_requires_new_authorized_receipt": true,
+    "training_paths": [
+      "ct_train.py",
+      "training"
+    ]
+  },
+  "config": "configs/gap_lr_matched_matrix.json",
+  "protocol": "docs/GAP_LR_MATCHED_PROTOCOL.md",
+  "formal_launch_status": "TRAINING_COMPLETE_PENDING_EVALUATION",
+  "formal_launch_blockers": [],
+  "post_training_pending": [
+    "Role D same-trajectory longitudinal audit",
+    "Role E NFE=1 FID-5k/KID-5k evaluation"
+  ],
+  "launch_gate": {
+    "environment_variable": "GAP_LR_AUDIT_RECEIPT",
+    "validator": "scripts/validate_gap_lr_audit_receipt.py",
+    "manual_collaborator_pass_allowed": false,
+    "free_form_c0_star_allowed": false,
+    "fail_closed": true,
+    "validation_status": "PASSED",
+    "validator_exit_code": 0,
+    "receipt": "results/gap_lr_matched/final_gap_lr_audit_receipt.json",
+    "receipt_sha256": "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa",
+    "receipt_is_immutable_historical_authorization": true,
+    "validated_c0_star": 1.2963523762588691
+  },
+  "smoke_test": {
+    "status": "PASS",
+    "formal_evidence": false,
+    "arms_checked": [
+      "A",
+      "B"
+    ],
+    "processed_kimg": {
+      "A": 1.024,
+      "B": 1.024
+    },
+    "attempted_iterations": {
+      "A": 8,
+      "B": 8
+    },
+    "successful_optimizer_steps": {
+      "A": 1,
+      "B": 1
+    },
+    "amp_skip_sequence": {
+      "A": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "B": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "grad_scale_sequence": [
+      65536,
+      32768,
+      16384,
+      8192,
+      4096,
+      2048,
+      1024,
+      512
+    ],
+    "first_common_non_skipped_attempt": 8,
+    "numbered_network_snapshots": true,
+    "numbered_training_states": true,
+    "scope": "launcher/checkpoint sanity only; insufficient for optimizer mechanism gate",
+    "exit_warning": "NCCL destroy_process_group warning observed after normal completion; not a training failure"
+  },
+  "required_external_evidence": {
+    "fresh_linearized_control": {
+      "status": "PASSED",
+      "control_name": "fresh-linearized matched control",
+      "c0_definition": "dot(delta_1_3,delta_1_0)/dot(delta_1_3,delta_1_3)",
+      "c0_star": 1.2963523762588691,
+      "claim_boundary": "initialization-local only; not optimizer-state-aware or trajectory matched"
+    },
+    "optimizer_mechanism_gate": {
+      "status": "PASSED",
+      "audited_states": 3,
+      "minimum_audited_states": 3,
+      "minimum_successful_optimizer_steps": 6,
+      "same_nonzero_radam_gradscaler_state": true,
+      "only_current_gap_changes": true,
+      "required_metrics": [
+        "raw_a_star",
+        "raw_residual",
+        "update_s_star",
+        "update_c_star",
+        "R_opt",
+        "h_update",
+        "h_moment_ideal",
+        "off_support_energy",
+        "H_exact",
+        "H_thresholded"
+      ]
+    }
+  },
+  "jobs": [
+    {
+      "arm": "A",
+      "run_id": "arm_a_g1_0_lr_fixed_s3",
+      "gap_scale": 1,
+      "learning_rate": 0.0001,
+      "status": "TRAINING_COMPLETE_STATE_VERIFIED"
+    },
+    {
+      "arm": "B",
+      "run_id": "arm_b_g1_3_lr_fixed_s3",
+      "gap_scale": 1.3,
+      "learning_rate": 0.0001,
+      "status": "TRAINING_COMPLETE_STATE_VERIFIED"
+    },
+    {
+      "arm": "C",
+      "run_id": "arm_c_g1_3_lr_matched_s3",
+      "gap_scale": 1.3,
+      "learning_rate": 0.00012963523762588692,
+      "status": "TRAINING_COMPLETE_STATE_VERIFIED",
+      "learning_rate_expression": "audit_receipt.fresh_linearized_control.c0_star*0.0001",
+      "control_name": "fresh-linearized matched control"
+    }
+  ],
+  "longitudinal_audit": {
+    "checkpoint_kimg": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "actual_checkpoint_kimg": [
+      32.128,
+      64.128,
+      128.128,
+      256.0
+    ],
+    "numbered_state_ids": [
+      "000001",
+      "000002",
+      "000004",
+      "000008"
+    ],
+    "reference_arm": "A",
+    "mix_states_from_different_arms_across_k": false,
+    "identical_counterfactual_state_required": true,
+    "status": "FORMAL_CHECKPOINTS_AVAILABLE_PENDING_ROLE_D_AUDIT"
+  },
+  "runtime_provenance": {
+    "audit_receipt_sha256": "6487fbcc5f63817c8e3a91968f45fb13437d1c580afa73966bdf0ad8061bb9fa",
+    "dataset_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+    "transfer_checkpoint_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da",
+    "config_sha256": "18469739a9c86358b87a0c24cd3f6d2a671e35e5972b947e96f2c5488b697bc3",
+    "protocol_commit": "2f1005b1a14446c0efdf86a95f20a2d7fb172121",
+    "training_code_commit": "2357bb1d2531a343bdb4397f5a08f4d42a2d135b",
+    "launch_timestamp_utc": "2026-08-09T02:20:18Z",
+    "host_identifier": "ECT002",
+    "device": "NVIDIA A100 80GB PCIe",
+    "cuda_visible_devices": "1",
+    "master_ports": [29641, 29642, 29643],
+    "completion_marker": "ALL FORMAL ARMS COMPLETE",
+    "post_run_receipt": "results/gap_lr_matched/collaborator_training_state_receipt.json",
+    "post_run_receipt_sha256": "645fdeb2f0831cef84f2aa030d067fb299f58ec92e4931a0175b0266192a5cd7"
+  },
+  "matching_claim": "Arm C is fresh-linearized at the common initialization; no entire-trajectory or optimizer-state-aware matching claim."
+}
