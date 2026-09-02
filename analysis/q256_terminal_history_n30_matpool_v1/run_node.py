@@ -749,6 +749,27 @@ def worker(args: argparse.Namespace) -> None:
     })
 
 
+def validate_parity(path: Path, protocol_path: Path, protocol: dict) -> dict:
+    report = load_json(path.resolve(strict=True))
+    if report.get("schema") != "ect.q256.terminal-history-runtime-parity/v1":
+        raise RuntimeError("runtime parity schema mismatch")
+    if report.get("status") != "PASS" or report.get("automatic_retry_count") != 0:
+        raise RuntimeError("runtime parity is not a first-attempt PASS")
+    if report.get("formal_protocol_sha256") != sha256_file(protocol_path):
+        raise RuntimeError("runtime parity formal-protocol binding mismatch")
+    if report.get("implementation_commit") != protocol["implementation_commit"]:
+        raise RuntimeError("runtime parity implementation binding mismatch")
+    comparisons = report.get("comparisons")
+    if (not isinstance(comparisons, list) or len(comparisons) != 2
+            or {row.get("arm") for row in comparisons} != {"A", "B"}
+            or any(row.get("status") != "PASS" for row in comparisons)):
+        raise RuntimeError("runtime parity comparison coverage mismatch")
+    live_runtime = runtime_fingerprint(Path(protocol["runtime"]["python"]))
+    if report.get("runtime") != live_runtime:
+        raise RuntimeError("runtime changed after parity")
+    return report
+
+
 def launch(args: argparse.Namespace) -> None:
     protocol_path = args.protocol.resolve(strict=True)
     protocol = validate_protocol(protocol_path)
@@ -757,6 +778,7 @@ def launch(args: argparse.Namespace) -> None:
     if (preflight.get("status") != "PASS" or preflight.get("node_id") != args.node_id
             or preflight.get("protocol_sha256") != protocol_sha):
         raise RuntimeError("preflight receipt mismatch")
+    validate_parity(args.parity, protocol_path, protocol)
     output_root = Path(protocol["paths"]["output_root"])
     output_root.mkdir(parents=True, exist_ok=False)
     (output_root / "training").mkdir()
@@ -767,6 +789,7 @@ def launch(args: argparse.Namespace) -> None:
     copy_exclusive(protocol_path, control / "protocol.json")
     copy_exclusive(protocol_path.with_name("protocol.sha256"), control / "protocol.sha256")
     copy_exclusive(args.preflight, control / "preflight.json")
+    copy_exclusive(args.parity, control / "runtime_parity_report.json")
     python = protocol["runtime"]["python"]
     workers = []
     registry = []
@@ -838,6 +861,7 @@ def parser() -> argparse.ArgumentParser:
     launch_parser.add_argument("--protocol", type=Path, required=True)
     launch_parser.add_argument("--node-id", choices=tuple(NODE_SEEDS), required=True)
     launch_parser.add_argument("--preflight", type=Path, required=True)
+    launch_parser.add_argument("--parity", type=Path, required=True)
     launch_parser.set_defaults(func=launch)
     work = sub.add_parser("worker")
     work.add_argument("--protocol", type=Path, required=True)
