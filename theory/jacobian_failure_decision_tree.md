@@ -114,8 +114,9 @@ source` at the audited state.
 
 ### C passes; D fails with plus/minus AMP mismatch
 
-The FP32 field admits a stable local derivative, while the production transition
-crosses a discrete AMP regime.  Verdict: `production discrete-transition source`.
+The FP32 field passes the local finite-difference stability criterion, while
+the production transition crosses a discrete AMP regime.  Verdict:
+`production discrete-transition source`.
 This does not imply absence of local structure away from the boundary.
 
 ### C passes; D fails without an AMP mismatch

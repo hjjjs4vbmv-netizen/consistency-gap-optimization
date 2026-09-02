@@ -37,8 +37,9 @@ an absence of local linear structure in the evaluated FP32 field.
 The strongest licensed sentence is:
 
 > At the audited state and calibrated scales, the full one-sided FP32 objective
-> field admits a stable local finite-difference linearization, whereas the local
-> parameter-to-augmented-state production transition does not.
+> field passes the prespecified local finite-difference stability criterion,
+> whereas the local parameter-to-augmented-state production transition fails
+> that criterion on the audited grid.
 
 The corresponding interpretation is:
 
@@ -63,8 +64,8 @@ minibatches, epsilon grid, and decision rule.
 
 ## 5. Connection to carryover-corrected dynamics
 
-The production separation explains why an objective-level factorization does
-not determine a trained trajectory. Once two trajectories differ, persistent
+The production separation shows why an objective-level factorization is
+insufficient by itself to determine a trained trajectory. Once two trajectories differ, persistent
 state blocks contain both mechanical carryover and state-dependent update
 feedback. The exact carryover-corrected recursion separates these terms:
 

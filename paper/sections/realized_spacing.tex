@@ -1,0 +1,67 @@
+% Role C / kangw24. Theory source: PR #81 q--g audit and production ECT
+% pair construction. Keep q and g as implementation parameters; the scientific
+% object is the realized pair-spacing intervention.
+\subsection{Realized pair spacing is the intervention}
+\label{sec:realized-spacing}
+
+ECT constructs a coupled pair by sampling an online time $t$ and selecting an
+earlier target time $r<t$.  Write the realized separation as
+$\Delta=t-r$.  In the implementation studied here, curriculum parameter $q$,
+stage $j$, and global multiplier $g$ jointly determine
+\begin{align}
+  r_q(t,j)
+  &=\max\!\left\{0,
+      t\left(1-\frac{n(t)}{q^{j+1}}\right)\right\},
+  \\
+  \Delta_{q,g}(t,j)
+  &=\min\!\left\{t,\,g\bigl(t-r_q(t,j)\bigr)\right\},
+  \qquad
+  r_{q,g}(t,j)=t-\Delta_{q,g}(t,j),
+  \label{eq:realized-spacing-construction}
+\end{align}
+where $n(t)$ is the fixed schedule-shape function.  The effective training
+object is therefore the joint law
+\begin{equation}
+  \mathcal{P}_{q,g}
+  =\operatorname{Law}\!\left(J,T,\Delta_{q,g}(T,J)\right)
+  \label{eq:effective-spacing-law}
+\end{equation}
+under the frozen stage and time samplers.  Neither nominal $q$, nominal $g$,
+nor the mean of $\Delta$ alone specifies this law.
+
+At a fixed unclipped stage, multiplying the separation by $g$ can be written
+as a reparameterization of $q$.  For reference parameters $(q_0,g_0)$, the
+same pair coordinates are obtained with $g'=1$ and
+$q_{\mathrm{eff}}(j)=q_0/g_0^{1/(j+1)}$.  This identity makes $g$ a controlled
+implementation probe of realized spacing, rather than an independent
+mechanism.  Across multiple stages or at a clipping boundary, equality
+requires matching the full law $\mathcal{P}_{q,g}$ rather than one scalar
+setting.
+
+The objective-level channels of a spacing intervention depend on the weighting
+regime.  For online output $D_t=f_\theta(x_t,t)$, detached target
+$T_r=\operatorname{sg}[f_\theta(x_r,r)]$, and residual $e_r=D_t-T_r$, write
+the per-sample loss as
+\begin{equation}
+  \ell(\theta;t,r)
+  =w(t,\Delta)\,\rho_c(e_r),
+  \qquad
+  \rho_c(e)=\sqrt{\lVert e\rVert_2^2+c^2}-c.
+  \label{eq:spacing-objective}
+\end{equation}
+Here $w$ includes all explicit weighting factors; no common time-dependent
+factor is silently dropped.  In the legacy CIFAR setting,
+$c=0$ and $w(t,\Delta)=1/\Delta$, so changing spacing moves the detached
+target endpoint and changes the explicit weight.  In the ImageNet-64 setting
+of PR~\#91, $c=0.06$ and
+$w(t,\Delta)=\omega_{\mathrm{snr}+k}(t)
+=(t^2+\sigma_{\mathrm{data}}^2)/(t\sigma_{\mathrm{data}})^2$ is independent of
+$r$ and $\Delta$ at matched $t$.  The IA--IB intervention therefore moves
+the detached target endpoint without introducing an inverse-spacing
+rescaling.  IA and IB hold the remaining paired training configuration fixed
+and change \texttt{global\_gap\_scale} from $1.0$ to $1.1$; their comparison
+estimates the policy-level trajectory contrast induced by that target-endpoint
+intervention under the evaluated ImageNet construction.  Because the arms
+diverge after training begins, this longitudinal contrast is not an isolated
+per-step target-channel effect.  An effect of $g$ independent of $q$ remains
+untested.
