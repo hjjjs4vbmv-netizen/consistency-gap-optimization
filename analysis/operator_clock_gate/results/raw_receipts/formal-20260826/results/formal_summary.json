@@ -1,0 +1,206 @@
+{
+  "algorithmic": {
+    "amp_pair_pass_count": 0,
+    "amp_regime_pass_count": 0,
+    "convergence_pass_count": 12,
+    "discrete_pair_pass_count": 128,
+    "finest_adjacent_relative_change": {
+      "count": 128,
+      "max": 0.18515325087102272,
+      "median": 0.08529472391554946,
+      "min": 0.03747899394614032
+    },
+    "source_preserved_count": 128,
+    "status_counts": {
+      "FAIL_CLOSED": 128
+    }
+  },
+  "coverage": {
+    "algorithmic": {
+      "duplicates": [],
+      "expected": 128,
+      "extra": [],
+      "missing": [],
+      "observed": 128,
+      "unique": 128
+    },
+    "field": {
+      "duplicates": [],
+      "expected": 128,
+      "extra": [],
+      "missing": [],
+      "observed": 128,
+      "unique": 128
+    }
+  },
+  "field": {
+    "by_arm": {
+      "A": {
+        "count": 32,
+        "max": 0.5605346562984238,
+        "median": 0.16568700298560185,
+        "min": 0.10104909163662441
+      },
+      "B": {
+        "count": 32,
+        "max": 0.4660458770677256,
+        "median": 0.16998988716852542,
+        "min": 0.09345449385533101
+      },
+      "C": {
+        "count": 32,
+        "max": 0.4660339054776994,
+        "median": 0.16807301471665256,
+        "min": 0.09597037293197569
+      },
+      "D": {
+        "count": 32,
+        "max": 0.5624574852455116,
+        "median": 0.16225391477201898,
+        "min": 0.1021811978968584
+      }
+    },
+    "convergence_pass_count": 0,
+    "finest_adjacent_relative_change": {
+      "count": 128,
+      "max": 0.5624574852455116,
+      "median": 0.1665756421706554,
+      "min": 0.09345449385533101
+    },
+    "source_preserved_count": 128,
+    "status_counts": {
+      "FAIL_CLOSED": 128
+    }
+  },
+  "manifests": {
+    "count": 4,
+    "source_files_preserved": true,
+    "statuses": {
+      "FAIL_CLOSED": 4
+    }
+  },
+  "matched": {
+    "amp_skip_all_arms_identical": true,
+    "amp_skips_by_arm": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "horizons": [
+      1,
+      4,
+      16,
+      64
+    ],
+    "source_preserved": true,
+    "status": "PASS",
+    "steps_by_arm": {
+      "A": 64,
+      "B": 64,
+      "C": 64,
+      "D": 64
+    }
+  },
+  "protocol": {
+    "algorithmic_finite_difference_epsilons": [
+      0.001,
+      0.0007,
+      0.0005,
+      0.0003
+    ],
+    "arms": {
+      "A": {
+        "denominator_scale": 1.0,
+        "meaning": "native_baseline",
+        "target_scale": 1.0
+      },
+      "B": {
+        "denominator_scale": 1.1,
+        "meaning": "native_probe",
+        "target_scale": 1.1
+      },
+      "C": {
+        "denominator_scale": 1.0,
+        "meaning": "target_geometry_only",
+        "target_scale": 1.1
+      },
+      "D": {
+        "denominator_scale": 1.1,
+        "meaning": "loss_weighting_only",
+        "target_scale": 1.0
+      }
+    },
+    "audit_minibatch_ids": [
+      2026082601,
+      2026082602,
+      2026082603,
+      2026082604
+    ],
+    "batch_construction": {
+      "accumulation_rounds": 8,
+      "batch_size": 128,
+      "drop_last": true,
+      "generator": "direct torch.randperm with one CPU torch.Generator manually seeded by audit_minibatch_id per batch",
+      "microbatch_size": 16,
+      "num_workers": 0,
+      "shuffle": true
+    },
+    "convergence_relative_tolerance": 0.05,
+    "dataset": {
+      "sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "size_bytes": 166000134
+    },
+    "field_finite_difference_epsilons": [
+      0.03,
+      0.02,
+      0.015,
+      0.01
+    ],
+    "finite_difference_calibration_boundary": "epsilon grids were revised using only arm A, audit batch 2026082601, direction 0 correctness smokes before the formal matrix; the 5% gate was not relaxed and all failed smokes are retained",
+    "horizons": [
+      1,
+      4,
+      16,
+      64
+    ],
+    "jvp_direction_convention": "per-tensor Gaussian with RMS=max(state RMS,1e-3); positive-state coordinates are elementwise clipped to remain positive under the largest frozen epsilon",
+    "matrix": "4 arms x 4 fixed audit minibatches x 8 fixed random projection directions x 4 horizons",
+    "projection_direction_seeds": [
+      2026082611,
+      2026082612,
+      2026082613,
+      2026082614,
+      2026082615,
+      2026082616,
+      2026082617,
+      2026082618
+    ],
+    "replacement_after_results": "PROHIBITED",
+    "runtime_determinism": {
+      "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+      "cudnn_benchmark": false,
+      "cudnn_deterministic": true,
+      "fp16_reduced_precision_reduction": false,
+      "tf32": false,
+      "torch_deterministic_algorithms": true
+    },
+    "schema_version": 1,
+    "source_selection": {
+      "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+      "policy": "lowest eligible training seed in the archived verified q256 fixed-baseline 256-kimg source manifest",
+      "q": 256,
+      "state_kimg": 256,
+      "training_seed": 3,
+      "training_state_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+    },
+    "status": "FROZEN_BEFORE_FORMAL_RESULTS"
+  },
+  "raw_tensors": {
+    "file_count": 256,
+    "missing_pairs": [],
+    "total_bytes": 342534144896
+  },
+  "schema_version": 1,
+  "status": "PASS_EXECUTION_COMPLETE_WITH_FAIL_CLOSED_JACOBIANS"
+}

@@ -1,0 +1,30 @@
+% Requires: \usepackage{booktabs}
+% Input with: \input{tables/q256_per_seed_appendix}
+\begin{table*}[t]
+  \centering
+  \caption{Seed-level paired results for the predeclared $q=256$, 256\,kimg
+  comparison. $\Delta=$ global-only minus fixed; negative values and positive
+  relative improvements favor global-only.}
+  \label{tab:q256-256k-per-seed}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{llrrrrr}
+    \toprule
+    Metric & NFE & Seed & Fixed & Global-only & $\Delta$ & Rel. imp. \\
+    \midrule
+    KID-50k & 1 & 3 & $0.342669$ & $0.319188$ & $-0.023481$ & $6.85\%$ \\
+    KID-50k & 1 & 4 & $0.340228$ & $0.304063$ & $-0.036166$ & $10.63\%$ \\
+    KID-50k & 1 & 5 & $0.313132$ & $0.297402$ & $-0.015730$ & $5.02\%$ \\
+    FID-50k & 1 & 3 & $320.59$ & $308.51$ & $-12.08$ & $3.77\%$ \\
+    FID-50k & 1 & 4 & $319.97$ & $301.98$ & $-17.98$ & $5.62\%$ \\
+    FID-50k & 1 & 5 & $294.20$ & $281.72$ & $-12.49$ & $4.24\%$ \\
+    \addlinespace
+    KID-50k & 2 & 3 & $0.296108$ & $0.055826$ & $-0.240282$ & $81.15\%$ \\
+    KID-50k & 2 & 4 & $0.286769$ & $0.084875$ & $-0.201894$ & $70.40\%$ \\
+    KID-50k & 2 & 5 & $0.034110$ & $0.034025$ & $-0.000085$ & $0.25\%$ \\
+    FID-50k & 2 & 3 & $280.90$ & $69.52$ & $-211.37$ & $75.25\%$ \\
+    FID-50k & 2 & 4 & $265.23$ & $97.63$ & $-167.60$ & $63.19\%$ \\
+    FID-50k & 2 & 5 & $45.80$ & $44.02$ & $-1.78$ & $3.89\%$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

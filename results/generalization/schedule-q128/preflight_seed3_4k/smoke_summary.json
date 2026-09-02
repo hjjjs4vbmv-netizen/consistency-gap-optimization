@@ -1,0 +1,45 @@
+{
+  "result_type": "preliminary_engineering_smoke",
+  "formal_comparable_result": false,
+  "quality_metrics_run": false,
+  "source_code_status": "unmerged PR23 source archive; engineering smoke only",
+  "setting": "schedule-q128",
+  "training_seed": 3,
+  "duration_mimg": 0.004,
+  "expected_attempted_iterations": 32,
+  "fixed": {
+    "attempted_iterations": 32,
+    "successful_optimizer_steps": 24,
+    "skipped_steps": 8,
+    "nan_inf_loss_rows": 0,
+    "schedule": "sigmoid",
+    "final_loss": 22.27374935,
+    "trailing_16_successful_loss_mean": 24.165067672499998,
+    "final_correction": 0.0,
+    "final_r_over_t_mean": 0.971908929911,
+    "final_gap_mean": 0.0280910700889,
+    "elapsed_seconds": 32.627042,
+    "peak_vram_gb": 2.50325
+  },
+  "global_only": {
+    "attempted_iterations": 32,
+    "successful_optimizer_steps": 24,
+    "skipped_steps": 8,
+    "nan_inf_loss_rows": 0,
+    "schedule": "global_sigmoid",
+    "final_loss": 19.90813899,
+    "trailing_16_successful_loss_mean": 21.324345113125,
+    "final_correction": 0.1,
+    "final_r_over_t_mean": 0.96909982374,
+    "final_gap_mean": 0.0309001762604,
+    "elapsed_seconds": 31.629461,
+    "peak_vram_gb": 2.502289
+  },
+  "acceptance": {
+    "both_reached_32_attempts": true,
+    "matched_successful_steps": true,
+    "matched_skipped_steps": true,
+    "no_nan_inf": true,
+    "global_gap_larger": true
+  }
+}

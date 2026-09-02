@@ -1,0 +1,68 @@
+{
+  "schema": "ect.q256.fresh-crossed-switch-median-correction/v1",
+  "status": "PASS",
+  "correction_date": "2026-09-02",
+  "correction_scope": "DESCRIPTIVE_MEDIANS_ONLY",
+  "reason": "The archived implementation averaged the lower-middle and middle order statistics for every sample size. That rule is correct for even n but not for the amended odd sample size n=11.",
+  "source_population": "AUTHOR_AMENDED_N11_COMPLETE_CASE",
+  "included_seeds": [31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42],
+  "source_bindings": {
+    "protocol.json": "df7f584c4af0017b6d655b843460033e22f8801b843859d7dbe32aa852f167b1",
+    "decoded_results.json": "5522dade2eb3bda5acdf1a9c54ed6069af245d4ffb1cd18b5d7e0894e0297396",
+    "H_C_I_Q_G_per_seed.csv": "4d8bc83f7e9254878294a38fc3ad2ac40c84445d497dd166cec4f37b2e197461",
+    "analysis.json": "d2a0052c9d216fdfe8e0dd2e9df8a9b268fe93b24bdab2d6e15bf5aea47ec9a7",
+    "primary_decision.json": "1c21f665bb5fec3c52a1f43255780f47beeeb205c5c1da10d1292590a72c340a",
+    "REPORT_11SEED.md": "2db4e8aad307b218dc2a0e1da6d2dcb5615585380f1c01b9ddca8ac2a62565a4",
+    "SHA256SUMS_11SEED.txt": "f88f1bae28021fea28df9fbb19c8be75919394ee71a29c10f4b0a67d20474e2a"
+  },
+  "artifact_policy": {
+    "formal_artifacts_modified": false,
+    "evaluation_rerun_performed": false,
+    "redecode_performed": false,
+    "original_formal_manifest_preserved": true
+  },
+  "corrections": [
+    {
+      "quantity": "H",
+      "archived_value": -0.05653251399225845,
+      "corrected_value": -0.027237725223582254
+    },
+    {
+      "quantity": "C",
+      "archived_value": 0.012764043099208422,
+      "corrected_value": 0.016993355924826092
+    },
+    {
+      "quantity": "I",
+      "archived_value": 0.012006230782704241,
+      "corrected_value": 0.018658080576266833
+    },
+    {
+      "quantity": "Q",
+      "archived_value": -0.00955469520114649,
+      "corrected_value": 0.008284592074332409
+    },
+    {
+      "quantity": "H_A",
+      "archived_value": -0.06292188150822842,
+      "corrected_value": -0.04627475067322706
+    },
+    {
+      "quantity": "G",
+      "archived_value": -0.04207919909200486,
+      "corrected_value": 0.008818626019299725
+    }
+  ],
+  "unchanged_primary_inference": {
+    "quantity": "H",
+    "mean": -0.07556640121337899,
+    "sample_sd": 0.11871913355012204,
+    "ci95_two_sided": [-0.15532300036317176, 0.0041901979364137865],
+    "ci90_two_sided": [-0.1404437472185972, -0.01068905520816077],
+    "negative_count": 8,
+    "positive_count": 3,
+    "zero_count": 0,
+    "exact_two_sided_sign_flip_p": 0.0419921875,
+    "primary_verdict": "INCONCLUSIVE"
+  }
+}

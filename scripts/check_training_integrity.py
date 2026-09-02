@@ -1,0 +1,378 @@
+#!/usr/bin/env python3
+"""Validate a completed training run and emit a formal-evaluation receipt."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import hashlib
+import json
+import math
+import pickle
+import subprocess
+import sys
+import time
+from pathlib import Path
+from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+import torch
+
+
+CHECKER_VERSION = "3"
+
+# training_stats reduces progress as float32.  At a million images that
+# representation can differ from the integer image counter by a fraction of
+# an image, while train_summary.csv preserves the exact counter.  Use the
+# integer counter when available and allow at most one image of telemetry
+# rounding in the legacy float comparison.
+TELEMETRY_PROGRESS_TOLERANCE_NIMG = 1.0
+
+METHOD_IDENTITIES = {
+    "fixed": ("sigmoid", 1.0),
+    "global110": ("global_sigmoid", 1.10),
+    "global_only": ("global_sigmoid", 1.10),
+}
+
+
+def fail(message: str) -> None:
+    raise SystemExit(f"[check_training_integrity] ERROR: {message}")
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def git_head() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
+def load_json(path: Path, label: str) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        fail(f"cannot read {label} {path}: {exc}")
+    if not isinstance(value, dict):
+        fail(f"{label} must contain a JSON object: {path}")
+    return value
+
+
+def metric_mean(record: dict[str, Any], name: str) -> float:
+    try:
+        value = float(record[name]["mean"])
+    except (KeyError, TypeError, ValueError) as exc:
+        fail(f"stats record lacks finite {name}.mean: {exc}")
+    if not math.isfinite(value):
+        fail(f"stats record has non-finite {name}.mean")
+    return value
+
+
+def inspect_stats(path: Path, budget_kimg: int) -> dict[str, Any]:
+    try:
+        lines = [line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    except OSError as exc:
+        fail(f"cannot read stats {path}: {exc}")
+    if not lines:
+        fail(f"stats is empty: {path}")
+    try:
+        records = [json.loads(line) for line in lines]
+    except json.JSONDecodeError as exc:
+        fail(f"stats contains invalid JSON: {path}: {exc}")
+    if not all(isinstance(record, dict) for record in records):
+        fail(f"stats contains a non-object record: {path}")
+    for record in records:
+        metric_mean(record, "Loss/loss")
+    final_kimg = metric_mean(records[-1], "Progress/kimg")
+    if final_kimg < budget_kimg:
+        fail(f"stats stops at {final_kimg} kimg, below declared {budget_kimg} kimg")
+    return {"records": len(records), "final_kimg": final_kimg}
+
+
+def inspect_summary(path: Path, budget_kimg: int) -> dict[str, Any]:
+    try:
+        with path.open("r", encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+    except OSError as exc:
+        fail(f"cannot read training summary {path}: {exc}")
+    if not rows:
+        fail(f"training summary is empty: {path}")
+    required = {"processed_kimg", "loss"}
+    if not required.issubset(rows[0]):
+        fail(f"training summary lacks required columns {sorted(required)}: {path}")
+    for row in rows:
+        try:
+            loss = float(row["loss"])
+        except (TypeError, ValueError) as exc:
+            fail(f"training summary has invalid loss: {exc}")
+        if not math.isfinite(loss):
+            fail("training summary has non-finite loss")
+    try:
+        final_kimg = float(rows[-1]["processed_kimg"])
+    except (TypeError, ValueError) as exc:
+        fail(f"training summary has invalid final processed_kimg: {exc}")
+    if not math.isfinite(final_kimg) or final_kimg < budget_kimg:
+        fail(f"training summary stops at {final_kimg} kimg, below declared {budget_kimg} kimg")
+    final_nimg = None
+    if "processed_nimg" in rows[-1] and str(rows[-1]["processed_nimg"]).strip():
+        try:
+            parsed_nimg = float(rows[-1]["processed_nimg"])
+        except (TypeError, ValueError) as exc:
+            fail(f"training summary has invalid final processed_nimg: {exc}")
+        if not math.isfinite(parsed_nimg) or not parsed_nimg.is_integer():
+            fail(f"training summary final processed_nimg is not an integer: {parsed_nimg!r}")
+        final_nimg = int(parsed_nimg)
+    return {"rows": len(rows), "final_kimg": final_kimg, "final_nimg": final_nimg}
+
+
+def inspect_log(path: Path) -> dict[str, Any]:
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError as exc:
+        fail(f"cannot read training log {path}: {exc}")
+    if "Exiting..." not in text:
+        fail(f"training log does not record a clean exit: {path}")
+    if "Traceback (most recent call last)" in text:
+        fail(f"training log contains a traceback: {path}")
+    return {"clean_exit_marker": "Exiting..."}
+
+
+def inspect_state(path: Path, budget_kimg: int) -> dict[str, Any]:
+    try:
+        state = torch.load(path, map_location="cpu", weights_only=False)
+    except (OSError, RuntimeError, ValueError, EOFError, pickle.UnpicklingError) as exc:
+        fail(f"cannot load training state {path}: {exc}")
+    if not isinstance(state, dict):
+        fail(f"training state must be a dictionary: {path}")
+    cur_nimg = state.get("cur_nimg")
+    if not isinstance(cur_nimg, (int, float)) or cur_nimg < budget_kimg * 1000:
+        fail(f"training state cur_nimg={cur_nimg!r} is below {budget_kimg * 1000}")
+    stack: list[Any] = [state]
+    tensors_checked = 0
+    while stack:
+        value = stack.pop()
+        if isinstance(value, torch.Tensor):
+            tensors_checked += 1
+            if value.is_floating_point() or value.is_complex():
+                if not torch.isfinite(value).all().item():
+                    fail(f"training state contains a non-finite tensor: {path}")
+        elif isinstance(value, dict):
+            stack.extend(value.values())
+        elif isinstance(value, (list, tuple, set)):
+            stack.extend(value)
+        elif isinstance(value, float) and not math.isfinite(value):
+            fail(f"training state contains a non-finite scalar: {path}")
+    return {"cur_nimg": int(cur_nimg), "tensors_checked": tensors_checked}
+
+
+def finite_float(value: Any, label: str) -> float:
+    try:
+        result = float(value)
+    except (TypeError, ValueError) as exc:
+        fail(f"{label} must be a finite number: {exc}")
+    if not math.isfinite(result):
+        fail(f"{label} must be finite")
+    return result
+
+
+def expected_method_identity(method: str) -> tuple[str, float]:
+    """Resolve the schedule identity promised by a named evaluation method."""
+    if method in METHOD_IDENTITIES:
+        return METHOD_IDENTITIES[method]
+    # Keep the checker usable for pre-existing schedule-named cells while
+    # requiring the declared method to agree with both persisted sources.
+    return method, 1.0
+
+
+def inspect_checkpoint(
+    path: Path, options: dict[str, Any], method: str,
+) -> dict[str, Any]:
+    """Load the evaluated snapshot and verify its EMA/schedule identity.
+
+    The snapshot is an experiment artifact accepted from the trusted training
+    workspace. ``pickle.load`` is therefore intentionally used to match the
+    loader used by the evaluator itself.
+    """
+    try:
+        with path.open("rb") as handle:
+            checkpoint = pickle.load(handle)
+    except Exception as exc:  # pickle failures span many exception classes.
+        fail(f"cannot load checkpoint pickle {path}: {exc}")
+    if not isinstance(checkpoint, dict):
+        fail(f"checkpoint pickle must contain a dictionary: {path}")
+    ema = checkpoint.get("ema")
+    if not isinstance(ema, torch.nn.Module):
+        fail(f"checkpoint has no torch.nn.Module EMA object: {path}")
+
+    ema_tensors_checked = 0
+    for name, tensor in list(ema.named_parameters()) + list(ema.named_buffers()):
+        if tensor.is_floating_point() or tensor.is_complex():
+            ema_tensors_checked += 1
+            if not torch.isfinite(tensor).all().item():
+                fail(f"checkpoint EMA has non-finite tensor {name!r}: {path}")
+
+    loss_fn = checkpoint.get("loss_fn")
+    schedule = getattr(loss_fn, "schedule", None)
+    checkpoint_schedule = getattr(schedule, "name", None)
+    if not isinstance(checkpoint_schedule, str) or not checkpoint_schedule:
+        fail(f"checkpoint loss_fn lacks schedule metadata: {path}")
+    checkpoint_scale = finite_float(
+        getattr(schedule, "global_gap_scale", 1.0),
+        f"checkpoint global_gap_scale ({path})",
+    )
+
+    loss_kwargs = options.get("loss_kwargs")
+    if not isinstance(loss_kwargs, dict):
+        fail("training_options.json lacks loss_kwargs schedule metadata")
+    options_schedule = loss_kwargs.get("adj")
+    if not isinstance(options_schedule, str) or not options_schedule:
+        fail("training_options.json loss_kwargs.adj is missing or invalid")
+    options_scale = finite_float(
+        loss_kwargs.get("global_gap_scale"),
+        "training_options.json loss_kwargs.global_gap_scale",
+    )
+
+    expected_schedule, expected_scale = expected_method_identity(method)
+    if options_schedule != expected_schedule or checkpoint_schedule != expected_schedule:
+        fail(
+            f"declared method {method!r} requires schedule {expected_schedule!r}, "
+            f"got training_options={options_schedule!r}, checkpoint={checkpoint_schedule!r}"
+        )
+    if not math.isclose(options_scale, expected_scale, rel_tol=0.0, abs_tol=1e-12):
+        fail(
+            f"declared method {method!r} requires global_gap_scale={expected_scale}, "
+            f"got training_options={options_scale}"
+        )
+    if not math.isclose(checkpoint_scale, expected_scale, rel_tol=0.0, abs_tol=1e-12):
+        fail(
+            f"declared method {method!r} requires global_gap_scale={expected_scale}, "
+            f"got checkpoint={checkpoint_scale}"
+        )
+    return {
+        "checkpoint_load_passed": True,
+        "ema_present": True,
+        "ema_finite_passed": True,
+        "schedule_identity_passed": True,
+        "global_gap_scale_identity_passed": True,
+        "method_identity_passed": True,
+        "ema_floating_tensors_checked": ema_tensors_checked,
+        "training_options_schedule": options_schedule,
+        "checkpoint_schedule": checkpoint_schedule,
+        "training_options_global_gap_scale": options_scale,
+        "checkpoint_global_gap_scale": checkpoint_scale,
+    }
+
+
+def build_receipt(args: argparse.Namespace) -> dict[str, Any]:
+    run_dir = args.run_dir.expanduser().resolve()
+    checkpoint = args.checkpoint.expanduser().resolve() if args.checkpoint else run_dir / "network-snapshot-latest.pkl"
+    paths = {
+        "checkpoint": checkpoint,
+        "training_options": run_dir / "training_options.json",
+        "stats": run_dir / "stats.jsonl",
+        "summary": run_dir / "train_summary.csv",
+        "log": run_dir / "log.txt",
+        "state": run_dir / "training-state-latest.pt",
+    }
+    missing = [name for name, path in paths.items() if not path.is_file()]
+    if missing:
+        fail(f"run is missing required artifacts {missing}: {run_dir}")
+    options = load_json(paths["training_options"], "training options")
+    if options.get("total_kimg") != args.budget_kimg:
+        fail(f"training_options total_kimg={options.get('total_kimg')!r}, expected {args.budget_kimg}")
+    if options.get("seed") != args.training_seed:
+        fail(f"training_options seed={options.get('seed')!r}, expected {args.training_seed}")
+    if args.expected_training_commit:
+        commit_file = run_dir / "commit_sha.txt"
+        if not commit_file.is_file() or args.expected_training_commit not in commit_file.read_text(encoding="utf-8"):
+            fail(f"run does not attest expected training commit {args.expected_training_commit}")
+    stats = inspect_stats(paths["stats"], args.budget_kimg)
+    summary = inspect_summary(paths["summary"], args.budget_kimg)
+    log = inspect_log(paths["log"])
+    state = inspect_state(paths["state"], args.budget_kimg)
+    checkpoint_identity = inspect_checkpoint(checkpoint, options, args.method)
+    if (
+        abs(stats["final_kimg"] - summary["final_kimg"]) * 1000
+        > TELEMETRY_PROGRESS_TOLERANCE_NIMG
+    ):
+        fail("stats and training summary final kimg disagree")
+    if (
+        abs(stats["final_kimg"] * 1000 - state["cur_nimg"])
+        > TELEMETRY_PROGRESS_TOLERANCE_NIMG
+    ):
+        fail("stats and training state progress disagree")
+    if summary["final_nimg"] is not None and summary["final_nimg"] != state["cur_nimg"]:
+        fail("training summary and training state processed_nimg disagree")
+    checkpoint_sha256 = sha256_file(checkpoint)
+    return {
+        "schema_version": 1,
+        "status": "passed",
+        "checkpoint_id": args.checkpoint_id,
+        "checkpoint_path": str(checkpoint),
+        "checkpoint_sha256": checkpoint_sha256,
+        "training_run_id": args.training_run_id,
+        "method": args.method,
+        "training_seed": args.training_seed,
+        "budget_kimg": args.budget_kimg,
+        "completion_passed": True,
+        "logs_state_consistent": True,
+        "finite_loss_state_passed": True,
+        "checkpoint_load_passed": checkpoint_identity["checkpoint_load_passed"],
+        "ema_present": checkpoint_identity["ema_present"],
+        "ema_finite_passed": checkpoint_identity["ema_finite_passed"],
+        "schedule_identity_passed": checkpoint_identity["schedule_identity_passed"],
+        "global_gap_scale_identity_passed": checkpoint_identity[
+            "global_gap_scale_identity_passed"
+        ],
+        "method_identity_passed": checkpoint_identity["method_identity_passed"],
+        "checker_version": args.checker_version,
+        "checker_git_commit": git_head(),
+        "checked_at_unix": time.time(),
+        "evidence": {
+            "run_directory": str(run_dir),
+            "training_options": str(paths["training_options"]),
+            "stats": stats,
+            "training_summary": summary,
+            "log": log,
+            "training_state": state,
+            "checkpoint_identity": checkpoint_identity,
+            "expected_training_commit": args.expected_training_commit,
+        },
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--checkpoint", type=Path)
+    parser.add_argument("--checkpoint-id", required=True)
+    parser.add_argument("--method", required=True)
+    parser.add_argument("--training-seed", type=int, required=True)
+    parser.add_argument("--budget-kimg", type=int, required=True)
+    parser.add_argument("--training-run-id", required=True)
+    parser.add_argument("--expected-training-commit")
+    parser.add_argument("--checker-version", default=CHECKER_VERSION)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if not args.training_run_id:
+        fail("training_run_id must be non-empty")
+    receipt = build_receipt(args)
+    output = args.output.expanduser().resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(json.dumps(receipt, indent=2, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

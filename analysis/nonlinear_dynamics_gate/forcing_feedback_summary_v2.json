@@ -1,0 +1,2050 @@
+{
+  "carryover_correction": {
+    "ema_formula": "R_tilde_k^EMA=R_k^EMA-carryover_only_transition_map(Delta_k^EMA)",
+    "m_formula": "R_tilde_k^m=R_k^m-beta1*Delta_k^m",
+    "rules_by_state_block": {
+      "EMA": [
+        {
+          "retention_source": "transition_step parameter lerp with AlgorithmicState.ema_beta; EMA buffers unchanged",
+          "retention_values": [
+            0.9993,
+            1.0
+          ],
+          "rule": "ema_transition_carryover_counterfactual_map"
+        }
+      ],
+      "m": [
+        {
+          "retention_source": "optimizer.param_groups[*].betas[0]",
+          "retention_values": [
+            0.9
+          ],
+          "rule": "radam_beta1_per_parameter_group"
+        }
+      ],
+      "net_buffer": [
+        {
+          "retention_source": null,
+          "retention_values": [],
+          "rule": "not_declared_for_this_readout"
+        }
+      ],
+      "scaler": [
+        {
+          "retention_source": null,
+          "retention_values": [],
+          "rule": "not_declared_for_this_readout"
+        }
+      ],
+      "theta": [
+        {
+          "retention_source": "theta_next=theta_prev+optimizer_update",
+          "retention_values": [
+            1.0
+          ],
+          "rule": "identity_parameter_carryover"
+        }
+      ],
+      "v": [
+        {
+          "retention_source": "optimizer.param_groups[*].betas[1]",
+          "retention_values": [
+            0.999
+          ],
+          "rule": "radam_beta2_per_parameter_group"
+        }
+      ]
+    },
+    "theta_formula": "R_tilde_k^theta=R_k^theta-Delta_k^theta",
+    "v_formula": "R_tilde_k^v=R_k^v-beta2*Delta_k^v"
+  },
+  "exact_closure": {
+    "all_pass": true,
+    "max_l2": 0.0,
+    "max_relative": 0.0
+  },
+  "instrumentation": {
+    "assets": {
+      "batch_file": {
+        "expected_sha256": "b8c42e3522dc14a9b75659d4b61dad94dfe638cd55361779a532b97293fb8987",
+        "matched": true,
+        "path": "/root/pr89-role-b-v2-20260828/assets/four-frozen-batches.pt",
+        "sha256": "b8c42e3522dc14a9b75659d4b61dad94dfe638cd55361779a532b97293fb8987"
+      },
+      "batch_tensor_receipts": {
+        "canonical_sha256": "b1eb60e44bdd7f4e6648d2af1439cf36a3873de20b6009d963295ab3abb804e9",
+        "expected_canonical_sha256": "b1eb60e44bdd7f4e6648d2af1439cf36a3873de20b6009d963295ab3abb804e9",
+        "matched": true,
+        "microbatch_count": 32,
+        "scope": "images, labels, t, noise, and dropout RNG state"
+      },
+      "checkpoint": {
+        "expected_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9",
+        "matched": true,
+        "path": "/root/pr89-role-b-v2-20260828/assets/network-snapshot-latest.pkl",
+        "sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9"
+      },
+      "implementation": {
+        "cli_common.py": "d7df9ef93d3e856baddc8fc5ae6f676171001884969b8da114bf80e3975c6e99",
+        "core.py": "f5da93cadb80716d0f34d5a06fc44b23847cb756bd6b11dc25dfc5d838a50eff",
+        "decompose_forcing_feedback.py": "eaad0e4bb1e63cce4c63eaaf07a3b880bb301f432571374944a0a357fd95699b",
+        "prepare_frozen_batches.py": "62804efba2397003c069a4beb9de4bef1f19a643a12c772c02932de6d4b6d416",
+        "run_algorithmic_jvp.py": "c7f7a21c16168b9c665c2c0d6bc260d3f220e4d7f5e56a97bd9f9dc89ad3beb7",
+        "run_field_jvp.py": "319dfd0aa063369514d4b21131cc12cb656ac454c566dda9f190dda79915ebe0",
+        "run_matched_micro_rollout.py": "56217932feebc3ecb412390d6cf348bfed3988657b9db9b4f0957faf3ed7aa99"
+      },
+      "protocol": {
+        "path": "/root/pr89-role-b-v2-20260828/repo-run/analysis/operator_clock_gate/protocol.json",
+        "sha256": "0f2b7ba508b40b2f8989bb843589d73ae0cd79d41a73d8f8eafb80f33acbdce7"
+      },
+      "runtime_determinism": {
+        "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+        "cuda_matmul_allow_fp16_reduced_precision_reduction": false,
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": false,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "deterministic_algorithms": true
+      },
+      "training_state": {
+        "expected_sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575",
+        "matched": true,
+        "path": "/root/pr89-role-b-v2-20260828/assets/training-state-latest.pt",
+        "sha256": "fbda746805e6614319b96653563757f9e48670339e8f275f018194ebe19c9575"
+      }
+    },
+    "kind": "64-step matched continuation from frozen source",
+    "replay_receipt": {
+      "state_hashes_k_0_through_horizon": [
+        {
+          "by_arm": {
+            "A": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+            "B": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+            "C": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+            "D": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59"
+          },
+          "k": 0
+        },
+        {
+          "by_arm": {
+            "A": "5fde0852898c497c9f3330b3fcf92b2c895c88cd430f0f3d335c09efa94a0ffb",
+            "B": "b9ae0b887c30fbab625c21f8148330f7405095d61f0e4f328a16f44010f58165",
+            "C": "099b883f029feb1ba1cdfb4612f5bf7bea47963223c3cc904f7dcd0ed503d99a",
+            "D": "cc35c019140d6ded4828974c2b5d52113d29375d6339ff1604d0fc4a6e848f48"
+          },
+          "k": 1
+        },
+        {
+          "by_arm": {
+            "A": "d1285560e952a01acba6939284aa40fe5667a4814a98b0fca2af3b215df963eb",
+            "B": "58e57fd73468b5174a0d341441a6a0aa90944b9def87503f25ee219bb671fbe2",
+            "C": "1ba46689333087aa3b71a535f6ef214b8dc6c5310dbf6c70ebcee8779bc97a5f",
+            "D": "d1c5ee32c30a1020497b235800f611dc74fda59715f0d34f3984d12cf062ae3b"
+          },
+          "k": 2
+        },
+        {
+          "by_arm": {
+            "A": "9735dd476edf73e097d5b344fa3d2d248e05ae351686d4576d8ea543b878bc54",
+            "B": "2f54ed5f0780bcc23797bcc1c3ba9d16aa2193f37f5d32ffcb04e64d53cff48e",
+            "C": "88b41270a5a495c5026e4ebbaec4813df2c9414cf90c29892dd26a8df0444fb8",
+            "D": "d4ca68753ec39a231fba78ef75731e8ba364799e4dd3000ac6a78a3d8e68d268"
+          },
+          "k": 3
+        },
+        {
+          "by_arm": {
+            "A": "1c262fad109084dce66a5499548d1845ab457057574ba48b180992160617915f",
+            "B": "b50c4f009b65051afedac74405356aafe3788ee07b293e592f6a7ee818374590",
+            "C": "f140d609e367a972f89245ca9107e646e19ba895e51d1a11a9bbf87438749a1e",
+            "D": "c6367a94e3e0a0ceeba92d7e205caddfcfd07835286432cd6c20ca4e3ab505fd"
+          },
+          "k": 4
+        },
+        {
+          "by_arm": {
+            "A": "feee74e4ef1414e74c1d8e5fc2015dd3e6b42d301c9ab98439895ba08e70e54f",
+            "B": "2af084c0421a1579af09f5b97ea2d8b36e86c03c7977e1b057ce54ff7d11a43d",
+            "C": "c92c4ab2f844d7be739ce8858201113cf75cc3140a9d4c153b8f845bff17b75d",
+            "D": "1954c31bfc18d07b2d0452d14631d34d8c214bd6ad493f8b5f39d9672f31c268"
+          },
+          "k": 5
+        },
+        {
+          "by_arm": {
+            "A": "a8d65c3e801f37cb650155bda67f55691dd3345213888d915d34182c52e5ebbf",
+            "B": "a3f3068d944568be23f4e629c6a9bb00ab1904d46c99b5d6622299c738612a55",
+            "C": "15c9cdb80ae49927d3fe63a27db675ee5a15e638e192db3f6fc8db555868168d",
+            "D": "1674334d260a16b1da2aa8da40a1cc756624bcc2b7b18ebf9414b4f998041768"
+          },
+          "k": 6
+        },
+        {
+          "by_arm": {
+            "A": "383116387e27a02857c34a135ed55fa2ed8f160eaa29041cd49ba43ad251a6f6",
+            "B": "09fa3b2ec010f83505beae284035ce005e71f94373bc575605aa856ab2201a93",
+            "C": "4b604b5ade3056f264ce3e9ea8223e7842e75c69bcc2144ddc0b222b204ce512",
+            "D": "5e13db8652bc7e0e54a886814d2c4bb69626bb977f6bae17d83077b74243d413"
+          },
+          "k": 7
+        },
+        {
+          "by_arm": {
+            "A": "19c358cd371fc01052eed1430ebfbfe9d26c24ec900575361bb6b04c830ffc29",
+            "B": "08d7788caae443de129e7c69e1b1fd151b83f445d87e298ab27da81fa01eb9cd",
+            "C": "42162a5cb13f09faa57f96e5e68bde4225d6406fa52c3fd9b545a8063aa54e91",
+            "D": "2d920e2182a2bee248caa20005bd6ebf4527035d587c41c822ff636f6887adc6"
+          },
+          "k": 8
+        },
+        {
+          "by_arm": {
+            "A": "822bed89f543a84f375eef84209cc292f7a5ca9966d53917aa25ef07404c30af",
+            "B": "f9cd853baf33bbb3fe90f1f5548c50c9f36a15596e79a444b25d3262dfe36164",
+            "C": "be0d24f359d5652484a83d507ba047f269ab4294731fc71a3b6173709f3e3476",
+            "D": "7ad61bc1f5add740e34eb9a447369ad14e382ecde9921bf4db77192bc5e23b88"
+          },
+          "k": 9
+        },
+        {
+          "by_arm": {
+            "A": "6746b96f4ea1a9002ed5cfa35e8319aa48f139fef8e2efefdb2b74b7732628dc",
+            "B": "73ed84ad916704b182864374b1fc8912f4662f6244d5696c61fb0029315b7194",
+            "C": "f0d200a7ff0953124abc0d0aa412f90d687d5aa2fc38750609077175e0584ebc",
+            "D": "c94e3e4120ea6db889277519320a67b6df18ec666e909fb1daaff64c5432d3d5"
+          },
+          "k": 10
+        },
+        {
+          "by_arm": {
+            "A": "a74962b4a8cbec926eb94986fd7f0fa168a20335ac974f0f054e424759f89829",
+            "B": "4ace4bd83af05381423c43ead50e05a605eb3d156e848cbc08d0f7a1549dd782",
+            "C": "578ccce7e698f05302323dc778821a645f905caace8550f46e1acd60b1775adc",
+            "D": "ad7929050256e6ec70eaa159dc47adf454a01d1de93d452ed6a1cdb501fb40b2"
+          },
+          "k": 11
+        },
+        {
+          "by_arm": {
+            "A": "58f84fe21d5513227100e80c68619b8bc4628dd2223345b761291df36194c4a6",
+            "B": "0304b03fa83e25b8f8599e43dd8d6054012e5fd0819428dde43b9bc2a45e8ae7",
+            "C": "0bbfbc0719d44927ae3100fda7583502fdf4206fa67f12ffc7c552a81da8a7c4",
+            "D": "ddf85a13666340b113bd9c6c25c969a34dd52ef39c85965f4d5f880621ddeaf1"
+          },
+          "k": 12
+        },
+        {
+          "by_arm": {
+            "A": "3115d6a37527c25f325341f4def1171cff7ef2d50c0ab2bbeef8b397f8fe5ccc",
+            "B": "c8e80c9b2c4090637a6186462ca48f41c6f1533c628770052e16276d819a8bbc",
+            "C": "20febc62965dd41e88ba0f61950fbcc11d2a02927b6745d9ff836cdefa520c14",
+            "D": "bde85a067aee5f447710c3fad1a2c86cf1ef867cf97ee4932d964f3634f3c3f3"
+          },
+          "k": 13
+        },
+        {
+          "by_arm": {
+            "A": "f7035ea0189d93de7429e18e38513c5822e9ab0b020be13dcd38132f9005d812",
+            "B": "0dea4a804c1a9f3b75196d71a6329236ebe31465e863f9087466737ff899f5ca",
+            "C": "9464e549d9d5ec054ab2b9e02d29edb979bc5942cd8477ba4210874bed1352b4",
+            "D": "ef5b58b04b7a592675bb559a7207e53ebeafde3b2ad8a255e6005630c27e12da"
+          },
+          "k": 14
+        },
+        {
+          "by_arm": {
+            "A": "285187db8e71f76d3f0ec0aad2d1fabeac10e1cac8f67f9c7ce039c3bd82ad83",
+            "B": "bcff54e8e8fe8dab3990a5bea6aebb8520dee0f3b25ce2526999ca5567cd34cf",
+            "C": "dcb0f0ae8edbc8792651b08f736ebe46861b4b3ae95db273c594dd99b9c08f2e",
+            "D": "44fd2d3e741c8579719f6a2723646bbc5144373f7093a2ffbebabb06356aabfe"
+          },
+          "k": 15
+        },
+        {
+          "by_arm": {
+            "A": "8670e1c3e40ef29a22dec2f9fcb6aded9751ce554bf75e869d17faca68d51168",
+            "B": "a0f82014c8bb69f28d99b17fbffc03cc7e943fe9163d51524c91e4441e0000b8",
+            "C": "3b0858e67c6e4c71dea17aba4f50342656113a8546d4d943aebeefd8967a6039",
+            "D": "d3d8b358c6e9b3efa562a18131982f808dfef1525b21ad66e3eb52900e374f81"
+          },
+          "k": 16
+        },
+        {
+          "by_arm": {
+            "A": "1df6a388ac352b42d93bf33bb017ff158b807ad23d434ac50a072bfd94b0b16b",
+            "B": "7aa03aac9ad4492ad282fa2e284dcbf7cfbc726241ef543ff7d45f8f58109dc6",
+            "C": "122b868b9b6462e2d761ad158449b013ce85b6e5faf076e3060acaa4192d553b",
+            "D": "cc66c6eb8c329f52164f25dd6e856a9ee7ba76e515e4678deff99d5e0ba7bd76"
+          },
+          "k": 17
+        },
+        {
+          "by_arm": {
+            "A": "e24b95d34c31ce85add64e3b0475d4834d7816c799cd54bf24988e449a411f35",
+            "B": "976e90118e1a3e65f2e1990c98f3637f033d9acd62e07e180a95b80d806cf8e2",
+            "C": "c725da5056fdc276b3691b782ea052673ceecae18ebd17314f975677649d8cec",
+            "D": "d9722b95afadf20dde5d93f6cb698a987002eb5bd4ccd42850c38d822e809feb"
+          },
+          "k": 18
+        },
+        {
+          "by_arm": {
+            "A": "b215dfdd43fee354b1247df9629abebb6d1d1e1b1ee0052149ba06e24cf04ebf",
+            "B": "05ce5a42af3fbb8e47eb5b3f0a85d3e42b4c5a49787f26e677476d5ad25a2c8d",
+            "C": "bf72c0ed495cb2fb80ced3ff30cb8436f462e86edc079d2afbf466ec1a2e576e",
+            "D": "0e523a96c1747da7dc9208cfb45e2c25c78642bd950e623641ac981214f0ee35"
+          },
+          "k": 19
+        },
+        {
+          "by_arm": {
+            "A": "f167e1140c2e8dcce7fc88ac627944f98f9de5525782109ff7fc67af53dc5a9f",
+            "B": "d5691bde50e4d6726e785a804e3a07dd38eb86716dea1e93ec6df50d823d48f7",
+            "C": "2ed1916684ed40c2fa9f703ff7663cfb33f57f164235d395b0828563654c30aa",
+            "D": "04c1f4e291c13871c769e3f7a2b4825aa2b33f306d78a3814b2193dbf7cb433f"
+          },
+          "k": 20
+        },
+        {
+          "by_arm": {
+            "A": "129686f4206e3405a7132a208bd0a086c45f5567fb42d4ae2299ac1badb269c0",
+            "B": "b33c465c9cbd4491db6405e964b3630ff1d811ce3814c37c4ad2d1735ad203d0",
+            "C": "fd273fe0ddb26ec3c4b296897d808eb63b22f5807bce14f7063300d61b7c7633",
+            "D": "1e7cba4588793c399f7d2275bc922716336a61204e596ebcfb6be7ef451f00a1"
+          },
+          "k": 21
+        },
+        {
+          "by_arm": {
+            "A": "26582c91cd4d4b0a4a9ef2281ab7939b97091b4ffc2363734c3c604887ed08d2",
+            "B": "7678b04de8f191cd400123e9f74ea31673f2de97031f5dc53011486d359038c2",
+            "C": "01ca68a6d805b27e32e0f3696cf730c6ab5a319cf8a0198cb8f03501c7c0e52c",
+            "D": "972eccaebf3cb1a7d0737878aca935cc76d6cc594edeffce84b169a4070fade8"
+          },
+          "k": 22
+        },
+        {
+          "by_arm": {
+            "A": "059fe21e57c3d150b2b83de4b4f2daf321f693e2c23982436bb1715dd2233de5",
+            "B": "c590224149441f5e9fc1aa8de22dacfbf2ec96d3ca6b43f0bec6bb4e419b6bef",
+            "C": "ac72b7e0fa57d749637d1fe3f439b2200468481af118eff1b7199984588461e0",
+            "D": "1cd3f508398aa71af4cacfad5fb186213795633f4820dc13a5bfecdb78728005"
+          },
+          "k": 23
+        },
+        {
+          "by_arm": {
+            "A": "18f88661f0d6b2002d6c4cbabe5b596646f8a08a35d9c752ec0c858e9e240647",
+            "B": "f37698a35285514beee4c9b9c1b74ed2b9700b90e38f48947fbcf37b9a11b06d",
+            "C": "05c314ee55e1758e379ac78916079a51bdb19713891a271a1ee1fa2ce9f10ba4",
+            "D": "60ed91171ef914eda884186f6f5edd7e818994dfdec3cdec281756838e6a46fe"
+          },
+          "k": 24
+        },
+        {
+          "by_arm": {
+            "A": "00f9e0596416eaa3de63ce83928849228a611a2c637a4ce2f1b750478736f04e",
+            "B": "c4596f8049fd4f6169732bd6264c53838927d7d711564036c50ffe3102160628",
+            "C": "ff58c930dd921e57187904fe19182f05a1cc6209e8ee9609b8a06ac6e246c3c3",
+            "D": "a65c9244602cd3220bc1ff0395c7506cf36d726fb0ebf7bf5f6e281f7f3ad6f3"
+          },
+          "k": 25
+        },
+        {
+          "by_arm": {
+            "A": "5375d3ad4e3d38462e89c833c3fb4456be33aeaab0ae06322969940111d9b5c8",
+            "B": "853d776e5702352d487f57087f8dd9d076fad1ed8b33b6200471bd824dd37a5a",
+            "C": "0fa642f5f6342b16ba0cfdf20aa1bdbdfb16d86334d3964370a85f43fa336f0f",
+            "D": "ffe9f15e9b63646821bd3af1e9fc7975d6d7a2f7af2ac3eabc9095004bd97891"
+          },
+          "k": 26
+        },
+        {
+          "by_arm": {
+            "A": "6cc4ef20cf0c53ababb65decfc784965a79a39cefd69e139c554af7e2abdab4f",
+            "B": "be3ab0e0e0501123fcedd64f0fefd285a4ae9c698a6afc536f3307f700d88ed3",
+            "C": "d377d77b1d220bad9f91a108468e6ad42c811ccdce85fedc289f917ee533a59e",
+            "D": "a149e0ceae5e78cc2160a911c31127d3c939ff466c455e8fc89f08dbb226b06d"
+          },
+          "k": 27
+        },
+        {
+          "by_arm": {
+            "A": "d59acb1346644f6480cd10f215a4c914dfe2410a0b717f382458e3654c595040",
+            "B": "b4aca4bc805a7560e1d0086ac0cebf81b5580f44f90c5b793b29416f7569220d",
+            "C": "f5b7c183e9025551fd8e80d91c9b55012b76abf2dbd0d4741507e015d33599c3",
+            "D": "753b924cc9caec2b8928b1d268f4feb396afbca50f9d253d6a5ade019c3c6d36"
+          },
+          "k": 28
+        },
+        {
+          "by_arm": {
+            "A": "da2e775ee3845a92bd4b43b482786645518a3b7d914c83f172f3e306d963e31a",
+            "B": "1cad3e695e17d15ecf6a355f954eb984b550287f30f049718df061cc2305319b",
+            "C": "8eeefc803caebde1de93c00d53f40514c42ebfab73faa213f241bf2f80dc2b0d",
+            "D": "d73daac10bb7aaf1c56fc931880db63bcafeebbe98a1ea466450c8194bed3399"
+          },
+          "k": 29
+        },
+        {
+          "by_arm": {
+            "A": "f957ae87c15c212c20df392bd014fb3869bd35c735a5390219b66289a2760e6a",
+            "B": "b1299535b9cf92770b1d3a47ec5e4fc465baf3d6772bfe3ad63e838cc68438e3",
+            "C": "9df440f33024853eac2d0aad39312f31ccbce16cd6e8b3748dd7c9f91ed2eba6",
+            "D": "66b5c13ebc7f57c62684caa91c6b6bb58f578f4a75c9dc4814c8bdcf15053979"
+          },
+          "k": 30
+        },
+        {
+          "by_arm": {
+            "A": "b9b64da23141abf1f99283a4c511a59bf79ce88893550b642241e177c83addc1",
+            "B": "7ac453ca4cab24f78c5c185926dc709eb00a5fc0e44bbfd58a2210ed70ae6646",
+            "C": "9007d9a3ff608a3ac19d54ec0f1ea5540d3289383c44aa51bb83d183761f33d3",
+            "D": "6c9c6d497131aaf7c5b5ab9363564c36f2afa943ea3fb6f861074a0a333d5819"
+          },
+          "k": 31
+        },
+        {
+          "by_arm": {
+            "A": "1fa630582035e4a8cdd2d8f0f6206a2f098a2c81e43fc27bc9f77ffb97d97ce4",
+            "B": "f7f234b44e713a2e10f7359c4a6594692349e5cc33bd447c5c4f0077e080fed9",
+            "C": "263c1575996a2fd62f933b5778b46da19ecccb26d473da7b8a9c500b9edacba1",
+            "D": "351a8990bdbbdd9593b2ed8dd065c5fe3f535ae34224d9c5e93d06f3134caee2"
+          },
+          "k": 32
+        },
+        {
+          "by_arm": {
+            "A": "7cd3fbe4db236e909ca5375519d55d184bcadcecaf6db79dd7188b58fc86135a",
+            "B": "005b92e17eeaef6979e4b5c4eb24e3251708691a9ba972cddf66ffa096008683",
+            "C": "32579a6f45025ea4cb3ebf3369deda9bec193812058d12d02f05f0f04f42ae02",
+            "D": "d405c507bdd6a649c6b1f0a7fafd46fbd77d6c30b0e6daf629ad6bb078d19e7b"
+          },
+          "k": 33
+        },
+        {
+          "by_arm": {
+            "A": "cb982ec3c74e3e8ef04c6156e2660300877ba71165e5ae5c20634177f87069ec",
+            "B": "6f815ae0aa970c9bd553f7d146c7c2c5a95834593f664166c752111759ec831c",
+            "C": "581a3dd5589c948d9a3b4135e297ba34d5a8277171e951d80c80d282fe83daf1",
+            "D": "edc51ba711790a791a7d853f6f3a9ea59f8a01bf038610248435b28817b0f639"
+          },
+          "k": 34
+        },
+        {
+          "by_arm": {
+            "A": "32428384c111ba6ba2ca89c021bd2e10b3736fd988f185799dbedec1003bb0ad",
+            "B": "35dcb483b546fc0e45a5ef56e7aacfd1de0d8a34077586ef7fb13742ec8cbcde",
+            "C": "a13fc866412ca209a56604fcf3c7c8b9c3edf6934b5f70e79ab106b034bc1861",
+            "D": "b28b39e57c2aa71f2c70e430b4de59317519dd3cd0215f626ec740df0ad7c65a"
+          },
+          "k": 35
+        },
+        {
+          "by_arm": {
+            "A": "a0e28893bf659db26b3551d13af0d5f4b4f9068914cb4d768782a9a6e25864ee",
+            "B": "bd9cb512eced6572ec5923f459ae77e157b434957db1d1edc72371a370a399d5",
+            "C": "7a2641caa619ab63cc7a88450143788deea3d1e2660f5b48d9df62d251ddb3c5",
+            "D": "0afecfa47e6df96d070f679f1ba08055d3ec22234ae4f63486e6453c4ca1b1d3"
+          },
+          "k": 36
+        },
+        {
+          "by_arm": {
+            "A": "6d188a149c734ebc277f518677932bd9654fd9637478c726813adc66efee4180",
+            "B": "2a48d15d46e75ba1b07dbf7cab9a43e571c11b8d15a3d656ca1519c22091f726",
+            "C": "74e606a5925b2e26cf20a42aeebbf64250c3887ce1a4f4cf7464c29e436637e3",
+            "D": "6254c5149ee3dee1a420ded101d62036dac3582a351b9a64562dda6914368083"
+          },
+          "k": 37
+        },
+        {
+          "by_arm": {
+            "A": "aed441868247419dc9d2226ecdaa884b19204453d3388949ebfa41b0a93ec4ed",
+            "B": "f9abb06c17cdd8b7a4793f34dea164ccb3c7fd27cb5f2c46a7211f437c1b0af7",
+            "C": "c4ab4badc4165ce71bcfec4b5be53ac21c78b9ce44b25d54417f373531fa8f64",
+            "D": "48c1815be513447d172ff4b0b95e5c0a21006f082e267be37f6e1eda6b2f52bb"
+          },
+          "k": 38
+        },
+        {
+          "by_arm": {
+            "A": "76aed0feb30aac86f749680cab4e897b20b5d2bacf1c8397bf37ee9cb73bbd43",
+            "B": "744937a2de774ed3661310e00a932e73afca62e5bcc32f96c6c2fa009c782cd1",
+            "C": "a179bc0bdf8d60088afbf2613e18fc30ac3207681c81fe75f8038dee40a413a7",
+            "D": "b9a8c20682e96c3e46515335e0b1fa50b41544ebb07fe154621e09dd884dac1b"
+          },
+          "k": 39
+        },
+        {
+          "by_arm": {
+            "A": "ae92f435ba3f758e68358510dc040cd54434df19a800a2f7144c7b270683f769",
+            "B": "506e181c6e0fc9a28aeed399897b8676aee7a6c15e50ce6b661ebd4b5300fd9f",
+            "C": "09cf1e6c102691f64d07d67ca8accd80b806a34ffc90c691ba1aca7d5b7767cc",
+            "D": "67e434be4c59ec235e6e7123b94f5063e91272a5ea2fe28154d2c886fc9a6e54"
+          },
+          "k": 40
+        },
+        {
+          "by_arm": {
+            "A": "6e6e60394d4d54bf9dcbaa8206b91c67f6477b1e3c3ea7c73d040b0db15bf3fb",
+            "B": "434b55bf88aff4e5db68dc75884eef1db415d2e722330702c6f2070a960e676b",
+            "C": "04f494856b77c46e48e404745cb4c4063cb1de596e61558d00e3affb5b48ef8f",
+            "D": "ae32cc9bc8358b5cd618b20c7a7e230218056c73364057aed50e7306203a0d6e"
+          },
+          "k": 41
+        },
+        {
+          "by_arm": {
+            "A": "0512e750ed2f04c10b1d1c4b6e28ba498df06717beb62f12f4272fad6f4d27b3",
+            "B": "50bbf2aa216e24760b8937b20c2336fb3f0f3ef1da06dc9540349d96b4ae40ce",
+            "C": "4c75157aebd5b769266edc97cc2d5052ac475b6c93163d6ebf01c711ec1ea9fe",
+            "D": "a20eab73f2845ce644e316651ae3afd63bc7d94486dfb7a185ef1571c13143ce"
+          },
+          "k": 42
+        },
+        {
+          "by_arm": {
+            "A": "525179f7e02297bc56f99bc7b6f7cca4264cbd0ef33d3ae015f00f32fd54d4e2",
+            "B": "c21196540d0cbe95043bc34b9d2d291d3326fcf121158b57ce4aa7c06a73de00",
+            "C": "1ea29a4ff7df5a9b9e84c35bf9170f6c3d0b8808b00c671f470aa1ebb229734c",
+            "D": "14356df370b7b8b66d49823b01ba5aadcc992149c8c0c41ea95e32ec408cd786"
+          },
+          "k": 43
+        },
+        {
+          "by_arm": {
+            "A": "c7ac5ef01cf54a874da4c1088a1a1426b24c94181d3633d681f5828a563f57eb",
+            "B": "75a714a2134d9268cdeeea899653a3e82bae2acc1fc23ceb9b474960e6c9feb3",
+            "C": "1bd71cd0645346a22895583cb503020b3eba16a89dbd42993a0e4301c3a37071",
+            "D": "4232da15bc19acb2e1f25e4f00b73b57649eca34293f6e5da58da005c9d2c08f"
+          },
+          "k": 44
+        },
+        {
+          "by_arm": {
+            "A": "62977ac653269ba5ba4ad9d3a9412beaa88b8da7b0bdf9a06945137194826886",
+            "B": "2da95dce6ab7c3faa51fe46c4ce91b578e71bf8be763836b378fd9a7e54f785d",
+            "C": "4002707a565086d1c19948899976ba9a4ef919e6a783a68b621c0c822496a2f8",
+            "D": "016da9be141d1075ab794d76dc80f5347fd5de4716f11c25ffa10af3897c467b"
+          },
+          "k": 45
+        },
+        {
+          "by_arm": {
+            "A": "9b26f5571a3378f20c296c47e3a7cb64f71e6119bb1b1e5d47b69c8b9a4f94e1",
+            "B": "37927dc54a4bf9e66894a66f83e7cd63fcee767cd6ae74b0d0ad86412b1bce77",
+            "C": "95186883211ffe07715e9bac316bcdc87b5e28c0c6ea3a7d1f4aa2a380809e62",
+            "D": "e6f03671551d90124a5413e703792419e3eb72d858f58150415ff8559a3edba4"
+          },
+          "k": 46
+        },
+        {
+          "by_arm": {
+            "A": "aa9ec17517246c74d25e585c9a54384b3cf7772f9915b9a8181d3a6740a8719a",
+            "B": "36b58c2e9e1d134e874e6e6cca9dc0c7148a480404edc1d7e8522cf7a4644fb3",
+            "C": "70e651acf4608383ac944a906b3a8488426ab66012760a414cfd67bed9644bd7",
+            "D": "0c3289ed3328694c1586e80be5cde0fad92eea4508b45e6a30461c4364c5f094"
+          },
+          "k": 47
+        },
+        {
+          "by_arm": {
+            "A": "7fca1ecba254078dc5533b7e5bb4f6572d64f212b2e05a8ef64dab499613c694",
+            "B": "96524b669c138998c6abe2c998615d2bc0fcec1eb9990c3ef91a147f1572d457",
+            "C": "b250b193d8f30284bc18b0928dd67fb29de814d1c7ebcce06e0fe2aa4afe91ac",
+            "D": "7c0577e10327bdab3788ede0521eeb98b193ec885c9cb31ef992a1e0189d09c6"
+          },
+          "k": 48
+        },
+        {
+          "by_arm": {
+            "A": "e82e547881cb735746b863510b50e127bda5dce891da2762af8ebe82ec8cddb6",
+            "B": "8f157169830de6fa17d651c421c598eb8945f62b355864d9b6f5b708825ddae6",
+            "C": "30fe11be6a5a7099a4d71acddf9a9e282411bc8c774c1b3d9ff994175f8de12b",
+            "D": "c49bfe6f7b3c3901b36a3434114bb6c3a9d9722de50d6387e6e233ad49b44220"
+          },
+          "k": 49
+        },
+        {
+          "by_arm": {
+            "A": "946eabd4975270483505334fe83ae35f9aa9ccf2190b64eca335aed917d1e82b",
+            "B": "849ba45c449a446b1e9c7ee24cbd206243f10c6ddf8ed7ca001f65bad3ea6422",
+            "C": "5c5932ce03dc8c427fb1689670e72eab368094dee3419f05fcaedd51d0ddfc41",
+            "D": "0b918efae36da82dc8510036f0527b0f4a115cf5d74df9b84d739e00625dfb57"
+          },
+          "k": 50
+        },
+        {
+          "by_arm": {
+            "A": "3d1475928a847322b4b8b16899a01b13f77fd533854a1afbe70d115381ed109a",
+            "B": "798f5080fe21fdff165ccbcebe98a520be062728f6de8c53f435c72ad8a693f6",
+            "C": "0c4c84e47435e70cde4b72fd7867f44a35ce43d319fc973948219c47e6d2ebfe",
+            "D": "7614a5870f9fd96fd98720e8ce7d0405828099cb4c4efc2516783fd20bec7471"
+          },
+          "k": 51
+        },
+        {
+          "by_arm": {
+            "A": "40b94b6edd20f3fd241d4435440fe45b3404b205b5537d843beccde4ecdbe094",
+            "B": "3829c41310fd6bfb1a317b8cb72e5afe0b8c17beae0c9723b73f0f4b1a3a014d",
+            "C": "cb2007277d6dfdd0b6e4cd9bc3c67c641fa85e4aa6433cdf7f67a0a32a74fafe",
+            "D": "9547cda5b1bc2149df3a2d48f559e6a8bb2de7544192cf3cf53ce55631e77d50"
+          },
+          "k": 52
+        },
+        {
+          "by_arm": {
+            "A": "8f8c203e61744fa7d69e796b99d1414b43fa23a0bb92c08d7c2583711b7f4a79",
+            "B": "e85a46ecec18b709504f00aef13a94f83275d717e8a35e0a3e8c6feb7000203d",
+            "C": "602bd721225b8c2257ff383306e694a999cab41dbc83fc621385aee970f3675b",
+            "D": "4bc75574d8b42397a2968bd2cdb5e4d8e9e5371eb7c45ca0dd0a8c0c3869d60d"
+          },
+          "k": 53
+        },
+        {
+          "by_arm": {
+            "A": "d8d0cd8afb7b0f19b0da2528f235571ef413152a16fa35deb9ec644166344007",
+            "B": "6d217511f9f9a0bd7098a6ebbaf6a459b3534cdedc6779e13299ba86752d84f6",
+            "C": "abb97dc3cc09281e770c924234ef4ab9c21bb499124a7d823d7fe8d68fac0474",
+            "D": "5e674555207ece2b66e98ea8642fedb9bff77204d591c79a2ab44fa3730bee8b"
+          },
+          "k": 54
+        },
+        {
+          "by_arm": {
+            "A": "302273c1e1d5761e26c5905ec40bb7879d4f339416fda802043d7a0e0bb96e3d",
+            "B": "5719a086db15407ad52eba67b970ff62c325fd5e3aef1c0b3c050626fd6ae525",
+            "C": "fb954684f02311913f441297bd24bc9b1341187a436171be7234438d64d7cea9",
+            "D": "08c38ae23e188cc4e0bb428541258150227b4e5d6139304bb45c4287680d350f"
+          },
+          "k": 55
+        },
+        {
+          "by_arm": {
+            "A": "76845c302726cffe897d78ad9d8386b68c2d73b597c8d91f806d76662791c568",
+            "B": "7369e137bef6f5547e9f84a0ce276ec08e8927a64cd92957a91193d255affe6b",
+            "C": "078db2d294dac4670d6b18cfbee4c1aab18fbbc613f7e90267d9e709bf8c6ed5",
+            "D": "2d76f8ee44d90476f14d2fa1c937ec9270ea7dc2923d2c027d66b8f664449b51"
+          },
+          "k": 56
+        },
+        {
+          "by_arm": {
+            "A": "30c3ed7fe4bbcf7eb889eb2e52a2b14e14e6174290572d729ff91a33f80343fd",
+            "B": "64e35ed8ae977b97f0a9186d9a48f7c6b322a669404fa467c90609eac7d92d3a",
+            "C": "b3de8888f495cadcc566764bba918e37916c718268e229fa53c75e1d510a82b3",
+            "D": "195ab947fcbd9865af3a214123f6a146561514e2791857c04360a0f990df55d3"
+          },
+          "k": 57
+        },
+        {
+          "by_arm": {
+            "A": "f6ac80a15e426c1b8997e5e93718478454ee33367c2914ae2e71999aec41669f",
+            "B": "30734d6791f4ea22eaa145d46929611c28964e967560a23c1cc1ff33ae701f94",
+            "C": "57dcfa7875621e5eccaee4db045f5906ca2be0ac119341245375b6a13d3179d0",
+            "D": "04835556d3ba0d0cfcea38b2c94386bebb3bcca16ead8f761ef561dee8fc7142"
+          },
+          "k": 58
+        },
+        {
+          "by_arm": {
+            "A": "719ad234c6d02eb89abc5c99986b7f7aee4ceae3dae0ef9ff75e4cecefde458d",
+            "B": "d9cda3c2b40b25510301a3fe1b84decd16a8c92bd8d43a47c52b00be0a002b01",
+            "C": "4099502a784c8fee043754fe3754fdcc19aebbe9ace2159876a313dccbec0239",
+            "D": "48a95490a712c9f260e96b7bcf6bd6f20ad89da0df86614354a94d54cea43033"
+          },
+          "k": 59
+        },
+        {
+          "by_arm": {
+            "A": "43716b06dfd4be612681b6798bb025b5474eb9129866e44af1054cd63a0b5cfd",
+            "B": "fcbe71278865db8c9ee224f44990853ff3531580f116509c9bd7901da0b189c6",
+            "C": "21d2b98eba128e62a5a3baf211ea79f8cbbc294d424c8442468d31674003d9c8",
+            "D": "c0f66f03030a878336c2213ba2c359651d80cde1532baab01081fb69942c71fc"
+          },
+          "k": 60
+        },
+        {
+          "by_arm": {
+            "A": "3464f3137aa91f21c2b15538d1e5024a74dd9989546a0873bf5a5d6e36f13a28",
+            "B": "f88a63c1dc6b15546255a8cb47613dc47ae4f91b376b799b66d585e64f727933",
+            "C": "5ab0fdb640cca7f992534819e32e1175c0734752eefcf63fcc7dcb5da73ed5b4",
+            "D": "c69d924339cfff97b266e59351d076e165e36a8dcf9294e3352212eb33aa0bdc"
+          },
+          "k": 61
+        },
+        {
+          "by_arm": {
+            "A": "090a21129d152d28befa0fb7b4758f73152a93a8d34c64c45d7341522ca06106",
+            "B": "82f8cf3a1c7ea2bd727993ebc38a3895b7bceafb3b55ae7370860554bd5a0df5",
+            "C": "5b847abd270028b6fc5f81083acdfef889122ec230a7607132649be06a3619d4",
+            "D": "ebb644628f45aea8fd255637cf62edf766361503c44eeace49da36fa152edc14"
+          },
+          "k": 62
+        },
+        {
+          "by_arm": {
+            "A": "aeac1340f8fbc8be9ea84ced6a3458e126c0c85583e3d5e9315acaf01d5f9fb6",
+            "B": "43d3a9f8acfae91354466f08a55cbe62528ea99d7cd3dc9ce45421baa5cafbf7",
+            "C": "4486a7ce09b8cae26f23a0c1254e14fe6cad1e88b3dc1a4ad5e93e770e25f45b",
+            "D": "31e5d809dae25900d64dff47e35913ff6e27a4b1e8ba3eeee254cfb7e88764b1"
+          },
+          "k": 63
+        },
+        {
+          "by_arm": {
+            "A": "345dc6bdf6f21c9a8004c60e5c482051fe1edff662ec497246ac4fa84049dbcc",
+            "B": "fc5d27dd8463f107bb90d41df6db8b4bd3d134be9b1c8b1fc7a9dcced13424fe",
+            "C": "1c6734188dc04816e9a826e0e84148d0ebfdf9980d972664632eedd517594a49",
+            "D": "a479ef9dc0de203d368dd22d036d72af3f86ba28972a2cdaf447f5db609f4783"
+          },
+          "k": 64
+        }
+      ],
+      "step_replay_receipt_count": 64,
+      "step_replay_receipts_sha256": "b46cb995ad477342b9f3caec11a193e32c4eb1d6e0b3076ab1d05cec841ab93e"
+    },
+    "scientific_scope": "local counterfactual instrumentation; not a new experiment"
+  },
+  "interpretation_guard": "R_over_b is a scale diagnostic, never a contribution percentage; large state-block values identify history-dominated state propagation, not a quality mechanism. G is a measured propagation gain only when paired with its direction cosine.",
+  "mechanism_by_arm_and_block": {
+    "B:observable:feature": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "B",
+      "block": "feature",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 0.46875,
+      "early_quarter_median_R_over_b": 1.0255372652463959,
+      "early_quarter_median_feedback_gain_G": 1.0109244952665142,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 0.875,
+      "late_quarter_median_R_over_b": 1.0648728832026215,
+      "late_quarter_median_cos_R_delta": 0.5487385192707097,
+      "late_quarter_median_cos_R_delta_k": 0.0158431317605744,
+      "late_quarter_median_feedback_gain_G": 0.9990476187247366,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.984375,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "observable",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "B:observable:residual": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "B",
+      "block": "residual",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 0.5625,
+      "early_quarter_median_R_over_b": 1.1205835402881985,
+      "early_quarter_median_feedback_gain_G": 0.9912299643188762,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 1.305989621950437,
+      "late_quarter_median_cos_R_delta": 0.7124174443977669,
+      "late_quarter_median_cos_R_delta_k": 0.1997285802944715,
+      "late_quarter_median_feedback_gain_G": 0.9973160795971482,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.984375,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "observable",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "B:state:EMA": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.9375,
+      "arm": "B",
+      "block": "EMA",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.015625,
+      "early_quarter_median_R_over_b": 9.574928084399493,
+      "early_quarter_median_feedback_gain_G": 1.173334820836824,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 273.11009195345883,
+      "late_quarter_median_cos_R_delta": 0.9999932964769183,
+      "late_quarter_median_cos_R_delta_k": 0.9993486747610141,
+      "late_quarter_median_feedback_gain_G": 1.0328065176613608,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.046875,
+      "median_corrected_R_over_b": 10.021324144154457,
+      "median_corrected_R_over_delta_k": 0.09827081600359716,
+      "median_cos_corrected_R_b": -0.0375856982694811,
+      "median_cos_corrected_R_delta_k": 0.5446619083881515,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "B:state:m": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.25,
+      "arm": "B",
+      "block": "m",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.734375,
+      "early_quarter_median_R_over_b": 2.4243838586505375,
+      "early_quarter_median_feedback_gain_G": 0.9525252714662654,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 3.727834006217522,
+      "late_quarter_median_cos_R_delta": 0.9751970618585813,
+      "late_quarter_median_cos_R_delta_k": 0.9407906606345502,
+      "late_quarter_median_feedback_gain_G": 0.9834980202704751,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.015625,
+      "median_corrected_R_over_b": 1.1229848393441415,
+      "median_corrected_R_over_delta_k": 0.3217476718612894,
+      "median_cos_corrected_R_b": -0.20723961208265204,
+      "median_cos_corrected_R_delta_k": -0.0037048217308558234,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "B:state:net_buffer": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "B",
+      "block": "net_buffer",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 1.0,
+      "early_quarter_median_R_over_b": null,
+      "early_quarter_median_feedback_gain_G": 0.0,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.0,
+      "late_feedback_dominant_fraction_R_gt_b": 0.0,
+      "late_quarter_median_R_over_b": null,
+      "late_quarter_median_cos_R_delta": null,
+      "late_quarter_median_cos_R_delta_k": null,
+      "late_quarter_median_feedback_gain_G": 0.0,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "B:state:scaler": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "B",
+      "block": "scaler",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 1.0,
+      "early_quarter_median_R_over_b": null,
+      "early_quarter_median_feedback_gain_G": 0.0,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.0,
+      "late_feedback_dominant_fraction_R_gt_b": 0.0,
+      "late_quarter_median_R_over_b": null,
+      "late_quarter_median_cos_R_delta": null,
+      "late_quarter_median_cos_R_delta_k": null,
+      "late_quarter_median_feedback_gain_G": 0.0,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "B:state:theta": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.984375,
+      "arm": "B",
+      "block": "theta",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.015625,
+      "early_quarter_median_R_over_b": 17.0408297491529,
+      "early_quarter_median_feedback_gain_G": 1.1541784052709767,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 138.59574004722174,
+      "late_quarter_median_cos_R_delta": 0.9999748693773565,
+      "late_quarter_median_cos_R_delta_k": 0.9995367362390885,
+      "late_quarter_median_feedback_gain_G": 1.01402153894665,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": 3.8572780422420694,
+      "median_corrected_R_over_delta_k": 0.04620489118408107,
+      "median_cos_corrected_R_b": 0.0596988937907879,
+      "median_cos_corrected_R_delta_k": 0.5973413404497496,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "B:state:v": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.40625,
+      "arm": "B",
+      "block": "v",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.59375,
+      "early_quarter_median_R_over_b": 6.340202260418687,
+      "early_quarter_median_feedback_gain_G": 0.9954504833336701,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.03125,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 61.368445176010724,
+      "late_quarter_median_cos_R_delta": 0.9999584026113402,
+      "late_quarter_median_cos_R_delta_k": 0.999945295438274,
+      "late_quarter_median_feedback_gain_G": 1.0012743901222856,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": 0.7207618150249445,
+      "median_corrected_R_over_delta_k": 0.024478805351597174,
+      "median_cos_corrected_R_b": -0.20571237079065308,
+      "median_cos_corrected_R_delta_k": -0.11759083132796212,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:observable:feature": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "C",
+      "block": "feature",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 0.515625,
+      "early_quarter_median_R_over_b": 1.0445614381028574,
+      "early_quarter_median_feedback_gain_G": 0.9942729156454588,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 1.0805581610248038,
+      "late_quarter_median_cos_R_delta": 0.5675628144271023,
+      "late_quarter_median_cos_R_delta_k": -0.004699312963499992,
+      "late_quarter_median_feedback_gain_G": 0.9990838993851314,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.984375,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "observable",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:observable:residual": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "C",
+      "block": "residual",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 0.421875,
+      "early_quarter_median_R_over_b": 1.050329107916765,
+      "early_quarter_median_feedback_gain_G": 0.981363574565709,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 1.223901337144335,
+      "late_quarter_median_cos_R_delta": 0.6586118306972786,
+      "late_quarter_median_cos_R_delta_k": 0.07614995239274032,
+      "late_quarter_median_feedback_gain_G": 1.0126741550916383,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.984375,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "observable",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:state:EMA": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.9375,
+      "arm": "C",
+      "block": "EMA",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.015625,
+      "early_quarter_median_R_over_b": 9.500283874109245,
+      "early_quarter_median_feedback_gain_G": 1.1519654246616469,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 199.30736600768716,
+      "late_quarter_median_cos_R_delta": 0.9999874129997297,
+      "late_quarter_median_cos_R_delta_k": 0.9989531835699373,
+      "late_quarter_median_feedback_gain_G": 1.0326832028964765,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.046875,
+      "median_corrected_R_over_b": 8.300451370326211,
+      "median_corrected_R_over_delta_k": 0.10843638035975778,
+      "median_cos_corrected_R_b": -0.055187106152433656,
+      "median_cos_corrected_R_delta_k": 0.4521609830168221,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:state:m": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.3125,
+      "arm": "C",
+      "block": "m",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.59375,
+      "early_quarter_median_R_over_b": 2.812300639387982,
+      "early_quarter_median_feedback_gain_G": 1.0412273149464963,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 3.7268347363225427,
+      "late_quarter_median_cos_R_delta": 0.9647809621202755,
+      "late_quarter_median_cos_R_delta_k": 0.8886453448918123,
+      "late_quarter_median_feedback_gain_G": 0.9978681478500832,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.171875,
+      "median_corrected_R_over_b": 1.5155659331116418,
+      "median_corrected_R_over_delta_k": 0.4583138823652513,
+      "median_cos_corrected_R_b": -0.26067715691395893,
+      "median_cos_corrected_R_delta_k": -0.02602016355940934,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:state:net_buffer": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "C",
+      "block": "net_buffer",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 1.0,
+      "early_quarter_median_R_over_b": null,
+      "early_quarter_median_feedback_gain_G": 0.0,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.0,
+      "late_feedback_dominant_fraction_R_gt_b": 0.0,
+      "late_quarter_median_R_over_b": null,
+      "late_quarter_median_cos_R_delta": null,
+      "late_quarter_median_cos_R_delta_k": null,
+      "late_quarter_median_feedback_gain_G": 0.0,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:state:scaler": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "C",
+      "block": "scaler",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 1.0,
+      "early_quarter_median_R_over_b": null,
+      "early_quarter_median_feedback_gain_G": 0.0,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.0,
+      "late_feedback_dominant_fraction_R_gt_b": 0.0,
+      "late_quarter_median_R_over_b": null,
+      "late_quarter_median_cos_R_delta": null,
+      "late_quarter_median_cos_R_delta_k": null,
+      "late_quarter_median_feedback_gain_G": 0.0,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:state:theta": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.984375,
+      "arm": "C",
+      "block": "theta",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.015625,
+      "early_quarter_median_R_over_b": 15.96908368322389,
+      "early_quarter_median_feedback_gain_G": 1.126750881075526,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 99.85208101810788,
+      "late_quarter_median_cos_R_delta": 0.9999503474469946,
+      "late_quarter_median_cos_R_delta_k": 0.999379002136918,
+      "late_quarter_median_feedback_gain_G": 1.0170605204862364,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": 3.398072845667725,
+      "median_corrected_R_over_delta_k": 0.05714506772486992,
+      "median_cos_corrected_R_b": -0.11427017761420462,
+      "median_cos_corrected_R_delta_k": 0.4821151720351634,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "C:state:v": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.453125,
+      "arm": "C",
+      "block": "v",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.53125,
+      "early_quarter_median_R_over_b": 4.660318311003683,
+      "early_quarter_median_feedback_gain_G": 1.0441207599121882,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 20.454900525059195,
+      "late_quarter_median_cos_R_delta": 0.9990960159626653,
+      "late_quarter_median_cos_R_delta_k": 0.9971265916947794,
+      "late_quarter_median_feedback_gain_G": 0.9780675313297384,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.015625,
+      "median_corrected_R_over_b": 1.4175498628904761,
+      "median_corrected_R_over_delta_k": 0.10385186875660993,
+      "median_cos_corrected_R_b": -0.21115049184651524,
+      "median_cos_corrected_R_delta_k": -0.10064676603731136,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:observable:feature": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "D",
+      "block": "feature",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 0.484375,
+      "early_quarter_median_R_over_b": 1.0340285743982816,
+      "early_quarter_median_feedback_gain_G": 1.0023894893010639,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 1.0827699269743407,
+      "late_quarter_median_cos_R_delta": 0.5779361138687498,
+      "late_quarter_median_cos_R_delta_k": 0.02579394007489992,
+      "late_quarter_median_feedback_gain_G": 0.9910183426756742,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.984375,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "observable",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:observable:residual": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "D",
+      "block": "residual",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 0.453125,
+      "early_quarter_median_R_over_b": 1.0651167515823778,
+      "early_quarter_median_feedback_gain_G": 0.9603251085795129,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 1.324752261063268,
+      "late_quarter_median_cos_R_delta": 0.7128737745626255,
+      "late_quarter_median_cos_R_delta_k": 0.24386433819166514,
+      "late_quarter_median_feedback_gain_G": 1.007749424994611,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.984375,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "observable",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:state:EMA": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.921875,
+      "arm": "D",
+      "block": "EMA",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.015625,
+      "early_quarter_median_R_over_b": 11.513573969112556,
+      "early_quarter_median_feedback_gain_G": 1.1827528658688056,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 359.28574296864156,
+      "late_quarter_median_cos_R_delta": 0.9999961119947391,
+      "late_quarter_median_cos_R_delta_k": 0.9993178749029671,
+      "late_quarter_median_feedback_gain_G": 1.033824031063671,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0625,
+      "median_corrected_R_over_b": 12.563123088454631,
+      "median_corrected_R_over_delta_k": 0.10202640473303651,
+      "median_cos_corrected_R_b": -0.022301572367968595,
+      "median_cos_corrected_R_delta_k": 0.539020458006645,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:state:m": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.21875,
+      "arm": "D",
+      "block": "m",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.71875,
+      "early_quarter_median_R_over_b": 2.1500942353918093,
+      "early_quarter_median_feedback_gain_G": 0.9877853076373317,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 5.703967980869815,
+      "late_quarter_median_cos_R_delta": 0.986242248575535,
+      "late_quarter_median_cos_R_delta_k": 0.9553539732123584,
+      "late_quarter_median_feedback_gain_G": 0.9491623778757614,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.09375,
+      "median_corrected_R_over_b": 1.2890676787742712,
+      "median_corrected_R_over_delta_k": 0.34577891018112417,
+      "median_cos_corrected_R_b": -0.0360714768044852,
+      "median_cos_corrected_R_delta_k": -0.03608798920397274,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:state:net_buffer": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "D",
+      "block": "net_buffer",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 1.0,
+      "early_quarter_median_R_over_b": null,
+      "early_quarter_median_feedback_gain_G": 0.0,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.0,
+      "late_feedback_dominant_fraction_R_gt_b": 0.0,
+      "late_quarter_median_R_over_b": null,
+      "late_quarter_median_cos_R_delta": null,
+      "late_quarter_median_cos_R_delta_k": null,
+      "late_quarter_median_feedback_gain_G": 0.0,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:state:scaler": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.0,
+      "arm": "D",
+      "block": "scaler",
+      "cancellation_fraction": 0.0,
+      "classification": "mixed_or_inconclusive",
+      "contraction_fraction_G_lt_1": 1.0,
+      "early_quarter_median_R_over_b": null,
+      "early_quarter_median_feedback_gain_G": 0.0,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.0,
+      "late_feedback_dominant_fraction_R_gt_b": 0.0,
+      "late_quarter_median_R_over_b": null,
+      "late_quarter_median_cos_R_delta": null,
+      "late_quarter_median_cos_R_delta_k": null,
+      "late_quarter_median_feedback_gain_G": 0.0,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": null,
+      "median_corrected_R_over_delta_k": null,
+      "median_cos_corrected_R_b": null,
+      "median_cos_corrected_R_delta_k": null,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:state:theta": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.96875,
+      "arm": "D",
+      "block": "theta",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.015625,
+      "early_quarter_median_R_over_b": 25.871904921575425,
+      "early_quarter_median_feedback_gain_G": 1.156333475289797,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.015625,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 260.2048073249342,
+      "late_quarter_median_cos_R_delta": 0.9999935972385764,
+      "late_quarter_median_cos_R_delta_k": 0.9995483127039095,
+      "late_quarter_median_feedback_gain_G": 1.0166596210685954,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.015625,
+      "median_corrected_R_over_b": 6.750638122403744,
+      "median_corrected_R_over_delta_k": 0.04848055840984064,
+      "median_cos_corrected_R_b": 0.24980153904163263,
+      "median_cos_corrected_R_delta_k": 0.6022207292362607,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    },
+    "D:state:v": {
+      "aligned_expansion_fraction_G_gt_1_cos_ge_0p8": 0.328125,
+      "arm": "D",
+      "block": "v",
+      "cancellation_fraction": 0.0,
+      "classification": "persistent_state_feedback_dominance",
+      "contraction_fraction_G_lt_1": 0.671875,
+      "early_quarter_median_R_over_b": 4.223032736433622,
+      "early_quarter_median_feedback_gain_G": 0.9928383139878675,
+      "forcing_dominant_fraction_R_le_0p25_b": 0.03125,
+      "late_feedback_dominant_fraction_R_gt_b": 1.0,
+      "late_quarter_median_R_over_b": 76.29774060074568,
+      "late_quarter_median_cos_R_delta": 0.9999754044149088,
+      "late_quarter_median_cos_R_delta_k": 0.9999487224080134,
+      "late_quarter_median_feedback_gain_G": 0.9988093147097823,
+      "low_alignment_fraction_cos_R_delta_k_lt_0p8": 0.0,
+      "median_corrected_R_over_b": 0.7592050607281933,
+      "median_corrected_R_over_delta_k": 0.021350284697151486,
+      "median_cos_corrected_R_b": -0.1207239375608725,
+      "median_cos_corrected_R_delta_k": -0.18684737788052583,
+      "space": "state",
+      "strong_expansion_claim_allowed": false,
+      "strong_expansion_gate_reason": "second independent state replication is not part of this audit"
+    }
+  },
+  "mechanism_decision_rules": {
+    "forcing_feedback_cancellation": "cos(b,R)<=-0.9 and both ||b|| and ||R|| >= ||delta|| on at least 50% of steps",
+    "persistent_forcing_accumulation": "R/b <= 0.25 on at least 80% of steps",
+    "persistent_state_feedback_dominance": "in the last quarter R>b on at least 75% of steps, median R/b>1, median cos(R,Delta_next)>=0.8, and late median R/b exceeds early median; this is a propagation/persistence label, not a stronger expansion claim"
+  },
+  "pre_transition_propagation_interpretation": {
+    "G_approximately_1_and_alignment_approximately_1": "state persistence is the main observed propagation component",
+    "G_gt_1_and_alignment_approximately_1": "possible same-direction expansion, subject to the stronger causal claim gate",
+    "G_lt_1": "contractive propagation",
+    "low_alignment": "rotation or complex deformation rather than simple same-direction expansion"
+  },
+  "run_receipt": {
+    "all_exact_closures_pass": true,
+    "arms": {
+      "A": {
+        "denominator_scale": 1.0,
+        "meaning": "native_baseline",
+        "target_scale": 1.0
+      },
+      "B": {
+        "denominator_scale": 1.1,
+        "meaning": "native_probe",
+        "target_scale": 1.1
+      },
+      "C": {
+        "denominator_scale": 1.0,
+        "meaning": "target_geometry_only",
+        "target_scale": 1.1
+      },
+      "D": {
+        "denominator_scale": 1.1,
+        "meaning": "loss_weighting_only",
+        "target_scale": 1.0
+      }
+    },
+    "carryover_correction": {
+      "ema_formula": "R_tilde_k^EMA=R_k^EMA-carryover_only_transition_map(Delta_k^EMA)",
+      "m_formula": "R_tilde_k^m=R_k^m-beta1*Delta_k^m",
+      "rules_by_state_block": {
+        "EMA": [
+          {
+            "retention_source": "transition_step parameter lerp with AlgorithmicState.ema_beta; EMA buffers unchanged",
+            "retention_values": [
+              0.9993,
+              1.0
+            ],
+            "rule": "ema_transition_carryover_counterfactual_map"
+          }
+        ],
+        "m": [
+          {
+            "retention_source": "optimizer.param_groups[*].betas[0]",
+            "retention_values": [
+              0.9
+            ],
+            "rule": "radam_beta1_per_parameter_group"
+          }
+        ],
+        "net_buffer": [
+          {
+            "retention_source": null,
+            "retention_values": [],
+            "rule": "not_declared_for_this_readout"
+          }
+        ],
+        "scaler": [
+          {
+            "retention_source": null,
+            "retention_values": [],
+            "rule": "not_declared_for_this_readout"
+          }
+        ],
+        "theta": [
+          {
+            "retention_source": "theta_next=theta_prev+optimizer_update",
+            "retention_values": [
+              1.0
+            ],
+            "rule": "identity_parameter_carryover"
+          }
+        ],
+        "v": [
+          {
+            "retention_source": "optimizer.param_groups[*].betas[1]",
+            "retention_values": [
+              0.999
+            ],
+            "rule": "radam_beta2_per_parameter_group"
+          }
+        ]
+      },
+      "theta_formula": "R_tilde_k^theta=R_k^theta-Delta_k^theta",
+      "v_formula": "R_tilde_k^v=R_k^v-beta2*Delta_k^v"
+    },
+    "definition": {
+      "closure": "z_{k+1}^X-z_{k+1}^A=b_k^X+R_k^X",
+      "feedback": "Phi_X(z_k^X,xi_k)-Phi_X(z_k^A,xi_k)",
+      "feedback_alignment": "cos(R_k,Delta_k)",
+      "feedback_gain": "||R_k||/max(||Delta_k||,epsilon)",
+      "forcing": "Phi_X(z_k^A,xi_k)-Phi_A(z_k^A,xi_k)",
+      "incremental_feedback": "R_tilde_k=R_k-carryover_only(Delta_k)",
+      "pre_transition_separation": "psi(z_k^X)-psi(z_k^A)"
+    },
+    "kind": "exact_nonlinear_forcing_feedback",
+    "max_closure_l2": 0.0,
+    "max_closure_relative": 0.0,
+    "norm_epsilon": 1e-30,
+    "observable_definition": {
+      "feature": "fixed-latent EMA output tensor under a common validation map",
+      "residual": "signed online-minus-target tensor under common arm-A validation map"
+    },
+    "required_state_blocks_present": true,
+    "schema_version": 2,
+    "source_preserved": true,
+    "source_rng_sha256_after": "1edeca8ddc11b9cef03d3a91b447cc4677049d64db67b4785325b6ab4f1bc2f8",
+    "source_rng_sha256_before": "1edeca8ddc11b9cef03d3a91b447cc4677049d64db67b4785325b6ab4f1bc2f8",
+    "source_state_sha256_after": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+    "source_state_sha256_before": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+    "state_blocks": [
+      "EMA",
+      "m",
+      "net_buffer",
+      "scaler",
+      "theta",
+      "v"
+    ],
+    "state_hashes_k_0_through_horizon": [
+      {
+        "by_arm": {
+          "A": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+          "B": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+          "C": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59",
+          "D": "c93b3d5aeda477ff43254a8fdcc88b455e9110494973603e49d3b88168be6b59"
+        },
+        "k": 0
+      },
+      {
+        "by_arm": {
+          "A": "5fde0852898c497c9f3330b3fcf92b2c895c88cd430f0f3d335c09efa94a0ffb",
+          "B": "b9ae0b887c30fbab625c21f8148330f7405095d61f0e4f328a16f44010f58165",
+          "C": "099b883f029feb1ba1cdfb4612f5bf7bea47963223c3cc904f7dcd0ed503d99a",
+          "D": "cc35c019140d6ded4828974c2b5d52113d29375d6339ff1604d0fc4a6e848f48"
+        },
+        "k": 1
+      },
+      {
+        "by_arm": {
+          "A": "d1285560e952a01acba6939284aa40fe5667a4814a98b0fca2af3b215df963eb",
+          "B": "58e57fd73468b5174a0d341441a6a0aa90944b9def87503f25ee219bb671fbe2",
+          "C": "1ba46689333087aa3b71a535f6ef214b8dc6c5310dbf6c70ebcee8779bc97a5f",
+          "D": "d1c5ee32c30a1020497b235800f611dc74fda59715f0d34f3984d12cf062ae3b"
+        },
+        "k": 2
+      },
+      {
+        "by_arm": {
+          "A": "9735dd476edf73e097d5b344fa3d2d248e05ae351686d4576d8ea543b878bc54",
+          "B": "2f54ed5f0780bcc23797bcc1c3ba9d16aa2193f37f5d32ffcb04e64d53cff48e",
+          "C": "88b41270a5a495c5026e4ebbaec4813df2c9414cf90c29892dd26a8df0444fb8",
+          "D": "d4ca68753ec39a231fba78ef75731e8ba364799e4dd3000ac6a78a3d8e68d268"
+        },
+        "k": 3
+      },
+      {
+        "by_arm": {
+          "A": "1c262fad109084dce66a5499548d1845ab457057574ba48b180992160617915f",
+          "B": "b50c4f009b65051afedac74405356aafe3788ee07b293e592f6a7ee818374590",
+          "C": "f140d609e367a972f89245ca9107e646e19ba895e51d1a11a9bbf87438749a1e",
+          "D": "c6367a94e3e0a0ceeba92d7e205caddfcfd07835286432cd6c20ca4e3ab505fd"
+        },
+        "k": 4
+      },
+      {
+        "by_arm": {
+          "A": "feee74e4ef1414e74c1d8e5fc2015dd3e6b42d301c9ab98439895ba08e70e54f",
+          "B": "2af084c0421a1579af09f5b97ea2d8b36e86c03c7977e1b057ce54ff7d11a43d",
+          "C": "c92c4ab2f844d7be739ce8858201113cf75cc3140a9d4c153b8f845bff17b75d",
+          "D": "1954c31bfc18d07b2d0452d14631d34d8c214bd6ad493f8b5f39d9672f31c268"
+        },
+        "k": 5
+      },
+      {
+        "by_arm": {
+          "A": "a8d65c3e801f37cb650155bda67f55691dd3345213888d915d34182c52e5ebbf",
+          "B": "a3f3068d944568be23f4e629c6a9bb00ab1904d46c99b5d6622299c738612a55",
+          "C": "15c9cdb80ae49927d3fe63a27db675ee5a15e638e192db3f6fc8db555868168d",
+          "D": "1674334d260a16b1da2aa8da40a1cc756624bcc2b7b18ebf9414b4f998041768"
+        },
+        "k": 6
+      },
+      {
+        "by_arm": {
+          "A": "383116387e27a02857c34a135ed55fa2ed8f160eaa29041cd49ba43ad251a6f6",
+          "B": "09fa3b2ec010f83505beae284035ce005e71f94373bc575605aa856ab2201a93",
+          "C": "4b604b5ade3056f264ce3e9ea8223e7842e75c69bcc2144ddc0b222b204ce512",
+          "D": "5e13db8652bc7e0e54a886814d2c4bb69626bb977f6bae17d83077b74243d413"
+        },
+        "k": 7
+      },
+      {
+        "by_arm": {
+          "A": "19c358cd371fc01052eed1430ebfbfe9d26c24ec900575361bb6b04c830ffc29",
+          "B": "08d7788caae443de129e7c69e1b1fd151b83f445d87e298ab27da81fa01eb9cd",
+          "C": "42162a5cb13f09faa57f96e5e68bde4225d6406fa52c3fd9b545a8063aa54e91",
+          "D": "2d920e2182a2bee248caa20005bd6ebf4527035d587c41c822ff636f6887adc6"
+        },
+        "k": 8
+      },
+      {
+        "by_arm": {
+          "A": "822bed89f543a84f375eef84209cc292f7a5ca9966d53917aa25ef07404c30af",
+          "B": "f9cd853baf33bbb3fe90f1f5548c50c9f36a15596e79a444b25d3262dfe36164",
+          "C": "be0d24f359d5652484a83d507ba047f269ab4294731fc71a3b6173709f3e3476",
+          "D": "7ad61bc1f5add740e34eb9a447369ad14e382ecde9921bf4db77192bc5e23b88"
+        },
+        "k": 9
+      },
+      {
+        "by_arm": {
+          "A": "6746b96f4ea1a9002ed5cfa35e8319aa48f139fef8e2efefdb2b74b7732628dc",
+          "B": "73ed84ad916704b182864374b1fc8912f4662f6244d5696c61fb0029315b7194",
+          "C": "f0d200a7ff0953124abc0d0aa412f90d687d5aa2fc38750609077175e0584ebc",
+          "D": "c94e3e4120ea6db889277519320a67b6df18ec666e909fb1daaff64c5432d3d5"
+        },
+        "k": 10
+      },
+      {
+        "by_arm": {
+          "A": "a74962b4a8cbec926eb94986fd7f0fa168a20335ac974f0f054e424759f89829",
+          "B": "4ace4bd83af05381423c43ead50e05a605eb3d156e848cbc08d0f7a1549dd782",
+          "C": "578ccce7e698f05302323dc778821a645f905caace8550f46e1acd60b1775adc",
+          "D": "ad7929050256e6ec70eaa159dc47adf454a01d1de93d452ed6a1cdb501fb40b2"
+        },
+        "k": 11
+      },
+      {
+        "by_arm": {
+          "A": "58f84fe21d5513227100e80c68619b8bc4628dd2223345b761291df36194c4a6",
+          "B": "0304b03fa83e25b8f8599e43dd8d6054012e5fd0819428dde43b9bc2a45e8ae7",
+          "C": "0bbfbc0719d44927ae3100fda7583502fdf4206fa67f12ffc7c552a81da8a7c4",
+          "D": "ddf85a13666340b113bd9c6c25c969a34dd52ef39c85965f4d5f880621ddeaf1"
+        },
+        "k": 12
+      },
+      {
+        "by_arm": {
+          "A": "3115d6a37527c25f325341f4def1171cff7ef2d50c0ab2bbeef8b397f8fe5ccc",
+          "B": "c8e80c9b2c4090637a6186462ca48f41c6f1533c628770052e16276d819a8bbc",
+          "C": "20febc62965dd41e88ba0f61950fbcc11d2a02927b6745d9ff836cdefa520c14",
+          "D": "bde85a067aee5f447710c3fad1a2c86cf1ef867cf97ee4932d964f3634f3c3f3"
+        },
+        "k": 13
+      },
+      {
+        "by_arm": {
+          "A": "f7035ea0189d93de7429e18e38513c5822e9ab0b020be13dcd38132f9005d812",
+          "B": "0dea4a804c1a9f3b75196d71a6329236ebe31465e863f9087466737ff899f5ca",
+          "C": "9464e549d9d5ec054ab2b9e02d29edb979bc5942cd8477ba4210874bed1352b4",
+          "D": "ef5b58b04b7a592675bb559a7207e53ebeafde3b2ad8a255e6005630c27e12da"
+        },
+        "k": 14
+      },
+      {
+        "by_arm": {
+          "A": "285187db8e71f76d3f0ec0aad2d1fabeac10e1cac8f67f9c7ce039c3bd82ad83",
+          "B": "bcff54e8e8fe8dab3990a5bea6aebb8520dee0f3b25ce2526999ca5567cd34cf",
+          "C": "dcb0f0ae8edbc8792651b08f736ebe46861b4b3ae95db273c594dd99b9c08f2e",
+          "D": "44fd2d3e741c8579719f6a2723646bbc5144373f7093a2ffbebabb06356aabfe"
+        },
+        "k": 15
+      },
+      {
+        "by_arm": {
+          "A": "8670e1c3e40ef29a22dec2f9fcb6aded9751ce554bf75e869d17faca68d51168",
+          "B": "a0f82014c8bb69f28d99b17fbffc03cc7e943fe9163d51524c91e4441e0000b8",
+          "C": "3b0858e67c6e4c71dea17aba4f50342656113a8546d4d943aebeefd8967a6039",
+          "D": "d3d8b358c6e9b3efa562a18131982f808dfef1525b21ad66e3eb52900e374f81"
+        },
+        "k": 16
+      },
+      {
+        "by_arm": {
+          "A": "1df6a388ac352b42d93bf33bb017ff158b807ad23d434ac50a072bfd94b0b16b",
+          "B": "7aa03aac9ad4492ad282fa2e284dcbf7cfbc726241ef543ff7d45f8f58109dc6",
+          "C": "122b868b9b6462e2d761ad158449b013ce85b6e5faf076e3060acaa4192d553b",
+          "D": "cc66c6eb8c329f52164f25dd6e856a9ee7ba76e515e4678deff99d5e0ba7bd76"
+        },
+        "k": 17
+      },
+      {
+        "by_arm": {
+          "A": "e24b95d34c31ce85add64e3b0475d4834d7816c799cd54bf24988e449a411f35",
+          "B": "976e90118e1a3e65f2e1990c98f3637f033d9acd62e07e180a95b80d806cf8e2",
+          "C": "c725da5056fdc276b3691b782ea052673ceecae18ebd17314f975677649d8cec",
+          "D": "d9722b95afadf20dde5d93f6cb698a987002eb5bd4ccd42850c38d822e809feb"
+        },
+        "k": 18
+      },
+      {
+        "by_arm": {
+          "A": "b215dfdd43fee354b1247df9629abebb6d1d1e1b1ee0052149ba06e24cf04ebf",
+          "B": "05ce5a42af3fbb8e47eb5b3f0a85d3e42b4c5a49787f26e677476d5ad25a2c8d",
+          "C": "bf72c0ed495cb2fb80ced3ff30cb8436f462e86edc079d2afbf466ec1a2e576e",
+          "D": "0e523a96c1747da7dc9208cfb45e2c25c78642bd950e623641ac981214f0ee35"
+        },
+        "k": 19
+      },
+      {
+        "by_arm": {
+          "A": "f167e1140c2e8dcce7fc88ac627944f98f9de5525782109ff7fc67af53dc5a9f",
+          "B": "d5691bde50e4d6726e785a804e3a07dd38eb86716dea1e93ec6df50d823d48f7",
+          "C": "2ed1916684ed40c2fa9f703ff7663cfb33f57f164235d395b0828563654c30aa",
+          "D": "04c1f4e291c13871c769e3f7a2b4825aa2b33f306d78a3814b2193dbf7cb433f"
+        },
+        "k": 20
+      },
+      {
+        "by_arm": {
+          "A": "129686f4206e3405a7132a208bd0a086c45f5567fb42d4ae2299ac1badb269c0",
+          "B": "b33c465c9cbd4491db6405e964b3630ff1d811ce3814c37c4ad2d1735ad203d0",
+          "C": "fd273fe0ddb26ec3c4b296897d808eb63b22f5807bce14f7063300d61b7c7633",
+          "D": "1e7cba4588793c399f7d2275bc922716336a61204e596ebcfb6be7ef451f00a1"
+        },
+        "k": 21
+      },
+      {
+        "by_arm": {
+          "A": "26582c91cd4d4b0a4a9ef2281ab7939b97091b4ffc2363734c3c604887ed08d2",
+          "B": "7678b04de8f191cd400123e9f74ea31673f2de97031f5dc53011486d359038c2",
+          "C": "01ca68a6d805b27e32e0f3696cf730c6ab5a319cf8a0198cb8f03501c7c0e52c",
+          "D": "972eccaebf3cb1a7d0737878aca935cc76d6cc594edeffce84b169a4070fade8"
+        },
+        "k": 22
+      },
+      {
+        "by_arm": {
+          "A": "059fe21e57c3d150b2b83de4b4f2daf321f693e2c23982436bb1715dd2233de5",
+          "B": "c590224149441f5e9fc1aa8de22dacfbf2ec96d3ca6b43f0bec6bb4e419b6bef",
+          "C": "ac72b7e0fa57d749637d1fe3f439b2200468481af118eff1b7199984588461e0",
+          "D": "1cd3f508398aa71af4cacfad5fb186213795633f4820dc13a5bfecdb78728005"
+        },
+        "k": 23
+      },
+      {
+        "by_arm": {
+          "A": "18f88661f0d6b2002d6c4cbabe5b596646f8a08a35d9c752ec0c858e9e240647",
+          "B": "f37698a35285514beee4c9b9c1b74ed2b9700b90e38f48947fbcf37b9a11b06d",
+          "C": "05c314ee55e1758e379ac78916079a51bdb19713891a271a1ee1fa2ce9f10ba4",
+          "D": "60ed91171ef914eda884186f6f5edd7e818994dfdec3cdec281756838e6a46fe"
+        },
+        "k": 24
+      },
+      {
+        "by_arm": {
+          "A": "00f9e0596416eaa3de63ce83928849228a611a2c637a4ce2f1b750478736f04e",
+          "B": "c4596f8049fd4f6169732bd6264c53838927d7d711564036c50ffe3102160628",
+          "C": "ff58c930dd921e57187904fe19182f05a1cc6209e8ee9609b8a06ac6e246c3c3",
+          "D": "a65c9244602cd3220bc1ff0395c7506cf36d726fb0ebf7bf5f6e281f7f3ad6f3"
+        },
+        "k": 25
+      },
+      {
+        "by_arm": {
+          "A": "5375d3ad4e3d38462e89c833c3fb4456be33aeaab0ae06322969940111d9b5c8",
+          "B": "853d776e5702352d487f57087f8dd9d076fad1ed8b33b6200471bd824dd37a5a",
+          "C": "0fa642f5f6342b16ba0cfdf20aa1bdbdfb16d86334d3964370a85f43fa336f0f",
+          "D": "ffe9f15e9b63646821bd3af1e9fc7975d6d7a2f7af2ac3eabc9095004bd97891"
+        },
+        "k": 26
+      },
+      {
+        "by_arm": {
+          "A": "6cc4ef20cf0c53ababb65decfc784965a79a39cefd69e139c554af7e2abdab4f",
+          "B": "be3ab0e0e0501123fcedd64f0fefd285a4ae9c698a6afc536f3307f700d88ed3",
+          "C": "d377d77b1d220bad9f91a108468e6ad42c811ccdce85fedc289f917ee533a59e",
+          "D": "a149e0ceae5e78cc2160a911c31127d3c939ff466c455e8fc89f08dbb226b06d"
+        },
+        "k": 27
+      },
+      {
+        "by_arm": {
+          "A": "d59acb1346644f6480cd10f215a4c914dfe2410a0b717f382458e3654c595040",
+          "B": "b4aca4bc805a7560e1d0086ac0cebf81b5580f44f90c5b793b29416f7569220d",
+          "C": "f5b7c183e9025551fd8e80d91c9b55012b76abf2dbd0d4741507e015d33599c3",
+          "D": "753b924cc9caec2b8928b1d268f4feb396afbca50f9d253d6a5ade019c3c6d36"
+        },
+        "k": 28
+      },
+      {
+        "by_arm": {
+          "A": "da2e775ee3845a92bd4b43b482786645518a3b7d914c83f172f3e306d963e31a",
+          "B": "1cad3e695e17d15ecf6a355f954eb984b550287f30f049718df061cc2305319b",
+          "C": "8eeefc803caebde1de93c00d53f40514c42ebfab73faa213f241bf2f80dc2b0d",
+          "D": "d73daac10bb7aaf1c56fc931880db63bcafeebbe98a1ea466450c8194bed3399"
+        },
+        "k": 29
+      },
+      {
+        "by_arm": {
+          "A": "f957ae87c15c212c20df392bd014fb3869bd35c735a5390219b66289a2760e6a",
+          "B": "b1299535b9cf92770b1d3a47ec5e4fc465baf3d6772bfe3ad63e838cc68438e3",
+          "C": "9df440f33024853eac2d0aad39312f31ccbce16cd6e8b3748dd7c9f91ed2eba6",
+          "D": "66b5c13ebc7f57c62684caa91c6b6bb58f578f4a75c9dc4814c8bdcf15053979"
+        },
+        "k": 30
+      },
+      {
+        "by_arm": {
+          "A": "b9b64da23141abf1f99283a4c511a59bf79ce88893550b642241e177c83addc1",
+          "B": "7ac453ca4cab24f78c5c185926dc709eb00a5fc0e44bbfd58a2210ed70ae6646",
+          "C": "9007d9a3ff608a3ac19d54ec0f1ea5540d3289383c44aa51bb83d183761f33d3",
+          "D": "6c9c6d497131aaf7c5b5ab9363564c36f2afa943ea3fb6f861074a0a333d5819"
+        },
+        "k": 31
+      },
+      {
+        "by_arm": {
+          "A": "1fa630582035e4a8cdd2d8f0f6206a2f098a2c81e43fc27bc9f77ffb97d97ce4",
+          "B": "f7f234b44e713a2e10f7359c4a6594692349e5cc33bd447c5c4f0077e080fed9",
+          "C": "263c1575996a2fd62f933b5778b46da19ecccb26d473da7b8a9c500b9edacba1",
+          "D": "351a8990bdbbdd9593b2ed8dd065c5fe3f535ae34224d9c5e93d06f3134caee2"
+        },
+        "k": 32
+      },
+      {
+        "by_arm": {
+          "A": "7cd3fbe4db236e909ca5375519d55d184bcadcecaf6db79dd7188b58fc86135a",
+          "B": "005b92e17eeaef6979e4b5c4eb24e3251708691a9ba972cddf66ffa096008683",
+          "C": "32579a6f45025ea4cb3ebf3369deda9bec193812058d12d02f05f0f04f42ae02",
+          "D": "d405c507bdd6a649c6b1f0a7fafd46fbd77d6c30b0e6daf629ad6bb078d19e7b"
+        },
+        "k": 33
+      },
+      {
+        "by_arm": {
+          "A": "cb982ec3c74e3e8ef04c6156e2660300877ba71165e5ae5c20634177f87069ec",
+          "B": "6f815ae0aa970c9bd553f7d146c7c2c5a95834593f664166c752111759ec831c",
+          "C": "581a3dd5589c948d9a3b4135e297ba34d5a8277171e951d80c80d282fe83daf1",
+          "D": "edc51ba711790a791a7d853f6f3a9ea59f8a01bf038610248435b28817b0f639"
+        },
+        "k": 34
+      },
+      {
+        "by_arm": {
+          "A": "32428384c111ba6ba2ca89c021bd2e10b3736fd988f185799dbedec1003bb0ad",
+          "B": "35dcb483b546fc0e45a5ef56e7aacfd1de0d8a34077586ef7fb13742ec8cbcde",
+          "C": "a13fc866412ca209a56604fcf3c7c8b9c3edf6934b5f70e79ab106b034bc1861",
+          "D": "b28b39e57c2aa71f2c70e430b4de59317519dd3cd0215f626ec740df0ad7c65a"
+        },
+        "k": 35
+      },
+      {
+        "by_arm": {
+          "A": "a0e28893bf659db26b3551d13af0d5f4b4f9068914cb4d768782a9a6e25864ee",
+          "B": "bd9cb512eced6572ec5923f459ae77e157b434957db1d1edc72371a370a399d5",
+          "C": "7a2641caa619ab63cc7a88450143788deea3d1e2660f5b48d9df62d251ddb3c5",
+          "D": "0afecfa47e6df96d070f679f1ba08055d3ec22234ae4f63486e6453c4ca1b1d3"
+        },
+        "k": 36
+      },
+      {
+        "by_arm": {
+          "A": "6d188a149c734ebc277f518677932bd9654fd9637478c726813adc66efee4180",
+          "B": "2a48d15d46e75ba1b07dbf7cab9a43e571c11b8d15a3d656ca1519c22091f726",
+          "C": "74e606a5925b2e26cf20a42aeebbf64250c3887ce1a4f4cf7464c29e436637e3",
+          "D": "6254c5149ee3dee1a420ded101d62036dac3582a351b9a64562dda6914368083"
+        },
+        "k": 37
+      },
+      {
+        "by_arm": {
+          "A": "aed441868247419dc9d2226ecdaa884b19204453d3388949ebfa41b0a93ec4ed",
+          "B": "f9abb06c17cdd8b7a4793f34dea164ccb3c7fd27cb5f2c46a7211f437c1b0af7",
+          "C": "c4ab4badc4165ce71bcfec4b5be53ac21c78b9ce44b25d54417f373531fa8f64",
+          "D": "48c1815be513447d172ff4b0b95e5c0a21006f082e267be37f6e1eda6b2f52bb"
+        },
+        "k": 38
+      },
+      {
+        "by_arm": {
+          "A": "76aed0feb30aac86f749680cab4e897b20b5d2bacf1c8397bf37ee9cb73bbd43",
+          "B": "744937a2de774ed3661310e00a932e73afca62e5bcc32f96c6c2fa009c782cd1",
+          "C": "a179bc0bdf8d60088afbf2613e18fc30ac3207681c81fe75f8038dee40a413a7",
+          "D": "b9a8c20682e96c3e46515335e0b1fa50b41544ebb07fe154621e09dd884dac1b"
+        },
+        "k": 39
+      },
+      {
+        "by_arm": {
+          "A": "ae92f435ba3f758e68358510dc040cd54434df19a800a2f7144c7b270683f769",
+          "B": "506e181c6e0fc9a28aeed399897b8676aee7a6c15e50ce6b661ebd4b5300fd9f",
+          "C": "09cf1e6c102691f64d07d67ca8accd80b806a34ffc90c691ba1aca7d5b7767cc",
+          "D": "67e434be4c59ec235e6e7123b94f5063e91272a5ea2fe28154d2c886fc9a6e54"
+        },
+        "k": 40
+      },
+      {
+        "by_arm": {
+          "A": "6e6e60394d4d54bf9dcbaa8206b91c67f6477b1e3c3ea7c73d040b0db15bf3fb",
+          "B": "434b55bf88aff4e5db68dc75884eef1db415d2e722330702c6f2070a960e676b",
+          "C": "04f494856b77c46e48e404745cb4c4063cb1de596e61558d00e3affb5b48ef8f",
+          "D": "ae32cc9bc8358b5cd618b20c7a7e230218056c73364057aed50e7306203a0d6e"
+        },
+        "k": 41
+      },
+      {
+        "by_arm": {
+          "A": "0512e750ed2f04c10b1d1c4b6e28ba498df06717beb62f12f4272fad6f4d27b3",
+          "B": "50bbf2aa216e24760b8937b20c2336fb3f0f3ef1da06dc9540349d96b4ae40ce",
+          "C": "4c75157aebd5b769266edc97cc2d5052ac475b6c93163d6ebf01c711ec1ea9fe",
+          "D": "a20eab73f2845ce644e316651ae3afd63bc7d94486dfb7a185ef1571c13143ce"
+        },
+        "k": 42
+      },
+      {
+        "by_arm": {
+          "A": "525179f7e02297bc56f99bc7b6f7cca4264cbd0ef33d3ae015f00f32fd54d4e2",
+          "B": "c21196540d0cbe95043bc34b9d2d291d3326fcf121158b57ce4aa7c06a73de00",
+          "C": "1ea29a4ff7df5a9b9e84c35bf9170f6c3d0b8808b00c671f470aa1ebb229734c",
+          "D": "14356df370b7b8b66d49823b01ba5aadcc992149c8c0c41ea95e32ec408cd786"
+        },
+        "k": 43
+      },
+      {
+        "by_arm": {
+          "A": "c7ac5ef01cf54a874da4c1088a1a1426b24c94181d3633d681f5828a563f57eb",
+          "B": "75a714a2134d9268cdeeea899653a3e82bae2acc1fc23ceb9b474960e6c9feb3",
+          "C": "1bd71cd0645346a22895583cb503020b3eba16a89dbd42993a0e4301c3a37071",
+          "D": "4232da15bc19acb2e1f25e4f00b73b57649eca34293f6e5da58da005c9d2c08f"
+        },
+        "k": 44
+      },
+      {
+        "by_arm": {
+          "A": "62977ac653269ba5ba4ad9d3a9412beaa88b8da7b0bdf9a06945137194826886",
+          "B": "2da95dce6ab7c3faa51fe46c4ce91b578e71bf8be763836b378fd9a7e54f785d",
+          "C": "4002707a565086d1c19948899976ba9a4ef919e6a783a68b621c0c822496a2f8",
+          "D": "016da9be141d1075ab794d76dc80f5347fd5de4716f11c25ffa10af3897c467b"
+        },
+        "k": 45
+      },
+      {
+        "by_arm": {
+          "A": "9b26f5571a3378f20c296c47e3a7cb64f71e6119bb1b1e5d47b69c8b9a4f94e1",
+          "B": "37927dc54a4bf9e66894a66f83e7cd63fcee767cd6ae74b0d0ad86412b1bce77",
+          "C": "95186883211ffe07715e9bac316bcdc87b5e28c0c6ea3a7d1f4aa2a380809e62",
+          "D": "e6f03671551d90124a5413e703792419e3eb72d858f58150415ff8559a3edba4"
+        },
+        "k": 46
+      },
+      {
+        "by_arm": {
+          "A": "aa9ec17517246c74d25e585c9a54384b3cf7772f9915b9a8181d3a6740a8719a",
+          "B": "36b58c2e9e1d134e874e6e6cca9dc0c7148a480404edc1d7e8522cf7a4644fb3",
+          "C": "70e651acf4608383ac944a906b3a8488426ab66012760a414cfd67bed9644bd7",
+          "D": "0c3289ed3328694c1586e80be5cde0fad92eea4508b45e6a30461c4364c5f094"
+        },
+        "k": 47
+      },
+      {
+        "by_arm": {
+          "A": "7fca1ecba254078dc5533b7e5bb4f6572d64f212b2e05a8ef64dab499613c694",
+          "B": "96524b669c138998c6abe2c998615d2bc0fcec1eb9990c3ef91a147f1572d457",
+          "C": "b250b193d8f30284bc18b0928dd67fb29de814d1c7ebcce06e0fe2aa4afe91ac",
+          "D": "7c0577e10327bdab3788ede0521eeb98b193ec885c9cb31ef992a1e0189d09c6"
+        },
+        "k": 48
+      },
+      {
+        "by_arm": {
+          "A": "e82e547881cb735746b863510b50e127bda5dce891da2762af8ebe82ec8cddb6",
+          "B": "8f157169830de6fa17d651c421c598eb8945f62b355864d9b6f5b708825ddae6",
+          "C": "30fe11be6a5a7099a4d71acddf9a9e282411bc8c774c1b3d9ff994175f8de12b",
+          "D": "c49bfe6f7b3c3901b36a3434114bb6c3a9d9722de50d6387e6e233ad49b44220"
+        },
+        "k": 49
+      },
+      {
+        "by_arm": {
+          "A": "946eabd4975270483505334fe83ae35f9aa9ccf2190b64eca335aed917d1e82b",
+          "B": "849ba45c449a446b1e9c7ee24cbd206243f10c6ddf8ed7ca001f65bad3ea6422",
+          "C": "5c5932ce03dc8c427fb1689670e72eab368094dee3419f05fcaedd51d0ddfc41",
+          "D": "0b918efae36da82dc8510036f0527b0f4a115cf5d74df9b84d739e00625dfb57"
+        },
+        "k": 50
+      },
+      {
+        "by_arm": {
+          "A": "3d1475928a847322b4b8b16899a01b13f77fd533854a1afbe70d115381ed109a",
+          "B": "798f5080fe21fdff165ccbcebe98a520be062728f6de8c53f435c72ad8a693f6",
+          "C": "0c4c84e47435e70cde4b72fd7867f44a35ce43d319fc973948219c47e6d2ebfe",
+          "D": "7614a5870f9fd96fd98720e8ce7d0405828099cb4c4efc2516783fd20bec7471"
+        },
+        "k": 51
+      },
+      {
+        "by_arm": {
+          "A": "40b94b6edd20f3fd241d4435440fe45b3404b205b5537d843beccde4ecdbe094",
+          "B": "3829c41310fd6bfb1a317b8cb72e5afe0b8c17beae0c9723b73f0f4b1a3a014d",
+          "C": "cb2007277d6dfdd0b6e4cd9bc3c67c641fa85e4aa6433cdf7f67a0a32a74fafe",
+          "D": "9547cda5b1bc2149df3a2d48f559e6a8bb2de7544192cf3cf53ce55631e77d50"
+        },
+        "k": 52
+      },
+      {
+        "by_arm": {
+          "A": "8f8c203e61744fa7d69e796b99d1414b43fa23a0bb92c08d7c2583711b7f4a79",
+          "B": "e85a46ecec18b709504f00aef13a94f83275d717e8a35e0a3e8c6feb7000203d",
+          "C": "602bd721225b8c2257ff383306e694a999cab41dbc83fc621385aee970f3675b",
+          "D": "4bc75574d8b42397a2968bd2cdb5e4d8e9e5371eb7c45ca0dd0a8c0c3869d60d"
+        },
+        "k": 53
+      },
+      {
+        "by_arm": {
+          "A": "d8d0cd8afb7b0f19b0da2528f235571ef413152a16fa35deb9ec644166344007",
+          "B": "6d217511f9f9a0bd7098a6ebbaf6a459b3534cdedc6779e13299ba86752d84f6",
+          "C": "abb97dc3cc09281e770c924234ef4ab9c21bb499124a7d823d7fe8d68fac0474",
+          "D": "5e674555207ece2b66e98ea8642fedb9bff77204d591c79a2ab44fa3730bee8b"
+        },
+        "k": 54
+      },
+      {
+        "by_arm": {
+          "A": "302273c1e1d5761e26c5905ec40bb7879d4f339416fda802043d7a0e0bb96e3d",
+          "B": "5719a086db15407ad52eba67b970ff62c325fd5e3aef1c0b3c050626fd6ae525",
+          "C": "fb954684f02311913f441297bd24bc9b1341187a436171be7234438d64d7cea9",
+          "D": "08c38ae23e188cc4e0bb428541258150227b4e5d6139304bb45c4287680d350f"
+        },
+        "k": 55
+      },
+      {
+        "by_arm": {
+          "A": "76845c302726cffe897d78ad9d8386b68c2d73b597c8d91f806d76662791c568",
+          "B": "7369e137bef6f5547e9f84a0ce276ec08e8927a64cd92957a91193d255affe6b",
+          "C": "078db2d294dac4670d6b18cfbee4c1aab18fbbc613f7e90267d9e709bf8c6ed5",
+          "D": "2d76f8ee44d90476f14d2fa1c937ec9270ea7dc2923d2c027d66b8f664449b51"
+        },
+        "k": 56
+      },
+      {
+        "by_arm": {
+          "A": "30c3ed7fe4bbcf7eb889eb2e52a2b14e14e6174290572d729ff91a33f80343fd",
+          "B": "64e35ed8ae977b97f0a9186d9a48f7c6b322a669404fa467c90609eac7d92d3a",
+          "C": "b3de8888f495cadcc566764bba918e37916c718268e229fa53c75e1d510a82b3",
+          "D": "195ab947fcbd9865af3a214123f6a146561514e2791857c04360a0f990df55d3"
+        },
+        "k": 57
+      },
+      {
+        "by_arm": {
+          "A": "f6ac80a15e426c1b8997e5e93718478454ee33367c2914ae2e71999aec41669f",
+          "B": "30734d6791f4ea22eaa145d46929611c28964e967560a23c1cc1ff33ae701f94",
+          "C": "57dcfa7875621e5eccaee4db045f5906ca2be0ac119341245375b6a13d3179d0",
+          "D": "04835556d3ba0d0cfcea38b2c94386bebb3bcca16ead8f761ef561dee8fc7142"
+        },
+        "k": 58
+      },
+      {
+        "by_arm": {
+          "A": "719ad234c6d02eb89abc5c99986b7f7aee4ceae3dae0ef9ff75e4cecefde458d",
+          "B": "d9cda3c2b40b25510301a3fe1b84decd16a8c92bd8d43a47c52b00be0a002b01",
+          "C": "4099502a784c8fee043754fe3754fdcc19aebbe9ace2159876a313dccbec0239",
+          "D": "48a95490a712c9f260e96b7bcf6bd6f20ad89da0df86614354a94d54cea43033"
+        },
+        "k": 59
+      },
+      {
+        "by_arm": {
+          "A": "43716b06dfd4be612681b6798bb025b5474eb9129866e44af1054cd63a0b5cfd",
+          "B": "fcbe71278865db8c9ee224f44990853ff3531580f116509c9bd7901da0b189c6",
+          "C": "21d2b98eba128e62a5a3baf211ea79f8cbbc294d424c8442468d31674003d9c8",
+          "D": "c0f66f03030a878336c2213ba2c359651d80cde1532baab01081fb69942c71fc"
+        },
+        "k": 60
+      },
+      {
+        "by_arm": {
+          "A": "3464f3137aa91f21c2b15538d1e5024a74dd9989546a0873bf5a5d6e36f13a28",
+          "B": "f88a63c1dc6b15546255a8cb47613dc47ae4f91b376b799b66d585e64f727933",
+          "C": "5ab0fdb640cca7f992534819e32e1175c0734752eefcf63fcc7dcb5da73ed5b4",
+          "D": "c69d924339cfff97b266e59351d076e165e36a8dcf9294e3352212eb33aa0bdc"
+        },
+        "k": 61
+      },
+      {
+        "by_arm": {
+          "A": "090a21129d152d28befa0fb7b4758f73152a93a8d34c64c45d7341522ca06106",
+          "B": "82f8cf3a1c7ea2bd727993ebc38a3895b7bceafb3b55ae7370860554bd5a0df5",
+          "C": "5b847abd270028b6fc5f81083acdfef889122ec230a7607132649be06a3619d4",
+          "D": "ebb644628f45aea8fd255637cf62edf766361503c44eeace49da36fa152edc14"
+        },
+        "k": 62
+      },
+      {
+        "by_arm": {
+          "A": "aeac1340f8fbc8be9ea84ced6a3458e126c0c85583e3d5e9315acaf01d5f9fb6",
+          "B": "43d3a9f8acfae91354466f08a55cbe62528ea99d7cd3dc9ce45421baa5cafbf7",
+          "C": "4486a7ce09b8cae26f23a0c1254e14fe6cad1e88b3dc1a4ad5e93e770e25f45b",
+          "D": "31e5d809dae25900d64dff47e35913ff6e27a4b1e8ba3eeee254cfb7e88764b1"
+        },
+        "k": 63
+      },
+      {
+        "by_arm": {
+          "A": "345dc6bdf6f21c9a8004c60e5c482051fe1edff662ec497246ac4fa84049dbcc",
+          "B": "fc5d27dd8463f107bb90d41df6db8b4bd3d134be9b1c8b1fc7a9dcced13424fe",
+          "C": "1c6734188dc04816e9a826e0e84148d0ebfdf9980d972664632eedd517594a49",
+          "D": "a479ef9dc0de203d368dd22d036d72af3f86ba28972a2cdaf447f5db609f4783"
+        },
+        "k": 64
+      }
+    ],
+    "status": "PASS",
+    "steps": 64,
+    "step_replay_receipt_count": 64,
+    "step_replay_receipts_sha256": "b46cb995ad477342b9f3caec11a193e32c4eb1d6e0b3076ab1d05cec841ab93e"
+  },
+  "schema_version": 3,
+  "status": "PASS",
+  "task_1_existing_rollout_state_audit": {
+    "legacy_horizons": [
+      1,
+      4,
+      16,
+      64
+    ],
+    "path": "/root/pr89-role-b-v2-20260828/repo-run/analysis/operator_clock_gate/results/raw_receipts/formal-20260826/results/matched/matched_micro_rollout.json",
+    "per_arm": {
+      "A": {
+        "complete_k_0_through_64": false,
+        "present_state_steps": []
+      },
+      "B": {
+        "complete_k_0_through_64": false,
+        "present_state_steps": []
+      },
+      "C": {
+        "complete_k_0_through_64": false,
+        "present_state_steps": []
+      },
+      "D": {
+        "complete_k_0_through_64": false,
+        "present_state_steps": []
+      }
+    },
+    "reason": "only projections/summaries/hashes are stored; full per-k augmented state absent",
+    "recoverable": false,
+    "sha256": "a51dead69a3776de12d10b2a6478c331476409ebac0a9dc03295a14fcd667323"
+  },
+  "strong_expansion_claim_gate": {
+    "allowed_wording": "propagation / persistence",
+    "required_facts": [
+      "G_k>1",
+      "R_k highly aligned with Delta_k",
+      "carryover-corrected R_tilde_k is non-trivial",
+      "direction is consistent in a second independent state replication"
+    ],
+    "second_state_replication_available": false,
+    "status": "WITHHELD"
+  }
+}

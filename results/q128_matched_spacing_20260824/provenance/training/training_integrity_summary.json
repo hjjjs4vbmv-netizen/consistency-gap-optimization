@@ -1,0 +1,97 @@
+{
+  "accepted_optimizer_steps_total": 119825,
+  "amp_skips_total": 175,
+  "artifact_file_hashes_recomputed": true,
+  "attempted_iterations_total": 120000,
+  "checkpoint_receipts": 105,
+  "checkpoints_expected": 105,
+  "dataset_sha256_values": [
+    "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+  ],
+  "fresh_a_cells": 3,
+  "fresh_bsame_cells": 3,
+  "gpu_uuid_limitation": "The immutable preflight schema recorded model and memory but not UUID. Released nodes cannot be queried retrospectively; UUIDs are not fabricated.",
+  "gpu_uuid_status": "not_recorded_in_preflight_v1",
+  "hardware_models": [
+    "NVIDIA A100-PCIE-40GB, 40960 MiB"
+  ],
+  "pairing": {
+    "3": {
+      "all_five_arms_present": true,
+      "arms": [
+        "A",
+        "Bmatch",
+        "Bsame",
+        "Cmatch",
+        "Dmatch"
+      ],
+      "status": "PASS",
+      "within_seed_equalities": {
+        "common_initial_state_sha256": true,
+        "ema_sha256": true,
+        "gradscaler_sha256": true,
+        "model_sha256": true,
+        "normalized_pairing_config_sha256": true,
+        "optimizer_sha256": true,
+        "rng_sha256": true,
+        "sampler_sha256": true
+      }
+    },
+    "4": {
+      "all_five_arms_present": true,
+      "arms": [
+        "A",
+        "Bmatch",
+        "Bsame",
+        "Cmatch",
+        "Dmatch"
+      ],
+      "status": "PASS",
+      "within_seed_equalities": {
+        "common_initial_state_sha256": true,
+        "ema_sha256": true,
+        "gradscaler_sha256": true,
+        "model_sha256": true,
+        "normalized_pairing_config_sha256": true,
+        "optimizer_sha256": true,
+        "rng_sha256": true,
+        "sampler_sha256": true
+      }
+    },
+    "5": {
+      "all_five_arms_present": true,
+      "arms": [
+        "A",
+        "Bmatch",
+        "Bsame",
+        "Cmatch",
+        "Dmatch"
+      ],
+      "status": "PASS",
+      "within_seed_equalities": {
+        "common_initial_state_sha256": true,
+        "ema_sha256": true,
+        "gradscaler_sha256": true,
+        "model_sha256": true,
+        "normalized_pairing_config_sha256": true,
+        "optimizer_sha256": true,
+        "rng_sha256": true,
+        "sampler_sha256": true
+      }
+    }
+  },
+  "runtime_sif_sha256_values": [
+    "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea"
+  ],
+  "schema": "ect.q128-matched-spacing-training-integrity/v1",
+  "stage0_only": true,
+  "stages_observed": [
+    0
+  ],
+  "status": "PASS",
+  "trajectories_completed": 15,
+  "trajectories_expected": 15,
+  "transfer_sha256_values": [
+    "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+  ]
+}

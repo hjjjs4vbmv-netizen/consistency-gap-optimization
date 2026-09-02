@@ -1,0 +1,62 @@
+{
+  "schema": "ect.q256.target-weight-gradient-scaling-manipulation/v1",
+  "status": "PASS",
+  "completed_utc": "2026-08-21T04:06:00Z",
+  "scope": "same-state/same-batch objective manipulation check; not a mechanism experiment",
+  "source_base_git_head": "36fb88b5e8fba38ba9912678a38495f6b7e97a28",
+  "source": {
+    "test_path": "tests/test_q256_target_weight_factorial.py",
+    "test_sha256": "8298ec73cfcf27b4374a46d215a6eca7369fc5d8bf61ce936da2e12d19d564c9",
+    "gate_path": "scripts/run_q256_target_weight_correctness_gate.py",
+    "gate_sha256": "6ff59ab7f30f94d203f52d99f834096fb14834adbb9033c31296b5151db7a981",
+    "required_test": "tests.test_q256_target_weight_factorial.CanonicalParityTest.test_clip_free_denominator_gradient_scaling_identities"
+  },
+  "runtime": {
+    "python": "3.9.6",
+    "torch": "2.3.0",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "device": "cpu"
+  },
+  "configuration": {
+    "q": 256,
+    "g": 1.1,
+    "c": 0,
+    "schedule": "sigmoid",
+    "seed": 20260819,
+    "fixture": "deterministic two-parameter weight plus two-parameter bias network",
+    "same_initial_parameters": true,
+    "same_batch": true,
+    "same_rng": true,
+    "stop_gradient_target": true,
+    "clip_free": true,
+    "denominator_scaled_to_zero_count": 0
+  },
+  "tolerance": {
+    "rtol": 0.000002,
+    "atol": 0.000001,
+    "criterion": "torch.testing.assert_close on every parameter-gradient tensor and realized denominator tensor"
+  },
+  "identities": [
+    {
+      "identity": "G_D=(1/1.10)G_A",
+      "shared_target_pair": "A/D",
+      "gradient_max_absolute_residual": 0.000732421875,
+      "gradient_max_relative_residual": 3.500603327211138e-7,
+      "gradient_max_expected_absolute": 2092.273193359375,
+      "allowed_absolute_residual_at_max_expected_gradient": 0.00418554638671875,
+      "denominator_max_absolute_residual": 6.05359673500061e-9,
+      "denominator_max_relative_residual": 1.0606618161546066e-6
+    },
+    {
+      "identity": "G_B=(1/1.10)G_C",
+      "shared_target_pair": "B/C",
+      "gradient_max_absolute_residual": 0.000732421875,
+      "gradient_max_relative_residual": 3.818796585619566e-7,
+      "gradient_max_expected_absolute": 2092.15185546875,
+      "allowed_absolute_residual_at_max_expected_gradient": 0.0041853037109375,
+      "denominator_max_absolute_residual": 6.05359673500061e-9,
+      "denominator_max_relative_residual": 1.0606618161546066e-6
+    }
+  ],
+  "formal_training_or_evaluation_performed": false
+}

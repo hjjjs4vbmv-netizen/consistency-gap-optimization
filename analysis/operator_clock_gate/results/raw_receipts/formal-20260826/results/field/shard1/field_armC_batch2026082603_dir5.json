@@ -1,0 +1,227 @@
+{
+  "arm": "C",
+  "audit_minibatch_id": 2026082603,
+  "audit_minibatch_index": 2,
+  "projection_direction_index": 5,
+  "projection_direction_seed": 2026082616,
+  "recompute_detach_field": {
+    "arm": "C",
+    "arm_spec": {
+      "denominator_scale": 1.0,
+      "meaning": "target_geometry_only",
+      "target_scale": 1.1
+    },
+    "branch_receipts": [
+      {
+        "epsilon": 0.03,
+        "minus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "745fecae5118cc4cdb0279563aa1bde2795369fc6564c4700092b1c4ed2603f6",
+            "37abca90c66f098e042036a5f2ce075f673a72bafbc7caa51c97ce501976321d",
+            "9a16521a001580089ead906a61937a34481c56b9d8c6360419159308c7e8f2ef",
+            "7675f23dec4314ea393fd837b9e7ff30cd5bc43e794b4ca7ff94fb4b94b95639",
+            "3393fbed8a6dbd8b7fae0afb265f5219e49675ba60da4b942632424cfccd00e7",
+            "afa99522e386c526bfe45ae069d1100e28b929a1fc9845f8d3d3ab66e50b15d0",
+            "e13c45fa1d168cb356421fd74f21b7a2425a6234a88c46d73d9a1405a8e176c4",
+            "ab169e172d0d3ea68bffaa6873d0520bf467de0a7bab309e559f94ce2d4d5ee4"
+          ],
+          "target_recompute_count": 8
+        },
+        "paired_target_recomputation": true,
+        "plus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "31c3d01041470d81523f62b9d7be895692aec888f81ac9c095929057987a40f6",
+            "a4bf1b0df42271ecaee0a19f74d92e3ef7aaaa31d496f70d631939c7aa2cead8",
+            "896a78fd8390e3a48e9435861658c21b420584f2577225d5311f9c44cab30f2e",
+            "c2a288e41424ce1c49acd655494255c3093987ddae26f6c4ba491a7676c942b9",
+            "82ce4c36da5dd3d56ae29e8bc0cadb9ff0b39caf6170a07ef3aa857196395b40",
+            "b123ae58b6ec786dbeba4c52da6a9964ffc11f952362762bc88bfecd8945ba13",
+            "1f5c154fea58790758544bfdd594df237bd04d0b1e60dda829d9fbd89e7a9515",
+            "078dde19a0be65c882d1c346e958c1c123acd6ec06ca483ca1017d5e44644b30"
+          ],
+          "target_recompute_count": 8
+        }
+      },
+      {
+        "epsilon": 0.02,
+        "minus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "c0dae14935b6c691ca8bd8aaac6e6dda205707710410883b31b932ba491a21a7",
+            "f3625c0e5a7ff1e30e5e0659ac128936147881f9b6e32b3ea8ae892ed804dda1",
+            "11e47b9e2503896c6e56af66009981114b0db024d4d65b5230905d5a8b21c500",
+            "69e0c83dbadaa1d865895b37c108ef74c75a7daea6e67ce9f0826a92919c611a",
+            "ace8cc043664f92bcd714e111ea3d1a4e2a738d8f1d0439eb3b3466ac2cf7f8a",
+            "d8dfc734a6f79c1845f82016474c8a92566f8bed30fe4d0f8f95cc7d9281e585",
+            "8aa5fc3dbdcbff3f9673f986846d3ff4ddc80b3c2f3000a4b6ac360d552f1749",
+            "45258fd76cd6d6dfa0999daf9297fdf8abbc49db7c7110824b946237726dbf50"
+          ],
+          "target_recompute_count": 8
+        },
+        "paired_target_recomputation": true,
+        "plus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "92a5e94bfeae9e6619759ff54d71cd72f5d601128c59f37d072165dfca45329a",
+            "c8c262bd9696e81883843edbc1b891b5a7e686b9f1698af5073926a031f7e82f",
+            "6508d9e5a57aa5c0e1704c362d995d8a782816dcc0219b9c062d782e8c19b33a",
+            "69c76156146fb019839a4f24342b08ca5530a0a5fd7137e2917a61cbb9e04e38",
+            "6488619f7c76037997051d2bcc852e90610174cae4d5c891406770a2c3692bb0",
+            "ef252cc98bf89354375cfe8fcbc4a5438b2288501fc005b28efee48f94fa4573",
+            "63fb056c9aa6a2601a232cdff7207b33d4d8850bb36a0dafbd38ee8228e29a64",
+            "711c93858e18eaa2023feb2621909a89626bcaecbf7cffa9e74a0c0b1808e10a"
+          ],
+          "target_recompute_count": 8
+        }
+      },
+      {
+        "epsilon": 0.015,
+        "minus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "56e47b2bf0818c239d13752d4780bb130e599e5db8f44ea53b7a3988c7015fea",
+            "137b9a56a9fbf442500e5fe6efd67ad68afcbadfc2f41725a67aad5af7b7fb21",
+            "ea2c767c90b0978a6c3440e50bf81a3ba84ea32b1cb14bbb8fe8c3d8259014bb",
+            "b15a9192f3b2f3013d0eb3dab9e5761ed5b0d61ecc39f461318bf3b7efdf86b4",
+            "71a7a3198b787964cde5530ceb3b3ffa771ff98bd1e764c0e43d34bb7947b5e4",
+            "587f83e21cb16320d78edcf4745fca96ea9b95dafbc92870204623ce221d7a50",
+            "b43d131f484d74b43809e4e72a7a70c168455e3959db7f00b3f54497013813db",
+            "eaccdd7c0e8c92fb53672ec5c98aecf4671ad027c84246ef2600ae2da9651da8"
+          ],
+          "target_recompute_count": 8
+        },
+        "paired_target_recomputation": true,
+        "plus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "88bef1f85d30d00b86cfc3a6ffde4f6c621da1c96785c68cce2790d18f0bc32d",
+            "4ffe200886da8e83123b93d08fbe95dce2dddf84fedcb4bcfd2b404a41823de0",
+            "8a4702a22a416cf644d1d5627f70d04c996b08ba31814c3cf2a864319e6648cf",
+            "43f1ad72861fe771972e26a04ad6741b7c2a41b36c7bb7085cdc0474d833ce37",
+            "01539acfdd714bd526f482ce689e047e084e773e73f18f4a69a9337dc78173f9",
+            "4d9721749e7de7e41c7100e3f8a407548e809971763bb15f9cd55bf0ef7d4d3c",
+            "aa1a6a85413962e5f2dfcfd317099a842d0fb4b5c1fcd30b528893c207885497",
+            "3422f891d54731a8ae92e8ce4bb2dc3f87822a445bf9e311f4f039e283d30836"
+          ],
+          "target_recompute_count": 8
+        }
+      },
+      {
+        "epsilon": 0.01,
+        "minus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "e5d1b9ff4f2b5d590c2d657e647793ebb9513e7e9c5e91a13bb7dbce15a94643",
+            "edde9826a153b7336c23593f98a726c7b47ac8fd1ec147a71be3db2bb23c2fe4",
+            "d1972dcfab628e58d9ba11e61e928050a1a8021cdeb5ab2519098680afbf4712",
+            "74ed8110c454f7d7979d8dadd0424a0f6495abbe910903fbf29436c4a945081d",
+            "a6360b24ae7451790a32bdc7998ddb96e69a723214788afb19b35fab011acad9",
+            "f1a5808b9a98f7da235ca3430c50eea8173d09d574d5d30742c7921033c2f1e8",
+            "08b90c7eb9a998a7c86f14927ae96117ca2c07ca86121229d39e610d92278fae",
+            "02c019543ca21f344a483b8e52ea0168a28b1ae4da8b191eb0fa515fff1a8686"
+          ],
+          "target_recompute_count": 8
+        },
+        "paired_target_recomputation": true,
+        "plus": {
+          "all_targets_detached": true,
+          "forward_count": 16,
+          "target_hashes": [
+            "cc2c4349464e6c151085bf874037f13817eca19478aa961c4730c54d930abbf1",
+            "a76d7a678adff7117dd20bb058dfc7f009b2c0ce0a4f32cacfd8b046d04ea62a",
+            "e52ca34c492015190062e54f72c861cb52713275c8ed414665b6f12f6233301f",
+            "491a704008b1568dbb8e7fbd22145fb965630ed487e7a36ed47eedb0ac5efdfa",
+            "8f8de824d8de19e0f79648ee02537752dd5d2234b8df90f94d0d61b561fc1fc1",
+            "90cc30977faf4cc23579224feae1e3740933f6c5879c90a2e94bf30cd4c3e042",
+            "680f6dfd5617596dc83792265e8093d1b31d4ddf3485de5c0abd8de141fe3b9d",
+            "d799167e281adc50a3a27baa1c0e5d768086160f39a4a57deb85cbf7fc617c08"
+          ],
+          "target_recompute_count": 8
+        }
+      }
+    ],
+    "convergence": {
+      "best_adjacent_pair": {
+        "coarse_epsilon": 0.03,
+        "fine_epsilon": 0.02,
+        "relative_change": 0.08126471580173456
+      },
+      "comparisons": [
+        {
+          "coarse_epsilon": 0.03,
+          "fine_epsilon": 0.02,
+          "relative_change": 0.08126471580173456
+        },
+        {
+          "coarse_epsilon": 0.02,
+          "fine_epsilon": 0.015,
+          "relative_change": 0.34165169903565873
+        },
+        {
+          "coarse_epsilon": 0.015,
+          "fine_epsilon": 0.01,
+          "relative_change": 0.41736386980323004
+        }
+      ],
+      "epsilons": [
+        0.03,
+        0.02,
+        0.015,
+        0.01
+      ],
+      "finest_adjacent_pair": {
+        "coarse_epsilon": 0.015,
+        "fine_epsilon": 0.01,
+        "relative_change": 0.41736386980323004
+      },
+      "passed": false,
+      "selection_rule": "smallest preregistered epsilon; convergence is the adjacent change from the next-smallest epsilon",
+      "tolerance": 0.05
+    },
+    "definition_guard": "Every theta+/-epsilon branch reruns online and target forwards and detaches the freshly recomputed target inside that branch.",
+    "field_jvp_l2": 14693.862736355402,
+    "learning_rate": 0.0001,
+    "operator_jvp_l2": 3962.703630748646,
+    "predictor": "recompute_and_detach_field_jacobian",
+    "schema_version": 1,
+    "selected_epsilon": 0.01,
+    "source_preserved": true,
+    "source_rng_sha256_after": "aa4c146d61213a2dacded0c8a9f1073d8d5496288e9bd9636de746b57b272571",
+    "source_rng_sha256_before": "aa4c146d61213a2dacded0c8a9f1073d8d5496288e9bd9636de746b57b272571",
+    "source_state_sha256_after": "6559390a131588d8a2742e7953ec99c68bca44f0bc48afe8d0c7fbf4dd79bf5c",
+    "source_state_sha256_before": "6559390a131588d8a2742e7953ec99c68bca44f0bc48afe8d0c7fbf4dd79bf5c",
+    "status": "FAIL_CLOSED"
+  },
+  "schema_version": 1,
+  "squared_baseline": {
+    "arm": "C",
+    "claim_boundary": "Theoretical squared-pair baseline only; it is not the true ECT recompute-and-detach field or the optimizer state transition.",
+    "formula": "I - eta * sum_e p_e w_e J_i^T (J_i-J_j)",
+    "jvp_l2": 3962.7040650847384,
+    "learning_rate": 0.0001,
+    "output_fd_epsilon": 0.001,
+    "predictor": "squared_loss_simplified_operator",
+    "schema_version": 1,
+    "source_preserved": true,
+    "source_rng_sha256_after": "aa4c146d61213a2dacded0c8a9f1073d8d5496288e9bd9636de746b57b272571",
+    "source_rng_sha256_before": "aa4c146d61213a2dacded0c8a9f1073d8d5496288e9bd9636de746b57b272571",
+    "source_state_sha256_after": "6559390a131588d8a2742e7953ec99c68bca44f0bc48afe8d0c7fbf4dd79bf5c",
+    "source_state_sha256_before": "6559390a131588d8a2742e7953ec99c68bca44f0bc48afe8d0c7fbf4dd79bf5c",
+    "status": "PASS"
+  },
+  "status": "FAIL_CLOSED",
+  "vector_hashes": {
+    "direction": "fdfc67e479d154cf918c6c69dec9d62d9298578d72fb33bc02c9f67811c0b98a",
+    "field_operator_jvp": "a545355fe091b9ee8b8974500e21c1d22f5e436a722b2fa7f598db36d93d5229",
+    "squared_operator_jvp": "edfe8eeed46b7862350cec8fcf951e0cee4d497012832acfd5f5d41ceff61e99"
+  }
+}

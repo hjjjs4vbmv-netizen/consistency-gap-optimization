@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "handoff_id": "q128-transfer-1000k-seed3-fixed-exploratory-role-d-v1",
+  "evidence_class": "exploratory_supplementary",
+  "formal_eligibility": "not_eligible",
+  "archive_filename": "q128-transfer-1000k-seed3-fixed-exploratory_20260806.tar",
+  "archive_sha256": "e52356ce05db13fc5d274f920b8e80e086e07e375d234c01acb29796e7e16608",
+  "checkpoints": [
+    {
+      "checkpoint_id": "q128-transfer-1000k-seed3-fixed-exploratory",
+      "filename": "network-snapshot-000020.pkl",
+      "sha256": "eda4c12e95bca6308b897e54dbc3e61b93d0f46c9299a113b7eb4f2bd36b83a5"
+    }
+  ],
+  "required_receiver_action": "Use scripts/verify_handoff.py from a separate checkout or account and return its unmodified JSON receipt.",
+  "claim_effect": "A passed receipt can independently verify this archive and checkpoint identity for this supplementary gradient diagnostic only; it cannot promote the evidence to a prospective or formal result."
+}

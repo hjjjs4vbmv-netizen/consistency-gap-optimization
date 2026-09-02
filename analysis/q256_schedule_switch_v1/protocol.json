@@ -1,0 +1,96 @@
+{
+  "schema": "ect.q256.schedule-switch-protocol/v1",
+  "protocol": "q256_ab_crossed_switch_v1",
+  "frozen_before_switch_results": true,
+  "origin_main_sha": "8d4844c293a75ce26a360e9907e39abaa1b87b77",
+  "source_training_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "source_replay_commit": "f4115a89c764081e01be4290f0868cb8f625825e",
+  "frozen_evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+  "dataset": {
+    "name": "canonical CIFAR-10 32x32",
+    "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "training_execution_archive": {
+      "path": "/mnt/ect_project/datasets/cifar10-32x32.zip",
+      "sha256": "2d4056e80de1a96fe16f2f58945c6c4710ecd9fc02e3cc7aa5b50513b7cdf389",
+      "semantic_exact_to_canonical": true,
+      "reason": "preserve the PR #80 source trajectory-config path and data order"
+    }
+  },
+  "training": {
+    "q": 256,
+    "architecture": "ddpmpp",
+    "precondition": "ect",
+    "optimizer": "RAdam",
+    "learning_rate": 0.0001,
+    "dropout": 0.2,
+    "augment": 0,
+    "xflip": false,
+    "global_batch": 128,
+    "batch_gpu": 16,
+    "ema_beta": 0.9993,
+    "fp16": true,
+    "amp": true,
+    "tf32": false,
+    "world_size": 1,
+    "cublas_workspace_config": ":4096:8",
+    "deterministic_pytorch": true,
+    "source_kimg": 512,
+    "final_kimg": 1024,
+    "additional_attempted_iterations": 4000,
+    "formal_milestones_kimg": [640, 768, 896, 1024]
+  },
+  "arms": {
+    "A": {
+      "target_gap_scale": 1.0,
+      "denominator_gap_scale": 1.0
+    },
+    "B": {
+      "target_gap_scale": 1.1,
+      "denominator_gap_scale": 1.1
+    }
+  },
+  "seeds": [14, 15, 16, 17, 18],
+  "formal_new_branches": ["A_to_B", "B_to_A"],
+  "archived_controls": ["A_to_A", "B_to_B"],
+  "parity_gate": {
+    "branches": ["A_to_A", "B_to_B"],
+    "target_kimg": 640,
+    "cells": 10,
+    "required_verdict": "10/10 COMPUTATIONAL_STATE_MATCH"
+  },
+  "evaluation": {
+    "new_trajectories_only": true,
+    "budgets_kimg": [640, 768, 896, 1024],
+    "nfe": [1, 2],
+    "nfe2_mid_t": 0.821,
+    "samples": 50000,
+    "sample_seeds": {
+      "start": 0,
+      "end": 49999
+    },
+    "metric_seed": 20260730,
+    "metrics_in_order": ["kid50k_full", "fid50k_full"],
+    "precision": "FP32",
+    "shared_generated_features_required": true,
+    "expected_jobs": 80
+  },
+  "analysis": {
+    "statistical_unit": "training seed",
+    "metrics": ["kid50k_full", "fid50k_full"],
+    "contrasts": ["S_A", "S_B", "H_A", "H_B", "I_switch"],
+    "aulc": {
+      "range_kimg": [512, 1024],
+      "method": "trapezoidal_normalized"
+    },
+    "summaries": ["mean", "median"],
+    "paired_bootstrap": "descriptive_only"
+  },
+  "governance": {
+    "no_result_dependent_stopping": true,
+    "no_result_dependent_branch_selection": true,
+    "no_seed_deletion": true,
+    "no_proxy_evaluation": true,
+    "immutable_no_overwrite_outputs": true,
+    "claim_scope": "conditional post-switch intervention over five descriptive seeds"
+  }
+}

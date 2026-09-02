@@ -1,0 +1,7 @@
+experiment_id,method,seed,q,global_gap_scale,target_kimg,final_kimg,final_loss,train_summary_rows,nonfinite_loss_rows,step_skipped_sum,snapshot_present,training_state_present,training_status,artifact_integrity,formal_evaluation_eligibility,blocker
+q128-seed3-fixed-256k,fixed,3,128.0,1.0,256,256.0,16.32977402,2000,0,9,True,True,TRAINING_COMPLETE,PASSED,BLOCKED,dataset_semantic_equivalence;role_d_receiver_verification
+q128-seed3-global110-256k,global110,3,128.0,1.1,256,256.0,16.24675548,2000,0,9,True,True,TRAINING_COMPLETE,PASSED,BLOCKED,dataset_semantic_equivalence;role_d_receiver_verification
+q128-seed4-fixed-256k,fixed,4,128.0,1.0,256,256.0,16.36701238,2000,0,9,True,True,TRAINING_COMPLETE,PASSED,BLOCKED,dataset_semantic_equivalence;role_d_receiver_verification
+q128-seed4-global110-256k,global110,4,128.0,1.1,256,256.0,16.34788167,2000,0,8,True,True,TRAINING_COMPLETE,PASSED,BLOCKED,dataset_semantic_equivalence;role_d_receiver_verification
+q128-seed5-fixed-256k,fixed,5,128.0,1.0,256,256.0,14.90946436,2000,0,8,True,True,TRAINING_COMPLETE,PASSED,BLOCKED,dataset_semantic_equivalence;role_d_receiver_verification
+q128-seed5-global110-256k,global110,5,128.0,1.1,256,256.0,14.82717252,2000,0,9,True,True,TRAINING_COMPLETE,PASSED,BLOCKED,dataset_semantic_equivalence;role_d_receiver_verification

@@ -1,0 +1,410 @@
+# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
+#
+# NVIDIA CORPORATION and its licensors retain all intellectual property
+# and proprietary rights in and to this software, related documentation
+# and any modifications thereto.  Any use, reproduction, disclosure or
+# distribution of this software and related documentation without an express
+# license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+import os
+import time
+import hashlib
+import pickle
+import copy
+import shutil
+import uuid
+import numpy as np
+import torch
+import dnnlib
+
+# KID-50k and FID-50k use the same audited Inception detector and feature
+# schema.  No other metric pair may reuse an array without a new identity gate.
+ALLOWED_PRECOMPUTED_FEATURE_REUSE = {
+    ('kid50k_full', 'fid50k_full'),
+}
+
+#----------------------------------------------------------------------------
+
+class MetricOptions:
+    def __init__(
+        self, generator_fn=None, G=None, G_kwargs={}, dataset_kwargs={},
+        num_gpus=1, rank=0, device=None, progress=None, cache=True,
+        sample_seeds=None, metric_seed=None,
+        generated_features_path=None, generated_samples_path=None,
+        generator_batch_size=None, precomputed_generated_features_path=None,
+        metric_name=None, precomputed_generated_features_source_metric=None,
+    ):
+        assert 0 <= rank < num_gpus
+
+        self.generator_fn   = generator_fn
+        self.G              = G
+        self.G_kwargs       = dnnlib.EasyDict(G_kwargs)
+        self.dataset_kwargs = dnnlib.EasyDict(dataset_kwargs)
+        self.num_gpus       = num_gpus
+        self.rank           = rank
+        self.device         = device if device is not None else torch.device('cuda', rank)
+        self.progress       = progress.sub() if progress is not None and rank == 0 else ProgressMonitor()
+        self.cache          = cache
+        self.sample_seeds   = None if sample_seeds is None else list(sample_seeds)
+        self.metric_seed    = metric_seed
+        self.generated_features_path = generated_features_path
+        self.generated_samples_path = generated_samples_path
+        self.generator_batch_size = generator_batch_size
+        self.precomputed_generated_features_path = precomputed_generated_features_path
+        self.metric_name = metric_name
+        self.precomputed_generated_features_source_metric = (
+            precomputed_generated_features_source_metric
+        )
+
+#----------------------------------------------------------------------------
+
+_feature_detector_cache = dict()
+
+def get_feature_detector_name(url):
+    return os.path.splitext(url.split('/')[-1])[0]
+
+def get_feature_detector(url, device=torch.device('cpu'), num_gpus=1, rank=0, verbose=False):
+    assert 0 <= rank < num_gpus
+    key = (url, device)
+    if key not in _feature_detector_cache:
+        is_leader = (rank == 0)
+        if not is_leader and num_gpus > 1:
+            torch.distributed.barrier() # leader goes first
+        with dnnlib.util.open_url(url, verbose=(verbose and is_leader)) as f:
+            _feature_detector_cache[key] = torch.jit.load(f).eval().to(device)
+        if is_leader and num_gpus > 1:
+            torch.distributed.barrier() # others follow
+    return _feature_detector_cache[key]
+
+#----------------------------------------------------------------------------
+
+class FeatureStats:
+    def __init__(self, capture_all=False, capture_mean_cov=False, max_items=None):
+        self.capture_all = capture_all
+        self.capture_mean_cov = capture_mean_cov
+        self.max_items = max_items
+        self.num_items = 0
+        self.num_features = None
+        self.all_features = None
+        self.raw_mean = None
+        self.raw_cov = None
+
+    def set_num_features(self, num_features):
+        if self.num_features is not None:
+            assert num_features == self.num_features
+        else:
+            self.num_features = num_features
+            self.all_features = []
+            self.raw_mean = np.zeros([num_features], dtype=np.float64)
+            self.raw_cov = np.zeros([num_features, num_features], dtype=np.float64)
+
+    def is_full(self):
+        return (self.max_items is not None) and (self.num_items >= self.max_items)
+
+    def append(self, x):
+        x = np.asarray(x, dtype=np.float32)
+        assert x.ndim == 2
+        if (self.max_items is not None) and (self.num_items + x.shape[0] > self.max_items):
+            if self.num_items >= self.max_items:
+                return
+            x = x[:self.max_items - self.num_items]
+
+        self.set_num_features(x.shape[1])
+        self.num_items += x.shape[0]
+        if self.capture_all:
+            self.all_features.append(x)
+        if self.capture_mean_cov:
+            x64 = x.astype(np.float64)
+            self.raw_mean += x64.sum(axis=0)
+            self.raw_cov += x64.T @ x64
+
+    def append_torch(self, x, num_gpus=1, rank=0):
+        assert isinstance(x, torch.Tensor) and x.ndim == 2
+        assert 0 <= rank < num_gpus
+        if num_gpus > 1:
+            ys = []
+            for src in range(num_gpus):
+                y = x.clone()
+                torch.distributed.broadcast(y, src=src)
+                ys.append(y)
+            x = torch.stack(ys, dim=1).flatten(0, 1) # interleave samples
+        self.append(x.cpu().numpy())
+
+    def get_all(self):
+        assert self.capture_all
+        return np.concatenate(self.all_features, axis=0)
+
+    def get_all_torch(self):
+        return torch.from_numpy(self.get_all())
+
+    def get_mean_cov(self):
+        assert self.capture_mean_cov
+        mean = self.raw_mean / self.num_items
+        cov = self.raw_cov / self.num_items
+        cov = cov - np.outer(mean, mean)
+        return mean, cov
+
+    def save(self, pkl_file):
+        with open(pkl_file, 'wb') as f:
+            pickle.dump(self.__dict__, f)
+
+    @staticmethod
+    def load(pkl_file):
+        with open(pkl_file, 'rb') as f:
+            s = dnnlib.EasyDict(pickle.load(f))
+        obj = FeatureStats(capture_all=s.capture_all, max_items=s.max_items)
+        obj.__dict__.update(s)
+        return obj
+
+#----------------------------------------------------------------------------
+
+class ProgressMonitor:
+    def __init__(self, tag=None, num_items=None, flush_interval=1000, verbose=False, progress_fn=None, pfn_lo=0, pfn_hi=1000, pfn_total=1000):
+        self.tag = tag
+        self.num_items = num_items
+        self.verbose = verbose
+        self.flush_interval = flush_interval
+        self.progress_fn = progress_fn
+        self.pfn_lo = pfn_lo
+        self.pfn_hi = pfn_hi
+        self.pfn_total = pfn_total
+        self.start_time = time.time()
+        self.batch_time = self.start_time
+        self.batch_items = 0
+        if self.progress_fn is not None:
+            self.progress_fn(self.pfn_lo, self.pfn_total)
+
+    def update(self, cur_items):
+        assert (self.num_items is None) or (cur_items <= self.num_items)
+        if (cur_items < self.batch_items + self.flush_interval) and (self.num_items is None or cur_items < self.num_items):
+            return
+        cur_time = time.time()
+        total_time = cur_time - self.start_time
+        time_per_item = (cur_time - self.batch_time) / max(cur_items - self.batch_items, 1)
+        if (self.verbose) and (self.tag is not None):
+            print(f'{self.tag:<19s} items {cur_items:<7d} time {dnnlib.util.format_time(total_time):<12s} ms/item {time_per_item*1e3:.2f}')
+        self.batch_time = cur_time
+        self.batch_items = cur_items
+
+        if (self.progress_fn is not None) and (self.num_items is not None):
+            self.progress_fn(self.pfn_lo + (self.pfn_hi - self.pfn_lo) * (cur_items / self.num_items), self.pfn_total)
+
+    def sub(self, tag=None, num_items=None, flush_interval=1000, rel_lo=0, rel_hi=1):
+        return ProgressMonitor(
+            tag             = tag,
+            num_items       = num_items,
+            flush_interval  = flush_interval,
+            verbose         = self.verbose,
+            progress_fn     = self.progress_fn,
+            pfn_lo          = self.pfn_lo + (self.pfn_hi - self.pfn_lo) * rel_lo,
+            pfn_hi          = self.pfn_lo + (self.pfn_hi - self.pfn_lo) * rel_hi,
+            pfn_total       = self.pfn_total,
+        )
+
+#----------------------------------------------------------------------------
+
+def compute_feature_stats_for_dataset(opts, detector_url, detector_kwargs, rel_lo=0, rel_hi=1, batch_size=128, data_loader_kwargs=None, max_items=None, **stats_kwargs):
+    dataset = dnnlib.util.construct_class_by_name(**opts.dataset_kwargs)
+    if data_loader_kwargs is None:
+        data_loader_kwargs = dict(pin_memory=True, num_workers=3, prefetch_factor=2)
+
+    # Try to lookup from cache.
+    cache_file = None
+    if opts.cache:
+        # Choose cache file name.
+        args = dict(dataset_kwargs=opts.dataset_kwargs, detector_url=detector_url, detector_kwargs=detector_kwargs, stats_kwargs=stats_kwargs)
+        md5 = hashlib.md5(repr(sorted(args.items())).encode('utf-8'))
+        cache_tag = f'{dataset.name}-{get_feature_detector_name(detector_url)}-{md5.hexdigest()}'
+        cache_file = dnnlib.make_cache_dir_path('gan-metrics', cache_tag + '.pkl')
+
+        # Check if the file exists (all processes must agree).
+        flag = os.path.isfile(cache_file) if opts.rank == 0 else False
+        if opts.num_gpus > 1:
+            flag = torch.as_tensor(flag, dtype=torch.float32, device=opts.device)
+            torch.distributed.broadcast(tensor=flag, src=0)
+            flag = (float(flag.cpu()) != 0)
+
+        # Load.
+        if flag:
+            return FeatureStats.load(cache_file)
+
+    # Initialize.
+    num_items = len(dataset)
+    if max_items is not None:
+        num_items = min(num_items, max_items)
+    stats = FeatureStats(max_items=num_items, **stats_kwargs)
+    progress = opts.progress.sub(tag='dataset features', num_items=num_items, rel_lo=rel_lo, rel_hi=rel_hi)
+    detector = get_feature_detector(url=detector_url, device=opts.device, num_gpus=opts.num_gpus, rank=opts.rank, verbose=progress.verbose)
+
+    # Main loop.
+    item_subset = [(i * opts.num_gpus + opts.rank) % num_items for i in range((num_items - 1) // opts.num_gpus + 1)]
+    for images, _labels in torch.utils.data.DataLoader(dataset=dataset, sampler=item_subset, batch_size=batch_size, **data_loader_kwargs):
+        if images.shape[1] == 1:
+            images = images.repeat([1, 3, 1, 1])
+        features = detector(images.to(opts.device), **detector_kwargs)
+        stats.append_torch(features, num_gpus=opts.num_gpus, rank=opts.rank)
+        progress.update(stats.num_items)
+
+    # Save to cache.
+    if cache_file is not None and opts.rank == 0:
+        os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+        temp_file = cache_file + '.' + uuid.uuid4().hex
+        stats.save(temp_file)
+        os.replace(temp_file, cache_file) # atomic
+    return stats
+
+#----------------------------------------------------------------------------
+
+def make_seeded_latents(sample_seeds, shape):
+    """Create one CPU float64 latent per explicit per-sample seed."""
+    latents = []
+    for seed in sample_seeds:
+        generator = torch.Generator(device='cpu').manual_seed(int(seed))
+        latents.append(torch.randn(shape, generator=generator, dtype=torch.float64))
+    return torch.stack(latents)
+
+#----------------------------------------------------------------------------
+
+def _atomic_save_npy(path, array):
+    """Save an array without pickle, then atomically publish the final path."""
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    temp_path = path + '.' + uuid.uuid4().hex + '.npy'
+    np.save(temp_path, array, allow_pickle=False)
+    os.replace(temp_path, path)
+
+def _atomic_copy_file(source_path, destination_path):
+    """Copy a file byte-for-byte, then atomically publish the final path."""
+    os.makedirs(os.path.dirname(os.path.abspath(destination_path)), exist_ok=True)
+    temp_path = destination_path + '.' + uuid.uuid4().hex
+    try:
+        shutil.copyfile(source_path, temp_path)
+        os.replace(temp_path, destination_path)
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
+#----------------------------------------------------------------------------
+
+def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel_lo=0, rel_hi=1, batch_size=128, batch_gen=128, jit=False, **stats_kwargs):
+    retain_artifacts = opts.generated_features_path is not None or opts.generated_samples_path is not None
+    if retain_artifacts and opts.num_gpus != 1:
+        raise ValueError('generated artifact retention currently requires num_gpus=1')
+    if opts.generated_features_path is not None:
+        stats_kwargs['capture_all'] = True
+    if opts.precomputed_generated_features_path is not None:
+        reuse_pair = (
+            opts.precomputed_generated_features_source_metric,
+            opts.metric_name,
+        )
+        if reuse_pair not in ALLOWED_PRECOMPUTED_FEATURE_REUSE:
+            raise ValueError(
+                'precomputed generated features are restricted to the audited '
+                'kid50k_full -> fid50k_full reuse path; got '
+                f'{reuse_pair[0]!r} -> {reuse_pair[1]!r}'
+            )
+        if opts.num_gpus != 1:
+            raise ValueError('precomputed generated features currently require num_gpus=1')
+        if opts.generated_samples_path is not None:
+            raise ValueError('cannot retain generated samples while reusing precomputed features')
+        stats = FeatureStats(**stats_kwargs)
+        if stats.max_items is None:
+            raise ValueError('precomputed generated features require max_items')
+        features = np.load(opts.precomputed_generated_features_path, allow_pickle=False)
+        if features.ndim != 2 or features.shape[0] != stats.max_items:
+            raise ValueError(
+                f'precomputed generated features have shape {features.shape}, '
+                f'expected ({stats.max_items}, feature_dim)'
+            )
+        if features.dtype != np.float32 or not np.isfinite(features).all():
+            raise ValueError('precomputed generated features must be finite float32')
+        stats.append(features)
+        if opts.generated_features_path is not None:
+            _atomic_copy_file(
+                opts.precomputed_generated_features_path,
+                opts.generated_features_path,
+            )
+        return stats
+    if opts.generator_batch_size is not None:
+        batch_gen = opts.generator_batch_size
+    elif batch_gen is None:
+        batch_gen = min(batch_size, 4)
+    assert batch_size % batch_gen == 0
+
+    # Setup generator and load labels.
+    G = copy.deepcopy(opts.G).eval().requires_grad_(False).to(opts.device)
+    generator_fn = opts.generator_fn
+
+    dataset = dnnlib.util.construct_class_by_name(**opts.dataset_kwargs)
+
+    # Image generation func.
+    def run_generator(z, c, sample_seeds=None):
+        kwargs = dict(opts.G_kwargs)
+        if sample_seeds is not None:
+            kwargs['sample_seeds'] = sample_seeds
+        img = generator_fn(G, z, c, **kwargs)
+        img = (img * 127.5 + 128).clamp(0, 255).to(torch.uint8)
+        return img
+
+    # JIT.
+    if jit:
+        # TODO: Add an init_fn for this.
+        z = torch.zeros([batch_gen, G.img_channels, G.img_resolution, G.img_resolution], device=opts.device)
+        c = torch.zeros([batch_gen, G.label_dim], device=opts.device)
+        run_generator = torch.jit.trace(run_generator, [z, c], check_trace=False)
+
+    # Initialize.
+    stats = FeatureStats(**stats_kwargs)
+    assert stats.max_items is not None
+    if opts.sample_seeds is not None:
+        if opts.num_gpus != 1:
+            raise ValueError('explicit sample_seeds currently require num_gpus=1')
+        if len(opts.sample_seeds) != stats.max_items:
+            raise ValueError(
+                f'explicit sample_seeds has {len(opts.sample_seeds)} entries, '
+                f'but this metric requires {stats.max_items} generated samples'
+            )
+    progress = opts.progress.sub(tag='generator features', num_items=stats.max_items, rel_lo=rel_lo, rel_hi=rel_hi)
+    detector = get_feature_detector(url=detector_url, device=opts.device, num_gpus=opts.num_gpus, rank=opts.rank, verbose=progress.verbose)
+
+    # Main loop.
+    seed_offset = 0
+    retained_images = [] if opts.generated_samples_path is not None else None
+    while not stats.is_full():
+        images = []
+        for _i in range(batch_size // batch_gen):
+            current_batch = min(batch_gen, stats.max_items - stats.num_items - len(images) * batch_gen)
+            if current_batch <= 0:
+                break
+            batch_sample_seeds = None
+            if opts.sample_seeds is None:
+                z = torch.randn(
+                    [current_batch, G.img_channels, G.img_resolution, G.img_resolution],
+                    device=opts.device,
+                )
+                label_indices = [np.random.randint(len(dataset)) for _i in range(current_batch)]
+            else:
+                batch_sample_seeds = opts.sample_seeds[seed_offset:seed_offset + current_batch]
+                z = make_seeded_latents(
+                    batch_sample_seeds,
+                    [G.img_channels, G.img_resolution, G.img_resolution],
+                ).to(opts.device)
+                label_indices = [int(seed) % len(dataset) for seed in batch_sample_seeds]
+                seed_offset += current_batch
+            c = [dataset.get_label(index) for index in label_indices]
+            c = torch.from_numpy(np.stack(c)).pin_memory().to(opts.device)
+            images.append(run_generator(z, c, sample_seeds=batch_sample_seeds))
+        images = torch.cat(images)
+        if images.shape[1] == 1:
+            images = images.repeat([1, 3, 1, 1])
+        if retained_images is not None:
+            retained_images.append(images.cpu().numpy())
+        features = detector(images, **detector_kwargs)
+        stats.append_torch(features, num_gpus=opts.num_gpus, rank=opts.rank)
+        progress.update(stats.num_items)
+    if opts.rank == 0 and opts.generated_features_path is not None:
+        _atomic_save_npy(opts.generated_features_path, stats.get_all())
+    if opts.rank == 0 and opts.generated_samples_path is not None:
+        _atomic_save_npy(opts.generated_samples_path, np.concatenate(retained_images, axis=0))
+    return stats
+
+#----------------------------------------------------------------------------

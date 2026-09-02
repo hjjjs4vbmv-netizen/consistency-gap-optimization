@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "package_id": "confirmatory-q256-formal-8375d46",
+  "protocol": "staged-checkpoint-evaluation-v1",
+  "phase": "formal",
+  "evidence_class": "formal",
+  "source_run_manifest_sha256": "7391959220cca6615f744ee1d6eb6d7afbace386afb0b5f5423b83cfae6ea21e",
+  "evaluation_git_commit": "8375d46ca4c65e85ab399fcf1effe22ebb766790",
+  "evaluation_environment": {
+    "python": {"implementation": "CPython", "version": "3.9.18"},
+    "scipy_version": "1.13.1",
+    "pytorch_version": "2.3.0",
+    "cuda": {"available": true, "compiled_version": "12.1", "device_count": 1, "gpu_models": ["NVIDIA A100-PCIE-40GB"]},
+    "inception_detector": {"identifier": "inception-2015-12-05", "format": "TorchScript", "return_features": true}
+  },
+  "dataset_sha256": "9fd64620e37bfc0c995535fa52701c9641bcd07635008bfda0c9fbddde1a4ed6",
+  "precision": "fp32",
+  "sample_count": 50000,
+  "generation_seed_range": "0-49999",
+  "metric_seed": 20260730,
+  "metric_names": ["kid50k_full", "fid50k_full"],
+  "metric_repeats": 1,
+  "nfe_modes": {"1": [], "2": [0.821]},
+  "comparison": {
+    "baseline_method": "fixed",
+    "candidate_method": "global110",
+    "candidate_label": "global_only",
+    "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric"],
+    "delta_direction": "global_only - fixed"
+  },
+  "checkpoints": [
+    {"checkpoint_id": "confirmatory-256k-seed3-fixed", "method": "fixed", "training_seed": 3, "budget_kimg": 256, "checkpoint_sha256": "09a41e1e7c03dcdf5ffb93bb68687390278b4b190183dfff92bacc1bf79738d9", "integrity_receipt_status": "passed"},
+    {"checkpoint_id": "confirmatory-256k-seed3-global110", "method": "global110", "training_seed": 3, "budget_kimg": 256, "checkpoint_sha256": "24875430eea4679a416ae921c3e9ae16142f6416d2a0edf970764384ef964bed", "integrity_receipt_status": "passed"},
+    {"checkpoint_id": "confirmatory-256k-seed4-fixed", "method": "fixed", "training_seed": 4, "budget_kimg": 256, "checkpoint_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9", "integrity_receipt_status": "passed"},
+    {"checkpoint_id": "confirmatory-256k-seed4-global110", "method": "global110", "training_seed": 4, "budget_kimg": 256, "checkpoint_sha256": "62a6122a7be523aeb12875d96e96312e9c90efde9eafb75d730c75ceea0e8862", "integrity_receipt_status": "passed"},
+    {"checkpoint_id": "confirmatory-256k-seed5-fixed", "method": "fixed", "training_seed": 5, "budget_kimg": 256, "checkpoint_sha256": "21fab0e501bb27032c0e49a553b05a2800ea0fbe20a2a1d94a6bbf5276f2b72a", "integrity_receipt_status": "passed"},
+    {"checkpoint_id": "confirmatory-256k-seed5-global110", "method": "global110", "training_seed": 5, "budget_kimg": 256, "checkpoint_sha256": "491dc887990e6d9f6fde70b5d12775aaf4bfc6155b731682926b02061c253e9b", "integrity_receipt_status": "passed"}
+  ],
+  "portable_path_policy": "Absolute server paths, dataset paths, checkpoint paths, receipt paths, and output paths are intentionally omitted. run_id is a logical identifier only."
+}

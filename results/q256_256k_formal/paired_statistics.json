@@ -1,0 +1,399 @@
+{
+  "status": "computed",
+  "schema_version": 2,
+  "pairing_key": [
+    "training_seed",
+    "budget_kimg",
+    "nfe",
+    "metric"
+  ],
+  "baseline_method": "fixed",
+  "candidate_method": "global110",
+  "candidate_label": "global_only",
+  "delta_direction": "global_only - fixed",
+  "effect_definitions": {
+    "relative_improvement_pct": "100 * (fixed - global_only) / fixed; positive favors global-only",
+    "geometric_mean_relative_improvement_pct": "100 * (1 - geometric_mean(global_only / fixed))",
+    "rank_consistency_spearman": "Spearman correlation of lower-is-better seed ranks between fixed and global-only",
+    "nfe_effect_heterogeneity": "per-seed relative-improvement difference, NFE=2 minus NFE=1, in percentage points"
+  },
+  "inference_note": "The independent units are the three training seeds. Exact sign tests and bootstrap intervals are descriptive sensitivity summaries, not a basis for strong significance claims.",
+  "statistics": [
+    {
+      "pair_count": 3,
+      "mean_delta": -14.1835921090954,
+      "median_delta": -12.485467394300088,
+      "sample_sd_delta": 3.2969383203453773,
+      "minimum_delta": -17.98343091141612,
+      "maximum_delta": -12.081878021569992,
+      "mean_relative_improvement_pct": 4.5442975938885874,
+      "geometric_mean_relative_improvement_pct": 4.547536960568433,
+      "relative_improvement_sample_sd_pct": 0.9617635389571673,
+      "relative_improvement_cv_pct": 21.164184763132546,
+      "worst_case_relative_improvement_pct": 3.768643908598368,
+      "best_case_relative_improvement_pct": 5.620426786696175,
+      "rank_consistency_spearman": 1.0,
+      "rank_order_exact_match": true,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0,
+      "exact_sign_test": {
+        "test": "exact_two_sided_sign_test",
+        "non_tied_pairs": 3,
+        "positive_signs": 3,
+        "negative_signs": 0,
+        "positive_label": "global_only_better",
+        "negative_label": "fixed_better",
+        "ties_excluded": 0,
+        "p_value": 0.25,
+        "interpretation": "low-resolution descriptive check with one sign per independent training seed; not a basis for a strong significance claim"
+      },
+      "bootstrap_mean_relative_improvement_pct_95ci": {
+        "method": "nonparametric_seed_bootstrap_percentile",
+        "replicates": 10000,
+        "confidence_level": 0.95,
+        "lower": 3.768643908598368,
+        "upper": 5.620426786696175,
+        "interpretation": "descriptive resampling interval; resampled seeds are not additional independent observations"
+      },
+      "leave_one_seed_out": [
+        {
+          "omitted_training_seed": 3,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 4.932124436533696,
+          "median_delta": -15.234449152858105,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 4,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 4.006232997484793,
+          "median_delta": -12.28367270793504,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 5,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 4.694535347647271,
+          "median_delta": -15.032654466493057,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        }
+      ],
+      "metric_name": "fid50k_full",
+      "budget_kimg": 256,
+      "nfe": 1
+    },
+    {
+      "pair_count": 3,
+      "mean_delta": -126.91688047374475,
+      "median_delta": -167.59698874377608,
+      "sample_sd_delta": 110.56037604257908,
+      "minimum_delta": -211.37397965899058,
+      "maximum_delta": -1.7796730184676193,
+      "mean_relative_improvement_pct": 47.441514773584075,
+      "geometric_mean_relative_improvement_pct": 55.5933734683107,
+      "relative_improvement_sample_sd_pct": 38.19963832269721,
+      "relative_improvement_cv_pct": 80.51943219984865,
+      "worst_case_relative_improvement_pct": 3.885377917222421,
+      "best_case_relative_improvement_pct": 75.24947330004183,
+      "rank_consistency_spearman": 0.5,
+      "rank_order_exact_match": false,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0,
+      "exact_sign_test": {
+        "test": "exact_two_sided_sign_test",
+        "non_tied_pairs": 3,
+        "positive_signs": 3,
+        "negative_signs": 0,
+        "positive_label": "global_only_better",
+        "negative_label": "fixed_better",
+        "ties_excluded": 0,
+        "p_value": 0.25,
+        "interpretation": "low-resolution descriptive check with one sign per independent training seed; not a basis for a strong significance claim"
+      },
+      "bootstrap_mean_relative_improvement_pct_95ci": {
+        "method": "nonparametric_seed_bootstrap_percentile",
+        "replicates": 10000,
+        "confidence_level": 0.95,
+        "lower": 3.885377917222421,
+        "upper": 75.24947330004183,
+        "interpretation": "descriptive resampling interval; resampled seeds are not additional independent observations"
+      },
+      "leave_one_seed_out": [
+        {
+          "omitted_training_seed": 3,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 33.5375355103552,
+          "median_delta": -84.68833088112186,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 4,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 39.56742560863213,
+          "median_delta": -106.57682633872909,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 5,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 69.21958320176489,
+          "median_delta": -189.48548420138331,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        }
+      ],
+      "metric_name": "fid50k_full",
+      "budget_kimg": 256,
+      "nfe": 2
+    },
+    {
+      "pair_count": 3,
+      "mean_delta": -0.025125434001286823,
+      "median_delta": -0.023481160402297974,
+      "sample_sd_delta": 0.010316681602448221,
+      "minimum_delta": -0.0361655056476593,
+      "maximum_delta": -0.015729635953903198,
+      "mean_relative_improvement_pct": 7.501846428089169,
+      "geometric_mean_relative_improvement_pct": 7.531509906886913,
+      "relative_improvement_sample_sd_pct": 2.8590875715975774,
+      "relative_improvement_cv_pct": 38.11178486528721,
+      "worst_case_relative_improvement_pct": 5.023325482032681,
+      "best_case_relative_improvement_pct": 10.629778969538284,
+      "rank_consistency_spearman": 1.0,
+      "rank_order_exact_match": true,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0,
+      "exact_sign_test": {
+        "test": "exact_two_sided_sign_test",
+        "non_tied_pairs": 3,
+        "positive_signs": 3,
+        "negative_signs": 0,
+        "positive_label": "global_only_better",
+        "negative_label": "fixed_better",
+        "ties_excluded": 0,
+        "p_value": 0.25,
+        "interpretation": "low-resolution descriptive check with one sign per independent training seed; not a basis for a strong significance claim"
+      },
+      "bootstrap_mean_relative_improvement_pct_95ci": {
+        "method": "nonparametric_seed_bootstrap_percentile",
+        "replicates": 10000,
+        "confidence_level": 0.95,
+        "lower": 5.023325482032681,
+        "upper": 10.629778969538286,
+        "interpretation": "descriptive resampling interval; resampled seeds are not additional independent observations"
+      },
+      "leave_one_seed_out": [
+        {
+          "omitted_training_seed": 3,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 7.826552225785482,
+          "median_delta": -0.02594757080078125,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 4,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 5.937880157364612,
+          "median_delta": -0.019605398178100586,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 5,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 8.741106901117412,
+          "median_delta": -0.029823333024978638,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        }
+      ],
+      "metric_name": "kid50k_full",
+      "budget_kimg": 256,
+      "nfe": 1
+    },
+    {
+      "pair_count": 3,
+      "mean_delta": -0.14742045352856317,
+      "median_delta": -0.20189446955919266,
+      "sample_sd_delta": 0.1290316143174649,
+      "minimum_delta": -0.24028171226382256,
+      "maximum_delta": -8.517876267433167e-05,
+      "mean_relative_improvement_pct": 50.599850918965664,
+      "geometric_mean_relative_improvement_pct": 61.81884222537545,
+      "relative_improvement_sample_sd_pct": 43.934131225758584,
+      "relative_improvement_cv_pct": 86.82660211018792,
+      "worst_case_relative_improvement_pct": 0.24971809104635811,
+      "best_case_relative_improvement_pct": 81.14669354944226,
+      "rank_consistency_spearman": 0.5,
+      "rank_order_exact_match": false,
+      "global_wins": 3,
+      "fixed_wins": 0,
+      "ties": 0,
+      "exact_sign_test": {
+        "test": "exact_two_sided_sign_test",
+        "non_tied_pairs": 3,
+        "positive_signs": 3,
+        "negative_signs": 0,
+        "positive_label": "global_only_better",
+        "negative_label": "fixed_better",
+        "ties_excluded": 0,
+        "p_value": 0.25,
+        "interpretation": "low-resolution descriptive check with one sign per independent training seed; not a basis for a strong significance claim"
+      },
+      "bootstrap_mean_relative_improvement_pct_95ci": {
+        "method": "nonparametric_seed_bootstrap_percentile",
+        "replicates": 10000,
+        "confidence_level": 0.95,
+        "lower": 0.24971809104635811,
+        "upper": 81.14669354944226,
+        "interpretation": "descriptive resampling interval; resampled seeds are not additional independent observations"
+      },
+      "leave_one_seed_out": [
+        {
+          "omitted_training_seed": 3,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 35.32642960372737,
+          "median_delta": -0.1009898241609335,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 4,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 40.69820582024431,
+          "median_delta": -0.12018344551324844,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        },
+        {
+          "omitted_training_seed": 5,
+          "retained_pair_count": 2,
+          "mean_relative_improvement_pct": 75.77491733292533,
+          "median_delta": -0.2210880909115076,
+          "global_wins": 2,
+          "fixed_wins": 0,
+          "ties": 0
+        }
+      ],
+      "metric_name": "kid50k_full",
+      "budget_kimg": 256,
+      "nfe": 2
+    }
+  ],
+  "nfe_effect_heterogeneity": [
+    {
+      "metric_name": "fid50k_full",
+      "budget_kimg": 256,
+      "pair_count": 3,
+      "effect_measure": "per-seed relative improvement percentage; NFE=2 minus NFE=1",
+      "mean_change_percentage_points": 42.89721717969549,
+      "median_change_percentage_points": 57.5692663167918,
+      "sample_sd_change_percentage_points": 38.10081463485301,
+      "minimum_change_percentage_points": -0.3584441691487972,
+      "maximum_change_percentage_points": 71.48082939144346,
+      "nfe2_larger_effect_seeds": 2,
+      "nfe1_larger_effect_seeds": 1,
+      "ties": 0,
+      "exact_sign_test": {
+        "test": "exact_two_sided_sign_test",
+        "non_tied_pairs": 3,
+        "positive_signs": 2,
+        "negative_signs": 1,
+        "positive_label": "NFE2_larger_effect",
+        "negative_label": "NFE1_larger_effect",
+        "ties_excluded": 0,
+        "p_value": 1.0,
+        "interpretation": "low-resolution descriptive check with one sign per independent training seed; not a basis for a strong significance claim"
+      },
+      "bootstrap_mean_change_percentage_points_95ci": {
+        "method": "nonparametric_seed_bootstrap_percentile",
+        "replicates": 10000,
+        "confidence_level": 0.95,
+        "lower": -0.3584441691487972,
+        "upper": 71.48082939144346,
+        "interpretation": "descriptive resampling interval; resampled seeds are not additional independent observations"
+      },
+      "per_seed_changes": [
+        {
+          "training_seed": 3,
+          "nfe2_minus_nfe1_relative_improvement_pct_points": 71.48082939144346
+        },
+        {
+          "training_seed": 4,
+          "nfe2_minus_nfe1_relative_improvement_pct_points": 57.5692663167918
+        },
+        {
+          "training_seed": 5,
+          "nfe2_minus_nfe1_relative_improvement_pct_points": -0.3584441691487972
+        }
+      ]
+    },
+    {
+      "metric_name": "kid50k_full",
+      "budget_kimg": 256,
+      "pair_count": 3,
+      "effect_measure": "per-seed relative improvement percentage; NFE=2 minus NFE=1",
+      "mean_change_percentage_points": 43.0980044908765,
+      "median_change_percentage_points": 59.77336214687009,
+      "sample_sd_change_percentage_points": 42.08898344488779,
+      "minimum_change_percentage_points": -4.773607390986323,
+      "maximum_change_percentage_points": 74.29425871674572,
+      "nfe2_larger_effect_seeds": 2,
+      "nfe1_larger_effect_seeds": 1,
+      "ties": 0,
+      "exact_sign_test": {
+        "test": "exact_two_sided_sign_test",
+        "non_tied_pairs": 3,
+        "positive_signs": 2,
+        "negative_signs": 1,
+        "positive_label": "NFE2_larger_effect",
+        "negative_label": "NFE1_larger_effect",
+        "ties_excluded": 0,
+        "p_value": 1.0,
+        "interpretation": "low-resolution descriptive check with one sign per independent training seed; not a basis for a strong significance claim"
+      },
+      "bootstrap_mean_change_percentage_points_95ci": {
+        "method": "nonparametric_seed_bootstrap_percentile",
+        "replicates": 10000,
+        "confidence_level": 0.95,
+        "lower": -4.773607390986323,
+        "upper": 74.29425871674572,
+        "interpretation": "descriptive resampling interval; resampled seeds are not additional independent observations"
+      },
+      "per_seed_changes": [
+        {
+          "training_seed": 3,
+          "nfe2_minus_nfe1_relative_improvement_pct_points": 74.29425871674572
+        },
+        {
+          "training_seed": 4,
+          "nfe2_minus_nfe1_relative_improvement_pct_points": 59.77336214687009
+        },
+        {
+          "training_seed": 5,
+          "nfe2_minus_nfe1_relative_improvement_pct_points": -4.773607390986323
+        }
+      ]
+    }
+  ]
+}

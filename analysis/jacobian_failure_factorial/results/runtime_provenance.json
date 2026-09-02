@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "node": "gpu0003",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "driver_version": "535.54.03",
+  "container": {
+    "path": "/data/raw/ECT/runtime/containers/nvidia-pytorch-24.04.sif",
+    "size_bytes": 8955748352,
+    "sha256": "7f803becb588c715a190b3ba5780265f78f583ec44e3d542bc670ed91422566f"
+  },
+  "python_version": "3.10.12",
+  "torch_version": "2.3.0a0+6ddf5cf85e.nv24.04",
+  "cuda_runtime_version": "12.4",
+  "cudnn_version": 90100,
+  "numpy_version": "1.24.4",
+  "numpy_pickle_compatibility": {
+    "purpose": "Alias NumPy-2 private pickle import paths to the NumPy-1 package used by the container; numerical array operations remain on NumPy 1.24.4.",
+    "sitecustomize_sha256": "3a75d6ec9e7ffb9f155cf5a8b9861aa470a2e57c185d318c76c24ff0f39aca65"
+  },
+  "determinism_environment": {
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "cuda_visible_device": "0"
+  }
+}

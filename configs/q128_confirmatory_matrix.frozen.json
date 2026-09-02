@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "manifest_kind": "frozen-logical-evaluation-matrix",
+  "protocol": "staged-checkpoint-evaluation-v1",
+  "matrix_id": "q128-fresh-fixed-vs-global110-v1",
+  "description": "Pre-result logical matrix for a fresh q=128 fixed-sigmoid versus global-only g=1.10 comparison. Checkpoint hashes and receipt digests are intentionally pending until the predeclared training endpoints exist; those runtime bindings must not alter this matrix's cell identities or evaluation contracts.",
+  "runtime_binding": {
+    "required_before_evaluation": true,
+    "versioned_paths": false,
+    "required_runtime_fields": ["checkpoint", "checkpoint_sha256", "integrity_receipt"],
+    "binding_rule": "Each runtime cell must preserve checkpoint_id, method, training_seed, budget_kimg, schedule_q, schedule_identity, and global_gap_scale exactly, then bind a completed checkpoint SHA-256 and a passed training-integrity receipt."
+  },
+  "comparison": {
+    "baseline_method": "fixed",
+    "candidate_method": "global110",
+    "candidate_label": "global_only",
+    "pairing_key": ["training_seed", "budget_kimg", "nfe", "metric"],
+    "delta_direction": "global_only - fixed"
+  },
+  "method_definitions": {
+    "fixed": {"label": "fixed sigmoid", "schedule_identity": "sigmoid", "global_gap_scale": 1.0, "local_controller": "disabled"},
+    "global110": {"label": "global-only g=1.10", "schedule_identity": "global_sigmoid", "global_gap_scale": 1.1, "local_controller": "disabled"}
+  },
+  "training": {"schedule_q": 128, "training_seeds": [3, 4, 5], "budget_kimg": [256]},
+  "evaluation_contracts": [
+    {"budget_kimg": 256, "stage": "formal", "evidence_class": "formal", "metric_names": ["kid50k_full", "fid50k_full"], "sample_count": 50000, "generation_seed_range": "0-49999", "metric_seed": 20260730}
+  ],
+  "nfe_modes": {"1": [], "2": [0.821]},
+  "formal_promotion_policy": {
+    "eligibility": "provenance_and_integrity_only",
+    "quick_metric_performance": "not_an_eligibility_criterion",
+    "required_formal_checkpoint_ids": [
+      "q128-fresh-256k-seed3-fixed", "q128-fresh-256k-seed3-global110",
+      "q128-fresh-256k-seed4-fixed", "q128-fresh-256k-seed4-global110",
+      "q128-fresh-256k-seed5-fixed", "q128-fresh-256k-seed5-global110"
+    ],
+    "required_evaluation_checkpoint_ids": [
+      "q128-fresh-256k-seed3-fixed", "q128-fresh-256k-seed3-global110",
+      "q128-fresh-256k-seed4-fixed", "q128-fresh-256k-seed4-global110",
+      "q128-fresh-256k-seed5-fixed", "q128-fresh-256k-seed5-global110"
+    ],
+    "rule": "Every predeclared checkpoint must enter formal evaluation when its immutable provenance matches and its training-integrity receipt passes. Quick KID/FID performance, if an implementation smoke is run, may not exclude, add, substitute, or otherwise select a formal checkpoint."
+  },
+  "cells": [
+    {"checkpoint_id": "q128-fresh-256k-seed3-fixed", "method": "fixed", "training_seed": 3, "budget_kimg": 256, "schedule_q": 128, "schedule_identity": "sigmoid", "global_gap_scale": 1.0},
+    {"checkpoint_id": "q128-fresh-256k-seed3-global110", "method": "global110", "training_seed": 3, "budget_kimg": 256, "schedule_q": 128, "schedule_identity": "global_sigmoid", "global_gap_scale": 1.1},
+    {"checkpoint_id": "q128-fresh-256k-seed4-fixed", "method": "fixed", "training_seed": 4, "budget_kimg": 256, "schedule_q": 128, "schedule_identity": "sigmoid", "global_gap_scale": 1.0},
+    {"checkpoint_id": "q128-fresh-256k-seed4-global110", "method": "global110", "training_seed": 4, "budget_kimg": 256, "schedule_q": 128, "schedule_identity": "global_sigmoid", "global_gap_scale": 1.1},
+    {"checkpoint_id": "q128-fresh-256k-seed5-fixed", "method": "fixed", "training_seed": 5, "budget_kimg": 256, "schedule_q": 128, "schedule_identity": "sigmoid", "global_gap_scale": 1.0},
+    {"checkpoint_id": "q128-fresh-256k-seed5-global110", "method": "global110", "training_seed": 5, "budget_kimg": 256, "schedule_q": 128, "schedule_identity": "global_sigmoid", "global_gap_scale": 1.1}
+  ]
+}

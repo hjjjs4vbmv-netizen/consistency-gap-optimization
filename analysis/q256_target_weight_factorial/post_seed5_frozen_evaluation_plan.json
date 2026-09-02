@@ -1,0 +1,65 @@
+{
+  "schema": "ect.q256.post-seed5-frozen-evaluation-plan/v1",
+  "created_utc": "2026-08-20T16:25:59Z",
+  "status": "SCHEDULED_NOT_STARTED",
+  "automation_id": "q256-formal-runs",
+  "training_source_commit": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+  "training_root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/formal/formal-direct-dcca41b-deterministic-v1",
+  "trigger": {
+    "expected_cells": 12,
+    "expected_attempts_per_cell": 2000,
+    "expected_kimg_per_cell": 256.0,
+    "require_final_artifacts": true,
+    "require_worker_pass": true,
+    "require_no_training_process": true,
+    "require_no_real_training_error": true
+  },
+  "scope": {
+    "seeds": [3, 4, 5],
+    "arms": ["A", "B", "C", "D"],
+    "checkpoint_policy": "all_12_final_256kimg_checkpoints_no_intermediate_selection",
+    "preview_selection_allowed": false,
+    "arm_subset_allowed": false
+  },
+  "matrix_binding": {
+    "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/matrix-binding-direct-dcca41b-v1",
+    "path_absent_at_schedule_time": true,
+    "direct_queue_limitation": "canonical matrix plan/completion and per-cell validation/hash receipts were not produced at launch",
+    "allowed_action": "minimal provenance and matrix binding from immutable completed artifacts",
+    "retraining_allowed": false,
+    "checkpoint_mutation_allowed": false,
+    "fail_closed_if_unbindable": true
+  },
+  "evaluation": {
+    "gpu_physical_index": 0,
+    "gpu_uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+    "gpu_role": "same GPU currently running seed5",
+    "forbid_switch_to_physical_gpu_1_without_user_instruction": true,
+    "require_idle_gpu": true,
+    "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-dcca41b-primary-first-v1",
+    "root_absent_at_schedule_time": true,
+    "primary_first": true,
+    "phase_order": ["all_12_nfe1", "all_12_nfe2", "collection"],
+    "sample_count": 50000,
+    "sample_seeds": "0-49999",
+    "metric_seed": 20260730,
+    "precision": "fp32",
+    "nfe": {
+      "1": {"mid_t": [], "metrics": ["fid50k_full", "kid50k_full"], "primary": "fid50k_full"},
+      "2": {"mid_t": [0.821], "metrics": ["fid50k_full", "kid50k_full"]}
+    },
+    "scheduling_adapter_policy": "may only reorder frozen jobs; must not change evaluation numerics",
+    "silent_retry_allowed": false
+  },
+  "collection": {
+    "root": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/evaluation/frozen-eval-dcca41b-primary-first-v1-results",
+    "root_absent_at_schedule_time": true,
+    "contrasts": ["Y_C-Y_A", "Y_B-Y_D", "Y_D-Y_A", "Y_B-Y_C"],
+    "interaction": "Y_B-Y_C-Y_D+Y_A",
+    "report_all_seed_level_raw_values": true
+  },
+  "completion_action": {
+    "record_commit_push_sync": true,
+    "disable_automation": true
+  }
+}
