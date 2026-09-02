@@ -1,0 +1,62 @@
+{
+  "candidate": {
+    "g": 1.0,
+    "q": 232.72727272727272
+  },
+  "claim_boundary": "The FP32 inverse-gap weight exceeds the frozen field tolerance on the dense grid. This is a numerical implementation mismatch, not evidence for an independent q mechanism. Real-checkpoint loss and gradient propagation remain pending.",
+  "coordinate_eps_multiplier": 32.0,
+  "coordinate_gate_passed": true,
+  "dense_grid": [
+    {
+      "candidate_zero_or_clipped_count": 0,
+      "coordinate_gate_passed": true,
+      "coordinate_tolerance": 3.814697265625e-06,
+      "delta_normalized_max_abs": 1.8087899231589865e-07,
+      "delta_relative_l2": 1.1605060247959424e-05,
+      "dtype": "float32",
+      "field_tolerance": 1e-06,
+      "grid_size": 8192,
+      "r_normalized_max_abs": 1.8169155931875112e-07,
+      "reference_zero_or_clipped_count": 0,
+      "t_max": 10000.0,
+      "t_min": 9.999999974752427e-07,
+      "weight_gate_passed": false,
+      "weight_relative_l2": 2.379224544314753e-06
+    },
+    {
+      "candidate_zero_or_clipped_count": 0,
+      "coordinate_gate_passed": true,
+      "coordinate_tolerance": 7.105427357601002e-15,
+      "delta_normalized_max_abs": 2.4879754714734167e-16,
+      "delta_relative_l2": 2.0394918010839855e-14,
+      "dtype": "float64",
+      "field_tolerance": 1e-06,
+      "grid_size": 8192,
+      "r_normalized_max_abs": 2.498712125136145e-16,
+      "reference_zero_or_clipped_count": 0,
+      "t_max": 10000.0,
+      "t_min": 1e-06,
+      "weight_gate_passed": true,
+      "weight_relative_l2": 4.401268435022466e-15
+    }
+  ],
+  "field_tolerance": 1e-06,
+  "implementation_sha256": {
+    "common_state_loader": "a198934e62a73aeeaef87976b54f753c53207d03d6d3a81d1a4fc34b6bcbfbaf",
+    "fixed_randomness_helper": "c98a1fb190cfce04c882b3f979c4361735afd93340cbaa592c357a68d1aea050",
+    "loss": "212b6ee18b4b8589421da29dd24caf1dd5a102df0e1417cd087da5db74fe3102",
+    "networks": "180692e5dca4dabb1a8c8915c4d823c242cc3bf64d6fc862aea809a148359dfc",
+    "protocol": "d7b781feeaff6c364c614df1d5aae53f43e7df7c09343b1ae4ce5a71d73d3722",
+    "runner": "0a4af28262757b2fae2ea68c9745f33c250322822256bb12f94470b412c1283b",
+    "schedules": "9bf88c5db75939c40ad4e1b3e0c5282c0becd5ef08a9bbecefe06cfd0db34054",
+    "theory_note": "ca5f518f61d1f3c440571092ce3f1fa7253f39e6b2e238d2cdbb4655f1872c25"
+  },
+  "minibatch_status": "PENDING_SERVER_SSH_UNAVAILABLE",
+  "reference": {
+    "g": 1.1,
+    "q": 256.0
+  },
+  "schema": "ect.q-g-production-parity-grid-partial/v1",
+  "status": "FAIL_DENSE_GRID_FIELD_GATE_MINIBATCH_PENDING",
+  "weight_field_gate_passed": false
+}

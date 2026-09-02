@@ -1,0 +1,24 @@
+{
+  "schema": "ect.q256.target-component-audit-descriptive-summary/v1",
+  "status": "PASS_DESCRIPTIVE_SUMMARY",
+  "independent_unit": "training_seed",
+  "seed_count": 3,
+  "seeds": [
+    3,
+    4,
+    5
+  ],
+  "budgets_kimg": [
+    256,
+    512,
+    768,
+    1024
+  ],
+  "matrix_validation_sha256": "3920d76a42c1623b64978d5e9dcd8163537888625bf6de7d7b1fab17bcc88969",
+  "fid_source_sha256": "46267b0f0b178b7df3e99a356b5b77d2ffd181a8be951996c3e77f4db5b4c77f",
+  "aligned_csv_sha256": "12b86b65f272a9637279f526241fc66998ea33d4bd8410caf7a111ef6aa4d37b",
+  "budget_csv_sha256": "e9064d986067bdd2360e8fb0216fa2ca92f0f4d9c6bfb45334cbe1b1795cdeef",
+  "seed_changes_csv_sha256": "0dc76904a15397f58b51239001e4a4b4dfa387d5c02742cdd5b00efa68480096",
+  "descriptive_only": true,
+  "claim_boundary": "The target component is small and nonzero in this fixed-batch whole-model mean-gradient audit. Its magnitude does not show a seed-consistent contraction from 256 to 1024 kimg. This does not identify optimizer causality or prove that batch-level target effects are negligible."
+}
