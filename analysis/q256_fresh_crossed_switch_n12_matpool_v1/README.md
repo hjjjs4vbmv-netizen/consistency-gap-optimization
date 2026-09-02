@@ -69,6 +69,12 @@ band. NFE2, KID, intermediate milestones, AULC, individual cells, interaction,
 and checkpoint-ranking diagnostics are descriptive and cannot rescue or alter
 the primary verdict.
 
+The archived n=11 finalizer also inherited an even-sample median implementation
+from the original n=12 design. The six descriptive medians are corrected in the
+public bundle's `MEDIAN_CORRECTION_V1.md` and `median_correction_v1.json`. The
+original formal artifacts remain unchanged for provenance. The correction does
+not affect any inferential output or the `INCONCLUSIVE` primary verdict.
+
 Accordingly, manuscript language must not state that fresh replication confirmed
 the claim that B history improves future quality under both current schedules.
 The supported wording is: a seed3--7 discovery was followed by an outcome-blind,

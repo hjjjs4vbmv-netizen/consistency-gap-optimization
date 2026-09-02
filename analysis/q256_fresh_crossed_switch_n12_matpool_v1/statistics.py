@@ -17,6 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import experiment  # noqa: E402
+from analysis.q256_fresh_crossed_switch_n12_matpool_v1.statistics_core import median  # noqa: E402
 
 DELTA = math.log(1.03)
 
@@ -24,12 +25,6 @@ DELTA = math.log(1.03)
 def mean(values) -> float:
     values = list(values)
     return sum(values) / len(values)
-
-
-def median(values: list[float]) -> float:
-    ordered = sorted(values)
-    midpoint = len(ordered) // 2
-    return (ordered[midpoint - 1] + ordered[midpoint]) / 2
 
 
 def sample_sd(values: list[float]) -> float:

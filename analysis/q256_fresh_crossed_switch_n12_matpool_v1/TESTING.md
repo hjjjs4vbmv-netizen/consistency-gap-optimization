@@ -41,6 +41,8 @@ python -m unittest discover -v -s tests \
 The dependency-free unit suite includes a valid-chain case and field/source
 tampering cases for the amendment schema, quality-observation attestation,
 decision threshold, numeric-recovery authorization, terminal failure receipt,
-and all eleven completion-receipt bindings. It does not claim to replace the
-frozen GPU-runtime tests; it specifically makes the authorization-chain fix
-reviewable without Torch or a GPU.
+all eleven completion-receipt bindings, conventional odd- and even-sample
+medians, and the published n=11 correction's bindings to the preserved
+seed-level contrast table and source artifacts. It does not claim to replace
+the frozen GPU-runtime tests; it makes these current-source checks reviewable
+without Torch or a GPU.

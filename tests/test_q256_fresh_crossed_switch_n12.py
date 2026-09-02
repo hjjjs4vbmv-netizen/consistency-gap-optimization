@@ -412,6 +412,11 @@ class FrozenStatisticsTests(unittest.TestCase):
 
     def test_scipy_intervals_and_category_checks_are_json_native(self):
         summary = frozen_statistics.summarize([float(value) / 100 for value in range(11)])
+        even_summary = frozen_statistics.summarize(
+            [float(value) / 100 for value in range(12)]
+        )
+        self.assertEqual(summary["median"], 0.05)
+        self.assertEqual(even_summary["median"], 0.055)
         _, checks = frozen_statistics.primary_verdict(summary)
         json.dumps({"summary": summary, "checks": checks})
         self.assertTrue(all(type(value) is bool for value in checks.values()))

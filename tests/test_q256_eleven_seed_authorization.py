@@ -1,4 +1,5 @@
 import copy
+import csv
 import hashlib
 import json
 import tempfile
@@ -6,6 +7,16 @@ import unittest
 from pathlib import Path
 
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import authorization
+from analysis.q256_fresh_crossed_switch_n12_matpool_v1.statistics_core import median
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BUNDLE = (
+    REPO_ROOT
+    / "results"
+    / "q256_fresh_crossed_switch_n12_matpool_v1"
+    / "final_11seed"
+)
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -219,6 +230,58 @@ class ElevenSeedAuthorizationFailClosedTests(unittest.TestCase):
         self.assertIn("no author amendment", n12)
         self.assertIn("seed38 excluded", n11)
         self.assertIn("n=12 claim is abandoned: True", n11)
+
+
+class MedianRegressionTests(unittest.TestCase):
+    def test_odd_sample_uses_middle_order_statistic(self):
+        self.assertEqual(median([11, 1, 7, 3, 9, 5, 2, 4, 6, 8, 10]), 6)
+
+    def test_even_sample_averages_two_middle_order_statistics(self):
+        self.assertEqual(median([12, 1, 7, 3, 9, 5, 2, 4, 6, 8, 10, 11]), 6.5)
+
+    def test_empty_sample_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "at least one value"):
+            median([])
+
+
+class PublishedCorrectionTests(unittest.TestCase):
+    def setUp(self):
+        self.correction = json.loads(
+            (BUNDLE / "median_correction_v1.json").read_text(encoding="utf-8")
+        )
+        self.analysis = json.loads((BUNDLE / "analysis.json").read_text(encoding="utf-8"))
+        with (BUNDLE / "H_C_I_Q_G_per_seed.csv").open(newline="", encoding="utf-8") as handle:
+            self.rows = list(csv.DictReader(handle))
+
+    def test_correction_matches_archived_seed_level_contrasts(self):
+        for item in self.correction["corrections"]:
+            quantity = item["quantity"]
+            values = [float(row[quantity]) for row in self.rows]
+            self.assertEqual(len(values), 11)
+            self.assertEqual(item["archived_value"], self.analysis["summaries"][quantity]["median"])
+            self.assertEqual(item["corrected_value"], median(values))
+
+    def test_source_bindings_match_preserved_artifacts(self):
+        for filename, expected in self.correction["source_bindings"].items():
+            observed = hashlib.sha256((BUNDLE / filename).read_bytes()).hexdigest()
+            self.assertEqual(observed, expected)
+
+    def test_primary_inference_is_explicitly_unchanged(self):
+        unchanged = self.correction["unchanged_primary_inference"]
+        archived = self.analysis["summaries"]["H"]
+        for key in (
+            "mean",
+            "sample_sd",
+            "ci95_two_sided",
+            "ci90_two_sided",
+            "negative_count",
+            "positive_count",
+            "zero_count",
+            "exact_two_sided_sign_flip_p",
+        ):
+            self.assertEqual(unchanged[key], archived[key])
+        self.assertEqual(unchanged["primary_verdict"], self.analysis["primary_verdict"])
+        self.assertEqual(unchanged["primary_verdict"], "INCONCLUSIVE")
 
 
 if __name__ == "__main__":
