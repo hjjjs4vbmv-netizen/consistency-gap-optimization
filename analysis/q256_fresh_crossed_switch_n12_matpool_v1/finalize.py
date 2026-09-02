@@ -43,6 +43,7 @@ def main() -> int:
     recovery_preparation_receipt = None
     postseal_authorization_sha = None
     postseal_archive_receipt = None
+    postseal_recovery_index = 0
     if args.eleven_seed_authorization is not None:
         authorization_path = args.eleven_seed_authorization.resolve(strict=True)
         experiment.validate_eleven_seed_authorization(
@@ -61,7 +62,8 @@ def main() -> int:
             raise RuntimeError("evaluation recovery finalization requires eleven-seed authorization")
         recovery_path = args.evaluation_recovery_authorization.resolve(strict=True)
         recovery = experiment.validate_evaluation_recovery1_authorization(
-            recovery_path, protocol_path, require_commit=True
+            recovery_path, protocol_path,
+            require_commit=args.postseal_report_recovery_authorization is None
         )
         if recovery.get("eleven_seed_authorization_sha256") != authorization_sha:
             raise RuntimeError("evaluation recovery finalization amendment binding mismatch")
@@ -80,6 +82,7 @@ def main() -> int:
         )
         postseal_authorization_sha = experiment.sha256_file(postseal_path)
         postseal_archive_receipt = Path(postseal["archive_receipt_path"])
+        postseal_recovery_index = postseal["manual_postseal_report_recovery_index"]
     training = experiment.load_json(training_path)
     integrity = experiment.load_json(integrity_path)
     seal = experiment.load_json(eval_root / "evaluation_matrix_seal.json")
@@ -140,6 +143,7 @@ def main() -> int:
 - Training matrix: PASS ({integrity['counts']['prefixes']}/{2 * len(seeds)} prefixes; {integrity['counts']['suffixes']}/{4 * len(seeds)} suffixes).
 - Blind evaluation: SEALED_PASS ({seal['sealed_jobs']}/{expected_jobs} jobs), decoded only after the full amended matrix seal.
 - Manual evaluation recovery: {1 if recovery_authorization_sha else 0}; the failed attempt is preserved and the replacement cache passed a non-metric storage gate.
+- Manual postseal report recovery: {postseal_recovery_index}; no evaluation rerun or re-decode was performed.
 - Analysis population: {len(seeds)} complete seeds ({', '.join(map(str, seeds))}); seed38 excluded by explicit author amendment; the original n=12 claim is abandoned: {authorization_sha is not None}.
 - Protocol SHA256: `{experiment.sha256_file(protocol_path)}`.
 - Implementation commit: `{protocol['implementation_commit']}`; final HEAD `{head}`; clean worktree: `{not bool(status)}`.
@@ -190,7 +194,7 @@ The primary classification is determined only by seed-level H from 1024-kimg NFE
         "evaluation_recovery_authorization_sha256": recovery_authorization_sha,
         "manual_evaluation_recovery_count": 1 if recovery_authorization_sha else 0,
         "postseal_report_recovery_authorization_sha256": postseal_authorization_sha,
-        "manual_postseal_report_recovery_count": 1 if postseal_authorization_sha else 0,
+        "manual_postseal_report_recovery_count": postseal_recovery_index,
         "included_seeds": list(seeds), "original_n12_claim_abandoned": authorization_sha is not None,
         "compute_ledger_rows": len(ledger),
     })

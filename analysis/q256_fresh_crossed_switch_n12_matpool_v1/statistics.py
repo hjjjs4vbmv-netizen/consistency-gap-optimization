@@ -148,7 +148,8 @@ def main() -> int:
             raise RuntimeError("evaluation recovery statistics require eleven-seed authorization")
         recovery_path = args.evaluation_recovery_authorization.resolve(strict=True)
         recovery = experiment.validate_evaluation_recovery1_authorization(
-            recovery_path, protocol_path, require_commit=True
+            recovery_path, protocol_path,
+            require_commit=args.postseal_report_recovery_authorization is None
         )
         if recovery.get("eleven_seed_authorization_sha256") != authorization_sha:
             raise RuntimeError("evaluation recovery statistics amendment binding mismatch")

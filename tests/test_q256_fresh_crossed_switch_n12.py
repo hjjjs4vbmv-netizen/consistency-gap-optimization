@@ -163,6 +163,17 @@ class ElevenSeedAmendmentTests(unittest.TestCase):
             evaluation.evaluation_profile(Path("/missing-protocol"), None,
                                           Path("/missing-recovery"))
 
+    def test_postseal_recovery_v2_parser_is_explicit(self):
+        from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import postseal_recovery
+        args = postseal_recovery.parser().parse_args([
+            "authorize-v2", "--protocol", "/protocol.json",
+            "--prior-authorization", "/prior.json",
+            "--prior-archive-receipt", "/receipt.json",
+            "--failure-log", "/failure.log", "--amendment-commit", "c" * 40,
+            "--destination", "/authorization-v2.json",
+        ])
+        self.assertEqual(args.command, "authorize-v2")
+
 
 class ProtocolTests(unittest.TestCase):
     def minimal_protocol(self):
