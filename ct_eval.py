@@ -15,10 +15,17 @@ from torch_utils import distributed as dist
 from torch_utils import training_stats
 from torch_utils import misc
 
-from metrics import metric_main
+from metrics import metric_main, metric_utils
 
 import warnings
 warnings.filterwarnings('ignore', 'Grad strides do not match bucket view strides') # False warning printed by PyTorch 1.12.
+
+IMAGENET64_FEATURE_COUNT = 50_000
+IMAGENET64_FEATURE_DIM = 2_048
+IMAGENET64_CLASS_COUNT = 1_000
+IMAGENET64_METRIC_SEED = 20_260_730
+IMAGENET64_NFE2_MID_T = 1.526
+INCEPTION_DETECTOR_URL = metric_utils.OFFICIAL_EDM2_INCEPTION_URL
 
 #----------------------------------------------------------------------------
 # Parse a comma separated list of numbers or ranges and return a list of ints.
@@ -48,19 +55,67 @@ class CommaSeparatedList(click.ParamType):
 
 #----------------------------------------------------------------------------
 
+def validate_imagenet64_feature_contract(
+    opts, sample_seeds, world_size, resolution, num_channels, label_dim,
+):
+    if opts.arch != 'edm2' or opts.preset != 'edm2-img64-s':
+        raise click.ClickException(
+            '--feature-only requires --arch=edm2 --preset=edm2-img64-s'
+        )
+    if not opts.resume:
+        raise click.ClickException('--feature-only requires --resume=CHECKPOINT')
+    if (
+        resolution != 64
+        or num_channels != 3
+        or not opts.cond
+        or label_dim != IMAGENET64_CLASS_COUNT
+    ):
+        raise click.ClickException(
+            '--feature-only requires a conditional ImageNet-64 dataset with '
+            f'{IMAGENET64_CLASS_COUNT} classes'
+        )
+    if opts.fp16:
+        raise click.ClickException('--feature-only requires --fp16=False')
+    if world_size != 1:
+        raise click.ClickException('--feature-only requires exactly one GPU')
+    feature_count = getattr(opts, 'engineering_feature_count', None)
+    feature_count = IMAGENET64_FEATURE_COUNT if feature_count is None else feature_count
+    if sample_seeds != list(range(feature_count)):
+        raise click.ClickException(
+            f'--feature-only requires --sample-seeds=0-{feature_count - 1}'
+        )
+    if opts.metrics:
+        raise click.ClickException('--feature-only requires --metrics=none')
+    if opts.retain_generated_artifacts:
+        raise click.ClickException(
+            '--feature-only does not permit retained generated samples'
+        )
+    if opts.seed is not None and opts.seed != IMAGENET64_METRIC_SEED:
+        raise click.ClickException(
+            f'--feature-only requires --seed={IMAGENET64_METRIC_SEED}'
+        )
+    if opts.nfe == '2' and tuple(opts.mid_t) != (IMAGENET64_NFE2_MID_T,):
+        raise click.ClickException(
+            f'ImageNet-64 NFE=2 requires --mid_t={IMAGENET64_NFE2_MID_T}'
+        )
+
+#----------------------------------------------------------------------------
+
 @click.command()
 
 # Main options.
 @click.option('--outdir',        help='Where to save the results', metavar='DIR',                   type=str, required=True)
 @click.option('--data',          help='Path to the dataset', metavar='ZIP|DIR',                     type=str, required=True)
 @click.option('--cond',          help='Train class-conditional model', metavar='BOOL',              type=bool, default=False, show_default=True)
-@click.option('--arch',          help='Network architecture', metavar='ddpmpp|ncsnpp|adm',          type=click.Choice(['ddpmpp', 'ncsnpp', 'adm']), default='ddpmpp', show_default=True)
+@click.option('--arch',          help='Network architecture', metavar='ddpmpp|ncsnpp|adm|edm2',     type=click.Choice(['ddpmpp', 'ncsnpp', 'adm', 'edm2']), default='ddpmpp', show_default=True)
+@click.option('--preset',        help='Model configuration preset', metavar='STR',                  type=click.Choice(['edm2-img64-s']), default=None)
 @click.option('--precond',       help='Preconditioning & loss function', metavar='vp|ve|edm|ct',    type=click.Choice(['vp', 've', 'edm', 'ct']), default='ct', show_default=True)
 
 # Hyperparameters.
 @click.option('--cbase',         help='Channel multiplier  [default: varies]', metavar='INT',       type=int)
 @click.option('--cres',          help='Channels per resolution  [default: varies]', metavar='LIST', type=parse_int_list)
 @click.option('--dropout',       help='Dropout probability', metavar='FLOAT',                       type=click.FloatRange(min=0, max=1), default=0.13, show_default=True)
+@click.option('--dropres',       help='Feature resolution where EDM2 dropout is applied', metavar='INT', type=click.IntRange(min=1))
 @click.option('--augment',       help='Augment probability', metavar='FLOAT',                       type=click.FloatRange(min=0, max=1), default=0.12, show_default=True)
 @click.option('--xflip',         help='Enable dataset x-flips', metavar='BOOL',                     type=bool, default=False, show_default=True)
 
@@ -99,6 +154,9 @@ class CommaSeparatedList(click.ParamType):
 @click.option('--metric-repeats', help='Number of times to repeat each metric',                     type=click.IntRange(min=1), default=3, show_default=True)
 @click.option('--sample-seeds',  help='Explicit per-sample seed list/range (single-GPU only)',       metavar='LIST', type=str)
 @click.option('--retain-generated-artifacts', help='Retain exact generated samples and metric features', is_flag=True)
+@click.option('--feature-only', help='Extract formal ImageNet-64 Inception features without images or quality metrics', is_flag=True)
+@click.option('--feature-output', help='Output .npy path for --feature-only', metavar='NPY', type=str)
+@click.option('--engineering-feature-count', help='Engineering-only feature extraction count below 50000', metavar='INT', type=click.IntRange(min=2, max=IMAGENET64_FEATURE_COUNT - 1))
 
 
 def main(**kwargs):
@@ -109,6 +167,16 @@ def main(**kwargs):
     torch.multiprocessing.set_start_method('spawn')
     dist.init()
 
+    if opts.preset == 'edm2-img64-s':
+        if opts.arch != 'edm2':
+            raise click.ClickException('edm2-img64-s requires --arch=edm2')
+        opts.cbase = 192
+        opts.dropout = 0.40
+        opts.dropres = 16
+        opts.augment = 0
+    if opts.feature_output is not None and not opts.feature_only:
+        raise click.ClickException('--feature-output requires --feature-only')
+
     # Initialize config dict.
     c = dnnlib.EasyDict()
     c.dataset_kwargs = dnnlib.EasyDict(class_name='training.dataset.ImageFolderDataset', path=opts.data, use_labels=opts.cond, xflip=opts.xflip, cache=opts.cache)
@@ -118,6 +186,8 @@ def main(**kwargs):
     try:
         dataset_obj = dnnlib.util.construct_class_by_name(**c.dataset_kwargs)
         dataset_name = dataset_obj.name
+        dataset_label_dim = dataset_obj.label_dim
+        dataset_num_channels = dataset_obj.num_channels
         c.dataset_kwargs.resolution = dataset_obj.resolution # be explicit about dataset resolution
         c.dataset_kwargs.max_size = len(dataset_obj) # be explicit about dataset size
         if opts.cond and not dataset_obj.has_labels:
@@ -133,12 +203,21 @@ def main(**kwargs):
     elif opts.arch == 'ncsnpp':
         c.network_kwargs.update(model_type='SongUNet', embedding_type='fourier', encoder_type='residual', decoder_type='standard')
         c.network_kwargs.update(channel_mult_noise=2, resample_filter=[1,3,3,1], model_channels=128, channel_mult=[2,2,2])
-    else:
-        assert opts.arch == 'adm'
+    elif opts.arch == 'adm':
         c.network_kwargs.update(model_type='DhariwalUNet', model_channels=192, channel_mult=[1,2,3,4])
+    else:
+        assert opts.arch == 'edm2'
+        if opts.preset != 'edm2-img64-s':
+            raise click.ClickException('--arch=edm2 requires --preset=edm2-img64-s')
+        c.network_kwargs.update(
+            class_name='training.networks_edm2.Precond',
+            model_channels=192,
+            dropout=0.40,
+            dropout_res=16,
+        )
 
-    # Preconditioning.
-    c.network_kwargs.class_name = 'training.networks.ECMPrecond'
+    if opts.arch != 'edm2':
+        c.network_kwargs.class_name = 'training.networks.ECMPrecond'
 
     # Network options.
     if opts.cbase is not None:
@@ -163,6 +242,15 @@ def main(**kwargs):
         raise click.ClickException('--retain-generated-artifacts currently requires exactly one GPU')
     if 128 % opts.metric_generator_batch != 0:
         raise click.ClickException('--metric-generator-batch must divide the metric batch size 128')
+    if opts.feature_only:
+        validate_imagenet64_feature_contract(
+            opts,
+            sample_seeds,
+            dist.get_world_size(),
+            c.dataset_kwargs.resolution,
+            dataset_num_channels,
+            dataset_label_dim,
+        )
     c.update(
         batch_size=opts.eval_batch,
         mid_t=() if opts.nfe == '1' else opts.mid_t,
@@ -171,10 +259,20 @@ def main(**kwargs):
         sample_seeds=sample_seeds,
         retain_generated_artifacts=opts.retain_generated_artifacts,
         metric_generator_batch=opts.metric_generator_batch,
+        feature_only=opts.feature_only,
+        feature_output=opts.feature_output,
+        feature_count=(
+            opts.engineering_feature_count
+            if opts.engineering_feature_count is not None
+            else IMAGENET64_FEATURE_COUNT
+        ),
+        balanced_class_labels=(IMAGENET64_CLASS_COUNT if opts.feature_only else None),
     )
 
     # Random seed.
-    if opts.seed is not None:
+    if opts.feature_only:
+        c.seed = IMAGENET64_METRIC_SEED
+    elif opts.seed is not None:
         c.seed = opts.seed
     else:
         seed = torch.randint(1 << 31, size=[], device=torch.device('cuda'))
@@ -307,7 +405,11 @@ def generator_fn(
     t_steps = torch.tensor([t_max]+list(mid_t), dtype=torch.float64, device=latents.device)
 
     # t_0 = T, t_N = 0
-    t_steps = torch.cat([net.round_sigma(t_steps), torch.zeros_like(t_steps[:1])])
+    round_sigma = getattr(net, 'round_sigma', None)
+    t_steps = torch.cat([
+        round_sigma(t_steps) if round_sigma is not None else t_steps,
+        torch.zeros_like(t_steps[:1]),
+    ])
 
     intermediate_steps = max(len(t_steps) - 2, 0)
     if step_noises is not None and len(step_noises) != intermediate_steps:
@@ -356,6 +458,10 @@ def evaluation(
     sample_seeds        = None,     # Explicit per-sample seeds for proxy metrics.
     retain_generated_artifacts = False, # Save exact generated samples/features used by metrics.
     metric_generator_batch = 128, # Generator microbatch used inside metric feature extraction.
+    feature_only        = False,    # Extract features without previews or metric values.
+    feature_output      = None,     # Destination for generated features.
+    feature_count       = None,     # Formal count, or explicit engineering gate count.
+    balanced_class_labels = None,   # Direct one-hot label count for formal generation.
     cudnn_benchmark     = True,     # Enable torch.backends.cudnn.benchmark?
     device              = torch.device('cuda'),
 ):
@@ -379,7 +485,7 @@ def evaluation(
     interface_kwargs = dict(img_resolution=dataset_obj.resolution, img_channels=dataset_obj.num_channels, label_dim=dataset_obj.label_dim)
     net = dnnlib.util.construct_class_by_name(**network_kwargs, **interface_kwargs) # subclass of torch.nn.Module
     net.eval().requires_grad_(False).to(device)
-    if dist.get_rank() == 0:
+    if dist.get_rank() == 0 and not feature_only:
         with torch.no_grad():
             images = torch.zeros([batch_gpu, net.img_channels, net.img_resolution, net.img_resolution], device=device)
             sigma = torch.ones([batch_gpu], device=device)
@@ -395,8 +501,61 @@ def evaluation(
             data = pickle.load(f)
         if dist.get_rank() == 0:
             torch.distributed.barrier() # other ranks follow
-        misc.copy_params_and_buffers(src_module=data['ema'], dst_module=net, require_all=False)
+        misc.copy_params_and_buffers(
+            src_module=data['ema'], dst_module=net, require_all=feature_only
+        )
         del data # conserve memory
+
+    if feature_only:
+        feature_count = IMAGENET64_FEATURE_COUNT if feature_count is None else feature_count
+        output_path = feature_output or os.path.join(run_dir, 'generated-features.npy')
+        if os.path.exists(output_path):
+            raise FileExistsError(f'feature output already exists: {output_path}')
+        if feature_count != IMAGENET64_FEATURE_COUNT:
+            dist.print0(
+                f'ENGINEERING GATE ONLY: extracting {feature_count} features; '
+                'this is not a formal quality artifact.'
+            )
+        dist.print0('Extracting generated Inception features...')
+        opts = metric_utils.MetricOptions(
+            generator_fn=functools.partial(generator_fn, mid_t=mid_t),
+            G=net,
+            G_kwargs={},
+            dataset_kwargs=dataset_kwargs,
+            num_gpus=1,
+            rank=0,
+            device=device,
+            sample_seeds=sample_seeds,
+            metric_seed=seed,
+            generator_batch_size=metric_generator_batch,
+            balanced_class_labels=balanced_class_labels,
+        )
+        stats = metric_utils.compute_feature_stats_for_generator(
+            opts,
+            detector_url=INCEPTION_DETECTOR_URL,
+            detector_kwargs={'return_features': True},
+            batch_size=128,
+            capture_all=True,
+            max_items=feature_count,
+        )
+        features = stats.get_all()
+        valid = (
+            features.shape == (feature_count, IMAGENET64_FEATURE_DIM)
+            and features.dtype == np.float32
+        )
+        for start in range(0, features.shape[0], 4096):
+            valid = valid and np.isfinite(features[start:start + 4096]).all()
+        if not valid:
+            raise RuntimeError(
+                'generated features must be finite float32 with shape '
+                f'({feature_count}, {IMAGENET64_FEATURE_DIM})'
+            )
+        metric_utils._atomic_save_npy(output_path, features)
+        dist.print0(
+            'Feature extraction complete: '
+            f'count={features.shape[0]} dimension={features.shape[1]} dtype=float32'
+        )
+        return
     
     # Export sample images.
     grid_size = None

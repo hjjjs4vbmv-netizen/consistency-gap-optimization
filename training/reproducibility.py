@@ -16,6 +16,9 @@ RNG_STATE_SCHEMA = 'ect.rank-rng-state/v1'
 TRAINING_STATE_SCHEMA = 'ect.q256.target-weight-training-state/v1'
 INITIAL_RECEIPT_SCHEMA = 'ect.q256.target-weight-initial-state/v1'
 TRAJECTORY_CONFIG_SCHEMA = 'ect.q256.target-weight-trajectory-config/v1'
+CURRENT_DEVICE_RNG_STATE_SCHEMA = 'ect.current-device-rng-state/v1'
+EXACT_TRAINING_STATE_SCHEMA = 'ect.exact-training-state/v1'
+EXACT_TRAJECTORY_CONFIG_SCHEMA = 'ect.exact-trajectory-config/v1'
 
 
 def canonical_json_data(value):
@@ -80,6 +83,58 @@ def restore_rng_state(state):
     torch.set_rng_state(state['torch_cpu'])
     if saved_cuda_count:
         torch.cuda.set_rng_state_all(cuda_states)
+
+
+def capture_current_device_rng_state(device):
+    """Capture process-local RNG without depending on other visible GPUs."""
+    device = torch.device(device)
+    cuda_state = None
+    if device.type == 'cuda':
+        device_index = (
+            torch.cuda.current_device() if device.index is None else device.index
+        )
+        cuda_state = torch.cuda.get_rng_state(device_index).clone()
+    return {
+        'schema': CURRENT_DEVICE_RNG_STATE_SCHEMA,
+        'python': random.getstate(),
+        'numpy': np.random.get_state(),
+        'torch_cpu': torch.get_rng_state().clone(),
+        'torch_cuda': cuda_state,
+        'torch_cuda_enabled': device.type == 'cuda',
+    }
+
+
+def restore_current_device_rng_state(state, device):
+    """Restore the RNG state owned by this process and its training device."""
+    if (
+        not isinstance(state, dict)
+        or state.get('schema') != CURRENT_DEVICE_RNG_STATE_SCHEMA
+    ):
+        raise ValueError('unsupported or missing current-device RNG state schema')
+    required = (
+        'python', 'numpy', 'torch_cpu', 'torch_cuda',
+        'torch_cuda_enabled',
+    )
+    missing = [name for name in required if name not in state]
+    if missing:
+        raise ValueError(
+            f'current-device RNG state missing fields: {", ".join(missing)}'
+        )
+    device = torch.device(device)
+    current_index = None
+    if device.type == 'cuda':
+        current_index = (
+            torch.cuda.current_device() if device.index is None else device.index
+        )
+    if bool(state['torch_cuda_enabled']) != (current_index is not None):
+        raise ValueError('CUDA RNG state does not match the current device type')
+    if (state['torch_cuda'] is None) == bool(state['torch_cuda_enabled']):
+        raise ValueError('current-device CUDA RNG payload is inconsistent')
+    random.setstate(state['python'])
+    np.random.set_state(state['numpy'])
+    torch.set_rng_state(state['torch_cpu'])
+    if current_index is not None:
+        torch.cuda.set_rng_state(state['torch_cuda'], current_index)
 
 
 def _digest_update(digest, value):

@@ -1,3 +1,4 @@
+import contextlib
 import math
 
 import torch
@@ -25,6 +26,24 @@ Q128_MATCHED_SPACING_ARMS = {
     (Q128_MATCHED_SPACING_GAP_SCALE, 1.0): 'Cmatch',
     (1.0, Q128_MATCHED_SPACING_GAP_SCALE): 'Dmatch',
 }
+
+
+@contextlib.contextmanager
+def disable_edm2_forced_wn(module):
+    """Disable repeated forced normalization during the EDM2 teacher pass."""
+    layers = [
+        child for child in module.modules()
+        if type(child).__module__ == 'training.networks_edm2'
+        and type(child).__name__ == 'MPConv'
+        and child.force_wn
+    ]
+    for layer in layers:
+        layer.force_wn = False
+    try:
+        yield
+    finally:
+        for layer in layers:
+            layer.force_wn = True
 
 
 def resolve_target_weight_factorial(
@@ -174,7 +193,7 @@ class ECMLoss:
                  local_tbin_max_scale=1.5, local_tbin_deadband=0.02,
                  local_tbin_min_gap=1e-3, global_gap_scale=1.0,
                  factorial_protocol='none', target_gap_scale=None,
-                 denominator_gap_scale=None):
+                 denominator_gap_scale=None, wt='legacy'):
         self.P_mean = P_mean
         self.P_std = P_std
         self.sigma_data = sigma_data
@@ -187,6 +206,11 @@ class ECMLoss:
             q=q,
             c=c,
         )
+        if wt not in ('legacy', 'snrpk'):
+            raise ValueError(f'unsupported weighting objective: {wt!r}')
+        if wt == 'snrpk' and self.factorial['enabled']:
+            raise ValueError('snrpk weighting cannot be combined with factorial weighting')
+        self.wt = wt
         
         # t -> r entry point, dispatched through training/schedules.py.
         # 'const' / 'sigmoid' are the official fixed formulas (bit-identical
@@ -393,6 +417,9 @@ class ECMLoss:
         r = t * ratio
         return torch.clamp(r, min=0)
 
+    def snrplusk_wt(self, t):
+        return (t ** 2 + self.sigma_data ** 2) / (t * self.sigma_data) ** 2
+
     def __call__(self, net, images, labels=None, augment_pipe=None):
         # t ~ p(t) and r ~ p(r|t, iters) (Mapping fn)
         rnd_normal = torch.randn([images.shape[0], 1, 1, 1], device=images.device)
@@ -494,12 +521,13 @@ class ECMLoss:
             else:
                 torch.set_rng_state(rng_state)
             with torch.no_grad():
-                D_yr = net(
-                    y + eps_r,
-                    r_target,
-                    labels,
-                    augment_labels=augment_labels,
-                )
+                with disable_edm2_forced_wn(net):
+                    D_yr = net(
+                        y + eps_r,
+                        r_target,
+                        labels,
+                        augment_labels=augment_labels,
+                    )
             
             mask = r_target > 0
             D_yr = torch.nan_to_num(D_yr)
@@ -534,6 +562,8 @@ class ECMLoss:
         # Weighting fn
         if self.factorial['enabled']:
             return loss / delta_denominator.flatten()
+        if self.wt == 'snrpk':
+            return loss * self.snrplusk_wt(t).flatten()
         # Keep the legacy expression at its original location so disabled
         # factorial support does not perturb allocator/kernel timing.
         return loss / (t - base_r).flatten()
