@@ -19,6 +19,7 @@ from torch_utils import distributed as dist
 from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
+from training import schedule_switch
 
 from metrics import metric_main
 
@@ -175,6 +176,19 @@ _SAME_STATE_TELEMETRY_FIELDS = (
     'dropout_rng_sha256',
     'augmentation_rng_sha256',
     *_FACTORIAL_TELEMETRY_FIELDS[27:],
+)
+
+_SCHEDULE_SWITCH_TELEMETRY_FIELDS = (
+    'schema',
+    'experiment_protocol',
+    'branch',
+    'origin_arm',
+    'continuation_arm',
+    'switch_relative_step',
+    *_FACTORIAL_TELEMETRY_FIELDS[1:],
+    'online_ema_distance',
+    'radam_first_moment_norm',
+    'radam_second_moment_norm',
 )
 
 #----------------------------------------------------------------------------
@@ -1031,6 +1045,7 @@ def training_loop(
     startup_preview     = True,     # Write initial data/model image grids.
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
     same_state_fork     = None,     # Protocol-bound B-history continuation metadata.
+    schedule_switch_manifest = None,# Frozen 512-kimg A/B continuation manifest.
     device              = torch.device('cuda'),
 ):
     # Initialize.
@@ -1052,6 +1067,37 @@ def training_loop(
             raise ValueError('same_state_fork metadata is not canonical')
         if not isinstance(same_state_fork['protocol_sha256'], str) or len(same_state_fork['protocol_sha256']) != 64:
             raise ValueError('same_state_fork protocol SHA256 is invalid')
+    switch_manifest = (
+        schedule_switch.load_run_manifest(schedule_switch_manifest)
+        if schedule_switch_manifest is not None else None
+    )
+    switch_metadata = (
+        schedule_switch.state_metadata(switch_manifest)
+        if switch_manifest is not None else None
+    )
+    if switch_manifest is not None:
+        if not strict_reproducibility or resume_state_dump is None:
+            raise ValueError(
+                'schedule switch requires a strict full-state resume'
+            )
+        if loss_kwargs.get('factorial_protocol') != 'q256_target_weight_v1':
+            raise ValueError('schedule switch requires q256 target-weight loss')
+        expected_factorial = schedule_switch.continuation_factorial(
+            switch_manifest
+        )
+        actual_factorial = {
+            'enabled': True,
+            'protocol': loss_kwargs.get('factorial_protocol'),
+            'arm': expected_factorial['arm'],
+            'target_gap_scale': float(loss_kwargs.get('target_gap_scale')),
+            'denominator_gap_scale': float(
+                loss_kwargs.get('denominator_gap_scale')
+            ),
+        }
+        if actual_factorial != expected_factorial:
+            raise ValueError('loss factors do not match switch continuation arm')
+    if same_state_fork is not None and switch_manifest is not None:
+        raise ValueError('same-state fork and schedule switch are mutually exclusive')
     if strict_reproducibility and dist.get_world_size() != 1:
         raise ValueError(
             'formal q256 target-weight arms require one process and one '
@@ -1324,8 +1370,18 @@ def training_loop(
     resumed_snapshot_grid_c = None
     resumed_snapshot_grid_size = None
     elapsed_base_sec = 0.0
+    persisted_factorial_identity = None
     if resume_state_dump:
         dist.print0(f'Loading training state from "{resume_state_dump}"...')
+        starting_schedule_switch = (
+            switch_manifest is not None
+            and os.path.realpath(resume_state_dump)
+            == os.path.realpath(switch_manifest['source_state']['path'])
+        )
+        if starting_schedule_switch:
+            schedule_switch.verify_resume_state_file(
+                resume_state_dump, switch_manifest
+            )
         # The training-state contains optimizer and persistent module objects.
         # Only load trusted checkpoints produced by this repository.
         data = torch.load(
@@ -1364,48 +1420,68 @@ def training_loop(
                 )
             if strict_reproducibility:
                 saved_factorial = data['factorial']
-                restored_same_state_fork = copy.deepcopy(
-                    data.get('same_state_fork')
-                )
-                initial_same_state_fork = (
-                    same_state_fork is not None
-                    and restored_same_state_fork is None
-                )
-                if initial_same_state_fork:
+                if switch_manifest is not None:
+                    if starting_schedule_switch:
+                        schedule_switch.verify_source_state(data, switch_manifest)
+                    else:
+                        schedule_switch.verify_switched_state(data, switch_manifest)
+                    persisted_factorial_identity = copy.deepcopy(
+                        data['factorial']
+                    )
+                else:
+                    restored_same_state_fork = copy.deepcopy(
+                        data.get('same_state_fork')
+                    )
+                    initial_same_state_fork = (
+                        same_state_fork is not None
+                        and restored_same_state_fork is None
+                    )
+                    if initial_same_state_fork:
+                        if (
+                            saved_factorial.get('protocol')
+                            != 'q256_target_weight_v1'
+                            or saved_factorial.get('arm')
+                            != same_state_fork['origin_arm']
+                            or int(data['cur_nimg'])
+                            != int(same_state_fork['source_kimg']) * 1000
+                        ):
+                            raise RuntimeError(
+                                'same-state fork source is not the frozen '
+                                'canonical B@384 state'
+                            )
+                        restored_same_state_fork = {
+                            **copy.deepcopy(same_state_fork),
+                            'continuation_arm': loss_fn.factorial['arm'],
+                            'branch_label': (
+                                f"B384_to_{loss_fn.factorial['arm']}"
+                            ),
+                            'source_attempted_iteration': int(
+                                data['attempted_iteration']
+                            ),
+                            'source_cur_nimg': int(data['cur_nimg']),
+                        }
+                    elif restored_same_state_fork is not None:
+                        expected_fork = {
+                            **copy.deepcopy(same_state_fork),
+                            'continuation_arm': loss_fn.factorial['arm'],
+                            'branch_label': (
+                                f"B384_to_{loss_fn.factorial['arm']}"
+                            ),
+                            'source_attempted_iteration': 3000,
+                            'source_cur_nimg': 384000,
+                        }
+                        if restored_same_state_fork != expected_fork:
+                            raise RuntimeError(
+                                'same-state fork metadata changed across resume'
+                            )
                     if (
-                        saved_factorial.get('protocol') != 'q256_target_weight_v1'
-                        or saved_factorial.get('arm') != same_state_fork['origin_arm']
-                        or int(data['cur_nimg']) != int(same_state_fork['source_kimg']) * 1000
+                        saved_factorial != loss_fn.factorial
+                        and not initial_same_state_fork
                     ):
                         raise RuntimeError(
-                            'same-state fork source is not the frozen canonical B@384 state'
+                            'factorial factors in training-state do not match '
+                            'current config'
                         )
-                    restored_same_state_fork = {
-                        **copy.deepcopy(same_state_fork),
-                        'continuation_arm': loss_fn.factorial['arm'],
-                        'branch_label': f"B384_to_{loss_fn.factorial['arm']}",
-                        'source_attempted_iteration': int(data['attempted_iteration']),
-                        'source_cur_nimg': int(data['cur_nimg']),
-                    }
-                elif restored_same_state_fork is not None:
-                    expected_fork = {
-                        **copy.deepcopy(same_state_fork),
-                        'continuation_arm': loss_fn.factorial['arm'],
-                        'branch_label': f"B384_to_{loss_fn.factorial['arm']}",
-                        'source_attempted_iteration': 3000,
-                        'source_cur_nimg': 384000,
-                    }
-                    if restored_same_state_fork != expected_fork:
-                        raise RuntimeError(
-                            'same-state fork metadata changed across resume'
-                        )
-                if (
-                    saved_factorial != loss_fn.factorial
-                    and not initial_same_state_fork
-                ):
-                    raise RuntimeError(
-                        'factorial factors in training-state do not match current config'
-                    )
             saved_trajectory_sha256 = reproducibility.state_sha256(
                 data['trajectory_config']
             )
@@ -1413,7 +1489,19 @@ def training_loop(
                 raise RuntimeError(
                     'training-state trajectory config hash is internally invalid'
                 )
-            if saved_trajectory_sha256 != strict_trajectory_config_sha256:
+            if (
+                switch_manifest is not None
+                and starting_schedule_switch
+            ):
+                if not schedule_switch.trajectory_configs_compatible(
+                    data['trajectory_config'], strict_trajectory_config,
+                    switch_manifest,
+                ):
+                    raise RuntimeError(
+                        'source trajectory config differs beyond the frozen '
+                        'schedule intervention and final budget'
+                    )
+            elif saved_trajectory_sha256 != strict_trajectory_config_sha256:
                 saved_trajectory_config = reproducibility.canonical_json_data(
                     data['trajectory_config']
                 )
@@ -1465,6 +1553,11 @@ def training_loop(
                         'Extending completed strict training budget from '
                         f'{saved_total_kimg} to {current_total_kimg} kimg; '
                         'all other trajectory settings match exactly.'
+                    )
+            if switch_manifest is not None and not starting_schedule_switch:
+                if saved_trajectory_sha256 != strict_trajectory_config_sha256:
+                    raise RuntimeError(
+                        'resumed switched trajectory config does not match current run'
                     )
         if exact_reproducibility:
             copy_module_state_exact(
@@ -1536,6 +1629,10 @@ def training_loop(
                         'exact training-state is missing GradScaler state'
                     )
                 dist.print0(f'GradScaler state is not found in "{resume_state_dump}", using the default state.')
+        if starting_schedule_switch:
+            schedule_switch.verify_resume_state_file(
+                resume_state_dump, switch_manifest
+            )
         del data # conserve memory
 
     if dataset_iterator is None:
@@ -1759,51 +1856,113 @@ def training_loop(
     factorial_telemetry_csv = None
     factorial_telemetry_writer = None
     if strict_reproducibility and dist.get_rank() == 0:
-        telemetry_fields = (
-            _SAME_STATE_TELEMETRY_FIELDS
-            if restored_same_state_fork is not None
-            else _FACTORIAL_TELEMETRY_FIELDS
-        )
-        telemetry_path = os.path.join(
-            run_dir,
-            'matched_training_telemetry_v1.csv'
-            if restored_same_state_fork is not None
-            else 'factorial_training_telemetry_v1.csv',
-        )
+        if switch_manifest is not None:
+            telemetry_fields = _SCHEDULE_SWITCH_TELEMETRY_FIELDS
+            telemetry_name = 'schedule_switch_training_telemetry_v1.csv'
+        elif restored_same_state_fork is not None:
+            telemetry_fields = _SAME_STATE_TELEMETRY_FIELDS
+            telemetry_name = 'matched_training_telemetry_v1.csv'
+        else:
+            telemetry_fields = _FACTORIAL_TELEMETRY_FIELDS
+            telemetry_name = 'factorial_training_telemetry_v1.csv'
+        telemetry_path = os.path.join(run_dir, telemetry_name)
         telemetry_exists = (
             os.path.isfile(telemetry_path)
             and os.path.getsize(telemetry_path) > 0
         )
-        if resume_state_dump and telemetry_exists:
-            with open(telemetry_path, 'rt', newline='') as handle:
-                reader = csv.DictReader(handle)
-                if tuple(reader.fieldnames or ()) != telemetry_fields:
+        if switch_manifest is not None:
+            source_telemetry_path = os.path.join(
+                run_dir, 'source_factorial_training_telemetry_v1.csv'
+            )
+            if not os.path.isfile(source_telemetry_path):
+                raise RuntimeError(
+                    'schedule switch requires immutable source telemetry copy'
+                )
+            with open(source_telemetry_path, 'rt', newline='') as handle:
+                source_reader = csv.DictReader(handle)
+                if tuple(source_reader.fieldnames or ()) != _FACTORIAL_TELEMETRY_FIELDS:
+                    raise RuntimeError('source factorial telemetry schema mismatch')
+                source_rows = list(source_reader)
+            if not source_rows:
+                raise RuntimeError('source factorial telemetry is empty')
+            source_last = source_rows[-1]
+            if (
+                int(source_last['attempted_iteration'])
+                != schedule_switch.SWITCH_ATTEMPT
+                or int(source_last['processed_nimg'])
+                != schedule_switch.SWITCH_NIMG
+                or source_last['arm'] != switch_manifest['origin_arm']
+            ):
+                raise RuntimeError('source factorial telemetry boundary mismatch')
+            if attempted_iteration == schedule_switch.SWITCH_ATTEMPT:
+                if telemetry_exists:
                     raise RuntimeError(
-                        'factorial telemetry schema does not match exactly'
+                        'fresh switch refuses existing post-switch telemetry'
                     )
-                rows = list(reader)
-            if not rows:
-                raise RuntimeError('factorial telemetry has no attempted rows')
-            last = rows[-1]
-            if int(last['attempted_iteration']) != attempted_iteration:
-                raise RuntimeError(
-                    'factorial telemetry attempt does not match training-state'
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'xt', newline=''
                 )
-            if int(last['processed_nimg']) != cur_nimg:
-                raise RuntimeError(
-                    'factorial telemetry nimg does not match training-state'
+            else:
+                if not telemetry_exists:
+                    raise RuntimeError(
+                        'switched resume requires existing post-switch telemetry'
+                    )
+                with open(telemetry_path, 'rt', newline='') as handle:
+                    reader = csv.DictReader(handle)
+                    if tuple(reader.fieldnames or ()) != _SCHEDULE_SWITCH_TELEMETRY_FIELDS:
+                        raise RuntimeError('schedule-switch telemetry schema mismatch')
+                    rows = list(reader)
+                if not rows:
+                    raise RuntimeError('schedule-switch telemetry has no rows')
+                last = rows[-1]
+                if (
+                    int(last['attempted_iteration']) != attempted_iteration
+                    or int(last['processed_nimg']) != cur_nimg
+                    or last['continuation_arm']
+                    != switch_manifest['continuation_arm']
+                ):
+                    raise RuntimeError('schedule-switch telemetry/state mismatch')
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'at', newline=''
                 )
-            if last['arm'] != loss_fn.factorial['arm']:
-                raise RuntimeError(
-                    'factorial telemetry arm does not match current config'
-                )
-            factorial_telemetry_csv = open(telemetry_path, 'at', newline='')
         elif resume_state_dump:
-            if restored_same_state_fork is None:
-                raise RuntimeError(
-                    'strict factorial resume requires existing versioned telemetry'
+            if not telemetry_exists:
+                if restored_same_state_fork is None:
+                    raise RuntimeError(
+                        'strict factorial resume requires existing versioned '
+                        'telemetry'
+                    )
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'xt', newline=''
                 )
-            factorial_telemetry_csv = open(telemetry_path, 'xt', newline='')
+            else:
+                with open(telemetry_path, 'rt', newline='') as handle:
+                    reader = csv.DictReader(handle)
+                    if tuple(reader.fieldnames or ()) != telemetry_fields:
+                        raise RuntimeError(
+                            'factorial telemetry schema does not match exactly'
+                        )
+                    rows = list(reader)
+                if not rows:
+                    raise RuntimeError(
+                        'factorial telemetry has no attempted rows'
+                    )
+                last = rows[-1]
+                if int(last['attempted_iteration']) != attempted_iteration:
+                    raise RuntimeError(
+                        'factorial telemetry attempt does not match training-state'
+                    )
+                if int(last['processed_nimg']) != cur_nimg:
+                    raise RuntimeError(
+                        'factorial telemetry nimg does not match training-state'
+                    )
+                if last['arm'] != loss_fn.factorial['arm']:
+                    raise RuntimeError(
+                        'factorial telemetry arm does not match current config'
+                    )
+                factorial_telemetry_csv = open(
+                    telemetry_path, 'at', newline=''
+                )
         else:
             if telemetry_exists:
                 raise RuntimeError(
@@ -1889,9 +2048,15 @@ def training_loop(
                 snapshot_grid_size=tuple(grid_size),
             )
             if strict_reproducibility:
-                data['factorial'] = dict(loss_fn.factorial)
+                data['factorial'] = (
+                    copy.deepcopy(persisted_factorial_identity)
+                    if switch_manifest is not None
+                    else dict(loss_fn.factorial)
+                )
             if restored_same_state_fork is not None:
                 data['same_state_fork'] = copy.deepcopy(restored_same_state_fork)
+            if switch_manifest is not None:
+                data['schedule_switch'] = copy.deepcopy(switch_metadata)
         return data
         
     # cur_tick in a checkpoint denotes the next loop.  The uninterrupted loop
@@ -2136,6 +2301,25 @@ def training_loop(
                 model_norm,
                 _,
             ) = tensor_collection_diagnostics(net.parameters())
+            radam_first_moment_norm = 0.0
+            radam_second_moment_norm = 0.0
+            if switch_manifest is not None:
+                first_moments = [
+                    item['exp_avg'] for item in optimizer.state.values()
+                    if 'exp_avg' in item
+                ]
+                second_moments = [
+                    item['exp_avg_sq'] for item in optimizer.state.values()
+                    if 'exp_avg_sq' in item
+                ]
+                first_nonfinite, radam_first_moment_norm, _ = (
+                    tensor_collection_diagnostics(first_moments)
+                )
+                second_nonfinite, radam_second_moment_norm, _ = (
+                    tensor_collection_diagnostics(second_moments)
+                )
+                if first_nonfinite or second_nonfinite:
+                    raise FloatingPointError('non-finite RAdam moment state')
         elif generic_exact_resume:
             model_nonfinite_count = tensor_collection_nonfinite_count(
                 tensor for _, tensor in misc.named_params_and_buffers(net)
@@ -2173,6 +2357,18 @@ def training_loop(
                 ema_norm,
                 _,
             ) = tensor_collection_diagnostics(ema.parameters())
+            online_ema_distance = 0.0
+            if switch_manifest is not None:
+                distance_nonfinite, online_ema_distance, _ = (
+                    tensor_collection_diagnostics(
+                        p_net.detach() - p_ema.detach()
+                        for p_net, p_ema in zip(
+                            net.parameters(), ema.parameters()
+                        )
+                    )
+                )
+                if distance_nonfinite:
+                    raise FloatingPointError('non-finite online-EMA distance')
         elif generic_exact_resume:
             ema_nonfinite_count = tensor_collection_nonfinite_count(
                 tensor for _, tensor in misc.named_params_and_buffers(ema)
@@ -2362,6 +2558,26 @@ def training_loop(
                         factorial_metrics['augmentation_rng_sha256']
                     ),
                 )
+            if switch_manifest is not None:
+                telemetry_row.update({
+                    'schema': 'ect.q256.schedule-switch-training-telemetry/v1',
+                    'experiment_protocol': switch_manifest[
+                        'experiment_protocol'
+                    ],
+                    'branch': switch_manifest['branch'],
+                    'origin_arm': switch_manifest['origin_arm'],
+                    'continuation_arm': switch_manifest['continuation_arm'],
+                    'switch_relative_step': (
+                        attempted_iteration - schedule_switch.SWITCH_ATTEMPT
+                    ),
+                    'online_ema_distance': f'{online_ema_distance:.17g}',
+                    'radam_first_moment_norm': (
+                        f'{radam_first_moment_norm:.17g}'
+                    ),
+                    'radam_second_moment_norm': (
+                        f'{radam_second_moment_norm:.17g}'
+                    ),
+                })
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)
                 factorial_telemetry_csv.flush()

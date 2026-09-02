@@ -1,0 +1,1647 @@
+{
+  "analysis_artifacts": {
+    "REPORT.md": "3dfa08316e333ad942f0d4294c78a95049e3980e1f89b2201fd21e9354fa7ad0",
+    "analysis_audit.json": "358729a12d6a0fb6bd9fda586ca3389b5919eb95e4fc9926621bbd132e44d3a7",
+    "contrast_summaries.csv": "70371236692a84425bcb762246e7b384a6d44320a6b76fcf76d789bebae50aee",
+    "contrast_summaries_logfid.csv": "21d3a9bc48c1b4eeb035bc470b9d201ed9bd2d0c230686a9679038ec0ab11b15",
+    "current_schedule_effects_fid50k_full_nfe1.png": "6a81e933db243ba017b7902a0cd3408b8604796099aca00a70ffa488982aaf75",
+    "current_schedule_effects_fid50k_full_nfe2.png": "0890c1cb91bc53fde4382d2686d339775df2e04231931fc5afb414e4e1d4c421",
+    "current_schedule_effects_kid50k_full_nfe1.png": "712b478b17122bc5c166e2267b52a6c691b35f1a5e45e720fdfcf3a6e220c6b0",
+    "current_schedule_effects_kid50k_full_nfe2.png": "4b2d0a2de11bf19543a35cee2e8b7bf2f2f075fb60e956afa8721cd491896fe1",
+    "history_and_interaction_fid50k_full_nfe1.png": "001459879eed057db07a4ab00854ed1b5e27dcdb030d6708485108907d832a61",
+    "history_and_interaction_fid50k_full_nfe2.png": "0ba4eae36ea66f87e3fa189f7df06fa010c45a1ab903ed9c6e893c4355cdfa36",
+    "history_and_interaction_kid50k_full_nfe1.png": "72f6959019084c915e25887fc5b8563504aa907543418d7836419c094bdb0a03",
+    "history_and_interaction_kid50k_full_nfe2.png": "f97af03cc5c72a7918e0682b173fa2ac4e04e13483e4df53176f60fadc25eeab",
+    "per_seed_aulc.csv": "275ef09c6089ceeba61c733ce690ce49157d01b6a89d0afd91bcd2e8d79d1ee1",
+    "per_seed_contrasts.csv": "3372b5bcd4656b48dbf16eb90e368e3faa6cf7a01967335649ea00b9f66c68a1",
+    "per_seed_delayed_reversal.csv": "0ae3fcc202fbdfe4f2fb78cc7d3bb900cbf562aa3b9562e304bb7f2b69808090",
+    "per_seed_four_trajectories_fid50k_full_nfe1.png": "13c0ca804758db53d08fb22f46dc2d15cad3fbb91c3e77e76af3d3b033bb208b",
+    "per_seed_four_trajectories_fid50k_full_nfe2.png": "70b8533d1f300b4e1c3342f28c12d2d2dfc997518ec833c6be66a9b91c3fad2e",
+    "per_seed_four_trajectories_kid50k_full_nfe1.png": "fd568b162124eeb9151c4d1e9c97b84a131d591e17ae94913a6196747e4c3d4f",
+    "per_seed_four_trajectories_kid50k_full_nfe2.png": "e4f06a7e25ef793863bb8eed57e4933f7b59fd4fd762200ab158349976fab729",
+    "per_seed_trajectories.csv": "f435d6e9bcc3066a953c997dee18cb4a5a07c7a2a74a81a5b575bb5f7ea81ec1"
+  },
+  "analysis_revision": {
+    "kind": "post_unblind_descriptive_reframing",
+    "new_outputs": [
+      "contrast_summaries_logfid.csv",
+      "per_seed_delayed_reversal.csv"
+    ],
+    "raw_training_and_evaluation_evidence_unchanged": true,
+    "source_pr_head": "77492faf7faf5ea42bd08a503d61b12c212c0f31"
+  },
+  "claim_boundary": "pre-result-frozen recovery protocol over an availability-selected five-seed cohort, with compatibility-audited archived controls; finite-horizon q256/CIFAR-10 switch evidence only, with no universal schedule ranking, confirmed interaction null, state-to-quality mediation claim, or global causal percentage",
+  "control_import_audit_sha256": "85b17eb34b38bd177122bd9eed401da622e4b577e6a61fa7c2a7f04411f589bb",
+  "counts": {
+    "aulc_rows": 20,
+    "contrast_rows": 100,
+    "evaluation_jobs": 80,
+    "formal_milestones": 40,
+    "formal_trajectories": 10,
+    "plots": 12,
+    "post_unblind_descriptive_tables": 2,
+    "trajectory_rows": 100
+  },
+  "evaluation_jobs": [
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "44b761678a2edfaeeaaf6c3a35f563ca708662228206d0a629c926cb93ce4f4c",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 9.954666979340079,
+        "kid50k_full": 0.0062259414814814906
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-A_to_B-kimg1024-nfe1.json",
+      "receipt_sha256": "39f8ab343ab0d3300d1b01003f2a2011a02a6173b5006c06de4c8806ce43ec80",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "dc6da9a6cf7533d5c0ae0fb96fb7cf437988ff00dbaa6290190833637939421a",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.9235008722032054,
+        "kid50k_full": 0.0010784491191191364
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-A_to_B-kimg1024-nfe2.json",
+      "receipt_sha256": "3bfb3d67d93c536718a4d4e0088e5e8307b36a7e588ef1eb8391e30a075aed36",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "6fcb74822d1a013a3f8861e3676917e11ef2e2f8d1abbebc4bfab68a992bc68c",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 15.31767799109869,
+        "kid50k_full": 0.010417167464964931
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-A_to_B-kimg640-nfe1.json",
+      "receipt_sha256": "6d9a2cdcb04a079d0d2a31a98331c15e30b0758487d87d22d9d20a9c423a5a59",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "24f06ad04f5bc939ba250fe083bfb2cb05f341edf31c0001ac35f2e7f660c65c",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 4.275997643803983,
+        "kid50k_full": 0.0014689401201201417
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-A_to_B-kimg640-nfe2.json",
+      "receipt_sha256": "fa7ef7140f46ae57ffaba968ec8327300de9adde843fcf7045c5b29810c14dc6",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "845ad20cf2f442fd56277345b3f45a4438e5b82ced1512c3a265458bf78ad812",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 12.792402730717527,
+        "kid50k_full": 0.008363020332832802
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-A_to_B-kimg768-nfe1.json",
+      "receipt_sha256": "c94fd6ff8343f771fffe3ae4c6bc877dfd865093bfad3ed67ba0b8f342101221",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "007114b05ebb64c31b0a7809de86f3bfa54f273991580e61b1034ca2f76447fd",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.3287695013321406,
+        "kid50k_full": 0.0015678811211211267
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-A_to_B-kimg768-nfe2.json",
+      "receipt_sha256": "dabd32d9194ef30d78306f250dc6f516660de5001d46a27b6aad90c40bc2c31f",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "7558bf5edfc5616435c95f87d98abb6c3fbb528074a8ba3e23441d4f376f04fd",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.050144890586129,
+        "kid50k_full": 0.007003601421421404
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-A_to_B-kimg896-nfe1.json",
+      "receipt_sha256": "bb65fed94c8bd66e16248b260bea2ac11832fd122e7c66a1c556c8d269cb76b6",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "dca72ea9df7d00986d61db4c03ec2c2e87c8ba17b490cb931ed8e3492f9006ab",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.059159298855241,
+        "kid50k_full": 0.0013548401651651695
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-A_to_B-kimg896-nfe2.json",
+      "receipt_sha256": "e16d9ffd81c1370d10eea774179a8cf62fb7aa770b96ca4320f00e5ef16c2198",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "7d70bdeaefff4307856ec1ec5ab75a1ced502e72cb2f8c01bce934e49dfce6f3",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.62396301808251,
+        "kid50k_full": 0.005263536996997
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-B_to_A-kimg1024-nfe1.json",
+      "receipt_sha256": "81d42f6073a39098e3c7a2d8ed3e78c2c5887fe3018b3824a7290e1ad36f5aae",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "70b42e32e19a994c03958e2f59460c2caf70b9467875e66f3e68bff14b46ab32",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.7902158082668214,
+        "kid50k_full": 0.0009287066091091128
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-B_to_A-kimg1024-nfe2.json",
+      "receipt_sha256": "9186f66d65f6e9be1ba8525b536057bfcec5c624927513b64f863ae164792224",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "d414620022a62cf4571d668fbd550ab48a62669fe7f7969aaa92e46b74741b03",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 12.748413915148486,
+        "kid50k_full": 0.008183933746246234
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-B_to_A-kimg640-nfe1.json",
+      "receipt_sha256": "dcdcb8ee9ef57a7966242c3d315ad67b45ae3bcc82556549cfcd49cdfed493d3",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "6700c56f590570883bf1445db966457a60cfa6c3019dc7a53db97e616e2aff10",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.6498831801614235,
+        "kid50k_full": 0.002144578991491498
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-B_to_A-kimg640-nfe2.json",
+      "receipt_sha256": "2eec8bc2d2d58b373329460f1d3f8f992f3622eee4b017c90e3f46603b3a4d9b",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "021dfd7feab4cadfeb58fc28974e0a49f125dae917c9b049831b956c525f06c3",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.058376164386432,
+        "kid50k_full": 0.007060859219219214
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-B_to_A-kimg768-nfe1.json",
+      "receipt_sha256": "decae46fe81317e9587072455aa89dd6d38a3b1122b554a49317b226ad737ab3",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "65db18ba9f8673e40b738172d381f360edaa2c3385be942e35d9606dd0b00905",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.051252312668465,
+        "kid50k_full": 0.0013135699024024187
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-B_to_A-kimg768-nfe2.json",
+      "receipt_sha256": "7748b8ca1dc6653e055b332baa101b3a7d524c8b76ab862b887104523c4dbb1f",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "512227d235b7bcac5c646b7ee3e034040a89221b61445c3c3532819dc7e3ca77",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 9.497460207489201,
+        "kid50k_full": 0.005862183278278253
+      },
+      "nfe": 1,
+      "receipt_file": "seed3-B_to_A-kimg896-nfe1.json",
+      "receipt_sha256": "1241c03d96dd18ec9de0de9551eacd271373640079fedf40b8747238698aedf1",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "90dfb0078e92e1e39f38b0fecd93435e4dc81ffd6f6e7c6c6c129c1fe13c8d93",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.867074711877582,
+        "kid50k_full": 0.0010261062612612478
+      },
+      "nfe": 2,
+      "receipt_file": "seed3-B_to_A-kimg896-nfe2.json",
+      "receipt_sha256": "2eeaca4003af21af3a7caa12eeb71f4c973ff8bffa5175f6da13fcf58f9fcf4e",
+      "seed": 3,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "799f4c03cbfd5ceeba1b1bc8cf877f7f877ad91adff13f1459bb04b311f8e88f",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.537039295429613,
+        "kid50k_full": 0.005118508751251238
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-A_to_B-kimg1024-nfe1.json",
+      "receipt_sha256": "85d85d6fc65db4615eb70fe2df4d5ef6ead7cf62272e061f008859a5bc9f5d78",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "d33fa6cc6181c3da62ca52267fbcb05e77b3105938ef3e9743e56e9a828c6615",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.7496277716919346,
+        "kid50k_full": 0.000879345227727731
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-A_to_B-kimg1024-nfe2.json",
+      "receipt_sha256": "8caaa415f2686bc332a27eee32888472aa3ad47ef16892bfa08b8c68ad7bedba",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "66884dafe9bb609ead01fe01bf09143a82cfa55b1393b05408eed0e1591f6c2e",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.521660452585962,
+        "kid50k_full": 0.0069826739214214105
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-A_to_B-kimg640-nfe1.json",
+      "receipt_sha256": "d4b01a3c396dfe53e6bd97cfa4dbc6e2a63a1a3d9ac53fca8ac2cb1523630063",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "4440e0cce8f9f59502d2fd800f0155946dfdacad3cb98e8de3cb13b197fbab1a",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.7243375385181974,
+        "kid50k_full": 0.0019130325750751171
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-A_to_B-kimg640-nfe2.json",
+      "receipt_sha256": "3c59c19a84e3280d6431dc966c48c8f313e500e9bd98662b1cdec016c3a02b05",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "69bbfdb448484a3e4d86b39a8ab75936f58338e5a87c3e74846a43048cebc4e5",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 10.133054472066755,
+        "kid50k_full": 0.006100507189689715
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-A_to_B-kimg768-nfe1.json",
+      "receipt_sha256": "5c1d0fcb49e2f647ae212d63ec8e3a8bfda2c101cb2cd93bb99a8a314e193933",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "971568c9ee4524c4a81465c5f3053650459cf38ad62d4990b9e9b446addf5642",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.006665758889643,
+        "kid50k_full": 0.0011539617517516945
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-A_to_B-kimg768-nfe2.json",
+      "receipt_sha256": "b9a380b68225b54d703d03f5aa9cc8ee534702b444376beb01a6b4cb68ccb35a",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "f6a12f8def7ee59ca960468405e9112076b0cfa640ca427a3d3e5fd83ae9ba7d",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.979863504031009,
+        "kid50k_full": 0.005323969114114115
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-A_to_B-kimg896-nfe1.json",
+      "receipt_sha256": "078b9989dd9a5a13a49371122584c4ff68f51afafad90b78b893470b3386c551",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "f0d34180f44cd585fbb22345afffc5d1229e97a48be0318d6d6a32dd3243c68e",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.8487314457517865,
+        "kid50k_full": 0.0009678233908908897
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-A_to_B-kimg896-nfe2.json",
+      "receipt_sha256": "69823667861cb32d8df3677345a51eaac14a6dce79b345ac435146478dea75f1",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "bad72612afc4acaa3128801323af20f55255a6947128b0ce249b030aa7a8de16",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.240620718715078,
+        "kid50k_full": 0.0048842665065065155
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-B_to_A-kimg1024-nfe1.json",
+      "receipt_sha256": "346d61f91e239ff474d3e7f9e19f658941001af32fa0b16a962a9f6345230e32",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "0f575654849888ce3c486a080e5ecbd1bb59814b7a1122c3a773e5535d8e0f88",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.65645231464838,
+        "kid50k_full": 0.0008374689064064205
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-B_to_A-kimg1024-nfe2.json",
+      "receipt_sha256": "cc89dbf73e40c67501f92d4658e564ba20d8b6b5f475dfdf6ce8a506c4906a62",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "95b9f278d2ec462cb434f1239eadd2c7281f2b771519aec2c14b1b0f5d3f4ea9",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.87862818543265,
+        "kid50k_full": 0.007215377309809819
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-B_to_A-kimg640-nfe1.json",
+      "receipt_sha256": "cd14d8f0b28723953cce4e05f60e9bdba8ca6b96af466c8452dba0ed1090ebb7",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "792670fbfbcb0aeaf04230b6257c63822aea49eec12cfa143500ce3e2f7529a1",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.616130679006778,
+        "kid50k_full": 0.0017431446871871595
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-B_to_A-kimg640-nfe2.json",
+      "receipt_sha256": "5f1fb102070ee483b09c3f74d7cee6d5738266ef22a2ad4209f0b64b0c66176d",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "416d35f57270b438d09e152dfe72c4ae8edbd8fe7c3ddc7fa99fc729d86b9ebf",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 10.252949324691826,
+        "kid50k_full": 0.0062125339564564775
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-B_to_A-kimg768-nfe1.json",
+      "receipt_sha256": "c405ce546c38cc6efb25d1bb30b13aebcc7a2a31088fc403556dab5b09f1029b",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "31ddbf22bccb31f10607557d732823f5d54eb27d6f9774578865ce4424de4220",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.0121203784289006,
+        "kid50k_full": 0.0011269201476476474
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-B_to_A-kimg768-nfe2.json",
+      "receipt_sha256": "24bda3a9b1352fbf73a95f035aed8108aa2df9e5b3d83d0ec950fe0307f43cfd",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "6d31189f4924c494c068f766ec51387303ad8e24e2fbcd9726fcdd20224f4d94",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.924859247247982,
+        "kid50k_full": 0.005304935332832824
+      },
+      "nfe": 1,
+      "receipt_file": "seed4-B_to_A-kimg896-nfe1.json",
+      "receipt_sha256": "3bb0f3946045946f1a43b94ed4f5dfc03a79a186f0f0409b6bb577086a9c8a21",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "dac384e41bd8fb680d171ae34b06ea36535df9ac88ca71e20bb8f1b85ad02234",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.816430228556537,
+        "kid50k_full": 0.0009811117692692824
+      },
+      "nfe": 2,
+      "receipt_file": "seed4-B_to_A-kimg896-nfe2.json",
+      "receipt_sha256": "868fa93e98515cdd7369646b95f60b2fa274d412cc58e62d09fecaef88ee204e",
+      "seed": 4,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "0523cb6cd47ad410512e5a4300155d2866a45b7abb91667193ef7d3bb67eaea3",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.488207911405944,
+        "kid50k_full": 0.005292016346346373
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-A_to_B-kimg1024-nfe1.json",
+      "receipt_sha256": "ceb5a4a1ef59c5083e40e7c79a17cfe366860f0f2ce4b2cebfc2b9e3fc3a909a",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "a2aa3368f8df6c4bfdd626793625e4690792d0bc910723371147c619d91006b4",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.7679464104860405,
+        "kid50k_full": 0.00098138768268268
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-A_to_B-kimg1024-nfe2.json",
+      "receipt_sha256": "5ab7ceac1b8ad99bbf9d09b07df52a89b6d757756922dae5c22e0090d7a531b1",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "0871c4a7082d525130d770fcd0b953b8fefbcb29e823be7bf88f88bf7f5fe1d0",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.941705094413521,
+        "kid50k_full": 0.007694500392892906
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-A_to_B-kimg640-nfe1.json",
+      "receipt_sha256": "dc2680f57e003304d2a6402cc368176a59e14003ee455cdfea3ff12839649508",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "d55dbe3312d183ff42932419cb130d8750278598ea45502f51dbba62ef80474c",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.6482508473206976,
+        "kid50k_full": 0.0021945331706706836
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-A_to_B-kimg640-nfe2.json",
+      "receipt_sha256": "51ae2853fca5ac210580e66b2487d0a4c0693e149f8dfcb0afc89fe23dba107b",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "31b9bd24ebed34e5887aa6730613eb0cbf7ca83c88e334f7ae1b5954fb15fe0a",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 10.015825465963946,
+        "kid50k_full": 0.006210521876876856
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-A_to_B-kimg768-nfe1.json",
+      "receipt_sha256": "16f62de35a5b08002204f87a802f671b1db2e7e4a723720e5f66a76d0d05fe0d",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "3feadc50e6cbc6ccb862380049b94dc71a7793d05f328a2abf15e73e7c583497",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.1179089136633893,
+        "kid50k_full": 0.001452052164664674
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-A_to_B-kimg768-nfe2.json",
+      "receipt_sha256": "0563fe062b3f68d2b77a4b60ec1f158531fb78c363f5bf9b42d81534eb63797a",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "e8a7529e35b01cf07dacafbcb17063c8139d8200c25c5575945bbe59fb9e7c16",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.871243090711628,
+        "kid50k_full": 0.005421175705705719
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-A_to_B-kimg896-nfe1.json",
+      "receipt_sha256": "9a2934b6f62d575e334383e4d74daa73155b6165076ca6d232ad4f35301a6ef2",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "e2768d70dec4be0787e2cb0a38297dac6a8b22a297b527c3b76da27933c86158",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.8487373572387673,
+        "kid50k_full": 0.0010591883058057648
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-A_to_B-kimg896-nfe2.json",
+      "receipt_sha256": "59911c943175c679d536c2e75ee396fb7518012e0b66ae17a246d9b0d4bd5a96",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "7f014e4937faba93e8bdd262995c19fa03bbcf80533e7bd45c480fae36629574",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 7.708279530084881,
+        "kid50k_full": 0.004713967307307311
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-B_to_A-kimg1024-nfe1.json",
+      "receipt_sha256": "6efa513c9c1f94aff9eacdcb3126db5a0d564c5e988d80630049485f2851cff6",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "777cf127374642a038ef35a7a635b236e657e500395efcac35582e8e8effa610",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.7500424253212765,
+        "kid50k_full": 0.0009592798648648387
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-B_to_A-kimg1024-nfe2.json",
+      "receipt_sha256": "ec28514466872b2cdc942ee5200cf8038d5802e863d0f898d1e079d95fe71e0c",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "2ea8006f7115923c93a5bec2bec8aa13cc23c846387bbc7661724c2018f3b639",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 10.788240801979482,
+        "kid50k_full": 0.0068974876476476585
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-B_to_A-kimg640-nfe1.json",
+      "receipt_sha256": "ba162497becf08e817f1c70dc55140cd8e8117c8c2573c2b4ae2242b348c7c52",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "78305fb62243a5205a5330941952bbfd2dde131b58d257ad758aa05f77bd01f8",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.5791667525725126,
+        "kid50k_full": 0.0017888151701701918
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-B_to_A-kimg640-nfe2.json",
+      "receipt_sha256": "8467e8c812cde2416b46df6f8f94d1553e2327b113b58821a022498a879c20e7",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "939d5ddb2de4817f36012aba26b41a51a8a0283c3533ae4c3fccccc227b4751c",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.926234351907993,
+        "kid50k_full": 0.005416868118118113
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-B_to_A-kimg768-nfe1.json",
+      "receipt_sha256": "d19f698ee691d8caa64bd504646c61118e57723e97acb9799e1fda5362fb4352",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "0402f745f0a886a3226060e672ebb4f36116bc90f11067b4edf2b249764b6268",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.009195831159106,
+        "kid50k_full": 0.0011006416591591642
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-B_to_A-kimg768-nfe2.json",
+      "receipt_sha256": "19fa108a0c5cd47c960aec310550e19da429162151f1778a86ec4cc05fcf52d0",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "9b0b59584eb7720423fe8e5a0e6bd59ca229ea87d26ba31fd243f1f8437a8049",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.07860513274551,
+        "kid50k_full": 0.004884036686686682
+      },
+      "nfe": 1,
+      "receipt_file": "seed5-B_to_A-kimg896-nfe1.json",
+      "receipt_sha256": "c63fb50fbe93438a251b0989313b92fb2dded530640df308a439aec0c2465099",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "bb19a5b501b67aba1addee4fe67cbe6f84d27aaf3ccc8d3a7746ab28a38539f9",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.7764996363200227,
+        "kid50k_full": 0.0009215910935935925
+      },
+      "nfe": 2,
+      "receipt_file": "seed5-B_to_A-kimg896-nfe2.json",
+      "receipt_sha256": "f25ccfa52587772e0b5fbc1f00bf8ab412231fb1bcd4bb2f6122f36784849c3f",
+      "seed": 5,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "e5b4eaf0819f5d28f6d5f1b2aa2ed342b17cd32dfd720c78d2e00f3a90b995d3",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.823104145953863,
+        "kid50k_full": 0.005569344724724715
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-A_to_B-kimg1024-nfe1.json",
+      "receipt_sha256": "e591ba8dc773b3c7d07c45ffc140b853d0edabec665b29c27bd806d4caffca58",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "4f93b73d276d5816f9deb630b7f09a045684a9fde8a3a1661aafa01cfac56f83",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.066463651900704,
+        "kid50k_full": 0.0011239393943943924
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-A_to_B-kimg1024-nfe2.json",
+      "receipt_sha256": "145a3483f98cd89efef20b0c036e26f9c9573aaa07e39e0fea6c277386da106d",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "86796269b9f0844992c01e629c653b5a97b4348482f7030b66316c62f910ba3e",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 15.129510013359315,
+        "kid50k_full": 0.010178256934434426
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-A_to_B-kimg640-nfe1.json",
+      "receipt_sha256": "7427999e8b28cb49add9144aaea8f5cee41372db210df147726bbe0e2beb413d",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "db3c2b3cfa906d11c975cbe618bf84d67dec7544b7139f2544f9cc88e0b04494",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 4.144692552640234,
+        "kid50k_full": 0.0019417847322322223
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-A_to_B-kimg640-nfe2.json",
+      "receipt_sha256": "e28e8a19c490dd3197d974089d2e6f1fa2284b87d8420c9165e0659c4ce4ca50",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "3e88d5c6b98415269ad6c3163050af041f81ea8981a4559dc6aa921fcb229640",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 12.310323058059613,
+        "kid50k_full": 0.008256980958458476
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-A_to_B-kimg768-nfe1.json",
+      "receipt_sha256": "09dde1af9aa516ba85876c72971d8e3d3bffb7c7a33a1c03b4371b288a978b9e",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "15b85267e880a45ca9537c5ca4b10027489ad94e6600422f97e882f239301bb8",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.7213902130022274,
+        "kid50k_full": 0.001536436103603628
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-A_to_B-kimg768-nfe2.json",
+      "receipt_sha256": "ad80712694941ed63d401004c8a2185bb3d3a7658d714bad4a8176dcd1e0a5ee",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "5491414182ef6ec59e84bfca6926a489d3820eff5ad5c43a4c20477dd26e6995",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 10.220351810324939,
+        "kid50k_full": 0.006646873713713685
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-A_to_B-kimg896-nfe1.json",
+      "receipt_sha256": "14d6e118e83cadabe004bb07d99a8aa941fdfc539d018089c918100abe743860",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "fc3888508fbcb112fc5ff069bf4a564deac91b573805dfcd403d49e06a86cc1a",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.3327042796323063,
+        "kid50k_full": 0.001266456546546551
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-A_to_B-kimg896-nfe2.json",
+      "receipt_sha256": "a970c7a922061d06ae1986abf3d024a2e9c7141408dd79ea50784f7fad2ead1c",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "51cc7a1c9e4db43875c423db82e6b691a46f2bec3680bcd4c9ca270cfc2de640",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.234427790786622,
+        "kid50k_full": 0.005384620297797787
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-B_to_A-kimg1024-nfe1.json",
+      "receipt_sha256": "447bb3f3fc5fbdf645bdf2c61cc109949846835164c9d2666072a68ef8c6e20e",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "2751ff80bdd5f1987bac9609da27b8b1fa9dd5e7c365abcbed8849770891f312",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.0592113004119765,
+        "kid50k_full": 0.001099116416416432
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-B_to_A-kimg1024-nfe2.json",
+      "receipt_sha256": "c5b740fc0a30c4d666a394ed8812110b7bf47c61dfd3ffc9b8b1b8df367f4646",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "25c64e75230e96b6e589ba81e30b61c42765cca08b9e3879c3d57eb844dacaec",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.970237438668786,
+        "kid50k_full": 0.008050932237237256
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-B_to_A-kimg640-nfe1.json",
+      "receipt_sha256": "04152c17c54e2d5aa4d74b553a412a7b03616c468fd2f4b949717e7f8336098b",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "37e75b0c3f76ed9b11c293313cd0d72d46584fd461cdd7577cae968e8860eae5",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.7240148961992294,
+        "kid50k_full": 0.0013192613313313313
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-B_to_A-kimg640-nfe2.json",
+      "receipt_sha256": "421eaf3fc0fbb69fc8885669aa13c7431113c85f8bce83335b7a6cc34c3ba03f",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "a5a29c0797a7b6283b91e6f5a84d70a38bcdde579f28280998c2c7042aa01fe6",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 9.740804035759684,
+        "kid50k_full": 0.006424813153153141
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-B_to_A-kimg768-nfe1.json",
+      "receipt_sha256": "d75d5a96b014b629a45df388fa1b82d092fdc810264ba9d41fdce339e2f9da37",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "6722b6a34f345f1fd1904e04fdb8ea2ed483d74c3ea6eed41d0a26efd94f2a2b",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.339662344526934,
+        "kid50k_full": 0.0011736482132132142
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-B_to_A-kimg768-nfe2.json",
+      "receipt_sha256": "cfc25d8d0f98bf51d4b27a51f40f2c4c8728d3e5b1362ddacd5b3a51123a2e97",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "5b8161f63a28a7afd0e1a3e8da9f1051c40062239e5f175a1259b53dce796eed",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.912993841048127,
+        "kid50k_full": 0.005852581431431458
+      },
+      "nfe": 1,
+      "receipt_file": "seed6-B_to_A-kimg896-nfe1.json",
+      "receipt_sha256": "11828833178c150a1c3f2982fed78c62b33354c273af69cb1ea80d61841383c3",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "e7b52dc75ee916734e86dd6d369094b7a90e55a9bd0b31739e8a51799c1d577e",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.2104737649943127,
+        "kid50k_full": 0.0011498235635635638
+      },
+      "nfe": 2,
+      "receipt_file": "seed6-B_to_A-kimg896-nfe2.json",
+      "receipt_sha256": "49b61b89e7b3d02be418aa6049e312fa40360a876775b161eeb1c886932b6c50",
+      "seed": 6,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "9c9fb742cbce907ec15548f5902564a8e4eb3f3013aa38f11dc2b6067a4f7dd3",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 9.881176358732084,
+        "kid50k_full": 0.0062179103303302875
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-A_to_B-kimg1024-nfe1.json",
+      "receipt_sha256": "bd658bbf122d4d79e590f2afbd9112d0a2e778041d9a25b594e489e8f5160643",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "2debfc2c2260216ab7fe50a82ba537faac88ef39ed665118e2e4b14a3c3d662e",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.9696021144499682,
+        "kid50k_full": 0.0010016322922922836
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-A_to_B-kimg1024-nfe2.json",
+      "receipt_sha256": "b80b71679ca6ef42cc98b06aea7fe9029030d62cf9b03be0db4e6574714f3436",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "e4e8b2bf68485962578dbf897729b0a1fec6e0d0584da2db7d3618083772734c",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 16.55321325893494,
+        "kid50k_full": 0.011343706951951922
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-A_to_B-kimg640-nfe1.json",
+      "receipt_sha256": "c86acceb22179f5ca8c7351801928d852e47f7637538f1e7301e5b1e9b28485c",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "7edf5077dc488ef06ab12ee38a30af0c2f6e5e5df51d84a18da912e21551dc1e",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 4.726069560854224,
+        "kid50k_full": 0.001758396664164161
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-A_to_B-kimg640-nfe2.json",
+      "receipt_sha256": "a58e1f13fb23ab5ea1813ad41073fef3189342d2ec4d31520ecb68f9c7b3b96c",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "fb349cd016e5f57083abffffd8cd23194b6133e2da6d6cfce0256361ef32d737",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 13.23190950960088,
+        "kid50k_full": 0.008734443270770734
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-A_to_B-kimg768-nfe1.json",
+      "receipt_sha256": "6cee5fd30140828f79dd719f6fd4f8abcc84584c9bafca9e78d5c9add0ea69f2",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "f27abf755bdb768c0e91dae54ef6e11bf297ab74daac66a5995de965d39b80a7",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.7061415172984575,
+        "kid50k_full": 0.0019314601026026094
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-A_to_B-kimg768-nfe2.json",
+      "receipt_sha256": "ddd8c6fb411390bf6884068a67e420b6aa1d16af97f02e2c9b6f24da95fd631e",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "c60cf89eda852b31cca26970ff373cc7d443f23592c1433c119d2172364b8d0f",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.109345747339942,
+        "kid50k_full": 0.007100086729229234
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-A_to_B-kimg896-nfe1.json",
+      "receipt_sha256": "1f1e61cd557eb609f74f0b4eb6ae73b023d2ac7213671744c1cc75bc2985dc4a",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "A_to_B",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "d14bb55f52eef43af21f0a79998fc94afc07c4ac6e17580730bb60075322da9d",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.20527663951626,
+        "kid50k_full": 0.001374202890390411
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-A_to_B-kimg896-nfe2.json",
+      "receipt_sha256": "5b03bfc6430272edd3fb406205b348375a379539919cc360bd91e2c76e9d5d85",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "0b370fcf29b5dc96ceed57bd762584c42d20d910e1d393f8371739cbafa2eb18",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 8.808817054314607,
+        "kid50k_full": 0.0054201295045045025
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-B_to_A-kimg1024-nfe1.json",
+      "receipt_sha256": "fbfd8911b272a654cdf279e2bb752c1610ae3ce163a37a5e2111b6c262ff795b",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 1024,
+      "generated_feature_sha256": "fd1c55d325f2f74a35bc84c5f9a5d7eb5b271dfcbe57316e91eb22bcc7a6be5d",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.8129970487936045,
+        "kid50k_full": 0.0009805334684684567
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-B_to_A-kimg1024-nfe2.json",
+      "receipt_sha256": "956efcc0b0c2f5a017470cbf935fb758c8c4f8c5d8fd7f5119b3a1df527dc052",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "6428742992894972921e5cbf6c3f7e14abd97de4b0689aaadf6ecc4cfb433c67",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 11.85514520155419,
+        "kid50k_full": 0.0074110878228228145
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-B_to_A-kimg640-nfe1.json",
+      "receipt_sha256": "a30db7704f59309b6afadeeb017c5110c38fcb74cb9df04ebb6c2637b4ca03e2",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 640,
+      "generated_feature_sha256": "dc36494393a7f15309a13de3d8ca3fa85a998ad2a47fbbd41b89ba315781d8fd",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.672526299140049,
+        "kid50k_full": 0.0013996278953954241
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-B_to_A-kimg640-nfe2.json",
+      "receipt_sha256": "0226c256587d861832e49f824c4bb184659be954d4a4894ed5b5299bae26b5d7",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "3e9b806fabde9c091fa600d512b756b9d9e5e8e282a0d8a489f79f88fc83dfe5",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 10.74063480598611,
+        "kid50k_full": 0.006697757222222212
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-B_to_A-kimg768-nfe1.json",
+      "receipt_sha256": "113adee8971eddd6b9fb57017a78a801ba961624926dc350057c9084383ddfee",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 768,
+      "generated_feature_sha256": "2d5aff122c8fe1cdc5b593cf6a3c896a46d66d3c679f2bfe1e621438b5c7b8c7",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 3.2898758747188435,
+        "kid50k_full": 0.001602440788288277
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-B_to_A-kimg768-nfe2.json",
+      "receipt_sha256": "f19f86abf829b9b969a9bf4ae80ddc032d1ca74db0cfbf22760b54de1c52e767",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "062d7989b431259649d17109d0650588f1a85448e5383d663131d538cd6a4025",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 9.722300784609118,
+        "kid50k_full": 0.006022992327327302
+      },
+      "nfe": 1,
+      "receipt_file": "seed7-B_to_A-kimg896-nfe1.json",
+      "receipt_sha256": "d6f711c62c2da99a3c9e5c16fd76eed69fd707529fbd029909f3c23287d2def4",
+      "seed": 7,
+      "status": "PASS"
+    },
+    {
+      "branch": "B_to_A",
+      "budget_kimg": 896,
+      "generated_feature_sha256": "47ad4e8952da8fcd832e995636c45adb21d7016830717079d2a4d1deef2f5612",
+      "kid_fid_shared_feature_identity": true,
+      "metrics": {
+        "fid50k_full": 2.93192444970083,
+        "kid50k_full": 0.0012079142917917898
+      },
+      "nfe": 2,
+      "receipt_file": "seed7-B_to_A-kimg896-nfe2.json",
+      "receipt_sha256": "a3a070158aa730782cecff1a9e372fe9ae58c4556ea0ae131c8a5e7b978427c2",
+      "seed": 7,
+      "status": "PASS"
+    }
+  ],
+  "formal_trajectories": [
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "A_to_B",
+      "checkpoint_manifest_sha256": "cd34d65a760880b0f7a13a3ea3034422d2710e004996102aa43d03b42be5ade1",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "2502eefea5c442d31cbe1cc625f67218994b9575eee69c565f7f7d4395ff355c",
+          "network_snapshot_sha256": "c305d0235873549b53125d96b758ef9994f0a10df151b610e1503a5a3d9d8d19",
+          "training_state_sha256": "a52ccdeac74ce5014fcd52673495b9cc70f25f0284ae17dea057d6dfb3620bf3"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "b4976976132df9c55ecf4d8222590bbe964c258529ded42dfc9a2c7efa79f4d4",
+          "network_snapshot_sha256": "a2a4b56f760768364f331d51486a6636b67498629bdd8afb7c29af96afd20803",
+          "training_state_sha256": "b32b226ff62ec5d67926bae29e0fd1ec2b27d98884891e8fc6f21f9e54b7f5e5"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "87c01ad0a863d141f65cfa24c2c82867c2cd8f1ddbd533ecae042fa247d2f4ec",
+          "network_snapshot_sha256": "c0f4ccb498061e1cd549027ffdffeaa1faf3b865d7bb6eedefc0aa750ad87f64",
+          "training_state_sha256": "f324f919f3b7c730d34517f3d0411684fceeae9023348079ac971c4ba6b4fb77"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "da64dca42d8890c766f321ccd1d301b6178b30af7b295040002cf78e8db3068a",
+          "network_snapshot_sha256": "2f5fe58d706edf6426896eafd006fd46c191a4cdb260ceb6a371559527ac9caf",
+          "training_state_sha256": "871677158da92d41478ec31ffc88f94b5fffec279c9cf36892797308a85a9024"
+        }
+      ],
+      "raw_grad_nonfinite_count": 3,
+      "seed": 3,
+      "status": "PASS",
+      "step_skipped_count": 3,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "ca2ac5365b13e8c056a14b5dc2b75314894163900457bf6c49162da7de6aa3f0",
+      "trajectory_completion_receipt_sha256": "ee656d60f9669da8aa5d4595e5ecc79336cff59fbb8f5167e2b2358f86917740"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "B_to_A",
+      "checkpoint_manifest_sha256": "57a286e4f1ceb03047b85f341f836efd9eb4abb1d362d15ad5105e208acec48d",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "8c0e9b2a7e7539f30e2a9937cd0031d3b9fc5360e4324b7b868e33b2ea84a4c9",
+          "network_snapshot_sha256": "824f98b9b941343dbc45bbe0bddd9a754ed2ff988e5e7bb37fecae5a20d5a260",
+          "training_state_sha256": "8cf734fb9092378e5651ba88134de90939d4bd7a7f667ab3b4c3adb7ffb47182"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "04fb6326250eeb505ffbdbbb7c6a4b32555449c94575b84c219ea1a132851f21",
+          "network_snapshot_sha256": "c2fb04a35f6c99651301456c85bf51f3781c4391a9b546f8896dd95c82b31b73",
+          "training_state_sha256": "3ec424dcc6fc5bce4c05fd0c644ee6f4116f7f5575b234b7015e57d26224ad69"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "41b1f575b8b554347c4116699274a822ae984567514eacbc5f8f642895651945",
+          "network_snapshot_sha256": "76146122be3a4b8e889884bbe772e39161a37a64928691588592c5e9fc29c2c5",
+          "training_state_sha256": "031981428e45d6419338c9767b2ce1031cf1d7a87d0b7ea0b256b9cd71e85234"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "81ac988e22edeb74b165b9ddfe81e63b07e5582234441a5c2a8e647c9698a9c4",
+          "network_snapshot_sha256": "e0f8a365f3e9aedd0547e3e2dc777869286f0e61599da28da913020eb436f6d5",
+          "training_state_sha256": "9bf2792ad388442964272f7455f893e46940e02fa335a1293e10e45fece48a0b"
+        }
+      ],
+      "raw_grad_nonfinite_count": 2,
+      "seed": 3,
+      "status": "PASS",
+      "step_skipped_count": 2,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "8633f72ee0cdf475daf2b3c0bfe42b04fa0481079402e19c0fdffe513021cb33",
+      "trajectory_completion_receipt_sha256": "fd6ce737683fe572edd43757f7222c64fc31f6f05061c4bc58ee8a71d05fb1cd"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "A_to_B",
+      "checkpoint_manifest_sha256": "dc6fa55ba1700578e582d69ee7d7f587e1a5d202dfa0cbf71e7205fdec6b86d8",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "358b390cc1718a8a18c5c3292f44b40073e723ea4397833ea15bf781c3a6bf49",
+          "network_snapshot_sha256": "e76f35836455e3566c1862c6d72c4364ffeaba13184db216f67604ef077bc160",
+          "training_state_sha256": "32092c49b8455f0cce79bdafd9abdaa3da020992d1f484585e4cdf9b8fab467c"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "aa75b03cc8ed05a1fc1585ae17bc19a099e411bf1f5768f78d7b8f0c0b3a2881",
+          "network_snapshot_sha256": "c9f00a3f3ebd690643ea404ca857b2c9a07dc6b393756c92971c4a519a02d3c5",
+          "training_state_sha256": "f703aee24d245d07936211005223d3ca09a88f1cd4aeb53d745930b845cbde65"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "ab9927f737f115adbebd9c5798bfb3839d45960598fa3ee651e4e0a670f9bbfb",
+          "network_snapshot_sha256": "402d74fc842c5a7f5aebe844d4118027c11b06700430f8095412df6c671f9958",
+          "training_state_sha256": "910bd6bd76e9edad41197dac53d16d5149330e74cac493acdc9903fa4ff5c6ed"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "79e68dc748f5af4d6389b1819c445cc3a4250649458c479d32e229cfa9a7715a",
+          "network_snapshot_sha256": "c7dbe00f9b32af42963657d05203771429c417a9289171174c920e9737711472",
+          "training_state_sha256": "5038e8c1a6c16c7f69d1a56116dc447b97b40f21f7369d8d2ffe288a0137ef5b"
+        }
+      ],
+      "raw_grad_nonfinite_count": 2,
+      "seed": 4,
+      "status": "PASS",
+      "step_skipped_count": 2,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "fc5ecc0b0bc53f2e3c2a5baf84e4a8380813b74e559ae55c9ba4e097a00c1772",
+      "trajectory_completion_receipt_sha256": "37e711fa60318e7a49a3994514de0c80e08d6d094198852507b151f98a88e525"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "B_to_A",
+      "checkpoint_manifest_sha256": "8071c0bac4ec214fa5863afb3785f42be0560d57c9a5c1d8c06a3452c1c09ff2",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "96db61cdbffa96ec56a4a43c3282184ce04c91cdf2993aac2444920d5b851a9f",
+          "network_snapshot_sha256": "77740add92f22b2246e673c9cee38cb75db31ffd77a62bc4865a08354fa259b1",
+          "training_state_sha256": "44d87dcfad200f8f264f622f8e29028b526a94e9c5cab7c343184e2c5dd73880"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "fd9a1a9e35e782e5241def3f96dd558ddc3f7ebbd2e7878e17052b504d8d36e8",
+          "network_snapshot_sha256": "bb3086f9ef46a728968a38080f03e871e79a9ccdb4f43455f0fab21bbcf6a664",
+          "training_state_sha256": "5a99b31aad55ce8b63bfa82c60c7f4ebccda11ea6496b764260c2c0a0f52c53d"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "00588860434a205edfdf3bb95e0027f3cafa8df05f81bf3278387358c62baf8a",
+          "network_snapshot_sha256": "adf100b365945391583c3770bfc25635de632f7573f48dcd7d57456a9c26dadc",
+          "training_state_sha256": "75dd9b55fd5e949690954032c8b6739aca5c4902dc4567185863d40b249b7c2a"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "489931e63986e13a7d2d4958469709ed4b64eba3605821b00bdce9732dcda6db",
+          "network_snapshot_sha256": "126a408c5cac08bddc528d7e7b167fab7434619554fa8d01f85025fdd04ecaa7",
+          "training_state_sha256": "da221cc2215df63ecbacb0862ca9c2eb2fa7fa3433a440fdfacffecad5d6f922"
+        }
+      ],
+      "raw_grad_nonfinite_count": 1,
+      "seed": 4,
+      "status": "PASS",
+      "step_skipped_count": 1,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "571d028b0c613f5133dd8a5b658648326f2e816086b8bec64710743d3241dc7f",
+      "trajectory_completion_receipt_sha256": "690699333f9bceb0d9afa534e48b30eba10b5fbc46ae495072ca680cc699bca3"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "A_to_B",
+      "checkpoint_manifest_sha256": "a3d58b8f9706706139274288f7657b16f31f564fe3673c1c5916e6268991772d",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "89e7baa820147efca75e3548b0b88f3872fc0cb923205820d7bae4a3a54bcdfe",
+          "network_snapshot_sha256": "d0b5350484750bfb7658b909d0d47830045ba6e4c0886c392b3de4876f5b7a2b",
+          "training_state_sha256": "17dcfddce771a63e6aea7f1f08735efb386b8aa866dc2c224bb324a45529590e"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "24a756d9a332579204560123dcd117dcaa91eef18d75f1ec61f14fbfec62c59d",
+          "network_snapshot_sha256": "65e28247d9a4475de643137b6663f5711fc5edb304b81cd36ad2e28b2d1e2365",
+          "training_state_sha256": "f89431d690a7737638e7155dbf88a7b31bc2e88927a025675ec7600c8fd843ed"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "bc14889ff9c8530c59da47aaebf6c481a2cbd2a90c2af63b2c8420c6ed81accc",
+          "network_snapshot_sha256": "f4d30fcdc16d2eb664941b77ed0e741399bb1466d3f1e70832c34716ae2095fb",
+          "training_state_sha256": "05684410bbd5e14896e73b07c5b4fbada60c7e0ce1d1f7699bf39640abc016c6"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "79713567e9129ba0ce0125daa1b3f46e5d0a87dd412becd5b2782270ece681cb",
+          "network_snapshot_sha256": "4704b6171dc8b74e9c23dcc16e21db4f59dc4bba5e90d6ff4f1ffe1218e6a252",
+          "training_state_sha256": "e4fce7d3485a8fa4b1be2b03436e1edbce8289a42a106eac4ab4c940d2b36bc5"
+        }
+      ],
+      "raw_grad_nonfinite_count": 1,
+      "seed": 5,
+      "status": "PASS",
+      "step_skipped_count": 1,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "0ccdf9271f5c6bb44edf07610c8b603d0d8492ff5d4fb07044ae19b805259302",
+      "trajectory_completion_receipt_sha256": "4b688d7980ac90ab64098f9be6d0d788c76f33d8f6a39292328186df60909788"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "B_to_A",
+      "checkpoint_manifest_sha256": "9b0cde97ae5f39e5626acf724026f78fe2cc9787db6676fcf67927b6a8fe3f15",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "19748821952722fbf3fd05d5dba192a41a34ede7ecbc23b65a8fbc23d97bc05a",
+          "network_snapshot_sha256": "93dccc8fa6a19da5ce42298432a2586e4c40aa069b3c3dda936120817f65445e",
+          "training_state_sha256": "8a2b4c702dea344ca1aa511ad37356c65e58bf84dfb23c072af10ffeb48ab490"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "bfd935f559ae2140106c439aea039f269e7dd41ccb66e36d13a0a5656eec6d57",
+          "network_snapshot_sha256": "81c639e407ac7afe1362de845b11ec0bcbe6777e0e1b59426bee19a3c84cd08e",
+          "training_state_sha256": "ca60537d1c7029649d68553b5d3a9ac0eea4a20e4fef628dad51f15793196b50"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "557a2f4187610072cff2190b86bed6f67e6301602ebdcd75e74db216f8565d83",
+          "network_snapshot_sha256": "3a5fbcc6463ac5ac180c2f011263d1ec4307ffabe29bc7b2f31d1a7b3b5c93f3",
+          "training_state_sha256": "89d4e5c24e33b4ae19214b6559027275ede83e83b310a01fad955831de14289a"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "669f4100dd431a9d5683248daf1dc974654385d9956b2ff54c414d30e8c846c9",
+          "network_snapshot_sha256": "325924ec48fd1381bbfd4af5ef0c9644b2158511979976e14f4ffeb46e0aa611",
+          "training_state_sha256": "ccec0e2b47369ac9e49732b7ee7d79be5a115744e298181a019f98dadc760abf"
+        }
+      ],
+      "raw_grad_nonfinite_count": 5,
+      "seed": 5,
+      "status": "PASS",
+      "step_skipped_count": 2,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "8e8cd0d35b3e300d7062bfdccb21b96c78d140d33fb87f70d2abc0c8ccb5d216",
+      "trajectory_completion_receipt_sha256": "07fd32f4ffebd1cb05a5fda7d59526370d398ed151502a2a628aaf5c263b1709"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "A_to_B",
+      "checkpoint_manifest_sha256": "8f147937e6e045c4169d5c7f87e41af25457b0313adf349ead96e9c2cc266c38",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "2bf6e33d796c7d6f0dc29324d586c9b0b8a6ea5b5a71f287141c23829133d32b",
+          "network_snapshot_sha256": "b86d7c1634fcb261d25070caffd6e4c0644ffb4505ac45cff1e21aff87a67cc9",
+          "training_state_sha256": "5db0019df2c48a6ac5ebaf0ffb135c604368b4cdb98ccec41a6fee1e93a32815"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "88bb1abd2418a934bafb95b4e1aa9191af0608b440fefe3f1ede6318b14db501",
+          "network_snapshot_sha256": "5511f461d5319ca0547c3bbfd99b67f1893417f7fbac3bf268ea3c7f7029a84a",
+          "training_state_sha256": "c10d0ea020fdd15f85aacb828363b37ce9357a80c59df853ecc7e441e054b324"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "6b3923eca7525765da712f1f53fef683d3f1274350c09358425efe1f0443959f",
+          "network_snapshot_sha256": "4ed471cad956527ae0265cd88f209837c69c13b824658451109a6012686c499b",
+          "training_state_sha256": "5f0cb5c85de16771b843f74fdb083030cc1b627d136836246553db41d69f6f71"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "741758d9e6026b18093b636cbaf69379feed9607d6b932da4782522cf8493371",
+          "network_snapshot_sha256": "850b6b0f33ff6572ab7fc1add8461ce7bf7b5c7fb6f4b6d11dee10a68fea48c3",
+          "training_state_sha256": "4c00d537f7776cd014904878a787c58abf33dd6a71fe165063a4945b0b11de94"
+        }
+      ],
+      "raw_grad_nonfinite_count": 4,
+      "seed": 6,
+      "status": "PASS",
+      "step_skipped_count": 2,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "f9377cefc6da3fb7b4613bec1f73db6cd25ed3d54bd39c612ee3584d5a8e5530",
+      "trajectory_completion_receipt_sha256": "acb6c1d9cd429bbc4a330d9aea66c91f3508c7865c10b0085b27986616f196ab"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "B_to_A",
+      "checkpoint_manifest_sha256": "a2d969544171416889516ad82074a5e4bc9b1db0929ecb0cd9b55c162d91f1b6",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "e77f09b4d5028a3ca9aa125c44ff56b4b461a7050fc1282ec46cd79192997413",
+          "network_snapshot_sha256": "7eef376d1e51994cb4aa5647e73699463444b83ffd439cd30eca1e97693771a6",
+          "training_state_sha256": "1e5ecf1db7eb767e2d6ffa491f1fa40b3e6e20992beb6965a83c5f5944b83261"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "b714f90e9fd13518f64d32355ba4e7adb4b7dee5c4f655cf19c6c50496a95dbd",
+          "network_snapshot_sha256": "98285bce7fcf8052420dc6bde0cdd45b88ea1418c8d528d8cc408590dd944ac9",
+          "training_state_sha256": "4f1e94968e5e9c7bb0ae2c1f0d1ea947b72320e0dc6f02634d000eb5e226e6d1"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "9ccbe5e804a32dfeae8a7e126e0a5c53ec95bbe559a411deaa6a017d9434dde0",
+          "network_snapshot_sha256": "39011f8bfc4373d81d84631bbfc8818dd70e8ef39ba6a17b2ca63299ab6d3d97",
+          "training_state_sha256": "e613c2f38ae92f6fb774613d24e2edaeac0298b7b4c0d80023f6f4a144ad2f7b"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "302adb78eaaff1006c062e115eecd72bfc47beba6b82554d00e1e74acdffe211",
+          "network_snapshot_sha256": "f145d63ac63622027046ef346374af3bfb219ddfe20038aad12e627e93736825",
+          "training_state_sha256": "68fddcfa51a546ef25632ad6e275c2f74685a0dfdc580fde591e475a7cdb1270"
+        }
+      ],
+      "raw_grad_nonfinite_count": 3,
+      "seed": 6,
+      "status": "PASS",
+      "step_skipped_count": 3,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "4e2ee749a980a38e3dd3e19b18300ba218d21084cc052b300458cc497f8c8cf5",
+      "trajectory_completion_receipt_sha256": "c31f224c7a942e59dcc7a657a76031234b3e73ad535ee6a0f13e23429388efbd"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "A_to_B",
+      "checkpoint_manifest_sha256": "38e0dde1f806c38c885086bbc0ef4bb591423d65961651cfa61139ea449149ae",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "8c41ac7b1c4f05a0e41eb7c6214bf51de77c63a5e8611285f540329e71b42dec",
+          "network_snapshot_sha256": "2578bf4cd5aaa8fec7a8c7e0717c2c17274267dda76184f99c17f711562a61fe",
+          "training_state_sha256": "79ffe69c190bcc74ff43d51be807e8afa6b60197bd7b5af011d7bc475dd9d302"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "e2f34e693da7c87c94dd68680656fab7ac91227f30d939aebfc1964da7f9f6e1",
+          "network_snapshot_sha256": "ba262cdc9251cdee2fa8ac047a7bde234d9f0d5dc1cabea555ce3362dbda2bf7",
+          "training_state_sha256": "6800a3966f94762c4d7b359cfd4d7be39cfed760b6cd565e235d37e8fce6c67a"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "ef9a9a7ac79e659d8663aae6b0255ca8102c05c82a5ba09a35171afad34a1801",
+          "network_snapshot_sha256": "ae4638c5c9616b7cf3c7f14285ff95b2e4b6af2cabd8aa350749b5edf633101e",
+          "training_state_sha256": "e4e569cc7f31c438e54d7145700158ca11a9187cb031c6260f14f6317aaa22dd"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "749026d41dd23fcb21e1a4990144d5447628b9efef5e29a869e807a0473c2801",
+          "network_snapshot_sha256": "b8359720a06b45e1ea0e6f61f9a50091388658ce82df2520d8111380c84d59d4",
+          "training_state_sha256": "dad1d91aed1d86adfec3a0d8a64028c86d4a6635113537b3ea001b2894dd2aa7"
+        }
+      ],
+      "raw_grad_nonfinite_count": 1,
+      "seed": 7,
+      "status": "PASS",
+      "step_skipped_count": 1,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "debd301e75e72fa8ad37bb9256e2acc2b87101a578dc1da36aed395f70577013",
+      "trajectory_completion_receipt_sha256": "b373df94c137ed17654fcfa9381fa5ae2caab579acde11815fffa8c9e3cddb4d"
+    },
+    {
+      "attempted_iteration_end": 8000,
+      "attempted_iteration_start": 4001,
+      "branch": "B_to_A",
+      "checkpoint_manifest_sha256": "3c62d4fa9a026ffd6c66a0ac8205ebf653f36ce2bb652fccccfcee8a5aef47c6",
+      "milestones": [
+        {
+          "kimg": 640,
+          "milestone_receipt_sha256": "3a202c0aed687c546a98f0d7f6cb3df0d4eb8ebd6445dbaf85b97775a4515d31",
+          "network_snapshot_sha256": "b1e6d14bd40f9be40e40f76c6f745bd9cce9aa2e20ec9f4caf433fb2c597c1f9",
+          "training_state_sha256": "78fcf15adc5b2e9c8ce7358d15464bbdf8746523a4d0ef9f547908ee7ac98552"
+        },
+        {
+          "kimg": 768,
+          "milestone_receipt_sha256": "e9bdd07b47678d3cf0bb4cf1232085dfd4c5849e6b2cd66120c7de362cc6317c",
+          "network_snapshot_sha256": "0e22fc02959683fd56700529ccb2a8bfea99c0d6a8c3857266d0edebea0006d9",
+          "training_state_sha256": "c1eadbc7221521f7fc6a4e345217a0ced20e77c323e755ccbb24891c2f5be47b"
+        },
+        {
+          "kimg": 896,
+          "milestone_receipt_sha256": "db296a42362a5151c067359e4814672c60bedc2e90193a10b9b091a65ce2df2e",
+          "network_snapshot_sha256": "0ebed9494c0ae24873d4f7218c00bdfbe370918b9703b5a48cfaf3b5cf327bce",
+          "training_state_sha256": "3055334c3f2b8ab17f8a3acdb74dba480533e75e27bfbe8b99ebf7ce7674cbb9"
+        },
+        {
+          "kimg": 1024,
+          "milestone_receipt_sha256": "f6cb85656d4368118fcac1342734d9fb82e6dd41b5361e6aa1895498ad311f49",
+          "network_snapshot_sha256": "47e34297321394d9b4772c03ed9d7bc1dd3dd879d21b37f762a52041dfcfad7f",
+          "training_state_sha256": "e22b7ce6b91c0f735984201cd232972c5d4fb7c7837127a9fc30f1e83cc330c8"
+        }
+      ],
+      "raw_grad_nonfinite_count": 3,
+      "seed": 7,
+      "status": "PASS",
+      "step_skipped_count": 3,
+      "telemetry_rows": 4000,
+      "telemetry_sha256": "e66368029a5859c5b1d4edbce1de76f9f7c04aae5ba4d43350e59c7e742efc61",
+      "trajectory_completion_receipt_sha256": "2f0db9ee65b56a7a0923cb82b92ca294aa7e36e601716bd0009b89ade4b6230b"
+    }
+  ],
+  "frozen_evaluation_manifest_sha256": "702da780068a0dea141b12e13880d9c2fdc8e7134e72fd8bebc29cdb5acd92aa",
+  "implementation_commit": "5d94af54a65764b20dd632b21a4db82d87480b4c",
+  "parity_gate_sha256": "c38cfc5e950205b8896f5ecc82dbcc6828a3dcbccaa9a73b19debfcc70c37939",
+  "pipeline_completed_utc": "2026-08-30T01:06:13Z",
+  "protocol_sha256": "195ca2843791c0ea28ac5a87f3c9e0fb24a4fb8c9214b665331dbbd92648b32d",
+  "schema": "ect.q256.schedule-switch-seed3-7-execution-evidence/v1",
+  "source_inventory_sha256": "f3a4ddc59fcf1f287034e28c8445dbe5d963e703c4458b3ad3a73ddd9fc6f29c",
+  "status": "PASS"
+}

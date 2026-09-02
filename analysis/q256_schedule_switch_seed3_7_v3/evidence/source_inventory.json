@@ -1,0 +1,1594 @@
+{
+  "archived_control_kimg": [
+    640,
+    768,
+    896,
+    1024
+  ],
+  "cells": [
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000640.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000640.pkl",
+            "sha256": "c6a31088c52e4db98a5cc100803d76aef4d7e01899e58e1dff271eb3e6663914",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724856,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000640.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000640.pt",
+            "sha256": "f6754d37e2a172084d8b3a2fb925536e27cbc7ddd14adbb40918a59f9c56b575"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000768.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000768.pkl",
+            "sha256": "110b8bce523e6e979f4034b4ffac77f5ede7b800d8033d9dd9b29030c29a8324",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000768.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000768.pt",
+            "sha256": "8425fc561db71afe11f0df046a74f18d7a3eaa5a9d89a5f27e94a8f72623e526",
+            "staged": false,
+            "verified_via_source_manifest": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000896.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000896.pkl",
+            "sha256": "b4a461d89f8c685ac890a5ef9553d57b682fb21609bbd538306386392113ffe2",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000896.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000896.pt",
+            "sha256": "672321a403938b13804127b58066ae4856a4cc3f05e826ac920a32461aa58805",
+            "staged": false,
+            "verified_via_source_manifest": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg001024.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg001024.pkl",
+            "sha256": "b0a027374c0a994a67152dd9219e7775b1c6e7ee6aa49ff9d15fcfe733485610",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg001024.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg001024.pt",
+            "sha256": "23d28652dce268e05b015d8cc371d8603cc1f71480de247901ab1f3c7f9d1bd0",
+            "staged": false,
+            "verified_via_source_manifest": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "internal_state_sha256": {
+        "ema": "2c7e0713754bdb67292ce3514f394ce11239085d6ef6912e8ca7485a6a513a7f",
+        "gradscaler": "cbb9e812a9870859a0096170fde785a1184800bbf5b9bea0eaa5e26b618a0ef6",
+        "net": "7c25315fa0641309909346ef3ab3f62a38c8b6e12dba06b1a907b4d48aa5eb3b",
+        "optimizer": "f7a78b4e522274a93c62f787e7e4ac4acf758fe7907843985db3b8feb4304e22",
+        "rank_rng": [
+          "f5cec4d437ee65860326c346b7038afc5782576ba8f6d226231bf4aa1773bfe1"
+        ],
+        "rank_sampler": [
+          "5d9cdfd856b981a9b7f1afaaa4120a0df77bb97eb9175866e322ca29ee29d127"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "A",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7137673,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/factorial_training_telemetry_v1.csv",
+          "sha256": "e9c31e96bb705e7fcb173b106c439d8ded815ad61a67dcdeeb5d4c83450817be"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/initial_state_receipt_v1.json",
+          "sha256": "d42ee7b279c2806df82c0eb1f3557de482dd5cbcae5d43dee990b5e4517329e8"
+        },
+        "train_summary.csv": {
+          "bytes": 998037,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/train_summary.csv",
+          "sha256": "746a02e7c6a9401e041ab53bff15808cd82ca6346ba1f02d3a7f5a45e80d1236"
+        },
+        "training_options.json": {
+          "bytes": 2421,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training_options.json",
+          "sha256": "f19bef299530eb5835af77fc52eec80f1c9c1f0248cd9905c30270c4ca771b94"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 3,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223162545,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000512.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg000512.pkl",
+          "sha256": "0e2aa71ae4d72517e6761a3e2f6eea031aaa844a6f5349f6978a7d61e8f70692"
+        },
+        "training_state": {
+          "bytes": 895724856,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000512.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/training-state-kimg000512.pt",
+          "sha256": "bd42db9f45973be78a60d15ea24811641126e661bd5c3a2c5d549a617f75c5e0"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 29672,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed3-replay-inventory.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed3-replay-inventory.csv",
+        "sha256": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3990,
+      "trajectory_config_sha256": "7ab29071cf2fafa060d4b49edfa2092b41e7b7b89b38155c79022a51a4c616e5"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000640.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000640.pkl",
+            "sha256": "545325879fe7963e48439ab7592b9ff8ab3c94b9b81576d90adbb90801a5949a",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724856,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000640.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000640.pt",
+            "sha256": "f6f2810d6416703315fde1914cc785dbc249d73e02e946b1e05cf2a9fc09dd1a"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000768.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000768.pkl",
+            "sha256": "caaba9c5366200e030bb09315ae79978a82dacd8af3ef728160214138b0fed7a",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000768.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000768.pt",
+            "sha256": "189d70cea63f5958427af8e584af08130093cdfd528ce65ec0645542eea35be0",
+            "staged": false,
+            "verified_via_source_manifest": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000896.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000896.pkl",
+            "sha256": "2718661b1257d06ae30a0aa5de1209a52f1070f5ca3591144b2f6e4d6d974a9c",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000896.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000896.pt",
+            "sha256": "7efac4484aa9ad4728a93c345eb326089fef4e2c1bd9fab72951a5a68802b758",
+            "staged": false,
+            "verified_via_source_manifest": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg001024.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg001024.pkl",
+            "sha256": "43115f4b2450bb87f2796d30bb1652966a3a9367c3dd76d3c8abc1c79ce8c6d5",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg001024.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg001024.pt",
+            "sha256": "3b2594de86095f94409028e4c8f7e7c6a1ad765ef9599b839a2b649a712c8109",
+            "staged": false,
+            "verified_via_source_manifest": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "internal_state_sha256": {
+        "ema": "4d578d8ea4b6bd937a56c5e53ccb237ab6f50153e260f1e56fecc03a52e93ac4",
+        "gradscaler": "678f0bcfde661ebde90845c3be5fa024e57b8a3e43549e38a6dc80915992c6a0",
+        "net": "ae6e314373b12bf34dea8a0cb22b46b45937f355ca1683ff3ee9752d80e06b63",
+        "optimizer": "63acd093e559d29761b288d890970ea849c574f4e5f93b6c02808976158d4b7e",
+        "rank_rng": [
+          "f5cec4d437ee65860326c346b7038afc5782576ba8f6d226231bf4aa1773bfe1"
+        ],
+        "rank_sampler": [
+          "5d9cdfd856b981a9b7f1afaaa4120a0df77bb97eb9175866e322ca29ee29d127"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "B",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7407484,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/factorial_training_telemetry_v1.csv",
+          "sha256": "730c0d647a9a2ce9b29f84073637c32a93aaa8b2648729fa73179587a3c36dba"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/initial_state_receipt_v1.json",
+          "sha256": "c893d760cd2a6e650312f7c42c9971aa419107306b489b843f41021bb504cfa2"
+        },
+        "train_summary.csv": {
+          "bytes": 998266,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/train_summary.csv",
+          "sha256": "0357ae236980aa6c21c1320c0553426447e4c7cea5a665de1a3007ee282cde99"
+        },
+        "training_options.json": {
+          "bytes": 2421,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training_options.json",
+          "sha256": "29daf7926e2ce3943b86de63ba1b6e0ac60fb6a7f822d6f7a469c26398a22714"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 3,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223162545,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000512.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000512.pkl",
+          "sha256": "6354e9b3945ca2a04a909547eed178a8e84ba0f24b592a5fb95504695a53fd8e"
+        },
+        "training_state": {
+          "bytes": 895724856,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000512.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/training-state-kimg000512.pt",
+          "sha256": "207e31ab74b5759d5cbad507b5df8b4a523eca44cc6bca38413b7a8e02a572a7"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 29672,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed3-replay-inventory.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed3-replay-inventory.csv",
+        "sha256": "96b048c796d501f01cf715ddf0f78daebb9ca24373f6151f843168e124e3e026"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3990,
+      "trajectory_config_sha256": "09c9567d885af4e49ffd118057d008aea10662845ab4ffa397191f6b9b606a00"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000640.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000640.pkl",
+            "sha256": "b3bee865d00ebdcb73a9125012522cf7add1a4d73f14dce300b00c46c444e450",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000640.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000640.pt",
+            "sha256": "737ddf10b7cf03f7e6e0887e1d8bf83326fc764cac22c926a3e54ce45be9535f"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000768.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000768.pkl",
+            "sha256": "017a7002212125267856522b48a8a40578a93e29ce825616a94f64e5733477b4",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000768.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000768.pt",
+            "sha256": "05cfa353d94752f0ee9b970eb7e19d9daf5a59be0d514c9c3fc2118e5d55c987",
+            "staged": false,
+            "verified_via_source_manifest": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000896.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000896.pkl",
+            "sha256": "b191154145c6f3880a7a01745dc8a8cfaed38e5b32abae4d0e1faa0d5db67fd0",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000896.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000896.pt",
+            "sha256": "1eaa7879c2e2a28b60c8de5e689f582fb2216fda90f74b798eb3bdc9f54cc7b0",
+            "staged": false,
+            "verified_via_source_manifest": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg001024.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg001024.pkl",
+            "sha256": "e429d5d6e822526ba83d0c60ebfc1f864fb574ce51781388d790994b4ff6247a",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg001024.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg001024.pt",
+            "sha256": "ba242f8b2ee0a448072a0fba3786d2e6a458fbaeb1b789269975b62d9fc0cdcd",
+            "staged": false,
+            "verified_via_source_manifest": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "internal_state_sha256": {
+        "ema": "1b6f71ccdfcd27916170a10cd993a7ba71657b6a090ee908db2bdfc89f09a955",
+        "gradscaler": "6d2c56659e32355726b76f03fb2f49a0ebd51d4aab3cc0ff7cae6e160091667c",
+        "net": "c32b20053f3ff985a7597bb8447da78e6f1f4727a0f9088ea137e54ff98f80bc",
+        "optimizer": "cf72e72805f071686b83edca4afc4cf5cdf1924783f1100a1fda633d4f23bb30",
+        "rank_rng": [
+          "3d8f4f5946333038a92addbc37890d653f61c53107ec919b5cf57d5b40f84acd"
+        ],
+        "rank_sampler": [
+          "8b15d2555fb8bbe7216cf8cc2001ed0e1dc81cad7d30740d772ebf0e3883fe47"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "A",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7134665,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/factorial_training_telemetry_v1.csv",
+          "sha256": "6869de9dfa6145c36c888005ffad554f83adaa403c83d84069efd0eaaa50cdfe"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/initial_state_receipt_v1.json",
+          "sha256": "5ed951f7f3cdbd8d285f47a5ec60881a466956d07f9f223723e5fcf435bc5cbc"
+        },
+        "train_summary.csv": {
+          "bytes": 996860,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/train_summary.csv",
+          "sha256": "9642eada10b88dccd4acba9b198a5ffa6d00fc5b3c60db963baeda81a776a79a"
+        },
+        "training_options.json": {
+          "bytes": 2421,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training_options.json",
+          "sha256": "2aabf72a6ae10a1f1f962be2f9db3c09a2e8440085f53f9070e5e297fa384463"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 4,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223162545,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000512.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg000512.pkl",
+          "sha256": "ef24432b4a85c5e6803b140f53219080905cf428ce0cb6c326cc67483673b7fa"
+        },
+        "training_state": {
+          "bytes": 895724792,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000512.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/training-state-kimg000512.pt",
+          "sha256": "29c1a14c061ed5ecf4439e1ec51d3246a74df83a891088624e01a3d0c4f45f28"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 29672,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed4-replay-inventory.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed4-replay-inventory.csv",
+        "sha256": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3989,
+      "trajectory_config_sha256": "f14c0046caa025931efeb494f4fc069dd020f42fe0d30e15ab96cd5948ef6a3e"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000640.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000640.pkl",
+            "sha256": "dfcc6e4a014f53a73ad58214738b3da1d71b1c47a4d7f97a338d3fc7f2f9624f",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000640.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000640.pt",
+            "sha256": "a6508765dc7211056cb15bfca31e882cc8ac6ccd62ce38ca202b91955b5e90cc"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000768.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000768.pkl",
+            "sha256": "ca670d64a922549245a38bc5f39b5770e24dbe458fb4064f5cd1f3453b6fd01c",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000768.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000768.pt",
+            "sha256": "c46ce61eb54f01bf4a99f1957288ce83b136d8a1ccedc9d8d469a7b2e64dfda3",
+            "staged": false,
+            "verified_via_source_manifest": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000896.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000896.pkl",
+            "sha256": "7cd3feff600f37a2c7df4ee79370d20e402eb4df264ed6819d7b70e23492b3a9",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000896.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000896.pt",
+            "sha256": "b6de765fd088a900caa0ff40963a5f8a8e10d0ddc496f0204b683fd1dfe598db",
+            "staged": false,
+            "verified_via_source_manifest": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg001024.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg001024.pkl",
+            "sha256": "9ff85962497039bc650d9252fb08c2f004f0887cc873de8f13e6652d4aafdfb1",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg001024.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg001024.pt",
+            "sha256": "f952d6e9b227c25a8ddf37d78dfc008e6524107a60a48a318cdc8334120e32b6",
+            "staged": false,
+            "verified_via_source_manifest": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "internal_state_sha256": {
+        "ema": "efcf445c0b30e52925f5ca0aa272191c8d80b67ec29aab7d59d3efd44a579cc3",
+        "gradscaler": "c67719f4ee4d31778fac88677a09fd25e3efda6b40ea4c3b2e15a3954b26791d",
+        "net": "8a7ab6723d5fe9e570c9053642ca87073a37367c6da467a7130de35093728f58",
+        "optimizer": "d13645dbee3aff7c851ad876282230b9c23d24c2c4c4f4de3e5f8cd66e5b2e7a",
+        "rank_rng": [
+          "3d8f4f5946333038a92addbc37890d653f61c53107ec919b5cf57d5b40f84acd"
+        ],
+        "rank_sampler": [
+          "8b15d2555fb8bbe7216cf8cc2001ed0e1dc81cad7d30740d772ebf0e3883fe47"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "B",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7409310,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/factorial_training_telemetry_v1.csv",
+          "sha256": "44d7feba441a65398b70e05c87fc35d5e74278f945ef571b53bafae6594936fb"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/initial_state_receipt_v1.json",
+          "sha256": "7df3d3654faab0ecf933714729e523942165481d690bda53b442780a238ce58f"
+        },
+        "train_summary.csv": {
+          "bytes": 999454,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/train_summary.csv",
+          "sha256": "f63cb96f2929699236355681e309c636782f22c353962545d4efe5a1b49a1558"
+        },
+        "training_options.json": {
+          "bytes": 2421,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training_options.json",
+          "sha256": "5cb9249293a93b934133149ac56e72dc01605b5b3daccf03ddb87068a73cad2f"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 4,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223162545,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000512.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/network-snapshot-kimg000512.pkl",
+          "sha256": "34a22acb1dc5cc50290e801ef9876ad7789bb5a484e0ac5080ed220e70529c77"
+        },
+        "training_state": {
+          "bytes": 895724792,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000512.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armB/training-state-kimg000512.pt",
+          "sha256": "ecc97d6d2e3894fa693bda9bfb5f2aad9229b0c6cb54110475ff941a456b3967"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 29672,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed4-replay-inventory.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed4-replay-inventory.csv",
+        "sha256": "d87db99d1445074f89bed457940ccbfedde92c7e7a663e235268165203fcbe7b"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3989,
+      "trajectory_config_sha256": "53a47e753c7e5ac5cebbaa58d07f1a225a9828670348d6b29327f4be4e53f30f"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000640.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000640.pkl",
+            "sha256": "6d16d00b2f4ccba28388a59bab49ea4c3c5da885b5bc24b9bd0dd2c25d29031e",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724856,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000640.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000640.pt",
+            "sha256": "0abafa49a40bce46781a48889f16c34b60077a3bdd831a0e300accf2b53a9b84"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000768.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000768.pkl",
+            "sha256": "6e2f2110c8a7ccb06dc9e0b386375427c788afd78473fb54aca74600b00e3693",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000768.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000768.pt",
+            "sha256": "766886044e80a2fa2db172b1db76d4aaef8d3314f12d550217917306de8e3b73",
+            "staged": false,
+            "verified_via_source_manifest": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000896.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000896.pkl",
+            "sha256": "d7e26f26a00a9fee02d80b8ee3bff078592e7178fa6d4302e60bd201826f088f",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000896.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000896.pt",
+            "sha256": "cfdfa834f38b7fbc28f41ab45cde7e2c0018e40d0a12a9d80a285d875ad49f81",
+            "staged": false,
+            "verified_via_source_manifest": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg001024.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg001024.pkl",
+            "sha256": "7901ac1a0f0803f9b1ee840868cbb5104cdc10ff91c0e286408e759e7093a29d",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg001024.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg001024.pt",
+            "sha256": "ab130fccf9d6e8b8175f54e14d6b1c3a3651baca349baceabc82072259c894cf",
+            "staged": false,
+            "verified_via_source_manifest": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "internal_state_sha256": {
+        "ema": "e64a9cd53c678bc8f6dc6f4cc5e8ff2019ef0d40a0ab0d72721b0e35ba6fc4ca",
+        "gradscaler": "a3f31a3da00b93317add8937c0a12a1de2cb2109ce399ef40abced771904a7af",
+        "net": "fb828547794a4f6bb93cece11e5475b195d9e45ca03b1b21fc4159b2470da1bf",
+        "optimizer": "ba13c7df61d3be4275b629fcdcc7b639d10134d77b63282ad785ca16576d4db7",
+        "rank_rng": [
+          "a299c975746f0aeb7c8d96d58423b1b58b16676a2fc831be9f25cd5b8aac52f2"
+        ],
+        "rank_sampler": [
+          "550897bbcd055e31b66833c6cb95c7293b4461ee759f97e12853dedec2a2c6e6"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "A",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7134459,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/factorial_training_telemetry_v1.csv",
+          "sha256": "65daebcb8fc6f3fbc0ba78eef1703974005e03829f08a429907127d2ac79543b"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/initial_state_receipt_v1.json",
+          "sha256": "4b7bc5a25174b10d97c974b14c3ca38b279061a0568a3fa812d62dfa690c1217"
+        },
+        "train_summary.csv": {
+          "bytes": 996641,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/train_summary.csv",
+          "sha256": "9a6d4e024c8307e378566a532576eb48066a52b17193cfb823022ac4620fd5f6"
+        },
+        "training_options.json": {
+          "bytes": 2421,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training_options.json",
+          "sha256": "738bc1bf2070f3e7efd6ed70e44575a827355d63ea4bdaaca9c193a333b1b41a"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 5,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223162545,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000512.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000512.pkl",
+          "sha256": "ac6eb3b5fa82e73055373e6afd42cc8ea4de665bfb6e96e7a8d6f9c1eed2ff01"
+        },
+        "training_state": {
+          "bytes": 895724856,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000512.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/training-state-kimg000512.pt",
+          "sha256": "9fbcc385fddeece17637aec41e960fede2bf973b40a95e09db1fe43af5fac26e"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 29488,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed5-replay-inventory.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed5-replay-inventory.csv",
+        "sha256": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3989,
+      "trajectory_config_sha256": "975297c5cef434ec87f6a1e7977f90a87f6530286a8a5cbe7bdc5fb3ec28804d"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000640.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000640.pkl",
+            "sha256": "d2ec4170992bcaeb208e9a0b5140af68a8309a4487e4ecca9bf64acd85106ce1",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724856,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000640.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000640.pt",
+            "sha256": "6b4c938754ac238f5f592cc53d80a7b41dacb263df530775ae00610290a162d4"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000768.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000768.pkl",
+            "sha256": "709796b8c4a2f849f6fbedfb234f6ec917c71dce56821d76700ce3084416285a",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000768.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000768.pt",
+            "sha256": "306577066c2cd8b2a6d6011ff75b68c9a31e8c5242c57547cead25035489b6b8",
+            "staged": false,
+            "verified_via_source_manifest": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000896.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000896.pkl",
+            "sha256": "df19d39cbfbc03f594662cdae7086b651050c19f931246f597a5a5ce41a8fc2f",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000896.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000896.pt",
+            "sha256": "00d1ca5970084532127377ba1ed43883c65cd4f272df68f6546fb22321c1243d",
+            "staged": false,
+            "verified_via_source_manifest": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223162545,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg001024.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg001024.pkl",
+            "sha256": "1cd872b9e4f8485f2f35ce4d6d06f7ecbfec8f0b648f1e40b45951e62f69c912",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": null,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg001024.pt",
+            "path": "/root/q256_target_weight_replay_curve_v1/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg001024.pt",
+            "sha256": "f878b9b24f71f28b03f00c0da7d1473f7d1c1cb7e37cf0997c2441dabc7e5b7a",
+            "staged": false,
+            "verified_via_source_manifest": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "internal_state_sha256": {
+        "ema": "2e6ed40524caad0186926cef260a0572ae644feb555b93a52dccc72497beee2e",
+        "gradscaler": "1224a5ce776fcc467ec0f49fee483711381903bf9699c660f10df5b6533bd973",
+        "net": "f128fef9dd9fc37d278b1f0c600bd0e1f55c84ffbcdf7a58b96dbf51aabacb97",
+        "optimizer": "226f3619a9087bdbc281d04f2903645696f4e9fad7dfb7365e42f4953f880335",
+        "rank_rng": [
+          "a299c975746f0aeb7c8d96d58423b1b58b16676a2fc831be9f25cd5b8aac52f2"
+        ],
+        "rank_sampler": [
+          "550897bbcd055e31b66833c6cb95c7293b4461ee759f97e12853dedec2a2c6e6"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "B",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7409167,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/factorial_training_telemetry_v1.csv",
+          "sha256": "84f1d78065702a2cb72692c5a02b22790d512893be62eb75490f72a1e6e828b6"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/initial_state_receipt_v1.json",
+          "sha256": "075488c0805a4c7e7d38b3f81ed838cfa69270cb13b8f8f008070366ca0a8de1"
+        },
+        "train_summary.csv": {
+          "bytes": 999141,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/train_summary.csv",
+          "sha256": "355d76f96385ac94b7cb37b24773a91182d19e6dc38c23b1e8488c29a39ea963"
+        },
+        "training_options.json": {
+          "bytes": 2421,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training_options.json",
+          "sha256": "7fc953008ae4f2110c773e454a9a86257210f7d23c416740abbfd19d316bda8b"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 5,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223162545,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000512.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000512.pkl",
+          "sha256": "d1e58d73facf8e9884f042f26ec9225fb1d2fa79e501b6135f82439ef3fd5def"
+        },
+        "training_state": {
+          "bytes": 895724856,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000512.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/training-state-kimg000512.pt",
+          "sha256": "d4efc5a3111864bf4a0c617e16db0b6f998e1c13a91a6198f3406de6d5bc0971"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 29488,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed5-replay-inventory.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/audits/seed5-replay-inventory.csv",
+        "sha256": "588b1475f7d290fb76b529c16f679aadfd060e5bc7de47c9c1e0a9909b4abd60"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3989,
+      "trajectory_config_sha256": "9555897020bfc3ce9528aed15adab0be4c2ef39118b170fa907dc513576384f7"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/640k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/640k/network-snapshot.pkl",
+            "sha256": "0fed2756c707a14b9d984a4dcc313ae0f1022cb5c572a774ff9c1ad61433e439",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/640k/training-state.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/640k/training-state.pt",
+            "sha256": "48ec5c41d4a67a1f3277e0c01d1198a557a914e5872f19ec3c289182669d4d37"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/768k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/768k/network-snapshot.pkl",
+            "sha256": "d7133731e6547b82d1f4300864279069ede5df4991b1139c15125a01d88aa6a7",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/768k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/768k/training-state.pt",
+            "sha256": "2291719a3d2244a1378642d7b2d1a5d65e994c1f3bd7eab1cd7af0db80ad6b46",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/896k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/896k/network-snapshot.pkl",
+            "sha256": "a554897cf899c7c12222da4b8b2f8921e137c3cb78586065ccb019921dbc41e3",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/896k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/896k/training-state.pt",
+            "sha256": "09e3d74a05cb2bcdbe22fd9e9f05c9b72efa3dc87a49d26075d4cc69333098b3",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/1024k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/1024k/network-snapshot.pkl",
+            "sha256": "c9beea7a3f99bbb959a9f21158fda18bb7c2a0d5e17347fa9d8e2947885578cb",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/1024k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/1024k/training-state.pt",
+            "sha256": "c935c036a78d6c557d18182ae98c05eb50e67d85c9cb5cdffb3054e7dad5381b",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "internal_state_sha256": {
+        "ema": "bb9fe35e034d07d6849189e364a896dc63c7ebd59ce041d2cc2a41c9b8948675",
+        "gradscaler": "4ca5ffaf3f2c447d3a35f88cbc275f0e89043ca59c9f25523e92094600b6dd2e",
+        "net": "380861865571a0bbd40957858ed68e80bb8d494e51ed3ef42cff7fbea417439f",
+        "optimizer": "a11bf766cadf6eadcf79e3b5b7f37a4085dda6c5f82f0942a526ca966727ef77",
+        "rank_rng": [
+          "ea99ef2ba2b24af5b074bcae54d03366d9bfe126bfe63762185da7ab72cde351"
+        ],
+        "rank_sampler": [
+          "3548d0386ac235a41f37db194c4f022f2bea24d8777c47451236a0dbb90fdd51"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "A",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7136559,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/factorial_training_telemetry_v1.csv",
+          "sha256": "31d3a3b028a40b7c57eb21d29eff90fbb1385b42de5b96ee49363c6efe9ce81c"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/initial_state_receipt_v1.json",
+          "sha256": "a3e7630e17e8bfad382f5ab9b18ca796cf3975c9d5d03e7901c8a7bf59e5ea62"
+        },
+        "train_summary.csv": {
+          "bytes": 999822,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/train_summary.csv",
+          "sha256": "130ef4e5c64092c65e125423cf3bd540b242d9047fa0b24081daf352de7aeb87"
+        },
+        "training_options.json": {
+          "bytes": 2424,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/training_options.json",
+          "sha256": "3bd7dbff4b5645e7c5197a5b33df2ff0dc3a64d0a1b1270c20144c8862133133"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 6,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223185675,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/512k/network-snapshot.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/512k/network-snapshot.pkl",
+          "sha256": "a13ded65c78502d447500b14edf8a2c9de4665e53a6c51e86b1ffb01ca590713"
+        },
+        "training_state": {
+          "bytes": 895724792,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/512k/training-state.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armA/checkpoints/512k/training-state.pt",
+          "sha256": "2dd0bf345dc5ca4fbcf7183e6e6d2fa90a8699e8372729692bf6f1c0f70d40ac"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 17952,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "sha256": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3989,
+      "trajectory_config_sha256": "6823e0c6d421e28cd4111bd133cd4bc15f2acb31da2ea2a53ad43e0a707b6cd8"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/640k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/640k/network-snapshot.pkl",
+            "sha256": "f50b4fce587a6b40a8a1d2641e8d76491b294a4a37e99decc5a26c59176042b8",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/640k/training-state.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/640k/training-state.pt",
+            "sha256": "080b8571aa51456e7e0f25a781e43e60bfa0f13e2298529e2df9c18214e6317c"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/768k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/768k/network-snapshot.pkl",
+            "sha256": "35bd8684d07201317f88b8b8aa60641663230e607abe7a0ede13ed05ef93550d",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/768k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/768k/training-state.pt",
+            "sha256": "fc10a8963961371edfe4afb6799bef13d367f574fb1893f9661d6861cb634de2",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/896k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/896k/network-snapshot.pkl",
+            "sha256": "faa94678e29083a6f283fcb05b8e62e5325e06f12d81ab745e0a050ee9c0fba5",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/896k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/896k/training-state.pt",
+            "sha256": "eb1ea5b8be6d5083d4a39ea537bbc4af61ab393a51bfc779f1419c8328535554",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/1024k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/1024k/network-snapshot.pkl",
+            "sha256": "7111f5f459e7bdf2287d0e8c950ef07c8b813861c30dc390bb716a2289eb7894",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/1024k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/1024k/training-state.pt",
+            "sha256": "3eab4f1917f5592ce6e4a8cde6b7f949460cf62063047250147e3ba3c8a3bda5",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "internal_state_sha256": {
+        "ema": "c37448fa5ad75217b1906021eadda2df311cd9a22ac9031b42ab4e8b5c8be7c5",
+        "gradscaler": "326f29319ecc7d50577e05bcaddd7ce0d862d408b85856a293b5d63c3d3eceb2",
+        "net": "e9564fed099ae661c247c2c7125d2c899acce0788f13a8ef6f96983653ff5dbb",
+        "optimizer": "f40f8706dcecbed4128d87a1d4acd1f5e2db64b1609a11534d4f92f6278e6cca",
+        "rank_rng": [
+          "ea99ef2ba2b24af5b074bcae54d03366d9bfe126bfe63762185da7ab72cde351"
+        ],
+        "rank_sampler": [
+          "3548d0386ac235a41f37db194c4f022f2bea24d8777c47451236a0dbb90fdd51"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "B",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7407691,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/factorial_training_telemetry_v1.csv",
+          "sha256": "83abecb127618e989c092cd2c55e71f9911ec5146771cc3419991f7d7a8b2919"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/initial_state_receipt_v1.json",
+          "sha256": "0195a41bfd8e0d53d4e58acc3556582434fdc716482fa488e9931a28a7eeb2d2"
+        },
+        "train_summary.csv": {
+          "bytes": 998979,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/train_summary.csv",
+          "sha256": "f380a8d1d798b78dcd611b3a078f78c0c1559c7ad609323e532ec991950b3a1b"
+        },
+        "training_options.json": {
+          "bytes": 2424,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/training_options.json",
+          "sha256": "1605379a431366b82170151345e0aaa16e9839847a943a5ad870f2723f179f1b"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 6,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223185675,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/512k/network-snapshot.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/512k/network-snapshot.pkl",
+          "sha256": "f945a5bbcad42f6a49fbe88e4c15f016c3df87e18dfd2188dfe38ee8a428d34c"
+        },
+        "training_state": {
+          "bytes": 895724792,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/512k/training-state.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed6/armB/checkpoints/512k/training-state.pt",
+          "sha256": "1b134048da8f8a3740ef794a50403ce2f15956774474ff068d43c60fb1cb5d21"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 17952,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "sha256": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3990,
+      "trajectory_config_sha256": "7384ebc90f2e466d66545d6e7752b509d170f218bca835290576444f53498864"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/640k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/640k/network-snapshot.pkl",
+            "sha256": "b1b357529378bde1ea472979cd10c81014e961ddeec5a944df8cdc74c7835541",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/640k/training-state.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/640k/training-state.pt",
+            "sha256": "0cecc36c6f9fe58f6718d5c220271425b692d96dfbe278ed124a9e29c4118648"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/768k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/768k/network-snapshot.pkl",
+            "sha256": "bf681bf14571f219d5eaa556919c870f8290cc0ae844ec3ba60269ef2d9dac19",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/768k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/768k/training-state.pt",
+            "sha256": "66f2414b8dcb332542241a2453c5e199e3697b0751a341cdd514e22fce4fbd52",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/896k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/896k/network-snapshot.pkl",
+            "sha256": "516b5953f781389155cebeb622e809a47e934a29fb9850d67e2c8d1045a90657",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/896k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/896k/training-state.pt",
+            "sha256": "cb4a025ff02faaa7e63584955bc850b561699d006536686cd26eab9cdf50d3b6",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/1024k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/1024k/network-snapshot.pkl",
+            "sha256": "cae3b91701fcf88601b195191decd6b13b211da6cf842e8ce82cddcca33ac35f",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/1024k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/1024k/training-state.pt",
+            "sha256": "a4164c7dab7d2ac4cf9372a7f1e3ae5195ad86bf3f28a2147fc48b8d5954ed72",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "internal_state_sha256": {
+        "ema": "9af144d4d7539e80beffad9ae944f771ea58b275ae822bd4ea753492679034a0",
+        "gradscaler": "e2e338d669491f882510c8ffe554b17c8e4d0dd4f44dba2e96a21f480ba07293",
+        "net": "13c66769abe2aea0e3526ea5153463e2f49e8d533fc8bce85562a9c6bab47705",
+        "optimizer": "52c09328f0df5af443b06c9ed150f0b1fc9557a6774212098660c2d45f3bb595",
+        "rank_rng": [
+          "9c8a9e5d335bf1e5ad1e86829d94e66dfc8b924db16c52927aa50930e53c5e11"
+        ],
+        "rank_sampler": [
+          "5e658c09cee34c5bfe4020590727b37055da1f62e6317347642ef82c88d0461d"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "A",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7139101,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/factorial_training_telemetry_v1.csv",
+          "sha256": "d42f62815adeb47304d04466dcb265f7db2107cc77a1907ea9a4e282cfdadb1f"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/initial_state_receipt_v1.json",
+          "sha256": "ebc6c60464b23231b7b8054fb4461f6dbb026c9505abb6cec9fd183cbddf0325"
+        },
+        "train_summary.csv": {
+          "bytes": 999409,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/train_summary.csv",
+          "sha256": "8a07e431f3e85e462e2dde5180b6ed9678d4d5c15b019538e8e255a23c70b63c"
+        },
+        "training_options.json": {
+          "bytes": 2424,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/training_options.json",
+          "sha256": "68e24f4757c249cfd9edd5b6d4ff266d35bd543853900a3be12cd3f8c875bc08"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 7,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223185675,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/512k/network-snapshot.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/512k/network-snapshot.pkl",
+          "sha256": "58378f43115681314204430a0c99b8a4feada2e7f54d7b90995ad65f8ef9f075"
+        },
+        "training_state": {
+          "bytes": 895724792,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/512k/training-state.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armA/checkpoints/512k/training-state.pt",
+          "sha256": "904e3cf2123f249206931c8263e8c6871036f09208cdbb01e1aa96c3ec621fd4"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 17952,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "sha256": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3989,
+      "trajectory_config_sha256": "eeb3b7543b3c40f8aa6d05ea9a5c4504d0ab26a989a09ca38d71cd625b0f1ceb"
+    },
+    {
+      "archived_controls": [
+        {
+          "kimg": 640,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/640k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/640k/network-snapshot.pkl",
+            "sha256": "071fddd768d44e76b70213d18b0d19fa6a6e38c7b3fbe8bc93d0b4e25438d883",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/640k/training-state.pt",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/640k/training-state.pt",
+            "sha256": "4185fd8bdc705d4de236c910b66499be1758d91f92c53bcfcf4752df1e3a62dd"
+          }
+        },
+        {
+          "kimg": 768,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/768k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/768k/network-snapshot.pkl",
+            "sha256": "28d6a724765664966454474bede4ba81c1235d4ba2e815561f3f9ed1216aba00",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/768k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/768k/training-state.pt",
+            "sha256": "39e604e14844c8f4102b027e171ff4f6af7e793ed1c371977394f50eeb3d65ae",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 896,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/896k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/896k/network-snapshot.pkl",
+            "sha256": "3925ef42a87d78a90f423d88aff603832ffb7c8fb15f28c4d04617cd23984e9b",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/896k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/896k/training-state.pt",
+            "sha256": "3a5a61d18728d54008e109ce7d2b54dddd7c4a0f5c184a9855b6973ff79b4c16",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        },
+        {
+          "kimg": 1024,
+          "network_snapshot": {
+            "bytes": 223185675,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/1024k/network-snapshot.pkl",
+            "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/1024k/network-snapshot.pkl",
+            "sha256": "ef7b8bf54e7026eb75d6ed5e1c049a0fe965f5c35cb566ed8623145ca8374dd8",
+            "staged": true
+          },
+          "training_state": {
+            "bytes": 895724792,
+            "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/1024k/training-state.pt",
+            "path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/1024k/training-state.pt",
+            "sha256": "1faa160b6c54279f762c7a0ed33cc05921c4c595e0ac0cc500a8fd754246597e",
+            "staged": false,
+            "verified_via_source_manifest": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+          }
+        }
+      ],
+      "attempted_iteration": 4000,
+      "canonical_cell_dir": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB",
+      "cur_nimg": 512000,
+      "factorial": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "internal_state_sha256": {
+        "ema": "103dd7385099e38c871bdbe5891d1c64c6a165a5bc0580ede12f2c36a7e85e5f",
+        "gradscaler": "f279849ce9701a7d00be73f48d456f46603f9751fa3625b6c37a3f0f823ad773",
+        "net": "0ccb36810c00ab3ed9eefdf6356bd9087275185d6e401ab3d4fed77150c9c6f7",
+        "optimizer": "8dde576a1d9b22bd521a46206b96f5b03ae8869dba7202b3f52beb3e75ca17ee",
+        "rank_rng": [
+          "9c8a9e5d335bf1e5ad1e86829d94e66dfc8b924db16c52927aa50930e53c5e11"
+        ],
+        "rank_sampler": [
+          "5e658c09cee34c5bfe4020590727b37055da1f62e6317347642ef82c88d0461d"
+        ]
+      },
+      "normalized_trajectory_config_sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9",
+      "origin_arm": "B",
+      "original_canonical_cell_dir": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB",
+      "required_history": {
+        "factorial_training_telemetry_v1.csv": {
+          "bytes": 7408239,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/factorial_training_telemetry_v1.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/factorial_training_telemetry_v1.csv",
+          "sha256": "d5dab1f6dd0587809fc64806174942e1f75143e7a75911fc1c5fac938a313038"
+        },
+        "initial_state_receipt_v1.json": {
+          "bytes": 5051,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/initial_state_receipt_v1.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/initial_state_receipt_v1.json",
+          "sha256": "58ebd64db670bcfe2777e56bf928dd1dce36c942e750e58a8c90b2017bdffb58"
+        },
+        "train_summary.csv": {
+          "bytes": 999568,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/train_summary.csv",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/train_summary.csv",
+          "sha256": "bfc836cbcff97a6be3cfb8e230eb79777c9f5b56e5fb21ecae3767c89e4d6208"
+        },
+        "training_options.json": {
+          "bytes": 2424,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/training_options.json",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/training_options.json",
+          "sha256": "7fcb44952cf39e121cae68668b2255e8f7617173890f999f05f174fdbc0134ec"
+        }
+      },
+      "sampler_consumed_samples": 512000,
+      "seed": 7,
+      "source_artifacts": {
+        "network_snapshot": {
+          "bytes": 223185675,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/512k/network-snapshot.pkl",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/512k/network-snapshot.pkl",
+          "sha256": "4de8a69efe12e6c56e547e87043c34e451b5cd9b9f524a632d9091aad73c7ed7"
+        },
+        "training_state": {
+          "bytes": 895724792,
+          "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/512k/training-state.pt",
+          "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/seed7/armB/checkpoints/512k/training-state.pt",
+          "sha256": "9a06876749202a6716ab4aa4894909f13aaf0ddca25244e1cf2b5e249a1c1550"
+        }
+      },
+      "source_checkpoint_manifest": {
+        "bytes": 17952,
+        "original_path": "/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "path": "/root/q256_seed3_7_sources_v2/data/raw/ECT/ect_runs/q256-target-weight-factorial-20260819/secondary-precision-extension/seed6-7-ab-128k-learning-curve-v1/consolidated_results_v1/reports/checkpoint_inventory_seed6_7_ab_128k.csv",
+        "sha256": "9b151c88fdd95f4c85dc7a58887c53ea81f9fa3c1d8f3a05f7ca17941eb339d2"
+      },
+      "source_kimg": 512,
+      "status": "PASS",
+      "successful_optimizer_steps": 3990,
+      "trajectory_config_sha256": "cab513a2bd982fd5d9c83af9e9b138226f0fb39027fe352e4c730776af37a7a1"
+    }
+  ],
+  "cross_cohort_compatibility": {
+    "cells": [
+      {
+        "arm": "A",
+        "seed": 3,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "B",
+        "seed": 3,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "A",
+        "seed": 4,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "B",
+        "seed": 4,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "A",
+        "seed": 5,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "B",
+        "seed": 5,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "A",
+        "seed": 6,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "B",
+        "seed": 6,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "A",
+        "seed": 7,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      },
+      {
+        "arm": "B",
+        "seed": 7,
+        "sha256": "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+      }
+    ],
+    "normalized_trajectory_config_sha256": [
+      "a15e0b84c241239a54bbdce8ce2e22c4497f779789f31c78e510fa23fa238ad9"
+    ],
+    "status": "PASS"
+  },
+  "origin_arms": [
+    "A",
+    "B"
+  ],
+  "protocol_sha256": "195ca2843791c0ea28ac5a87f3c9e0fb24a4fb8c9214b665331dbbd92648b32d",
+  "schema": "ect.q256.schedule-switch-source-inventory/v1",
+  "seeds": [
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "source_kimg": 512,
+  "source_prefix": "/root/q256_seed3_7_sources_v2",
+  "status": "PASS"
+}
