@@ -7,22 +7,26 @@ training seeds, IA and IB, ten checkpoints from 1,280 through 12,800 kimg,
 and NFE 1 or 2. Differences are reported as `IA - IB`; lower FID and KID are
 better, so a negative difference favors IA.
 
-IA has a strong and consistent advantage through 6,400 kimg. It wins all 30
-same-seed comparisons in that range on both FID and KID. Across the complete
-matrix it wins 50 of 60 FID pairs and 46 of 60 KID pairs, but those totals
-should not be read as a uniform late-training advantage.
+Across three paired training seeds, IA has lower FID and KID in all 30 repeated
+seed-by-checkpoint-by-NFE comparisons through 6,400 kimg.  These cells comprise
+five checkpoints and two NFE settings within each seed; the training seed is
+the independent unit.  Across the complete descriptive matrix, IA has lower
+FID in 50 of 60 pairs and lower KID in 46 of 60 pairs.  The latter counts
+summarize repeated measurements and do not define a uniform late-training
+ranking.
 
-The main late-training finding is seed heterogeneity. Seeds 101 and 102 remain
-well behaved and continue improving, reaching NFE2 FID values near 3.25--3.31
-at 12,800 kimg. Seed 103 becomes unstable after 7,680 kimg in both arms, with
-especially severe degradation for IB at 8,960 kimg. Consequently, the
-three-seed means after 8,960 kimg are dominated by the unstable seed rather
-than representing the typical behavior of all three runs.
+The main late-training finding is seed heterogeneity. Seeds 101 and 102
+continue improving, reaching NFE2 FID values near 3.25--3.31 at 12,800 kimg.
+For seed 103, FID and KID deteriorate sharply after 7,680 kimg in both arms,
+with especially severe degradation for IB at 8,960 kimg. Consequently, the
+three-seed means after 8,960 kimg are highly sensitive to seed 103 and do not
+describe a common response across the three paired seeds.
 
-The best individual row in the frozen matrix is seed 101, IB, 12,800 kimg,
-NFE2: FID50k 3.254632 and KID50k 0.001893475. This is essentially tied in FID
-with seed 101 IA at the same checkpoint and NFE (3.255185), while IB has the
-lower KID for that pair.
+The minimum observed FID among the 120 evaluated cells occurs for seed 101,
+IB, at 12,800 kimg and NFE2: FID50k 3.254632 and KID50k 0.001893475.  This
+descriptive minimum is selected over the full matrix and is not an independent
+endpoint comparison.  For the matched seed 101 IA cell, FID is 3.255185 and
+KID is higher than for IB.
 
 ### Mean paired differences
 
@@ -39,9 +43,9 @@ lower KID for that pair.
 | 11,520 | +17.082985 | +0.031361935 | +10.975258 | +0.012254395 |
 | 12,800 | +12.438636 | +0.015751068 | +12.043924 | +0.009670329 |
 
-The extreme late mean differences reflect seed 103's instability. The
-per-seed rows in `per_trajectory.csv` and `paired_differences.csv` should be
-used when interpreting those checkpoints.
+The extreme late mean differences reflect the sharp deterioration of seed 103.
+The per-seed rows in `per_trajectory.csv` and `paired_differences.csv` show the
+heterogeneity hidden by those three-seed means.
 
 ## Frozen protocol
 
@@ -71,6 +75,6 @@ groups.
 - `TRAINING_PROVENANCE.md`: provenance interpretation, receipt basis, and the
   IA/IB configuration-equality audit.
 
-The results are descriptive estimates from three seeds. The observed seed 103
-instability is part of the frozen result and has not been filtered or used to
-alter the training or stopping protocol.
+The results are descriptive estimates from three training seeds.  The observed
+late deterioration of seed 103 is part of the frozen result and was not used to
+filter a seed or alter the training or stopping protocol.

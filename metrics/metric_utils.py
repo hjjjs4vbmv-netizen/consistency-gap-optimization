@@ -21,6 +21,8 @@ import dnnlib
 # schema.  No other metric pair may reuse an array without a new identity gate.
 ALLOWED_PRECOMPUTED_FEATURE_REUSE = {
     ('kid50k_full', 'fid50k_full'),
+    ('imagenet64_kid50k_full', 'imagenet64_kid50k_full'),
+    ('imagenet64_kid50k_full', 'imagenet64_fid50k_full'),
 }
 
 #----------------------------------------------------------------------------
@@ -477,7 +479,10 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
                 if batch_sample_seeds is not None:
                     label_indices = [int(seed) % len(dataset) for seed in batch_sample_seeds]
                 c = [dataset.get_label(index) for index in label_indices]
-                c = torch.from_numpy(np.stack(c)).pin_memory().to(opts.device)
+                c = torch.from_numpy(np.stack(c))
+                if opts.device.type == 'cuda':
+                    c = c.pin_memory()
+                c = c.to(opts.device)
             else:
                 label_indices = [int(seed) % balanced_class_count for seed in batch_sample_seeds]
                 c = torch.nn.functional.one_hot(

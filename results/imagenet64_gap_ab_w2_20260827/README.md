@@ -6,11 +6,13 @@ The comparison is paired by training seed and reported as `IA - IB` for both
 FID50k and KID50k. Lower is better, so a negative delta favors IA. IA is the
 `global_gap_scale=1.0` arm and IB is the `global_gap_scale=1.1` arm.
 
-IA is consistently better through 6,400 kimg: it wins all 30 paired
-seed/checkpoint/NFE comparisons on both FID and KID. At 7,680 kimg the gap is
-small and seed-dependent. The NFE1 mean still favors IA, while the NFE2 mean
-favors IB. Across the complete three-seed matrix through 7,680 kimg, IA wins
-33 of 36 paired comparisons for each metric.
+Across three paired training seeds, IA has lower FID and KID in all 30 repeated
+seed-by-checkpoint-by-NFE comparisons through 6,400 kimg. These cells comprise
+five checkpoints and two NFE settings within each seed; the training seed is
+the independent unit. At 7,680 kimg the gap is small and seed-dependent. The
+NFE1 mean still favors IA, while the NFE2 mean favors IB. Across the complete
+descriptive matrix through 7,680 kimg, IA has lower values in 33 of 36 pairs
+for each metric.
 
 The 8,960-kimg extension contains only one complete IA/IB pair (seed 102), so
 it is descriptive rather than a replicated conclusion. For that seed, IA has

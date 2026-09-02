@@ -96,6 +96,7 @@ def calc_imagenet64_fid_kid_from_features(
         device=torch.device('cpu'),
         metric_seed=metric_seed,
         precomputed_generated_features_path=generated_features_path,
+        precomputed_generated_features_source_metric='imagenet64_kid50k_full',
         precomputed_real_features_path=real_features_path,
     )
     return dnnlib.EasyDict(

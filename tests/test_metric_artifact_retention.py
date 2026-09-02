@@ -232,7 +232,7 @@ class MetricArtifactRetentionTests(unittest.TestCase):
             generated_path = os.path.join(tmpdir, 'generated.npy')
             np.save(real_path, real, allow_pickle=False)
             np.save(generated_path, generated, allow_pickle=False)
-            opts = metric_utils.MetricOptions(
+            common = dict(
                 G=None,
                 dataset_kwargs={},
                 rank=0,
@@ -240,6 +240,15 @@ class MetricArtifactRetentionTests(unittest.TestCase):
                 device=torch.device('cpu'),
                 precomputed_real_features_path=real_path,
                 precomputed_generated_features_path=generated_path,
+                precomputed_generated_features_source_metric=(
+                    'imagenet64_kid50k_full'
+                ),
+            )
+            fid_opts = metric_utils.MetricOptions(
+                metric_name='imagenet64_fid50k_full', **common
+            )
+            kid_opts = metric_utils.MetricOptions(
+                metric_name='imagenet64_kid50k_full', **common
             )
             with mock.patch.object(
                 metric_utils.dnnlib.util,
@@ -251,10 +260,10 @@ class MetricArtifactRetentionTests(unittest.TestCase):
                 side_effect=AssertionError('scoring must not load a detector'),
             ):
                 fid = frechet_inception_distance.compute_fid(
-                    opts, max_real=None, num_gen=6
+                    fid_opts, max_real=None, num_gen=6
                 )
                 kid = kernel_inception_distance.compute_kid(
-                    opts,
+                    kid_opts,
                     max_real=None,
                     num_gen=6,
                     num_subsets=5,
@@ -288,6 +297,10 @@ class MetricArtifactRetentionTests(unittest.TestCase):
                 'real.npy',
             )
             self.assertEqual(call.kwargs['metric_seed'], 20260730)
+            self.assertEqual(
+                call.kwargs['precomputed_generated_features_source_metric'],
+                'imagenet64_kid50k_full',
+            )
 
         with self.assertRaisesRegex(ValueError, 'metric_seed=20260730'):
             metric_main.calc_imagenet64_fid_kid_from_features(
