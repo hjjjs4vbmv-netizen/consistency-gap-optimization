@@ -1,0 +1,84 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-7.4.4, pluggy-1.3.0 -- /usr/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('/home/ECT001/q256-finalize-branch-1fd9d5a/.hypothesis/examples')
+rootdir: /home/ECT001/q256-finalize-branch-1fd9d5a
+plugins: hypothesis-5.35.1, flakefinder-1.1.0, rerunfailures-13.0, shard-0.1.2, xdist-3.5.0, xdoctest-1.0.2
+collecting ... collected 1 item
+Running 1 items in this shard: tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_scaler_falls_back_to_cuda_amp_on_torch22
+
+tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_scaler_falls_back_to_cuda_amp_on_torch22 FAILED [100%]
+
+=================================== FAILURES ===================================
+_____ RAdamUpdateGaugeTests.test_scaler_falls_back_to_cuda_amp_on_torch22 ______
+
+self = <test_radam_update_gauge.RAdamUpdateGaugeTests testMethod=test_scaler_falls_back_to_cuda_amp_on_torch22>
+
+    def test_scaler_falls_back_to_cuda_amp_on_torch22(self):
+        sentinel = object()
+>       with mock.patch.object(MODULE.torch.amp, "GradScaler", None), \
+                mock.patch.object(
+                    MODULE.torch.cuda.amp, "GradScaler", return_value=sentinel,
+                ) as legacy_scaler:
+
+tests/test_radam_update_gauge.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x7f77fe4e1960>
+
+    def __enter__(self):
+        """Perform the patch."""
+        new, spec, spec_set = self.new, self.spec, self.spec_set
+        autospec, kwargs = self.autospec, self.kwargs
+        new_callable = self.new_callable
+        self.target = self.getter()
+    
+        # normalise False to None
+        if spec is False:
+            spec = None
+        if spec_set is False:
+            spec_set = None
+        if autospec is False:
+            autospec = None
+    
+        if spec is not None and autospec is not None:
+            raise TypeError("Can't specify spec and autospec")
+        if ((spec is not None or autospec is not None) and
+            spec_set not in (True, None)):
+            raise TypeError("Can't provide explicit spec_set *and* spec or autospec")
+    
+>       original, local = self.get_original()
+
+/usr/lib/python3.10/unittest/mock.py:1447: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x7f77fe4e1960>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'torch.amp' from '/usr/local/lib/python3.10/dist-packages/torch/amp/__init__.py'> does not have the attribute 'GradScaler'
+
+/usr/lib/python3.10/unittest/mock.py:1420: AttributeError
+- generated xml file: /home/ECT001/q256-merge-readiness-pre-fix/branch_original/torch22_fallback/junit.xml -
+=========================== short test summary info ============================
+FAILED tests/test_radam_update_gauge.py::RAdamUpdateGaugeTests::test_scaler_falls_back_to_cuda_amp_on_torch22
+============================== 1 failed in 1.41s ===============================

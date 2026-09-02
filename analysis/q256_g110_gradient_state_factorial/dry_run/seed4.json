@@ -1,0 +1,73 @@
+{
+  "assets": {
+    "checkpoint": {
+      "actual_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "exists": true,
+      "expected_sha256": "ac94e7b07e5b7628e6b14b26155fb3de09e42373497183d39aba4fe9863663c9",
+      "path": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed4_fixed/network-snapshot-latest.pkl",
+      "sha256_matches": true,
+      "size_bytes": 223169454
+    },
+    "data": {
+      "actual_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "exists": true,
+      "expected_sha256": "a469a9f1b89d43a4a5a0fea42a351b6f107800fc32712881ea3d0ee8cc3a88c1",
+      "path": "/data/raw/ECT/datasets/cifar10-32x32.zip",
+      "sha256_matches": true,
+      "size_bytes": 166000134
+    },
+    "training_state": {
+      "actual_sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "exists": true,
+      "expected_sha256": "2c7af1ccd2183d452116b74fee0504d07f2a7935b06cc5fe4d3d76a1e1a0307a",
+      "path": "/home/ECT001/q256-assets-15eac7c/seeds45_package_full/seed4_fixed/training-state-latest.pt",
+      "sha256_matches": true,
+      "size_bytes": 669426643
+    }
+  },
+  "audit_seeds": [
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108
+  ],
+  "cells": [
+    {
+      "cell": "A",
+      "gradient_mode": "observed",
+      "state_mode": "real"
+    },
+    {
+      "cell": "B",
+      "gradient_mode": "observed",
+      "state_mode": "reset"
+    },
+    {
+      "cell": "C",
+      "gradient_mode": "exact_scalar",
+      "state_mode": "real"
+    },
+    {
+      "cell": "D",
+      "gradient_mode": "exact_scalar",
+      "state_mode": "reset"
+    }
+  ],
+  "mode": "dry_run",
+  "operations_excluded": [
+    "training",
+    "sample_generation",
+    "FID",
+    "KID",
+    "continuation_training",
+    "moment_only_variants"
+  ],
+  "probe_gap_scale": 1.1,
+  "reference_gap_scale": 1.0,
+  "status": "PASS",
+  "training_seed": 4
+}

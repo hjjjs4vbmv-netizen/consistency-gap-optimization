@@ -422,9 +422,13 @@ def check_disjoint(
         check_ref(repo, ref, f"PR #53 {field}")
 
     scripts_dir = Path(__file__).resolve().parent
-    if str(scripts_dir) not in sys.path:
-        sys.path.insert(0, str(scripts_dir))
-    from rebuild_disjoint_5k_summary import verify_committed_tables
+    import_path_before = list(sys.path)
+    try:
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        from rebuild_disjoint_5k_summary import verify_committed_tables
+    finally:
+        sys.path[:] = import_path_before
 
     verify_committed_tables(repo, commit)
     aggregation = bundle["aggregation_script"]
@@ -451,9 +455,13 @@ def check_disjoint_cell_bindings(
         raise AuditFailure("PR #53 detached cell-manifest checksum mismatch")
 
     scripts_dir = Path(__file__).resolve().parent
-    if str(scripts_dir) not in sys.path:
-        sys.path.insert(0, str(scripts_dir))
-    from build_disjoint_5k_cell_manifest import build
+    import_path_before = list(sys.path)
+    try:
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        from build_disjoint_5k_cell_manifest import build
+    finally:
+        sys.path[:] = import_path_before
 
     rebuilt = (json.dumps(build(repo), indent=2, sort_keys=False) + "\n").encode()
     if rebuilt != payload:
