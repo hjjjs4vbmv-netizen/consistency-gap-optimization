@@ -51,7 +51,7 @@ def interval(values: list[float], confidence: float) -> list[float]:
     n = len(values)
     center = mean(values)
     sd = sample_sd(values)
-    half = scipy.stats.t.ppf((1 + confidence) / 2, n - 1) * sd / math.sqrt(n)
+    half = float(scipy.stats.t.ppf((1 + confidence) / 2, n - 1) * sd / math.sqrt(n))
     return [center - half, center + half]
 
 
@@ -77,12 +77,12 @@ def summarize(values: list[float], *, sign_flip: bool = True) -> dict:
 def primary_verdict(summary: dict) -> tuple[str, dict]:
     lo95, hi95 = summary["ci95_two_sided"]
     lo90, hi90 = summary["ci90_two_sided"]
-    strong = (hi95 < -DELTA and summary["negative_count"] >= 10
-              and all(value < 0 for value in summary["leave_one_seed_out_means"]))
-    equivalent = lo90 > -DELTA and hi90 < DELTA
-    weak = not strong and not equivalent and hi95 < 0
-    opposite = lo95 > 0
-    inconclusive = lo95 <= 0 <= hi95 and not equivalent
+    strong = bool(hi95 < -DELTA and summary["negative_count"] >= 10
+                  and all(value < 0 for value in summary["leave_one_seed_out_means"]))
+    equivalent = bool(lo90 > -DELTA and hi90 < DELTA)
+    weak = bool(not strong and not equivalent and hi95 < 0)
+    opposite = bool(lo95 > 0)
+    inconclusive = bool(lo95 <= 0 <= hi95 and not equivalent)
     # The equivalence and opposite-direction conditions can mathematically
     # overlap for a very precise but practically tiny positive effect.  The
     # frozen order makes practical equivalence take precedence in that case.
@@ -124,6 +124,7 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--eleven-seed-authorization", type=Path)
     parser.add_argument("--evaluation-recovery-authorization", type=Path)
+    parser.add_argument("--postseal-report-recovery-authorization", type=Path)
     args = parser.parse_args()
     protocol_path = args.protocol.resolve(strict=True)
     protocol = experiment.load_json(protocol_path)
@@ -132,6 +133,7 @@ def main() -> int:
     expected_jobs = 264
     authorization_sha = None
     recovery_authorization_sha = None
+    postseal_authorization_sha = None
     if args.eleven_seed_authorization is not None:
         authorization_path = args.eleven_seed_authorization.resolve(strict=True)
         experiment.validate_eleven_seed_authorization(
@@ -151,6 +153,12 @@ def main() -> int:
         if recovery.get("eleven_seed_authorization_sha256") != authorization_sha:
             raise RuntimeError("evaluation recovery statistics amendment binding mismatch")
         recovery_authorization_sha = experiment.sha256_file(recovery_path)
+    if args.postseal_report_recovery_authorization is not None:
+        from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import postseal_recovery
+        postseal_path = args.postseal_report_recovery_authorization.resolve(strict=True)
+        postseal_recovery.validate_authorization(postseal_path, protocol_path,
+                                                 require_commit=True)
+        postseal_authorization_sha = experiment.sha256_file(postseal_path)
     decoded_path = args.decoded_results.resolve(strict=True)
     decoded = experiment.load_json(decoded_path)
     if (decoded.get("status") != "PASS" or not decoded.get("decoded_after_full_seal")
@@ -187,8 +195,8 @@ def main() -> int:
                      "logFID_A_512": source["A"], "logFID_B_512": source["B"]})
     summaries = {name: summarize([row[name] for row in rows]) for name in ("H", "C", "I", "Q", "H_A", "G")}
     verdict, checks = primary_verdict(summaries["H"])
-    interaction_equivalent = (summaries["I"]["ci90_two_sided"][0] > -DELTA
-                              and summaries["I"]["ci90_two_sided"][1] < DELTA)
+    interaction_equivalent = bool(summaries["I"]["ci90_two_sided"][0] > -DELTA
+                                  and summaries["I"]["ci90_two_sided"][1] < DELTA)
     secondary_holm = holm({name: summaries[name]["exact_two_sided_sign_flip_p"] for name in ("C", "I")})
     checkpoint_diagnostic_count = sum(row["Q"] >= 0 and row["H_A"] < 0 for row in rows)
 
@@ -220,6 +228,7 @@ def main() -> int:
         "protocol_sha256": experiment.sha256_file(protocol_path),
         "eleven_seed_authorization_sha256": authorization_sha,
         "evaluation_recovery_authorization_sha256": recovery_authorization_sha,
+        "postseal_report_recovery_authorization_sha256": postseal_authorization_sha,
         "included_seeds": list(seeds),
         "excluded_seed": (experiment.ELEVEN_SEED_EXCLUSION if authorization_sha else None),
         "original_n12_claim_abandoned": authorization_sha is not None,
@@ -251,6 +260,7 @@ def main() -> int:
         "included_seeds": list(seeds),
         "eleven_seed_authorization_sha256": authorization_sha,
         "evaluation_recovery_authorization_sha256": recovery_authorization_sha,
+        "postseal_report_recovery_authorization_sha256": postseal_authorization_sha,
         "original_n12_claim_abandoned": authorization_sha is not None,
     })
     print(json.dumps({"status": "PASS", "primary_verdict": verdict}))

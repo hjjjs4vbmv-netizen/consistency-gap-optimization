@@ -399,6 +399,12 @@ class FrozenStatisticsTests(unittest.TestCase):
             self.summary((0.04, 0.08), (0.045, 0.075), negatives=0, loso=0.06))
         self.assertEqual(verdict, "OPPOSITE_DIRECTION_FALSIFICATION")
 
+    def test_scipy_intervals_and_category_checks_are_json_native(self):
+        summary = frozen_statistics.summarize([float(value) / 100 for value in range(11)])
+        _, checks = frozen_statistics.primary_verdict(summary)
+        json.dumps({"summary": summary, "checks": checks})
+        self.assertTrue(all(type(value) is bool for value in checks.values()))
+
 
 class BlindEvaluationManifestTests(unittest.TestCase):
     def test_public_manifest_is_opaque_complete_and_balanced(self):

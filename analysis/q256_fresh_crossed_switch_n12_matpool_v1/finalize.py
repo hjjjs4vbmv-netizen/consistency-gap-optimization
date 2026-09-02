@@ -24,6 +24,7 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--eleven-seed-authorization", type=Path)
     parser.add_argument("--evaluation-recovery-authorization", type=Path)
+    parser.add_argument("--postseal-report-recovery-authorization", type=Path)
     args = parser.parse_args()
     protocol_path = args.protocol.resolve(strict=True)
     protocol = experiment.load_json(protocol_path)
@@ -40,6 +41,8 @@ def main() -> int:
     authorization_sha = None
     recovery_authorization_sha = None
     recovery_preparation_receipt = None
+    postseal_authorization_sha = None
+    postseal_archive_receipt = None
     if args.eleven_seed_authorization is not None:
         authorization_path = args.eleven_seed_authorization.resolve(strict=True)
         experiment.validate_eleven_seed_authorization(
@@ -69,6 +72,14 @@ def main() -> int:
             root / "archive" / "manual-evaluation-recovery-1"
             / "evaluation_recovery1_preparation_receipt.json"
         )
+    if args.postseal_report_recovery_authorization is not None:
+        from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import postseal_recovery
+        postseal_path = args.postseal_report_recovery_authorization.resolve(strict=True)
+        postseal = postseal_recovery.validate_authorization(
+            postseal_path, protocol_path, require_commit=True
+        )
+        postseal_authorization_sha = experiment.sha256_file(postseal_path)
+        postseal_archive_receipt = Path(postseal["archive_receipt_path"])
     training = experiment.load_json(training_path)
     integrity = experiment.load_json(integrity_path)
     seal = experiment.load_json(eval_root / "evaluation_matrix_seal.json")
@@ -93,6 +104,14 @@ def main() -> int:
                 != recovery_authorization_sha
                 or preparation.get("metrics_executed") is not False):
             raise RuntimeError("evaluation recovery preparation gate is not PASS")
+    if postseal_authorization_sha is not None:
+        if analysis.get("postseal_report_recovery_authorization_sha256") != postseal_authorization_sha:
+            raise RuntimeError("statistics are not postseal-report-recovery-bound")
+        archive_receipt = experiment.load_json(postseal_archive_receipt)
+        if (archive_receipt.get("status") != "PASS"
+                or archive_receipt.get("postseal_report_recovery_authorization_sha256")
+                != postseal_authorization_sha):
+            raise RuntimeError("postseal statistics archive receipt is not PASS")
     ledger = []
     for path in sorted((root / "training").glob("seed*/**/compute_completion_receipt.json")):
         if int(path.parts[-3].removeprefix("seed")) not in seeds:
@@ -155,6 +174,9 @@ The primary classification is determined only by seed-level H from 1024-kimg NFE
     if args.evaluation_recovery_authorization is not None:
         deliverables.insert(2, args.evaluation_recovery_authorization.resolve(strict=True))
         deliverables.insert(3, recovery_preparation_receipt.resolve(strict=True))
+    if args.postseal_report_recovery_authorization is not None:
+        deliverables.insert(4, args.postseal_report_recovery_authorization.resolve(strict=True))
+        deliverables.insert(5, postseal_archive_receipt.resolve(strict=True))
     sums = root / f"SHA256SUMS{suffix}.txt"
     with sums.open("x", encoding="utf-8") as handle:
         for path in deliverables:
@@ -167,6 +189,8 @@ The primary classification is determined only by seed-level H from 1024-kimg NFE
         "eleven_seed_authorization_sha256": authorization_sha,
         "evaluation_recovery_authorization_sha256": recovery_authorization_sha,
         "manual_evaluation_recovery_count": 1 if recovery_authorization_sha else 0,
+        "postseal_report_recovery_authorization_sha256": postseal_authorization_sha,
+        "manual_postseal_report_recovery_count": 1 if postseal_authorization_sha else 0,
         "included_seeds": list(seeds), "original_n12_claim_abandoned": authorization_sha is not None,
         "compute_ledger_rows": len(ledger),
     })
