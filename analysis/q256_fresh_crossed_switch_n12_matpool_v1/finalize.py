@@ -14,6 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
 from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import experiment  # noqa: E402
+from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import authorization  # noqa: E402
 
 
 def main() -> int:
@@ -136,17 +137,9 @@ def main() -> int:
     head = subprocess.check_output(["git", "-C", protocol["paths"]["repository_root"], "rev-parse", "HEAD"], text=True).strip()
     status = subprocess.check_output(["git", "-C", protocol["paths"]["repository_root"], "status", "--porcelain"], text=True).strip()
     h = analysis["summaries"]["H"]
-    if authorization_sha is not None:
-        population_line = (
-            f"{len(seeds)} complete seeds ({', '.join(map(str, seeds))}); "
-            "seed38 excluded by explicit author amendment; the original n=12 "
-            "claim is abandoned: True"
-        )
-    else:
-        population_line = (
-            f"{len(seeds)} preregistered seeds ({', '.join(map(str, seeds))}); "
-            "no author amendment or seed exclusion"
-        )
+    population_line = authorization.analysis_population_line(
+        seeds, amended=authorization_sha is not None
+    )
     report = f"""# Fresh q256 crossed-switch replication report
 
 ## Execution and integrity status

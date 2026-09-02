@@ -130,15 +130,10 @@ def _validate_seed_receipts(output_root: Path, authorization: dict,
 
 
 def _validate_terminal_failure(output_root: Path, expected_sha: str) -> None:
-    candidates = []
-    for name in ("compute_failure_receipt.json", "compute_completion_receipt.json"):
-        for path in output_root.glob(f"**/{name}"):
-            if path.is_file() and not path.is_symlink() and sha256_file(path) == expected_sha:
-                candidates.append(path)
-    unique = sorted(set(candidates))
-    if len(unique) != 1:
+    path = output_root / "training" / "seed38" / "AB" / "compute_completion_receipt.json"
+    value = load_object(path)
+    if sha256_file(path) != expected_sha:
         raise RuntimeError("terminal seed38/AB failure receipt identity mismatch")
-    value = load_object(unique[0])
     if (value.get("schema")
             != "ect.q256.fresh-crossed-switch-compute-completion/v1"
             or value.get("status") != "FAIL"
@@ -146,6 +141,19 @@ def _validate_terminal_failure(output_root: Path, expected_sha: str) -> None:
             or value.get("exit_code") != 1
             or value.get("hard_timeout") is not False):
         raise RuntimeError("terminal seed38/AB failure receipt content mismatch")
+
+
+def analysis_population_line(seeds: tuple[int, ...], *, amended: bool) -> str:
+    rendered = ", ".join(map(str, seeds))
+    if amended:
+        return (
+            f"{len(seeds)} complete seeds ({rendered}); seed38 excluded by explicit "
+            "author amendment; the original n=12 claim is abandoned: True"
+        )
+    return (
+        f"{len(seeds)} preregistered seeds ({rendered}); no author amendment or "
+        "seed exclusion"
+    )
 
 
 def validate_eleven_seed_authorization(

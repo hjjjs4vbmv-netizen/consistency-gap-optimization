@@ -46,8 +46,7 @@ class ElevenSeedAuthorizationFailClosedTests(unittest.TestCase):
         })
 
         self.failure_path = (
-            self.output / "archive" / "manual-recovery-2" / "seed38_AB_failed_attempt2"
-            / "compute_failure_receipt.json"
+            self.output / "training" / "seed38" / "AB" / "compute_completion_receipt.json"
         )
         write_json(self.failure_path, {
             "schema": "ect.q256.fresh-crossed-switch-compute-completion/v1",
@@ -210,6 +209,16 @@ class ElevenSeedAuthorizationFailClosedTests(unittest.TestCase):
         write_json(self.failure_path, value)
         with self.assertRaises(RuntimeError):
             self.validate()
+
+    def test_population_report_text_is_conditional(self):
+        n12 = authorization.analysis_population_line(authorization.SEEDS, amended=False)
+        n11 = authorization.analysis_population_line(
+            authorization.INCLUDED_SEEDS, amended=True
+        )
+        self.assertNotIn("seed38 excluded", n12)
+        self.assertIn("no author amendment", n12)
+        self.assertIn("seed38 excluded", n11)
+        self.assertIn("n=12 claim is abandoned: True", n11)
 
 
 if __name__ == "__main__":

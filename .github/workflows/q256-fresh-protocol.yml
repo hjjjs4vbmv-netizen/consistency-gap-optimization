@@ -6,10 +6,6 @@ on:
       - "analysis/q256_fresh_crossed_switch_n12_matpool_v1/**"
       - "tests/test_q256_eleven_seed_authorization.py"
       - ".github/workflows/q256-fresh-protocol.yml"
-  push:
-    branches:
-      - "codex/q256-fresh-crossed-switch-n12-matpool-v1"
-
 permissions:
   contents: read
 
