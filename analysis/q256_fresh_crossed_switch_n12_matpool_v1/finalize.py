@@ -136,6 +136,17 @@ def main() -> int:
     head = subprocess.check_output(["git", "-C", protocol["paths"]["repository_root"], "rev-parse", "HEAD"], text=True).strip()
     status = subprocess.check_output(["git", "-C", protocol["paths"]["repository_root"], "status", "--porcelain"], text=True).strip()
     h = analysis["summaries"]["H"]
+    if authorization_sha is not None:
+        population_line = (
+            f"{len(seeds)} complete seeds ({', '.join(map(str, seeds))}); "
+            "seed38 excluded by explicit author amendment; the original n=12 "
+            "claim is abandoned: True"
+        )
+    else:
+        population_line = (
+            f"{len(seeds)} preregistered seeds ({', '.join(map(str, seeds))}); "
+            "no author amendment or seed exclusion"
+        )
     report = f"""# Fresh q256 crossed-switch replication report
 
 ## Execution and integrity status
@@ -144,7 +155,7 @@ def main() -> int:
 - Blind evaluation: SEALED_PASS ({seal['sealed_jobs']}/{expected_jobs} jobs), decoded only after the full amended matrix seal.
 - Manual evaluation recovery: {1 if recovery_authorization_sha else 0}; the failed attempt is preserved and the replacement cache passed a non-metric storage gate.
 - Manual postseal report recovery: {postseal_recovery_index}; no evaluation rerun or re-decode was performed.
-- Analysis population: {len(seeds)} complete seeds ({', '.join(map(str, seeds))}); seed38 excluded by explicit author amendment; the original n=12 claim is abandoned: {authorization_sha is not None}.
+- Analysis population: {population_line}.
 - Protocol SHA256: `{experiment.sha256_file(protocol_path)}`.
 - Implementation commit: `{protocol['implementation_commit']}`; final HEAD `{head}`; clean worktree: `{not bool(status)}`.
 - Host: `{protocol['hostname']}`; GPU UUIDs: {', '.join(gpu['uuid'] for gpu in protocol['gpus'])}.

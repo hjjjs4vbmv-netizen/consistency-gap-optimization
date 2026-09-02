@@ -26,6 +26,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
 from training import reproducibility, schedule_switch  # noqa: E402
+from analysis.q256_fresh_crossed_switch_n12_matpool_v1 import authorization as amendment_authorization  # noqa: E402
 
 EXPERIMENT_ID = "q256_fresh_crossed_switch_n12_matpool_v1"
 PROTOCOL_SCHEMA = "ect.q256.fresh-crossed-switch-protocol/v1"
@@ -82,26 +83,12 @@ def load_json(path: Path) -> dict:
 
 def validate_eleven_seed_authorization(path: Path, protocol_path: Path,
                                        *, require_commit: bool = False) -> dict:
-    path = path.resolve(strict=True)
-    value = load_json(path)
-    expected = {
-        "status": "AUTHOR_APPROVED",
-        "protocol_sha256": sha256_file(protocol_path),
-        "excluded_seed": ELEVEN_SEED_EXCLUSION,
-        "included_seeds": list(ELEVEN_SEEDS),
-        "expected_evaluation_jobs": ELEVEN_JOB_COUNT,
-        "original_n12_claim_abandoned": True,
-        "decode_forbidden_before_full_amended_seal": True,
-    }
-    if any(value.get(key) != expected_value for key, expected_value in expected.items()):
-        raise RuntimeError("eleven-seed authorization binding mismatch")
-    if require_commit:
-        head = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
-        ).strip()
-        if value.get("amendment_commit") != head:
-            raise RuntimeError("eleven-seed authorization commit mismatch")
-    return value
+    return amendment_authorization.validate_eleven_seed_authorization(
+        path,
+        protocol_path,
+        require_commit=require_commit,
+        repository_root=REPO_ROOT,
+    )
 
 
 def validate_evaluation_recovery1_authorization(path: Path, protocol_path: Path,

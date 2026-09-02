@@ -1,10 +1,24 @@
 # q256 512-kimg crossed schedule switch — seeds 3–7
 
-Status: **PASS**
+Execution status: **PASS**. Evidentiary status: **DISCOVERY ONLY**.
 
 Protocol: `q256_ab_crossed_switch_seed3_7_v3`
 
 Protocol SHA256: `195ca2843791c0ea28ac5a87f3c9e0fb24a4fb8c9214b665331dbbd92648b32d`
+
+## Fresh-replication update
+
+The subsequent outcome-blind fresh replication did not confirm this directional
+finding. Its original n=12 design was author-amended before quality observation
+to an n=11 complete-case analysis after a trajectory-specific seed38/AB failure;
+the 242-job blind matrix then completed and produced an **INCONCLUSIVE** primary
+verdict. The fresh result neither confirms history carryover nor establishes a
+practical null. Consequently, the seed3--7 findings below must not be described
+as robustly replicated or as a confirmed core empirical discovery. The seed38
+failure also leaves informative missingness as an explicit limitation.
+
+The formal post-seal evidence is retained under
+`results/q256_fresh_crossed_switch_n12_matpool_v1/final_11seed/`.
 
 ## Scope
 
