@@ -1,0 +1,220 @@
+{
+  "schema": "ect.q256.target-weight-factorial-cohort3-preregistration/v1",
+  "status": "frozen_before_any_formal_cohort3_training_or_quality_evaluation",
+  "created_utc": "2026-08-21T07:50:22Z",
+  "cohort": {
+    "name": "Cohort III",
+    "classification": "prospective_validation_cohort",
+    "seeds": [8, 9, 10, 11, 12],
+    "independent_unit": "training_seed",
+    "required_completion_count": 5,
+    "all_seeds_mandatory": true
+  },
+  "prior_observation_boundary": {
+    "cohort_i": {
+      "seeds": [3, 4, 5],
+      "status": "original_preregistered_primary_factorial"
+    },
+    "cohort_ii": {
+      "seeds": [6, 7],
+      "status": "secondary_sensitivity_extension"
+    },
+    "results_observed_before_cohort3_design": true,
+    "known_scientific_observation": "Component-level target and denominator effects showed substantial seed and trajectory heterogeneity.",
+    "retrospective_membership_in_original_n3_preregistration": false
+  },
+  "source": {
+    "base_merge_commit": "64e56392883248668a92aa6c18c0cec3d1ef796f",
+    "formal_training_semantics_reference": "dcca41b19e7c45512b5fbe98776520396a1bf9ac",
+    "required_branch": "experiment/q256-cohort3-seed8-12",
+    "training_core_semantic_diff_required_empty": [
+      "ct_train.py",
+      "training/loss.py",
+      "training/schedules.py",
+      "training/ct_training_loop.py",
+      "training/reproducibility.py",
+      "torch_utils/misc.py"
+    ],
+    "training_core_modification_authorized": false
+  },
+  "factorial": {
+    "q": 256,
+    "arms_in_required_execution_order": ["A", "B", "C", "D"],
+    "arms": {
+      "A": {
+        "target_gap_scale": 1.0,
+        "denominator_gap_scale": 1.0,
+        "label": "baseline"
+      },
+      "B": {
+        "target_gap_scale": 1.1,
+        "denominator_gap_scale": 1.1,
+        "label": "full_coupled_gap_intervention"
+      },
+      "C": {
+        "target_gap_scale": 1.1,
+        "denominator_gap_scale": 1.0,
+        "label": "target_geometry_only"
+      },
+      "D": {
+        "target_gap_scale": 1.0,
+        "denominator_gap_scale": 1.1,
+        "label": "denominator_weighting_only"
+      }
+    }
+  },
+  "training": {
+    "budget_kimg": 256,
+    "expected_attempted_iterations": 2000,
+    "expected_processed_images": 256000,
+    "fresh_runs_required": true,
+    "run_count": 20,
+    "metrics_during_training": [],
+    "formal_quality_evaluation_in_this_task": false,
+    "fixed_protocol": {
+      "model": {
+        "arch": "ddpmpp",
+        "precond": "ect",
+        "conditional": false
+      },
+      "loss": {
+        "q": 256,
+        "k": 8,
+        "b": 1,
+        "c": 0,
+        "double_ticks": 10000,
+        "pseudo_huber_change_authorized": false
+      },
+      "optimizer": {
+        "name": "RAdam",
+        "lr": 0.0001,
+        "betas": [0.9, 0.999],
+        "eps": 1e-08,
+        "weight_decay": 0
+      },
+      "batch": {
+        "global": 128,
+        "per_gpu": 16,
+        "workers": 1
+      },
+      "regularization": {
+        "dropout": 0.2,
+        "augmentation": 0,
+        "dataset_xflip": false
+      },
+      "precision": {
+        "network_fp16": true,
+        "amp": true,
+        "tf32": false,
+        "loss_scaling": 1.0
+      },
+      "ema_beta": 0.9993,
+      "checkpointing": {
+        "tick_kimg": 10,
+        "numbered_snapshot_ticks": null,
+        "numbered_state_dump_ticks": null,
+        "latest_checkpoint_ticks": 10,
+        "preview_ticks": 26
+      }
+    }
+  },
+  "assets": {
+    "dataset": {
+      "path": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372.zip",
+      "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+    },
+    "transfer_checkpoint": {
+      "path": "/data/raw/ECT/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    }
+  },
+  "runtime_contract": {
+    "ngc_image": "nvcr.io/nvidia/pytorch:24.01-py3",
+    "python": "3.10.12",
+    "pytorch": "2.2.0a0+81ea7a4",
+    "cuda_runtime": "12.3",
+    "cudnn_major": 8,
+    "deterministic_algorithms": true,
+    "deterministic_cudnn": true,
+    "cublas_workspace_config": ":4096:8",
+    "cudnn_benchmark": false,
+    "formal_fallback_to_host_python313_torch28_cuda128": false
+  },
+  "hardware_mapping": {
+    "physical_gpu_0": 8,
+    "physical_gpu_1": 9,
+    "physical_gpu_2": 10,
+    "physical_gpu_3": 11,
+    "physical_gpu_4": 12,
+    "same_physical_gpu_for_all_arms_within_seed": true,
+    "one_active_process_per_gpu": true,
+    "ddp": false
+  },
+  "later_independent_evaluation": {
+    "status": "frozen_but_not_executed_in_training_task",
+    "checkpoint_kimg": 256,
+    "primary_metric": {
+      "name": "FID-50k",
+      "nfe": 1
+    },
+    "primary_contrast": {
+      "name": "Delta_full",
+      "formula": "B-A",
+      "directional_hypothesis": "B-A < 0"
+    },
+    "secondary_metrics": [
+      {"name": "KID-50k", "nfe": 1},
+      {"name": "FID-50k", "nfe": 2},
+      {"name": "KID-50k", "nfe": 2}
+    ],
+    "secondary_structural_contrasts": [
+      "C-A",
+      "B-D",
+      "D-A",
+      "B-C",
+      "I=B-C-D+A"
+    ]
+  },
+  "decision_rules": {
+    "complete_all_five_seeds_regardless_of_early_outcomes": true,
+    "result_dependent_arm_deletion": false,
+    "result_dependent_seed_deletion": false,
+    "early_stopping_on_relative_loss_samples_fid_or_kid": false,
+    "inspect_relative_sample_quality_during_training": false,
+    "claim_target_geometry_universally_dominates": false,
+    "claim_optimizer_state_causes_endpoint_fid_changes": false
+  },
+  "failure_policy": {
+    "fail_closed_on_nonzero_arm_exit": true,
+    "automatically_skip_failed_arm": false,
+    "clean_restart_to_improve_trajectory": false,
+    "preserve_logs_and_artifacts": true,
+    "classify_and_report_all_deviations": true,
+    "deterministic_resume_allowed_only_for_infrastructure_failure": true,
+    "resume_requirements": [
+      "same committed clean source",
+      "same runtime digest",
+      "same dataset and transfer hashes",
+      "same physical GPU UUID",
+      "complete self-contained training state",
+      "restored model EMA optimizer GradScaler RNG and sampler state",
+      "exact-resume validation passes"
+    ]
+  },
+  "preformal_hard_gates": [
+    "exact runtime established",
+    "five A100 GPUs visible and exclusive",
+    "safe shared-memory configuration validated under five-GPU concurrency",
+    "dataset and transfer hashes exact",
+    "training-core semantics unchanged from formal reference",
+    "preregistration externally frozen",
+    "focused q256 correctness suite passes",
+    "32-attempt uninterrupted versus 16-plus-resume exact match passes",
+    "five-GPU identical-trajectory parity passes"
+  ],
+  "handoff": {
+    "quality_evaluation_remains_independent": true,
+    "required_formats": ["json", "csv", "markdown"],
+    "large_checkpoints_committed_to_git": false
+  }
+}
