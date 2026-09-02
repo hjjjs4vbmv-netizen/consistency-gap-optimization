@@ -65,9 +65,9 @@ def classification_summary(probe_payloads: list[dict]) -> dict[str, Any]:
             (
                 seed,
                 (
-                    "descriptive_history_dominated_propagation"
+                    "descriptive_postfork_propagation"
                     if space == "observable"
-                    else "history_dominated_persistent_propagation"
+                    else "postfork_persistent_state_propagation"
                 )
                 if label == "persistent_state_feedback_dominance"
                 else label,
@@ -234,11 +234,13 @@ def corrected_feedback_replication(
     return {
         "seed_level_rule": (
             "At both late horizons {256,500}: closure passes, corrected_R_norm "
-            "is finite and >0, and corrected_R_over_delta_k is finite and >0."
+            "is finite and >0, and corrected_R_over_delta_k is finite and >0. "
+            "This resolved-nonzero rule has no substantive magnitude threshold."
         ),
         "cross_seed_rule": (
-            "Numerically nonzero corrected incremental feedback is replicated "
-            "when the seed-level rule holds in at least 2/3 formal seeds."
+            "The report records cross-seed occurrence when this deterministic "
+            "resolved-nonzero rule holds in at least 2/3 formal seeds; it does "
+            "not interpret finite >0 as a substantive effect-size criterion."
         ),
         "directional_cross_seed_rule": (
             "A conservative directionally consistent result requires all 3/3 "
@@ -416,7 +418,8 @@ def main() -> int:
         "legacy_field_note": (
             "The inherited PR #89 persistent_state_feedback_dominance label "
             "is retained only under legacy_pr89_classification_by_seed. The "
-            "headline interpretation is history-dominated/persistent propagation."
+            "headline interpretation is persistent post-fork propagation "
+            "conditional on the shared B@384 source state."
         ),
         "corrected_incremental_feedback": corrected_replication,
         "replicated_persistent_state_entries": replicated_persistent_state,
@@ -434,8 +437,8 @@ def main() -> int:
             "allowed": [
                 "exact same-state forcing identity",
                 "mechanical carryover separated from corrected feedback",
-                "conditional history-dominated/persistent propagation across three B-history states",
-                "numerically nonzero corrected feedback under the stated post-hoc presence rule",
+                "persistent post-fork propagation across three shared-source B@384 states",
+                "resolved nonzero corrected feedback under a deterministic finite-greater-than-zero rule with no magnitude threshold",
                 "descriptive propagation in audited observables without a carryover map",
             ],
             "withheld": [
@@ -476,10 +479,10 @@ def main() -> int:
         f"1. B no-op parity: **{'3/3 PASS' if summary['parity_3_of_3'] else 'FAIL_CLOSED'}**.",
         f"2. Formal branches: **{'12/12 PASS' if summary['formal_branches_12_of_12'] else 'FAIL_CLOSED'}**.",
         f"3. Exact closure: **{'all PASS' if closure_pass else 'FAIL_CLOSED'}**.",
-        "4. Raw late-horizon propagation is history-dominated/persistent for theta/EMA/m/v in B/C/D across 3/3 seeds. This raw label includes declared mechanical carryover.",
-        f"5. Numerically nonzero corrected incremental feedback replicates under the separately stated presence rule for: `{corrected_replicated_entries}`. This is not a dominance or amplification result.",
+        "4. Conditional on the shared B@384 source state, post-fork differences persist in theta/EMA/m/v for B/C/D across 3/3 seeds at the audited late horizons. This raw propagation label includes declared mechanical carryover.",
+        f"5. Corrected incremental feedback is resolved as finite and nonzero under exact closure for: `{corrected_replicated_entries}` in at least 2/3 seeds. The rule has no substantive magnitude threshold and is not a dominance or amplification result.",
         f"6. Audited observables replicate descriptively in: `{replicated_observables}`. Feature/residual readouts have no declared linear carryover map and are not carryover-corrected state-mechanism evidence.",
-        "7. The paper may claim conditional history-dominated/persistent propagation from B@384 history; no quality, global causal, or actionable-law claim is licensed.",
+        "7. The paper may claim persistent post-fork state propagation conditional on a shared B@384 source. This design does not compare distinct pre-384 histories and licenses no quality, global-causal, or state-to-FID mediation claim.",
         f"8. P1 is **{'worth protocol consideration' if p1_worthwhile else 'not yet justified'}**; P1 was not started.",
         "", f"Actual training compute: `{total_gpu_hours:.6f}` A100 GPU-hours.", "",
         "## Raw propagation classification", "",
@@ -492,15 +495,15 @@ def main() -> int:
         corrected_replication["directional_cross_seed_rule"],
         corrected_replication["claim_ceiling"], "",
         f"Across all late persistent-state rows, raw `feedback_gain_G` ranges from `{corrected_replication['late_raw_propagation_gain_G_range'][0]:.6g}` to `{corrected_replication['late_raw_propagation_gain_G_range'][1]:.6g}` and `corrected_R_over_delta_k` ranges from `{corrected_replication['late_corrected_R_over_delta_k_range'][0]:.6g}` to `{corrected_replication['late_corrected_R_over_delta_k_range'][1]:.6g}`; no corrected ratio exceeds 1.",
-        "Thus neither raw nor corrected amplification is universal.", "",
+        "These norm ratios do not test whether corrected feedback expands the complete next-step separation. That directional criterion was not evaluated in P0.", "",
         f"Directionally consistent 3/3 entries: `{corrected_directional_entries}`.",
-        "", "| arm:state:block | nonzero seeds | replicated presence | directional 3/3 | alignment sign |",
+        "", "| arm:state:block | resolved-nonzero seeds | occurrence in at least 2/3 | directional 3/3 | alignment sign |",
         "|---|---:|---|---|---|", *corrected_lines, "",
         "Per-seed late medians for raw `feedback_gain_G`, `corrected_R_over_delta_k`, and corrected-feedback alignment are in `late_propagation_corrected_feedback.csv`.",
         "", "## Observable scope", "",
-        "Fixed-latent EMA feature and signed residual readouts show replicated descriptive history-dominated propagation in B/C/D across 3/3 seeds. They have no declared linear carryover map, so no carryover-corrected observable mechanism is claimed.",
+        "Fixed-latent EMA feature and signed residual readouts show descriptive post-fork propagation in B/C/D across 3/3 seeds. They have no declared linear carryover map, so no carryover-corrected observable mechanism is claimed.",
         "", "## Exploratory absolute-norm contrasts", "",
-        "`exploratory_absolute_norm_contrasts.csv` contains algebraic contrasts of branch-specific absolute L2 norms. For example, `norm_C_minus_norm_A` is `||z_C||_2 - ||z_A||_2`, not `||z_C-z_A||_2`. These rows are not used for the mechanism headline and are not target effects, denominator effects, factorial causal effects, or independent-training arm rankings.",
+        "`exploratory_absolute_norm_contrasts.csv` contains algebraic contrasts of branch-specific absolute L2 norms. For example, `norm_C_minus_norm_A` is `||z_C||_2 - ||z_A||_2`, not `||z_C-z_A||_2`. These rows are conditional on the shared B@384 source, are not used for the mechanism headline, and are not target effects, denominator effects, factorial causal effects, or independent-training arm rankings.",
     ]
     (args.outdir / "P0_REPORT.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     files = sorted(path for path in args.outdir.iterdir() if path.is_file() and path.name != "SHA256SUMS.txt")

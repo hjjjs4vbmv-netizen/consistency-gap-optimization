@@ -5,8 +5,8 @@
     "allowed": [
       "exact same-state forcing identity",
       "mechanical carryover separated from corrected feedback",
-      "conditional history-dominated/persistent propagation across three B-history states",
-      "numerically nonzero corrected feedback under the stated post-hoc presence rule",
+      "persistent post-fork propagation across three shared-source B@384 states",
+      "resolved nonzero corrected feedback under a deterministic finite-greater-than-zero rule with no magnitude threshold",
       "descriptive propagation in audited observables without a carryover map"
     ],
     "withheld": [
@@ -207,7 +207,7 @@
       }
     },
     "claim_ceiling": "This post-hoc presence rule does not establish corrected-feedback dominance, same-direction amplification, or a causal contribution.",
-    "cross_seed_rule": "Numerically nonzero corrected incremental feedback is replicated when the seed-level rule holds in at least 2/3 formal seeds.",
+    "cross_seed_rule": "The report records cross-seed occurrence when this deterministic resolved-nonzero rule holds in at least 2/3 formal seeds; it does not interpret finite >0 as a substantive effect-size criterion.",
     "directional_cross_seed_rule": "A conservative directionally consistent result requires all 3/3 seeds to have finite nonzero corrected-feedback alignment with the same sign at h=256 and h=500 within seed, and the same sign across seeds. This rule is post-hoc and descriptive.",
     "late_corrected_R_over_delta_k_range": [
       0.00012999562263671724,
@@ -217,10 +217,10 @@
       0.8812340241883639,
       1.0070686589325109
     ],
-    "seed_level_rule": "At both late horizons {256,500}: closure passes, corrected_R_norm is finite and >0, and corrected_R_over_delta_k is finite and >0."
+    "seed_level_rule": "At both late horizons {256,500}: closure passes, corrected_R_norm is finite and >0, and corrected_R_over_delta_k is finite and >0. This resolved-nonzero rule has no substantive magnitude threshold."
   },
   "formal_branches_12_of_12": true,
-  "legacy_field_note": "The inherited PR #89 persistent_state_feedback_dominance label is retained only under legacy_pr89_classification_by_seed. The headline interpretation is history-dominated/persistent propagation.",
+  "legacy_field_note": "The inherited PR #89 persistent_state_feedback_dominance label is retained only under legacy_pr89_classification_by_seed. The headline interpretation is persistent post-fork propagation conditional on the shared B@384 source state.",
   "max_closure_relative": 0.0,
   "p1_started": false,
   "p1_worthwhile": true,
@@ -230,74 +230,74 @@
   "raw_propagation_classifications": {
     "B:observable:feature": {
       "by_seed": {
-        "3": "descriptive_history_dominated_propagation",
-        "4": "descriptive_history_dominated_propagation",
-        "5": "descriptive_history_dominated_propagation"
+        "3": "descriptive_postfork_propagation",
+        "4": "descriptive_postfork_propagation",
+        "5": "descriptive_postfork_propagation"
       },
       "classification_scope": "descriptive readout propagation; no declared carryover map",
       "counts": {
-        "descriptive_history_dominated_propagation": 3
+        "descriptive_postfork_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "descriptive_history_dominated_propagation",
+      "replicated_classification": "descriptive_postfork_propagation",
       "replication_status": "cross-seed replicated"
     },
     "B:observable:residual": {
       "by_seed": {
-        "3": "descriptive_history_dominated_propagation",
-        "4": "descriptive_history_dominated_propagation",
-        "5": "descriptive_history_dominated_propagation"
+        "3": "descriptive_postfork_propagation",
+        "4": "descriptive_postfork_propagation",
+        "5": "descriptive_postfork_propagation"
       },
       "classification_scope": "descriptive readout propagation; no declared carryover map",
       "counts": {
-        "descriptive_history_dominated_propagation": 3
+        "descriptive_postfork_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "descriptive_history_dominated_propagation",
+      "replicated_classification": "descriptive_postfork_propagation",
       "replication_status": "cross-seed replicated"
     },
     "B:state:EMA": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "B:state:m": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "B:state:net_buffer": {
@@ -338,110 +338,110 @@
     },
     "B:state:theta": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "B:state:v": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "C:observable:feature": {
       "by_seed": {
-        "3": "descriptive_history_dominated_propagation",
-        "4": "descriptive_history_dominated_propagation",
-        "5": "descriptive_history_dominated_propagation"
+        "3": "descriptive_postfork_propagation",
+        "4": "descriptive_postfork_propagation",
+        "5": "descriptive_postfork_propagation"
       },
       "classification_scope": "descriptive readout propagation; no declared carryover map",
       "counts": {
-        "descriptive_history_dominated_propagation": 3
+        "descriptive_postfork_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "descriptive_history_dominated_propagation",
+      "replicated_classification": "descriptive_postfork_propagation",
       "replication_status": "cross-seed replicated"
     },
     "C:observable:residual": {
       "by_seed": {
-        "3": "descriptive_history_dominated_propagation",
-        "4": "descriptive_history_dominated_propagation",
-        "5": "descriptive_history_dominated_propagation"
+        "3": "descriptive_postfork_propagation",
+        "4": "descriptive_postfork_propagation",
+        "5": "descriptive_postfork_propagation"
       },
       "classification_scope": "descriptive readout propagation; no declared carryover map",
       "counts": {
-        "descriptive_history_dominated_propagation": 3
+        "descriptive_postfork_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "descriptive_history_dominated_propagation",
+      "replicated_classification": "descriptive_postfork_propagation",
       "replication_status": "cross-seed replicated"
     },
     "C:state:EMA": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "C:state:m": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "C:state:net_buffer": {
@@ -482,110 +482,110 @@
     },
     "C:state:theta": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "C:state:v": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "D:observable:feature": {
       "by_seed": {
-        "3": "descriptive_history_dominated_propagation",
-        "4": "descriptive_history_dominated_propagation",
-        "5": "descriptive_history_dominated_propagation"
+        "3": "descriptive_postfork_propagation",
+        "4": "descriptive_postfork_propagation",
+        "5": "descriptive_postfork_propagation"
       },
       "classification_scope": "descriptive readout propagation; no declared carryover map",
       "counts": {
-        "descriptive_history_dominated_propagation": 3
+        "descriptive_postfork_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "descriptive_history_dominated_propagation",
+      "replicated_classification": "descriptive_postfork_propagation",
       "replication_status": "cross-seed replicated"
     },
     "D:observable:residual": {
       "by_seed": {
-        "3": "descriptive_history_dominated_propagation",
-        "4": "descriptive_history_dominated_propagation",
-        "5": "descriptive_history_dominated_propagation"
+        "3": "descriptive_postfork_propagation",
+        "4": "descriptive_postfork_propagation",
+        "5": "descriptive_postfork_propagation"
       },
       "classification_scope": "descriptive readout propagation; no declared carryover map",
       "counts": {
-        "descriptive_history_dominated_propagation": 3
+        "descriptive_postfork_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "descriptive_history_dominated_propagation",
+      "replicated_classification": "descriptive_postfork_propagation",
       "replication_status": "cross-seed replicated"
     },
     "D:state:EMA": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "D:state:m": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "D:state:net_buffer": {
@@ -626,38 +626,38 @@
     },
     "D:state:theta": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     },
     "D:state:v": {
       "by_seed": {
-        "3": "history_dominated_persistent_propagation",
-        "4": "history_dominated_persistent_propagation",
-        "5": "history_dominated_persistent_propagation"
+        "3": "postfork_persistent_state_propagation",
+        "4": "postfork_persistent_state_propagation",
+        "5": "postfork_persistent_state_propagation"
       },
       "classification_scope": "raw propagation including declared mechanical carryover",
       "counts": {
-        "history_dominated_persistent_propagation": 3
+        "postfork_persistent_state_propagation": 3
       },
       "legacy_pr89_classification_by_seed": {
         "3": "persistent_state_feedback_dominance",
         "4": "persistent_state_feedback_dominance",
         "5": "persistent_state_feedback_dominance"
       },
-      "replicated_classification": "history_dominated_persistent_propagation",
+      "replicated_classification": "postfork_persistent_state_propagation",
       "replication_status": "cross-seed replicated"
     }
   },

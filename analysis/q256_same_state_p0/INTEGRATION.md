@@ -1,9 +1,9 @@
 # PR #91 integration gate
 
-Status: **WAITING_FOR_PR_91_MERGE**
+Status: **REBASING AND REGRESSION COMPLETE**
 
 PR #91 remains the canonical owner of generic exact-resume behavior. PR #94
-must not merge first and must not resolve the overlap by replacing PR #91's
+was rebased after PR #91 and does not replace PR #91's
 `exact_resume` / `exact_reproducibility` path with the q256-specific fork path.
 
 The historical P0 execution is preserved by the immutable tag
@@ -59,5 +59,7 @@ At minimum, run:
 - Python compilation
 - `git diff --check`
 
-The merge gate remains open until PR #91 is merged and these checks pass on the
-rebased PR #94 branch.
+After rebasing onto main through PR #93, the combined local gate reports
+`109 passed, 4 skipped, 162 subtests passed`. The skips are environment-bound;
+no integration assertion failed. Python compilation and `git diff --check`
+also pass.

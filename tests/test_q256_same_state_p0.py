@@ -34,7 +34,8 @@ class SameStateProtocolTest(unittest.TestCase):
         self.assertNotIn("--same-state-origin-arm", result.output)
         legacy = CliRunner().invoke(train_cli, ["--same-state-fork"])
         self.assertNotEqual(legacy.exit_code, 0)
-        self.assertIn("No such option: --same-state-fork", legacy.output)
+        self.assertIn("No such option", legacy.output)
+        self.assertIn("--same-state-fork", legacy.output)
 
     def test_attempt_milestones_are_exact_and_bounded(self):
         values = normalize_immutable_checkpoint_attempts(
