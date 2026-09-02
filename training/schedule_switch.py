@@ -22,6 +22,7 @@ FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL = (
 FRESH_N12_ENGINEERING_PROTOCOL = (
     "q256_fresh_crossed_switch_n12_matpool_engineering_v1"
 )
+TERMINAL_HISTORY_N30_PROTOCOL = "q256_terminal_history_n30_matpool_v1"
 SUPPORTED_PROTOCOL_SEEDS = {
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
@@ -30,6 +31,7 @@ SUPPORTED_PROTOCOL_SEEDS = {
     FRESH_N12_PROTOCOL: tuple(range(31, 43)),
     FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL: (38,),
     FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
+    TERMINAL_HISTORY_N30_PROTOCOL: tuple(range(50, 80)),
 }
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
 STATE_SCHEMA = "ect.q256.schedule-switch-state/v1"
@@ -105,13 +107,18 @@ def load_run_manifest(path: str) -> dict:
     if run_kind == "parity":
         branches = PARITY_BRANCHES
     elif experiment_protocol in {
-        FRESH_N12_PROTOCOL, FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
+        FRESH_N12_PROTOCOL,
+        FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL,
+        TERMINAL_HISTORY_N30_PROTOCOL,
     }:
         branches = CROSSED_BRANCHES
     else:
         branches = FORMAL_BRANCHES
     branch = manifest.get("branch")
     _require(branch in branches, "invalid schedule-switch branch")
+    if experiment_protocol == TERMINAL_HISTORY_N30_PROTOCOL:
+        _require(branch in {"AA", "BA"},
+                 "terminal n30 protocol permits only AA and BA")
     origin, continuation = branches[branch]
     _require(manifest.get("origin_arm") == origin,
              "schedule-switch origin arm mismatch")
