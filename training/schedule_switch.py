@@ -22,6 +22,7 @@ FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL = (
 FRESH_N12_ENGINEERING_PROTOCOL = (
     "q256_fresh_crossed_switch_n12_matpool_engineering_v1"
 )
+SWITCHPOINT_SWEEP_PROTOCOL = "q256_switchpoint_sweep_v1"
 SUPPORTED_PROTOCOL_SEEDS = {
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
@@ -30,6 +31,7 @@ SUPPORTED_PROTOCOL_SEEDS = {
     FRESH_N12_PROTOCOL: tuple(range(31, 43)),
     FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL: (38,),
     FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
+    SWITCHPOINT_SWEEP_PROTOCOL: tuple(range(81, 93)),
 }
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
 STATE_SCHEMA = "ect.q256.schedule-switch-state/v1"
@@ -54,6 +56,11 @@ CROSSED_BRANCHES = {
     "BA": ("B", "A"),
     "BB": ("B", "B"),
 }
+SWEEP_BRANCHES = {
+    "CTRL": ("A", "A"),
+    "BA": ("B", "A"),
+}
+SWEEP_SWITCH_KIMG = (128, 256, 384, 512)
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
 
@@ -104,6 +111,8 @@ def load_run_manifest(path: str) -> dict:
     _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
     if run_kind == "parity":
         branches = PARITY_BRANCHES
+    elif experiment_protocol == SWITCHPOINT_SWEEP_PROTOCOL:
+        branches = SWEEP_BRANCHES
     elif experiment_protocol in {
         FRESH_N12_PROTOCOL, FRESH_N12_NUMERIC_RECOVERY_V2_PROTOCOL
     }:
@@ -130,8 +139,14 @@ def load_run_manifest(path: str) -> dict:
         for name in ("authorization_sha256", "failed_compute_receipt_sha256"):
             _require(_HEX64.fullmatch(str(amendment.get(name, ""))) is not None,
                      f"numeric recovery v2 invalid {name}")
-    _require(manifest.get("switch_kimg") == SWITCH_KIMG,
-             "schedule-switch point must be 512 kimg")
+    switch_kimg = manifest.get("switch_kimg")
+    if experiment_protocol == SWITCHPOINT_SWEEP_PROTOCOL:
+        allowed_switches = (512,) if branch == "CTRL" else SWEEP_SWITCH_KIMG
+        _require(switch_kimg in allowed_switches,
+                 "invalid switch point for switchpoint sweep branch")
+    else:
+        _require(switch_kimg == SWITCH_KIMG,
+                 "schedule-switch point must be 512 kimg")
     expected_final = 640 if run_kind == "parity" else 1024
     _require(manifest.get("final_kimg") == expected_final,
              "schedule-switch final budget mismatch")
@@ -168,6 +183,14 @@ def load_run_manifest(path: str) -> dict:
     return manifest
 
 
+def switch_nimg(manifest: dict) -> int:
+    return int(manifest["switch_kimg"]) * 1000
+
+
+def switch_attempt(manifest: dict) -> int:
+    return switch_nimg(manifest) // 128
+
+
 def continuation_factorial(manifest: dict) -> dict:
     arm = manifest["continuation_arm"]
     target, denominator = ARM_FACTORS[arm]
@@ -189,7 +212,7 @@ def state_metadata(manifest: dict) -> dict:
         "branch": manifest["branch"],
         "origin_arm": manifest["origin_arm"],
         "continuation_arm": manifest["continuation_arm"],
-        "switch_kimg": SWITCH_KIMG,
+        "switch_kimg": manifest["switch_kimg"],
         "source_state_path": source["path"],
         "source_state_sha256": source["sha256"],
         "source_internal_state_hashes": copy.deepcopy(
@@ -227,10 +250,12 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
     )
     missing = [name for name in required if name not in state]
     _require(not missing, "source training-state missing fields: " + ", ".join(missing))
-    _require(int(state["cur_nimg"]) == SWITCH_NIMG,
-             "source training-state is not exactly 512 kimg")
-    _require(int(state["attempted_iteration"]) == SWITCH_ATTEMPT,
-             "source attempted iteration is not exactly 4000")
+    expected_nimg = switch_nimg(manifest)
+    expected_attempt = switch_attempt(manifest)
+    _require(int(state["cur_nimg"]) == expected_nimg,
+             "source training-state is not at the declared switch point")
+    _require(int(state["attempted_iteration"]) == expected_attempt,
+             "source attempted iteration does not match the switch point")
     origin = manifest["origin_arm"]
     target, denominator = ARM_FACTORS[origin]
     factorial = state["factorial"]
@@ -248,7 +273,7 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
     ranks = state["rank_states"]
     _require(len(ranks) == 1, "schedule-switch requires WORLD_SIZE=1 source")
     _require(int(ranks[0]["sampler_state"].get("consumed_samples", -1))
-             == SWITCH_NIMG, "source sampler cursor is not exactly 512000")
+             == expected_nimg, "source sampler cursor does not match the switch point")
     actual_hashes = internal_state_hashes(state)
     _require(actual_hashes == manifest["source_state"]["internal_state_sha256"],
              "source internal-state hash mismatch")

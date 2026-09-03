@@ -1,0 +1,134 @@
+{
+  "schema": "ect.q256.switchpoint-sweep-protocol/v1",
+  "experiment_id": "q256_switchpoint_sweep_v1",
+  "status": "READY_TO_FREEZE",
+  "root": "/data/ECT002/q256_switchpoint_sweep",
+  "independent_unit": "training_seed",
+  "seeds": [81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92],
+  "claim_ceiling": "Ordered dependence on B-prefix duration along the four tested nested B-prefix-to-A-chase schedules; no separate identification of early writing, dose accumulation, memory decay, optimizer or EMA mediation, or out-of-setting generalization.",
+  "paths": {
+    "assets": "/data/ECT002/q256_switchpoint_sweep/assets",
+    "runtime": "/data/ECT002/q256_switchpoint_sweep/runtime",
+    "training": "/data/ECT002/q256_switchpoint_sweep/training",
+    "evaluation": "/data/ECT002/q256_switchpoint_sweep/evaluation",
+    "evidence": "/data/ECT002/q256_switchpoint_sweep/evidence",
+    "analysis": "/data/ECT002/q256_switchpoint_sweep/analysis"
+  },
+  "assets": {
+    "dataset": {
+      "path": "/data/ECT002/q256_switchpoint_sweep/assets/cifar10-32x32-canonical-08c9ed1b.zip",
+      "sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
+    },
+    "transfer": {
+      "path": "/data/ECT002/q256_switchpoint_sweep/assets/edm-cifar10-32x32-uncond-vp.pkl",
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    },
+    "evaluator_source": {
+      "commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+      "path": "/data/ECT002/q256_switchpoint_sweep/evaluator"
+    },
+    "detector": {
+      "path": "/data/ECT002/q256_switchpoint_sweep/assets/cache/downloads/a866f8d678872dcf6fcf60ddd09807ab_https___nvlabs-fi-cdn.nvidia.com_stylegan2-ada-pytorch_pretrained_metrics_inception-2015-12-05.pt",
+      "sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4"
+    },
+    "real_features": [
+      {
+        "path": "/data/ECT002/q256_switchpoint_sweep/assets/cache/gan-metrics/cifar10-32x32-inception-2015-12-05-827e0dc6500ddabe52e4e4bc3b6e982e.pkl",
+        "sha256": "ba44251acffc10807a2d74f78ab8e51cea174a375232e0170f650df53d2f73ac"
+      },
+      {
+        "path": "/data/ECT002/q256_switchpoint_sweep/assets/cache/gan-metrics/cifar10-32x32-inception-2015-12-05-130641aa1a5b5b34a4ced2e252b27c30.pkl",
+        "sha256": "314834241c02ff0ff60c2aa72bc603e06e3c6f6b26896af3abfc005810b501bd"
+      }
+    ]
+  },
+  "training": {
+    "q": 256,
+    "mapping": "official_sigmoid",
+    "precondition": "ect",
+    "architecture": "ddpmpp",
+    "optimizer": {"name": "RAdam", "lr": 0.0001},
+    "global_batch": 128,
+    "batch_gpu": 16,
+    "dropout": 0.2,
+    "augment": 0,
+    "xflip": false,
+    "ema_beta": 0.9993,
+    "fp16": true,
+    "amp": true,
+    "tf32": false,
+    "deterministic_algorithms": true,
+    "cudnn_benchmark": false,
+    "cublas_workspace_config": ":4096:8",
+    "tick_kimg": 128,
+    "numbered_snapshot_ticks": 0,
+    "numbered_state_dump_ticks": 0,
+    "milestone_export": "exact immutable full state, then EMA snapshot export",
+    "stop_condition": "attempted_iterations",
+    "arms": {
+      "A": {"target_gap_scale": 1.0, "denominator_gap_scale": 1.0},
+      "B": {"target_gap_scale": 1.1, "denominator_gap_scale": 1.1}
+    },
+    "switch_points_kimg": [128, 256, 384, 512],
+    "training_job_ids_per_seed": ["prefix_A", "prefix_B", "CTRL", "BA128", "BA256", "BA384", "BA512"],
+    "required_snapshots": {
+      "CTRL": [640, 768, 896, 1024],
+      "BA128": [640, 1024],
+      "BA256": [768, 1024],
+      "BA384": [896, 1024],
+      "BA512": [1024]
+    },
+    "required_full_states": {
+      "B-trunk": [128, 256, 384, 512],
+      "trajectory_end": 1024
+    },
+    "ctrl_noop_switch_kimg": 512,
+    "resume_integrity_validation": "exact source state, sampler cursor, optimizer, EMA, RNG, and trajectory configuration",
+    "replacement_seeds": "FORBIDDEN"
+  },
+  "gpu_schedule": {
+    "indices": [0, 1, 2, 3, 4, 5, 6, 7],
+    "prefix_queues": {
+      "0": ["A81", "A85", "A89"],
+      "1": ["B81", "B85", "B89"],
+      "2": ["A82", "A86", "A90"],
+      "3": ["B82", "B86", "B90"],
+      "4": ["A83", "A87", "A91"],
+      "5": ["B83", "B87", "B91"],
+      "6": ["A84", "A88", "A92"],
+      "7": ["B84", "B88", "B92"]
+    },
+    "continuation_layout": "GPUs 0..3 each run CTRL, BA384 and BA512 for one seed group; GPUs 4..7 each run BA128 and BA256 for the matching group",
+    "kimg_per_gpu": 6528,
+    "phase_barrier": "all prefix workers finish before continuation workers start",
+    "evaluation_assignment": "deterministic_round_robin_0_through_7"
+  },
+  "evaluation": {
+    "precision": "FP32",
+    "nfe": 1,
+    "samples_per_job": 50000,
+    "generation_seed_range": [0, 49999],
+    "metric_seed": 20260730,
+    "metrics_same_job": ["fid50k_full", "kid50k_full"],
+    "inferential_metric": "natural_log(fid50k_full)",
+    "primary_jobs_per_seed": 8,
+    "primary_job_count": 96,
+    "secondary_additional_jobs_per_seed": 3,
+    "secondary_additional_job_count": 36,
+    "preseal_unique_job_count": 132,
+    "opaque_manifest": true,
+    "decode_count": 1,
+    "terminal_job_states": ["PASS", "EXHAUSTED_FAILURE"],
+    "seal_states": ["SEALED_PASS", "SEALED_WITH_DOCUMENTED_FAILURES"],
+    "excluded": ["NFE2", "unlisted_milestones", "raw_FID_inference", "KID_inference"]
+  },
+  "postseal_companion": {
+    "seed": 81,
+    "cells": ["CTRL@1024", "BA512@1024"],
+    "generation_blocks": [[0, 49999], [50000, 99999], [100000, 149999], [150000, 199999], [200000, 249999]],
+    "block0_reuses_formal_job": true,
+    "new_job_count": 8,
+    "descriptive_only": true
+  },
+  "analysis_plan": "analysis_plan.json"
+}
