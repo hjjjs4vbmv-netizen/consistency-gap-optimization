@@ -25,6 +25,7 @@ ANALYSIS = ROOT / "analysis/q128_fresh_regime_history_n8_v1"
 CONFIG = ROOT / "configs/q128_fresh_regime_history_n8_v1.frozen.json"
 PROTOCOL = ANALYSIS / "protocol.json"
 ARMS = ("A", "Bsame", "Bmatch", "Cmatch", "Dmatch")
+AMP_SKIP_WARMUP_PROCESSED_NIMG = 10_000
 
 
 def now() -> str:
@@ -130,13 +131,95 @@ def run_native(a, c, seed: int, arm: str, run_dir: Path, *, stop: int | None = N
 def telemetry_gate(path: Path) -> dict:
     with path.open(newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    numeric = ("loss_nonfinite_count","raw_grad_nonfinite_count",
-               "sanitized_grad_nonfinite_count","update_nonfinite_count",
-               "model_nonfinite_count","ema_nonfinite_count","factor_nonfinite_count",
-               "nonpositive_denominator_count","target_scaled_to_zero_count",
-               "denominator_scaled_to_zero_count")
-    totals = {k:sum(int(r[k]) for r in rows) for k in numeric}
-    return {"rows":len(rows),"counts":totals,"status":"PASS" if not any(totals.values()) else "FAIL"}
+    count_fields = (
+        "loss_nonfinite_count", "raw_grad_nonfinite_count",
+        "sanitized_grad_nonfinite_count", "update_nonfinite_count",
+        "model_nonfinite_count", "ema_nonfinite_count",
+        "factor_nonfinite_count", "nonpositive_denominator_count",
+        "target_r_equal_t_count", "target_scaled_to_zero_count",
+        "denominator_r_equal_t_count", "denominator_scaled_to_zero_count",
+    )
+    must_be_zero = tuple(x for x in count_fields if x != "raw_grad_nonfinite_count")
+    finite_fields = (
+        "loss", "raw_grad_finite_norm", "sanitized_grad_norm",
+        "update_norm", "model_norm", "ema_norm", "target_delta_min",
+        "target_delta_max", "target_delta_mean", "denominator_delta_min",
+        "denominator_delta_max", "denominator_delta_mean",
+        "learning_rate", "grad_scale_before", "grad_scale_after",
+    )
+    totals = {name: 0 for name in count_fields}
+    failures: list[str] = []
+    cumulative_skips = 0
+    skip_attempts: list[int] = []
+    if not rows:
+        failures.append("telemetry has no rows")
+    for row_number, row in enumerate(rows, start=2):
+        label = f"row {row_number}"
+        try:
+            counts = {name: int(row[name]) for name in count_fields}
+            values = {name: float(row[name]) for name in finite_fields}
+            attempted = int(row["attempted_iteration"])
+            successful = int(row["successful_optimizer_steps"])
+            processed_nimg = int(row["processed_nimg"])
+            sample_count = int(row["sample_count"])
+            step_skipped = int(row["step_skipped"])
+            raw_grad_norm = float(row["raw_grad_norm"])
+        except (KeyError, TypeError, ValueError, OverflowError) as exc:
+            failures.append(f"{label}: malformed telemetry: {exc}")
+            continue
+        for name, value in counts.items():
+            totals[name] += value
+        nonfinite = [name for name, value in values.items() if not math.isfinite(value)]
+        if nonfinite:
+            failures.append(f"{label}: non-finite required fields: {nonfinite}")
+        for name in must_be_zero:
+            if counts[name] != 0:
+                failures.append(f"{label}: {name} must be zero")
+        if sample_count != 128:
+            failures.append(f"{label}: sample_count must equal 128")
+        if step_skipped not in (0, 1):
+            failures.append(f"{label}: step_skipped must be 0 or 1")
+            continue
+        if bool(counts["raw_grad_nonfinite_count"]) != bool(step_skipped):
+            failures.append(f"{label}: raw-gradient non-finite status must match AMP skip")
+        cumulative_skips += step_skipped
+        if successful != attempted - cumulative_skips:
+            failures.append(f"{label}: successful_optimizer_steps mismatch")
+        if step_skipped:
+            skip_attempts.append(attempted)
+            if processed_nimg >= AMP_SKIP_WARMUP_PROCESSED_NIMG:
+                failures.append(f"{label}: AMP skip occurred outside frozen warm-up")
+            if raw_grad_norm != float("inf"):
+                failures.append(f"{label}: skipped raw_grad_norm must be +inf")
+            if values["grad_scale_after"] >= values["grad_scale_before"]:
+                failures.append(f"{label}: AMP skip did not reduce GradScaler")
+            if values["update_norm"] != 0:
+                failures.append(f"{label}: skipped attempt changed parameters")
+        else:
+            if not math.isfinite(raw_grad_norm) or raw_grad_norm < 0:
+                failures.append(f"{label}: successful raw_grad_norm is invalid")
+            if values["grad_scale_after"] < values["grad_scale_before"]:
+                failures.append(f"{label}: GradScaler fell without AMP skip")
+            if values["update_norm"] <= 0:
+                failures.append(f"{label}: successful update_norm must be positive")
+        for prefix in ("target_delta", "denominator_delta"):
+            minimum = values[f"{prefix}_min"]
+            mean = values[f"{prefix}_mean"]
+            maximum = values[f"{prefix}_max"]
+            if minimum <= 0 or not minimum <= mean <= maximum:
+                failures.append(f"{label}: {prefix} must satisfy 0 < min <= mean <= max")
+    return {
+        "rows": len(rows),
+        "counts": totals,
+        "amp_skip_attempts": skip_attempts,
+        "amp_skip_policy": {
+            "raw_nonfinite_allowed_only_when_step_skipped": True,
+            "warmup_processed_nimg_exclusive_upper_bound": AMP_SKIP_WARMUP_PROCESSED_NIMG,
+            "scientific_state_must_remain_unchanged_on_skip": True,
+        },
+        "failures": failures,
+        "status": "PASS" if not failures else "FAIL",
+    }
 
 
 def crossed(a, source: Path, output: Path, branch: str, final: int) -> None:
