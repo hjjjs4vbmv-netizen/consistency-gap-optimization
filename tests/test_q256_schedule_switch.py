@@ -215,6 +215,33 @@ class ScheduleSwitchTests(unittest.TestCase):
                 with self.subTest(mutation=mutation), self.assertRaises(RuntimeError):
                     schedule_switch.load_run_manifest(path)
 
+    def test_terminal_n30_protocol_allows_only_seed50_79_aa_ba(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "training-state.pt"
+            source_path.write_bytes(b"immutable-source")
+            state = self.make_state()
+            manifest = self.make_manifest(source_path, state)
+            manifest.update({
+                "experiment_protocol": schedule_switch.TERMINAL_HISTORY_N30_PROTOCOL,
+                "seed": 50,
+                "branch": "AA",
+                "origin_arm": "A",
+                "continuation_arm": "A",
+            })
+            path = Path(directory) / "manifest.json"
+            for seed, branch, origin in ((50, "AA", "A"), (79, "BA", "B")):
+                manifest.update(seed=seed, branch=branch, origin_arm=origin,
+                                continuation_arm="A")
+                path.write_text(json.dumps(manifest), encoding="utf-8")
+                self.assertEqual(schedule_switch.load_run_manifest(path)["seed"], seed)
+            for seed, branch, origin in ((49, "AA", "A"), (80, "BA", "B"),
+                                         (50, "AB", "A"), (50, "BB", "B")):
+                manifest.update(seed=seed, branch=branch, origin_arm=origin,
+                                continuation_arm=branch[-1])
+                path.write_text(json.dumps(manifest), encoding="utf-8")
+                with self.subTest(seed=seed, branch=branch), self.assertRaises(RuntimeError):
+                    schedule_switch.load_run_manifest(path)
+
 
 if __name__ == "__main__":
     unittest.main()
