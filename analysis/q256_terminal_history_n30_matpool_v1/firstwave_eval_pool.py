@@ -21,16 +21,16 @@ from pathlib import Path
 
 PROTOCOL_SHA256 = "317d3ef93102050276c1366d9633e322d60fbc9000cd56c8fc8a24c1d4eef544"
 DATASET_SHA256 = "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372"
-SIF_SHA256 = "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea"
 EVALUATOR_COMMIT = "d6aba02fb88e9db0993623895eb2228ed717d810"
 EVALUATOR_ARCHIVE_SHA256 = "7ef8a1b22af9beab106ad3adbac6474608f27e74c43629a95fcc71738dab0a6f"
 EVALUATOR_CT_EVAL_SHA256 = "8e17e4cd4e12097e12659a9c8849d42554f24efb25e5255261383d952d878c95"
-WORK_ROOT = Path("/root/q256-n30-firstwave-eval-v2")
+WORK_ROOT = Path("/root/q256-n30-firstwave-eval-v3")
 SOURCE_ROOT = Path("/root/q256-terminal-history-n30-v1")
 DATASET = Path("/mnt/ect_project/datasets/cifar10-32x32.zip")
-SIF = Path("/mnt/ect_project/q256_target_weight_1024k/runtime/ect-pytorch2401-deterministic.sif")
-ROOTFS = Path("/root/q256-eval-runtime-rootfs")
 EVALUATOR = Path("/root/q256-evaluator-d6aba02")
+TRAIN_RUNTIME_BASE = Path("/root/q256-training-runtime-base")
+TRAIN_RUNTIME_ENV = Path("/root/q256-training-runtime-env")
+RUNTIME_RECEIPT = Path("/root/q256-training-runtime-transfer-receipt.json")
 TRANSFER_KEY = Path("/root/q256_eval_transfer_ed25519")
 KNOWN_HOSTS = Path("/root/q256_eval_known_hosts")
 METRICS = ("kid50k_full", "fid50k_full")
@@ -166,15 +166,34 @@ def validate_environment(node_id: str) -> None:
     config = NODE_CONFIG[node_id]
     if sha256_file(DATASET) != DATASET_SHA256:
         raise RuntimeError("canonical evaluation dataset SHA mismatch")
-    if sha256_file(SIF) != SIF_SHA256:
-        raise RuntimeError("frozen SIF SHA mismatch")
     if sha256_file(Path("/root/q256-evaluator-d6aba02.tar.gz")) != EVALUATOR_ARCHIVE_SHA256:
         raise RuntimeError("evaluator archive SHA mismatch")
     if sha256_file(EVALUATOR / "ct_eval.py") != EVALUATOR_CT_EVAL_SHA256:
         raise RuntimeError("evaluator ct_eval.py SHA mismatch")
-    python = ROOTFS / "usr" / "bin" / "python"
+    runtime_receipt = load(RUNTIME_RECEIPT)
+    if runtime_receipt.get("status") != "PASS":
+        raise RuntimeError("training-compatible runtime receipt is not PASS")
+    archive = Path(runtime_receipt["archive_path"])
+    if sha256_file(archive) != runtime_receipt.get("archive_sha256"):
+        raise RuntimeError("training-compatible runtime archive changed")
+    python = TRAIN_RUNTIME_ENV / "bin" / "python"
     if not python.is_file() or not TRANSFER_KEY.is_file() or not KNOWN_HOSTS.is_file():
         raise RuntimeError("runtime or transfer identity missing")
+    probe = json.loads(subprocess.check_output([
+        str(python), "-c",
+        (
+            "import json,platform,numpy,scipy,torch;"
+            "print(json.dumps({'python':platform.python_version(),"
+            "'numpy':numpy.__version__,'scipy':scipy.__version__,"
+            "'torch':torch.__version__,'torch_cuda':torch.version.cuda},sort_keys=True))"
+        ),
+    ], text=True))
+    expected_probe = {
+        "python": "3.11.13", "numpy": "2.1.2", "scipy": "1.16.1",
+        "torch": "2.6.0+cu124", "torch_cuda": "12.4",
+    }
+    if probe != expected_probe or runtime_receipt.get("runtime_probe") != probe:
+        raise RuntimeError(f"training-compatible runtime probe mismatch: {probe}")
     output = subprocess.check_output(
         ["nvidia-smi", "--query-gpu=index,name,memory.total", "--format=csv,noheader,nounits"],
         text=True,
@@ -198,6 +217,7 @@ def prepare_inputs(node_id: str) -> tuple[Path, list[dict]]:
     ):
         (WORK_ROOT / name).mkdir()
     control = WORK_ROOT / "control"
+    shutil.copy2(RUNTIME_RECEIPT, control / "runtime_transfer_receipt.json")
     missing = [
         {"seed": seed, "cell": cell, "reason": "protocol-observed numerical failure"}
         for seed, cell in sorted(MISSING)
@@ -240,7 +260,9 @@ def prepare_inputs(node_id: str) -> tuple[Path, list[dict]]:
         "status": "FROZEN_WAITING_CHECKPOINT_BINDINGS", "node_id": node_id,
         "protocol_sha256": PROTOCOL_SHA256,
         "dataset_sha256": DATASET_SHA256,
-        "runtime_sif_sha256": SIF_SHA256,
+        "runtime_transfer_receipt_sha256": sha256_file(
+            control / "runtime_transfer_receipt.json"
+        ),
         "evaluator_commit": EVALUATOR_COMMIT,
         "nfe": 1, "sample_seeds": [0, 49999], "sample_count": 50000,
         "metric_seed": 20260730, "metrics": list(METRICS),
@@ -287,17 +309,10 @@ def bind_input(node_id: str, job: dict) -> dict:
 
 
 def runtime_env(gpu: int, cache: Path, port: int) -> dict[str, str]:
-    root = ROOTFS
+    root = TRAIN_RUNTIME_BASE
     paths = [
-        root / "usr/local/lib/python3.10/dist-packages/torch/lib",
-        root / "usr/local/lib/python3.10/dist-packages/torch_tensorrt/lib",
-        root / "usr/local/lib", root / "usr/local/cuda/compat/lib",
-        root / "usr/local/nvidia/lib", root / "usr/local/nvidia/lib64",
-        root / "lib", root / "lib/x86_64-linux-gnu",
-        root / "opt/hpcx/clusterkit/lib", root / "opt/hpcx/hcoll/lib",
-        root / "opt/hpcx/nccl_rdma_sharp_plugin/lib", root / "opt/hpcx/ompi/lib",
-        root / "opt/hpcx/sharp/lib", root / "opt/hpcx/ucc/lib",
-        root / "opt/hpcx/ucx/lib", root / "usr/local/cuda/targets/x86_64-linux/lib",
+        root / "lib/python3.11/site-packages/torch/lib",
+        root / "lib",
         Path("/usr/lib/x86_64-linux-gnu"), Path("/lib/x86_64-linux-gnu"),
     ]
     env = os.environ.copy()
@@ -307,7 +322,7 @@ def runtime_env(gpu: int, cache: Path, port: int) -> dict[str, str]:
         DNNLIB_CACHE_DIR=str(cache), MASTER_ADDR="127.0.0.1", MASTER_PORT=str(port),
         RANK="0", LOCAL_RANK="0", WORLD_SIZE="1",
         LD_LIBRARY_PATH=":".join(map(str, paths)),
-        PATH=f"{root / 'usr/local/cuda/bin'}:{root / 'usr/bin'}:/usr/bin:/bin",
+        PATH=f"{TRAIN_RUNTIME_ENV / 'bin'}:{root / 'bin'}:/usr/bin:/bin",
     )
     return env
 
@@ -375,7 +390,7 @@ def run_job(job: dict, gpu: int, cache: Path) -> dict:
     output.mkdir()
     cache.mkdir(parents=True, exist_ok=True)
     port = 53000 + gpu
-    python = ROOTFS / "usr/bin/python"
+    python = TRAIN_RUNTIME_ENV / "bin/python"
     command = [
         str(python), "-m", "torch.distributed.run", "--standalone", "--nproc_per_node=1",
         f"--master_port={port}", str(EVALUATOR / "ct_eval.py"),
