@@ -1,0 +1,208 @@
+{
+  "analysis": {
+    "complete_case_sensitivity": true,
+    "confidence_interval": "two-sided 95% Student-t interval over paired seed-level contrasts",
+    "decision_precedence": [
+      "directional_negative",
+      "directional_positive",
+      "practical_equivalence",
+      "inconclusive"
+    ],
+    "equivalence_margin": "plus_or_minus_log(1.03)",
+    "failure_estimands": [
+      "planned-trajectory failure rate by AA/BA arm",
+      "prefix-history failure rate by A/B history",
+      "association between arm/history and missing endpoint quality"
+    ],
+    "intention_to_run_denominator": 30,
+    "primary_contrast": "logFID_BA-logFID_AA",
+    "primary_outcome": "FID50k at 1024 kimg, NFE1",
+    "tost_interval": "two-sided 90% Student-t interval"
+  },
+  "assets": {
+    "dataset": {
+      "byte_identical_to_prior_08c9ed1_archive": false,
+      "ordered_pixels_labels_sha256": "ccab7d422ddf0274e3d40693bfc00a87147c21bd1ebb65a7d2aaccdc142519b7",
+      "path": "/mnt/ect_project/datasets/cifar10-32x32.zip",
+      "semantic_audit": "PASS: all 50000 ordered RGB images and labels matched the official CIFAR-10 Python training batches",
+      "sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3"
+    },
+    "transfer": {
+      "path": "/mnt/ect_project/pretrained/edm-cifar10-32x32-uncond-vp.pkl",
+      "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+    }
+  },
+  "cells": [
+    "AA",
+    "BA"
+  ],
+  "evaluation": {
+    "blind_until_all_available_jobs_sealed": true,
+    "expected_jobs": 60,
+    "metric_seed": 20260730,
+    "metrics_in_order": [
+      "kid50k_full",
+      "fid50k_full"
+    ],
+    "nfe": 1,
+    "precision": "FP32",
+    "sample_seed_range": [
+      0,
+      49999
+    ],
+    "samples_per_job": 50000,
+    "shared_generated_features_required": true
+  },
+  "experiment_id": "q256_terminal_history_n30_matpool_v1",
+  "frozen_at": "2026-09-03T01:30:00Z",
+  "implementation_commit": "3f2e0694596fc4be961de4c5d9dbf0b2a118be5a",
+  "node_gpu_counts": {
+    "node7": 7,
+    "node8": 8
+  },
+  "node_seeds": {
+    "node7": [
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79
+    ],
+    "node8": [
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65
+    ]
+  },
+  "paths": {
+    "output_root": "/root/q256-terminal-history-n30-v1"
+  },
+  "provenance": {
+    "prior_fresh_replication": "q256_fresh_crossed_switch_n12_matpool_v1, seeds31-42, amended n=11, primary INCONCLUSIVE",
+    "seed_selection": "consecutive seeds 50-79 explicitly requested before launch",
+    "upstream_pr97_head": "fb616c93b0984df71c2b12688722d3c9c7dd30f8"
+  },
+  "runtime": {
+    "kind": "identical system-site virtual environments on both MatPool nodes",
+    "pip_freeze_sha256": "6cb13c43afa426ec1f0f13bcd09430b11fcfd045c2e4e8fc7e2bedfd16c2d26a",
+    "probe": {
+      "click": "8.2.1",
+      "cudnn": 90100,
+      "numpy": "2.1.2",
+      "pillow": "11.3.0",
+      "psutil": "7.0.0",
+      "python": "3.11.13",
+      "scipy": "1.16.1",
+      "torch": "2.6.0+cu124",
+      "torch_cuda": "12.4"
+    },
+    "python": "/root/q256-terminal-runtime/env/bin/python",
+    "runtime_specific_exact_resume_parity_required": true
+  },
+  "schema": "ect.q256.terminal-history-n30-protocol/v1",
+  "seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "storage": {
+    "minimum_free_bytes_by_node": {
+      "node7": 429496729600,
+      "node8": 429496729600
+    },
+    "preserve_all_failed_cells": true,
+    "preserve_full_states_at_kimg": [
+      512,
+      640,
+      768,
+      896,
+      1024
+    ]
+  },
+  "training": {
+    "adaptive_update_kimg": 0.5,
+    "amp": true,
+    "architecture": "ddpmpp",
+    "augment": 0,
+    "batch_gpu": 16,
+    "cublas_workspace_config": ":4096:8",
+    "cudnn_benchmark": false,
+    "deterministic_algorithms": true,
+    "dropout": 0.2,
+    "ema_beta": 0.9993,
+    "factorial_arms": {
+      "A": [
+        1.0,
+        1.0
+      ],
+      "B": [
+        1.1,
+        1.1
+      ]
+    },
+    "final_kimg": 1024,
+    "fp16": true,
+    "global_batch": 128,
+    "learning_rate": 0.0001,
+    "mapping": "sigmoid",
+    "no_automatic_retry": true,
+    "optimizer": "RAdam",
+    "precondition": "ect",
+    "prefix_attempts": 4000,
+    "q": 256,
+    "suffix_attempts": 4000,
+    "switch_kimg": 512,
+    "tf32": false,
+    "world_size": 1,
+    "xflip": false
+  }
+}

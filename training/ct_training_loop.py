@@ -64,6 +64,7 @@ def validate_planned_pause(
     allowed = {
         schedule_switch.FRESH_N12_PROTOCOL: tuple(range(31, 43)),
         schedule_switch.FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
+        schedule_switch.TERMINAL_HISTORY_N30_PROTOCOL: tuple(range(50, 80)),
     }
     if (
         attempts != schedule_switch.SWITCH_ATTEMPT

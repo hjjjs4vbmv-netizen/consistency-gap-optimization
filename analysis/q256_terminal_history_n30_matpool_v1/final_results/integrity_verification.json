@@ -1,0 +1,780 @@
+{
+  "assignments": {
+    "files": [
+      {
+        "count": 11,
+        "file": "eval_assignments_eval5.json",
+        "sha256": "1dd969ed4a88224fc0b26a45573b71b2885296115fe5c1f3577410eab7bb312f"
+      },
+      {
+        "count": 13,
+        "file": "eval_assignments_eval6.json",
+        "sha256": "8d989465b76ce0443ec62cd442e3355a098ad565c16d87f306b9e73109b05a25"
+      },
+      {
+        "count": 3,
+        "file": "eval_assignments_single1.json",
+        "sha256": "c8125c4579ada9e2c4900ce6a0bd713e9e82c4d4c09adf8aa0e75c5c9f8b9768"
+      },
+      {
+        "count": 3,
+        "file": "eval_assignments_single2.json",
+        "sha256": "a087cf9179c403a5d440b17a75249bfef00abab918a22157b14762c2875d72ee"
+      }
+    ],
+    "planned_endpoints": 30,
+    "status": "PASS",
+    "unique_endpoints": 30
+  },
+  "evaluation": {
+    "endpoint_checks": [
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 50,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 50,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 51,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 51,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 52,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 52,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 53,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 53,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 54,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 54,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 55,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 55,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 56,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 56,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 57,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 57,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 66,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 66,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 67,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 68,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 69,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 69,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 70,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 70,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 71,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 71,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 72,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 72,
+        "shared_features": "PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 59,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 59,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 60,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 60,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 61,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 62,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 63,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 64,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 73,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 74,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 74,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 75,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 75,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 76,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 76,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 77,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 77,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 78,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 78,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 79,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 79,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 64,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "single1"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 65,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "single1"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 73,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "single1"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 61,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "single2"
+      },
+      {
+        "binding": "PASS",
+        "cell": "BA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 62,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "single2"
+      },
+      {
+        "binding": "PASS",
+        "cell": "AA",
+        "checkpoint_sha": "PASS",
+        "metric_decode": "PASS",
+        "receipt": "PASS",
+        "seed": 63,
+        "shared_features": "PASS",
+        "wave": "secondwave",
+        "worker": "single2"
+      }
+    ],
+    "evaluated_endpoint_count": 55,
+    "expected_missing": [
+      [
+        58,
+        "AA"
+      ],
+      [
+        58,
+        "BA"
+      ],
+      [
+        65,
+        "AA"
+      ],
+      [
+        67,
+        "AA"
+      ],
+      [
+        68,
+        "AA"
+      ]
+    ],
+    "seals": [
+      {
+        "seal_sha256": "b50f8e942a6b63ca11b423d2e847b185f46f811f59bdac46fa26bef9b688eff0",
+        "status": "SEALED_PASS",
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "seal_sha256": "a7501ec0987b69f1040e1ff8f31f18f70c1fb714285ab6b62ad279e1bf3be394",
+        "status": "SEALED_PASS",
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "seal_sha256": "c92d3d0e72ae171392da5126c48681bbb83277c2acdc5c89acf656ac1f208bfe",
+        "status": "SEALED_PASS",
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "seal_sha256": "8b924bab757d77a9984174097551405e15cb3f3e493ac501a849f873b16de2c5",
+        "status": "SEALED_PASS",
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "seal_sha256": "a10e6620e5e47caacbb9d684b6b84e1cc4623f311d3c63a5d3f4b1fca6fc5c1c",
+        "status": "SEALED_PASS",
+        "wave": "secondwave",
+        "worker": "single1"
+      },
+      {
+        "seal_sha256": "c9bc0a15072cbc2e1632abae551ae88b43d44e64fa0d8df7c3d599e837010c65",
+        "status": "SEALED_PASS",
+        "wave": "secondwave",
+        "worker": "single2"
+      }
+    ],
+    "sources": [
+      {
+        "csv_sha256": "f1471b47bf298616520af3ec179cd748e0f0240609776b9dd3fd754a980da6ea",
+        "row_count": 16,
+        "wave": "firstwave",
+        "worker": "node8"
+      },
+      {
+        "csv_sha256": "f798681fbc8a149b4f588267d20713867415d820e13935d5ef2de96dbc0f48e1",
+        "row_count": 12,
+        "wave": "firstwave",
+        "worker": "node7"
+      },
+      {
+        "csv_sha256": "afa547a2b636e7922728cb4a7145dd017224389986fd1765ab6158c8aa38bba5",
+        "row_count": 8,
+        "wave": "secondwave",
+        "worker": "eval5"
+      },
+      {
+        "csv_sha256": "988efa90bf027322944a218676547021fabca0708b54a694f831133d1ca1d0a2",
+        "row_count": 13,
+        "wave": "secondwave",
+        "worker": "eval6"
+      },
+      {
+        "csv_sha256": "3d4985bc352dadb4950712c1c0c1b4b024aabc22a72f6a0c1c9973377d9a586e",
+        "row_count": 3,
+        "wave": "secondwave",
+        "worker": "single1"
+      },
+      {
+        "csv_sha256": "204db7e8d7fb07c9b6e68ac9c6b4aec02e16bc35f6db9456f11eb18b2919d29a",
+        "row_count": 3,
+        "wave": "secondwave",
+        "worker": "single2"
+      }
+    ],
+    "status": "PASS",
+    "unique_endpoint_count": 55
+  },
+  "failures": {
+    "endpoint_failures": [
+      {
+        "cell": "AA",
+        "seed": 67,
+        "source": "node7"
+      },
+      {
+        "cell": "AA",
+        "seed": 68,
+        "source": "node7"
+      },
+      {
+        "cell": "AA",
+        "seed": 58,
+        "source": "node8"
+      },
+      {
+        "cell": "BA",
+        "seed": 58,
+        "source": "node8"
+      },
+      {
+        "cell": "AA",
+        "seed": 65,
+        "source": "node8"
+      }
+    ],
+    "prefix_failures": [
+      {
+        "history": "A",
+        "receipt_sha256": "bf27b8c129c32224a4a911b04285e3788eee88452b81dd8e9eb61f498317836b",
+        "seed": 67
+      }
+    ],
+    "status": "PASS"
+  },
+  "protocol_sha256": "317d3ef93102050276c1366d9633e322d60fbc9000cd56c8fc8a24c1d4eef544",
+  "schema": "ect.q256.terminal-history-final-integrity/v1",
+  "status": "PASS",
+  "verified_at": "2026-09-03T12:27:19.197732+00:00"
+}
