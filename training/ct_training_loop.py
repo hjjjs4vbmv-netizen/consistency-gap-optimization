@@ -1080,11 +1080,11 @@ def training_loop(
             raise ValueError(
                 'schedule switch requires a strict full-state resume'
             )
-        if loss_kwargs.get('factorial_protocol') != 'q256_target_weight_v1':
-            raise ValueError('schedule switch requires q256 target-weight loss')
         expected_factorial = schedule_switch.continuation_factorial(
             switch_manifest
         )
+        if loss_kwargs.get('factorial_protocol') != expected_factorial['protocol']:
+            raise ValueError('schedule switch factorial protocol mismatch')
         actual_factorial = {
             'enabled': True,
             'protocol': loss_kwargs.get('factorial_protocol'),

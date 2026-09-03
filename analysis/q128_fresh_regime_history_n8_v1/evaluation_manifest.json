@@ -1,0 +1,4500 @@
+{
+  "decode_gate": "all jobs whose category is PRIMARY or KEY_SECONDARY must be SEALED_PASS",
+  "evaluation": {
+    "metric_seed": 20260730,
+    "metrics": [
+      "fid50k_full",
+      "kid50k_full"
+    ],
+    "nfe2_mid_t": 0.821,
+    "precision": "fp32",
+    "sample_seeds": "0-49999"
+  },
+  "job_count": 272,
+  "jobs": [
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 0,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e55bd92d22dc42529210",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 1,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "85de4673bc16b5fd9baa",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 2,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b26ddb19ace01f6499e5",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 3,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "3e56f352d1b95f0ba2ef",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 4,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "cca35c08efc8f67f8e05",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 5,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "5d60cf1c77f53f3e3e72",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 6,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ba713d5ffb70ed5cc311",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 7,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "11f5c692ee658185ff38",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 8,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "007f03f50c7bb98678ca",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 9,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e270ee8abc9a3e907fe8",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 10,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "8859c09b6272f78329fa",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 11,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "c932802cc3a4a3a1c891",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 12,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "c941e496d43826310683",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 13,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "8147d6e4dae207d7c137",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 14,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "83ade0f5e8832752cea9",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 15,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "ea873288bd8e8b7b5333",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 16,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9b6d8a5a82909bf5b1da",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 17,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "72b1e6e6f10032ff1ed3",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 18,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2ae3a97cf055288ba5a0",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 19,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "1bcbcdedab1baf86588d",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 20,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "4635e73c22ceb35c8b18",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 21,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2d54af19b8b2606a3d8b",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 22,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e265e690aed33f649fcf",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 23,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "8d557ff46cb2d5e09acb",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 24,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e7ddc1687c484aa00a30",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 25,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "95182e5f5f4c42e339ff",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 26,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e15d314837c33917c953",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 27,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "92ca9fc05e477a96328c",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 28,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "222366c0b36aa7cab0af",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 29,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2580ba943116163bffe2",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 30,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "80e5a7cf32c7ea6c74fb",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 31,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "eec9b40bc03ec306de9b",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 32,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "98d2256e29d1ec4912bb",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed201/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 33,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "3a6bf4d7db5189241d67",
+      "seed": 201,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 34,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ec874114a89b3a1bb750",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 35,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "49877f188d0c32d3c0f6",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 36,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "bd6ecb58b45c092cb5c7",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 37,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "71719c9aa4cdddd0c16b",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 38,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "f82856545bb867abe221",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 39,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "8382fbcf9bfd7c78f288",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 40,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ba9c9bc97e31039cb5b8",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 41,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "f338b185c06be840889e",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 42,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "4c9f3ea50fc96dfda4e5",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 43,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "f7c81c646e796b69c6e7",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 44,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9293216a17ab5a0acd44",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 45,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "9319d3d13116e7c2f90c",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 46,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e53611882c21bf4454bd",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 47,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "38757a874d95903dd931",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 48,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "fe49ffacc00bc6a189b0",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 49,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "e77e243b9f1219ad0d95",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 50,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "0f36ce3219b4a398e1e9",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 51,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "934d6d5c14794bfc6289",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 52,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "da936a116c385b5d2c9e",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 53,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "3e0dbc65e281096018ff",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 54,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "62a89fc186582c81371f",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 55,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ac417c8597ce02facfbb",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 56,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b170c35d30ff1f33dbf6",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 57,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7a439f3a187966ee5bf2",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 58,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ca51e60a7082cf649bc5",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 59,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "10ae983a2dba74474128",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 60,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "efacda2f87f96e2463f0",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 61,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "45d691d886fe97d1673b",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 62,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "4eadf0684f9b4ca9ae40",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 63,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "410d08bbc5b3246a45b9",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 64,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e775b31ab60148bffcbc",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 65,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "f406acb790262e0528db",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 66,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "65c80465647a5564b774",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed202/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 67,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "ae68676c7c7f879bcaff",
+      "seed": 202,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 68,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9a6c5b614bb0225978b1",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 69,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1020e77750bc48ed2ad3",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 70,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1d376e7ffddbe5e80281",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 71,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "040a1d6e9856907808b5",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 72,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3095e9de170e92ad6be4",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 73,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b435cc282d03ed370475",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 74,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "71df1a6fc1875297a57e",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 75,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "1820d4a0ea9110b40ee1",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 76,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "485ea1f81d5e26e14030",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 77,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ce6a047ebc543e71b7cc",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 78,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "68cdeb24f5cba831333f",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 79,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "a14e341fdfc2343e804c",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 80,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "adf16b058522b409ce6b",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 81,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b556c4d57bc477d05a93",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 82,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ea416806a6cbdd0932f5",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 83,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "d74d0d5eceb028a2ab22",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 84,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "af2a5968fd970d50ae57",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 85,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "aed73e1ce8532b5287b5",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 86,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "552b88c70b97f9216ed2",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 87,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "eaefe74c280b338edda5",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 88,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "12dffa8425a4cfc8cdc4",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 89,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "4848c2b7b83865cd71b3",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 90,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "28c8c04fe874cb486512",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 91,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9e610ab3345ec5e972ce",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 92,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9d4e39c929976fadc0b2",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 93,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "46582fa90ca381443660",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 94,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3e38920cb267cc930576",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 95,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b167dadab4ff0b7c0e91",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 96,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "a4b26c773ff4e459c8d2",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 97,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "413b8bbc0c3d426910f3",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 98,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3f7ae19f9d93d59063f7",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 99,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b393fbafbaa49f864d3e",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 100,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "967ffa6cc884a0974ca3",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed203/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 101,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "18279e2df889adf7e96f",
+      "seed": 203,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 102,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d94eeb426d92360fa8c7",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 103,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1adac6a320de740352e7",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 104,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "6b1fecbf0b0f8d5fed3e",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 105,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "7359d00771248ac21760",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 106,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7a26158b5829455c929d",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 107,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "04ca79f9b7453d307f79",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 108,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "90b8db2d16b8c423587d",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 109,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "e4773329712f2c0e4fee",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 110,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "fd4852dfc3022f799220",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 111,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d6ce8a4ad9a5cb9d3bc6",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 112,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d96db98792dd4400eb0c",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 113,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "8ced766fbbe55f508fdf",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 114,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "0ad1cfeaf8a59a1a6e08",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 115,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "5813bdd5e52984a0383c",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 116,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7372f1607729c2a19fac",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 117,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "f3665587e1c9eaa76d08",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 118,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ba9d62b5c7246bffaf90",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 119,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "c49b175d30027d3b60bf",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 120,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "c0dbdb6dd2f5f71f842d",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 121,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "ba115af3f521df4c4f68",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 122,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "42d704e71ebe7f2173db",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 123,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "92e152dd8f45234d8dbf",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 124,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "15e79bcb8debe7c3734c",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 125,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "4ef9e824d56084932a72",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 126,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e342ae0606c9ef1a2bc8",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 127,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "dd68083525d87281cb13",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 128,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d9087740d2021719ad87",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 129,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "238f4767fed5670bf25b",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 130,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "fb4bd451ac5251fc2106",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 131,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "367db9ae1da14dbd2b1f",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 132,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "72f8517aa604d46ffc41",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 133,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "f3df3b8127abc99e10c7",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 134,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "5e5ae4a325ef0c684b19",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed204/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 135,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "94c96518428d5ef580ec",
+      "seed": 204,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 136,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "906158f751ac36b51b3c",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 137,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "27faed989f244ae70210",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 138,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3e0c6ee1373fa0b45421",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 139,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "09b15fcda89ac8973c56",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 140,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d98f5a72226a2769b85d",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 141,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7959a33ab15110cda2ff",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 142,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "0c7f6e71e4d3489e967e",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 143,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "da2492e7d2cd7b70913a",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 144,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2b508f59b3428b44e78c",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 145,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a6de727196c4f043c0e9",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 146,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "da4b3c0607c2abc73dc2",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 147,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "c7267d2d8e017030d469",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 148,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a910072ec31e5df9d45d",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 149,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "21ca202e97bcb5dd0807",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 150,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "11a44f15b9bd1b38b09d",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 151,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "ef29c6ef9e2ff40484c6",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 152,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "558836fa24fded94ab2a",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 153,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7fd5e7f044f213dad083",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 154,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b650d64eb122b4a6da07",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 155,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "a1c9c5e560f9589fc7d8",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 156,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "57d2fafaa062e9c5c2de",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 157,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2787b64808ef969a4920",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 158,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9cadcb127b00faa41acb",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 159,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "45b486a173994a650f29",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 160,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "07343fca7addf485d1e3",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 161,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "351e59be5b740daaf270",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 162,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "46d04c48864f4d132a64",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 163,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "85414a6cd8622e70982d",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 164,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "9d2f45157c0b8b020fd7",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 165,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "02b89913ebcdf391fadc",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 166,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b8c08beae6929fd2a1cd",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 167,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "c21dc7943644c1447d30",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 168,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "49dc4b9083421fa0698d",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed205/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 169,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "285ef5b6bd7e7f95de7c",
+      "seed": 205,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 170,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "dc275061b99ff7cf82ce",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 171,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d09e09f7119dc714542f",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 172,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ff7ea3c2a800dc636614",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 173,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "e4b17c50aa716b1d070b",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 174,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "0ed54c4332875ad26a78",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 175,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a82f3df5c44648444d70",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 176,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "cf38acf537a66f6cdca9",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 177,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "17a6bf0f2b733678603a",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 178,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "bd663761ec3aaf834baf",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 179,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "f8170098c5be65d7b58e",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 180,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1dea0ff7063fee47622b",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 181,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "c9a47a6f0f6327bdd65d",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 182,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2352b5eee3d025519e22",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 183,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1705cc38b54754aa17a6",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 184,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7b43f2fe69de80d19bbe",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 185,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "cf472a2df6fbaa787a37",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 186,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "95cbe78df861102c3589",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 187,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "91718c4a2ab42adcb1b3",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 188,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "6b7be02aca33a8f3d561",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 189,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "9107ab0725759bdb8116",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 190,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "430ea14a9c353ce6acab",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 191,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "980db08786501182a0b2",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 192,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "e4bd53e9b70a330579f3",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 193,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "75776e1d241ef888ef4d",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 194,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "739536c4911273d43629",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 195,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ddc27c2c6c07f79e95e4",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 196,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "be43a236ed22dc96e8c7",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 197,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "47c137d22ff662a42a5a",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 198,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "2d7dd896adf744ed319d",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 199,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "29691442761a5b0a6e05",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 200,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "62dffee718b37194ab73",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 201,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2e3935bd5a2f7effa9c3",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 202,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "93bccb65a7ff3e64b2bd",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed206/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 203,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "9b1bfefa6f3c97ebe59b",
+      "seed": 206,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 204,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "c26f3f675d76d99aa003",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 205,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "69d40109bdda56bdd9d4",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 206,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d90198150ba6f111af91",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 207,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "ee0d3f985055c1aeb024",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 208,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b36ec9f32e47bf375f8a",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 209,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3ac6f7f053f24ce5c3f3",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 210,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "13514d4ac9b1453bb3c3",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 211,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "6144fbdd72f484058a56",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 212,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "58d5ac035ee6b76aa9c3",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 213,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "8f5eb8b9410e7df3ed97",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 214,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "fee456af9f1f5116e321",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 215,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "977c31466c56c3a82076",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 216,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "31e80862f03dd8b2a0ae",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 217,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a8cfad23b7e48843bac9",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 218,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "fecec98ff9674cb6c578",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 219,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "f6425be03e001bad274f",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 220,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "24f1f6db754bbc5e8144",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 221,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7a9934b2da90a4353895",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 222,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "4e8efe1d904640fb9c92",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 223,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "fb6d9fabddde645241b0",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 224,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3c1b16e87418b2875395",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 225,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a00f8b491ba31f85a3d4",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 226,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3a8cdfc0ea4256599e47",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 227,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d82939edbd431cd67267",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 228,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3728d3ccd6fc1cf42614",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 229,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ea5c7125eed3eceb293a",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 230,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "434fddbf1e4b486ce5f9",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 231,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d211162380ca8c0bea63",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 232,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "69d46fa0740bc0680d99",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 233,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "99aef2c6ddd6438611b2",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 234,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1d46f8db29c3035918d4",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 235,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "45c1d4ba3aa0647b0c88",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 236,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "31e19ff35360fec03c1f",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed207/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 237,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "c75cebb64ce56876f556",
+      "seed": 207,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 238,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b6e4db233e7a544d43e6",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 239,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3f3267f84699f9273e43",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 240,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "8008332a8ec4f13746c6",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 241,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "c937766827ec7fd98ba5",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 242,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7a652007f1311743001c",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 243,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "99a488ed898c2151ede2",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 244,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b58a1c172c027f6cba68",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 245,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "f7696330ca2b48e7a6bd",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 246,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3f44c68fea2686e6bd98",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 247,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d646acb8222297ee05c8",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 248,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ec3e07121df2e97ef2d3",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 249,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "4cc947ccb98c9c141cf8",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 250,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "2ca656e0f8623ea48e1e",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 251,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9a81f6c0137fa26da5c6",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 252,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d75fa880fbaa562d519f",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 253,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "f26b09b18620659a7d72",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 254,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ef3ee3a11f6d28ce79ca",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 255,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d90ce2f85b6db0e576f3",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 256,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1671ce510a61b6374724",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 257,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "c111a263c7a7988a392e",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 258,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "61b540db11faea84344c",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 259,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "5ff57574b98c2c5d6d68",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 260,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "afbc2d5487c60fe00b40",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 261,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "5ec5924aeb57674b9394",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 262,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "54a709db33cab5dae136",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 263,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "915a8689c4a6407d7223",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 264,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1cee954a75f28ee6083b",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 265,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a0c5e7799c126545b98f",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 266,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "85312b6ca9c23502d02e",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 267,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "5c309798e0fb57480cfc",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 268,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "cec521dfb150f0469bd9",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 269,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "96bc7432f563f231bcb8",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 270,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d10a59b523ede4c78143",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed208/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": null,
+      "job_index": 271,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "15aaec3bcd7e3083c84c",
+      "seed": 208,
+      "status": "FROZEN_NOT_RUN",
+      "trajectory": "BA"
+    }
+  ],
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "quality_values_decoded": false,
+  "schema": "ect.q128-fresh-evaluation-manifest/v1",
+  "status": "FROZEN_NOT_RUN"
+}

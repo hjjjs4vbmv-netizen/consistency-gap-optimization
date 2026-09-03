@@ -1,0 +1,26 @@
+{
+  "schema": "ect.q128-fresh-regime-history-analysis/v1",
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "sole_primary": {
+    "estimand": "H_A = logFID_NFE1(BA@1024) - logFID_NFE1(AA@1024)",
+    "alternative": "E[H_A] < 0", "test": "one-sided paired t-test", "alpha": 0.05,
+    "negative_verdict": "NEGATIVE_DIRECTION_SUPPORTED iff mean(H_A)<0 and one-sided lower-direction p<0.05",
+    "positive_verdict": "POSITIVE_DIRECTION_SUPPORTED iff mean(H_A)>0 and one-sided upper-direction p<0.05",
+    "otherwise": "DIRECTION_UNRESOLVED",
+    "not_required": ["two-sided_95CI_below_zero","7_of_8_negative","all_LOSO_negative","effect_over_3_percent","TOST_pass","sign_flip_pass"],
+    "report": ["mean","median","SD","two-sided_95CI","one-sided_95_upper_bound","negative_seed_count","exact_one-sided_sign-flip_p","LOSO_means"]
+  },
+  "practical_magnitude": {
+    "independent_axis": true, "band": "[-log(1.03),+log(1.03)]", "TOST_alpha": 0.05,
+    "equivalent": "PRACTICALLY_EQUIVALENT iff 90% CI is entirely inside the band",
+    "otherwise": "PRACTICAL_MAGNITUDE_UNRESOLVED",
+    "material_flag": "MATERIAL_NEGATIVE_SUPPORTED iff one-sided 95% upper confidence bound < -log(1.03)",
+    "material_flag_required_for_primary": false
+  },
+  "key_secondary_phase": {"estimand":"P = [logFID(Bsame)-logFID(A)]@1024 - [logFID(Bsame)-logFID(A)]@512","alternative":"E[P] < 0","test":"one-sided paired t-test","alpha":0.05,"report":["mean","two-sided_95CI","one-sided_p","sign_count","LOSO","exact_sign_flip"]},
+  "key_secondary_nfe": {"estimand":"R = [logFID_NFE2(Cmatch)-logFID_NFE2(Bmatch)]-[logFID_NFE1(Cmatch)-logFID_NFE1(Bmatch)] at 1024","report":["effect_estimate","CI","seed_points","direction_consistency"],"allowed_claim":"Bmatch/Cmatch diagnostic trajectory ranking is or is not NFE-dependent","causal_channel_claims_forbidden":true},
+  "crossed_secondary": {"H_B":"BB-AB","S_A":"AB-AA","S_B":"BB-BA","I":"BB-BA-AB+AA","scale":"log FID at 1024 NFE1","interaction_equivalence_requires_independent_TOST":true,"cannot_rescue_primary":true},
+  "missingness_reporting": ["all_started_failure_count","arm_specific_failure_count","B_history_specific_failure_count","completion_conditioned_estimand"],
+  "fresh_only_inference": true,
+  "post_decode_old_comparison": "DESCRIPTIVE EVIDENCE SYNTHESIS only; cannot change fresh verdict"
+}

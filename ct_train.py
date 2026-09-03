@@ -595,14 +595,18 @@ def main(**kwargs):
             raise click.ClickException(
                 '--schedule-switch-manifest requires --resume'
             )
-        if opts.factorial_protocol != TARGET_WEIGHT_FACTORIAL_PROTOCOL:
+        if opts.factorial_protocol not in STRICT_FACTORIAL_PROTOCOLS:
             raise click.ClickException(
-                'schedule switch requires q256_target_weight_v1'
+                'schedule switch requires a strict frozen factorial protocol'
             )
         manifest = schedule_switch.load_run_manifest(
             opts.schedule_switch_manifest
         )
         expected = schedule_switch.continuation_factorial(manifest)
+        if opts.factorial_protocol != expected['protocol']:
+            raise click.ClickException(
+                'CLI factorial protocol does not match switch manifest'
+            )
         actual = resolve_target_weight_factorial(
             opts.factorial_protocol,
             opts.target_gap_scale,

@@ -1,0 +1,24 @@
+{
+  "schema": "ect.q128-fresh-regime-history-protocol/v1",
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "study_name": "Fresh q128 Regime and History Generalization Study v1",
+  "cohort": {"formal_seeds": [201,202,203,204,205,206,207,208], "replacement_pool": [209,210,211,212], "smoke_seed": 999, "primary_n": 8},
+  "discovery_reference": {"seeds": [3,4,5], "role": "DISCOVERY_REFERENCE_ONLY", "pooling_forbidden": true},
+  "scientific_config": "configs/q128_fresh_regime_history_n8_v1.frozen.json",
+  "arm_order": {
+    "201": ["A","Bsame","Bmatch","Cmatch","Dmatch"],
+    "202": ["Bsame","Bmatch","Cmatch","Dmatch","A"],
+    "203": ["Bmatch","Cmatch","Dmatch","A","Bsame"],
+    "204": ["Cmatch","Dmatch","A","Bsame","Bmatch"],
+    "205": ["Dmatch","A","Bsame","Bmatch","Cmatch"],
+    "206": ["Dmatch","Cmatch","Bmatch","Bsame","A"],
+    "207": ["A","Dmatch","Cmatch","Bmatch","Bsame"],
+    "208": ["Bsame","A","Dmatch","Cmatch","Bmatch"]
+  },
+  "gpu_assignment": {"201":0,"202":1,"203":2,"204":3,"205":4,"206":5,"207":6,"208":7},
+  "continuation_order": {"even_seed":["AB","BA"],"odd_seed":["BA","AB"]},
+  "hard_gates": ["freeze_precedes_formal_logs","asset_hashes","source_hashes","analytic_identity","zero_clipping","stage0","A_native_parity","Bsame_native_parity","target_denominator_tensor_correctness","finite_loss_gradient","five_arm_smoke","full_state_export_import","A_to_A_computational_state_match","Bsame_to_Bsame_computational_state_match","A_to_Bsame_switch","Bsame_to_A_switch","optimizer_restoration","EMA_restoration","GradScaler_restoration","RNG_sampler_restoration","source_immutability","opaque_evaluation_seal_decode_smoke","required_tests"],
+  "formal_log_allowlist": ["training_progress","finite_nonfinite","AMP_skip","step_count","checkpoint_integrity","GPU_utilization"],
+  "formal_log_forbidden": ["FID","KID","arm_quality_ranking","unsealed_primary_outcome"],
+  "missingness": {"complete_primary_unit_required":["A@512","Bsame@512","AA@1024","BA@1024"],"whole_seed_exclusion":true,"presorted_replacement":true,"max_replacements":4,"over_limit":"EXECUTION_FAILED","technical_exact_rerun":"allowed_only_if_scientific_trajectory_identity_unchanged_and_audited"}
+}
