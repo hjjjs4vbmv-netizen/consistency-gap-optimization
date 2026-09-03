@@ -13,7 +13,8 @@ waiver="${analysis}/owner_directed_operational_waiver_003.json"
 [[ "$("${python_bin}" -c 'import json,sys; print(json.load(open(sys.argv[1]))["job_count"])' "${analysis}/evaluation_manifest.json")" == 272 ]] || { echo "evaluation manifest missing" >&2; exit 2; }
 mkdir -p "${run_root}/formal_logs" "${run_root}/runtime_receipts"
 freeze_sha="$(git -C "${repo}" rev-parse HEAD)"
-freeze_time="$(git -C "${repo}" show -s --format=%cI HEAD)"
+freeze_epoch="$(git -C "${repo}" show -s --format=%ct HEAD)"
+freeze_time="$(date -u -r "${freeze_epoch}" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d "@${freeze_epoch}" +%Y-%m-%dT%H:%M:%SZ)"
 declare -a pids=()
 for gpu in 0 1 2 3 4 5 6 7; do
   seed=$((201 + gpu))
