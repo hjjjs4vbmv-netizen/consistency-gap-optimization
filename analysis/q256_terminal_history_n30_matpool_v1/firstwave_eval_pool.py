@@ -25,7 +25,7 @@ SIF_SHA256 = "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea"
 EVALUATOR_COMMIT = "d6aba02fb88e9db0993623895eb2228ed717d810"
 EVALUATOR_ARCHIVE_SHA256 = "7ef8a1b22af9beab106ad3adbac6474608f27e74c43629a95fcc71738dab0a6f"
 EVALUATOR_CT_EVAL_SHA256 = "8e17e4cd4e12097e12659a9c8849d42554f24efb25e5255261383d952d878c95"
-WORK_ROOT = Path("/root/q256-n30-firstwave-eval-v1")
+WORK_ROOT = Path("/root/q256-n30-firstwave-eval-v2")
 SOURCE_ROOT = Path("/root/q256-terminal-history-n30-v1")
 DATASET = Path("/mnt/ect_project/datasets/cifar10-32x32.zip")
 SIF = Path("/mnt/ect_project/q256_target_weight_1024k/runtime/ect-pytorch2401-deterministic.sif")
@@ -192,7 +192,10 @@ def validate_environment(node_id: str) -> None:
 def prepare_inputs(node_id: str) -> tuple[Path, list[dict]]:
     config = NODE_CONFIG[node_id]
     WORK_ROOT.mkdir(parents=True, exist_ok=False)
-    for name in ("inputs", "jobs", "receipts", "logs", "job-caches", "control"):
+    for name in (
+        "inputs", "jobs", "receipts", "logs", "job-caches", "control",
+        "input-bindings",
+    ):
         (WORK_ROOT / name).mkdir()
     control = WORK_ROOT / "control"
     missing = [
@@ -220,48 +223,21 @@ def prepare_inputs(node_id: str) -> tuple[Path, list[dict]]:
     )
     if sha256_file(protocol_dest) != PROTOCOL_SHA256:
         raise RuntimeError("transferred protocol hash mismatch")
-    remote_records = []
-    while True:
-        remote_records = []
-        pending = []
-        for seed, cell in expected_cells(node_id):
-            record = remote_probe(config, seed, cell)
-            if record is None:
-                pending.append(f"seed{seed}/{cell}")
-            else:
-                remote_records.append({"seed": seed, "cell": cell, **record})
-        if not pending:
-            break
-        print(f"[{utc_now()}] waiting for source endpoints: {','.join(pending)}", flush=True)
-        time.sleep(60)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=config["gpu_count"]) as executor:
-        futures = []
-        for record in remote_records:
-            destination = WORK_ROOT / "inputs" / f"seed{record['seed']}-{record['cell']}.pkl"
-            futures.append(executor.submit(pull_file, config, record, destination))
-        for future in futures:
-            future.result()
     jobs = []
     private = []
-    for index, record in enumerate(remote_records):
-        seed, cell = record["seed"], record["cell"]
-        checkpoint = WORK_ROOT / "inputs" / f"seed{seed}-{cell}.pkl"
+    for index, (seed, cell) in enumerate(expected_cells(node_id)):
         opaque = hashlib.sha256(
             f"{PROTOCOL_SHA256}|firstwave|{seed}|{cell}".encode()
         ).hexdigest()[:24]
         job = {
             "queue_index": index,
             "opaque_id": opaque,
-            "checkpoint_sha256": record["sha256"],
-            "checkpoint_bytes": record["bytes"],
-            "compute_receipt_sha256": record["compute_receipt_sha256"],
-            "trajectory_receipt_sha256": record["trajectory_receipt_sha256"],
         }
         jobs.append(job)
-        private.append({**job, "seed": seed, "cell": cell, "checkpoint": str(checkpoint)})
+        private.append({**job, "seed": seed, "cell": cell})
     public_manifest = {
         "schema": "ect.q256.terminal-history-firstwave-public-evaluation/v1",
-        "status": "FROZEN_NOT_RUN", "node_id": node_id,
+        "status": "FROZEN_WAITING_CHECKPOINT_BINDINGS", "node_id": node_id,
         "protocol_sha256": PROTOCOL_SHA256,
         "dataset_sha256": DATASET_SHA256,
         "runtime_sif_sha256": SIF_SHA256,
@@ -278,13 +254,36 @@ def prepare_inputs(node_id: str) -> tuple[Path, list[dict]]:
     atomic_json(control / "private_map.json", private_map)
     public_manifest["private_map_sha256"] = sha256_file(control / "private_map.json")
     atomic_json(control / "public_manifest.json", public_manifest)
-    atomic_json(control / "input_transfer_receipt.json", {
-        "schema": "ect.q256.terminal-history-firstwave-input-transfer/v1",
-        "status": "PASS", "node_id": node_id, "records": remote_records,
-        "public_manifest_sha256": sha256_file(control / "public_manifest.json"),
-        "protocol_sha256": PROTOCOL_SHA256,
-    })
     return control / "private_map.json", private
+
+
+def bind_input(node_id: str, job: dict) -> dict:
+    config = NODE_CONFIG[node_id]
+    seed, cell = job["seed"], job["cell"]
+    while True:
+        record = remote_probe(config, seed, cell)
+        if record is not None:
+            break
+        print(f"[{utc_now()}] waiting for source endpoint: seed{seed}/{cell}", flush=True)
+        time.sleep(60)
+    destination = WORK_ROOT / "inputs" / f"seed{seed}-{cell}.pkl"
+    pull_file(config, record, destination)
+    binding = {
+        "schema": "ect.q256.terminal-history-firstwave-input-binding/v1",
+        "status": "PASS", "node_id": node_id,
+        "seed": seed, "cell": cell, "opaque_id": job["opaque_id"],
+        "checkpoint": str(destination),
+        "checkpoint_bytes": record["bytes"],
+        "checkpoint_sha256": record["sha256"],
+        "source_path": record["path"],
+        "compute_receipt_sha256": record["compute_receipt_sha256"],
+        "trajectory_receipt_sha256": record["trajectory_receipt_sha256"],
+        "protocol_sha256": PROTOCOL_SHA256,
+        "bound_at": utc_now(),
+    }
+    binding_path = WORK_ROOT / "input-bindings" / f"{job['opaque_id']}.json"
+    atomic_json(binding_path, binding)
+    return {**job, **binding}
 
 
 def runtime_env(gpu: int, cache: Path, port: int) -> dict[str, str]:
@@ -439,7 +438,7 @@ def copy_cache_template(destination: Path) -> None:
 
 def execute_jobs(node_id: str, private: list[dict]) -> None:
     config = NODE_CONFIG[node_id]
-    prewarm = private[0]
+    prewarm = bind_input(node_id, private[0])
     first = run_job(prewarm, 0, WORK_ROOT / "cache-template")
     if first["status"] != "PASS":
         raise RuntimeError("cache-prewarm evaluation job failed; no retry")
@@ -450,6 +449,7 @@ def execute_jobs(node_id: str, private: list[dict]) -> None:
     def worker(gpu: int, jobs: list[dict]) -> list[dict]:
         results = []
         for job in jobs:
+            job = bind_input(node_id, job)
             cache = WORK_ROOT / "job-caches" / job["opaque_id"]
             copy_cache_template(cache)
             results.append(run_job(job, gpu, cache))
@@ -470,6 +470,16 @@ def execute_jobs(node_id: str, private: list[dict]) -> None:
     })
     if failures or len(results) != len(private):
         raise RuntimeError("evaluation matrix failed closed")
+    bindings = sorted((WORK_ROOT / "input-bindings").glob("*.json"))
+    if len(bindings) != len(private):
+        raise RuntimeError("checkpoint binding count mismatch")
+    atomic_json(WORK_ROOT / "control" / "input_transfer_receipt.json", {
+        "schema": "ect.q256.terminal-history-firstwave-input-transfer/v1",
+        "status": "PASS", "node_id": node_id,
+        "binding_hashes": {path.name: sha256_file(path) for path in bindings},
+        "public_manifest_sha256": sha256_file(WORK_ROOT / "control" / "public_manifest.json"),
+        "protocol_sha256": PROTOCOL_SHA256,
+    })
 
 
 def seal_and_decode(node_id: str, private: list[dict]) -> None:
@@ -491,6 +501,7 @@ def seal_and_decode(node_id: str, private: list[dict]) -> None:
     atomic_json(WORK_ROOT / "control" / "evaluation_seal.json", seal)
     rows = []
     for job in private:
+        binding = load(WORK_ROOT / "input-bindings" / f"{job['opaque_id']}.json")
         receipt = load(WORK_ROOT / "receipts" / f"{job['opaque_id']}.json")
         if receipt_hashes[f"{job['opaque_id']}.json"] != sha256_file(
             WORK_ROOT / "receipts" / f"{job['opaque_id']}.json"
@@ -501,7 +512,7 @@ def seal_and_decode(node_id: str, private: list[dict]) -> None:
             "seed": job["seed"], "cell": job["cell"], "budget_kimg": 1024,
             "nfe": 1, "kid50k_full": metric_value(job_dir / "metric-kid50k_full.jsonl", "kid50k_full"),
             "fid50k_full": metric_value(job_dir / "metric-fid50k_full.jsonl", "fid50k_full"),
-            "opaque_id": job["opaque_id"], "checkpoint_sha256": job["checkpoint_sha256"],
+            "opaque_id": job["opaque_id"], "checkpoint_sha256": binding["checkpoint_sha256"],
             "receipt_sha256": receipt_hashes[f"{job['opaque_id']}.json"],
         })
     rows.sort(key=lambda row: (row["seed"], row["cell"]))
