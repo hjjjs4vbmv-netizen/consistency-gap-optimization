@@ -1,0 +1,123 @@
+{
+  "schema": "ect.noise-floor/v1",
+  "scope": "post-seal descriptive generation-block sensitivity for the mechanically selected first three complete n=30 companion pairs",
+  "expected_checkpoints": 6,
+  "expected_contrasts": 3,
+  "expected_rotations": 0,
+  "expected_rotation_rows": 0,
+  "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+  "metric_seed": 20260730,
+  "dataset": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+  "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+  "runtime_sif": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runtime/ect-pytorch2401-deterministic.sif",
+  "runtime_sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea",
+  "detector_cache": "/data/raw/ECT/ect_runs/q256-longitudinal-seed6-13-cd-20260823/relay_evaluation/cache/downloads",
+  "evaluator_repo": "/data/raw/ECT/ect_runs/noise_floor/evaluator",
+  "output_root": "/data/raw/ECT/q256_n30_companion/generation_blocks",
+  "blocks": [
+    {"id": "B1", "start": 50000, "end": 99999},
+    {"id": "B2", "start": 100000, "end": 149999},
+    {"id": "B3", "start": 150000, "end": 199999},
+    {"id": "B4", "start": 200000, "end": 249999},
+    {"id": "B5", "start": 250000, "end": 299999}
+  ],
+  "canary_jobs": [
+    "N30-S50-AA-b1-nfe1",
+    "N30-S50-AA-b1-nfe2",
+    "N30-S50-BA-b1-nfe1",
+    "N30-S50-BA-b1-nfe2"
+  ],
+  "checkpoints": [
+    {
+      "id": "N30-S50-AA",
+      "identity": "q256 n30 seed50 AA@1024",
+      "cohort": "q256_n30_companion",
+      "seed": 50,
+      "arm": "AA",
+      "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q256_n30_companion/checkpoints/seed50-AA.pkl",
+      "sha256": "92a4519067daf30c1e92e966ba580ee1faea524366a6bd35816f45348a333a11",
+      "b0": {
+        "1": {"fid": 11.578598071369743, "kid": 0.0071945455856621265},
+        "2": {"fid": null, "kid": null}
+      }
+    },
+    {
+      "id": "N30-S50-BA",
+      "identity": "q256 n30 seed50 BA@1024",
+      "cohort": "q256_n30_companion",
+      "seed": 50,
+      "arm": "BA",
+      "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q256_n30_companion/checkpoints/seed50-BA.pkl",
+      "sha256": "0017cde304fdac54f36be61ecbfd90ff6f31996b354cc20a76d4ec55103e09f8",
+      "b0": {
+        "1": {"fid": 10.86740872008123, "kid": 0.006684369873255491},
+        "2": {"fid": null, "kid": null}
+      }
+    },
+    {
+      "id": "N30-S51-AA",
+      "identity": "q256 n30 seed51 AA@1024",
+      "cohort": "q256_n30_companion",
+      "seed": 51,
+      "arm": "AA",
+      "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q256_n30_companion/checkpoints/seed51-AA.pkl",
+      "sha256": "61c9db7e3d837a097280779c7448f06c73c7a62ef8731d6788cdfd5ad93e1575",
+      "b0": {
+        "1": {"fid": 8.626674454487627, "kid": 0.00540600810199976},
+        "2": {"fid": null, "kid": null}
+      }
+    },
+    {
+      "id": "N30-S51-BA",
+      "identity": "q256 n30 seed51 BA@1024",
+      "cohort": "q256_n30_companion",
+      "seed": 51,
+      "arm": "BA",
+      "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q256_n30_companion/checkpoints/seed51-BA.pkl",
+      "sha256": "013194514b912e1fee059ca9c2fdb25e46f778a9d4c987d3ba3651a1969e69bc",
+      "b0": {
+        "1": {"fid": 8.32431310939327, "kid": 0.005143420305103064},
+        "2": {"fid": null, "kid": null}
+      }
+    },
+    {
+      "id": "N30-S52-AA",
+      "identity": "q256 n30 seed52 AA@1024",
+      "cohort": "q256_n30_companion",
+      "seed": 52,
+      "arm": "AA",
+      "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q256_n30_companion/checkpoints/seed52-AA.pkl",
+      "sha256": "2b6c9dbb0b7e10191b17f37d44f6753d8d4afd571194f9cff2c05cbcc1664158",
+      "b0": {
+        "1": {"fid": 8.824924759559256, "kid": 0.005562820006161928},
+        "2": {"fid": null, "kid": null}
+      }
+    },
+    {
+      "id": "N30-S52-BA",
+      "identity": "q256 n30 seed52 BA@1024",
+      "cohort": "q256_n30_companion",
+      "seed": 52,
+      "arm": "BA",
+      "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q256_n30_companion/checkpoints/seed52-BA.pkl",
+      "sha256": "f45c159173e2c339423f576271d42f2ceb937da30763d6dc0ca95724220e8623",
+      "b0": {
+        "1": {"fid": 7.865091597317183, "kid": 0.004685786087065935},
+        "2": {"fid": null, "kid": null}
+      }
+    }
+  ],
+  "contrasts": [
+    {"id": "N30_S50_BA_MINUS_AA", "lhs": "N30-S50-BA", "rhs": "N30-S50-AA"},
+    {"id": "N30_S51_BA_MINUS_AA", "lhs": "N30-S51-BA", "rhs": "N30-S51-AA"},
+    {"id": "N30_S52_BA_MINUS_AA", "lhs": "N30-S52-BA", "rhs": "N30-S52-AA"}
+  ],
+  "rotations": [],
+  "not_evaluated": []
+}
