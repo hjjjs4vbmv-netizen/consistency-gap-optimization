@@ -1,0 +1,188 @@
+{
+  "schema": "ect.noise-floor/v1",
+  "scope": "post-seal descriptive; 16 prespecified checkpoints, including a three-checkpoint access-recovery supplement",
+  "expected_checkpoints": 16,
+  "expected_contrasts": 8,
+  "expected_rotations": 2,
+  "expected_rotation_rows": 5,
+  "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+  "metric_seed": 20260730,
+  "dataset": "/data/raw/ECT/datasets/cifar10-32x32-canonical-08c9ed1b2b1c.zip",
+  "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+  "runtime_sif": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runtime/ect-pytorch2401-deterministic.sif",
+  "runtime_sha256": "9d5f2c9e68f1f7dcaa20457bf6e0b6fa46f74a8605edaf5d49fdccf9f6bb62ea",
+  "detector_cache": "/data/raw/ECT/ect_runs/q256-longitudinal-seed6-13-cd-20260823/relay_evaluation/cache/downloads",
+  "evaluator_repo": "/data/raw/ECT/ect_runs/noise_floor/evaluator",
+  "output_root": "/data/raw/ECT/ect_runs/noise_floor/output",
+  "blocks": [
+    {"id": "B1", "start": 50000, "end": 99999},
+    {"id": "B2", "start": 100000, "end": 149999},
+    {"id": "B3", "start": 150000, "end": 199999},
+    {"id": "B4", "start": 200000, "end": 249999},
+    {"id": "B5", "start": 250000, "end": 299999}
+  ],
+  "canary_jobs": [
+    "NF-02-b1-nfe1",
+    "NF-02-b1-nfe2",
+    "NF-12-b1-nfe1",
+    "NF-12-b1-nfe2"
+  ],
+  "checkpoints": [
+    {
+      "id": "NF-01", "identity": "q256 seed3 AA@1024", "cohort": "q256_schedule_control",
+      "seed": 3, "arm": "AA", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armA/network-snapshot-kimg001024.pkl",
+      "sha256": "b0a027374c0a994a67152dd9219e7775b1c6e7ee6aa49ff9d15fcfe733485610",
+      "ema_canonical_sha256": "7b5a6e1a12a504b32729d102f02d904b354d010ef84666c8f7c765eb20b812fa",
+      "b0": {"1": {"fid": 9.669405820296213, "kid": 0.005999107735235234}, "2": {"fid": 2.866395993060456, "kid": 0.0010535892067066743}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:14-15"
+    },
+    {
+      "id": "NF-03", "identity": "q256 seed4 AA@1024", "cohort": "q256_schedule_control",
+      "seed": 4, "arm": "AA", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed4/armA/network-snapshot-kimg001024.pkl",
+      "sha256": "e429d5d6e822526ba83d0c60ebfc1f864fb574ce51781388d790994b4ff6247a",
+      "ema_canonical_sha256": "636066f14afd980334314ce089e79450f8a7f1a64ec64b8c56ce006d42fb0fd4",
+      "b0": {"1": {"fid": 8.293418813661093, "kid": 0.0049997911786786925}, "2": {"fid": 2.7133168501776064, "kid": 0.0008854795895895858}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:70-71"
+    },
+    {
+      "id": "NF-05", "identity": "q256 seed5 A@512", "cohort": "q256_target_weight",
+      "seed": 5, "arm": "A", "budget_kimg": 512,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg000512.pkl",
+      "sha256": "ac6eb3b5fa82e73055373e6afd42cc8ea4de665bfb6e96e7a8d6f9c1eed2ff01",
+      "ema_canonical_sha256": "e64a9cd53c678bc8f6dc6f4cc5e8ff2019ef0d40a0ab0d72721b0e35ba6fc4ca",
+      "b0": {"1": {"fid": 19.725624472339653, "kid": 0.014180237507507458}, "2": {"fid": 4.655834727263966, "kid": 0.0019519279879879649}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:118-119"
+    },
+    {
+      "id": "NF-06", "identity": "q256 seed5 B@512", "cohort": "q256_target_weight",
+      "seed": 5, "arm": "B", "budget_kimg": 512,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armB/network-snapshot-kimg000512.pkl",
+      "sha256": "d1e58d73facf8e9884f042f26ec9225fb1d2fa79e501b6135f82439ef3fd5def",
+      "ema_canonical_sha256": "2e6ed40524caad0186926cef260a0572ae644feb555b93a52dccc72497beee2e",
+      "b0": {"1": {"fid": 25.331948729454204, "kid": 0.020122994334334357}, "2": {"fid": 6.42421940059645, "kid": 0.00472042614114112}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:132-133"
+    },
+    {
+      "id": "NF-07", "identity": "q256 target-weight seed3 B@256", "cohort": "q256_target_weight",
+      "seed": 3, "arm": "B", "budget_kimg": 256,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg000256.pkl",
+      "sha256": "ab362d71eb8d4afb9bea32c90198d08f52d5c327c3cb562aba6a129f301b13e7",
+      "ema_canonical_sha256": "62a575c81ac76ed89427c63f353a4b9695b7d3594ce55d29173d38e6961f1779",
+      "b0": {"1": {"fid": 310.50756280404903, "kid": 0.3136369202802803}, "2": {"fid": 100.49738349413276, "kid": 0.0882065039039039}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:16-17"
+    },
+    {
+      "id": "NF-08", "identity": "q256 target-weight seed3 D@1024", "cohort": "q256_target_weight",
+      "seed": 3, "arm": "D", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armD/network-snapshot-kimg001024.pkl",
+      "sha256": "5242196e525a673795d6c2b3bf1ea7dae2a6910cc5c133ce86e18a3b3c74817b",
+      "ema_canonical_sha256": "270c68b15dbc94cb400cf6e7779d9add54839e6c41c853cb9e056f343e9bcc5b",
+      "b0": {"1": {"fid": 8.809199227910838, "kid": 0.005311956116116112}, "2": {"fid": 2.8512938747604104, "kid": 0.0009555485885885855}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:56-57"
+    },
+    {
+      "id": "NF-09", "identity": "q128 seed3 Bsame@1024", "cohort": "q128_matched_spacing",
+      "seed": 3, "arm": "Bsame", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q128_matched_spacing_v1/runs/seed3/armBsame/network-snapshot-kimg001024.pkl",
+      "sha256": "ba3c97cbf9d271c609cccd033773d64f52cc2162cef0053f5756ab8b2f563174",
+      "ema_canonical_sha256": "f6d58097a68e1381dde8c9cac72893fc0d3a1a4ba52e4738bda67fa09e57c4b6",
+      "b0": {"1": {"fid": 8.760275226998814, "kid": 0.005544742627627652}, "2": {"fid": 2.984276917133206, "kid": 0.0010985576276276517}},
+      "b0_source": "results/q128_matched_spacing_20260824/evaluation_results.csv:28-29"
+    },
+    {
+      "id": "NF-10", "identity": "q128 seed3 Cmatch@1024", "cohort": "q128_matched_spacing",
+      "seed": 3, "arm": "Cmatch", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q128_matched_spacing_v1/runs/seed3/armCmatch/network-snapshot-kimg001024.pkl",
+      "sha256": "57f75aa146c52036b23c96eaf1dcdbe60f75e2545eaf003375dadeb30469a9a8",
+      "ema_canonical_sha256": "18f4b780ebd765d8392bc665216f707dc9e4e33788194ab4d2ac8699eb992e1a",
+      "b0": {"1": {"fid": 7.3638463971114287, "kid": 0.004302724036536557}, "2": {"fid": 2.7856235619351692, "kid": 0.0009215274649649655}},
+      "b0_source": "results/q128_matched_spacing_20260824/evaluation_results.csv:56-57"
+    },
+    {
+      "id": "NF-11", "identity": "q256 seed5 AA@1024", "cohort": "q256_schedule_control",
+      "seed": 5, "arm": "AA", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed5/armA/network-snapshot-kimg001024.pkl",
+      "sha256": "7901ac1a0f0803f9b1ee840868cbb5104cdc10ff91c0e286408e759e7093a29d",
+      "ema_canonical_sha256": "a5f1a278a1fb217199046a3d160c7ea271290ba75704b1eef5397a740551de44",
+      "b0": {"1": {"fid": 8.379453301226578, "kid": 0.005054116621621607}, "2": {"fid": 2.8623330982260384, "kid": 0.0010308451651651603}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:126-127"
+    },
+    {
+      "id": "NF-13", "identity": "q256 target-weight seed3 D@256", "cohort": "q256_target_weight",
+      "seed": 3, "arm": "D", "budget_kimg": 256,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armD/network-snapshot-kimg000256.pkl",
+      "sha256": "af2732f6ee8713d43c8efade27b0854b9a8cff0a13a2dcb6bc5003b522ae9dd8",
+      "ema_canonical_sha256": "5446e93127785c6855255569abe64aa8cfa63aef19cf88d2d361cce4f7386c85",
+      "b0": {"1": {"fid": 329.2346175418478, "kid": 0.3450168130030031}, "2": {"fid": 194.67010904240104, "kid": 0.20275556081081084}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:44-45"
+    },
+    {
+      "id": "NF-14", "identity": "q256 target-weight seed3 B@1024", "cohort": "q256_target_weight",
+      "seed": 3, "arm": "B", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/q256-target-weight-replay-curve-v1-20260822/runs/q256-target-weight-replay-curve-v1/seed3/armB/network-snapshot-kimg001024.pkl",
+      "sha256": "43115f4b2450bb87f2796d30bb1652966a3a9367c3dd76d3c8abc1c79ce8c6d5",
+      "ema_canonical_sha256": "798f4e89a1ada5b14798bb4f106bc8e11c9f6551667d06834c24c8c1262b34dd",
+      "b0": {"1": {"fid": 8.686351455868186, "kid": 0.005436252860360346}, "2": {"fid": 2.8315297837924347, "kid": 0.0009893910660660503}},
+      "b0_source": "results/q256_target_weight_replay_curve_seed3_5/fidkid50k-final-20260823/evaluation_results.csv:28-29"
+    },
+    {
+      "id": "NF-15", "identity": "q128 seed3 A@1024", "cohort": "q128_matched_spacing",
+      "seed": 3, "arm": "A", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q128_matched_spacing_v1/runs/seed3/armA/network-snapshot-kimg001024.pkl",
+      "sha256": "5f7093c9af0a030e91d686f424fca962b755bc261853b2ae467fb8964751c0b6",
+      "ema_canonical_sha256": "f73907ea7d714e884f4aaa63ae1f974c79ec868e10bc9c42ac72914b893d82a1",
+      "b0": {"1": {"fid": 9.46136729389367, "kid": 0.006005076994494507}, "2": {"fid": 3.024045253518805, "kid": 0.0011786098573573918}},
+      "b0_source": "results/q128_matched_spacing_20260824/evaluation_results.csv:14-15"
+    },
+    {
+      "id": "NF-16", "identity": "q128 seed3 Bmatch@1024", "cohort": "q128_matched_spacing",
+      "seed": 3, "arm": "Bmatch", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/q128_matched_spacing_v1/runs/seed3/armBmatch/network-snapshot-kimg001024.pkl",
+      "sha256": "e0265368fcab05da516eb6d480bf18d7ff13ddfe27b3ff8703be4a563adfa5ae",
+      "ema_canonical_sha256": "8286f620e5bb0cd5757ed7f90b09b8a506098da8b32b6c40574a80a836252417",
+      "b0": {"1": {"fid": 8.5439628501855, "kid": 0.005104851316316281}, "2": {"fid": 2.766479190962804, "kid": 0.0009328737562562719}},
+      "b0_source": "results/q128_matched_spacing_20260824/evaluation_results.csv:42-43"
+    },
+    {
+      "id": "NF-02", "identity": "q256 seed3 BA@1024", "cohort": "q256_schedule_switch",
+      "seed": 3, "arm": "BA", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/noise_floor/checkpoints/seed3/B_to_A/kimg1024/network-snapshot.pkl",
+      "sha256": "e0f8a365f3e9aedd0547e3e2dc777869286f0e61599da28da913020eb436f6d5",
+      "b0": {"1": {"fid": 8.62396301808251, "kid": 0.005263536996997}, "2": {"fid": 2.7902158082668214, "kid": 0.0009287066091091128}},
+      "b0_source": "results/q256_schedule_switch_seed3_7/evaluation_receipts/seed3-B_to_A-kimg1024-nfe{1,2}.json"
+    },
+    {
+      "id": "NF-04", "identity": "q256 seed4 BA@1024", "cohort": "q256_schedule_switch",
+      "seed": 4, "arm": "BA", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/noise_floor/checkpoints/seed4/B_to_A/kimg1024/network-snapshot.pkl",
+      "sha256": "126a408c5cac08bddc528d7e7b167fab7434619554fa8d01f85025fdd04ecaa7",
+      "b0": {"1": {"fid": 8.240620718715078, "kid": 0.0048842665065065155}, "2": {"fid": 2.65645231464838, "kid": 0.0008374689064064205}},
+      "b0_source": "results/q256_schedule_switch_seed3_7/evaluation_receipts/seed4-B_to_A-kimg1024-nfe{1,2}.json"
+    },
+    {
+      "id": "NF-12", "identity": "q256 seed5 BA@1024", "cohort": "q256_schedule_switch",
+      "seed": 5, "arm": "BA", "budget_kimg": 1024,
+      "path": "/data/raw/ECT/ect_runs/noise_floor/checkpoints/seed5/B_to_A/kimg1024/network-snapshot.pkl",
+      "sha256": "325924ec48fd1381bbfd4af5ef0c9644b2158511979976e14f4ffeb46e0aa611",
+      "b0": {"1": {"fid": 7.708279530084881, "kid": 0.004713967307307311}, "2": {"fid": 2.7500424253212765, "kid": 0.0009592798648648387}},
+      "b0_source": "results/q256_schedule_switch_seed3_7/evaluation_receipts/seed5-B_to_A-kimg1024-nfe{1,2}.json"
+    }
+  ],
+  "contrasts": [
+    {"id": "Q256_Q_seed5", "lhs": "NF-06", "rhs": "NF-05"},
+    {"id": "Q256_HA_seed3", "lhs": "NF-02", "rhs": "NF-01"},
+    {"id": "Q256_HA_seed4", "lhs": "NF-04", "rhs": "NF-03"},
+    {"id": "Q256_HA_seed5", "lhs": "NF-12", "rhs": "NF-11"},
+    {"id": "TW_BD_256", "lhs": "NF-07", "rhs": "NF-13"},
+    {"id": "TW_BD_1024", "lhs": "NF-14", "rhs": "NF-08"},
+    {"id": "Q128_Bsame_A", "lhs": "NF-09", "rhs": "NF-15"},
+    {"id": "Q128_Cmatch_Bmatch", "lhs": "NF-10", "rhs": "NF-16"}
+  ],
+  "rotations": [
+    {"id": "TW_BD_256_TO_1024", "early": "TW_BD_256", "late": "TW_BD_1024"},
+    {"id": "DR_Q256_SEED5", "early": "Q256_Q_seed5", "late": "Q256_HA_seed5", "nfe": 1, "metric": "fid"}
+  ],
+  "not_evaluated": []
+}

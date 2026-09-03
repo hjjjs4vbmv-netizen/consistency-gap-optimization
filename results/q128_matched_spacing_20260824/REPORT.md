@@ -38,7 +38,10 @@ At stage 0 with `c=0` and no clipping, the sigmoid gap is proportional to `g/q`.
 ## Arm summaries
 
 AULC is normalized trapezoidal area under the natural-log FID curve; lower is better.
-Values below are three-seed means.
+Values below are three-seed means from the historical B0 generation block.
+They are retained as measurements, not winner assignments. Bmatch-related NFE2
+ordering is **not interpreted—pending Task 3**, because generation-block repeats
+are not complete across all seeds and arms.
 
 | Arm | NFE1 AULC | NFE2 AULC | 1024 NFE1 FID / KID | 1024 NFE2 FID / KID |
 | --- | ---: | ---: | ---: | ---: |
@@ -47,6 +50,28 @@ Values below are three-seed means.
 | Bmatch | 3.2619 | 1.9492 | 8.084 / 0.004928 | 2.749 / 0.000958 |
 | Cmatch | 3.1291 | 1.8466 | 7.447 / 0.004426 | 2.816 / 0.000965 |
 | Dmatch | 3.4220 | 2.2326 | 9.904 / 0.006313 | 2.975 / 0.001135 |
+
+The only available paired generation-block audit of the Bmatch NFE2 ordering is
+the seed-3 Cmatch--Bmatch comparison at 1024 kimg. The table reports each cell's
+generation SD rather than converting the smaller point estimate into a winner.
+SD is the sample SD across B1--B5; B0 is an anchor and is excluded from the mean
+and SD.
+
+| Cell | Metric scale | B0 value | B1--B5 mean | Generation SD | Interpretation |
+| --- | --- | ---: | ---: | ---: | --- |
+| seed 3, Cmatch, NFE2 | log FID | 1.02447 | 1.00188 | 0.00525 | not interpreted |
+| seed 3, Bmatch, NFE2 | log FID | 1.01758 | 1.02528 | 0.00387 | not interpreted |
+| seed 3, Cmatch, NFE2 | raw KID | 0.00092153 | 0.00088364 | 0.00003143 | not interpreted |
+| seed 3, Bmatch, NFE2 | raw KID | 0.00093287 | 0.00094160 | 0.00003637 | not interpreted |
+
+For the paired contrast, Cmatch--Bmatch log FID changes from B0 `+0.00690` to
+a B1--B5 mean of `-0.02340` (paired generation SD `0.00458`; B0 sign retained
+in 0/5 blocks). Raw KID changes from `-0.00001135` to `-0.00005796` (paired
+generation SD `0.00001129`; B0 sign retained in 5/5 blocks). The metric-specific
+pattern is therefore not interpreted as an arm winner.
+
+No Task 7 `2SD` value is transferred to another cell or used as a TIE or
+equivalence rule.
 
 ## Post-unblind deterministic AULC contrasts
 
@@ -70,14 +95,20 @@ AULC was not present in the immutable pre-unblind protocol. It is reported as a 
 ## Interpretation
 
 - The descriptive `Bmatch-Bsame` AULC contrast is not directionally stable: NFE1 is negative for 1/3 seeds and NFE2 for 2/3 seeds. Seed 3 has a large early-curve penalty.
-- At 1024 kimg, `Bmatch` has lower FID and KID than `Bsame` for all three seeds at both NFEs.
+- Under the historical B0 block, `Bmatch` has lower FID and KID than `Bsame`
+  for all three seeds at NFE1. The corresponding NFE2 ordering is not
+  interpreted pending Task 3; generation-block sensitivity was not evaluated
+  for the Bmatch--Bsame contrast.
 - `Cmatch-A` improves NFE1 AULC for 3/3 seeds and NFE2 for 2/3 seeds.
 - `Dmatch-A` is worse for 3/3 seeds at both NFEs.
 - The outcome-level interaction is negative for 2/3 seeds at NFE1 and 3/3 at NFE2; it is not an objective-level causal decomposition.
 
 ## Direction consistency
 
-FID and KID agree in direction for 36/42 `Bmatch-Bsame` cells. The terminal `Bmatch-Bsame` contrast agrees in all 6 seed-by-NFE cells.
+Under B0, FID and KID agree in direction for 36/42 `Bmatch-Bsame` descriptive
+cells. At the terminal checkpoint they agree in the three NFE1 cells; the NFE2
+ordering is not interpreted pending Task 3. These cells are repeated readouts,
+not independent evidence units.
 
 ## Exploratory TTQ
 
