@@ -1,0 +1,39 @@
+{
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "repair_id": "runtime_repair_001",
+  "classification": "PRE_FORMAL_RUNTIME_DEPENDENCY_REPAIR",
+  "initial_freeze_commit": "1cff4563b706e67f4ea6a53cae7ade5ee7034490",
+  "initial_freeze_timestamp": "2026-09-03T10:20:38+08:00",
+  "failed_smoke_attempt": {
+    "seed": 999,
+    "failure_class": "IMPORT_FAILURE",
+    "error": "ModuleNotFoundError: No module named 'click'",
+    "log_path": "/root/q128_fresh_regime_history_n8_v1/smoke_gate.log",
+    "log_sha256": "f0078945a4954aff2684b64fed1f8e7a7cd6a7eb96f8fcaf6afb561c5e8200d4",
+    "log_timestamp": "2026-09-03T10:37:23.421523454+08:00",
+    "optimizer_steps": 0,
+    "formal_logs_created": 0,
+    "formal_processes_remaining": 0
+  },
+  "repair": {
+    "package": "click",
+    "version": "8.1.8",
+    "wheel": "click-8.1.8-py3-none-any.whl",
+    "wheel_sha256": "63c132bbbed01578a06712a2d1f497bb62d9c1c0d329b7903a866228027263b2",
+    "installation_mode": "pip install --no-deps --force-reinstall from local verified wheel",
+    "runtime_python": "/root/miniconda3/envs/myconda/bin/python",
+    "python_version": "3.13.5",
+    "pytorch_version": "2.8.0+cu128",
+    "cuda_runtime": "12.8"
+  },
+  "post_repair_import_gates": {
+    "ct_train_help": "PASS",
+    "training_module_import": "PASS",
+    "evaluation_module_import": "PASS"
+  },
+  "scientific_semantics_changed": false,
+  "protocol_sha256_changed": false,
+  "protocol_sha256": "e908da54c47d2f3faa9dd699f7d1a345446fdb11a71ad32642ec74197f59b3bf",
+  "next_attempt_run_root": "/root/q128_fresh_regime_history_n8_v1_repair1",
+  "fail_closed": true
+}

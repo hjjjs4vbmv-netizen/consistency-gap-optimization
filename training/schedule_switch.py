@@ -1,4 +1,4 @@
-"""Fail-closed q256 A/B schedule-switch manifest and state validation."""
+"""Fail-closed A/B schedule-switch manifest and state validation."""
 
 from __future__ import annotations
 
@@ -15,13 +15,16 @@ PROTOCOL = "q256_ab_crossed_switch_v1"
 SEED3_7_PROTOCOL = "q256_ab_crossed_switch_seed3_7_v1"
 SEED3_7_PROTOCOL_V2 = "q256_ab_crossed_switch_seed3_7_v2"
 SEED3_7_PROTOCOL_V3 = "q256_ab_crossed_switch_seed3_7_v3"
+Q128_FRESH_PROTOCOL = "q128_fresh_regime_history_n8_v1"
 SUPPORTED_PROTOCOL_SEEDS = {
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V2: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V3: tuple(range(3, 8)),
+    Q128_FRESH_PROTOCOL: tuple(range(201, 213)) + (999,),
 }
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
+Q128_RUN_MANIFEST_SCHEMA = "ect.q128.schedule-switch-run-manifest/v1"
 STATE_SCHEMA = "ect.q256.schedule-switch-state/v1"
 SWITCH_KIMG = 512
 SWITCH_NIMG = SWITCH_KIMG * 1000
@@ -37,6 +40,14 @@ FORMAL_BRANCHES = {
 PARITY_BRANCHES = {
     "A_to_A": ("A", "A"),
     "B_to_B": ("B", "B"),
+}
+Q128_FORMAL_BRANCHES = {
+    "A_to_Bsame": ("A", "Bsame"),
+    "Bsame_to_A": ("Bsame", "A"),
+}
+Q128_PARITY_BRANCHES = {
+    "A_to_A": ("A", "A"),
+    "Bsame_to_Bsame": ("Bsame", "Bsame"),
 }
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
@@ -79,14 +90,23 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch manifest must be a regular file")
     with open(path, "rt", encoding="utf-8") as handle:
         manifest = json.load(handle)
-    _require(manifest.get("schema") == RUN_MANIFEST_SCHEMA,
-             "unsupported schedule-switch manifest schema")
     experiment_protocol = manifest.get("experiment_protocol")
     _require(experiment_protocol in SUPPORTED_PROTOCOL_SEEDS,
              "schedule-switch protocol identity mismatch")
+    expected_schema = (
+        Q128_RUN_MANIFEST_SCHEMA
+        if experiment_protocol == Q128_FRESH_PROTOCOL
+        else RUN_MANIFEST_SCHEMA
+    )
+    _require(manifest.get("schema") == expected_schema,
+             "unsupported schedule-switch manifest schema")
     run_kind = manifest.get("run_kind")
-    _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
-    branches = PARITY_BRANCHES if run_kind == "parity" else FORMAL_BRANCHES
+    allowed_run_kinds = {"parity", "formal", "smoke"} if experiment_protocol == Q128_FRESH_PROTOCOL else {"parity", "formal"}
+    _require(run_kind in allowed_run_kinds, "invalid schedule-switch run kind")
+    if experiment_protocol == Q128_FRESH_PROTOCOL:
+        branches = Q128_PARITY_BRANCHES if run_kind == "parity" else Q128_FORMAL_BRANCHES
+    else:
+        branches = PARITY_BRANCHES if run_kind == "parity" else FORMAL_BRANCHES
     branch = manifest.get("branch")
     _require(branch in branches, "invalid schedule-switch branch")
     origin, continuation = branches[branch]
@@ -98,7 +118,7 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch seed is outside the frozen protocol cohort")
     _require(manifest.get("switch_kimg") == SWITCH_KIMG,
              "schedule-switch point must be 512 kimg")
-    expected_final = 640 if run_kind == "parity" else 1024
+    expected_final = 640 if run_kind in {"parity", "smoke"} else 1024
     _require(manifest.get("final_kimg") == expected_final,
              "schedule-switch final budget mismatch")
     _require(_HEX64.fullmatch(str(manifest.get("protocol_sha256", ""))) is not None,
@@ -136,10 +156,12 @@ def load_run_manifest(path: str) -> dict:
 
 def continuation_factorial(manifest: dict) -> dict:
     arm = manifest["continuation_arm"]
-    target, denominator = ARM_FACTORS[arm]
+    q128 = manifest["experiment_protocol"] == Q128_FRESH_PROTOCOL
+    factors = {"A": (1.0, 1.0), "Bsame": (1.1, 1.1)} if q128 else ARM_FACTORS
+    target, denominator = factors[arm]
     return {
         "enabled": True,
-        "protocol": "q256_target_weight_v1",
+        "protocol": "q128_matched_spacing_v1" if q128 else "q256_target_weight_v1",
         "arm": arm,
         "target_gap_scale": target,
         "denominator_gap_scale": denominator,
@@ -193,9 +215,12 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
     _require(int(state["attempted_iteration"]) == SWITCH_ATTEMPT,
              "source attempted iteration is not exactly 4000")
     origin = manifest["origin_arm"]
-    target, denominator = ARM_FACTORS[origin]
+    q128 = manifest["experiment_protocol"] == Q128_FRESH_PROTOCOL
+    factors = {"A": (1.0, 1.0), "Bsame": (1.1, 1.1)} if q128 else ARM_FACTORS
+    target, denominator = factors[origin]
+    loss_protocol = "q128_matched_spacing_v1" if q128 else "q256_target_weight_v1"
     factorial = state["factorial"]
-    _require(factorial.get("protocol") == "q256_target_weight_v1"
+    _require(factorial.get("protocol") == loss_protocol
              and factorial.get("arm") == origin
              and float(factorial.get("target_gap_scale")) == target
              and float(factorial.get("denominator_gap_scale")) == denominator,

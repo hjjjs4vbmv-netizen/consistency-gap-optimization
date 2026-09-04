@@ -1,0 +1,23 @@
+{
+  "schema": "ect.q128-fresh-owner-operational-waiver/v1",
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "waiver_id": "owner_directed_operational_waiver_003",
+  "status": "ACTIVE",
+  "recorded_utc": "2026-09-03T05:04:03Z",
+  "authority": "experiment_owner_explicit_instruction",
+  "waived_gates": [
+    "seed999_smoke",
+    "exact_resume_switch_parity"
+  ],
+  "gate_verdicts": {
+    "seed999_smoke": "WAIVED_NOT_PASSED",
+    "exact_resume_switch_parity": "WAIVED_NOT_PASSED"
+  },
+  "formal_training_authorized_by_owner": true,
+  "formal_quality_values_observed_before_waiver": false,
+  "scientific_or_statistical_choices_changed": false,
+  "training_command_changed": false,
+  "accepted_risk": "crossed-history outputs may be invalidated by an undiscovered exact-resume or schedule-switch defect",
+  "required_launch_disclosure": true,
+  "protocol_sha256": "e908da54c47d2f3faa9dd699f7d1a345446fdb11a71ad32642ec74197f59b3bf"
+}

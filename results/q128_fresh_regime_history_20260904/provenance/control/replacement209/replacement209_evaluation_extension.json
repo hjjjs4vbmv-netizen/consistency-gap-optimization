@@ -1,0 +1,654 @@
+{
+  "created_utc": "2026-09-04T06:32:49.177359Z",
+  "effective_cohort": [
+    201,
+    202,
+    203,
+    204,
+    206,
+    207,
+    208,
+    209
+  ],
+  "frozen_manifest_sha256": "34f296c1eac0042bb6d37cd692c3a1ab008ef87caa7417b4ce9f0f33dde6e17e",
+  "job_count": 34,
+  "jobs": [
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armA/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "927178e16c1b7f7e1d0fa1b48735ad41812e81bc1296c52386057e9135727eb6",
+      "job_index": 136,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "3d007d383acb9ac62c13",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": "ba31eac2928c234b88715cbf1a9385e772b6ad7c0e244337547bb0ed151d8936",
+      "job_index": 137,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d45b009abd4ba9b9e501",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "5acb12c888b174e403054ff233e2784fb8ca1dfee05b6ce7225a5e9d4c5fffd8",
+      "job_index": 138,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "c72b5e19d58e5dc5f749",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "5acb12c888b174e403054ff233e2784fb8ca1dfee05b6ce7225a5e9d4c5fffd8",
+      "job_index": 139,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "0d9675fbeaf0552b3a1a",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 512,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBsame/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "8e947e87671a72840024f50440f9b861941c60aaa09a40839dd869b4044f5536",
+      "job_index": 140,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "43281e53f21f5875e49f",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBsame/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": "964630567130f439dc3e9bc45d3a0f11f824f6aabe01537b4fbedc4a90005f49",
+      "job_index": 141,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "84b4252b9af93ed18460",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "PRIMARY",
+        "KEY_SECONDARY_PHASE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "a317748621456291e2431bf8346c73d4694458e49aa74f2000f336434a1f1094",
+      "job_index": 142,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "1a2a2ed35162be473cad",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBsame/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "a317748621456291e2431bf8346c73d4694458e49aa74f2000f336434a1f1094",
+      "job_index": 143,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "b073d62c825df8ebc56f",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "f70874cd64818c8673329dd7e60d073d952b4b3eac1e328bf65c184fb94540f3",
+      "job_index": 144,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a9a9664019ccd9b5fa81",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": "ff4672987bf39e6a349e92eeb040a8ae701f5f58b9b277c086e5ff12fd48f6c6",
+      "job_index": 145,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "076e0ee91b6c51311d71",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "e1368482c7e203b736edc5dff28cba04b1ebd6ef1ff05605acbcb35879bf173c",
+      "job_index": 146,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "511409dc5460362e71c3",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "e1368482c7e203b736edc5dff28cba04b1ebd6ef1ff05605acbcb35879bf173c",
+      "job_index": 147,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "a05abea4872f6866349e",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armCmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "d2c77f35a97b2a7bbeca4c52d0bac07b95180b62b56c8068d8bec4703f4bd38e",
+      "job_index": 148,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "ea78e127b8bcc0369f2c",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armCmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": "3ac76e94ab6a912448f973eefca610d042a10a80db5bb3e0d1f11cf95627b28f",
+      "job_index": 149,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "f1923a8126342efe6d36",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "b396f6761fa3f7a4680bad58fa99c3d8ac29b60c88bb0501f63d0ed80dbdb393",
+      "job_index": 150,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "b50831ca384a6ab7c055",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM",
+        "KEY_SECONDARY_NFE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "KEY_SECONDARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armCmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "b396f6761fa3f7a4680bad58fa99c3d8ac29b60c88bb0501f63d0ed80dbdb393",
+      "job_index": 151,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "9f5e6eea0836fd837787",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Cmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 512,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armDmatch/network-snapshot-kimg000512.pkl",
+      "checkpoint_sha256": "162394ca564bc6edfeb5d929cd4b2b44b1761d328b75c58f0b49b393282bc93e",
+      "job_index": 152,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "63109c190a3475548e3a",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armDmatch/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": "4e9834527af2493f04327c37937753e968ec3b29e41a288a35f4c09fbcd139fc",
+      "job_index": 153,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "4bc27fa2c274fec6b45b",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "4b20faaac29ed9fb45cda5864cfbaea8b3d1b31aef7fe3d3bc64e9252e2d6b78",
+      "job_index": 154,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "598ea8230c667c7f0ccf",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_FIVE_ARM"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armDmatch/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "4b20faaac29ed9fb45cda5864cfbaea8b3d1b31aef7fe3d3bc64e9252e2d6b78",
+      "job_index": 155,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "cba7041dd517185fed9b",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Dmatch"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "b144444792d1d55b6047479d02f0e19cacc4ee00ab07d9a8567cb349ebbf2ec8",
+      "job_index": 156,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "93bbee17d0aa3c22b016",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": "cc0e0e3671b02329c06861e57cae196d2ee2f6b170b44eda6b28d0ecb98b6be0",
+      "job_index": 157,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "f7bea88fa7d31df1599c",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "A"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBsame/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "94ffe9b457ba133dce903634b8f0fb9df7f752e76e9d8cfcf873a5bbd3f6e7ef",
+      "job_index": 158,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "34d0a5cec27a5f8fb4fa",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED_NATIVE"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/armBsame/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": "1b7ededfada527e58c7b3251580095d6f6444d6c76b4075c6c171937ec48a9b7",
+      "job_index": 159,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "7bb05bb6e405cd9d7ef9",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "Bsame"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/AB/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "48c2ea2888c7a0f756fe3273e59d692c2cb537feb9c0c576999dc72fbf9bbac0",
+      "job_index": 160,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "d9e798c9c6780c5966fd",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/AB/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": "2741eef8d95a1b14a81bdf427397e8ccf05880935c245d2e9828a776024280c3",
+      "job_index": 161,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "acf6eaeb9756596de590",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/AB/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": "a97372417d878ce849095c8e4a3a2e2638741aef16bc4642ff78761f4d819645",
+      "job_index": 162,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "8dcf5113718e20e90545",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "2c2b2b2c2c4b5ef5e66feb0a68919fa05622c4db984dd753e39ee97bf47b0e8b",
+      "job_index": 163,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "a2c2ed6cda859be72b0b",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/AB/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "2c2b2b2c2c4b5ef5e66feb0a68919fa05622c4db984dd753e39ee97bf47b0e8b",
+      "job_index": 164,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "50665d50c1935bf67b4e",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "AB"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 640,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/BA/network-snapshot-kimg000640.pkl",
+      "checkpoint_sha256": "a40f22258995949f69101d90e5d9db50f8945d738fab45c6d983a3d4d3af0d86",
+      "job_index": 165,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "9b8203c8fa249550ac8e",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 768,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/BA/network-snapshot-kimg000768.pkl",
+      "checkpoint_sha256": "db5db62072870502e5c7414f344e2319d9e5a19510c010ad702c7fbd3362201f",
+      "job_index": 166,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "36ff330c76af92b628d0",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 896,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/BA/network-snapshot-kimg000896.pkl",
+      "checkpoint_sha256": "fe038551283fb3ff06527ed30c44fc699401068997d595f829758888407ef2ee",
+      "job_index": 167,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "148cbff0d46aa00829b6",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED",
+        "PRIMARY",
+        "CROSSED_SECONDARY"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "PRIMARY",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "fbcb1eb61b7116959981790dde2e8c985a147cb6b7fa29214bfec96858ecbaaa",
+      "job_index": 168,
+      "mid_t": null,
+      "nfe": 1,
+      "opaque_id": "95b2ebccf35be4faf220",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "BA"
+    },
+    {
+      "analysis_roles": [
+        "DESCRIPTIVE_CROSSED"
+      ],
+      "assigned_eval_gpu": 4,
+      "budget_kimg": 1024,
+      "category": "DESCRIPTIVE",
+      "checkpoint_path": "/root/q128_fresh_regime_history_n8_v1/formal/seed209/BA/network-snapshot-kimg001024.pkl",
+      "checkpoint_sha256": "fbcb1eb61b7116959981790dde2e8c985a147cb6b7fa29214bfec96858ecbaaa",
+      "job_index": 169,
+      "mid_t": 0.821,
+      "nfe": 2,
+      "opaque_id": "488e9d45ccaa244364a1",
+      "replacement_of_seed": 205,
+      "seed": 209,
+      "status": "BOUND_NOT_RUN",
+      "trajectory": "BA"
+    }
+  ],
+  "old_seed205_jobs_excluded": true,
+  "opaque_id_rule": "sha256(protocol_id|seed|trajectory|budget_kimg|nfe)[:20]",
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "protocol_sha256": "e908da54c47d2f3faa9dd699f7d1a345446fdb11a71ad32642ec74197f59b3bf",
+  "quality_values_decoded": false,
+  "replacement_of_seed": 205,
+  "replacement_seed": 209,
+  "schema": "ect.q128-fresh-replacement-evaluation-extension/v1",
+  "status": "BOUND_NOT_RUN"
+}

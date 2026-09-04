@@ -1,0 +1,103 @@
+{
+  "branch": "experiment/q128-fresh-regime-history-n8-v1",
+  "formal_launch_utc": "2026-09-03T05:08:27Z",
+  "freeze_commit": "5abd4bd074f6987110f29a0adb93e24e842450bd",
+  "freeze_commit_timestamp": "2026-09-03T05:07:39Z",
+  "freeze_precedes_formal_logs": true,
+  "jobs": [
+    {
+      "gpu_identity": "0, GPU-4c7f9706-4aa9-3e0d-77dc-7d60770de75b, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 0,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed201.log",
+      "pid": 3921,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed201",
+      "seed": 201
+    },
+    {
+      "gpu_identity": "1, GPU-34962947-daa7-4a85-dbcb-ec375884c9bf, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 1,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed202.log",
+      "pid": 3922,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed202",
+      "seed": 202
+    },
+    {
+      "gpu_identity": "2, GPU-97fbe27b-7894-7bde-fe12-deeeffb3b355, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 2,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed203.log",
+      "pid": 3923,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed203",
+      "seed": 203
+    },
+    {
+      "gpu_identity": "3, GPU-d769c7d9-1684-b1d6-f9a5-922fec514974, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 3,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed204.log",
+      "pid": 3924,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed204",
+      "seed": 204
+    },
+    {
+      "gpu_identity": "4, GPU-6a4b6766-c00f-c1a5-059c-e098fc8b12c4, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 4,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed205.log",
+      "pid": 3925,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed205",
+      "seed": 205
+    },
+    {
+      "gpu_identity": "5, GPU-61e3a676-4e43-4daf-eddf-7e7754557267, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 5,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed206.log",
+      "pid": 3926,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed206",
+      "seed": 206
+    },
+    {
+      "gpu_identity": "6, GPU-9015e7ca-971b-7dfa-c636-928a213fc1e1, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 6,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed207.log",
+      "pid": 3927,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed207",
+      "seed": 207
+    },
+    {
+      "gpu_identity": "7, GPU-b0e88c86-df21-f3b5-3c8a-fdcf025c9eb4, NVIDIA A100-PCIE-40GB, 610.57.04",
+      "gpu_index": 7,
+      "log": "/root/q128_fresh_regime_history_n8_v1/formal_logs/seed208.log",
+      "pid": 3928,
+      "run_dir": "/root/q128_fresh_regime_history_n8_v1/formal/seed208",
+      "seed": 208
+    }
+  ],
+  "operational_gate_status": {
+    "exact_resume_switch_parity": "WAIVED_NOT_PASSED",
+    "preflight": "PASS",
+    "seed999_smoke": "WAIVED_NOT_PASSED"
+  },
+  "owner_directed_waiver": {
+    "accepted_risk": "crossed-history outputs may be invalidated by an undiscovered exact-resume or schedule-switch defect",
+    "authority": "experiment_owner_explicit_instruction",
+    "formal_quality_values_observed_before_waiver": false,
+    "formal_training_authorized_by_owner": true,
+    "gate_verdicts": {
+      "exact_resume_switch_parity": "WAIVED_NOT_PASSED",
+      "seed999_smoke": "WAIVED_NOT_PASSED"
+    },
+    "protocol_id": "q128_fresh_regime_history_n8_v1",
+    "protocol_sha256": "e908da54c47d2f3faa9dd699f7d1a345446fdb11a71ad32642ec74197f59b3bf",
+    "recorded_utc": "2026-09-03T05:04:03Z",
+    "required_launch_disclosure": true,
+    "schema": "ect.q128-fresh-owner-operational-waiver/v1",
+    "scientific_or_statistical_choices_changed": false,
+    "status": "ACTIVE",
+    "training_command_changed": false,
+    "waived_gates": [
+      "seed999_smoke",
+      "exact_resume_switch_parity"
+    ],
+    "waiver_id": "owner_directed_operational_waiver_003"
+  },
+  "schema": "ect.q128-fresh-launch-receipt/v1",
+  "status": "LAUNCHED_WITH_OWNER_OPERATIONAL_WAIVER"
+}

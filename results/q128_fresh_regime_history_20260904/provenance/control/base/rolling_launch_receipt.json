@@ -1,0 +1,36 @@
+{
+  "bound_manifest_sha256": "5d4b3f94f5880cbae0849ee026e2307a012948bdc555c323879f9750916696de",
+  "completed_seeds": [
+    201,
+    202,
+    203,
+    204,
+    206,
+    207,
+    208
+  ],
+  "completed_utc": "2026-09-04T07:01:29.471261Z",
+  "coordinator_pid": 25345,
+  "created_utc": "2026-09-04T02:00:26.977754Z",
+  "excluded_training_gpu": 4,
+  "expected_count": 238,
+  "first_quality_job_started": true,
+  "job_count": 238,
+  "pending_seed": 209,
+  "quality_values_decoded": false,
+  "runtime_script_sha256": "0ee33f5dba0c4f82029ac87d2578783a4f8b0d603f677a24ff698fbc4fd32ca2",
+  "schema": "ect.q128-fresh-rolling-evaluation-launch/v1",
+  "sealed_pass_count": 238,
+  "seed_to_eval_gpu": {
+    "201": 0,
+    "202": 1,
+    "203": 2,
+    "204": 3,
+    "206": 5,
+    "207": 6,
+    "208": 7
+  },
+  "started_utc": "2026-09-04T02:01:19.409792Z",
+  "status": "SEALED_PASS_COMPLETED7",
+  "worker_failures": []
+}

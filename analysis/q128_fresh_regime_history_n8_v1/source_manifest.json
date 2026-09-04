@@ -1,0 +1,25 @@
+{
+  "schema": "ect.q128-fresh-source-manifest/v1",
+  "status": "FROZEN",
+  "base_main_commit": "28b411c9a569c5b728d35de4253b45a79ba2831e",
+  "old_q128_config_immutable": true,
+  "assets": {
+    "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "transfer_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+  },
+  "files": [
+    {"path":"training/loss.py","sha256":"f3782e45f8d60b7198fa33d72922f07ab7adc1d812b767c5413cff2eaf783544"},
+    {"path":"training/schedules.py","sha256":"99b92df5bb517b4313c69b3062e4de7be981644d20807b4ad154ab81dc35a6a4"},
+    {"path":"training/reproducibility.py","sha256":"a2a8bcecf9a2d8aad7de112cfb4b39fef739c55de9f4011aeef49212f72c6fe1"},
+    {"path":"training/ct_training_loop.py","sha256":"b53c4645c4a8e6c0ce3001aa5d71333b11c57acc2603d06de606b42d328b148c"},
+    {"path":"training/schedule_switch.py","sha256":"7f77fa287e8405e6b1158d8a451b19242dd277a499fa8b88fbb37c63da0e7cff"},
+    {"path":"ct_train.py","sha256":"832096d0f0ce5bbf5507392445c709f18abaeb43bfa218caa3e9298b9cdb1753"},
+    {"path":"ct_eval.py","sha256":"938941b612bd766fbf552e84d4e127daedb19594b39a5603b7c735d89d47d325"},
+    {"path":"scripts/run_q128_fresh_regime_history_n8_v1.py","sha256":"b35d3d6d8f201a86d6d07c85a2e0fefe38b89ce353663121560518f7cdc819ae"},
+    {"path":"scripts/run_q128_crossed_continuation_v1.py","sha256":"d1b6421d4889553f15a483a20fe837b5b5caf7710604c0d6042cb2671d4e9467"},
+    {"path":"scripts/generate_q128_fresh_evaluation_manifest.py","sha256":"9710306476d7bc10083b2970d01c9e7a8a3549acc3ecb23f02b9c1248c277346"},
+    {"path":"scripts/launch_q128_fresh_n8.sh","sha256":"351bb57df6db345862d7f53576cb484654330fcf534f6610ba86b98711d72c2e"},
+    {"path":"scripts/launch_q128_fresh_eval.sh","sha256":"5ff83bbb81e9d85f062b40e60fa225bc13f38cadef4e782c5e60575a618fa01b"},
+    {"path":"configs/q128_matched_spacing_v1.frozen.json","sha256":"4f27754a96fcaa8672042811c340346fa90fdd3d928ca86fc2eb1395abec2bd7"}
+  ]
+}

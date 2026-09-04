@@ -1,0 +1,57 @@
+{
+  "schema": "ect.q128-fresh-regime-history-training/v1",
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "study_name": "Fresh q128 Regime and History Generalization Study v1",
+  "status": "FROZEN_READY_FOR_TECHNICAL_PREFLIGHT",
+  "discovery_reference": {
+    "config": "configs/q128_matched_spacing_v1.frozen.json",
+    "results": "results/q128_matched_spacing_20260824/",
+    "seeds": [3, 4, 5],
+    "use": "DISCOVERY_REFERENCE_ONLY",
+    "pooling_with_fresh_forbidden": true
+  },
+  "assets": {
+    "dataset_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "transfer_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+  },
+  "training": {
+    "schedule_q": 128,
+    "formal_seeds": [201, 202, 203, 204, 205, 206, 207, 208],
+    "replacement_pool": [209, 210, 211, 212],
+    "smoke_seed": 999,
+    "final_budget_kimg": 1024,
+    "switch_kimg": 512,
+    "immutable_checkpoint_kimg": [256, 384, 512, 640, 768, 896, 1024],
+    "arms": {
+      "A": {"target_gap_scale": 1.0, "denominator_gap_scale": 1.0},
+      "Bsame": {"target_gap_scale": 1.1, "denominator_gap_scale": 1.1},
+      "Bmatch": {"target_gap_scale": 0.55, "denominator_gap_scale": 0.55},
+      "Cmatch": {"target_gap_scale": 0.55, "denominator_gap_scale": 1.0},
+      "Dmatch": {"target_gap_scale": 1.0, "denominator_gap_scale": 0.55}
+    },
+    "shared_hyperparameters": {
+      "architecture": "ddpmpp", "preconditioning": "ect",
+      "global_batch": 128, "batch_gpu": 16, "optimizer": "RAdam",
+      "learning_rate": 0.0001, "dropout": 0.2, "augment": 0,
+      "xflip": false, "mapping": "sigmoid", "factorial_protocol": "q128_matched_spacing_v1",
+      "k": 8, "b": 1, "c": 0, "double_ticks": 10000,
+      "ema_beta": 0.9993, "fp16": true, "amp": true,
+      "tf32": false, "workers": 1
+    },
+    "gpu_invariance": "one seed remains on one fixed GPU for every native arm and continuation",
+    "native_execution": "five arms execute sequentially in frozen seed-specific order",
+    "continuations": {
+      "AB": "A-history@512 -> current Bsame -> 1024",
+      "BA": "Bsame-history@512 -> current A -> 1024",
+      "even_seed_order": ["AB", "BA"],
+      "odd_seed_order": ["BA", "AB"]
+    }
+  },
+  "evaluation": {
+    "precision": "fp32", "sample_count": 50000,
+    "sample_seed_start": 0, "sample_seed_end": 49999,
+    "metric_seed": 20260730, "metrics": ["fid50k_full", "kid50k_full"],
+    "nfe2_mid_t": 0.821, "opaque_ids": true,
+    "decode_gate": "all PRIMARY and KEY_SECONDARY jobs SEALED_PASS"
+  }
+}

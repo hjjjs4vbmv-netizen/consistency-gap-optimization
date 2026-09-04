@@ -1,0 +1,51 @@
+{
+  "created_utc": "2026-09-04T09:39:33.924725Z",
+  "fresh_effective_cohort": {
+    "max": 0.08414984464150477,
+    "mean": -0.00228662149665243,
+    "median": -0.019235122317864173,
+    "min": -0.1037555861892634,
+    "n": 8,
+    "negative_count": 5,
+    "positive_count": 3,
+    "seed_points": {
+      "201": 0.08012058315755821,
+      "202": -0.02520409109095123,
+      "203": 0.05992473550360966,
+      "204": -0.031127784732394748,
+      "206": 0.08414984464150477,
+      "207": -0.1037555861892634,
+      "208": -0.013266153544777115,
+      "209": -0.0691345197185056
+    }
+  },
+  "fresh_final_receipt_sha256": "6690d88dbf3bbaba62bb0ed8fc10bd9d1fc14bd11d52c11bb4c82800bbad4bb0",
+  "fresh_final_verdict_sha256": "ed3132341aff88f4bb2a5ae3ee5e0f880f35e867d8c802ae2cb104827ead53c2",
+  "fresh_sole_primary_separate": {
+    "directional_verdict": "DIRECTION_UNRESOLVED",
+    "estimand": "H_A=logFID_NFE1(BA@1024)-logFID_NFE1(AA@1024)",
+    "mean": -0.03202176808393592
+  },
+  "fresh_verdict_locked_before_old_bundle_access": true,
+  "interpretation": "The old and fresh D(1024) summaries are shown side by side only. The old n=3 cohort is not part of fresh inference and cannot alter any fresh verdict.",
+  "old_discovery_reference": {
+    "max": 0.029578784611772768,
+    "mean": -0.030794811202734824,
+    "median": -0.04497363442394198,
+    "min": -0.07698958379603527,
+    "n": 3,
+    "negative_count": 2,
+    "positive_count": 1,
+    "seed_points": {
+      "3": -0.07698958379603527,
+      "4": 0.029578784611772768,
+      "5": -0.04497363442394198
+    }
+  },
+  "pooled_n": null,
+  "pooled_p_value": null,
+  "pooling_performed": false,
+  "schema": "ect.q128-fresh-descriptive-evidence-synthesis/v1",
+  "shared_descriptive_estimand": "D(1024)=logFID_NFE1(Bsame@1024)-logFID_NFE1(A@1024)",
+  "status": "DESCRIPTIVE_EVIDENCE_SYNTHESIS_ONLY"
+}

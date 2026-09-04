@@ -1,0 +1,44 @@
+{
+  "protocol_id": "q128_fresh_regime_history_n8_v1",
+  "repair_id": "runtime_repair_002",
+  "classification": "PRE_FORMAL_VERIFIER_CORRECTNESS_REPAIR",
+  "prior_freeze_commit": "73fd46000b62ea5e9b66a070a88b69ddb4f88a9a",
+  "failed_smoke_attempt": {
+    "attempt": 2,
+    "seed": 999,
+    "run_root": "/root/q128_fresh_regime_history_n8_v1_repair1",
+    "log_sha256": "0535337005f1b56136871155a321e26c2bc47e49d73840babee2336350446aa2",
+    "log_last_write_timestamp": "2026-09-03T12:53:52.342294985+08:00",
+    "termination": "OWNER_FAIL_CLOSED_BEFORE_DETERMINISTIC_VERIFIER_FAILURE",
+    "formal_logs_created": 0,
+    "quality_metrics_observed": 0
+  },
+  "defect": {
+    "component": "scripts/run_q128_fresh_regime_history_n8_v1.py:telemetry_gate",
+    "old_behavior": "rejected raw_grad_nonfinite_count even when paired with a valid frozen AMP warm-up skip",
+    "reference_contracts": [
+      "scripts/verify_gap_factorial_arm.py",
+      "scripts/verify_q256_target_weight_arm.py",
+      "scripts/run_q256_target_weight_matrix.py"
+    ]
+  },
+  "repair_contract": {
+    "amp_skip_warmup_processed_nimg_exclusive_upper_bound": 10000,
+    "raw_gradient_nonfinite_requires_step_skipped": true,
+    "step_skipped_requires_gradscaler_decrease": true,
+    "step_skipped_requires_zero_update_norm": true,
+    "loss_sanitized_gradient_update_model_ema_and_factors_must_be_finite": true,
+    "zero_clipping_gate_retained": true,
+    "training_command_changed": false,
+    "training_semantics_changed": false
+  },
+  "tests_added": [
+    "test_amp_warmup_skip_preserves_finite_state_gate",
+    "test_raw_nonfinite_without_skip_fails_closed",
+    "test_late_amp_skip_fails_closed"
+  ],
+  "protocol_sha256_changed": false,
+  "protocol_sha256": "e908da54c47d2f3faa9dd699f7d1a345446fdb11a71ad32642ec74197f59b3bf",
+  "next_attempt_run_root": "/root/q128_fresh_regime_history_n8_v1_repair2",
+  "fail_closed": true
+}

@@ -1,0 +1,46 @@
+{
+  "arm": "Dmatch",
+  "created_utc": "2026-09-03T09:07:09.083517Z",
+  "decision": {
+    "further_retry_forbidden": true,
+    "replacement_gpu_index": 4,
+    "replacement_pool_position": 1,
+    "replacement_seed": 209,
+    "seed205": "EXCLUDED_TERMINAL_FAILURE"
+  },
+  "deterministic_replay": {
+    "compared_field_count": 50,
+    "mismatched_fields": [],
+    "original_row_sha256": "23e190c04de892a3d669424935037187de81de57780b73c390df1a6b3d43ce9b",
+    "replay_row_sha256": "23e190c04de892a3d669424935037187de81de57780b73c390df1a6b3d43ce9b",
+    "scientific_fields_equal": true
+  },
+  "failure": {
+    "attempted_iteration": 7951,
+    "ema_nonfinite_count": 0,
+    "grad_scale_after": "32",
+    "grad_scale_before": "64",
+    "loss": "nan",
+    "loss_nonfinite_count": 2,
+    "model_nonfinite_count": 0,
+    "processed_nimg": 1017728,
+    "raw_grad_nonfinite_count": 55732739,
+    "raw_grad_norm": "inf",
+    "step_skipped": 1,
+    "successful_optimizer_steps": 7937,
+    "update_norm": "0"
+  },
+  "gpu_index": 4,
+  "gpu_uuid": "GPU-6a4b6766-c00f-c1a5-059c-e098fc8b12c4",
+  "resume_source": {
+    "attempted_iteration": 7901,
+    "path": "runtime_receipts/recovery_seed205_Dmatch/training-state-latest.pt",
+    "processed_nimg": 1011328,
+    "sha256": "e7fc4339757d122b0311700ba3bbb6bcd9819361ecdd4a0e74569ead82b89d4d",
+    "successful_optimizer_steps": 7888
+  },
+  "schema": "ect.q128-fresh-terminal-failure-recovery/v1",
+  "seed": 205,
+  "source_commit": "5abd4bd074f6987110f29a0adb93e24e842450bd",
+  "status": "TERMINAL_FAILURE_CONFIRMED"
+}
