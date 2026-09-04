@@ -1,0 +1,25 @@
+{
+  "arm_order": [
+    "Dmatch",
+    "A",
+    "Bsame",
+    "Bmatch",
+    "Cmatch"
+  ],
+  "arm_order_source": "failed cohort slot 205",
+  "continuation_order": [
+    "BA",
+    "AB"
+  ],
+  "created_utc": "2026-09-03T09:05:08.307304Z",
+  "gpu_index": 4,
+  "gpu_uuid": "GPU-6a4b6766-c00f-c1a5-059c-e098fc8b12c4",
+  "replacement_pool_position": 1,
+  "replacement_seed": 209,
+  "replaces_seed": 205,
+  "schema": "ect.q128-fresh-replacement-launch/v1",
+  "seed205_recovery_source_sha256": "e7fc4339757d122b0311700ba3bbb6bcd9819361ecdd4a0e74569ead82b89d4d",
+  "source_commit": "5abd4bd074f6987110f29a0adb93e24e842450bd",
+  "status": "LAUNCHED",
+  "trigger": "deterministically reproduced terminal non-finite loss at seed205 Dmatch attempt 7951"
+}
