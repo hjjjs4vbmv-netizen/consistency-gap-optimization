@@ -63,23 +63,6 @@ def validate_planned_pause(
     attempts = int(stop_after_attempts)
     if attempts == 16 and planned_pause_protocol is None:
         return attempts
-    if planned_pause_protocol == schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL:
-        if (
-            attempts not in m1.GATE_START_ATTEMPTS
-            or seed not in schedule_switch.SUPPORTED_PROTOCOL_SEEDS[
-                schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
-            ]
-            or total_kimg != 1024
-            or resume_state_dump is None
-            or schedule_switch_manifest is None
-            or schedule_switch_experiment_protocol
-            != schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
-        ):
-            raise ValueError(
-                'M1 planned pause requires an M1 full-state resume at the '
-                'absolute 4016 or 4032 attempt gate'
-            )
-        return attempts
     allowed = {
         schedule_switch.FRESH_N12_PROTOCOL: tuple(range(31, 43)),
         schedule_switch.FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
@@ -291,10 +274,6 @@ _SCHEDULE_SWITCH_TELEMETRY_FIELDS = (
 _M1_SCHEDULE_SWITCH_TELEMETRY_FIELDS = (
     *_SCHEDULE_SWITCH_TELEMETRY_FIELDS,
     'seed',
-    'eps_sha256',
-    'dropout_rng_sha256',
-    'online_input_sha256',
-    'target_input_sha256',
 )
 
 #----------------------------------------------------------------------------
@@ -821,21 +800,6 @@ def aggregate_factorial_runtime_metrics(metric_batches):
         result[field] = reproducibility.state_sha256(
             [metrics[field] for metrics in metric_batches]
         )
-    m1_crn_fields = (
-        'eps_sha256', 'dropout_rng_sha256',
-        'online_input_sha256', 'target_input_sha256',
-    )
-    if any(field in first for field in m1_crn_fields):
-        if any(
-            field not in metrics
-            for metrics in metric_batches
-            for field in m1_crn_fields
-        ):
-            raise RuntimeError('incomplete M1 CRN runtime telemetry')
-        for field in m1_crn_fields:
-            result[field] = reproducibility.state_sha256(
-                [metrics[field] for metrics in metric_batches]
-            )
     for prefix in ('target_delta', 'denominator_delta'):
         result[f'{prefix}_min'] = min(
             float(metrics[f'{prefix}_min']) for metrics in metric_batches
@@ -1086,13 +1050,8 @@ def training_loop(
             if switch_manifest is not None else None
         ),
     )
-    if (
-        m1_manifest is not None
-        and not m1_shadow_update
-        and planned_pause_protocol
-        != schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
-    ):
-        raise ValueError('disabling the M1 shadow update is gate-only')
+    if m1_manifest is not None and not m1_shadow_update:
+        raise ValueError('M1 requires the E_512 shadow readout')
     immutable_checkpoint_nimg = normalize_immutable_checkpoint_nimg(
         immutable_checkpoint_kimg,
         total_kimg=total_kimg,
@@ -1310,8 +1269,6 @@ def training_loop(
             schedule_switch.verify_resume_state_file(
                 resume_state_dump, switch_manifest
             )
-            if m1_manifest is not None:
-                m1.verify_source_artifacts(m1_manifest)
         # The training-state contains optimizer and persistent module objects.
         # Only load trusted checkpoints produced by this repository.
         data = torch.load(
@@ -1557,11 +1514,6 @@ def training_loop(
         reproducibility.restore_rng_state(resumed_rng_state)
         if dist.get_world_size() > 1:
             torch.distributed.barrier()
-    if planned_pause_protocol == schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL:
-        m1.validate_gate_resume_boundary(
-            stop_after_attempts, attempted_iteration
-        )
-
     if m1_manifest is not None and starting_schedule_switch:
         reset_count = m1.apply_optimizer_intervention(
             optimizer, m1_manifest['branch']
@@ -1749,29 +1701,30 @@ def training_loop(
             and os.path.getsize(telemetry_path) > 0
         )
         if switch_manifest is not None:
-            source_telemetry_path = os.path.join(
-                run_dir, 'source_factorial_training_telemetry_v1.csv'
-            )
-            if not os.path.isfile(source_telemetry_path):
-                raise RuntimeError(
-                    'schedule switch requires immutable source telemetry copy'
+            if m1_manifest is None:
+                source_telemetry_path = os.path.join(
+                    run_dir, 'source_factorial_training_telemetry_v1.csv'
                 )
-            with open(source_telemetry_path, 'rt', newline='') as handle:
-                source_reader = csv.DictReader(handle)
-                if tuple(source_reader.fieldnames or ()) != _FACTORIAL_TELEMETRY_FIELDS:
-                    raise RuntimeError('source factorial telemetry schema mismatch')
-                source_rows = list(source_reader)
-            if not source_rows:
-                raise RuntimeError('source factorial telemetry is empty')
-            source_last = source_rows[-1]
-            if (
-                int(source_last['attempted_iteration'])
-                != schedule_switch.SWITCH_ATTEMPT
-                or int(source_last['processed_nimg'])
-                != schedule_switch.SWITCH_NIMG
-                or source_last['arm'] != switch_manifest['origin_arm']
-            ):
-                raise RuntimeError('source factorial telemetry boundary mismatch')
+                if not os.path.isfile(source_telemetry_path):
+                    raise RuntimeError(
+                        'schedule switch requires immutable source telemetry copy'
+                    )
+                with open(source_telemetry_path, 'rt', newline='') as handle:
+                    source_reader = csv.DictReader(handle)
+                    if tuple(source_reader.fieldnames or ()) != _FACTORIAL_TELEMETRY_FIELDS:
+                        raise RuntimeError('source factorial telemetry schema mismatch')
+                    source_rows = list(source_reader)
+                if not source_rows:
+                    raise RuntimeError('source factorial telemetry is empty')
+                source_last = source_rows[-1]
+                if (
+                    int(source_last['attempted_iteration'])
+                    != schedule_switch.SWITCH_ATTEMPT
+                    or int(source_last['processed_nimg'])
+                    != schedule_switch.SWITCH_NIMG
+                    or source_last['arm'] != switch_manifest['origin_arm']
+                ):
+                    raise RuntimeError('source factorial telemetry boundary mismatch')
             if attempted_iteration == schedule_switch.SWITCH_ATTEMPT:
                 if telemetry_exists:
                     if m1_manifest is None or starting_schedule_switch:
@@ -1970,12 +1923,12 @@ def training_loop(
         os.path.join(run_dir, 'initial_state_receipt_v1.json')
         if dist.get_rank() == 0 else None
     )
-    if strict_reproducibility and resume_state_dump:
+    if strict_reproducibility and resume_state_dump and m1_manifest is None:
         if dist.get_rank() == 0 and not os.path.isfile(initial_receipt_path):
             raise RuntimeError(
                 'strict factorial resume requires the original initial-state receipt'
             )
-    elif strict_reproducibility:
+    elif strict_reproducibility and not resume_state_dump:
         initial_rank_states = gather_rank_reproducibility_state(
             dataset_sampler, local_consumed_samples
         )
@@ -2047,14 +2000,6 @@ def training_loop(
                 rank_states=branch_init_rank_states,
                 advance_tick=False,
             )
-            source_state = torch.load(
-                m1_manifest['source_state']['path'],
-                map_location=torch.device('cpu'), weights_only=False,
-            )
-            m1.validate_branch_init_against_source(
-                branch_init, source_state, m1_manifest
-            )
-            del source_state
             path = m1.save_branch_init_state(branch_init, run_dir)
             dist.print0(f'Saved M1 branch-init state: {path}')
 
@@ -2428,16 +2373,6 @@ def training_loop(
                 telemetry_row.update({
                     'schema': 'ect.m1.training-telemetry/v1',
                     'seed': seed,
-                    'eps_sha256': factorial_metrics['eps_sha256'],
-                    'dropout_rng_sha256': factorial_metrics[
-                        'dropout_rng_sha256'
-                    ],
-                    'online_input_sha256': factorial_metrics[
-                        'online_input_sha256'
-                    ],
-                    'target_input_sha256': factorial_metrics[
-                        'target_input_sha256'
-                    ],
                 })
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)

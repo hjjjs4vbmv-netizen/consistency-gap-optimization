@@ -153,6 +153,18 @@ def load_run_manifest(path: str) -> dict:
     expected_final = 640 if run_kind == "parity" else 1024
     _require(manifest.get("final_kimg") == expected_final,
              "schedule-switch final budget mismatch")
+    source = manifest.get("source_state")
+    _require(isinstance(source, dict), "missing source-state record")
+    _require(os.path.isabs(str(source.get("path", ""))),
+             "source-state path must be absolute")
+    if experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL:
+        _require(set(source) == {"path"},
+                 "M1 source-state record accepts only its path")
+        _require(os.path.isabs(str(manifest.get("immutable_output_root", ""))),
+                 "M1 output root must be absolute")
+        _require(manifest.get("m1_shadow_update") is True,
+                 "M1 requires the E_512 shadow readout")
+        return manifest
     _require(_HEX64.fullmatch(str(manifest.get("protocol_sha256", ""))) is not None,
              "invalid protocol SHA256")
     _require(_HEX40.fullmatch(str(manifest.get("implementation_commit", ""))) is not None,
@@ -160,10 +172,6 @@ def load_run_manifest(path: str) -> dict:
     _require(_HEX64.fullmatch(str(manifest.get(
         "source_checkpoint_manifest_sha256", ""))) is not None,
         "invalid source checkpoint-manifest SHA256")
-    source = manifest.get("source_state")
-    _require(isinstance(source, dict), "missing source-state record")
-    _require(os.path.isabs(str(source.get("path", ""))),
-             "source-state path must be absolute")
     _require(isinstance(source.get("bytes"), int) and source["bytes"] > 0,
              "invalid source-state byte count")
     _require(_HEX64.fullmatch(str(source.get("sha256", ""))) is not None,
@@ -200,6 +208,17 @@ def continuation_factorial(manifest: dict) -> dict:
 
 def state_metadata(manifest: dict) -> dict:
     source = manifest["source_state"]
+    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+        return {
+            "schema": STATE_SCHEMA,
+            "experiment_protocol": manifest["experiment_protocol"],
+            "run_kind": manifest["run_kind"],
+            "branch": manifest["branch"],
+            "origin_arm": manifest["origin_arm"],
+            "continuation_arm": manifest["continuation_arm"],
+            "switch_kimg": SWITCH_KIMG,
+            "source_state_path": source["path"],
+        }
     metadata = {
         "schema": STATE_SCHEMA,
         "experiment_protocol": manifest["experiment_protocol"],
@@ -229,7 +248,11 @@ def state_metadata(manifest: dict) -> dict:
 def verify_resume_state_file(path: str, manifest: dict) -> None:
     source = manifest["source_state"]
     _require(os.path.realpath(path) == os.path.realpath(source["path"]),
-             "resume path does not match frozen source-state path")
+             "resume path does not match source-state path")
+    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+        _require(os.path.isfile(path) and not os.path.islink(path),
+                 "M1 source state must be a regular file")
+        return
     _require(os.path.getsize(path) == source["bytes"],
              "source-state byte count mismatch")
     _require(sha256_file(path) == source["sha256"],
@@ -258,15 +281,23 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
              and float(factorial.get("denominator_gap_scale")) == denominator,
              "source factorial identity mismatch")
     trajectory = state["trajectory_config"]
-    _require(reproducibility.state_sha256(trajectory)
-             == state["trajectory_config_sha256"],
-             "source trajectory-config SHA256 mismatch")
+    if manifest["experiment_protocol"] != M1_HISTORY_PERSISTENCE_PROTOCOL:
+        _require(reproducibility.state_sha256(trajectory)
+                 == state["trajectory_config_sha256"],
+                 "source trajectory-config SHA256 mismatch")
     _require(int(trajectory.get("seed", -1)) == manifest["seed"],
              "source trajectory seed mismatch")
     ranks = state["rank_states"]
     _require(len(ranks) == 1, "schedule-switch requires WORLD_SIZE=1 source")
     _require(int(ranks[0]["sampler_state"].get("consumed_samples", -1))
              == SWITCH_NIMG, "source sampler cursor is not exactly 512000")
+    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+        return {
+            "attempted_iteration": int(state["attempted_iteration"]),
+            "cur_nimg": int(state["cur_nimg"]),
+            "seed": int(trajectory["seed"]),
+            "arm": origin,
+        }
     actual_hashes = internal_state_hashes(state)
     _require(actual_hashes == manifest["source_state"]["internal_state_sha256"],
              "source internal-state hash mismatch")

@@ -492,13 +492,6 @@ class ECMLoss:
         )
         online_input = y + eps_t if capture_m1_crn else None
         target_input = y + eps_r if capture_m1_crn else None
-        if capture_m1_crn:
-            self._runtime_factorial_metrics.update({
-                'eps_sha256': reproducibility.state_sha256(eps),
-                'dropout_rng_sha256': reproducibility.state_sha256(rng_state),
-                'online_input_sha256': reproducibility.state_sha256(online_input),
-                'target_input_sha256': reproducibility.state_sha256(target_input),
-            })
         D_yt = net(
             online_input if capture_m1_crn else y + eps_t,
             t,

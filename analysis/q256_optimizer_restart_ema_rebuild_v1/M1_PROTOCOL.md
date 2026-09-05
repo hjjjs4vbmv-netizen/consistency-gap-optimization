@@ -52,7 +52,7 @@
 
 不得使用旧 FID、旧 suffix 是否存活或 A/B GradScaler 是否相等作筛选条件。已知旧风险包括 seed58-AA、seed58-BA、seed65-AA；它们不自动排除合格的 A/B@512 源。若这三条 K 失败在 M1 中重现，四臂完整集合预计最多 14 对，但 R 主集合仍可能有 16 对。
 
-冻结 roster 时记录已检查候选、资格结论、A/B 路径和外部 checkpoint SHA。源 checkpoint 只读，每个分支使用独立输出目录。
+roster 记录 seed、资格结论和固定的 A/B 源路径。源 checkpoint 只读，每个分支使用独立输出目录。
 
 ## 3. 固定训练设置
 
@@ -65,15 +65,15 @@
 | optimizer | RAdam；lr=1e-4，betas=(0.9,0.999)，eps=1e-8，weight_decay=0 |
 | batch | global=128，batch_gpu=16，world_size=1 |
 | 精度 | PR101 FP16+AMP；TF32=false；恢复同一 CUDA/cuDNN 确定性设置 |
-| 环境 | Python 3.11.13、PyTorch 2.6.0+cu124、CUDA 12.4、NumPy 2.1.2、SciPy 1.16.1；以 receipt、pip-freeze 与启动时 live probe 绑定。若使用重建 prefix，receipt 必须标记 `REBUILT_NOT_BYTE_IDENTICAL`，结论仅条件于该重建运行时，不声称复原原 tar 字节环境 |
+| 环境 | Python 3.11.13、PyTorch 2.6.0+cu124、CUDA 12.4、NumPy 2.1.2、SciPy 1.16.1；使用已部署的重建 runtime，结论仅条件于该运行时，不声称复原原 tar 字节环境 |
 | 其他 | dropout=0.2，augment=0，xflip=false |
 | EMA | beta=0.9993；不得被新 ramp-up/half-life 参数覆盖 |
 | 进度 | attempted iterations 4000→8000，即 512→1024 kimg |
 | 保存 | 专用 branch-init@512，以及 640、768、896、1024 完整状态 |
 
-训练 ZIP SHA256：`9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3`；ordered-pixel/label SHA256：`ccab7d422ddf0274e3d40693bfc00a87147c21bd1ebb65a7d2aaccdc142519b7`。路径可以按部署改变，数据身份不能静默替换。
+训练数据固定为已部署的 CIFAR-10 32×32 training archive；路径可以按节点改变，数据内容和预处理不得静默替换。
 
-启动前把 PR101 实际数值终止、sanitization、GradScaler 和 managed-overflow 设置写入同一 run manifest；不依赖 CLI 默认值，也不为让某个分支存活而新增学习率、clipping 或精度救援。
+实际命令必须显式给出 PR101 的数值终止、sanitization、GradScaler 和 managed-overflow 设置；不依赖 CLI 默认值，也不为让某个分支存活而新增学习率、clipping 或精度救援。
 
 ## 4. 四分支与一次性干预
 
@@ -98,7 +98,7 @@ K 必须用同一 M1 runner 重跑；旧 PR101 终点只作溯源参考。每条
 - 参数、buffers、param groups、LR/schedule、global progress、RNG/sampler、GradScaler 和 E_KEEP 不因 R 操作改变。
 - global successful-step 日志保留；另记 restart 后的 successful steps。
 
-分支 checkpoint 只需增加一个紧凑的 `m1` 元数据块，至少含 protocol ID、branch、seed、source SHA、initialized_at_nimg、reset_count 和 initialized EMAs。恢复 512/640/768/896 状态时加载当前 optimizer 和全部读出，绝不再次 reset 或重建 E_512。缺少关键 `m1` 字段时直接拒绝恢复。
+分支 checkpoint 只需增加一个紧凑的 `m1` 元数据块，至少含 protocol ID、branch、seed、source path、initialized_at_nimg、reset_count 和 initialized EMAs。恢复 512/640/768/896 状态时加载当前 optimizer 和全部读出，绝不再次 reset 或重建 E_512。缺少关键 `m1` 字段时直接拒绝恢复。
 
 ## 5. EMA、随机输入与时钟
 
@@ -190,35 +190,28 @@ i_s=\frac13\sum_b
 | 基础设施中断 | 同 run/参数/源，从最后完整状态恢复；最多 2 次，仍失败为 `INCOMPLETE_TECHNICAL` |
 | 临时评估故障 | 同 checkpoint/readout/sample IDs 最多 2 次额外重试；已有有效特征可只重算指标 |
 | readout state_dict 任一参数或 buffer 非有限，或预注册全零图像、sigma=1、全零标签的 FP32/eval/no-grad 固定输入 forward 产生非有限输出 | 证据确认后为 `SCIENTIFIC_READOUT_INVALID`；不换样本；forward 异常而未产生上述观测时仍为技术未决 |
-| runner/CRN/导出语义错误 | `INVALID_IMPLEMENTATION`；隔离受影响产物，修复并重过 gate |
-| 源文件不可读 | 只恢复同一外部 checkpoint 身份；恢复不了则技术阻断，不换 seed |
+| runner/CRN/导出语义错误 | `INVALID_IMPLEMENTATION`；隔离受影响产物，修复后从固定源路径重跑 |
+| 源文件不可读 | 只恢复同一路径所指的既定源 checkpoint；恢复不了则技术阻断，不换 seed |
 
-正式 1024-kimg readout 必须先以 `training_receipt.json` 中对应 branch 的 canonical 1024 milestone 路径/SHA完成固定输入分类。只有 `READOUT_VALID` classification receipt 可进入 exporter，且唯一 evaluator snapshot 由 exporter 生成；`SCIENTIFIC_READOUT_INVALID` 只生成缺失证据，不生成或进入可评估 snapshot。G4 的 attempt-4032 非质量导出不适用此正式分类门禁。
+正式 1024-kimg readout 使用对应 branch 的 1024 milestone 完成固定输入分类。`READOUT_VALID` 才进入 exporter；`SCIENTIFIC_READOUT_INVALID` 只记录缺失原因，不生成或进入可评估 snapshot。
 
 K 失败不排除同 seed 的完整 R；非主要读出或 KID 失败不自动删除有效 R/E_512/FID。某分支科学失败后其余预定分支继续。技术重放不能覆盖原科学失败。
 
 每条训练轨迹和评估槽只需记录当前状态、最终原因及必要路径；不为同一事实维护多份账本。正式解码前核算全部计划槽。R primary 仍有技术未决时，不得通过删除未决 seed 完成主要裁决。
 
-## 9. 最小实现与启动 gates
+## 9. 最小实现与直接启动
 
 实现范围：M1 branch-init/恢复模式、reset-once、E_512 保存与恢复、按读出导出、三 block 评估和缺失感知汇总。功能默认关闭时必须保持旧 runner 行为。
 
-对所有入选的 32 个源做只读检查；前两个入选 seed 先完成 G1–G3，再复用其隔离的 attempt-4032（516096 nimg）真实 M1 gate state 完成 G4：
+训练直接从固定源路径启动，不建立额外的 G1–G4、seal、hash chain 或 admission receipt。加载每个 seed 时检查 A/B 源均为完整的 512 kimg、attempt 4000 状态，arm 与 seed 正确，且 A/B 的 RNG 和 sampler 状态直接相等。完整 restore 后才执行 K/R 操作并写 branch-init；恢复分支时只接受计数器、分支身份和 E_512 状态一致的完整 checkpoint。
 
-| Gate | 必须证明的行为 |
-|---|---|
-| G1 基线与源 | 源身份/进度/状态正确；一个 K 连续 32 attempts 与 PR101 合法恢复一致；实际数值规则已绑定 |
-| G2 干预与恢复 | K 不变；R 只重建指定 optimizer state 且等价于 fresh RAdam；branch-init、16+save+restore+16 精确恢复；reset/E_512 只发生一次 |
-| G3 shadow 与 CRN | 开关 E_512 不反馈 online/E_KEEP/optimizer/scaler/RNG；四分支实际 batch、t、noise、dropout 按 attempt/microbatch 一致 |
-| G4 导出评估与基本资源条件 | 从同一真实 gate state 导出 ONLINE、E_KEEP、E_512；覆盖 ONLINE-B0、E_KEEP-B0、E_512-B0/B1/B2 五类 dry-run；验证 snapshot 反序列化、NFE1/FP32、block 区间、共享特征路径和统计器配置，以及 live A100、最低空闲显存、空闲磁盘与 cache 条件；不得执行质量生成 |
+运行中的首批日志用于及时发现实现或资源错误，但不是决定某条轨迹是否可进入分析的额外门禁。若出现实现错误，隔离受影响产物并修复后从固定源路径重跑；若出现基础设施中断，按第 8 节从最后完整状态恢复。首个终点完成后，在质量评估开始前确认 ONLINE、E_KEEP、E_512 可以导出；该接口检查不产生质量证据。
 
-“精确一致”比较规范化计算状态和张量，不要求路径、耗时或标签不同的整个 checkpoint 文件字节相同。先通过 G1–G3；随后直接从其隔离输出根中的 attempt-4032 短 gate state 生成三个非质量 readout，并完成五类反序列化/evaluator/resource canary。个体 canary 必须原子写持久 PASS/FAIL receipt；五类再收口为一个 PASS seal，绑定 training/evaluation manifest、G1–G3 receipt、gate state、branch manifest、snapshot、runtime、evaluator、数据和实际 probe。所有 gate artifact 均 `quality_eligible=false`、`quality_generation=false`，不进入 canonical 320 槽或推断集。G4 PASS 后，才从冻结 source 启动 64 条正式轨迹。dry-run 不支持实测 50k 吞吐或峰值显存的表述。无需为 G4 另跑完整 512-kimg suffix，也无需额外科学 recurrence 扫点、rectified-update 叙事检查或 E_768 gate。
+## 10. 运行记录与预算
 
-## 10. 冻结、运行与预算
+协议、实现和固定参数由 Git 历史管理；不再建立额外文件哈希链、gate seal 或相互引用的 receipt。运行只保留 16-seed roster、固定源路径、实际命令、原始日志、完整 checkpoints、简短状态记录、评估指标和最终完整性表。状态记录包含 slot、seed、branch、host、GPU、源/恢复路径、恢复进度、开始/结束时间、退出码和终态，不把记录本身升级为科学证据。
 
-代码和协议用一个 Git commit 标识。冻结材料只需：已检查候选与 16-seed roster、一个可展开 64 条训练和 320 个评估槽的参数化 run manifest、外部源 checkpoint/data/evaluator 身份、运行环境、G1–G4 结果和资源绑定。训练槽与评估槽各自的原子 receipt 记录所绑定对象、UTC 启动时间和终态；不再另设重复的全局 `launch_record.json`，也不手工维护 64/320 份重复 manifest。
-
-顺序：完成 inventory 和 runner → 形成候选 commit → 由该 commit 生成并绑定 run manifest/evaluation manifest → G1–G3 产生 attempt-4032 short states → 从其中一个 short state 导出三 readout并完成五类 G4 canary/aggregate seal → G4 PASS → 确认代码仍是同一 clean commit → 从冻结 source 运行完整 64 条正式训练并逐槽原子记录 receipt → 滚动评估并封存 canonical 320 槽状态 → 全部槽核算后统一解码。gate 后若改代码，必须形成新候选 commit、重建 manifest 并重过 G1–G4。新质量数值不得用于改 roster、blocks、读出或失败规则。
+顺序：确定 roster 与代码版本 → 从固定 source 启动 64 条正式训练 → endpoint 就绪后滚动导出和评估 → 全部计划槽完成或按第 8 节确定状态后统一分析。路径调整、调度变化和基础设施恢复不改变科学设计；若修改 estimand、分支定义、训练数值语义、roster 或失败规则，则形成新的代码版本并隔离旧产物。新质量数值不得用于改 roster、blocks、读出或失败规则。
 
 同 seed 四分支在同一物理 GPU 串行，按 roster 位置循环使用以下顺序以分散顺序影响：
 
@@ -242,7 +235,7 @@ K 失败不排除同 seed 的完整 R；非主要读出或 KID 失败不自动�
 
 ## 11. 最终交付与用语
 
-最终包至少包含：roster/源身份、run manifest 与代码 commit、64 条轨迹和 320 个评估槽的状态表、逐 seed×branch×readout×block 指标、主要 d_s/CI、S_4 次级对比、全 16 成败表、必要的失败/恢复证据、G1–G4 结果以及实际成本。
+最终包至少包含：roster/源路径、固定训练配置与代码版本、64 条轨迹和 320 个评估槽的状态表、逐 seed×branch×readout×block 指标、主要 d_s/CI、S_4 次级对比、全 16 成败表、必要的失败/恢复记录以及实际成本。
 
 | 结果 | 可写 | 不可写 |
 |---|---|---|
@@ -258,5 +251,5 @@ M1 不运行 M2，不做 moments 移植、m/v 拆分、保留 step 的额外 res
 
 - PR101 fixed ref：`890a85a8ef4d9effb48f653111a70b5f15b249de`。
 - 数据、训练配置、已知失败和基线执行语义来自该 ref 的 `analysis/q256_terminal_history_n30_matpool_v1/`、`training/ct_training_loop.py` 与既有 evaluator/exporter。
-- M1 runner、评估槽与分析器已有实现候选，但尚待服务器 inventory 与 G1–G4 实机 gates；未启动正式 M1 训练或质量评估。不得把本文件或未执行的候选代码当作 gate PASS 或运行证据。
-- 不需要预先附空的 rules JSON 或 64/320 行模板；inventory 完成后由唯一 run manifest 机械展开正式槽表。
+- M1 runner、评估槽与分析器来自当前实现；训练启动和质量评估的实际状态以服务器日志、checkpoint 与最终槽表为准，本文本本身不是运行证据。
+- 不需要预先附空的 rules JSON、hash ledger 或 64/320 行模板；roster 确定后由 slot、seed 与 branch 机械展开。

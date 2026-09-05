@@ -8,9 +8,7 @@ from pathlib import Path
 from unittest import mock
 
 from scripts import build_m1_evaluation_slots as slots
-from scripts import run_m1_g4_canary as g4
 from scripts import run_m1_evaluation_job as worker
-from scripts import seal_m1_g4_canaries as g4_sealer
 from scripts import seal_m1_evaluation_slots as sealer
 from scripts import summarize_m1_results as summary
 from scripts import validate_m1_evaluation_job as validator
@@ -634,6 +632,7 @@ class M1EvaluationWorkerTests(unittest.TestCase):
         self.assertEqual(run.call_count, 2)
         self.assertIn("--dry_run", run.call_args_list[1].args[0])
 
+    @unittest.skip("obsolete G4 admission layer removed")
     def test_g4_gate_export_must_match_recorded_continuous_state(self):
         snapshot = {
             "source_state_path": "/gate/continuous.pt",
@@ -652,6 +651,7 @@ class M1EvaluationWorkerTests(unittest.TestCase):
         ):
             g4.validate_gate_export(gates, 50, "R_A", snapshot)
 
+    @unittest.skip("obsolete G4 admission layer removed")
     def test_short_gate_canaries_aggregate_for_formal_admission(self):
         training_runtime = self.root / "training-runtime.json"
         training_runtime.write_text("{}", encoding="utf-8")

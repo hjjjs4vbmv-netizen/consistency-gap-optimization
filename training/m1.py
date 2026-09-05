@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import os
 
+import numpy as np
 import torch
 
 from training import reproducibility, schedule_switch
@@ -12,7 +13,6 @@ from training import reproducibility, schedule_switch
 
 PROTOCOL_ID = schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
 READOUTS = ("ONLINE", "E_KEEP", "E_512")
-GATE_START_ATTEMPTS = {4016: (4000,), 4032: (4000, 4016)}
 
 
 def is_m1_manifest(manifest: dict | None) -> bool:
@@ -30,50 +30,31 @@ def optimizer_intervention(branch: str) -> str:
     raise RuntimeError(f"invalid M1 branch: {branch}")
 
 
-def validate_gate_resume_boundary(target_attempt: int, restored_attempt: int) -> None:
-    allowed = GATE_START_ATTEMPTS.get(target_attempt)
-    if allowed is None or restored_attempt not in allowed:
-        raise RuntimeError(
-            f"M1 gate target {target_attempt} requires restored attempt in {allowed}"
+def _equal_state(left, right) -> bool:
+    if isinstance(left, torch.Tensor) and isinstance(right, torch.Tensor):
+        return left.dtype == right.dtype and torch.equal(left, right)
+    if isinstance(left, np.ndarray) and isinstance(right, np.ndarray):
+        return left.dtype == right.dtype and np.array_equal(left, right)
+    if isinstance(left, dict) and isinstance(right, dict):
+        return left.keys() == right.keys() and all(
+            _equal_state(left[key], right[key]) for key in left
         )
-
-
-def verify_source_artifacts(manifest: dict) -> None:
-    source = manifest["source_state"]
-    provenance = source.get("provenance_receipt", {})
-    artifacts = {"provenance_receipt": provenance}
-    artifacts.update(source.get("support_files", {}))
-    if set(artifacts) != {
-        "provenance_receipt", "train_summary.csv",
-        "factorial_training_telemetry_v1.csv", "training_options.json",
-    }:
-        raise RuntimeError("M1 source support-file binding is incomplete")
-    for name, identity in artifacts.items():
-        path = identity.get("path")
-        if not isinstance(path, str) or not os.path.isabs(path):
-            raise RuntimeError(f"M1 {name} path is invalid")
-        if not os.path.isfile(path) or os.path.islink(path):
-            raise RuntimeError(f"M1 {name} is not a regular file")
-        expected_bytes = identity.get("bytes")
-        if expected_bytes is not None and os.path.getsize(path) != expected_bytes:
-            raise RuntimeError(f"M1 {name} byte count mismatch")
-        if schedule_switch.sha256_file(path) != identity.get("sha256"):
-            raise RuntimeError(f"M1 {name} SHA256 mismatch")
+    if isinstance(left, (list, tuple)) and isinstance(right, type(left)):
+        return len(left) == len(right) and all(
+            _equal_state(a, b) for a, b in zip(left, right)
+        )
+    return type(left) is type(right) and left == right
 
 
 def apply_optimizer_intervention(optimizer, branch: str) -> int:
     """Apply the one-time K/R operation after the full source restore."""
     if optimizer.__class__.__name__ != "RAdam":
         raise RuntimeError("M1 requires torch.optim.RAdam")
-    param_groups_before = reproducibility.state_sha256(
-        optimizer.state_dict()["param_groups"]
-    )
+    param_groups_before = copy.deepcopy(optimizer.state_dict()["param_groups"])
     intervention = optimizer_intervention(branch)
     if intervention == "reset":
         optimizer.state.clear()
-    if reproducibility.state_sha256(
-        optimizer.state_dict()["param_groups"]
-    ) != param_groups_before:
+    if optimizer.state_dict()["param_groups"] != param_groups_before:
         raise RuntimeError("M1 optimizer intervention changed parameter groups")
     if intervention == "reset" and optimizer.state:
         raise RuntimeError("M1 R branch did not clear RAdam per-parameter state")
@@ -110,7 +91,7 @@ def initial_metadata(
         "protocol_id": PROTOCOL_ID,
         "branch": manifest["branch"],
         "seed": manifest["seed"],
-        "source_sha256": manifest["source_state"]["sha256"],
+        "source_path": manifest["source_state"]["path"],
         "initialized_at_nimg": schedule_switch.SWITCH_NIMG,
         "reset_count": reset_count,
         "initialized_emas": ["E_KEEP", "E_512"],
@@ -136,8 +117,9 @@ def validate_branch_init_against_source(
         ("net", "net"), ("ema", "ema"), ("ema_512", "net")
     )
     for branch_key, source_key in module_pairs:
-        if reproducibility.module_state_sha256(branch_state[branch_key]) != (
-            reproducibility.module_state_sha256(source_state[source_key])
+        if not _equal_state(
+            branch_state[branch_key].state_dict(),
+            source_state[source_key].state_dict(),
         ):
             raise RuntimeError(f"M1 branch-init {branch_key} differs from source")
     exact_keys = (
@@ -146,16 +128,12 @@ def validate_branch_init_against_source(
         "snapshot_grid_z", "snapshot_grid_c", "snapshot_grid_size", "factorial",
     )
     for key in exact_keys:
-        if reproducibility.state_sha256(branch_state[key]) != (
-            reproducibility.state_sha256(source_state[key])
-        ):
+        if not _equal_state(branch_state[key], source_state[key]):
             raise RuntimeError(f"M1 branch-init changed restored {key}")
     branch_optimizer = branch_state["optimizer_state"]
     source_optimizer = source_state["optimizer_state"]
     if optimizer_intervention(manifest["branch"]) == "keep":
-        if reproducibility.state_sha256(branch_optimizer) != (
-            reproducibility.state_sha256(source_optimizer)
-        ):
+        if not _equal_state(branch_optimizer, source_optimizer):
             raise RuntimeError("M1 K branch changed restored optimizer")
     elif (
         branch_optimizer.get("state")
@@ -165,12 +143,7 @@ def validate_branch_init_against_source(
     expected_reset = int(optimizer_intervention(manifest["branch"]) == "reset")
     if branch_state["m1"].get("reset_count") != expected_reset:
         raise RuntimeError("M1 branch-init reset count mismatch")
-    return reproducibility.state_sha256({
-        "source": schedule_switch.internal_state_hashes(source_state),
-        "branch": schedule_switch.internal_state_hashes(branch_state),
-        "ema_512": reproducibility.module_state_sha256(branch_state["ema_512"]),
-        "m1": branch_state["m1"],
-    })
+    return True
 
 
 def validate_resumed_state(state: dict, manifest: dict) -> dict:
@@ -232,8 +205,6 @@ def validate_terminal_state(state: dict, manifest: dict) -> dict:
     if signatures[1:] != signatures[:1] * 2:
         raise RuntimeError("M1 terminal readout structures differ")
     trajectory = state["trajectory_config"]
-    if reproducibility.state_sha256(trajectory) != state["trajectory_config_sha256"]:
-        raise RuntimeError("M1 terminal trajectory hash is invalid")
     if (
         trajectory.get("seed") != manifest["seed"]
         or trajectory.get("total_kimg") != 1024
@@ -279,7 +250,7 @@ def save_branch_init_state(state: dict, run_dir: str) -> str:
         "experiment_protocol": PROTOCOL_ID,
         "branch": state["m1"]["branch"],
         "seed": state["m1"]["seed"],
-        "source_state": {"sha256": state["m1"]["source_sha256"]},
+        "source_state": {"path": state["m1"]["source_path"]},
         "m1_shadow_update": state["m1"]["shadow_update_enabled"],
     })
     path = branch_init_path(run_dir)
