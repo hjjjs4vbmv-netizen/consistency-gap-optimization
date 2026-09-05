@@ -1,0 +1,85 @@
+{
+  "schema": "ect.q256.switchpoint-sweep-analysis/v1",
+  "experiment_id": "q256_switchpoint_sweep_v1",
+  "independent_unit": "training_seed",
+  "primary": {
+    "name": "ordered_prefix_dependence_after_fixed_chase",
+    "estimand": "G_s(i) = log(FID50k_NFE1(BA(s), t=s+512)) - log(FID50k_NFE1(CTRL, t=s+512)), s in {128,256,384,512}",
+    "cell_map": {
+      "G_128": ["BA128@640", "CTRL@640"],
+      "G_256": ["BA256@768", "CTRL@768"],
+      "G_384": ["BA384@896", "CTRL@896"],
+      "G_512": ["BA512@1024", "CTRL@1024"]
+    },
+    "frozen_direction": "G_128 >= G_256 >= G_384 >= G_512",
+    "test": {
+      "name": "Page ordered-alternatives test",
+      "sided": "one-sided",
+      "block": "training_seed",
+      "transform_for_ranking": "Z_s = -G_s",
+      "rank_rule": "larger Z receives larger rank; ties receive average ranks",
+      "p_value": "exact null distribution for actual complete-seed count and four treatments",
+      "alpha": 0.05
+    },
+    "verdicts": {
+      "ORDERED_PREFIX_DEPENDENCE": "p_exact <= 0.05 AND mean(G_512) < mean(G_128)",
+      "ORDERING_NOT_RESOLVED": "otherwise"
+    },
+    "minimum_complete_seeds": 9,
+    "complete_seed_requires": [
+      "training_integrity",
+      "PASS CTRL@640",
+      "PASS CTRL@768",
+      "PASS CTRL@896",
+      "PASS CTRL@1024",
+      "PASS BA128@640",
+      "PASS BA256@768",
+      "PASS BA384@896",
+      "PASS BA512@1024"
+    ],
+    "report": [
+      "all seed-level G values",
+      "per-point mean median sample_SD two-sided_95pct_Student_t_CI sign_counts",
+      "Page statistic and exact one-sided p",
+      "descriptive adjacent paired differences with mean and 95pct_CI"
+    ]
+  },
+  "secondary_descriptive": {
+    "name": "common_1024_endpoint",
+    "estimand": "H_s(i) = log(FID50k_NFE1(BA(s)@1024)) - log(FID50k_NFE1(CTRL@1024)), s in {128,256,384,512}",
+    "additional_cells": ["BA128@1024", "BA256@1024", "BA384@1024"],
+    "report": ["available seeds and n_s", "all seed-level H values", "mean", "median", "sample_SD", "two-sided_95pct_Student_t_CI", "sign_counts"],
+    "tests": "NONE",
+    "verdict": "NONE"
+  },
+  "missing_data": {
+    "primary": "complete-case across the eight primary cells; n=9..12 runs the unchanged four-point primary; n<9 aborts primary",
+    "secondary_only_failure": "does not remove a primary-complete seed; report actual n_s",
+    "arm_concentration": "at least three failures in one switch arm is DIFFERENTIAL_ARM_FAILURE; no three-point primary",
+    "replacement_seed": "FORBIDDEN"
+  },
+  "blinding": {
+    "decode_before_terminal_seal": "FORBIDDEN",
+    "terminal_job_states": ["PASS", "EXHAUSTED_FAILURE"],
+    "terminal_seals": ["SEALED_PASS", "SEALED_WITH_DOCUMENTED_FAILURES"],
+    "decode_once": true,
+    "violation": "EXPLORATORY_ONLY"
+  },
+  "excluded_from_inference": ["H_s", "KID", "NFE2", "unlisted milestones", "raw FID", "generation-noise companion", "per-point tests", "subgroup tests"],
+  "claim_ceiling": "Ordered dependence on B-prefix duration along the schedules tested after a fixed 512-kimg A chase; no early-writing, dose-accumulation, memory-decay, mediation, or generalization claim.",
+  "allowed_wording": {
+    "ORDERED_PREFIX_DEPENDENCE": "After a fixed 512-kimg A chase, the BA-versus-A log-FID contrast showed the prespecified ordered dependence on B-prefix duration across the four schedules tested, with longer prefixes associated with a more negative contrast.",
+    "ORDERING_NOT_RESOLVED": "The fresh cohort did not resolve the prespecified ordered dependence on B-prefix duration; the four point estimates and intervals are reported descriptively.",
+    "common_endpoint": "At the common 1024-kimg endpoint, the prespecified BA-versus-A contrasts were [values and intervals]; these descriptive contrasts combine differences in B-prefix and subsequent A-chase duration."
+  },
+  "downstream_boundaries": {
+    "TASK1": "Compare TASK2 H_512 only with TASK1 descriptive H_A, side by side with no pooling or test; TASK1 primary H remains INCONCLUSIVE.",
+    "PR96": "Report TASK2 H_512-H_384 beside the analogous PR96 pulse contrast descriptively; independent seeds and different common-A chase horizons preclude pooling or verdict revision.",
+    "other_cohorts": "Never pool with seeds 3-7, 19-28, 31-42, or 51-80."
+  },
+  "postseal_companion": {
+    "quantity": "paired log-FID contrast for seed81 BA512@1024 minus CTRL@1024 across five non-overlapping generation blocks",
+    "report": ["five paired values", "sample_SD", "range"],
+    "inferential_role": "NONE"
+  }
+}

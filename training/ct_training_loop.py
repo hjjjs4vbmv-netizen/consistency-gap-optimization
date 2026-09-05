@@ -64,6 +64,7 @@ def validate_planned_pause(
     allowed = {
         schedule_switch.FRESH_N12_PROTOCOL: tuple(range(31, 43)),
         schedule_switch.FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
+        schedule_switch.SWITCHPOINT_SWEEP_PROTOCOL: tuple(range(81, 93)),
     }
     if (
         attempts != schedule_switch.SWITCH_ATTEMPT
@@ -1645,13 +1646,13 @@ def training_loop(
             source_last = source_rows[-1]
             if (
                 int(source_last['attempted_iteration'])
-                != schedule_switch.SWITCH_ATTEMPT
+                != schedule_switch.switch_attempt(switch_manifest)
                 or int(source_last['processed_nimg'])
-                != schedule_switch.SWITCH_NIMG
+                != schedule_switch.switch_nimg(switch_manifest)
                 or source_last['arm'] != switch_manifest['origin_arm']
             ):
                 raise RuntimeError('source factorial telemetry boundary mismatch')
-            if attempted_iteration == schedule_switch.SWITCH_ATTEMPT:
+            if attempted_iteration == schedule_switch.switch_attempt(switch_manifest):
                 if telemetry_exists:
                     raise RuntimeError(
                         'fresh switch refuses existing post-switch telemetry'
@@ -1730,7 +1731,9 @@ def training_loop(
         )
         if not resume_state_dump or (
             switch_manifest is not None
-            and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+            and attempted_iteration == schedule_switch.switch_attempt(
+                switch_manifest
+            )
         ):
             factorial_telemetry_writer.writeheader()
             factorial_telemetry_csv.flush()
@@ -2245,7 +2248,9 @@ def training_loop(
                     'origin_arm': switch_manifest['origin_arm'],
                     'continuation_arm': switch_manifest['continuation_arm'],
                     'switch_relative_step': (
-                        attempted_iteration - schedule_switch.SWITCH_ATTEMPT
+                        attempted_iteration - schedule_switch.switch_attempt(
+                            switch_manifest
+                        )
                     ),
                     'online_ema_distance': f'{online_ema_distance:.17g}',
                     'radam_first_moment_norm': (
