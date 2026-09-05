@@ -20,6 +20,7 @@ from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
 from training import schedule_switch
+from training import m1
 
 from metrics import metric_main
 
@@ -46,6 +47,7 @@ _AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
 def validate_planned_pause(
     *, stop_after_attempts, planned_pause_protocol, strict_reproducibility,
     seed, total_kimg, resume_state_dump, schedule_switch_manifest,
+    schedule_switch_experiment_protocol=None,
 ):
     """Authorize only the legacy 16-step gate or the frozen fresh 512-kimg fork."""
     if stop_after_attempts is None:
@@ -60,6 +62,23 @@ def validate_planned_pause(
         raise ValueError('stop_after_attempts must be an exact integer')
     attempts = int(stop_after_attempts)
     if attempts == 16 and planned_pause_protocol is None:
+        return attempts
+    if planned_pause_protocol == schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL:
+        if (
+            attempts not in m1.GATE_START_ATTEMPTS
+            or seed not in schedule_switch.SUPPORTED_PROTOCOL_SEEDS[
+                schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
+            ]
+            or total_kimg != 1024
+            or resume_state_dump is None
+            or schedule_switch_manifest is None
+            or schedule_switch_experiment_protocol
+            != schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
+        ):
+            raise ValueError(
+                'M1 planned pause requires an M1 full-state resume at the '
+                'absolute 4016 or 4032 attempt gate'
+            )
         return attempts
     allowed = {
         schedule_switch.FRESH_N12_PROTOCOL: tuple(range(31, 43)),
@@ -269,6 +288,15 @@ _SCHEDULE_SWITCH_TELEMETRY_FIELDS = (
     'radam_second_moment_norm',
 )
 
+_M1_SCHEDULE_SWITCH_TELEMETRY_FIELDS = (
+    *_SCHEDULE_SWITCH_TELEMETRY_FIELDS,
+    'seed',
+    'eps_sha256',
+    'dropout_rng_sha256',
+    'online_input_sha256',
+    'target_input_sha256',
+)
+
 #----------------------------------------------------------------------------
 
 def canonical_processed_nimg(value):
@@ -289,7 +317,7 @@ def canonical_processed_nimg(value):
 
 #----------------------------------------------------------------------------
 
-def load_and_migrate_train_summary(summary_path):
+def load_and_migrate_train_summary(summary_path, *, allow_empty_current=False):
     """Load a resume CSV, upgrading only known historical schemas.
 
     Values absent from the original schema cannot be reconstructed, so their
@@ -301,6 +329,8 @@ def load_and_migrate_train_summary(summary_path):
         fieldnames = tuple(reader.fieldnames or ())
         rows = list(reader)
 
+    if not rows and allow_empty_current and fieldnames == _TRAIN_SUMMARY_FIELDS:
+        return [], None
     if not rows:
         raise RuntimeError(f'resume requested but {summary_path} has no data rows')
     if fieldnames == _TRAIN_SUMMARY_FIELDS:
@@ -791,6 +821,21 @@ def aggregate_factorial_runtime_metrics(metric_batches):
         result[field] = reproducibility.state_sha256(
             [metrics[field] for metrics in metric_batches]
         )
+    m1_crn_fields = (
+        'eps_sha256', 'dropout_rng_sha256',
+        'online_input_sha256', 'target_input_sha256',
+    )
+    if any(field in first for field in m1_crn_fields):
+        if any(
+            field not in metrics
+            for metrics in metric_batches
+            for field in m1_crn_fields
+        ):
+            raise RuntimeError('incomplete M1 CRN runtime telemetry')
+        for field in m1_crn_fields:
+            result[field] = reproducibility.state_sha256(
+                [metrics[field] for metrics in metric_batches]
+            )
     for prefix in ('target_delta', 'denominator_delta'):
         result[f'{prefix}_min'] = min(
             float(metrics[f'{prefix}_min']) for metrics in metric_batches
@@ -988,6 +1033,10 @@ def training_loop(
         schedule_switch.state_metadata(switch_manifest)
         if switch_manifest is not None else None
     )
+    m1_manifest = switch_manifest if m1.is_m1_manifest(switch_manifest) else None
+    m1_shadow_update = bool(
+        m1_manifest is not None and m1_manifest.get('m1_shadow_update', True)
+    )
     allow_managed_loss_overflow = bool(
         switch_manifest is not None
         and switch_manifest.get("experiment_protocol")
@@ -1032,12 +1081,31 @@ def training_loop(
         total_kimg=total_kimg,
         resume_state_dump=resume_state_dump,
         schedule_switch_manifest=schedule_switch_manifest,
+        schedule_switch_experiment_protocol=(
+            switch_manifest.get('experiment_protocol')
+            if switch_manifest is not None else None
+        ),
     )
+    if (
+        m1_manifest is not None
+        and not m1_shadow_update
+        and planned_pause_protocol
+        != schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
+    ):
+        raise ValueError('disabling the M1 shadow update is gate-only')
     immutable_checkpoint_nimg = normalize_immutable_checkpoint_nimg(
         immutable_checkpoint_kimg,
         total_kimg=total_kimg,
         batch_size=batch_size,
     )
+    if (
+        m1_manifest is not None
+        and schedule_switch.SWITCH_NIMG in immutable_checkpoint_nimg
+    ):
+        raise ValueError(
+            'M1 writes its 512-kimg branch-init directly; do not include 512 '
+            'in immutable_checkpoint_kimg'
+        )
     if immutable_checkpoint_nimg and not strict_reproducibility:
         raise ValueError(
             'immutable checkpoint milestones are reserved for strict factorial runs'
@@ -1153,6 +1221,8 @@ def training_loop(
     # Setup optimizer.
     dist.print0('Setting up optimizer...')
     loss_fn = dnnlib.util.construct_class_by_name(**loss_kwargs)
+    if m1_manifest is not None:
+        loss_fn.capture_m1_crn = True
     optimizer = dnnlib.util.construct_class_by_name(params=net.parameters(), **optimizer_kwargs) # subclass of torch.optim.Optimizer
     augment_pipe = dnnlib.util.construct_class_by_name(**augment_kwargs) if augment_kwargs is not None else None # training.augment.AugmentPipe
     
@@ -1225,6 +1295,10 @@ def training_loop(
     resumed_snapshot_grid_size = None
     elapsed_base_sec = 0.0
     persisted_factorial_identity = None
+    starting_schedule_switch = False
+    ema_512 = None
+    m1_metadata = None
+    m1_successful_steps = 0
     if resume_state_dump:
         dist.print0(f'Loading training state from "{resume_state_dump}"...')
         starting_schedule_switch = (
@@ -1236,6 +1310,8 @@ def training_loop(
             schedule_switch.verify_resume_state_file(
                 resume_state_dump, switch_manifest
             )
+            if m1_manifest is not None:
+                m1.verify_source_artifacts(m1_manifest)
         # The training-state contains optimizer and persistent module objects.
         # Only load trusted checkpoints produced by this repository.
         data = torch.load(
@@ -1344,6 +1420,17 @@ def training_loop(
                 data.get('ema'), ema, label='strict training-state -> EMA'
             )
         optimizer.load_state_dict(data['optimizer_state'])
+        if m1_manifest is not None:
+            if not starting_schedule_switch:
+                m1_metadata = m1.validate_resumed_state(data, m1_manifest)
+                m1_successful_steps = m1_metadata[
+                    'successful_steps_since_init'
+                ]
+                ema_512 = m1.initialize_ema_512(net)
+                copy_module_state_exact(
+                    data['ema_512'], ema_512,
+                    label='strict M1 training-state -> E_512',
+                )
         if 'cur_nimg' not in data:
             raise RuntimeError(
                 f'resume training-state missing cur_nimg: {resume_state_dump}; '
@@ -1470,6 +1557,19 @@ def training_loop(
         reproducibility.restore_rng_state(resumed_rng_state)
         if dist.get_world_size() > 1:
             torch.distributed.barrier()
+    if planned_pause_protocol == schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL:
+        m1.validate_gate_resume_boundary(
+            stop_after_attempts, attempted_iteration
+        )
+
+    if m1_manifest is not None and starting_schedule_switch:
+        reset_count = m1.apply_optimizer_intervention(
+            optimizer, m1_manifest['branch']
+        )
+        ema_512 = m1.initialize_ema_512(net)
+        m1_metadata = m1.initial_metadata(
+            m1_manifest, reset_count, successful_optimizer_steps
+        )
 
     # Train.
     dist.print0(f'Training for {total_kimg} kimg...')
@@ -1546,59 +1646,74 @@ def training_loop(
         summary_exists = os.path.isfile(summary_path) and os.path.getsize(summary_path) > 0
         if resume_state_dump:
             if summary_exists:
-                rows, migrated_backup = load_and_migrate_train_summary(summary_path)
+                rows, migrated_backup = load_and_migrate_train_summary(
+                    summary_path,
+                    allow_empty_current=(
+                        m1_manifest is not None
+                        and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+                    ),
+                )
                 if migrated_backup is not None:
                     dist.print0(
                         f'Migrated legacy train_summary.csv to telemetry schema; '
                         f'original saved as "{migrated_backup}"'
                     )
-                last = rows[-1]
-                last_attempted = int(float(last['attempted_iteration']))
-                last_nimg = int(float(last.get('processed_nimg', last.get('nimg', -1))))
-                last_schedule = str(last.get('schedule', '')).strip()
-                if last_schedule and last_schedule != str(schedule_name):
-                    raise RuntimeError(
-                        f'train_summary.csv schedule={last_schedule!r} does not match '
-                        f'current schedule={schedule_name!r}; refuse mixed-schedule resume'
-                    )
-                if attempted_iteration and last_attempted != attempted_iteration:
-                    raise RuntimeError(
-                        f'train_summary.csv last attempted_iteration={last_attempted} '
-                        f'does not match training-state attempted_iteration={attempted_iteration}'
-                    )
-                if last_nimg >= 0 and last_nimg != cur_nimg:
-                    raise RuntimeError(
-                        f'train_summary.csv last processed_nimg={last_nimg} '
-                        f'does not match resumed cur_nimg={cur_nimg}'
-                    )
-                last_next_loop_tick = str(last.get('next_loop_cur_tick', '')).strip()
-                if last_next_loop_tick:
-                    try:
-                        parsed_next_loop_tick = float(last_next_loop_tick)
-                    except ValueError as exc:
-                        raise RuntimeError(
-                            'train_summary.csv last next_loop_cur_tick must be numeric: '
-                            f'{last_next_loop_tick!r}'
-                        ) from exc
-                    if (
-                        not math.isfinite(parsed_next_loop_tick)
-                        or not parsed_next_loop_tick.is_integer()
-                        or parsed_next_loop_tick < 0
+                if not rows:
+                    if not (
+                        m1_manifest is not None
+                        and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
                     ):
                         raise RuntimeError(
-                            'train_summary.csv last next_loop_cur_tick must be a '
-                            f'non-negative integer: {last_next_loop_tick!r}'
+                            'resume train_summary.csv has no attempted rows'
                         )
-                    if int(parsed_next_loop_tick) != cur_tick:
+                else:
+                    last = rows[-1]
+                    last_attempted = int(float(last['attempted_iteration']))
+                    last_nimg = int(float(last.get('processed_nimg', last.get('nimg', -1))))
+                    last_schedule = str(last.get('schedule', '')).strip()
+                    if last_schedule and last_schedule != str(schedule_name):
                         raise RuntimeError(
-                            f'train_summary.csv last next_loop_cur_tick={last_next_loop_tick} '
-                            f'does not match resumed cur_tick={cur_tick}'
+                            f'train_summary.csv schedule={last_schedule!r} does not match '
+                            f'current schedule={schedule_name!r}; refuse mixed-schedule resume'
                         )
-                if not attempted_iteration:
-                    attempted_iteration = last_attempted
-                    successful_optimizer_steps = int(float(
-                        last.get('successful_optimizer_steps', last_attempted)
-                    ))
+                    if attempted_iteration and last_attempted != attempted_iteration:
+                        raise RuntimeError(
+                            f'train_summary.csv last attempted_iteration={last_attempted} '
+                            f'does not match training-state attempted_iteration={attempted_iteration}'
+                        )
+                    if last_nimg >= 0 and last_nimg != cur_nimg:
+                        raise RuntimeError(
+                            f'train_summary.csv last processed_nimg={last_nimg} '
+                            f'does not match resumed cur_nimg={cur_nimg}'
+                        )
+                    last_next_loop_tick = str(last.get('next_loop_cur_tick', '')).strip()
+                    if last_next_loop_tick:
+                        try:
+                            parsed_next_loop_tick = float(last_next_loop_tick)
+                        except ValueError as exc:
+                            raise RuntimeError(
+                                'train_summary.csv last next_loop_cur_tick must be numeric: '
+                                f'{last_next_loop_tick!r}'
+                            ) from exc
+                        if (
+                            not math.isfinite(parsed_next_loop_tick)
+                            or not parsed_next_loop_tick.is_integer()
+                            or parsed_next_loop_tick < 0
+                        ):
+                            raise RuntimeError(
+                                'train_summary.csv last next_loop_cur_tick must be a '
+                                f'non-negative integer: {last_next_loop_tick!r}'
+                            )
+                        if int(parsed_next_loop_tick) != cur_tick:
+                            raise RuntimeError(
+                                f'train_summary.csv last next_loop_cur_tick={last_next_loop_tick} '
+                                f'does not match resumed cur_tick={cur_tick}'
+                            )
+                    if not attempted_iteration:
+                        attempted_iteration = last_attempted
+                        successful_optimizer_steps = int(float(
+                            last.get('successful_optimizer_steps', last_attempted)
+                        ))
             train_summary_csv = open(summary_path, 'at', newline='')
             train_summary_writer = csv.DictWriter(train_summary_csv, fieldnames=_TRAIN_SUMMARY_FIELDS)
             if not summary_exists:
@@ -1617,6 +1732,11 @@ def training_loop(
 
     factorial_telemetry_csv = None
     factorial_telemetry_writer = None
+    switch_telemetry_fields = (
+        _M1_SCHEDULE_SWITCH_TELEMETRY_FIELDS
+        if m1_manifest is not None
+        else _SCHEDULE_SWITCH_TELEMETRY_FIELDS
+    )
     if strict_reproducibility and dist.get_rank() == 0:
         telemetry_path = os.path.join(
             run_dir,
@@ -1654,12 +1774,27 @@ def training_loop(
                 raise RuntimeError('source factorial telemetry boundary mismatch')
             if attempted_iteration == schedule_switch.SWITCH_ATTEMPT:
                 if telemetry_exists:
-                    raise RuntimeError(
-                        'fresh switch refuses existing post-switch telemetry'
+                    if m1_manifest is None or starting_schedule_switch:
+                        raise RuntimeError(
+                            'fresh switch refuses existing post-switch telemetry'
+                        )
+                    with open(telemetry_path, 'rt', newline='') as handle:
+                        reader = csv.DictReader(handle)
+                        if (
+                            tuple(reader.fieldnames or ())
+                            != switch_telemetry_fields
+                            or list(reader)
+                        ):
+                            raise RuntimeError(
+                                'M1 branch-init resume requires header-only telemetry'
+                            )
+                    factorial_telemetry_csv = open(
+                        telemetry_path, 'at', newline=''
                     )
-                factorial_telemetry_csv = open(
-                    telemetry_path, 'xt', newline=''
-                )
+                else:
+                    factorial_telemetry_csv = open(
+                        telemetry_path, 'xt', newline=''
+                    )
             else:
                 if not telemetry_exists:
                     raise RuntimeError(
@@ -1667,7 +1802,7 @@ def training_loop(
                     )
                 with open(telemetry_path, 'rt', newline='') as handle:
                     reader = csv.DictReader(handle)
-                    if tuple(reader.fieldnames or ()) != _SCHEDULE_SWITCH_TELEMETRY_FIELDS:
+                    if tuple(reader.fieldnames or ()) != switch_telemetry_fields:
                         raise RuntimeError('schedule-switch telemetry schema mismatch')
                     rows = list(reader)
                 if not rows:
@@ -1725,13 +1860,16 @@ def training_loop(
             factorial_telemetry_csv,
             fieldnames=(
                 _SCHEDULE_SWITCH_TELEMETRY_FIELDS
-                if switch_manifest is not None
+                if switch_manifest is not None and m1_manifest is None
+                else _M1_SCHEDULE_SWITCH_TELEMETRY_FIELDS
+                if m1_manifest is not None
                 else _FACTORIAL_TELEMETRY_FIELDS
             ),
         )
         if not resume_state_dump or (
             switch_manifest is not None
             and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+            and not telemetry_exists
         ):
             factorial_telemetry_writer.writeheader()
             factorial_telemetry_csv.flush()
@@ -1742,6 +1880,8 @@ def training_loop(
     def update_scheduler(loss_fn):
         loss_fn.update_schedule(stage)
         dist.print0(f'Update scheduler at {cur_tick} ticks, {cur_nimg / 1e3} kimg, ratio {loss_fn.ratio}')
+
+    elapsed_sec = elapsed_base_sec + (time.time() - start_time)
 
     def build_training_state(
         adaptive_signal_window_state=None,
@@ -1805,6 +1945,11 @@ def training_loop(
             )
             if switch_manifest is not None:
                 data['schedule_switch'] = copy.deepcopy(switch_metadata)
+            if m1_manifest is not None:
+                data['ema_512'] = ema_512
+                data['m1'] = m1.checkpoint_metadata(
+                    m1_metadata, m1_successful_steps
+                )
             if allow_managed_loss_overflow:
                 data['managed_loss_overflow_count'] = (
                     managed_loss_overflow_count
@@ -1893,6 +2038,26 @@ def training_loop(
                 overwrite=False,
             )
 
+    if m1_manifest is not None and starting_schedule_switch:
+        branch_init_rank_states = gather_rank_reproducibility_state(
+            dataset_sampler, local_consumed_samples
+        )
+        if dist.get_rank() == 0:
+            branch_init = build_training_state(
+                rank_states=branch_init_rank_states,
+                advance_tick=False,
+            )
+            source_state = torch.load(
+                m1_manifest['source_state']['path'],
+                map_location=torch.device('cpu'), weights_only=False,
+            )
+            m1.validate_branch_init_against_source(
+                branch_init, source_state, m1_manifest
+            )
+            del source_state
+            path = m1.save_branch_init_state(branch_init, run_dir)
+            dist.print0(f'Saved M1 branch-init state: {path}')
+
     if (
         stop_after_attempts is not None
         and attempted_iteration >= stop_after_attempts
@@ -1900,7 +2065,6 @@ def training_loop(
         raise RuntimeError(
             'planned pause target must be greater than restored attempts'
         )
-
     # Already at/past the requested budget (e.g. resume with same duration): do not
     # execute an extra optimizer step before noticing done.
     if cur_nimg >= total_kimg * 1000:
@@ -2053,6 +2217,8 @@ def training_loop(
         attempted_iteration += 1
         if not step_skipped:
             successful_optimizer_steps += 1
+            if m1_manifest is not None:
+                m1_successful_steps += 1
 
         loss_count = sum(x.numel() for x in loss_batches)
         loss_sum = sum(float(x.sum().cpu()) for x in loss_batches)
@@ -2075,6 +2241,8 @@ def training_loop(
             ema_beta = 0.5 ** (batch_size / max(ema_halflife_nimg, 1e-8))
         for p_ema, p_net in zip(ema.parameters(), net.parameters()):
             p_ema.copy_(p_net.detach().lerp(p_ema, ema_beta))
+        if ema_512 is not None and m1_shadow_update:
+            m1.update_ema_512(ema_512, net, ema_beta)
 
         if strict_reproducibility:
             (
@@ -2255,6 +2423,21 @@ def training_loop(
                     'radam_second_moment_norm': (
                         f'{radam_second_moment_norm:.17g}'
                     ),
+                })
+            if m1_manifest is not None:
+                telemetry_row.update({
+                    'schema': 'ect.m1.training-telemetry/v1',
+                    'seed': seed,
+                    'eps_sha256': factorial_metrics['eps_sha256'],
+                    'dropout_rng_sha256': factorial_metrics[
+                        'dropout_rng_sha256'
+                    ],
+                    'online_input_sha256': factorial_metrics[
+                        'online_input_sha256'
+                    ],
+                    'target_input_sha256': factorial_metrics[
+                        'target_input_sha256'
+                    ],
                 })
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)

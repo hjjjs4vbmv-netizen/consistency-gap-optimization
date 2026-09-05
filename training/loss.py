@@ -486,7 +486,25 @@ class ECMLoss:
             rng_state = torch.cuda.get_rng_state()
         else:
             rng_state = torch.get_rng_state()
-        D_yt = net(y + eps_t, t, labels, augment_labels=augment_labels)
+        capture_m1_crn = (
+            self._runtime_factorial_metrics is not None
+            and getattr(self, 'capture_m1_crn', False)
+        )
+        online_input = y + eps_t if capture_m1_crn else None
+        target_input = y + eps_r if capture_m1_crn else None
+        if capture_m1_crn:
+            self._runtime_factorial_metrics.update({
+                'eps_sha256': reproducibility.state_sha256(eps),
+                'dropout_rng_sha256': reproducibility.state_sha256(rng_state),
+                'online_input_sha256': reproducibility.state_sha256(online_input),
+                'target_input_sha256': reproducibility.state_sha256(target_input),
+            })
+        D_yt = net(
+            online_input if capture_m1_crn else y + eps_t,
+            t,
+            labels,
+            augment_labels=augment_labels,
+        )
         
         if r_target.max() > 0:
             if y.is_cuda:
@@ -495,7 +513,7 @@ class ECMLoss:
                 torch.set_rng_state(rng_state)
             with torch.no_grad():
                 D_yr = net(
-                    y + eps_r,
+                    target_input if capture_m1_crn else y + eps_r,
                     r_target,
                     labels,
                     augment_labels=augment_labels,
