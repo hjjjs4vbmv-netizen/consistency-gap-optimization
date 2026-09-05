@@ -5,10 +5,12 @@ from __future__ import annotations
 
 import argparse
 import copy
+import csv
 import fcntl
 import json
 import os
 import re
+import shutil
 import socket
 import subprocess
 from datetime import datetime, timezone
@@ -29,6 +31,8 @@ ORDERS = (
 )
 BRANCHES = {"K_A": "A", "K_B": "B", "R_A": "A", "R_B": "B"}
 SCIENTIFIC_FAILURE_MARKERS = (
+    "FloatingPointError: factorial source times",
+    "FloatingPointError: factorial base times",
     "FloatingPointError: non-finite",
     "FloatingPointError: target realized",
     "FloatingPointError: denominator realized",
@@ -204,7 +208,7 @@ def select_resume(run_dir: Path, source: Path, manifest: dict) -> tuple[Path, in
     if valid:
         attempt, path = max(valid, key=lambda item: item[0])
         return path.resolve(), attempt
-    if any(run_dir.iterdir()):
+    if any(run_dir.iterdir()) and not any(run_dir.glob("train-attempt-*.log")):
         allowed = {"formal_run_manifest.json", "branch_status.json"}
         if any(path.name not in allowed for path in run_dir.iterdir()):
             raise RuntimeError(f"existing branch has no usable checkpoint: {run_dir}")
@@ -216,6 +220,69 @@ def select_resume(run_dir: Path, source: Path, manifest: dict) -> tuple[Path, in
 def scientific_failure(log: Path) -> bool:
     text = log.read_text(encoding="utf-8", errors="replace")
     return any(marker in text for marker in SCIENTIFIC_FAILURE_MARKERS)
+
+
+def truncate_attempt_csv(path: Path, resume_attempt: int) -> None:
+    if not path.is_file():
+        if resume_attempt > schedule_switch.SWITCH_ATTEMPT:
+            raise RuntimeError(f"M1 recovery CSV is missing: {path}")
+        return
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        fieldnames = reader.fieldnames
+        if not fieldnames or "attempted_iteration" not in fieldnames:
+            raise RuntimeError(f"M1 recovery CSV has no attempted_iteration: {path}")
+        rows = list(reader)
+    attempts = [int(float(row["attempted_iteration"])) for row in rows]
+    if (
+        resume_attempt > schedule_switch.SWITCH_ATTEMPT
+        and resume_attempt not in attempts
+    ):
+        raise RuntimeError(
+            f"M1 recovery CSV has no row for attempt {resume_attempt}: {path}"
+        )
+    kept = [row for row, attempt in zip(rows, attempts) if attempt <= resume_attempt]
+    if len(kept) == len(rows):
+        return
+    temporary = path.with_name(f".{path.name}.recovery-{os.getpid()}.tmp")
+    try:
+        with temporary.open("x", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(kept)
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+def prepare_recovery_files(
+    run_dir: Path, resume: Path, source: Path, resume_attempt: int
+) -> None:
+    truncate_attempt_csv(run_dir / "train_summary.csv", resume_attempt)
+    truncate_attempt_csv(
+        run_dir / "schedule_switch_training_telemetry_v1.csv", resume_attempt
+    )
+    stale_states = []
+    from_source = os.path.realpath(resume) == os.path.realpath(source)
+    for path in run_dir.glob("training-state-kimg*.pt"):
+        match = re.fullmatch(r"training-state-kimg(\d{6})\.pt", path.name)
+        if match and (
+            from_source
+            or int(match.group(1)) * 1000 // 128 > resume_attempt
+        ):
+            stale_states.append(path)
+    if not stale_states:
+        return
+    stale = run_dir / "recovery-stale"
+    stale.mkdir(exist_ok=True)
+    for path in stale_states:
+        destination = stale / path.name
+        suffix = 2
+        while destination.exists():
+            destination = stale / f"{path.stem}.{suffix}{path.suffix}"
+            suffix += 1
+        shutil.move(path, destination)
 
 
 def run_branch(
@@ -242,7 +309,10 @@ def run_branch(
         if old.get("status") in {"PASS", "SCIENTIFIC_FAILURE"}:
             return old
 
+    recovering = any(run_dir.glob("train-attempt-*.log"))
     resume, resume_attempt = select_resume(run_dir, source, manifest)
+    if recovering:
+        prepare_recovery_files(run_dir, resume, source, resume_attempt)
     if resume_attempt == 8000:
         state = torch.load(resume, map_location="cpu", weights_only=False)
         m1.validate_terminal_state(state, manifest)

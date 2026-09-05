@@ -1,4 +1,5 @@
 import copy
+import csv
 import json
 import tempfile
 import unittest
@@ -149,6 +150,97 @@ class M1TrainingStateTests(unittest.TestCase):
         self.assertEqual(launcher.parse_slot("S16")[1], launcher.ORDERS[3])
         with self.assertRaises(ValueError):
             launcher.parse_slot("S17")
+
+    def test_numeric_source_failures_are_scientific(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / "attempt.log"
+            for message in (
+                "factorial source times must be finite and positive",
+                "factorial base times must be finite and satisfy 0 <= r <= t",
+            ):
+                log.write_text(f"FloatingPointError: {message}\n", encoding="utf-8")
+                self.assertTrue(launcher.scientific_failure(log))
+            log.write_text("RuntimeError: CUDA out of memory\n", encoding="utf-8")
+            self.assertFalse(launcher.scientific_failure(log))
+
+    def test_recovery_truncates_csv_and_moves_future_checkpoint(self):
+        with tempfile.TemporaryDirectory() as directory:
+            run_dir = Path(directory)
+            fields = ["attempted_iteration", "value"]
+            for name in (
+                "train_summary.csv",
+                "schedule_switch_training_telemetry_v1.csv",
+            ):
+                with (run_dir / name).open("w", encoding="utf-8", newline="") as handle:
+                    writer = csv.DictWriter(handle, fieldnames=fields)
+                    writer.writeheader()
+                    for attempt in (4001, 4500, 5000):
+                        writer.writerow({"attempted_iteration": attempt, "value": attempt})
+            kept = run_dir / "training-state-kimg000512.pt"
+            future = run_dir / "training-state-kimg000640.pt"
+            kept.touch()
+            future.touch()
+
+            checkpoint = run_dir / "training-state-latest.pt"
+            checkpoint.touch()
+            source = run_dir / "source.pt"
+            source.touch()
+            launcher.prepare_recovery_files(
+                run_dir, checkpoint, source, 4500
+            )
+
+            for name in (
+                "train_summary.csv",
+                "schedule_switch_training_telemetry_v1.csv",
+            ):
+                with (run_dir / name).open("r", encoding="utf-8", newline="") as handle:
+                    attempts = [
+                        int(row["attempted_iteration"])
+                        for row in csv.DictReader(handle)
+                    ]
+                self.assertEqual(attempts, [4001, 4500])
+            self.assertTrue(kept.is_file())
+            self.assertFalse(future.exists())
+            self.assertTrue((run_dir / "recovery-stale" / future.name).is_file())
+
+    def test_recovery_requires_an_exact_csv_boundary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            run_dir = Path(directory)
+            with (run_dir / "train_summary.csv").open(
+                "w", encoding="utf-8", newline=""
+            ) as handle:
+                writer = csv.DictWriter(
+                    handle, fieldnames=["attempted_iteration", "value"]
+                )
+                writer.writeheader()
+                writer.writerow({"attempted_iteration": 4499, "value": "before"})
+                writer.writerow({"attempted_iteration": 4501, "value": "after"})
+            with self.assertRaisesRegex(RuntimeError, "no row for attempt 4500"):
+                launcher.truncate_attempt_csv(
+                    run_dir / "train_summary.csv", 4500
+                )
+
+    def test_failed_pre_branch_init_attempt_can_restart_from_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            run_dir = Path(directory) / "run"
+            run_dir.mkdir()
+            manifest = self.make_manifest(directory)
+            source = Path(manifest["source_state"]["path"])
+            torch.save(self.source_state(), source)
+            (run_dir / "formal_run_manifest.json").write_text("{}", encoding="utf-8")
+            (run_dir / "train-attempt-01.log").write_text(
+                "RuntimeError: CUDA out of memory\n", encoding="utf-8"
+            )
+            corrupt_branch_init = run_dir / "training-state-kimg000512.pt"
+            corrupt_branch_init.write_bytes(b"not a checkpoint")
+            resume, attempt = launcher.select_resume(run_dir, source, manifest)
+            self.assertEqual(resume, source)
+            self.assertEqual(attempt, schedule_switch.SWITCH_ATTEMPT)
+            launcher.prepare_recovery_files(run_dir, resume, source, attempt)
+            self.assertFalse(corrupt_branch_init.exists())
+            self.assertTrue(
+                (run_dir / "recovery-stale" / corrupt_branch_init.name).is_file()
+            )
 
 
 if __name__ == "__main__":
