@@ -163,6 +163,30 @@ class M1TrainingStateTests(unittest.TestCase):
             log.write_text("RuntimeError: CUDA out of memory\n", encoding="utf-8")
             self.assertFalse(launcher.scientific_failure(log))
 
+    def test_only_numeric_invariant_reasons_are_scientific(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / "attempt.log"
+            prefix = "FloatingPointError: strict factorial training invariant failure: "
+            for reason in launcher.SCIENTIFIC_INVARIANT_REASONS:
+                log.write_text(prefix + reason + "\n", encoding="utf-8")
+                self.assertTrue(launcher.scientific_failure(log))
+            for reason in (
+                "non-finite sanitized gradient",
+                "successful optimizer update norm is not positive",
+                "factorial sample_count != batch_size",
+                "sampler consumption != processed_nimg",
+                "raw gradient non-finite status does not match AMP skip",
+                "skipped optimizer attempt changed parameters",
+            ):
+                log.write_text(prefix + reason + "\n", encoding="utf-8")
+                self.assertFalse(launcher.scientific_failure(log))
+
+            log.write_text(
+                prefix + "non-finite loss; sampler consumption != processed_nimg\n",
+                encoding="utf-8",
+            )
+            self.assertFalse(launcher.scientific_failure(log))
+
     def test_recovery_truncates_csv_and_moves_future_checkpoint(self):
         with tempfile.TemporaryDirectory() as directory:
             run_dir = Path(directory)

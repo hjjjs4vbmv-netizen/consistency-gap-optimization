@@ -36,7 +36,12 @@ SCIENTIFIC_FAILURE_MARKERS = (
     "FloatingPointError: non-finite",
     "FloatingPointError: target realized",
     "FloatingPointError: denominator realized",
-    "FloatingPointError: strict factorial training invariant failure",
+)
+SCIENTIFIC_INVARIANT_REASONS = (
+    "non-finite loss",
+    "non-finite update/model/EMA",
+    "non-finite target/denominator factor",
+    "non-positive realized denominator",
 )
 
 
@@ -219,7 +224,17 @@ def select_resume(run_dir: Path, source: Path, manifest: dict) -> tuple[Path, in
 
 def scientific_failure(log: Path) -> bool:
     text = log.read_text(encoding="utf-8", errors="replace")
-    return any(marker in text for marker in SCIENTIFIC_FAILURE_MARKERS)
+    if any(marker in text for marker in SCIENTIFIC_FAILURE_MARKERS):
+        return True
+    invariant = "FloatingPointError: strict factorial training invariant failure:"
+    for line in text.splitlines():
+        if invariant not in line:
+            continue
+        reasons = [reason.strip() for reason in line.split(invariant, 1)[1].split(";")]
+        return bool(reasons) and all(
+            reason in SCIENTIFIC_INVARIANT_REASONS for reason in reasons
+        )
+    return False
 
 
 def truncate_attempt_csv(path: Path, resume_attempt: int) -> None:
