@@ -305,9 +305,15 @@ def main() -> int:
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--runtime-python", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--next-slot")
+    parser.add_argument("--next-seed", type=int)
     args = parser.parse_args()
 
-    slot, order = parse_slot(args.slot)
+    if (args.next_slot is None) != (args.next_seed is None):
+        raise ValueError("--next-slot and --next-seed must be supplied together")
+    jobs = [(args.slot, args.seed)]
+    if args.next_slot is not None:
+        jobs.append((args.next_slot, args.next_seed))
     source_root = args.source_root.resolve(strict=True)
     dataset = args.dataset.resolve(strict=True)
     runtime_python = args.runtime_python.resolve(strict=True)
@@ -321,26 +327,29 @@ def main() -> int:
     except BlockingIOError as exc:
         raise RuntimeError(f"GPU {args.gpu} already has an M1 lane") from exc
 
-    check_paired_random_streams(source_root, args.seed)
-    results = {}
-    for position, branch in enumerate(order, start=1):
-        result = run_branch(
-            slot=slot, seed=args.seed, branch=branch, gpu=args.gpu,
-            source_root=source_root, dataset=dataset,
-            runtime_python=runtime_python, output_root=output_root,
+    for slot_value, seed in jobs:
+        slot, order = parse_slot(slot_value)
+        check_paired_random_streams(source_root, seed)
+        results = {}
+        for position, branch in enumerate(order, start=1):
+            result = run_branch(
+                slot=slot, seed=seed, branch=branch, gpu=args.gpu,
+                source_root=source_root, dataset=dataset,
+                runtime_python=runtime_python, output_root=output_root,
+            )
+            result["order_position"] = position
+            write_json(output_root / slot / branch / "branch_status.json", result)
+            results[branch] = result
+        status = (
+            "PASS" if all(row["status"] == "PASS" for row in results.values())
+            else "COMPLETE_WITH_SCIENTIFIC_FAILURES"
         )
-        result["order_position"] = position
-        write_json(output_root / slot / branch / "branch_status.json", result)
-        results[branch] = result
-    status = (
-        "PASS" if all(row["status"] == "PASS" for row in results.values())
-        else "COMPLETE_WITH_SCIENTIFIC_FAILURES"
-    )
-    write_json(output_root / slot / "slot_status.json", {
-        "slot": slot, "seed": args.seed, "order": list(order), "host": socket.gethostname(),
-        "gpu": args.gpu, "status": status, "branches": results, "ended_utc": utc_now(),
-    })
-    print(f"M1_SLOT_{status} slot={slot} seed={args.seed}", flush=True)
+        write_json(output_root / slot / "slot_status.json", {
+            "slot": slot, "seed": seed, "order": list(order),
+            "host": socket.gethostname(), "gpu": args.gpu,
+            "status": status, "branches": results, "ended_utc": utc_now(),
+        })
+        print(f"M1_SLOT_{status} slot={slot} seed={seed}", flush=True)
     return 0
 
 
