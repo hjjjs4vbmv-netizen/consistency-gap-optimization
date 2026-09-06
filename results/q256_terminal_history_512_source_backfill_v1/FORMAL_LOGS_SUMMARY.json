@@ -1,0 +1,28 @@
+{
+  "no_new_training": true,
+  "smoke_status": "NOT_RUN_USER_WAIVED",
+  "source_valid_pairs": 29,
+  "formal_jobs": 58,
+  "formal_terminal_status_counts": {
+    "PASS": 58,
+    "FAILED": 0,
+    "NOT_RUN": 0
+  },
+  "technical_scheduler_resume": "Input readiness and non-atomic marker races; untouched lanes resumed without rerunning scientific jobs",
+  "scientific_jobs_repeated": 0,
+  "transport_cancellations": "Superseded full-state copying and redundant first-eight snapshot copying; retained logs",
+  "integrity_scope": "Full source inventory; per-input SHA before evaluation; evaluator-generated artifact hashes; no redundant bulk binary seal pass",
+  "large_generated_artifact_location": "/data/raw/ECT/q256_terminal_history_512_source_backfill_v1/raw_evaluation_artifacts",
+  "cost": {
+    "accounting": "Sum of elapsed seconds while each evaluation attempt held one exclusive GPU; includes generation and metric computation, excludes CPU inventory/export/transfer.",
+    "formal_ended_epoch": 1788627177.0491743,
+    "formal_gpu_hours": 2.7901842266631625,
+    "formal_gpu_seconds": 10044.663215987384,
+    "formal_started_epoch": 1788624479.5087066,
+    "formal_wall_seconds": 2697.540467739105,
+    "smoke_gpu_seconds": 0,
+    "total_a100_gpu_hours": 2.7901842266631625,
+    "protocol_freeze_to_formal_end_wall_seconds": 5653.049174308777,
+    "wall_time_scope": "Formal matrix includes input waiting; separate freeze-to-formal-end interval includes transfer and runtime preparation. GPUh is occupied evaluation time, not rental billing."
+  }
+}

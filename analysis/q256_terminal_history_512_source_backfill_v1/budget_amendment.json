@@ -1,0 +1,19 @@
+{
+  "amendment_id": "budget_transport_and_smoke_waiver_v1",
+  "changes": [
+    "Cancel smoke per explicit user instruction before any formal quality result",
+    "Export FP32 EMA snapshots on ECT002 from fully inventoried retained states; transfer only snapshots and receipts",
+    "Reuse completed source-state SHA verification; one destination snapshot SHA verification; omit repeated large-file hashing at seal"
+  ],
+  "created_epoch": 1788624253.59681,
+  "no_formal_result_observed": true,
+  "original_protocol_sha256": "87b51a7383c67772cdbc1f96ef1bda3766af233995c41f2b36ce57ba1abcad72",
+  "smoke_status": "NOT_RUN_USER_WAIVED",
+  "unchanged": [
+    "29 source pairs, 58 jobs",
+    "NFE1 FP32 FID50k/KID50k same generated features",
+    "50000 sample IDs 0..49999, metric seed 20260730",
+    "Frozen evaluator, detector, real features, original post-hoc analysis and PR101 primary verdict"
+  ],
+  "user_authorized": true
+}

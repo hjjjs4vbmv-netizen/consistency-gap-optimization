@@ -1,0 +1,209 @@
+{
+  "analysis": {
+    "Q": "ln(fid_B_512)-ln(fid_A_512)",
+    "role": "descriptive source-quality summaries only",
+    "source_summaries": [
+      "n",
+      "mean",
+      "median",
+      "sample_SD",
+      "two-sided 95% Student-t CI",
+      "Q>0 count",
+      "Q<0 count",
+      "Q=0 count"
+    ]
+  },
+  "assets": {
+    "assets/cache-template/downloads/a866f8d678872dcf6fcf60ddd09807ab_https___nvlabs-fi-cdn.nvidia.com_stylegan2-ada-pytorch_pretrained_metrics_inception-2015-12-05.pt": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4",
+    "assets/cache-template/gan-metrics/cifar10-32x32-inception-2015-12-05-130641aa1a5b5b34a4ced2e252b27c30.pkl": "314834241c02ff0ff60c2aa72bc603e06e3c6f6b26896af3abfc005810b501bd",
+    "assets/cache-template/gan-metrics/cifar10-32x32-inception-2015-12-05-827e0dc6500ddabe52e4e4bc3b6e982e.pkl": "ba44251acffc10807a2d74f78ab8e51cea174a375232e0170f650df53d2f73ac",
+    "assets/cifar10-32x32-eval.zip": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "assets/q256-evaluator-d6aba02.tar.gz": "7ef8a1b22af9beab106ad3adbac6474608f27e74c43629a95fcc71738dab0a6f"
+  },
+  "claim_boundary": {
+    "allowed": "Within the PR101 q256 cohort, one-step FID at 512 kimg does not always preserve the ordering of downstream continuation value (only if reversals observed).",
+    "prohibited": [
+      "general unreliability of FID",
+      "systematic misranking claim",
+      "preregistered PR101 primary reversal endpoint claim",
+      "source FID causes future quality",
+      "pooled unplanned PR95/97/101 confirmatory p-value"
+    ]
+  },
+  "cohort": {
+    "candidate_seeds": [
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79
+    ],
+    "formal_jobs": 58,
+    "inclusion": "Both retained A/B@512 states valid by source-only inventory; endpoint success never used for source inclusion",
+    "n_source_pairs": 29,
+    "source_inventory_csv_sha256": "c1caafce048cdb5189fa70ffb24ad5e482033ae734aff329661f0950370bb3a2",
+    "source_inventory_json_sha256": "8caeb9df31e3e4566bad7b5832bb515e4fae64e225bb361d6d70a8051b6afe65",
+    "source_valid_pairs": [
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79
+    ]
+  },
+  "dataset_binding": {
+    "dataset": "CIFAR-10 training 50000 ordered RGB images; PR101 prior semantic binding retained",
+    "eval_zip_sha256": "08c9ed1b2b1c523268dc0f05a0569dd654209aea46197e3f56ec149dd714f372",
+    "ordered_pixels_labels_sha256": "ccab7d422ddf0274e3d40693bfc00a87147c21bd1ebb65a7d2aaccdc142519b7",
+    "source_training_zip_sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3"
+  },
+  "evaluation": {
+    "budget_kimg": 512,
+    "dataset_use_labels": false,
+    "dataset_xflip": false,
+    "eval_batch": 512,
+    "fid": "FID50k",
+    "fp16": false,
+    "kid": "KID50k from the same generated features",
+    "metric_generator_batch": 128,
+    "metric_repeats": 1,
+    "metric_seed": 20260730,
+    "metrics_in_order": [
+      "kid50k_full",
+      "fid50k_full"
+    ],
+    "nfe": 1,
+    "precision": "FP32",
+    "retain_generated_artifacts": true,
+    "sample_ids": {
+      "first": 0,
+      "last": 49999
+    },
+    "samples_per_job": 50000,
+    "shared_generated_feature_sha_required": true,
+    "tf32": false,
+    "workers": 1
+  },
+  "evaluator": {
+    "archive_sha256": "7ef8a1b22af9beab106ad3adbac6474608f27e74c43629a95fcc71738dab0a6f",
+    "ct_eval_py_sha256": "8e17e4cd4e12097e12659a9c8849d42554f24efb25e5255261383d952d878c95",
+    "export_binding": "source file SHA -> source EMA canonical SHA -> exported EMA canonical SHA -> snapshot file SHA",
+    "export_semantics_reference": "scripts/export_q256_replay_milestone_snapshots.py; PR97 experiment.py export_prefix",
+    "pipeline_reference": "analysis/q256_terminal_history_n30_matpool_v1/firstwave_eval_pool.py",
+    "prior_pr101_commit": "890a85a8ef4d9effb48f653111a70b5f15b249de",
+    "source_commit": "d6aba02fb88e9db0993623895eb2228ed717d810"
+  },
+  "execution": {
+    "add_generation_blocks_after_results": false,
+    "all_jobs_terminal_status_before_analysis": [
+      "PASS",
+      "FAILED",
+      "NOT_RUN"
+    ],
+    "assignment": "sorted seed then arm, round-robin by queue index modulo 8",
+    "gpus": 8,
+    "immutable_attempt_directories": true,
+    "max_generation_jobs_per_gpu": 1,
+    "metric_blinding": "Do not decode formal scalar rankings until all jobs terminal and integrity sealed",
+    "scientific_nonfinite": "retain evidence; no scientific retry or replacement",
+    "seed_replacement": false,
+    "technical_retries": "same checkpoint and same config only, new attempt directory; preserve original failure"
+  },
+  "experiment_id": "q256_terminal_history_512_source_backfill_v1",
+  "frozen_at_utc": "2026-09-05T15:18:44Z",
+  "joint_analysis": {
+    "H_A": "ln(fid_BA_1024)-ln(fid_AA_1024)",
+    "correlation_role": "descriptive; no confirmatory p-value",
+    "correlations": [
+      "Pearson",
+      "Spearman"
+    ],
+    "delayed_reversal": "Q>0 and H_A<0",
+    "endpoint_file": "analysis/q256_terminal_history_n30_matpool_v1/final_results/paired_results.csv",
+    "endpoint_file_sha256": "272845e3562787d14ff87ba6f3bb2c5a0c359e4926aa3e990eef81cab9caa504",
+    "join": "inner join on seed of complete finite source pairs and frozen complete finite AA/BA endpoints; compute actual n",
+    "plot": "Q on x, H_A on y, zero lines and seed labels; no regression line",
+    "quadrants": {
+      "bad_to_bad": "Q>0,H_A>0",
+      "good_to_good": "Q<0,H_A<0",
+      "reversal": "Q>0,H_A<0",
+      "reverse_loss": "Q<0,H_A>0"
+    },
+    "ties": "exact zero retained and reported separately; no epsilon relabeling"
+  },
+  "modifies_pr101_primary_verdict": false,
+  "no_new_training": true,
+  "return_archive_directory": "/data/raw/ECT/q256_terminal_history_512_source_backfill_v1",
+  "return_archive_parent": "/data/raw/ECT",
+  "runtime": {
+    "preferred_archive_sha256": "c2f2758219964e2b7b79c2f27d01c3edbb2f129bf111d02fab9c1a8b8bc1360a",
+    "provisioning": "Reuse historical runtime if readable; otherwise reconstruct exact target versions and document parity before formal evaluation",
+    "target": {
+      "numpy": "2.1.2",
+      "python": "3.11.13",
+      "scipy": "1.16.1",
+      "torch": "2.6.0+cu124",
+      "torch_cuda": "12.4"
+    }
+  },
+  "schema": "q256.pr101.source-backfill-protocol/v1",
+  "smoke": {
+    "purpose": "snapshot binding, generation, shared FID/KID features, independent output/receipt paths; no formal source ranking inspected",
+    "sample_ids": [
+      0,
+      63
+    ],
+    "source_selection": "lowest included seed, arm A"
+  },
+  "source_archive_root": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1",
+  "study_role": "post-hoc source-quality backfill and descriptive structural audit"
+}

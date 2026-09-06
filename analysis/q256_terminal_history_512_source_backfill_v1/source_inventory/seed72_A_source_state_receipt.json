@@ -1,0 +1,33 @@
+{
+  "arm": "A",
+  "protocol_sha256": "317d3ef93102050276c1366d9633e322d60fbc9000cd56c8fc8a24c1d4eef544",
+  "schema": "ect.q256.terminal-history-prefix-source/v1",
+  "seed": 72,
+  "source_kimg": 512,
+  "status": "PASS",
+  "telemetry_audit": {
+    "first_attempt": 1,
+    "last_attempt": 4000,
+    "path": "/root/q256-terminal-history-n30-v1/training/seed72/prefix_A/factorial_training_telemetry_v1.csv",
+    "rows": 4000,
+    "semantic_nonfinite": 0,
+    "sha256": "523c4982ba3e09ffae3bcc7e335c527cf7600b0d644cd00d4fb385cee7edcdc7"
+  },
+  "training_state": {
+    "bytes": 895720440,
+    "internal_state_sha256": {
+      "ema": "a86ffa22a71efdbde3ec2d60453c2f301f48be4edd30b66454d08f04714cc1bc",
+      "gradscaler": "3a97a0032efb70f531ab3bcd365c99ac04083706e6b6021cb850b94573afa944",
+      "net": "db7bec1a5711690cac04b6738062b09c5e5b24e0b9b289a862fb75b5c75c5b54",
+      "optimizer": "141962971fb17431e902275e5b83e87d6f17475216fe42f6bc1f0464d57f3ab2",
+      "rank_rng": [
+        "c8ace4925f79d9a2b5876976a4b75d224a553cf0b3e1e5dfc13f0558a0507036"
+      ],
+      "rank_sampler": [
+        "28d0f0c628aab88f76171069425f130ba50b2353520ad2ff60cd9d57931b5a93"
+      ]
+    },
+    "path": "/root/q256-terminal-history-n30-v1/training/seed72/prefix_A/training-state-kimg000512.pt",
+    "sha256": "a2aa79c19dc44b2bbd2864971e4c42f5a1185432720bbce4343df85858eed778"
+  }
+}
