@@ -1,0 +1,12 @@
+{
+  "accounting": "Sum of elapsed seconds while each evaluation attempt held one exclusive GPU; includes generation and metric computation, excludes CPU inventory/export/transfer.",
+  "formal_ended_epoch": 1788627177.0491743,
+  "formal_gpu_hours": 2.7901842266631625,
+  "formal_gpu_seconds": 10044.663215987384,
+  "formal_started_epoch": 1788624479.5087066,
+  "formal_wall_seconds": 2697.540467739105,
+  "smoke_gpu_seconds": 0,
+  "total_a100_gpu_hours": 2.7901842266631625,
+  "protocol_freeze_to_formal_end_wall_seconds": 5653.049174308777,
+  "wall_time_scope": "Formal matrix includes input waiting; separate freeze-to-formal-end interval includes transfer and runtime preparation. GPUh is occupied evaluation time, not rental billing."
+}

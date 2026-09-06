@@ -1,0 +1,2517 @@
+{
+  "audit_archive_sha256": "940ed69968dd229ecb020f666d7e46c3e38315d159e8133f27ea29688778a513",
+  "candidate_seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "elapsed_seconds": 380.54301476478577,
+  "historical_protocol_sha256": "317d3ef93102050276c1366d9633e322d60fbc9000cd56c8fc8a24c1d4eef544",
+  "n_source_pairs": 29,
+  "no_new_training": true,
+  "note": "Receipts read from the SHA-verified historical audit tar because extracted receipt permissions deny ECT002 direct reads. No source files modified.",
+  "paired_source_valid_seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "rows": [
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed50/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 50,
+      "checkpoint_sha256": "2746d7c53ec2e0e663bda09595c51b98d8d914213b0d12b2bb7cf4a5ce6b638d",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "d6a75e8e0c241abdd14e850cabaf6a35e5d22c389ed121778c87628255fd5cf1",
+        "gradscaler": "44699e531882f3db5395245d0cd9bd2041306f479261e3afac4dff1f2217ad66",
+        "net": "86657ec10fc30f1ea1ee1b8ccbffd5efa35662dc8dc27c817642a2f39ad424ab",
+        "optimizer": "0ef15b0b5756f97b4feef3ec26d04ea13f003c6f00f85b88cb6fcc1a63300d0d",
+        "rank_rng": [
+          "48b7f25a6e49aad6e3614ece2637be06aea05ed12cce71a67afdcd175eac13cc"
+        ],
+        "rank_sampler": [
+          "197603178a9c47fe49ba5b78e3f04859b6ac13673926cce6854b3d0dd0550f48"
+        ]
+      },
+      "receipt_archive_member": "training/seed50/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "1f5d100c7a2da15378994945748b9db59acaa8689ee31a9b451816b4bf387fc6",
+      "seed": 50,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "8f21e550d01635fe45a3828ce567b364cd992275fe15076b43f26baf0dc698b5",
+      "training_options_sha256": "7572fcf0b41488ac1a7466591e9c54fc2cdd0603775213d71913d32e38fdde28",
+      "trajectory_config_sha256": "453a2f628468b2788b9e82fb22f9dd46cd2c2607b4921234e95b6ad46d509c00"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed50/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 50,
+      "checkpoint_sha256": "b934dc52a754e0c174ed37b6279c8e29635b40c92aa40fa53b5e1d21f1a05bbe",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "610a9f7798ca2d96369c1db7724c58c945247a0108bd1869bc386563212e90e8",
+        "gradscaler": "f9cca23da3ca560ddd8eccf89f5b1f8c3f33cc49c3dcd138884ceccf4a673792",
+        "net": "43b3d7bc290acaa54998668a327f109ae920c43dd640d50c693a66da72a11690",
+        "optimizer": "b9dac8c3246e4c23d03d35449c5fe3ed9caf075c8b548412b84550089adc4658",
+        "rank_rng": [
+          "48b7f25a6e49aad6e3614ece2637be06aea05ed12cce71a67afdcd175eac13cc"
+        ],
+        "rank_sampler": [
+          "197603178a9c47fe49ba5b78e3f04859b6ac13673926cce6854b3d0dd0550f48"
+        ]
+      },
+      "receipt_archive_member": "training/seed50/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "3da4c8164c7e78c5326f84f3f05d9b911bf3fa7f90a8f3878403ddd71457504e",
+      "seed": 50,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "c2cc40498562714f592863f0573880b4a5f5f0e72d3997368d5833c7622f5674",
+      "training_options_sha256": "958f685994e21d2a1f4c5099fd117b8953bd721a8c644ad629bc70592681c33a",
+      "trajectory_config_sha256": "e946ef99eac334a0e4ee2f7414484ad498737acc1b547be7ef39f450b76f614a"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed51/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 51,
+      "checkpoint_sha256": "231c6c2c7ffec05110abfd217f72b3076bbeeaa15b2b4c1885d2d8f860a9892b",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "06ade0abb83b57c08623e12b9043b4f565dd57de23593b69645a9cd84a12f1cf",
+        "gradscaler": "e6c54ade4ed5a00f4d0ae7af9e7c42d90c11172086a0e7deaeb58faf031b6695",
+        "net": "ec6d1955ab9e3266dbb769edd3dd36f1a853e0eb473df7b851daeba4db6f233a",
+        "optimizer": "b3621eda04358c109c0e2255eb9be860a9e7ab75ac325d521a7c681ba8ba7fcf",
+        "rank_rng": [
+          "8aa3e1c00c5ed4d9839083369a700bc1ee7c58f8be5c1ed0647cfb4cb046a43f"
+        ],
+        "rank_sampler": [
+          "2474dc63cc65c9b66e6f50a9ee0a36add28fe906234a985f84cf34c3fe8772d0"
+        ]
+      },
+      "receipt_archive_member": "training/seed51/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "d1c4f489c810074877120dcce752b218e5bc633ab684c237e49101f56cfb13db",
+      "seed": 51,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "177abc89ee29dbb3243b676647cd30b2b005f0cb7a607d790897e0b219f01397",
+      "training_options_sha256": "a68bb3860215040241f3384aa2d74dbc99b0cb82e5c5808e169479dd120eba51",
+      "trajectory_config_sha256": "54be2a84ba11bdbe89c27ea6f452c19638b54b08853f30f202811dbd1d74543c"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed51/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 51,
+      "checkpoint_sha256": "c0ca1422238639a3782a6ab73de9d5a171565f19d42b81cea6041b3254e9b3b6",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "0ebe999c0c277756f0d30f01f79ae99bb8cc7823daca961ab1a4c8f04db7208c",
+        "gradscaler": "41b967db471b176baec132ec8ca0d8a3a45ebcb1a30df360a43497c6755b9ec2",
+        "net": "da8e8bf079a66a576c1e9229e07a43f57785c99d07bffbb61bbba92bdf143545",
+        "optimizer": "640ec6d85aadd3a6d741be1195e6967d7b07c575ab0c49bdd1dd25c00484cd2c",
+        "rank_rng": [
+          "8aa3e1c00c5ed4d9839083369a700bc1ee7c58f8be5c1ed0647cfb4cb046a43f"
+        ],
+        "rank_sampler": [
+          "2474dc63cc65c9b66e6f50a9ee0a36add28fe906234a985f84cf34c3fe8772d0"
+        ]
+      },
+      "receipt_archive_member": "training/seed51/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "27e45b52aa75c167b5a9c39389d0e8edd4f138cf4066e26d6e9a14d8155f676a",
+      "seed": 51,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "aba1f821cd0a4fc6fbf55544349f08ad99d6b2b0b739e9bcf916e1d1fe813a02",
+      "training_options_sha256": "d201745dd6f07b7be1dfb409ba2a350bd68b1a4fae6921255851293194455635",
+      "trajectory_config_sha256": "e9d2c17dc52358e27d4b1f943139fe4d58c3cec52719dd7e7a48b28fd5e7283b"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed52/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 52,
+      "checkpoint_sha256": "fb88ffeb12597c29ccaf08765ab10d185f5ee542b91414e82762746850401a81",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "43f12194f7490d241c7ca60b3a85158e3f945f0365509922c195f3fa11f39b4d",
+        "gradscaler": "c095fb05a0c556b90d839c99ee594360477cf9ac09b59c5a8fe7c208f26fa201",
+        "net": "6304b0d62424b4c2d4421527e233898696de6c6118c840bc953d9bfd3852287e",
+        "optimizer": "11ad9f685534a49e50faae83607665ebb8f05e70759e6281b759e89797b77f91",
+        "rank_rng": [
+          "4a847a38a0a665707104d89a731b843d0eaf83287fecb1c91e706ad721afb725"
+        ],
+        "rank_sampler": [
+          "a5f8a056837faa9570ab442259443ba7d373a3b0b369f1b19bdafd098914e22f"
+        ]
+      },
+      "receipt_archive_member": "training/seed52/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "09f4a18c5c7a84ed7d97ff139940057658ee9eb50be1fd10800b4c625508b57f",
+      "seed": 52,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "54b5521b611d6b03be78cc8faa86f5524ab1f6df915e743c1ae719c5359f7260",
+      "training_options_sha256": "8eb62d1bcd21aefbf0cd3e601d5fb21b4df5aa7cf4653576d131f2868b7d5e45",
+      "trajectory_config_sha256": "93426fdcdf609158f31474a3f4448b21d3f3823440695be7ef01ab4e74817159"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed52/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 52,
+      "checkpoint_sha256": "d515194010cd387ad99a0739c3ef102df81f396f35a679ca9e0b17fc3c46eab4",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "6ca1507835031ca394ba8bcfeebcf99d15b53992a837bc463d6aa55e5284eee0",
+        "gradscaler": "acedada2e2d3fee001fd2902edc1d9d67517f554e65d41f57f6b05dacf962f53",
+        "net": "585b446fddf9941a118b673f12742bba191e14320109726e19e54f35e489165a",
+        "optimizer": "64b1a67bc8b0660e9d0cb1390e2a02572756547638997ee7dfd4fb28b31dfc0c",
+        "rank_rng": [
+          "4a847a38a0a665707104d89a731b843d0eaf83287fecb1c91e706ad721afb725"
+        ],
+        "rank_sampler": [
+          "a5f8a056837faa9570ab442259443ba7d373a3b0b369f1b19bdafd098914e22f"
+        ]
+      },
+      "receipt_archive_member": "training/seed52/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "5cf3a60677ce7cca64ecd74f762ab7b5aced28c29506bda32074bf160e376413",
+      "seed": 52,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "3055a35ccade4730ec2348c9c1d18d3a5d4c883cfab12ee60fe980476e3ffdb3",
+      "training_options_sha256": "63c80cb38792ee96164cc3642d33179ed7a743c4d861d09022e6e56d9bbc4355",
+      "trajectory_config_sha256": "4719fa03bca7aeddea8608e7df525e75ea8927999dc62820bfc5019113a868c6"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed53/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 53,
+      "checkpoint_sha256": "b9d70c0734cf38ff3fba4a8bf1b64f8d3b3264ef6b6111e29f7679a1be1c80f0",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "18f21be91e9f166320c65ed4430a52e16664006d405eebec1f815eeddd27df77",
+        "gradscaler": "c769bb1322f48d6d8f7272a3bacdf434974706c597036bad0d5a304b0f82cf91",
+        "net": "9ca0dc7d16f6c66fa67e6ef425301b6931b0ba79cb5212ee69c6a6e621812eef",
+        "optimizer": "ea184d9b82484ea631d1b5f7fa4ee73f0948c50486a82ad07fb88bf1313fa1ec",
+        "rank_rng": [
+          "b9c79b6e57c22a0300fb00aea0beb702913f5b33a3ed20c2f3704b0b74223348"
+        ],
+        "rank_sampler": [
+          "560038e39b64bd65336536435b587a44af75d36be88e248931493e4dec18bcc8"
+        ]
+      },
+      "receipt_archive_member": "training/seed53/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "5ebf1eef3f6baf9bf4af1a118c5b3ef91ee5a73a60ab399f0cad519dcafb610f",
+      "seed": 53,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "a2e5b86b912c282bc6aa9dcbd28ee0412eadf5d737dd542fddd0ac6400c8027a",
+      "training_options_sha256": "36e8e1c93fb45e1b660a9683feac46207d370b34adb278079e1c317d0c40c7d0",
+      "trajectory_config_sha256": "d50138fa2e4fbd45910456973c47fdb331d2648e54ca1d3b2704d360c1cafc00"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed53/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 53,
+      "checkpoint_sha256": "69478366d8cb233e45abb01f79b9da098f919ed49c7f54554f8d7e2f780a2fb9",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "3f155758e185536c48444fd2ae57932fe6a62ae04a8df45f620c8a9af93f7e91",
+        "gradscaler": "c88307506d3553976f163379681b51a6f12b339a0252c45a6087fe82ba3cdef1",
+        "net": "36b72397749d94889b9707e7cf8d6eeaa687a5179b729f643fcbdead66795f87",
+        "optimizer": "5f86a69a77d99d0ed663f9807466f8902ff3249e7dbef58bbdfd00b0246a67e6",
+        "rank_rng": [
+          "b9c79b6e57c22a0300fb00aea0beb702913f5b33a3ed20c2f3704b0b74223348"
+        ],
+        "rank_sampler": [
+          "560038e39b64bd65336536435b587a44af75d36be88e248931493e4dec18bcc8"
+        ]
+      },
+      "receipt_archive_member": "training/seed53/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "c93d9d7474451f9eb1f3b5081edb684baa591bedac68c17b9ed8a150f7ba5964",
+      "seed": 53,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "a21594a57170a095af8d498b713b254d8e54d79e6b6080d6c23b108243fea8c2",
+      "training_options_sha256": "4a3728d804d7eb39ea3d59df65c9986c322b6f0bb03868532f85df70a3d0252f",
+      "trajectory_config_sha256": "ba23958c5d2934a118bb527e0c3ff84926b53883e24117a2c5bd7ae0beb0a050"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed54/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 54,
+      "checkpoint_sha256": "6cf5f488211e0254e6dd33995369080ebcfd3b8180f2cccacb436b79ad97356c",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "877050d9dfc9976b4239cd553e2b2e084a57ef82cee0d9b20298ea816cc2000e",
+        "gradscaler": "69d2e9a796b5d942ed6d721e4b53a90a8de0acc1d0b0186fdadb83a5e5952741",
+        "net": "e13af14ca7cb5d62cd91074096e6d296d18ef853857fbbf2e8168344514c9122",
+        "optimizer": "8b45a57dc7b31a4bf4edadbb2eecc7e379d4e727c8d582da6e899f98d372e302",
+        "rank_rng": [
+          "74d5d66f9089b50f6e0d14c8cac48723544d0be6afa800c6a0a7a8328a29cf75"
+        ],
+        "rank_sampler": [
+          "0e295585ab150d5253bc373e35ec5be358ecf5beede0c53c60f9a93701a8676a"
+        ]
+      },
+      "receipt_archive_member": "training/seed54/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "b9925110bbc2382f51588d39d5e181476fe50d1b4560e4e94d98c4beb304b419",
+      "seed": 54,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "554c358b0ee7d2665f7421c3341994cef45b0d556d8a966dd844a05591c74b2e",
+      "training_options_sha256": "b456e4fbcf71bfcee7a185ead32b965af6f33eaa61d7e49b6c19e8ce675687bb",
+      "trajectory_config_sha256": "d9cdcfb7881e34069c6e52eee3028b8b43f1db7ddf8e35143c3ff9229a4f8db8"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed54/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 54,
+      "checkpoint_sha256": "3aad8a7c6fecf93fdb52670211b0c13039a538ddc3f2efb84f9105cf75e73b6a",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "ecd0660cc2c1c912b9c44f220433c32887bf99dccc257af98fd93d788c911bd4",
+        "gradscaler": "55894816e66487e4eb7c4f996792fcca41adb3915150735cbfb999fb3a4bcb46",
+        "net": "a4588dadac0776f5977e31ee1de1f3831a07832e909312c9105b793e12de1b6f",
+        "optimizer": "cb0fb95e2c36f5427e68dd9a298e2856c21abc072ff7f877273fea9cbbb9b2f7",
+        "rank_rng": [
+          "74d5d66f9089b50f6e0d14c8cac48723544d0be6afa800c6a0a7a8328a29cf75"
+        ],
+        "rank_sampler": [
+          "0e295585ab150d5253bc373e35ec5be358ecf5beede0c53c60f9a93701a8676a"
+        ]
+      },
+      "receipt_archive_member": "training/seed54/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "79b1c3a4cc3c89b707d26e2f332a9927763a5fb3bf9168bb4ec8d7a0e6c450f7",
+      "seed": 54,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "2063e9342db6bb816efb2779ad9f3ee30cb71fde942af30488029873278909e5",
+      "training_options_sha256": "112304a676841dd3a836cb05062372ede749e7ce85c389738a11e1e993ce68d9",
+      "trajectory_config_sha256": "0aab1a1536912256f9593e186907c8a024a09df8964fc6f596c3070c27a5b337"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed55/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 55,
+      "checkpoint_sha256": "cfc937846f1b06919181653aa3ea8819bbfc4ffb0e39c0d84943c29b60653b90",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "acd988fe346616b0083d7685d5fded57c122fa0d1ceafc5c775a4caf5d3fddfb",
+        "gradscaler": "e682623955bee4c0bed2990c307b65cc4729435ef2a3d1a1ad70f06e445e0f28",
+        "net": "28fb9d1cd32ceae9861dfee70360bf07e9954146aafffed0781ca83b1dff8f44",
+        "optimizer": "36a54b41d16b9e9b9a722cb35b365b72111074bdf92bff79a2d37315ddf542a2",
+        "rank_rng": [
+          "0e1d2bec3033c4bd87e23599ed46493db6a67f653011e04c355a3194aa48f510"
+        ],
+        "rank_sampler": [
+          "d9b42837d8e9f6f5e89b1d9236181e8302f818a68a6ca9f0eaeac4526be1ebbe"
+        ]
+      },
+      "receipt_archive_member": "training/seed55/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "41dcd8c000e979e841eb033e5214f5ac1b18c287c3de3d05f6e9d4874d1c310b",
+      "seed": 55,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "8d7e37470daf36b622c4b041d60ca6ce24ac9fb9f1088851df2cfffe945a9999",
+      "training_options_sha256": "4424f3a27a9da992b697b7c53d1f0e37eaf09b482d08e93cbb004a70dc82d75b",
+      "trajectory_config_sha256": "1f8c4965887f994ebc29a8db14586e6ee49f629d1aa269ae6dd21b08006a4368"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed55/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 55,
+      "checkpoint_sha256": "50faaed69a8c946a700e3a8862c7c433bfa1487a6c4b04c51d03053fd8827813",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "0c10b23f18fc0b2922d91b59bba25a3b57a94ed373c312aba8dd98e68a3d24e7",
+        "gradscaler": "ed1033638aa3f56522c3330203567d6b2ab09690918527b85753404dbddfb032",
+        "net": "0af7bb7933644398acf629c3e220bebf70d43cd9f65c4fb0f32f2e07e1cde13d",
+        "optimizer": "5ee9f609e64d04d2787bb7cc3c15b8e38cb39b33ef4b9130026935adc267d343",
+        "rank_rng": [
+          "0e1d2bec3033c4bd87e23599ed46493db6a67f653011e04c355a3194aa48f510"
+        ],
+        "rank_sampler": [
+          "d9b42837d8e9f6f5e89b1d9236181e8302f818a68a6ca9f0eaeac4526be1ebbe"
+        ]
+      },
+      "receipt_archive_member": "training/seed55/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "c3dfd6fb241e21af9ffe1d5e6cb94fcb22d33e8bd9eb292d2c7fe4aa9d292231",
+      "seed": 55,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "b9dd3b00c720bd2ec714f214f7ecf1fed77ed2bce3092f894b7d6e122fe3c77b",
+      "training_options_sha256": "8ac3527e8dff41cc28f752e58281de6f56ce3dd0be5bba83f085d4a54e5cd320",
+      "trajectory_config_sha256": "695d56a6eef1c334cf7f6f58c7b2538abe37542ba2e0daf3fb742baca0639ac7"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed56/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 56,
+      "checkpoint_sha256": "8748ea7387d4d4d8eebc8547b123c6af3a01d2f02ea170aafb35715691f044f0",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "9e96970a53d21506df45052db6c45fe6ff5e7a288aac549a7706cb57c8926003",
+        "gradscaler": "e549637f122bc4ccd54f3a7b54cbc4c1b7f5f40017e6ec483cd97708f15f741e",
+        "net": "e938858f8b460fd9ebc20e3d116839e21428f1aaa1b726d2b65b00eae62cac3a",
+        "optimizer": "d29c1a6e66ef40daa7812c73c1577288d349ecfcc62c464a82906a9088b0c71f",
+        "rank_rng": [
+          "b68e44345d3505997ff8df384f2a076ac42766c35f7a6fe97071cb5d8af079ae"
+        ],
+        "rank_sampler": [
+          "af4d2cd2bc3bbf1c6b426329aef951dfec45f594d9a07cbadd6ea355f269aafd"
+        ]
+      },
+      "receipt_archive_member": "training/seed56/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "d363cdc36a10ed29885d05b65cd82090363fa9bb40c7d38001a74602f8cd18ce",
+      "seed": 56,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "8da319a908ac2ec066b0f5b354cc94e16f172729edd27e2bf69fb68d23c95d49",
+      "training_options_sha256": "6b0ff02203c6ad6becf5ca3f1ba0b658a25cf987c1e5bb21b1b41a80ac931834",
+      "trajectory_config_sha256": "e9c7378195b183abcb1fe081f28e668377e6fc9dfbb5428ecbed7e40e49fe66c"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed56/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 56,
+      "checkpoint_sha256": "8a321745b6903b48106c4210ebd9a7a10d0f1ab91a84bd4f5c6c6aa9ae492e1f",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "404e4c84d7ecd8da7a37b5dd00446b4040890a19617cefe0277dcf261c97b902",
+        "gradscaler": "cf11a1c284afaa673cd2b54d218fe891facd533af81cf478c861f2f69ff7d683",
+        "net": "cf47413685ea537e6a0fb4eb2e018e679bc36912731e159e075180a7843ecadb",
+        "optimizer": "ce19db3a8f0dcdbd5e801b5fcfbb2f445b6a32084d96bba8933258139eaa6035",
+        "rank_rng": [
+          "b68e44345d3505997ff8df384f2a076ac42766c35f7a6fe97071cb5d8af079ae"
+        ],
+        "rank_sampler": [
+          "af4d2cd2bc3bbf1c6b426329aef951dfec45f594d9a07cbadd6ea355f269aafd"
+        ]
+      },
+      "receipt_archive_member": "training/seed56/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "7782e887012c2cc72e58b215707e2231cd4438501cb1510d87a042fa5d0c3c8e",
+      "seed": 56,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "daf25b96390ae31ad322c5e24a4d28f08435502c742b7c487b4eb75798c2d0e6",
+      "training_options_sha256": "55aebcb55514281b638280060c47be8ea9d999dfef30a15b24326412bc390359",
+      "trajectory_config_sha256": "98fdee3eceee2cae87f21647ebd5cfc58a310a8fe2ac188f97a30cfaf30063d4"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed57/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 57,
+      "checkpoint_sha256": "0c6a4325f4859506f4f0eee038388458aed0692d9389c6b68f6261beaf33b7ba",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "ed29df8ae0717e85f1431bc6cbd9dd6f9a7f02df57bf4823a49392a2ba06237e",
+        "gradscaler": "cf5c33c6c08ee87e3d8d01ef3e6650d9049f1afb68a33fb772021064eeb3f174",
+        "net": "30f8947ba8d6d8f3d2544e3bbd5e78270e9d02aa78e200acc4d54b065f8ec4cd",
+        "optimizer": "ba495ff2bd0786c5eb2da3e58721956793f1a8fafc3c4bb4b0ec9be88666a0d2",
+        "rank_rng": [
+          "903490e41d7e36b63e5213d191bc8d817aea31ecec9dde669de44d656774e65d"
+        ],
+        "rank_sampler": [
+          "43906148dd234c8c8eb90ecfb138ee3c00ff447eb200fa8cd25fa7a9c467de67"
+        ]
+      },
+      "receipt_archive_member": "training/seed57/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "abee2f08ca8599fe73fd893b830232dd9f50c9293d7810a75e529857f6a43ed9",
+      "seed": 57,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "8fc3e2d7f00485791fcff4a19aed6c3a0a731be2a3900a0fb2fef72a32eccfe1",
+      "training_options_sha256": "8e9921026c4ec72b6911d7eb9e6ca8f78012c68fe2c1022f6089d0e03fa428fd",
+      "trajectory_config_sha256": "767b7e5045efa7cf6a3e81cbd4fe48c9d5ff9f230a7e91b241f997f1acf11429"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed57/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 57,
+      "checkpoint_sha256": "3046720a86d60848de7808ffd8084fba2fa5f536792cbbac6c3ea11a04657a61",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "0761cf03c3c508d62bbe092f0712ef15173f734b45eb778bd188bf20626a1010",
+        "gradscaler": "e2c01090266be096226cf7057371de746f50a463033761c12924f6961d07207a",
+        "net": "571e7c8f09ec6a8c53787b2f3aea05a60c2ef6d9ec3fee023cc012211526d941",
+        "optimizer": "c4acd9139091868cd7e12f2230dca19855d50daf8ab3282fbe7bd3fc20a5de04",
+        "rank_rng": [
+          "903490e41d7e36b63e5213d191bc8d817aea31ecec9dde669de44d656774e65d"
+        ],
+        "rank_sampler": [
+          "43906148dd234c8c8eb90ecfb138ee3c00ff447eb200fa8cd25fa7a9c467de67"
+        ]
+      },
+      "receipt_archive_member": "training/seed57/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "65c75618681fad16daa0e741253f6d2213aca4aa0d582445294993b18db4b80e",
+      "seed": 57,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "eb3c2bdeeb55bc0f26e00dea18b27d1b4bd5c5b90e0c32ac7a59c41b9d9a6f67",
+      "training_options_sha256": "e2178034ee4fd96098587c0075403fad70f42c25156b61cc66f6c065d4914026",
+      "trajectory_config_sha256": "a761d567850b74a145f6deda42d4378f6e585231c65a3142de9843ee311912cd"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed58/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 58,
+      "checkpoint_sha256": "f9e6636f853dfbc76cadcb050395ff249543df136a94ecf5c6e8c1fc8d588394",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "c6c6a8fa1dd5f49291efdc7c390953f5c9e7847e047417b735478e50d1e3379c",
+        "gradscaler": "c647d1e8cdbb225f86e1168e99c4140a1c49ef981fb831223ac50f99fef2b63e",
+        "net": "567f5e3ffb5ee9c7f9c55c1f9b30855724bed597bfec453e8c8757db62925b6a",
+        "optimizer": "72ea633b79ab533cc3e49b13b33b806307a96b1b1af79094812e97aad259e489",
+        "rank_rng": [
+          "14959fcc0ec851a6880179475de2d71b84d15d8f84d4e256309f2365d21cdd74"
+        ],
+        "rank_sampler": [
+          "223fa5248d7b2c6fb78c167a0cf1bf10549806df7cad0d48573af5c47fe4ffe9"
+        ]
+      },
+      "receipt_archive_member": "training/seed58/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "1f42a5278019128ee9bd7aa42bb014ed6d5ead2c2e92e3a487ac2c163d1a5b9a",
+      "seed": 58,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "f8576cd2f96528900be3322de0abac9728f65bf51678603b6670516f602db2e8",
+      "training_options_sha256": "c16235ae4bdd991ed4d9c37fffdfe2e92f7686beace494dfd53ff660f449c1ac",
+      "trajectory_config_sha256": "4249404bbeb52a68d2fbb49be673f02abebe098e5ba0e34c36e5d324adcaf96f"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed58/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 58,
+      "checkpoint_sha256": "99a1d78a6ac3146b7543b873cee048dffc4a1cbf80642d6e27bd031034996b1b",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "f67520f82a696aaf7826f50a16f79c635ba7e6cda232da2faf506a1681925109",
+        "gradscaler": "fea60d8f5daa02347fee7b4afd949e8360c0361e8711b1f3a0a8d73d3ce0fda8",
+        "net": "51290ec766db697710f6509fec7087e5f92d9b006d43003155a75f2342b87ab0",
+        "optimizer": "6a3ef55e471d7f068082dfbd54ee4de0173f7246a7ffb1213b21d1b4a530fcca",
+        "rank_rng": [
+          "14959fcc0ec851a6880179475de2d71b84d15d8f84d4e256309f2365d21cdd74"
+        ],
+        "rank_sampler": [
+          "223fa5248d7b2c6fb78c167a0cf1bf10549806df7cad0d48573af5c47fe4ffe9"
+        ]
+      },
+      "receipt_archive_member": "training/seed58/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "74e436c5ccd228238c6395de8a77dd6f243630d9a6a3dcb640ddcdb186a813d2",
+      "seed": 58,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "0475c910bbfb1ec08ef2703a820f7a51dfe1cf05097ddb1fa949d2c0e82cdee0",
+      "training_options_sha256": "11f0f4838bc6e869f115446d4e2cf169ac02c7c3521e334bae4fdca41a6a1dda",
+      "trajectory_config_sha256": "456d34f3298bae8e82cf5480ca0efca50e3ca7de1acc36a8a136579a5db1d223"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed59/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 59,
+      "checkpoint_sha256": "61e53e7a378cd0839d05740f685a85ba9a03cc06fadaf07def24865b5e360d5c",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "aaab31f5284ab035df7fda5ffe79f084cc7c3a9a34f392c4d601750501152b47",
+        "gradscaler": "e1d9a10b22187354ec721c77b10633f0cc521fb54be72721b4c6972c345b97e2",
+        "net": "3be5062abd6d1282114f26ee2049a8b929df8ffedab159a4da651bb71e116d7c",
+        "optimizer": "7d7d774e39a0bce4f455c2c7eeb8f720b9ee60f0f986d046d95980891b712fdf",
+        "rank_rng": [
+          "55568196e55b758bd4622a9a78207cd21f35c6d90e4fcfacd4324f067550eecc"
+        ],
+        "rank_sampler": [
+          "b1c3aa90637c5ad0d31e6e10e1891acc7342cfedf6083a38b9080082d8edd7b8"
+        ]
+      },
+      "receipt_archive_member": "training/seed59/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "a731d6a8c73e28e04eac5a6f48d210294a0cf166036f4f0c7444f80767c70c4e",
+      "seed": 59,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "6583e94560d4a7a14520c1adb38f2ea619da6d95c5b6765150be60ec411882e1",
+      "training_options_sha256": "fa1044966a7b2029b045c4cb79e9da18f729b11ce67b16b95b30d33eb823a38f",
+      "trajectory_config_sha256": "424dd3ed5ead3812bab271c5eff48098677d6264f456fd402006031262b5811a"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed59/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 59,
+      "checkpoint_sha256": "a002fb216d96cd6efe3e5e7e517c3321d32db8b58cacf727014a30d4cdcd81fa",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "15ec3eaf45c4370cf0fc3a0752f7fb1829d65ba91c7ad060c89eb5ca8c57417c",
+        "gradscaler": "d680563b76d2ababb320ae67368522f60da821fe88d49f35fba67c257c56336a",
+        "net": "23ffd76ccb857b1752c787afca0b6526524c7685b48bdcd86ee8392de9ef971e",
+        "optimizer": "82763240ee747fa67d6010d53534ec167dc9466bd28d90b832dd4f1265cdcfa2",
+        "rank_rng": [
+          "55568196e55b758bd4622a9a78207cd21f35c6d90e4fcfacd4324f067550eecc"
+        ],
+        "rank_sampler": [
+          "b1c3aa90637c5ad0d31e6e10e1891acc7342cfedf6083a38b9080082d8edd7b8"
+        ]
+      },
+      "receipt_archive_member": "training/seed59/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "d5508d5062b4a003c41d9169e8539bcd4ef51b87c012d08f149e8870411c1ae0",
+      "seed": 59,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "ec4864a4fcde5ec361d6a2be938e5937ad50999ce6ab56c01489726b2259c758",
+      "training_options_sha256": "93c91a5e3747b61b5d11bf8db00896a47a07ad5f3c963443b0edf28cbdb4ed86",
+      "trajectory_config_sha256": "1f0dd3703fd55c6bd56bc4b5208f395b3d17a226d19f9b6c875060397df1343c"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed60/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 60,
+      "checkpoint_sha256": "57af64d8354a528637a2e736355925c5f23cc8a4f2ee330443485898c86128e3",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "c240512c727cbae150cc562cf87f5800b1c3e191905df49f770beb1fce0599b2",
+        "gradscaler": "f34fcb74b2718d8da7c33edbf780c01e941a0358736cab5598506482512ed7f2",
+        "net": "5349838d47e75f2761b235345321a98a4080741e194ba28e7b05107980f0b1cc",
+        "optimizer": "11ecd8d3170e99fcc24724143352fd2c70ea4e570661fc446c0007951510fe6f",
+        "rank_rng": [
+          "33fdbd1a1358e1e4aee9fbd3f1640900ff0f1008f06c391d09778ea2e37ed414"
+        ],
+        "rank_sampler": [
+          "8e20cc2d5c2180eda936879d6112021ba779e5f35fa6ec3a742f0fad78d9595a"
+        ]
+      },
+      "receipt_archive_member": "training/seed60/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "9087050bbc5971c08117f5dc614228bf55053855dbb9bc06bc396eda850c1f6a",
+      "seed": 60,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "1061675ee042a78a42783adecad99d96b7bfdde1e511e464385fc665f0cae155",
+      "training_options_sha256": "e9fec95b0d37d6ac490ebec8612618e052be104fb7a1aa6430156b24e90c3476",
+      "trajectory_config_sha256": "9be75657eba1ff3de83287556b7b3368307363b098a3e472159d4412e2bc1edb"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed60/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 60,
+      "checkpoint_sha256": "79d11a1dda18273e5a65bf5067a2b19bb309097e51279698f3c5a46bd1054312",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "5af79815d7a6129071550b07e077a2d16fab743d7f8c2c095f4051265e85bc20",
+        "gradscaler": "7721c61e4f9fb3f8bda5ac9e3c51c11914aa87c728d9fde295217e87750e5017",
+        "net": "4cd975723243cf4c52cd84ac995783d956914e90c293d0167d6ee52d6d8ebb6e",
+        "optimizer": "06961bb389a3d56f82b7df94e5743e3c8010a479ee99dc1891237661b26390dd",
+        "rank_rng": [
+          "33fdbd1a1358e1e4aee9fbd3f1640900ff0f1008f06c391d09778ea2e37ed414"
+        ],
+        "rank_sampler": [
+          "8e20cc2d5c2180eda936879d6112021ba779e5f35fa6ec3a742f0fad78d9595a"
+        ]
+      },
+      "receipt_archive_member": "training/seed60/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "a666d9706a5a750b3818b0e9c8a46269075b4356d8c2e659308d999780bd2bd8",
+      "seed": 60,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "f0b3c08645c357fd196d63e31d82536b9cd55cfb7a0c7c5d77a1837c2ea7aa1b",
+      "training_options_sha256": "c79ca384c0af2d5b3ad92652832d7d818025d90d1257023348309ca3f319bb81",
+      "trajectory_config_sha256": "5b32da4ef1cf5658f65b68dcfa7cbd6fe3eacd62911798aff60d27d46d3be07d"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed61/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 61,
+      "checkpoint_sha256": "9ba6bd31e514fdf43bfa80f07e1c7d4c8bac174cd1aae87d88e3a391112574f6",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "70a71c6bfb3a4d0ecf6c23b4e7072f50e26a1df81ca1882aebe9a8afb62bba68",
+        "gradscaler": "5e95f50bfa3d5af532f13102d915044641f785315ada2e3f76a4c3b7185eaf5d",
+        "net": "f4b2e66a35785230b83061fb0b635ee2a9fe893ce261cb9a3dbcb1c811e8e5b3",
+        "optimizer": "537b90146367d1e7e672310f6408b5eefd4fce432250c32fb5722ea71ed9f414",
+        "rank_rng": [
+          "b1a822245508bf88b8ecc14a6c27b3ca497790bee91c7abf17c92bc09dee462b"
+        ],
+        "rank_sampler": [
+          "cb977393a0238f1e7f2bfbd38a41fb5dcc7db891f2ee7dd2837a7d6204d9f2cd"
+        ]
+      },
+      "receipt_archive_member": "training/seed61/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "6ba1b6bfc07bc364faddee170c4b5513a981c691780cb70895716df20236cf2b",
+      "seed": 61,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "6eaeb6825158598ec5fffcd2161c37767837f90149e75c628d9c8ac6aec17bc9",
+      "training_options_sha256": "688d282893469144d13a3e0b4db49757e79de74301568ca9a2a541fc1305a098",
+      "trajectory_config_sha256": "84b3b34ed533e7758ef3427ad8ed6abebf382768b8e90c7a3c0a49156dafb94b"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed61/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 61,
+      "checkpoint_sha256": "e16c74fcdd4ebb16bf54eb4f2310e2675da574ee3846b79b81ec1354c713e008",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "f536589dfaf52aee61fff8b30fccbd19406a3c40a2020bb150b071cf82030e61",
+        "gradscaler": "c6a788b94e22929105b8db66b862c19bd5fc0456d9eadf768e833d0fe6cd57f7",
+        "net": "bbde75821b1543da30434eb97d17cb3aa574faa80372741c8b6b1dcca399707c",
+        "optimizer": "d665fb8bbe6446be12122daf8a6786202237c7a9183bc2c596187d83b0be533a",
+        "rank_rng": [
+          "b1a822245508bf88b8ecc14a6c27b3ca497790bee91c7abf17c92bc09dee462b"
+        ],
+        "rank_sampler": [
+          "cb977393a0238f1e7f2bfbd38a41fb5dcc7db891f2ee7dd2837a7d6204d9f2cd"
+        ]
+      },
+      "receipt_archive_member": "training/seed61/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "dfd64e8dafa8cd3bb8ee9ef12302c7617e32369bdc611fc2f779b4bb03b13f62",
+      "seed": 61,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "a79b7c9256c0276b9039cec4c7fdf6f56a07ee04846e020e9a5d418291c7444f",
+      "training_options_sha256": "363ff9c07d75cd330a39351b496d5a4fc348c96937a7b559c4fb59249e2a0669",
+      "trajectory_config_sha256": "5734fd3acccd6f02e13daec65668efbcdb480b28c350a18adaffe9f3c8a98f41"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed62/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 62,
+      "checkpoint_sha256": "107fbdbfd34b51e9e99c22228f76d6ad4c796f70c7e5bac3b3cd3764b0f3583d",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "44c41c54202a2e54b3783ef488fbeaacc260d60eee9ce6dd06a254e7015dda4a",
+        "gradscaler": "7371033248424d4cc3e68bba70c9444c07e826e6df6da2eb184e78245f8c5534",
+        "net": "01ad16e62a380ab2f775b025060502ef500c49564b24d7bc8792487bee27f7b1",
+        "optimizer": "2f38cf037c2295ac7136aa54e8a00c59cfd4f76eb784907c48e8e63e6975a6fa",
+        "rank_rng": [
+          "7f8a2d0a1a62d690253e9c37da52d7781234f6370593229ceb35798f1f8dbb58"
+        ],
+        "rank_sampler": [
+          "fa80bebca95be33b2128dc0446bc4811708fabc8bbd9e8adfd967fd037523889"
+        ]
+      },
+      "receipt_archive_member": "training/seed62/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "11c8231a5e3c640c3598b82d79d6a63b1803b59e04b196c3fb8f3503d07867b6",
+      "seed": 62,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "974b64bafdc40c8f981e922e98f1e84eca93410a31a664f6803449fd87f81cd0",
+      "training_options_sha256": "a293ed812a05c2d30642cc5da188f195aff80f3c663b7944c724c4e6ad926ddd",
+      "trajectory_config_sha256": "0e6180f3c72171cd2e5abd7f788cc593802ad622d8c097f74bce797fbca5b908"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed62/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 62,
+      "checkpoint_sha256": "ca4a33d934f89aed747c6f4d95622a9e0f0cf9f3a45b86e827e514a13d9852c1",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "b7f58641aa4b45778050509732c0eb822f9128a94037530ae2d9aa93b0373f04",
+        "gradscaler": "93cbd6a8792acf0a4b6d3ca343f808513bf5c53b86c05e1a12b79a6823152556",
+        "net": "25e312268eb1131ce8456b2255f5bffb5ab4e98484bcef995147f38343a8542d",
+        "optimizer": "9564b4177865492b1a66c664796e2e35ad1e85dcdc17924b5233ece308713d26",
+        "rank_rng": [
+          "7f8a2d0a1a62d690253e9c37da52d7781234f6370593229ceb35798f1f8dbb58"
+        ],
+        "rank_sampler": [
+          "fa80bebca95be33b2128dc0446bc4811708fabc8bbd9e8adfd967fd037523889"
+        ]
+      },
+      "receipt_archive_member": "training/seed62/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "4fed905f18a0fed642b943b5711b9b04df1843c6d860121095dec2c5a6128b55",
+      "seed": 62,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "93654536d57c667f1989f8c8acbcf2d812a44e6abe98041ec222db726d8791a8",
+      "training_options_sha256": "d9f8ca5100bba4cfe7a48991d4ba3389acb77649e9d2f57e24ecde915a89e43b",
+      "trajectory_config_sha256": "41a490fa4c27fc6cc624e0688827794f43726b1554ad2d630ba6c8ec1fac2196"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed63/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 63,
+      "checkpoint_sha256": "ed1caa34db2111f246d11c7fd567476fbce2d40b0190fe45ba9bc284d64cacfc",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "2c64802a0c0cd364c7e59100974cd8c67d98ecf853d4f53256b113baf6d448c6",
+        "gradscaler": "ab2263c6590001e1237aa6e13cefacdfe813bb448bd070ba3d8a58f77121aafc",
+        "net": "10bebdf01131a6b259ef33e92b2ae01697d7fb4e7b4f544105dc5936d8c966b2",
+        "optimizer": "6264939aab0a2fc519fe25ed71e44d879e2942229beb9fba2dc3b80326beaaad",
+        "rank_rng": [
+          "65b2a087416ac160cac57d5414cd4b0f6c0aa869e6bc9a249b4fb4027d2aafbc"
+        ],
+        "rank_sampler": [
+          "2e72175d6f09fd8c8aab0054b73ae34ac78809124b317ab55e45ad7e6a5629da"
+        ]
+      },
+      "receipt_archive_member": "training/seed63/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "501ec32a15a6b40ecc2c6023a9180df4dc414530f0b75736269eaa59193cef88",
+      "seed": 63,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "0a3ef05352db8e72f9c97ce3d76867336309f1ce276031446e9a98a121c901a4",
+      "training_options_sha256": "db76279057284eb8a22d85990cb9955a3693f29236c490643f4776af4d230aa4",
+      "trajectory_config_sha256": "307aa40aff9ec4f903a072deb8db40b42d7c369bf951d7fe03f2dbc8eecc3a72"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed63/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 63,
+      "checkpoint_sha256": "e348aa4b6cdd2a167d78497997a09a5cbf8bd7f4784f8549a41a69dda830bf10",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "1de31c2438439c634d991d9fc4daf74e2e318b0ae9207f29b476657929ed0602",
+        "gradscaler": "83c189f38de822fc6f89cf20a24604dc21de66a08f5a1107456c056b468a3b15",
+        "net": "4a9cfb4c4b09aa5efe6aa2c0b6c88c8d9d6c98d63fa280b33bb2455f5364b68a",
+        "optimizer": "460d59981d2439681856326d4a799b1d50ce68f1a3a8244d40218367ddb04e06",
+        "rank_rng": [
+          "65b2a087416ac160cac57d5414cd4b0f6c0aa869e6bc9a249b4fb4027d2aafbc"
+        ],
+        "rank_sampler": [
+          "2e72175d6f09fd8c8aab0054b73ae34ac78809124b317ab55e45ad7e6a5629da"
+        ]
+      },
+      "receipt_archive_member": "training/seed63/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "8ad005a1096d32767804f96f0e6b93479a1bf4d12efc132ae1b6ad5034ff6ecd",
+      "seed": 63,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "b42c5f2ea2495ea3a372408cf1e0080fb59596e58530df1130e36f748d53447a",
+      "training_options_sha256": "9119411af780449171c6258115b04b1dbd110214a2629a9a702b2f0e62a8e023",
+      "trajectory_config_sha256": "4876af3382323bb0f9ff0b29a074650c4e8f456b25873288eb4b009b05b0e611"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed64/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 64,
+      "checkpoint_sha256": "b265778fe41c395899bbcdb5573a0f5bcaab9fed4fb2cd66dcde1b0a6f8d9f57",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "e3606d69592e20b8528aa0fa3452806e1c9d9f1db529a9affc39e77dbe3d0586",
+        "gradscaler": "40a3580c06f3200cd9275b10709144f828465963a01dabdc5a2d0b7856f668a4",
+        "net": "863b174f58544d4e9713cbd3455a03a529bab25bbba0985c8581614e480be82e",
+        "optimizer": "41704b77a691711ae8dee63ca66956f486edb2f5d71f8a3c0c81388939773d5f",
+        "rank_rng": [
+          "944f27e29debf93d6e4d58babea8e2acea6e551ff184dad71b8bb988e4f0b05a"
+        ],
+        "rank_sampler": [
+          "44f886d57b829b919c56731d7b4a8ee8463a6a10a3aa4d044f346363df5976fb"
+        ]
+      },
+      "receipt_archive_member": "training/seed64/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "4dcffdbdb5bae8b0508faa06b45e67a7a7c3505c1892c6f5dd2a66f7b9d98030",
+      "seed": 64,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "aa742a5273ad31cbf0012990664b528769b96940605f68e1dc2f755eb426f15a",
+      "training_options_sha256": "b9aab5835169ad4c9b5c77e76839dc6634b1628a40fe75cb1b9df2d9fd092ca0",
+      "trajectory_config_sha256": "f55cea9be46b58e7f93d83344fca9730a7354ab69a0177dbcbef107cc77a31f9"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed64/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 64,
+      "checkpoint_sha256": "0fd3338a9e034189be86adcfd25e2876a495bc4f33b6aa4763ceccb72f9569b8",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "f5405df654d548c2116d6d8d61d52b7828a4fd9793e306ce3b3f6777c9cf78e0",
+        "gradscaler": "1845f67fa8951cd7e270c663d016b67b1f1200a2818ced1af1dae3fe98363525",
+        "net": "97a83780ee5532ae8416f507bd47be8b69a7ddfafc062803c1b1f8120fc05e0a",
+        "optimizer": "b3f64e75b067988cb253dc6bcd23155a4ffba0f12d8ff52e85efdd0ddedf30c4",
+        "rank_rng": [
+          "944f27e29debf93d6e4d58babea8e2acea6e551ff184dad71b8bb988e4f0b05a"
+        ],
+        "rank_sampler": [
+          "44f886d57b829b919c56731d7b4a8ee8463a6a10a3aa4d044f346363df5976fb"
+        ]
+      },
+      "receipt_archive_member": "training/seed64/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "57c693ad2c6e25ed2fa6018168b4e7332323f9172041e7e51b12e9d32693e762",
+      "seed": 64,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "115a9d046ac813992e0dfa847621c8ca122f8b71488975dfaaf97bb43139f090",
+      "training_options_sha256": "b32972ae431c3914311362a9e1379f75dcdbd7463a39eaa27394c5f5750143a7",
+      "trajectory_config_sha256": "66034b757c09fc72297b166a38f2ef82e9a37818de8f5bc9af85226c3b12bdd1"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed65/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 65,
+      "checkpoint_sha256": "63fb6597f99f879f917e0aa5de220a14eaa749953e2d242174b299ed7c5d2f30",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "e473f47b7e53b5cbebbb855598bc16f1d58c594eea2e39427d38aafbf2de386d",
+        "gradscaler": "ab5034d68ed1a251defef7cad4b7cea9b1f8f6220e00fe17cb05e98804a9b543",
+        "net": "0c36b926060fe8f62ef5fff713336935b31e9ec45f6bf0e2d6df0f0a7dc49257",
+        "optimizer": "53509c5ab46bf53244f5bea1053700d58087a8197aab7e2c6caa7c39b599f1bc",
+        "rank_rng": [
+          "6ac927ca34315d736d4bf84c83e9d1e2f060c36eb623bee557ca2586af71f5ec"
+        ],
+        "rank_sampler": [
+          "5e31c45303a837dc2c0f625d2473faed4d4df9959b44d364e33880aa19fab146"
+        ]
+      },
+      "receipt_archive_member": "training/seed65/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "70b1bad6f02c6c49eda456ba06e438980f2b95879b81c44ffc0fe3720c105300",
+      "seed": 65,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "c6b0318fa7cc62dfe6aa6d49c8323096dba7145e1c12070b3c1d5c5a700dd181",
+      "training_options_sha256": "e18331b3eeecde8ed6b16e856c15606f8ccfe9740a544fa38727a1f984e00f71",
+      "trajectory_config_sha256": "8b74e10ffdbad00c634e35284a3b8c26fed73c71c6ede9722715a21f3fec2eb0"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed65/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 65,
+      "checkpoint_sha256": "3eaa649f8985b5d193ec4ffb8b0aa4ab774646462cdac71b944e56de0b27bc32",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "33270905296c9369165298aad35a8571e498fc87f9aad4030051ab7161d4559f",
+        "gradscaler": "6a9f847efef8fade034328b20e3b23080e4144a27dacd87747bd29dc9b78f2f9",
+        "net": "02bb486c8b309d7143431ad691b753a88806202614657fbbce59afababbf49a2",
+        "optimizer": "e57ae190bc643fa0738714572fe5079ca6a5f71d05ad394650c8bfd4b5a50adc",
+        "rank_rng": [
+          "6ac927ca34315d736d4bf84c83e9d1e2f060c36eb623bee557ca2586af71f5ec"
+        ],
+        "rank_sampler": [
+          "5e31c45303a837dc2c0f625d2473faed4d4df9959b44d364e33880aa19fab146"
+        ]
+      },
+      "receipt_archive_member": "training/seed65/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "cbf7be8abba6df1bb7e31a6dbe6c0d722d327eef12a1e8c7185b011ff4860f5e",
+      "seed": 65,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "94730f0b2179676afa47d6242581526de6a13641300b72aaa067e761da44beeb",
+      "training_options_sha256": "c1ffe7417e26f02ff44160ac9e10aa88a20a0b0c2c16d06eec4c08ebc1177459",
+      "trajectory_config_sha256": "8dd824dd4809fb8188c4aff6ffb3682934283fd965f641a9c9f1506fd2ec56f2"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed66/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 66,
+      "checkpoint_sha256": "61dc39fa58b0073fb54d62c290f8fb7dad5510332165826874eceecd1c4eff13",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "5bc9f96a181b7ec42d38b4edff6befeb5adce02ea0f1976105fdca05da2f6bc9",
+        "gradscaler": "eb001623bbe307e336494ccdd68bb480ef9c24445ade0ec4509ab156bf8f2270",
+        "net": "019eace60c0c633568ed2dcc7e5e9bff885f294c095b43616a664b5d6c52c441",
+        "optimizer": "39a6d6730ce5f56d49296a2ec9991539ccbe4306423d69cc29719183a7617069",
+        "rank_rng": [
+          "d097a8508421ba7a99e03d20a8ddd9bb68a6edbc20973de09b35566bd494359e"
+        ],
+        "rank_sampler": [
+          "fd96980c5435e359d33b8c664464e06d09ce0e88625d8c65af7ed17e4d22a997"
+        ]
+      },
+      "receipt_archive_member": "training/seed66/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "eb011fe8a54c14a58cdbbeb85970e55c8867a476fbf3fca091ea21e6ffd03ad1",
+      "seed": 66,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "cb6fd9794574007064de82227d8de4c8d7112dca922964b9b9c37df5dbb910f5",
+      "training_options_sha256": "081fdb3a8650239b866c3fe1246931d25e14c0b0aa3d2470e2e60560a8381393",
+      "trajectory_config_sha256": "53217fed73c10093c963e82aa5080d1f38478100e823089e73ab04ae47ba9fcc"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed66/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 66,
+      "checkpoint_sha256": "14ac03f2d779367aba869536de892a1913a5f3f231eff50e91f978d29da1bc00",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "ccfff23e35448f65fa837657465c50ab96d3edeb39cf63ecf30c965656086580",
+        "gradscaler": "e0bd33f75cd8f567c9e5672506fbd90b22750015653e33753918a4a5069699fb",
+        "net": "32d19574eaade9f0320b79058bd1aa5ef14bf2316736532d96d0fd7c0fc509b8",
+        "optimizer": "173c2fcd9e353affa4caeac472227bb5815cdcf52c3550a13fabe2dff9aaf819",
+        "rank_rng": [
+          "d097a8508421ba7a99e03d20a8ddd9bb68a6edbc20973de09b35566bd494359e"
+        ],
+        "rank_sampler": [
+          "fd96980c5435e359d33b8c664464e06d09ce0e88625d8c65af7ed17e4d22a997"
+        ]
+      },
+      "receipt_archive_member": "training/seed66/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "5ce396923a12a7856814718e8a1ddd33d98c6f7c63cadca6e355934590b89a6b",
+      "seed": 66,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "9a46bd72e1902e699094de82d3a16982e55711e1497aa05067e41ae34e9ad8f1",
+      "training_options_sha256": "da4e7c0ded81bd4da33bbb804b3f1c18b8902ba7379f71ad814a21c74334b2db",
+      "trajectory_config_sha256": "cc68fe25c27ac2535a9e16918b34b8e7e21b531c256a898b86d6cf66ab7ca238"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": null,
+      "chain_status": "MISSING",
+      "checkpoint_exists": false,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed67/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_sha256": "",
+      "cur_nimg": null,
+      "ema_finite": false,
+      "ema_present": false,
+      "exclusion_reason": "RuntimeError: MISSING_512_SOURCE_STATE",
+      "factorial_identity": null,
+      "included_in_paired_cohort": false,
+      "seed": 67,
+      "source_receipt_directly_readable": false,
+      "source_valid": false
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed67/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 67,
+      "checkpoint_sha256": "3c4915bd106fdb53f03005afd06d92b2d20bfaffea717d20255fa73c2e3598f6",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": false,
+      "internal_state_sha256": {
+        "ema": "c5e1760942d3ecce1539eb5ff10cec54fa60312157245537cefcb9a2e5c8f1c6",
+        "gradscaler": "7dd598ecc34cca976b75f84f257855e271558633331fcb33d709f250b5326ebb",
+        "net": "1fa981a434486477fc9369565588770b38f364648413f64bc366f6a44b44d75d",
+        "optimizer": "107631732866079760d4f7fa2c1f69c14f5d806f2218ef8beec862dc309dabbd",
+        "rank_rng": [
+          "917a62ce38c8955cb79097887be62e35bd0d09181bdc1d7686d4bd51cadeb4c7"
+        ],
+        "rank_sampler": [
+          "fcd31d476cb567c8502dd19ac0b64aa6618a6e391f8707fcd5567eea8ba9ede5"
+        ]
+      },
+      "receipt_archive_member": "training/seed67/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "ea07d1e39c33f934c2ed61234934583d354c5944427e6734937b9a7ee45c6751",
+      "seed": 67,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "17ddcbed5164c139c85de273fde1949c6ecd279f4fd487c40d7bc980d7e6ee03",
+      "training_options_sha256": "98f5d583c3096b8609dee75943aefca454b9a7975a69e0e5d90623a8d84a9356",
+      "trajectory_config_sha256": "632e8b81d75f7d7bab023c91e6611db36c231dbe25b77fe8466cf0ef3b5806e1"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed68/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 68,
+      "checkpoint_sha256": "d6d6fa7541809268bc46802a3f4559804922b5659b9c293b3ae0f6aee69213d1",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "098fc204718e69cc0f1d91957397671682ae4e8c7ac269f0e9668b94b162e888",
+        "gradscaler": "62016a8a48a02215462aae868462bcb36abda97a2fc51ba2709748c589a8a162",
+        "net": "d707ce66efe7fa656ed9b78ab3f86af14d33f1430317e2e9afc21bbfb48df1e9",
+        "optimizer": "b4563d96a336e4b094264e8443ff77ddf959799c317e490f88c7c0e268ae4aa3",
+        "rank_rng": [
+          "7c7816e110c16d633dedbc4ed68f84729c5daf35b41c6352351f72dbcb52a917"
+        ],
+        "rank_sampler": [
+          "d206e4dce49d227cf279f08f8c712a00e12d3eea2105322f6e57a2089a9456e9"
+        ]
+      },
+      "receipt_archive_member": "training/seed68/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "b77c3c4eca2bd30999aca7ee132f5520bc6e090484d00b4bc3d664997ea7a633",
+      "seed": 68,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "9c9a1b555e6600de418e6475fd6680b034c8a312fa49ea08265b33cc793f763b",
+      "training_options_sha256": "2d37fe4264d72756f07f2c7da6ddf9865aa9ba8507494d0a72bc55f651caa7c7",
+      "trajectory_config_sha256": "393e5cc8a6281d03721d9ef80d7f46297f4e8a0bd632ec71e78c655ebcbac3dc"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed68/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 68,
+      "checkpoint_sha256": "1c1a7b9a7a25dafdcbd8868a021c2396300c2bf0d8f5772e3d9f5ac422151a8e",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "73eec071be364a8c3deeee39a043148715676e8c2b7882e0dc09844d63a0641e",
+        "gradscaler": "b68e7ddcd6815bf03ccefade187d77fa6a9d2d60a574df9c78a560da3da1c24b",
+        "net": "24496f6974d052ec0f390f9bf52b30b98de74e4325985fefbd570d74285033c0",
+        "optimizer": "7835833900103078aeb095ff19e96f3a4c3ec8d957fa4c8519dd31a9f6309da3",
+        "rank_rng": [
+          "7c7816e110c16d633dedbc4ed68f84729c5daf35b41c6352351f72dbcb52a917"
+        ],
+        "rank_sampler": [
+          "d206e4dce49d227cf279f08f8c712a00e12d3eea2105322f6e57a2089a9456e9"
+        ]
+      },
+      "receipt_archive_member": "training/seed68/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "0f9bebfc79373d2c0f2f1bf1c471f77d775c03178c9fa272b9acb7357fd4537a",
+      "seed": 68,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "12b802658f63d50c3c2474fe8e45fd1f1d198c5fe262c2d8b58e7c2527232fce",
+      "training_options_sha256": "5d541b99cd8a900a7babef952928bbe395321891224c1cb0b7682ee1b0b702a4",
+      "trajectory_config_sha256": "b1f8b9465d2b516313f1baeb466f1430b46c49bb091b462b1d8321dbb3b2210d"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed69/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 69,
+      "checkpoint_sha256": "c30b891853590323384e1859b20452de17ad7d927fa4c3e456c5c2027b4e3896",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "70f9dc1567ae0a9e588d4702ead8590d5bc8ef80bd4d10ed4d192023d035cbb1",
+        "gradscaler": "7610a3eadb56296f19329a30d5c1d69976a6289bd4d87c58739ae33fbc77b1fd",
+        "net": "6fdf65452e926a338f678fe1f80952b6f52da4a34bd2c1cbfa0565c461304d6d",
+        "optimizer": "dd817027fd73eb2dc4397f04194e712824a1eceebfad7fd3407e803085ac4db8",
+        "rank_rng": [
+          "94517accf29ff9ff09d9226936c48ebf95cf346317b1cc6418548c9101c584cb"
+        ],
+        "rank_sampler": [
+          "82d3ac8cf9d06749b2741c7d9f330842a6c5ac1218d88c6554a230f5e5d8cf92"
+        ]
+      },
+      "receipt_archive_member": "training/seed69/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "4a995de3836b4d05e7de9d25d73c63614f55dd68fabcc873a5460f353679ffe8",
+      "seed": 69,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "0b892985da9f300860af178e09e8733ccf426ec67200fa0bf6928ae5bb4445b6",
+      "training_options_sha256": "8485b4ab439db07cc97462b6360395496f5391665078042879d665f3d96ea7d7",
+      "trajectory_config_sha256": "20d4c10ca366401160507f285683831b74bac0beac8f33dcfa0d36e2fa25d8b8"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed69/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 69,
+      "checkpoint_sha256": "c54379866efde8f09d03f2abc54cf4b02168d2c88ee78c5d31086470dc5a065d",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "a83b3998b73bdd718e9cd835f8660e9711778bdf1d462847fadab145133b30dd",
+        "gradscaler": "d17b03098dfc1c01e2c1e7a74bfd9dd3c338ea0a4fb8ca7ba19c8358d032bce7",
+        "net": "0a168d18dfe66da2eb21b20691d7064163370cef4629cda369a1d77813d40d2b",
+        "optimizer": "520ba3572438b1acc2e404e87bdd96ad53736c50421af08eb712191a6ce9ec79",
+        "rank_rng": [
+          "94517accf29ff9ff09d9226936c48ebf95cf346317b1cc6418548c9101c584cb"
+        ],
+        "rank_sampler": [
+          "82d3ac8cf9d06749b2741c7d9f330842a6c5ac1218d88c6554a230f5e5d8cf92"
+        ]
+      },
+      "receipt_archive_member": "training/seed69/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "7a0c22132021a9a997b582de185eaba4ecab08aae57caa853ef25edf2aaa47ab",
+      "seed": 69,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "3ffa0bafdd6bb51256b34c5f33e2710fc8c6711b306bf22e7cf018ac3097f436",
+      "training_options_sha256": "541177110fe55fbade3af0705374cdf5fa12e82e09de2caf85322a4dd64c0b6e",
+      "trajectory_config_sha256": "e58d269e7ef4a822f3f39a520ca79bbe58062c14ffa193db18c83d99aafa6b23"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed70/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 70,
+      "checkpoint_sha256": "883f397d30d01740f1106aaf846a13bff0f601ef63c17fdeeb12fd6e7015e4d0",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "4f5e7ab86f2b9a602cc3795cb9ca4a576b111e1b28128ec29569df3fa82d6f5a",
+        "gradscaler": "838f57a275d83cf5835e4ba8b94d3873f6d871a2c65c08a72906280819d3950a",
+        "net": "bd6e825e4effd550c67a32640666a32b157e8e0027131de5309e5fb27ab5f805",
+        "optimizer": "dcb08ea777528f0dd8d6e0b550d8674a3ab36d39c9079f9adde4c7046637de1d",
+        "rank_rng": [
+          "98a83e13acfaab15849737a1e1598612bec4d249a90177dfaea29cbd62ef0c51"
+        ],
+        "rank_sampler": [
+          "93d6ab65c65d4b275b41a509d53bf9f4339d42c20a6d6d3426fe56c1e5ed73c5"
+        ]
+      },
+      "receipt_archive_member": "training/seed70/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "7e741550811aac3332c999abc84da25131648e252d18b1dba1223dc1b8ce425f",
+      "seed": 70,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "8d7030be8046f41be07f33d137f6c35182a1938d6e54ec241d5ecba8f910c406",
+      "training_options_sha256": "47223699d3b000c21aef469f3d0855204073ac2f9fbdff2343b5c5a1c63acf7c",
+      "trajectory_config_sha256": "63b89852dda292724aefd3f269af36a3a61b546b1ee83e2025baebbc6e93ead8"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed70/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 70,
+      "checkpoint_sha256": "19be2e152c436d84e4cb8355bfa0a33a8517afc064663c98c58a459c471ee9b7",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "fb2ef47dde4cbcae2e96fc9e8d6d8ce6982acdb21b51f0300e902132f2d583ab",
+        "gradscaler": "b1dec5504f15870188487eb1e2ffe4895476286f13e657e0058be63e54b9608d",
+        "net": "ae1030a6f50604a5e6367ec31ccaaa8056583c6680066632ce6fdf0e0ae7e2ca",
+        "optimizer": "c6411cb2ea976090de9a5432a486e170ca8296e3a1a3fd408f619f5598774784",
+        "rank_rng": [
+          "98a83e13acfaab15849737a1e1598612bec4d249a90177dfaea29cbd62ef0c51"
+        ],
+        "rank_sampler": [
+          "93d6ab65c65d4b275b41a509d53bf9f4339d42c20a6d6d3426fe56c1e5ed73c5"
+        ]
+      },
+      "receipt_archive_member": "training/seed70/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "01bb8edce56a479671a1bb31ada94d90c3e2fee1786dd93df7ecbd0fbeb1f28b",
+      "seed": 70,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "cfbb61ebaaa7fa5d2e6bca0a6a7c51e71c6e2ce318e8cf95c244d8a9ffbd1313",
+      "training_options_sha256": "6a2e3cf7db0c4bd47f0ffe072494b874b910812d47dc2a004a72f99758adb06b",
+      "trajectory_config_sha256": "b9c66b329831c009037077f9dcaadc1bb1ae44782bc1c456ff21dbf05abb6c1d"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed71/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 71,
+      "checkpoint_sha256": "82bcde7d91d861a24a50411d8d8f4fa937d60f72b6cfa63c16855eaf5deea7f5",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "7a87113ed16bc560bdf2f1af03ca7dd9d2bb300eb3d016482e340eb7d06b3ab5",
+        "gradscaler": "b83b106e32d8941429e9971b9ba21b716386aafcb04fb7d3edd14d1e0c6a160d",
+        "net": "cd612ae9f8ad8b88e6644b56db31f62b85694da65b2d693d69dda462e2c3ae91",
+        "optimizer": "94e137e7b5e6fed9248e5fc91d7a5fc41a53e600384d32827c9bea1a223e2187",
+        "rank_rng": [
+          "56c702a9cecd5e4db2c97bb545bfcd11555335eaa67c2c15b9111fec34146492"
+        ],
+        "rank_sampler": [
+          "837e020b73185133e524edac26510aeec7a0f76725f3eb49070f1687102bcb8d"
+        ]
+      },
+      "receipt_archive_member": "training/seed71/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "99c052cfbf80975e79a6593716b672f8ace2d0eee74f13efc6a11dd448190b09",
+      "seed": 71,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "482b7f13023330875822c71b87ae2935785fbab3154a0a95e92b6b2ec9b903be",
+      "training_options_sha256": "20f090e712a4329025f75e3a6098f9d73b30cead904f067f340af0cf342f4395",
+      "trajectory_config_sha256": "c085525c3bbf135e6e89d80071d5d1ffaf2a4b27f4f293e574175b30fe5fb38e"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed71/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 71,
+      "checkpoint_sha256": "3d2ad2f7a05f5c47aa900fcc3d566d4f42a7849736152caf8221a2425770d45e",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "0ba3ca264f80124556dc4534ec2c5db6c039b4c4da4384e1f2453608a8210825",
+        "gradscaler": "b83b106e32d8941429e9971b9ba21b716386aafcb04fb7d3edd14d1e0c6a160d",
+        "net": "fdec2e920bfa0b0abaec3f566ab6d25656337a04386da21b9020a40faa3da55c",
+        "optimizer": "bc2ccf93001303f34d44fbb1b45a86ef29d68bc99ae1e027776d80e13be1c947",
+        "rank_rng": [
+          "56c702a9cecd5e4db2c97bb545bfcd11555335eaa67c2c15b9111fec34146492"
+        ],
+        "rank_sampler": [
+          "837e020b73185133e524edac26510aeec7a0f76725f3eb49070f1687102bcb8d"
+        ]
+      },
+      "receipt_archive_member": "training/seed71/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "a31c563fd34881a488b6979d7be73a29d5cc9c20fd7733ee06d7b77affe19853",
+      "seed": 71,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "159318623ce4da185362ba7c5782bc497a762cc7a50ef2e720853e5b49fd8f03",
+      "training_options_sha256": "d327071b929ab97a99669366f89773d367d1d5536311183ee661375db2d6fb22",
+      "trajectory_config_sha256": "126834e365810efaf7620e326253d7342ed78d0a7bd68c4ab9d7332cb9fad9a5"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed72/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 72,
+      "checkpoint_sha256": "a2aa79c19dc44b2bbd2864971e4c42f5a1185432720bbce4343df85858eed778",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "a86ffa22a71efdbde3ec2d60453c2f301f48be4edd30b66454d08f04714cc1bc",
+        "gradscaler": "3a97a0032efb70f531ab3bcd365c99ac04083706e6b6021cb850b94573afa944",
+        "net": "db7bec1a5711690cac04b6738062b09c5e5b24e0b9b289a862fb75b5c75c5b54",
+        "optimizer": "141962971fb17431e902275e5b83e87d6f17475216fe42f6bc1f0464d57f3ab2",
+        "rank_rng": [
+          "c8ace4925f79d9a2b5876976a4b75d224a553cf0b3e1e5dfc13f0558a0507036"
+        ],
+        "rank_sampler": [
+          "28d0f0c628aab88f76171069425f130ba50b2353520ad2ff60cd9d57931b5a93"
+        ]
+      },
+      "receipt_archive_member": "training/seed72/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "92591285bc300827c6c11e6aaac4117431d13818780b255a968e24b40a7fd206",
+      "seed": 72,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "523c4982ba3e09ffae3bcc7e335c527cf7600b0d644cd00d4fb385cee7edcdc7",
+      "training_options_sha256": "9324bc013233699cd3dc60ed5cb16f696341c0082cbf0a4b1758411a91967acc",
+      "trajectory_config_sha256": "f624944b8279bf54d47bda16349719f1fa7c0a78aab1e3395ad4980d49947dd9"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed72/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 72,
+      "checkpoint_sha256": "a968beda069d7fc258adf04f93f93fc496c18b7f5bc8c0a36b34239fa1d0b085",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "37e76bcf7e4e52be99d5183974a7d56e833b2d9aebd3696cc64796a7f9952cd2",
+        "gradscaler": "efaca132ed92106bce57e28d88d58086347849fdd174afd18ec8c5ba3e0e06dc",
+        "net": "8c442ce436ffbbaf95e99da5807e33ccfbdfb7ad898ecb4d07a740a25b07834c",
+        "optimizer": "4016969b2b7975222a8b23d220e499794afc9da5280fa7117f2a10452a579e62",
+        "rank_rng": [
+          "c8ace4925f79d9a2b5876976a4b75d224a553cf0b3e1e5dfc13f0558a0507036"
+        ],
+        "rank_sampler": [
+          "28d0f0c628aab88f76171069425f130ba50b2353520ad2ff60cd9d57931b5a93"
+        ]
+      },
+      "receipt_archive_member": "training/seed72/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "ed16a183c6ed45e1a235c0433ed55ebd6b2a5d5b4e60c51e3950fa60fa079fa8",
+      "seed": 72,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "edcf3e80d796a71fd0c12a2b7ed3b23e65a13937492795d1326f97984879b82b",
+      "training_options_sha256": "bb2a81945416e94fd37bed427a06ae8e141e46aa7e9b0724f121f9a3bcd381d8",
+      "trajectory_config_sha256": "3a2a28fcef6e8b990ae796eb5b836e29de3581e0defa1c23736f1771667da142"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed73/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 73,
+      "checkpoint_sha256": "98e7a9cdab54b32e67c5f8256bdece03cd87c9e8587e175477146f0be22935af",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "d1c2fa51a43d113ff798aef3876a389f6206a3fcb8d5f967b0aa0d18856ae6d7",
+        "gradscaler": "03842a9fb4475911dcb4310678de4aca4cd5452c9ac9469bcfd3496fabd31db3",
+        "net": "2cb660ccb3faee3561045c26de43a132cf9bdf7c2a1c00b701b92104d21cea22",
+        "optimizer": "7f0c70f8d3e92f88472c90c2fd64207195b760797af2c22ff1ceb15f95467fc4",
+        "rank_rng": [
+          "24b44f0acc975e290845086f56f99b8cd432f3c50b63e5c37d7c1bcc375c7da4"
+        ],
+        "rank_sampler": [
+          "9e6a51b93e1da4eec6548d2c618691486599569b4c3dbdfc80f5f23aab1de945"
+        ]
+      },
+      "receipt_archive_member": "training/seed73/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "07b24ba22c0742ccb8497b49bcfae9325a08c43d4c453260d1100b686aa0d5a5",
+      "seed": 73,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "736016e6622474b6eb279958ce25b107206c75a685362419f2dfdafb5525c5dd",
+      "training_options_sha256": "ace3bd1aa40760d0a1d4db93791cb4855abb83cae57e00487ad37a437bd0e1f8",
+      "trajectory_config_sha256": "5f2ceb7aa98e9fe053a9d741e60edf77c9e7d48c091e545fa9083bdc8ed48a46"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed73/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 73,
+      "checkpoint_sha256": "0130f1bedf3b9791a45de9a45c80a4802609454454411998fda5f12f505a1832",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "d8479f677580e6195e5dfb1bbf138817726dcb3887d975f64ed514487c96d1fb",
+        "gradscaler": "eea323e571332ac9822904ab1afb199e7a8d3f877d2a7d22c355741689e5a608",
+        "net": "71a54beb6bce7e38c23516f809d5e4eb66c79852f49d83874209d9e87c845db7",
+        "optimizer": "5fda97078738cf0a195af24f7b57b8b451f5d2309cfcb21f59cf3771174a2648",
+        "rank_rng": [
+          "24b44f0acc975e290845086f56f99b8cd432f3c50b63e5c37d7c1bcc375c7da4"
+        ],
+        "rank_sampler": [
+          "9e6a51b93e1da4eec6548d2c618691486599569b4c3dbdfc80f5f23aab1de945"
+        ]
+      },
+      "receipt_archive_member": "training/seed73/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "7ed4e21ac1465541ec29bc7ef588b1c9cb5862216e5fbf05ae7748e325da1421",
+      "seed": 73,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "db7d771732df828767044a87e07e723c4b95102e286f9649393e0bcdf5b64c96",
+      "training_options_sha256": "05a98032086f3df9f237c9a664bc98559c4d6736390ab4d022c3eec9310f0857",
+      "trajectory_config_sha256": "93a6476250b60414181759cc37ca834017989398a97a01716c415cd6548df679"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed74/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 74,
+      "checkpoint_sha256": "831478252f08052fbd1ea4431babf9506104a42cb1d14f888b11d07be1e4a5b8",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "4639f1b1310ec9822e5307342632c4f7d1ff6ef5f8f71a2125cd521d49831efb",
+        "gradscaler": "1c4d4f3aaa506b7ee0023da1112ef412872f51f56d573a86e226abe3b6e196d9",
+        "net": "c9e26f0cfd6f5b7dcbc33be7d897a169e1a60df36954757dea975ee085c844d4",
+        "optimizer": "16c31a574dab5b65f6a03db494868fee739dc80e8a3f7542534a38857118aeba",
+        "rank_rng": [
+          "76e536b88871de5b9a545398083fdd1c13ac4218bb622097553bfb5fddeec88f"
+        ],
+        "rank_sampler": [
+          "18eb08602f46c5323266a69d776cd3d2fc091b6f480266cdf6df19bf9c916de4"
+        ]
+      },
+      "receipt_archive_member": "training/seed74/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "83fa69f71d28159847eaf23b9cecc688993e44469733ff0db469ca74c08d8a7b",
+      "seed": 74,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "92625fb41028982c52eab95d1d562eab53e41f682847027f36408fa42d2ad9e6",
+      "training_options_sha256": "e42c3a319558f4aeff7c7590c1348ab85522acd2f5fcb2e6bd6cc7904d10f168",
+      "trajectory_config_sha256": "f3e8117ca2129ce39352d881306bef02b3c8f63d2ca3b227b569d66b06947329"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed74/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 74,
+      "checkpoint_sha256": "7581354e3f00a76a96f425415216d920d10127568142af5bdbb716d55f06e4bd",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "b87d31d2034d99e22098378ee53c509a38fbe177e6507505cab4a58561d42e5e",
+        "gradscaler": "7c4d8ad1678f1f3008e44098fe0f155267f0eacf9e96ef5ddd77953970c808ab",
+        "net": "cdbae17fa42eb86a097b784ce9bf261e11ba9ac3d89c11fceea0d2c7073f5be6",
+        "optimizer": "9725025167310b9c0fca4738dee3334524fcce122eae509518d4b9a47ee47652",
+        "rank_rng": [
+          "76e536b88871de5b9a545398083fdd1c13ac4218bb622097553bfb5fddeec88f"
+        ],
+        "rank_sampler": [
+          "18eb08602f46c5323266a69d776cd3d2fc091b6f480266cdf6df19bf9c916de4"
+        ]
+      },
+      "receipt_archive_member": "training/seed74/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "c433cd10b206c5df0e19c3bfdf77149fca26a8bff0e8e37ce8e094179d07124b",
+      "seed": 74,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "e24073de5687b613366709e852d94252d6ccb3d57d8dadc241358050abd9ef6a",
+      "training_options_sha256": "979a61fcea6d863412bb8129ffcf68cf579a3a16b6f49f7d0de6fce935da7b9c",
+      "trajectory_config_sha256": "90e3a20eaafe85a7c46631fb354bde9e802417f7b595856dbe31b5154e934cee"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed75/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 75,
+      "checkpoint_sha256": "bb71ae69a7750378665284868f9262d8cbaacfc6dba7104e21617e85eb3de00c",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "6cbf61a5dcc1ae20d79e2c6977dafff7eced6d83d25fcc5a288f0656d2d005a0",
+        "gradscaler": "938e657f392ef1c18b147e2b571122b8a1b3fc6b7c8f611b2cf3bd0fdcb6cada",
+        "net": "3e0b7a4a877487bb83dcc04b70bc28cdcdf037bef4a5b21db06472ce6d0f075c",
+        "optimizer": "30d659c2d81c70263dc96c8e00a49ac134cdb50b27a2446b012b601547eb32f7",
+        "rank_rng": [
+          "e32706e6141d4a4148b3b7ca1f0aff908244eb8368903ab04b6f49341587d2a7"
+        ],
+        "rank_sampler": [
+          "24a66545c247d06cbabb818eebbd5a183284fb94281a4c9b72bdc35b81b87cc2"
+        ]
+      },
+      "receipt_archive_member": "training/seed75/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "f8343841d98575bf27d5551e2fdf1c067968f03f4bd30e2560a233e591265fda",
+      "seed": 75,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "1d4c4c14c3debfb073577e08ebdff595a73be487fff6b91a70d7be5c59871435",
+      "training_options_sha256": "a607618b077d87022ea4b6df0d880d7c2e627901ce4d2533ccdc184aaadc98d8",
+      "trajectory_config_sha256": "95e875b2e9bf005236ea154e15cfce4ccd165401c460a64e0ac4261fcdd47dad"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed75/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 75,
+      "checkpoint_sha256": "e04ac88c530b300aa2db2f41458713b1c77829f2be16a4fa87b1cc93f3395e02",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "266cdd06846983fa1c012ade226fbc9b394675b6c05602f938b8fb2a81280c1c",
+        "gradscaler": "208fe6df0e430c8316a1f510410a13fc965674c553408c51e3a86eaa3faf51c0",
+        "net": "ec8608ec13f6f4aa71cfc83d8d7b55a275602a8ede902d7c13f0fde6b01493f3",
+        "optimizer": "43291a025cd20de444bd90d30a5b3f062fa8ece13dea3118be76f2d641928566",
+        "rank_rng": [
+          "e32706e6141d4a4148b3b7ca1f0aff908244eb8368903ab04b6f49341587d2a7"
+        ],
+        "rank_sampler": [
+          "24a66545c247d06cbabb818eebbd5a183284fb94281a4c9b72bdc35b81b87cc2"
+        ]
+      },
+      "receipt_archive_member": "training/seed75/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "1e295940c9359359876a15f4e94bad16319bd286014196f7c36d4016ada92602",
+      "seed": 75,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "5ebc49ec248d1027ee9468a0e6a7eff89a7d9ace6912a374a40895b5c7d91489",
+      "training_options_sha256": "85a0322e0b14dc8adf30f1fcb539cbe0f30bfed3e9500e13eb5364ead8a6746b",
+      "trajectory_config_sha256": "3bb4d4c99967e63df0eb29c9b3beaa587c1dacd0f787b4080252c8ae6f961907"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed76/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 76,
+      "checkpoint_sha256": "2ce4cde19c227cdaae00aa9089bea1a8678328f4c5d44d0d4e4c5bd81e469c11",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "d3168a2714d2db42138e753ef62145e8e05e85f0c4b4bb5f3d906d96df7061ef",
+        "gradscaler": "18ae2f282c4f448fd1caed062ea8a20b5676b0bad473ef25c4dcba3d7674c4ab",
+        "net": "f375f6fdbc31a3e0d3f5bee509fc329f3dc73f2fe39ea13438fc6e29887e2b6f",
+        "optimizer": "525f1ab603871531e1aac9413317359de309ff2a5ee57e6ff538476a3621e579",
+        "rank_rng": [
+          "9cda6c06a415758f53ec24bc34e2016824e6ec983d2bfa028e50b685f07875ef"
+        ],
+        "rank_sampler": [
+          "306c377e6785eb10a77ae8b397964aadb308c8c30a63da6af2ba03e5b6337c57"
+        ]
+      },
+      "receipt_archive_member": "training/seed76/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "42dde841ec0bdd0e7774f0c789c232a1b78d907567979938963ee3803f0fd270",
+      "seed": 76,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "b3bfca337482158519f3801faa291d93b6f48703c39bc28d3686ab97dd159b01",
+      "training_options_sha256": "1e3e41f35cc2ee6efa3b761c25392508cbf8f98cf5b664ff54f15ea3ba0ca791",
+      "trajectory_config_sha256": "097ff79137c61cd766669fa96db817fb8f4be2e995c19d0078f95bd5f2a62d46"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed76/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 76,
+      "checkpoint_sha256": "650275ba5f4e48235f1d51baeac4df52ce857185b1ed9cf45ea92714875df8a4",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "8871871ed269a2aad5836901a6868bdde1d11a3f790c78c4d9e63892b48cd65f",
+        "gradscaler": "60062c2b2508acc897f8386172488edd4ecd9a9bd7a16351555d6dc3e90af8cf",
+        "net": "43b1d40877ea67fb20eb5b129acb1e455992eaeac1db17f42f3af6b57bf8a0b5",
+        "optimizer": "c088b20c47d7e428322564d24219df8e082e5729f3f2bfb72dc7b1429baf6de6",
+        "rank_rng": [
+          "9cda6c06a415758f53ec24bc34e2016824e6ec983d2bfa028e50b685f07875ef"
+        ],
+        "rank_sampler": [
+          "306c377e6785eb10a77ae8b397964aadb308c8c30a63da6af2ba03e5b6337c57"
+        ]
+      },
+      "receipt_archive_member": "training/seed76/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "bbdfe42cf4b556c96fd58017f8500672b74c7e87e7f980da5b83a6581cd149ad",
+      "seed": 76,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "fd6eae56b5ce9a8d1a798e2af0e12e73bb508cff6f160e5767a4b03b5f89ffe3",
+      "training_options_sha256": "b1fc442d9c219023532f826be9147b0c3b9cc85a1c708ce319a6dea24938f142",
+      "trajectory_config_sha256": "2facbe1d28ea07191a769af4417cc121a704118ee398c627deb5509a1f4b2460"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed77/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 77,
+      "checkpoint_sha256": "bc3bcc8c7670b148016f2fe28abc0f276d2de75ec43632ee92447a91211b6cd4",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "657ef5f0da88858a78caa9d6e720a635d44d15085063575e1dd4ab01a9e093a0",
+        "gradscaler": "dfcd58541c76b40de7369281d14980ca1db2de68561922c941a4540d49027112",
+        "net": "91501cd0f6a239b4907af65f0d19e2265b155c721de2cc18641fac2f86a481b5",
+        "optimizer": "d83e35cb0afa22c4bc17700467283274435a4fb3173af62741e9aca6f07336f7",
+        "rank_rng": [
+          "56a6d6e0af35b4288caba002d56c4f61f70be428c28b50e90219a7c78e65876e"
+        ],
+        "rank_sampler": [
+          "28645857f09d4297ac2b9ef2c92f73d42aa1103939825201afdd95b822f632cb"
+        ]
+      },
+      "receipt_archive_member": "training/seed77/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "f4d192bb76c943553dea5b5eacbcb8f356e938995d0f880396d10ed4e999ffdb",
+      "seed": 77,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "c424d0391a75809fef878e65ae9947d6818fa3fb2af0be6345ac10a0ee9f5096",
+      "training_options_sha256": "ea135dbe53d695e95400cf850831c071f9e5bcfdb488b00587071bd05fbd0b9d",
+      "trajectory_config_sha256": "83c0a44eb6be4ae56ecddd9e4c89667f8735bffc22b57d1799db2ea180903a8e"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed77/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 77,
+      "checkpoint_sha256": "bef73c22803fa3bdc28147758ce626b299bedfecc4932dc3a48bbefbd602bb3e",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "5c52dae568a7a01fe5ace4563c1dba462108e707b402ce9f682ad758191159c7",
+        "gradscaler": "dcc5ad69ddd4223d42e6ea505aae071c41d2feabc19c0c7b14cbe30ee0581b51",
+        "net": "a974d8219ade2f4d2087b64ade29a0313e680b2987c6d0efb945b8981aecb457",
+        "optimizer": "e29f35d3c7f77548b3505b201e3f527bd6c8a185271ada48a3e1aa5a5e37f339",
+        "rank_rng": [
+          "56a6d6e0af35b4288caba002d56c4f61f70be428c28b50e90219a7c78e65876e"
+        ],
+        "rank_sampler": [
+          "28645857f09d4297ac2b9ef2c92f73d42aa1103939825201afdd95b822f632cb"
+        ]
+      },
+      "receipt_archive_member": "training/seed77/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "4daea6fb8272aa2aa468c9afc0a9568607597838a6b8f696024e89b14f0d7b6f",
+      "seed": 77,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "22e1b3d212e35c2e99b2d485e71b689f873ebaab01add4b42127c2623e16ced4",
+      "training_options_sha256": "c132bb9811d8d5a808c0b9232cd73586a59ca6335b5ba855474c9846bbecace8",
+      "trajectory_config_sha256": "87edba3194fc43dc7386ae3ec13d425ce0ef8d4aea2e52ba6c54d948ab6c776f"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed78/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 78,
+      "checkpoint_sha256": "649beb3c9d2a17d9a61b7acd84595b7e4dabcddbf787809a443b4f12abf5a4fb",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "f016cd80099b26fde93986636f34f8e31e3fa1299e6d6f3f7772395781c0441a",
+        "gradscaler": "607aeba837ecd88f067b9c4b1f4be34e865e0622152e7ceeb5a8c4e390d3e55d",
+        "net": "1633bfbf86902bfa1285af78b51d72083ebc6a8d2156b372f3b9a30966e44ee5",
+        "optimizer": "3bb656ab241227753c985fc22a993f703ee8811ba5d6e61cf746fc8759650326",
+        "rank_rng": [
+          "b610be95123e932193bbb24e493b5d8c22b692dec5c27be02d69e443c82c1191"
+        ],
+        "rank_sampler": [
+          "46e96bb5af33fd91ea7cbbbe19fe75c5368cb23e8e392bf722156026754827f9"
+        ]
+      },
+      "receipt_archive_member": "training/seed78/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "a96165b6a20e53ca99f3d7b1fa8e204363a5c0cc8b415723d58c4ea649c7cf90",
+      "seed": 78,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "3370b30b47929f9a79581e9db15cb01c2552ce72490d6d9a82f745d8b2c4e43b",
+      "training_options_sha256": "f1fc09d5a08095ec1012795073a41458d879507fc3ecf86d2add5c455770e57c",
+      "trajectory_config_sha256": "26616ca88d8aab2961a5097ce0c36626b2dfadb3121747f7139e1318c8313c12"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed78/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 78,
+      "checkpoint_sha256": "3e860efc62f54fe9f1776ad6d5d21db6be4b0b35e424a07243cfd09e258db19e",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "bd99cd2fee92a6c564a99a3418e072f617fbb9fe37343977bad2a2f651ebd9bd",
+        "gradscaler": "eda0a9e8275b9121b952bcd0888ce01d8fbf7d940a5d810a10a7c3a122921c5a",
+        "net": "7f1173591154bc9b28cee2cf1c32b647371e7aa2bc12c990c57bb852162e09bf",
+        "optimizer": "092f2d9532fbc481703a07b29620437d7fc064d96e8f7041b911097e13f13152",
+        "rank_rng": [
+          "b610be95123e932193bbb24e493b5d8c22b692dec5c27be02d69e443c82c1191"
+        ],
+        "rank_sampler": [
+          "46e96bb5af33fd91ea7cbbbe19fe75c5368cb23e8e392bf722156026754827f9"
+        ]
+      },
+      "receipt_archive_member": "training/seed78/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "291fd2340b7625c91e5fcf76ab8e82f4df26ccac7ae7485a56e6a79ccd09dca6",
+      "seed": 78,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "24ee226c3a08d85883f106cac4b23a9b1c374d174f6f4a290124c16690894533",
+      "training_options_sha256": "648115282038e22ae8f31710435e7e49e3e680c65d712604005a13540fb9d88d",
+      "trajectory_config_sha256": "ec83aebd32ba00307f0131f8e841802acffbd53068f426a575823fa349d9e0a4"
+    },
+    {
+      "arm": "A",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed79/prefix_A/training-state-kimg000512.pt",
+      "checkpoint_seed": 79,
+      "checkpoint_sha256": "83bc760bdd789fc170a87796976c4768df120f2810887922ff6ae6ca36c12f77",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "A",
+        "denominator_gap_scale": 1.0,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.0
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "53f77a6fd1918600f294eb9e78b89d597e0fca908ea5372db1656e3f540b5350",
+        "gradscaler": "ff06e39846fe010a5e0ef96f8d085f5db478f57e9646409e1734ea880f921041",
+        "net": "d043047b0131eb82aaef6ea6ae9004eced947640956708c9f1c14be6e51f2ca6",
+        "optimizer": "3b96ec0cb5513d27c36b461a765b1e539645825451feb04e71ed8c32a2d6196b",
+        "rank_rng": [
+          "53f8cb40e99983fe2aeaa94f49b1d9786ddcc01ca05ef8192366f39fab7de96c"
+        ],
+        "rank_sampler": [
+          "492b9a067b72d98f13e127c7f63f98c84f2cf0d4c5bfebf775732e91ff0d2565"
+        ]
+      },
+      "receipt_archive_member": "training/seed79/prefix_A/source_state_receipt.json",
+      "receipt_sha256": "2aa7b28a10df8595562df65796f0422fdd7b34439814851867018695f238bea0",
+      "seed": 79,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "d8aac299cbd3e4ea32847912a6f5c4accc3702826acfd5bd86100fe2785a5d9b",
+      "training_options_sha256": "dbc5acb1b34c7bb11e42781ca9c0c4b9526561d91a97194e5cc5012ea915255f",
+      "trajectory_config_sha256": "c290e48164b81f4171f27407b111599731e781af06c43ddedbb14f7d057be310"
+    },
+    {
+      "arm": "B",
+      "attempted_iteration": 4000,
+      "chain_status": "PASS",
+      "checkpoint_exists": true,
+      "checkpoint_path": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1/training/seed79/prefix_B/training-state-kimg000512.pt",
+      "checkpoint_seed": 79,
+      "checkpoint_sha256": "df65387193bdc6bb76c66d27dd4d02443be4fc5a5759c7d1a7d325b3a5f57da7",
+      "cur_nimg": 512000,
+      "ema_finite": true,
+      "ema_present": true,
+      "exclusion_reason": "",
+      "factorial_identity": {
+        "arm": "B",
+        "denominator_gap_scale": 1.1,
+        "enabled": true,
+        "protocol": "q256_target_weight_v1",
+        "target_gap_scale": 1.1
+      },
+      "included_in_paired_cohort": true,
+      "internal_state_sha256": {
+        "ema": "82847c7b09c740f29bbe4c103334eb69665b45ebe2977cd3aa343c01ff7dce1c",
+        "gradscaler": "1577c6bcfd8958d8dd12beb3013f1bd565727545be317b6c9b4b31d66f12299a",
+        "net": "5734615ab0d9d12ae0c5d6cdd0b1ed683892756fb143fb51050e8b63f5eddada",
+        "optimizer": "f5d4f97e71f053157a6eca12701d474ddd23bb8639f8e5d41988bd4ec66e8b03",
+        "rank_rng": [
+          "53f8cb40e99983fe2aeaa94f49b1d9786ddcc01ca05ef8192366f39fab7de96c"
+        ],
+        "rank_sampler": [
+          "492b9a067b72d98f13e127c7f63f98c84f2cf0d4c5bfebf775732e91ff0d2565"
+        ]
+      },
+      "receipt_archive_member": "training/seed79/prefix_B/source_state_receipt.json",
+      "receipt_sha256": "369a7cee2b44eeef5c757a455832426d1451ac09e85a0f99551359e28ea8bce7",
+      "seed": 79,
+      "source_receipt_directly_readable": false,
+      "source_valid": true,
+      "telemetry_sha256": "03c3f12d8b5bf2cf135c690de9934a2155118e33eb76c486c3d9444d0056f230",
+      "training_options_sha256": "37ee1781e389374f0f983d4c7f08c745912df2c914f53abfc61f6cb90413371e",
+      "trajectory_config_sha256": "39d3802efc7d8cb98120a14f6752b3c9fdcd1628d1e2288bef3cd4d831b64962"
+    }
+  ],
+  "runtime": {
+    "numpy": "1.24.4",
+    "python": "3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]",
+    "torch": "2.3.0a0+6ddf5cf85e.nv24.04"
+  },
+  "schema": "q256.pr101.source-inventory/v1",
+  "source_mount_read_only": true,
+  "source_root": "/data/raw/ECT/q256_terminal_history_n30_full_archive_v1"
+}
