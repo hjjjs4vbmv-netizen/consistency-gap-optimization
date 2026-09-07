@@ -23,14 +23,25 @@ def initialized_model(reverse=False):
 
 
 class StateInterventionTests(unittest.TestCase):
-    def test_four_lanes_cover_fixed_matrix_once_with_balanced_cost(self):
+    def test_six_lanes_cover_fixed_matrix_once_with_balanced_cost(self):
         from scripts.run_state_interventions import LANES
         jobs = [job for lane in LANES.values() for job in lane]
         self.assertEqual(len(jobs), 24)
         self.assertEqual(set(jobs), {(seed, branch) for seed in intervention.SEEDS
                                     for branch in intervention.BRANCHES})
         self.assertEqual([sum(1 if branch.startswith('L_') else 2 for _, branch in lane)
-                          for lane in LANES.values()], [9, 9, 9, 9])
+                          for lane in LANES.values()], [6] * 6)
+
+    def test_reserved_remote_branch_cannot_start_on_old_worker(self):
+        from scripts import run_state_interventions as runner
+        with tempfile.TemporaryDirectory() as directory:
+            args = SimpleNamespace(output=Path(directory))
+            (args.output / intervention.M2 / 'seed61' / 'L_A').mkdir(parents=True)
+            with mock.patch.object(runner, 'wait_sources'), \
+                 mock.patch.object(runner.subprocess, 'run') as launch:
+                with self.assertRaisesRegex(RuntimeError, 'refusing to overwrite'):
+                    runner.run_branch(args, 61, 'L_A')
+                launch.assert_not_called()
 
     def test_formal_runner_preserves_scientific_failure_without_retry(self):
         from scripts import run_state_interventions as runner
