@@ -78,6 +78,7 @@ def prepare(args):
         source_state_path=export['source_state_path'],
         source_state_sha256=export['source_state_sha256'],
         evaluation_dataset_sha256=dataset_hash, evaluator=evaluator)
+    record['planned_metrics'] = record.pop('metrics')
     record['execution_source_files'] = {
         str(Path(module.__file__).relative_to(Path(__file__).resolve().parents[1])):
         validation.sha256_file(Path(module.__file__))
