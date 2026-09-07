@@ -14,6 +14,12 @@ from scripts import run_m1_training_slot as old
 from scripts import state_intervention_sources as sources
 from training import m1, schedule_switch, state_interventions as interventions
 
+LANES = {}
+for role, first, tail in (('ect', (59, 60), 61), ('cloud', (55, 56), 62)):
+    for gpu, arm in enumerate(('A', 'B')):
+        LANES[f'{role}-{gpu}'] = ([(first[gpu], branch) for branch in interventions.BRANCHES]
+            + [(tail, 'L_' + arm), (tail, 'X_' + arm + '_from_' + ('B' if arm == 'A' else 'A'))])
+
 
 def wait_sources(args, seed, branch):
     arm = interventions.BRANCHES[branch][0]
@@ -76,13 +82,11 @@ def main():
     parser.add_argument('--source-root', type=Path, required=True)
     parser.add_argument('--dataset', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--seeds', type=int, nargs='+', choices=interventions.SEEDS, required=True)
-    parser.add_argument('--gpu', type=int, required=True)
+    parser.add_argument('--lane', choices=LANES, required=True)
     parser.add_argument('--code-commit', required=True)
     parser.add_argument('--engineering', type=Path, required=True)
     args = parser.parse_args()
-    if len(set(args.seeds)) != len(args.seeds):
-        raise ValueError('duplicate seeds in queue')
+    args.gpu = int(args.lane[-1])
     for branch in interventions.BRANCHES:
         record = json.loads((args.engineering / 'seed55' / branch / 'check.json').read_text())
         if record['status'] != 'PASS':
@@ -95,14 +99,16 @@ def main():
         '--query-compute-apps=pid', '--format=csv,noheader'], text=True).strip()
     if occupied:
         raise RuntimeError(f'GPU {args.gpu} occupied: {occupied}')
-    for seed in args.seeds:
-        while not all(sources.prefix(args.source_root, seed, a).is_file() for a in ('A', 'B')):
-            print(f'WAIT_PAIRED_SOURCE seed={seed}', flush=True)
-            time.sleep(60)
-        old.check_paired_random_streams(
-            args.source_root / 'q256_terminal_history_n30_full_archive_v1/training', seed)
-        for branch in interventions.BRANCHES:
-            run_branch(args, seed, branch)
+    checked = set()
+    for seed, branch in LANES[args.lane]:
+        if seed not in checked:
+            while not all(sources.prefix(args.source_root, seed, a).is_file() for a in ('A', 'B')):
+                print(f'WAIT_PAIRED_SOURCE seed={seed}', flush=True)
+                time.sleep(60)
+            old.check_paired_random_streams(
+                args.source_root / 'q256_terminal_history_n30_full_archive_v1/training', seed)
+            checked.add(seed)
+        run_branch(args, seed, branch)
     print('QUEUE_FINISHED', flush=True)
 
 

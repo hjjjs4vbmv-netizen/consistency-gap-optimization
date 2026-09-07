@@ -5,10 +5,13 @@ GPUs; no additional instance is rented automatically.
 
 | Node role | GPU 0 seeds | GPU 1 seeds |
 |---|---|---|
-| Cloud ingress / relay | 55 | 56 |
-| Private ECT | 59, then 61 | 60, then 62 |
+| Cloud ingress / relay | 55; then 62 L_A / X_A_from_B | 56; then 62 L_B / X_B_from_A |
+| Private ECT | 59; then 61 L_A / X_A_from_B | 60; then 61 L_B / X_B_from_A |
 
-Each seed runs `L_A`, `L_B`, `X_A_from_B`, `X_B_from_A` in that fixed order.
+The first seed of each lane runs `L_A`, `L_B`, `X_A_from_B`, `X_B_from_A` in that
+fixed order. The final seed on each node is shared by its two GPUs as shown above,
+with L before X on each GPU. Every branch appears once; each lane has three L and
+three X branches, avoiding idle cards during the final two seeds.
 Each branch starts once its own complete sources and the original runtime are present;
 evaluation-only source files and other seeds' files do not block it. Original sources
 remain read-only. New outputs use separate M2 and SWAP namespaces.
