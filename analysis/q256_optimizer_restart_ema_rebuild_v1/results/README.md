@@ -1,5 +1,7 @@
 # M1 结果：主比较 INCONCLUSIVE（7/16 完整 R 配对）
 
+2026-09-07 补充：[32 格 optimizer moments / step 短程诊断](../optimizer_split/README.md)及[完整绝对质量表](../optimizer_split/QUALITY.md)。这是看过结果后选择案例的诊断，不改变本报告原始主要推断。
+
 2026-09-07 从 ECT 完整归档读取。原始 320 槽 = 260 PASS + 60 NO_ENDPOINT；
 另有 60 PASS 的失败后 FP32 敏感性评估，严格分开，不填回原始失败。
 原始 64 分支：K_A 14/16、K_B 15/16、R_A 8/16、R_B 15/16 成功。
