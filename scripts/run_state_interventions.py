@@ -15,7 +15,7 @@ from scripts import state_intervention_sources as sources
 from training import m1, schedule_switch, state_interventions as interventions
 
 LANES = {}
-for role, seeds in (('ect', (59, 60)), ('cloud', (55, 56)), ('extra', (61, 62)):
+for role, seeds in (('ect', (59, 60)), ('cloud', (55, 56)), ('extra', (61, 62))):
     for gpu, seed in enumerate(seeds):
         LANES[f'{role}-{gpu}'] = [(seed, branch) for branch in interventions.BRANCHES]
 
