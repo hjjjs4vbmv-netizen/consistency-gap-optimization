@@ -8,7 +8,7 @@ import json
 import os
 import re
 
-from training import reproducibility
+from training import reproducibility, state_interventions
 
 
 PROTOCOL = "q256_ab_crossed_switch_v1"
@@ -25,6 +25,7 @@ FRESH_N12_ENGINEERING_PROTOCOL = (
 TERMINAL_HISTORY_N30_PROTOCOL = "q256_terminal_history_n30_matpool_v1"
 M1_HISTORY_PERSISTENCE_PROTOCOL = "m1_r1_history_persistence_q256"
 SUPPORTED_PROTOCOL_SEEDS = {
+    **{name: state_interventions.SEEDS for name in state_interventions.PROTOCOLS},
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V2: tuple(range(3, 8)),
@@ -64,6 +65,7 @@ M1_BRANCHES = {
     "R_A": ("A", "A"),
     "R_B": ("B", "A"),
 }
+M1_FAMILY = (M1_HISTORY_PERSISTENCE_PROTOCOL, *state_interventions.PROTOCOLS)
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
 
@@ -112,9 +114,11 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch protocol identity mismatch")
     run_kind = manifest.get("run_kind")
     _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
-    if experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if experiment_protocol in M1_FAMILY:
         _require(run_kind == "formal", "M1 permits only formal runs")
-        branches = M1_BRANCHES
+        branches = state_interventions.BRANCHES if state_interventions.enabled(manifest) else M1_BRANCHES
+        if state_interventions.enabled(manifest):
+            state_interventions.validate_manifest(manifest)
     elif run_kind == "parity":
         branches = PARITY_BRANCHES
     elif experiment_protocol in {
@@ -157,7 +161,7 @@ def load_run_manifest(path: str) -> dict:
     _require(isinstance(source, dict), "missing source-state record")
     _require(os.path.isabs(str(source.get("path", ""))),
              "source-state path must be absolute")
-    if experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if experiment_protocol in M1_FAMILY:
         _require(set(source) == {"path"},
                  "M1 source-state record accepts only its path")
         _require(os.path.isabs(str(manifest.get("immutable_output_root", ""))),
@@ -208,7 +212,7 @@ def continuation_factorial(manifest: dict) -> dict:
 
 def state_metadata(manifest: dict) -> dict:
     source = manifest["source_state"]
-    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] in M1_FAMILY:
         return {
             "schema": STATE_SCHEMA,
             "experiment_protocol": manifest["experiment_protocol"],
@@ -249,7 +253,7 @@ def verify_resume_state_file(path: str, manifest: dict) -> None:
     source = manifest["source_state"]
     _require(os.path.realpath(path) == os.path.realpath(source["path"]),
              "resume path does not match source-state path")
-    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] in M1_FAMILY:
         _require(os.path.isfile(path) and not os.path.islink(path),
                  "M1 source state must be a regular file")
         return
@@ -260,6 +264,9 @@ def verify_resume_state_file(path: str, manifest: dict) -> None:
 
 
 def verify_source_state(state: dict, manifest: dict) -> dict:
+    if manifest['experiment_protocol'] == state_interventions.M2:
+        state_interventions.verify_late_source(state, manifest)
+        return {'cur_nimg': 768000, 'attempted_iteration': 6000}
     required = (
         "net", "ema", "optimizer_state", "gradscaler_state",
         "attempted_iteration", "successful_optimizer_steps", "cur_nimg",
@@ -281,7 +288,7 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
              and float(factorial.get("denominator_gap_scale")) == denominator,
              "source factorial identity mismatch")
     trajectory = state["trajectory_config"]
-    if manifest["experiment_protocol"] != M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] not in M1_FAMILY:
         _require(reproducibility.state_sha256(trajectory)
                  == state["trajectory_config_sha256"],
                  "source trajectory-config SHA256 mismatch")
@@ -291,7 +298,7 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
     _require(len(ranks) == 1, "schedule-switch requires WORLD_SIZE=1 source")
     _require(int(ranks[0]["sampler_state"].get("consumed_samples", -1))
              == SWITCH_NIMG, "source sampler cursor is not exactly 512000")
-    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] in M1_FAMILY:
         return {
             "attempted_iteration": int(state["attempted_iteration"]),
             "cur_nimg": int(state["cur_nimg"]),

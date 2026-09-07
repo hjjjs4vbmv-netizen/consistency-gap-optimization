@@ -21,6 +21,7 @@ from torch_utils import misc
 from training import reproducibility
 from training import schedule_switch
 from training import m1
+from training import state_interventions
 
 from metrics import metric_main
 
@@ -998,6 +999,10 @@ def training_loop(
         if switch_manifest is not None else None
     )
     m1_manifest = switch_manifest if m1.is_m1_manifest(switch_manifest) else None
+    intervention_enabled = state_interventions.enabled(switch_manifest)
+    initialization_nimg = state_interventions.boundary(switch_manifest) if intervention_enabled else schedule_switch.SWITCH_NIMG
+    initialization_attempt = initialization_nimg // 128
+    parent_state_metadata = None
     m1_shadow_update = bool(
         m1_manifest is not None and m1_manifest.get('m1_shadow_update', True)
     )
@@ -1388,6 +1393,13 @@ def training_loop(
                     data['ema_512'], ema_512,
                     label='strict M1 training-state -> E_512',
                 )
+            elif intervention_enabled:
+                parent_state_metadata = {
+                    key: copy.deepcopy(data.get(key)) for key in ('m1', 'schedule_switch')
+                }
+                if switch_manifest['experiment_protocol'] == state_interventions.M2:
+                    ema_512 = m1.initialize_ema_512(net)
+                    copy_module_state_exact(data['ema_512'], ema_512, label='late source -> E_512')
         if 'cur_nimg' not in data:
             raise RuntimeError(
                 f'resume training-state missing cur_nimg: {resume_state_dump}; '
@@ -1515,13 +1527,19 @@ def training_loop(
         if dist.get_world_size() > 1:
             torch.distributed.barrier()
     if m1_manifest is not None and starting_schedule_switch:
-        reset_count = m1.apply_optimizer_intervention(
-            optimizer, m1_manifest['branch']
-        )
-        ema_512 = m1.initialize_ema_512(net)
+        if intervention_enabled:
+            intervention_summary = state_interventions.apply(optimizer, net, m1_manifest)
+            reset_count = int(m1_manifest['experiment_protocol'] == state_interventions.M2)
+        else:
+            reset_count = m1.apply_optimizer_intervention(optimizer, m1_manifest['branch'])
+        if ema_512 is None:
+            ema_512 = m1.initialize_ema_512(net)
         m1_metadata = m1.initial_metadata(
             m1_manifest, reset_count, successful_optimizer_steps
         )
+        if intervention_enabled:
+            m1_metadata.update(parent_state_metadata=parent_state_metadata,
+                               intervention_summary=intervention_summary)
 
     # Train.
     dist.print0(f'Training for {total_kimg} kimg...')
@@ -1602,7 +1620,7 @@ def training_loop(
                     summary_path,
                     allow_empty_current=(
                         m1_manifest is not None
-                        and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+                        and attempted_iteration == initialization_attempt
                     ),
                 )
                 if migrated_backup is not None:
@@ -1613,7 +1631,7 @@ def training_loop(
                 if not rows:
                     if not (
                         m1_manifest is not None
-                        and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+                        and attempted_iteration == initialization_attempt
                     ):
                         raise RuntimeError(
                             'resume train_summary.csv has no attempted rows'
@@ -1725,7 +1743,7 @@ def training_loop(
                     or source_last['arm'] != switch_manifest['origin_arm']
                 ):
                     raise RuntimeError('source factorial telemetry boundary mismatch')
-            if attempted_iteration == schedule_switch.SWITCH_ATTEMPT:
+            if attempted_iteration == initialization_attempt:
                 if telemetry_exists:
                     if m1_manifest is None or starting_schedule_switch:
                         raise RuntimeError(
@@ -1821,7 +1839,7 @@ def training_loop(
         )
         if not resume_state_dump or (
             switch_manifest is not None
-            and attempted_iteration == schedule_switch.SWITCH_ATTEMPT
+            and attempted_iteration == initialization_attempt
             and not telemetry_exists
         ):
             factorial_telemetry_writer.writeheader()
@@ -2024,6 +2042,14 @@ def training_loop(
 
     while True:
 
+        observe_intervention = (
+            state_interventions.enabled(m1_manifest)
+            and attempted_iteration < initialization_attempt + 64
+        )
+        if observe_intervention:
+            input_rng_before = reproducibility.state_sha256(
+                reproducibility.capture_rng_state()
+            )
         # Accumulate gradients.
         optimizer.zero_grad(set_to_none=True)
         loss_batches = []
@@ -2377,6 +2403,10 @@ def training_loop(
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)
                 factorial_telemetry_csv.flush()
+            if observe_intervention:
+                state_interventions.record_attempt(
+                    run_dir, optimizer, telemetry_row, input_rng_before
+                )
 
             invariant_failures, managed_loss_overflow_count, managed_overflow = (
                 strict_attempt_invariant_failures(
