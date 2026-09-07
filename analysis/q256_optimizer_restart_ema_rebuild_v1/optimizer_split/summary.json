@@ -1,0 +1,70 @@
+{
+  "groups": {
+    "K": {
+      "completed": 8,
+      "failed": 0,
+      "cells_with_skips": 0,
+      "skipped_attempts": 0,
+      "first_update_ratio_range": [
+        1.0,
+        1.0
+      ],
+      "first_update_ratio_median": 1.0,
+      "cosine_range": [
+        1.0,
+        1.0
+      ]
+    },
+    "R": {
+      "completed": 7,
+      "failed": 1,
+      "cells_with_skips": 6,
+      "skipped_attempts": 12,
+      "first_update_ratio_range": [
+        0.9039494420054411,
+        1.9102286613975359
+      ],
+      "first_update_ratio_median": 1.1163947406967214,
+      "cosine_range": [
+        0.0479118175621578,
+        0.08606876869968547
+      ]
+    },
+    "clear_moments": {
+      "completed": 8,
+      "failed": 0,
+      "cells_with_skips": 0,
+      "skipped_attempts": 0,
+      "first_update_ratio_range": [
+        12.703211030673858,
+        14.726222697620658
+      ],
+      "first_update_ratio_median": 13.608685003438325,
+      "cosine_range": [
+        0.30425200526636564,
+        0.37669111550248774
+      ]
+    },
+    "reset_step": {
+      "completed": 7,
+      "failed": 1,
+      "cells_with_skips": 7,
+      "skipped_attempts": 14,
+      "first_update_ratio_range": [
+        2.42941407004311,
+        4.339376068037508
+      ],
+      "first_update_ratio_median": 3.228576572357722,
+      "cosine_range": [
+        0.10801149573808447,
+        0.1697232271362526
+      ]
+    }
+  },
+  "total_observed_attempts": 1938,
+  "summed_cell_wall_hours": 1.54598005,
+  "gpu_cells": {
+    "0": 2,
+    "1": 30
+  }
+}
