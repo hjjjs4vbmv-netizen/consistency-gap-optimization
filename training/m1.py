@@ -8,7 +8,7 @@ import os
 import numpy as np
 import torch
 
-from training import reproducibility, schedule_switch
+from training import reproducibility, schedule_switch, state_interventions
 
 
 PROTOCOL_ID = schedule_switch.M1_HISTORY_PERSISTENCE_PROTOCOL
@@ -18,11 +18,13 @@ READOUTS = ("ONLINE", "E_KEEP", "E_512")
 def is_m1_manifest(manifest: dict | None) -> bool:
     return (
         manifest is not None
-        and manifest.get("experiment_protocol") == PROTOCOL_ID
+        and manifest.get("experiment_protocol") in schedule_switch.M1_FAMILY
     )
 
 
 def optimizer_intervention(branch: str) -> str:
+    if branch in state_interventions.BRANCHES:
+        return 'reset' if branch.startswith('L_') else 'keep'
     if branch in {"K_A", "K_B"}:
         return "keep"
     if branch in {"R_A", "R_B"}:
@@ -76,6 +78,8 @@ def update_ema_512(ema_512, net, beta: float) -> None:
 def initial_metadata(
     manifest: dict, reset_count: int, successful_steps_at_init: int = 0
 ) -> dict:
+    if state_interventions.enabled(manifest):
+        return state_interventions.metadata(manifest, successful_steps_at_init)
     if not is_m1_manifest(manifest):
         raise RuntimeError("not an M1 manifest")
     expected_reset = int(optimizer_intervention(manifest["branch"]) == "reset")
@@ -242,6 +246,19 @@ def save_branch_init_state(state: dict, run_dir: str) -> str:
             "M1 branch-init is not a complete training state: "
             + ", ".join(missing)
         )
+    if state['m1']['protocol_id'] in state_interventions.PROTOCOLS:
+        point = state['m1']['initialized_at_nimg']
+        if state['cur_nimg'] != point or state['attempted_iteration'] != point // 128:
+            raise RuntimeError('intervention initialization progress mismatch')
+        metadata = state['m1']
+        validate_resumed_state(state, {
+            'experiment_protocol': metadata['protocol_id'], 'branch': metadata['branch'],
+            'seed': metadata['seed'], 'source_state': {'path': metadata['source_path']},
+            'donor_state': {'path': metadata['donor_path']},
+        })
+        path = os.path.join(run_dir, f'training-state-kimg{point // 1000:06d}.pt')
+        reproducibility.atomic_torch_save(state, path, overwrite=False)
+        return path
     if int(state.get("cur_nimg", -1)) != schedule_switch.SWITCH_NIMG:
         raise RuntimeError("M1 branch-init must be written at 512 kimg")
     if int(state.get("attempted_iteration", -1)) != schedule_switch.SWITCH_ATTEMPT:
