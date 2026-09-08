@@ -20,7 +20,7 @@ from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
 from training import schedule_switch
-from training import m1
+from training import m1, history_component
 
 from metrics import metric_main
 
@@ -62,6 +62,18 @@ def validate_planned_pause(
         raise ValueError('stop_after_attempts must be an exact integer')
     attempts = int(stop_after_attempts)
     if attempts == 16 and planned_pause_protocol is None:
+        return attempts
+    if planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_ENGINEERING_PROTOCOL:
+        if (seed != 50 or total_kimg != 1024
+                or attempts not in (8, 16, 4008, 4016)
+                or (schedule_switch_manifest is not None and schedule_switch_experiment_protocol
+                    != schedule_switch.HISTORY_COMPONENT_ENGINEERING_PROTOCOL)):
+            raise ValueError('invalid isolated history-component engineering pause')
+        return attempts
+    if planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_PROTOCOL:
+        if (seed not in range(50, 66) or total_kimg != 1024 or attempts != 4000
+                or schedule_switch_manifest is not None):
+            raise ValueError('invalid history-component prefix pause')
         return attempts
     allowed = {
         schedule_switch.FRESH_N12_PROTOCOL: tuple(range(31, 43)),
@@ -997,10 +1009,21 @@ def training_loop(
         schedule_switch.state_metadata(switch_manifest)
         if switch_manifest is not None else None
     )
-    m1_manifest = switch_manifest if m1.is_m1_manifest(switch_manifest) else None
+    component_run = history_component.is_manifest(switch_manifest)
+    component_prefix = planned_pause_protocol in {
+        schedule_switch.HISTORY_COMPONENT_PROTOCOL,
+        schedule_switch.HISTORY_COMPONENT_ENGINEERING_PROTOCOL,
+    } and switch_manifest is None
+    ema_operations = history_component if component_run else m1
+    ema_metadata_key = 'history_component' if component_run else 'm1'
+    m1_manifest = switch_manifest if (component_run or m1.is_m1_manifest(switch_manifest)) else None
     m1_shadow_update = bool(
-        m1_manifest is not None and m1_manifest.get('m1_shadow_update', True)
+        component_run or (m1_manifest is not None and m1_manifest.get('m1_shadow_update', True))
     )
+    if component_prefix and planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_PROTOCOL:
+        if (float(loss_kwargs.get('target_gap_scale', -1)),
+                float(loss_kwargs.get('denominator_gap_scale', -1))) not in {(1.1, 1.0), (1.0, 1.1)}:
+            raise ValueError('formal history-component prefix requires C or D factors')
     allow_managed_loss_overflow = bool(
         switch_manifest is not None
         and switch_manifest.get("experiment_protocol")
@@ -1276,6 +1299,12 @@ def training_loop(
             map_location=torch.device('cpu'),
             weights_only=False,
         )
+        if component_prefix and planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_PROTOCOL:
+            if data.get('history_component_prefix') != {
+                'protocol_id': planned_pause_protocol, 'seed': seed,
+                'source_history': loss_fn.factorial['arm'], 'total_kimg': total_kimg,
+            }:
+                raise RuntimeError('formal prefix recovery requires its own history-component state')
         if strict_reproducibility:
             if data.get('reproducibility_schema') != reproducibility.TRAINING_STATE_SCHEMA:
                 raise RuntimeError(
@@ -1379,11 +1408,12 @@ def training_loop(
         optimizer.load_state_dict(data['optimizer_state'])
         if m1_manifest is not None:
             if not starting_schedule_switch:
-                m1_metadata = m1.validate_resumed_state(data, m1_manifest)
+                m1_metadata = ema_operations.validate_resumed_state(data, m1_manifest)
                 m1_successful_steps = m1_metadata[
                     'successful_steps_since_init'
                 ]
-                ema_512 = m1.initialize_ema_512(net)
+                ema_512 = (copy.deepcopy(data['ema_512']).to(device).eval().requires_grad_(False)
+                           if component_run else ema_operations.initialize_ema_512(net))
                 copy_module_state_exact(
                     data['ema_512'], ema_512,
                     label='strict M1 training-state -> E_512',
@@ -1515,11 +1545,11 @@ def training_loop(
         if dist.get_world_size() > 1:
             torch.distributed.barrier()
     if m1_manifest is not None and starting_schedule_switch:
-        reset_count = m1.apply_optimizer_intervention(
+        reset_count = ema_operations.apply_optimizer_intervention(
             optimizer, m1_manifest['branch']
         )
-        ema_512 = m1.initialize_ema_512(net)
-        m1_metadata = m1.initial_metadata(
+        ema_512 = ema_operations.initialize_ema_512(net)
+        m1_metadata = ema_operations.initial_metadata(
             m1_manifest, reset_count, successful_optimizer_steps
         )
 
@@ -1896,11 +1926,17 @@ def training_loop(
                 snapshot_grid_c=[value.detach().cpu() for value in grid_c],
                 snapshot_grid_size=tuple(grid_size),
             )
+            if planned_pause_protocol in {schedule_switch.HISTORY_COMPONENT_PROTOCOL,
+                                           schedule_switch.HISTORY_COMPONENT_ENGINEERING_PROTOCOL} and switch_manifest is None:
+                data['history_component_prefix'] = {
+                    'protocol_id': planned_pause_protocol, 'seed': seed,
+                    'source_history': loss_fn.factorial['arm'], 'total_kimg': total_kimg,
+                }
             if switch_manifest is not None:
                 data['schedule_switch'] = copy.deepcopy(switch_metadata)
             if m1_manifest is not None:
                 data['ema_512'] = ema_512
-                data['m1'] = m1.checkpoint_metadata(
+                data[ema_metadata_key] = ema_operations.checkpoint_metadata(
                     m1_metadata, m1_successful_steps
                 )
             if allow_managed_loss_overflow:
@@ -2000,8 +2036,13 @@ def training_loop(
                 rank_states=branch_init_rank_states,
                 advance_tick=False,
             )
-            path = m1.save_branch_init_state(branch_init, run_dir)
+            path = ema_operations.save_branch_init_state(branch_init, run_dir)
             dist.print0(f'Saved M1 branch-init state: {path}')
+
+    if component_prefix and not resume_state_dump and planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_PROTOCOL:
+        history_component.check_archived_initial(run_dir, seed)
+    if component_prefix or component_run:
+        history_component.observe_first_training_forward(net, run_dir)
 
     if (
         stop_after_attempts is not None
@@ -2141,7 +2182,7 @@ def training_loop(
             ) = tensor_collection_diagnostics(net.parameters())
             radam_first_moment_norm = 0.0
             radam_second_moment_norm = 0.0
-            if switch_manifest is not None:
+            if switch_manifest is not None or component_prefix:
                 first_moments = [
                     item['exp_avg'] for item in optimizer.state.values()
                     if 'exp_avg' in item
@@ -2187,7 +2228,11 @@ def training_loop(
         for p_ema, p_net in zip(ema.parameters(), net.parameters()):
             p_ema.copy_(p_net.detach().lerp(p_ema, ema_beta))
         if ema_512 is not None and m1_shadow_update:
-            m1.update_ema_512(ema_512, net, ema_beta)
+            ema_operations.update_ema_512(ema_512, net, ema_beta)
+            if component_run:
+                shadow_nonfinite, _, _ = tensor_collection_diagnostics(ema_512.parameters())
+                if shadow_nonfinite:
+                    raise FloatingPointError('non-finite E_512 state')
 
         if strict_reproducibility:
             (
@@ -2371,7 +2416,8 @@ def training_loop(
                 })
             if m1_manifest is not None:
                 telemetry_row.update({
-                    'schema': 'ect.m1.training-telemetry/v1',
+                    'schema': ('ect.q256.history-component-telemetry/v1' if component_run
+                               else 'ect.m1.training-telemetry/v1'),
                     'seed': seed,
                 })
             if factorial_telemetry_writer is not None:
