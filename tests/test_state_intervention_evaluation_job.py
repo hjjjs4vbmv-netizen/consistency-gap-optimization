@@ -108,6 +108,8 @@ class EvaluationJobTests(unittest.TestCase):
         feature.flush()
         with self.assertRaisesRegex(ValueError, 'features differ'):
             inspect_output(self.slot, self.root, snapshot, dataset)
+        self.assertEqual(inspect_output(self.slot, self.root, snapshot, dataset, scan_features=False),
+                         {'kid50k_full': -0.001, 'fid50k_full': 1e9})
         feature[123, 4] = 0
         feature.flush()
         del feature
@@ -115,6 +117,8 @@ class EvaluationJobTests(unittest.TestCase):
             dict(metric='fid50k_full', num_gpus=1, results={'fid50k_full': float('nan')})))
         with self.assertRaises(FloatingPointError):
             inspect_output(self.slot, self.root, snapshot, dataset)
+        with self.assertRaises(FloatingPointError):
+            inspect_output(self.slot, self.root, snapshot, dataset, scan_features=False)
 
 
 if __name__ == '__main__':

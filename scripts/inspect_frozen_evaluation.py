@@ -7,7 +7,7 @@ import numpy as np
 from scripts import build_m1_evaluation_slots as slots
 
 
-def inspect_output(row, job, snapshot, dataset):
+def inspect_output(row, job, snapshot, dataset, *, scan_features=True):
     options = json.loads((job / 'training_options.json').read_text())
     expected = dict(sample_seeds=list(range(int(row['sample_seed_start']),
                                           int(row['sample_seed_end']) + 1)),
@@ -37,7 +37,8 @@ def inspect_output(row, job, snapshot, dataset):
         results[metric] = value
     if features[0].shape != (50000, 2048) or features[1].shape != features[0].shape:
         raise ValueError('incomplete generated feature count')
-    for start in range(0, 50000, 1000):
+    # Collection can reuse the completed job's finite/equality scan; execution cannot.
+    for start in range(0, 50000 if scan_features else 0, 1000):
         a, b = (f[start:start + 1000] for f in features)
         if not np.isfinite(a).all() or not np.array_equal(a, b):
             raise ValueError('KID/FID generated features differ or are nonfinite')
