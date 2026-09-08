@@ -10,10 +10,13 @@ from types import SimpleNamespace
 from scripts import run_state_intervention_evaluation as job
 
 
-def seed_slots(seed):
+def seed_slots(seed, branch=None):
     if seed not in job.experiment.SEEDS:
         raise ValueError('seed is outside the fixed cohort')
-    return [row for row in job.slots.build_slots() if row['seed'] == seed and row['mode'] == 'NEW']
+    if branch is not None and branch not in job.experiment.BRANCHES:
+        raise ValueError('branch is outside the new training branches')
+    return [row for row in job.slots.build_slots() if row['seed'] == seed
+            and row['mode'] == 'NEW' and (branch is None or row['branch'] == branch)]
 
 
 def training_ready(runs_root, seed):
@@ -103,8 +106,10 @@ def export_readout(slot, args):
 
 
 def run_lane(args):
-    rows = seed_slots(args.training_seed)
-    lane_path = args.output / 'lanes' / f'seed{args.training_seed}.json'
+    branch = getattr(args, 'branch', None)
+    rows = seed_slots(args.training_seed, branch)
+    suffix = f'-{branch}' if branch else ''
+    lane_path = args.output / 'lanes' / f'seed{args.training_seed}{suffix}.json'
     lane_path.parent.mkdir(parents=True, exist_ok=True)
     with lane_path.with_suffix('.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -112,6 +117,8 @@ def run_lane(args):
             raise FileExistsError(f'prior lane record exists; inspect before restarting: {lane_path}')
         lane = dict(seed=args.training_seed, gpu=args.gpu, planned=len(rows),
                     started_utc=job.original.utc_now(), status='WAIT_TRAINING')
+        if branch:
+            lane['branch'] = branch
         job.original.write_json(lane_path, lane)
         try:
             while not training_ready(args.runs_root, args.training_seed):
@@ -150,6 +157,8 @@ def main():
                  'evaluator', 'dataset', 'cache'):
         parser.add_argument('--' + flag, type=Path, required=True)
     parser.add_argument('--training-seed', type=int, choices=job.experiment.SEEDS, required=True)
+    parser.add_argument('--branch', choices=job.experiment.BRANCHES,
+                        help='Evaluate only this explicitly assigned new branch')
     parser.add_argument('--gpu', type=int, choices=(0, 1), required=True)
     run_lane(parser.parse_args())
 

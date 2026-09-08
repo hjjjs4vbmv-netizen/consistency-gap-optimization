@@ -43,6 +43,20 @@ class EvaluationQueueTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             queue.training_ready(self.args.runs_root, 59)
 
+    def test_branch_dispatch_partitions_twenty_swap_slots_without_overlap(self):
+        rows = [r for seed in (55, 56) for branch in ('X_A_from_B', 'X_B_from_A')
+                for r in queue.seed_slots(seed, branch)]
+        self.assertEqual(len(rows), 20)
+        self.assertEqual(len({r['slot_id'] for r in rows}), 20)
+        self.assertTrue(all(r['budget_kimg'] == 1024 and r['mode'] == 'NEW' for r in rows))
+        for seed in (55, 56):
+            assigned = {r['slot_id'] for r in rows if r['seed'] == seed}
+            retained = [r for r in queue.seed_slots(seed) if r['slot_id'] not in assigned]
+            self.assertEqual(len(retained), 26)
+            self.assertFalse(any(r['branch'].startswith('X_') for r in retained))
+        with self.assertRaises(ValueError):
+            queue.seed_slots(55, 'R_B')
+
     def test_scientific_failure_records_all_five_without_metrics(self):
         path = self.write_training('L_A', 'NUMERICAL_FAILURE')
         rows = [r for r in queue.seed_slots(59) if r['branch'] == 'L_A']
