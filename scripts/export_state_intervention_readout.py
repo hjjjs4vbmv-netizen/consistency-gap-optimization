@@ -10,6 +10,17 @@ from scripts import validate_m1_evaluation_job as validation
 from training import m1, reproducibility, schedule_switch
 
 
+def validate_branch_status(record, slot):
+    # The original runner's terminal recheck records PASS without a subprocess exit code.
+    terminal_recheck = (slot['protocol_id'] == slots.original.PROTOCOL_ID
+        and slot['budget_kimg'] == 768 and record.get('status') == 'PASS'
+        and record.get('resume_attempt') == 8000 and 'exit_code' not in record)
+    if (record.get('status') not in ('PASS', 'COMPLETE') or
+            (record.get('exit_code') != 0 and not terminal_recheck) or
+            record.get('seed') != slot['seed'] or record.get('branch') != slot['branch']):
+        raise ValueError('source branch is not a matching completed formal run')
+
+
 def validate_state(state, manifest, slot):
     expected = dict(experiment_protocol=slot['protocol_id'], seed=int(slot['seed']),
                     branch=slot['branch'], run_kind='formal')
@@ -60,11 +71,7 @@ def main():
     branch_status_path = directory / 'branch_status.json'
     manifest = schedule_switch.load_run_manifest(str(manifest_path))
     branch_status = json.loads(branch_status_path.read_text())
-    if (branch_status.get('status') not in ('PASS', 'COMPLETE') or
-            branch_status.get('exit_code') != 0 or
-            branch_status.get('seed') != slot['seed'] or
-            branch_status.get('branch') != slot['branch']):
-        raise ValueError('source branch is not a matching completed formal run')
+    validate_branch_status(branch_status, slot)
     output = args.output_root / slot['readout_id']
     if output.exists():
         raise FileExistsError(f'readout output already exists: {output}')

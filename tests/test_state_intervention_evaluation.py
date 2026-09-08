@@ -5,7 +5,7 @@ import unittest
 import torch
 
 from scripts import state_intervention_evaluation_slots as slots
-from scripts.export_state_intervention_readout import prepare_readout
+from scripts.export_state_intervention_readout import prepare_readout, validate_branch_status
 from training import m1, reproducibility, schedule_switch
 
 
@@ -33,6 +33,29 @@ def fixture(slot):
 
 
 class EvaluationPreparationTests(unittest.TestCase):
+    def test_original_terminal_recheck_without_exit_code_can_export(self):
+        for seed in (55, 56):
+            row = slots.get_slot(f'seed{seed}-R_B-kimg000768-ONLINE-B0')
+            record = dict(seed=seed, branch='R_B', status='PASS', resume_attempt=8000)
+            before = record.copy()
+            validate_branch_status(record, row)
+            self.assertEqual(record, before)
+            state, manifest = fixture(row)
+            snapshot, _ = prepare_readout(state, manifest, row)
+            self.assertEqual(snapshot['ema'].weight.item(), 1)
+
+    def test_terminal_recheck_does_not_accept_failed_or_wrong_sources(self):
+        row = slots.get_slot('seed55-R_B-kimg000768-ONLINE-B0')
+        record = dict(seed=55, branch='R_B', status='PASS', resume_attempt=8000)
+        for change in ({'seed': 56}, {'branch': 'R_A'}, {'status': 'TECHNICAL_FAILURE'},
+                       {'resume_attempt': 7999}, {'exit_code': 1}, {'exit_code': None}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                validate_branch_status(dict(record, **change), row)
+        new = slots.get_slot('seed55-L_A-kimg001024-ONLINE-B0')
+        with self.assertRaises(ValueError):
+            validate_branch_status(dict(record, branch='L_A', status='COMPLETE'), new)
+        validate_branch_status(dict(record, branch='L_A', status='COMPLETE', exit_code=0), new)
+
     def test_fixed_matrix_and_reuse_never_become_new_jobs(self):
         rows = slots.build_slots()
         self.assertEqual(len(rows), 336)
