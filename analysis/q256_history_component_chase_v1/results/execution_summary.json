@@ -1,0 +1,750 @@
+{
+  "training_groups": [
+    {
+      "group": "train_1",
+      "runtime": {
+        "cudnn": 90100,
+        "numpy": "2.1.2",
+        "python": "3.11.13",
+        "scipy": "1.16.1",
+        "torch": "2.6.0+cu124",
+        "torch_cuda": "12.4"
+      },
+      "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+      "short_checks": {
+        "checks": {
+          "A_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "A_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "A_no_intervention": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "C_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "C_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "D_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "D_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "branch_init_once_keep": {
+            "status": "PASS"
+          },
+          "prefix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "suffix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "ema_512",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          }
+        },
+        "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+        "process_gpuh": 0.08963470023746291,
+        "scope": "short engineering checks only, not full-run bitwise reproduction",
+        "status": "PASS",
+        "wall_hours": 0.09168853022520326
+      },
+      "preflight_sha256": "bdc6ce22793a2a14d2d55fea84ba10a20e31eee8a3b7dc395bc2dbcaaf714ffd",
+      "assets_sha256": {
+        "dataset": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+        "transfer": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+      },
+      "training_process_gpuh": 38.38252629064722
+    },
+    {
+      "group": "train_2",
+      "runtime": {
+        "cudnn": 90100,
+        "numpy": "2.1.2",
+        "python": "3.11.13",
+        "scipy": "1.16.1",
+        "torch": "2.6.0+cu124",
+        "torch_cuda": "12.4"
+      },
+      "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+      "short_checks": {
+        "checks": {
+          "A_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "A_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "A_no_intervention": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "C_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "C_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "D_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "D_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "branch_init_once_keep": {
+            "status": "PASS"
+          },
+          "prefix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "suffix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "ema_512",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          }
+        },
+        "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+        "process_gpuh": 0.08950294751260014,
+        "scope": "short engineering checks only, not full-run bitwise reproduction",
+        "status": "PASS",
+        "wall_hours": 0.0913239798332668
+      },
+      "preflight_sha256": "93b42f38b752744f2199a14107f3e53a2199b35009eea5a2085d1f9ba9e7fc50",
+      "assets_sha256": {
+        "dataset": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+        "transfer": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+      },
+      "training_process_gpuh": 31.78664023764017
+    },
+    {
+      "group": "train_3",
+      "runtime": {
+        "cudnn": 90100,
+        "numpy": "2.1.2",
+        "python": "3.11.13",
+        "scipy": "1.16.1",
+        "torch": "2.6.0+cu124",
+        "torch_cuda": "12.4"
+      },
+      "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+      "short_checks": {
+        "checks": {
+          "A_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "A_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "A_no_intervention": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "C_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "C_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "D_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "D_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "branch_init_once_keep": {
+            "status": "PASS"
+          },
+          "prefix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "suffix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "ema_512",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          }
+        },
+        "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+        "process_gpuh": 0.09339237382273294,
+        "scope": "short engineering checks only, not full-run bitwise reproduction",
+        "status": "PASS",
+        "wall_hours": 0.09545106310138686
+      },
+      "preflight_sha256": "3ba7010cffab2b7e07fb22c1cf40e4b8824d11a6c107842956002f08bb1c04ed",
+      "assets_sha256": {
+        "dataset": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+        "transfer": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+      },
+      "training_process_gpuh": 23.371210528524696
+    },
+    {
+      "group": "train_4",
+      "runtime": {
+        "cudnn": 90100,
+        "numpy": "2.1.2",
+        "python": "3.11.13",
+        "scipy": "1.16.1",
+        "torch": "2.6.0+cu124",
+        "torch_cuda": "12.4"
+      },
+      "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+      "short_checks": {
+        "checks": {
+          "A_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "A_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "A_no_intervention": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "C_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "C_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "D_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "D_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "branch_init_once_keep": {
+            "status": "PASS"
+          },
+          "prefix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "suffix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "ema_512",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          }
+        },
+        "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+        "process_gpuh": 0.10824283782341,
+        "scope": "short engineering checks only, not full-run bitwise reproduction",
+        "status": "PASS",
+        "wall_hours": 0.11013511239602748
+      },
+      "preflight_sha256": "c2722ba77ad5682369c1a2b48d9248169f77353ca8828d02062cd0fb2ef55bb8",
+      "assets_sha256": {
+        "dataset": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+        "transfer": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+      },
+      "training_process_gpuh": 23.389248574015994
+    },
+    {
+      "group": "train_5",
+      "runtime": {
+        "cudnn": 90100,
+        "numpy": "2.1.2",
+        "python": "3.11.13",
+        "scipy": "1.16.1",
+        "torch": "2.6.0+cu124",
+        "torch_cuda": "12.4"
+      },
+      "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+      "short_checks": {
+        "checks": {
+          "A_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "A_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "A_no_intervention": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "C_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "C_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "D_base_inputs": {
+            "attempts_compared": 16,
+            "fields": [
+              "batch_sha256",
+              "t_sha256",
+              "base_r_sha256"
+            ],
+            "scope": "existing telemetry only; unrecorded epsilon/dropout not asserted"
+          },
+          "D_dtype": {
+            "input_dtype": "torch.float16",
+            "module_class": "SongUNet",
+            "scope": "first actual inner-denoiser forward in this trajectory",
+            "training": true
+          },
+          "branch_init_once_keep": {
+            "status": "PASS"
+          },
+          "prefix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          },
+          "suffix_resume": {
+            "exact": true,
+            "state_fields": [
+              "net",
+              "ema",
+              "ema_512",
+              "optimizer_state",
+              "gradscaler_state",
+              "rank_states",
+              "loss_fn_state",
+              "attempted_iteration",
+              "successful_optimizer_steps",
+              "cur_nimg",
+              "cur_tick",
+              "tick_start_nimg"
+            ],
+            "status": "PASS"
+          }
+        },
+        "implementation_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+        "process_gpuh": 0.13059116756957437,
+        "scope": "short engineering checks only, not full-run bitwise reproduction",
+        "status": "PASS",
+        "wall_hours": 0.1416111302205051
+      },
+      "preflight_sha256": "fe5d524774eec088e8a85351a7b2436664c4e39bd5bdc5d7ed67dc1ef49f5d26",
+      "assets_sha256": {
+        "dataset": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+        "transfer": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+      },
+      "training_process_gpuh": 10.633593131727022
+    }
+  ],
+  "evaluation_groups": [
+    {
+      "group": "eval_1",
+      "process_gpuh": 11.774247510870921,
+      "export_process_gpuh": 0.141790024286343,
+      "setup_process_gpuh": 0
+    },
+    {
+      "group": "eval_2",
+      "process_gpuh": 4.9613222401713335,
+      "export_process_gpuh": 0.02504004985301031,
+      "setup_process_gpuh": 0
+    },
+    {
+      "group": "eval_3",
+      "process_gpuh": 2.957103659666609,
+      "export_process_gpuh": 0.020225092299903432,
+      "setup_process_gpuh": 0
+    },
+    {
+      "group": "eval_4",
+      "process_gpuh": 2.1167698994837703,
+      "export_process_gpuh": 0.027090173204325968,
+      "setup_process_gpuh": 0
+    },
+    {
+      "group": "eval_5",
+      "process_gpuh": 0.9430826329864148,
+      "export_process_gpuh": 0.026506550300142005,
+      "setup_process_gpuh": 0
+    },
+    {
+      "group": "eval_6",
+      "process_gpuh": 0.9639203525888216,
+      "export_process_gpuh": 0.012944076503627002,
+      "setup_process_gpuh": 0
+    }
+  ],
+  "scientific_failure": [
+    {
+      "seed": 58,
+      "path": "CA",
+      "phase": "suffix",
+      "last_actual_telemetry": {
+        "schema": "ect.q256.history-component-telemetry/v1",
+        "experiment_protocol": "q256_history_component_chase_v1",
+        "branch": "CA",
+        "origin_arm": "C",
+        "continuation_arm": "A",
+        "switch_relative_step": "3592",
+        "protocol": "q256_target_weight_v1",
+        "arm": "A",
+        "target_gap_scale": "1",
+        "denominator_gap_scale": "1",
+        "attempted_iteration": "7592",
+        "successful_optimizer_steps": "7576",
+        "processed_nimg": "971776",
+        "processed_kimg": "971.776000",
+        "stage": "0",
+        "loss": "nan",
+        "loss_nonfinite_count": "1",
+        "raw_grad_norm": "inf",
+        "raw_grad_finite_norm": "0",
+        "raw_grad_nonfinite_count": "55732739",
+        "sanitized_grad_norm": "0",
+        "sanitized_grad_nonfinite_count": "0",
+        "update_norm": "0",
+        "update_nonfinite_count": "0",
+        "model_norm": "3964.132295617444",
+        "model_nonfinite_count": "0",
+        "ema_norm": "3963.8942996141991",
+        "ema_nonfinite_count": "0",
+        "sample_count": "128",
+        "batch_sha256": "20738b44f44e98dd99b223719921fb07f87ee11d77548ef51bb5fb4549709f9d",
+        "t_sha256": "c2cdd414e8752c7f17c55d16e6ffcd61ae88cc888163146cb1d485fd16a49a2d",
+        "base_r_sha256": "c77a0e7af4ccc84ff9f134bba883d872eb74a0328781ca307651251cec508da8",
+        "target_r_sha256": "c77a0e7af4ccc84ff9f134bba883d872eb74a0328781ca307651251cec508da8",
+        "denominator_r_sha256": "c77a0e7af4ccc84ff9f134bba883d872eb74a0328781ca307651251cec508da8",
+        "target_delta_sha256": "d08f40517206bf1eae9048e2c56d5ffe06476943c5dc03787c54536dff4641ab",
+        "denominator_delta_sha256": "d08f40517206bf1eae9048e2c56d5ffe06476943c5dc03787c54536dff4641ab",
+        "base_r_zero_count": "0",
+        "target_r_zero_count": "0",
+        "target_r_equal_t_count": "0",
+        "target_scaled_to_zero_count": "0",
+        "denominator_r_zero_count": "0",
+        "denominator_r_equal_t_count": "0",
+        "denominator_scaled_to_zero_count": "0",
+        "target_delta_min": "1.9712606444954872e-05",
+        "target_delta_max": "0.079725265502929688",
+        "target_delta_mean": "0.0096495148027315736",
+        "denominator_delta_min": "1.9712606444954872e-05",
+        "denominator_delta_max": "0.079725265502929688",
+        "denominator_delta_mean": "0.0096495148027315736",
+        "factor_nonfinite_count": "0",
+        "nonpositive_denominator_count": "0",
+        "learning_rate": "0.0001",
+        "grad_scale_before": "8",
+        "grad_scale_after": "4",
+        "step_skipped": "1",
+        "elapsed_sec": "13167.867601",
+        "gpu_hours_cumulative": "3.657741000",
+        "online_ema_distance": "28.628841232103873",
+        "radam_first_moment_norm": "8042.7681667250336",
+        "radam_second_moment_norm": "20186887.967837594",
+        "seed": "58"
+      },
+      "telemetry_sha256": "f926061ac67b52426f52a8c404b67b2c6c8e2c2b44322ada30aa6602f6d5509e"
+    }
+  ],
+  "validation": "original runtime computation; short engineering exact checks only, not a full training replay",
+  "legacy_published_json_test": "FAILED exact JSON comparison; 15 last-bit differences, max abs 4.44e-16; old raw145 metric receipts exactly matched and old data/test unchanged"
+}

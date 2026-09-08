@@ -24,6 +24,13 @@ FRESH_N12_ENGINEERING_PROTOCOL = (
 )
 TERMINAL_HISTORY_N30_PROTOCOL = "q256_terminal_history_n30_matpool_v1"
 M1_HISTORY_PERSISTENCE_PROTOCOL = "m1_r1_history_persistence_q256"
+HISTORY_COMPONENT_PROTOCOL = "q256_history_component_chase_v1"
+HISTORY_COMPONENT_ENGINEERING_PROTOCOL = "q256_history_component_chase_engineering_v1"
+COMPACT_SOURCE_PROTOCOLS = {
+    M1_HISTORY_PERSISTENCE_PROTOCOL,
+    HISTORY_COMPONENT_PROTOCOL,
+    HISTORY_COMPONENT_ENGINEERING_PROTOCOL,
+}
 SUPPORTED_PROTOCOL_SEEDS = {
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
@@ -34,6 +41,8 @@ SUPPORTED_PROTOCOL_SEEDS = {
     FRESH_N12_ENGINEERING_PROTOCOL: (20260831,),
     TERMINAL_HISTORY_N30_PROTOCOL: tuple(range(50, 80)),
     M1_HISTORY_PERSISTENCE_PROTOCOL: tuple(range(50, 80)),
+    HISTORY_COMPONENT_PROTOCOL: tuple(range(50, 66)),
+    HISTORY_COMPONENT_ENGINEERING_PROTOCOL: (50,),
 }
 RUN_MANIFEST_SCHEMA = "ect.q256.schedule-switch-run-manifest/v1"
 STATE_SCHEMA = "ect.q256.schedule-switch-state/v1"
@@ -43,6 +52,8 @@ SWITCH_ATTEMPT = SWITCH_NIMG // 128
 ARM_FACTORS = {
     "A": (1.0, 1.0),
     "B": (1.1, 1.1),
+    "C": (1.1, 1.0),
+    "D": (1.0, 1.1),
 }
 FORMAL_BRANCHES = {
     "A_to_B": ("A", "B"),
@@ -64,6 +75,7 @@ M1_BRANCHES = {
     "R_A": ("A", "A"),
     "R_B": ("B", "A"),
 }
+HISTORY_COMPONENT_BRANCHES = {"CA": ("C", "A"), "DA": ("D", "A")}
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
 
@@ -112,7 +124,13 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch protocol identity mismatch")
     run_kind = manifest.get("run_kind")
     _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
-    if experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if experiment_protocol == HISTORY_COMPONENT_PROTOCOL:
+        _require(run_kind == "formal", "history component permits only formal runs")
+        branches = HISTORY_COMPONENT_BRANCHES
+    elif experiment_protocol == HISTORY_COMPONENT_ENGINEERING_PROTOCOL:
+        _require(run_kind == "formal", "engineering retains the 1024-kimg plan")
+        branches = {**HISTORY_COMPONENT_BRANCHES, "AA": ("A", "A")}
+    elif experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL:
         _require(run_kind == "formal", "M1 permits only formal runs")
         branches = M1_BRANCHES
     elif run_kind == "parity":
@@ -157,12 +175,14 @@ def load_run_manifest(path: str) -> dict:
     _require(isinstance(source, dict), "missing source-state record")
     _require(os.path.isabs(str(source.get("path", ""))),
              "source-state path must be absolute")
-    if experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if experiment_protocol in COMPACT_SOURCE_PROTOCOLS:
         _require(set(source) == {"path"},
                  "M1 source-state record accepts only its path")
         _require(os.path.isabs(str(manifest.get("immutable_output_root", ""))),
                  "M1 output root must be absolute")
-        _require(manifest.get("m1_shadow_update") is True,
+        shadow_key = ("m1_shadow_update" if experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL
+                      else "history_component_shadow_update")
+        _require(manifest.get(shadow_key) is True,
                  "M1 requires the E_512 shadow readout")
         return manifest
     _require(_HEX64.fullmatch(str(manifest.get("protocol_sha256", ""))) is not None,
@@ -208,7 +228,7 @@ def continuation_factorial(manifest: dict) -> dict:
 
 def state_metadata(manifest: dict) -> dict:
     source = manifest["source_state"]
-    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] in COMPACT_SOURCE_PROTOCOLS:
         return {
             "schema": STATE_SCHEMA,
             "experiment_protocol": manifest["experiment_protocol"],
@@ -249,7 +269,7 @@ def verify_resume_state_file(path: str, manifest: dict) -> None:
     source = manifest["source_state"]
     _require(os.path.realpath(path) == os.path.realpath(source["path"]),
              "resume path does not match source-state path")
-    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] in COMPACT_SOURCE_PROTOCOLS:
         _require(os.path.isfile(path) and not os.path.islink(path),
                  "M1 source state must be a regular file")
         return
@@ -281,7 +301,14 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
              and float(factorial.get("denominator_gap_scale")) == denominator,
              "source factorial identity mismatch")
     trajectory = state["trajectory_config"]
-    if manifest["experiment_protocol"] != M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] == HISTORY_COMPONENT_PROTOCOL:
+        _require(state.get("history_component_prefix") == {
+            "protocol_id": HISTORY_COMPONENT_PROTOCOL, "seed": manifest["seed"],
+            "source_history": origin, "total_kimg": 1024,
+        }, "history-component source must be its own new C/D prefix")
+        _require("schedule_switch" not in state and "ema_512" not in state,
+                 "source must be prefix state, not branch-init")
+    if manifest["experiment_protocol"] not in COMPACT_SOURCE_PROTOCOLS:
         _require(reproducibility.state_sha256(trajectory)
                  == state["trajectory_config_sha256"],
                  "source trajectory-config SHA256 mismatch")
@@ -291,7 +318,7 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
     _require(len(ranks) == 1, "schedule-switch requires WORLD_SIZE=1 source")
     _require(int(ranks[0]["sampler_state"].get("consumed_samples", -1))
              == SWITCH_NIMG, "source sampler cursor is not exactly 512000")
-    if manifest["experiment_protocol"] == M1_HISTORY_PERSISTENCE_PROTOCOL:
+    if manifest["experiment_protocol"] in COMPACT_SOURCE_PROTOCOLS:
         return {
             "attempted_iteration": int(state["attempted_iteration"]),
             "cur_nimg": int(state["cur_nimg"]),
