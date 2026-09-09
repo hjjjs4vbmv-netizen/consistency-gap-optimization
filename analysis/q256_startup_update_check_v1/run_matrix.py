@@ -1,5 +1,5 @@
 """Prepare immutable inputs or execute the eight slots serially under a hard budget."""
-import argparse,datetime,fcntl,hashlib,inspect,json,os,platform,signal,subprocess,time
+import argparse,datetime,fcntl,hashlib,inspect,json,os,platform,signal,subprocess,time,shutil
 from pathlib import Path
 from analysis.q256_startup_update_check_v1.protocol import ARMS,BASE,PROTOCOL,EXPECTED_ENV,native_cli
 
@@ -50,7 +50,8 @@ def prepare(root,python,commit):
                 zero_vector_metrics='relative error/cosine N/A when a required norm is zero',
                 asset_hashes={str(dataset):DATA_SHA256,str(transfer):TRANSFER_SHA256},
                 cost_policy='conservative full GPU-training process-group wall duration, including setup/failures; idle rental not GPUh',
-                retry_policy='no automatic scientific trajectory retries')
+                retry_policy='no automatic scientific trajectory retries',
+                storage_policy='native atomic writes on container local filesystem; every completed/failed process archived and byte-hash verified to persistent root before next GPU process')
     write(control/'fixed_protocol.json',freeze,True)
     jobs=[]
     for seed in (50,51):
@@ -59,7 +60,7 @@ def prepare(root,python,commit):
             slot=f'seed{seed}-{arm}';mp=control/f'{slot}.json'
             m=dict(protocol=PROTOCOL,engineering_only=True,seed=seed,arm=arm,attempts=64,total_kimg=1024,
                    initialization='fresh_transfer',reference_receipt=str(receipt),reference_receipt_sha256=sha(receipt),
-                   dataset=str(dataset),transfer=str(transfer),output=str(root/'runs'/slot),manifest_path=str(mp))
+                   dataset=str(dataset),transfer=str(transfer),output=str(Path('/root/q256_startup_update_check_v1_runs')/slot),manifest_path=str(mp))
             write(mp,m,True)
             command=[python,'-m','torch.distributed.run','--standalone','--nproc_per_node=1',
                      str(code/'analysis/q256_startup_update_check_v1/entry.py'),'--manifest',str(mp)]
@@ -89,6 +90,8 @@ def run(root,python):
         if remaining<=10:
             row['status']='NOT_RUN_BUDGET';continue
         timeout=min(1200.,remaining-10)
+        manifest=json.loads((control/f"{row['slot']}.json").read_text())
+        scratch=Path(manifest['output'])
         record=dict(slot=row['slot'],started_utc=now(),hard_timeout_seconds=timeout,command=row['command'])
         log=control/f"{row['slot']}.log"
         start=time.monotonic();proc=None
@@ -110,7 +113,7 @@ def run(root,python):
         finally:
             record.update(ended_utc=now(),charged_seconds=time.monotonic()-start)
             record['process_gpuh']=record['charged_seconds']/3600
-            data=root/'runs'/row['slot']/'startup_attempts.jsonl'
+            data=scratch/'startup_attempts.jsonl'
             rows=[json.loads(x) for x in data.read_text().splitlines()] if data.exists() else []
             row['attempts']=len(rows);row['successful_steps']=rows[-1]['successful_optimizer_steps'] if rows else 0
             row['skips']=sum(x['skip'] for x in rows)
@@ -118,6 +121,13 @@ def run(root,python):
             record['status']=row['status'];ledger['processes'].append(record)
             ledger['process_gpuh']=sum(x['process_gpuh'] for x in ledger['processes'])
             write(control/'gpu_ledger.json',ledger);write(control/'run_status.json',jobs)
+            if scratch.exists():
+                destination=root/'runs'/row['slot']
+                shutil.copytree(scratch,destination)
+                hashes={str(p.relative_to(scratch)):sha(p) for p in scratch.rglob('*') if p.is_file()}
+                for name,digest in hashes.items():
+                    if sha(destination/name)!=digest:raise RuntimeError('archive mismatch: '+name)
+                write(control/f"{row['slot']}-archive.json",dict(verified_utc=now(),files=hashes),True)
     write(control/'matrix_finished.json',dict(finished_utc=now(),attempts=sum(r['attempts'] for r in jobs),
           all_eight_completed=all(r['status']=='COMPLETED' for r in jobs),process_gpuh=ledger['process_gpuh']))
 if __name__=='__main__':

@@ -35,3 +35,9 @@ entirely on CPU and regenerates numerical tables and the four-panel figure.
 All large tensors and raw logs belong in the persistent experiment directory,
 not Git. Startup checkpoints carry `startup_engineering` metadata and are
 rejected as formal training resumes.
+
+The MatPool persistent filesystem does not support the repository's atomic
+hard-link publication. Training uses `/root/q256_startup_update_check_v1_runs`;
+the driver copies each complete or failed run to persistent `runs/` and checks
+every file's SHA256 before starting another GPU process. The native atomic
+helpers remain unchanged. Archive copying is outside GPU process accounting.
