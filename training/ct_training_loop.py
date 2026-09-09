@@ -20,7 +20,7 @@ from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
 from training import schedule_switch
-from training import m1, history_component, d_restore
+from training import m1, history_component, d_restore, startup_update
 
 from metrics import metric_main
 
@@ -47,9 +47,11 @@ _AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
 def validate_planned_pause(
     *, stop_after_attempts, planned_pause_protocol, strict_reproducibility,
     seed, total_kimg, resume_state_dump, schedule_switch_manifest,
-    schedule_switch_experiment_protocol=None,
+    schedule_switch_experiment_protocol=None, startup_check=None,
 ):
     """Authorize only the legacy 16-step gate or the frozen fresh 512-kimg fork."""
+    if startup_check is not None and planned_pause_protocol != startup_update.PROTOCOL:
+        raise ValueError('startup manifest requires its isolated pause protocol')
     if stop_after_attempts is None:
         if planned_pause_protocol is not None:
             raise ValueError('planned_pause_protocol requires stop_after_attempts')
@@ -61,6 +63,13 @@ def validate_planned_pause(
     if isinstance(stop_after_attempts, bool) or int(stop_after_attempts) != stop_after_attempts:
         raise ValueError('stop_after_attempts must be an exact integer')
     attempts = int(stop_after_attempts)
+    if planned_pause_protocol == startup_update.PROTOCOL:
+        startup_update.validate_pause(seed=seed, attempts=stop_after_attempts,
+            total_kimg=total_kimg, resume_state_dump=resume_state_dump,
+            schedule_switch_manifest=schedule_switch_manifest, manifest=startup_check)
+        return attempts
+    if startup_check is not None:
+        raise ValueError('startup manifest requires its own engineering pause protocol')
     if attempts == 16 and planned_pause_protocol is None:
         return attempts
     if planned_pause_protocol == schedule_switch.D_RESTORE_ENGINEERING_PROTOCOL:
@@ -1001,10 +1010,13 @@ def training_loop(
     stop_after_attempts = None,     # Gate-only planned pause after N attempts.
     planned_pause_protocol = None,  # Explicit authorization for a frozen long pause.
     schedule_switch_manifest = None,# Frozen 512-kimg A/B continuation manifest.
+    startup_check_manifest = None, # Isolated engineering-only startup intervention.
     device              = torch.device('cuda'),
 ):
     # Initialize.
     start_time = time.time()
+    startup_check = startup_update.read_manifest(startup_check_manifest)
+    startup_observer = None
     strict_reproducibility = (
         loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
     )
@@ -1069,6 +1081,7 @@ def training_loop(
             'formal q256 target-weight arms require AMP/GradScaler enabled'
         )
     stop_after_attempts = validate_planned_pause(
+        startup_check=startup_check,
         stop_after_attempts=stop_after_attempts,
         planned_pause_protocol=planned_pause_protocol,
         strict_reproducibility=strict_reproducibility,
@@ -1185,6 +1198,9 @@ def training_loop(
         strict_trajectory_config_sha256 = reproducibility.state_sha256(
             strict_trajectory_config
         )
+
+    if startup_check is not None:
+        startup_update.validate_config(startup_check, strict_trajectory_config, resume_pkl)
 
     # Load dataset.
     dist.print0('Loading dataset...')
@@ -1307,6 +1323,8 @@ def training_loop(
             map_location=torch.device('cpu'),
             weights_only=False,
         )
+        if 'startup_engineering' in data:
+            raise ValueError('startup engineering checkpoints cannot seed formal training or be resumed')
         if component_prefix and planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_PROTOCOL:
             if data.get('history_component_prefix') != {
                 'protocol_id': planned_pause_protocol, 'seed': seed,
@@ -1898,6 +1916,8 @@ def training_loop(
             # checkpoint I/O and maintenance work.
             elapsed_sec=elapsed_sec,
         )
+        if startup_check is not None:
+            data['startup_engineering'] = copy.deepcopy(startup_check)
         if hasattr(loss_fn, 'schedule_state_dict'):
             data['loss_fn_state'] = loss_fn.schedule_state_dict()
         if adaptive_signal_window is not None:
@@ -2035,6 +2055,9 @@ def training_loop(
                 overwrite=False,
             )
 
+    if startup_check is not None:
+        startup_observer = startup_update.Observer(startup_check, net, optimizer, run_dir)
+
     if m1_manifest is not None and starting_schedule_switch:
         branch_init_rank_states = gather_rank_reproducibility_state(
             dataset_sampler, local_consumed_samples
@@ -2086,6 +2109,8 @@ def training_loop(
 
         # Accumulate gradients.
         optimizer.zero_grad(set_to_none=True)
+        if startup_observer is not None:
+            startup_observer.begin(attempted_iteration, successful_optimizer_steps)
         loss_batches = []
         schedule_metric_batches = []
         local_signal_batches = []
@@ -2147,6 +2172,9 @@ def training_loop(
                 param.detach().clone() for param in net.parameters()
             ]
 
+        if startup_observer is not None:
+            startup_observer.before_step(raw_grad_nonfinite_count)
+
         # NOTE(aiihn & Gsunshine): This should be further tested for AMP.
         for param in net.parameters():
             if param.grad is not None:
@@ -2193,6 +2221,8 @@ def training_loop(
                     net.parameters(), parameters_before_step
                 )
             )
+            if startup_observer is not None:
+                startup_observer.after_step(parameters_before_step, scale_before, scale_after, step_skipped)
             del parameters_before_step
             (
                 model_nonfinite_count,
@@ -2201,7 +2231,7 @@ def training_loop(
             ) = tensor_collection_diagnostics(net.parameters())
             radam_first_moment_norm = 0.0
             radam_second_moment_norm = 0.0
-            if switch_manifest is not None or component_prefix:
+            if switch_manifest is not None or component_prefix or startup_observer is not None:
                 first_moments = [
                     item['exp_avg'] for item in optimizer.state.values()
                     if 'exp_avg' in item
@@ -2440,6 +2470,8 @@ def training_loop(
                                else 'ect.m1.training-telemetry/v1'),
                     'seed': seed,
                 })
+            if startup_observer is not None:
+                startup_observer.record(telemetry_row, radam_first_moment_norm, radam_second_moment_norm)
             if factorial_telemetry_writer is not None:
                 factorial_telemetry_writer.writerow(telemetry_row)
                 factorial_telemetry_csv.flush()
