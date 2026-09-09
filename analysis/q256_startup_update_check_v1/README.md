@@ -41,3 +41,18 @@ hard-link publication. Training uses `/root/q256_startup_update_check_v1_runs`;
 the driver copies each complete or failed run to persistent `runs/` and checks
 every file's SHA256 before starting another GPU process. The native atomic
 helpers remain unchanged. Archive copying is outside GPU process accounting.
+
+## Completed engineering run
+
+See [Chinese report](results/REPORT_ZH.md) and [GPU ledger](results/archive_receipts/gpu_ledger.json).
+Execution commit: `4198387b514fedbe43574452b18e021923a1de58`.
+Large artifacts: `/mnt/q256_startup_update_check_v1_20260909/runs/`.
+From the repository root, with the recorded environment and mounted archive:
+
+```bash
+CUDA_VISIBLE_DEVICES='' python -m analysis.q256_startup_update_check_v1.verify_results --root /mnt/q256_startup_update_check_v1_20260909
+CUDA_VISIBLE_DEVICES='' python -m analysis.q256_startup_update_check_v1.analyze --root /mnt/q256_startup_update_check_v1_20260909 --output /tmp/startup-analysis
+```
+
+The verification module checks saved final checkpoints and original A telemetry.
+It consumes no training RNG and does not run forward/backward.

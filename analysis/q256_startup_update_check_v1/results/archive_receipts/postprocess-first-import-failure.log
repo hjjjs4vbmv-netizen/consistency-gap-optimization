@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/mnt/q256_startup_update_check_v1_20260909/control/verify-final.py", line 8, in <module>
+    state=torch.load(d/'training-state-latest.pt',map_location='cpu',weights_only=False)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/ect-startup-env/lib/python3.11/site-packages/torch/serialization.py", line 1471, in load
+    return _load(
+           ^^^^^^
+  File "/root/ect-startup-env/lib/python3.11/site-packages/torch/serialization.py", line 1964, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+  File "/root/ect-startup-env/lib/python3.11/site-packages/torch/serialization.py", line 1953, in find_class
+    return super().find_class(mod_name, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'torch_utils'

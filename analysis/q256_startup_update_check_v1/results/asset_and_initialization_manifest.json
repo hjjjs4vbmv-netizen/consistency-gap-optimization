@@ -1,0 +1,50 @@
+{
+  "dataset": {
+    "sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+    "persistent_relative_path": "assets/cifar10-32x32-training-original.zip"
+  },
+  "transfer": {
+    "sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da",
+    "server_path": "/mnt/ect_project/pretrained/edm-cifar10-32x32-uncond-vp.pkl"
+  },
+  "original_environment_archive": {
+    "sha256": "c2f2758219964e2b7b79c2f27d01c3edbb2f129bf111d02fab9c1a8b8bc1360a",
+    "persistent_relative_path": "assets/q256-training-runtime-py311-torch260.tar.gz"
+  },
+  "initial_receipts": [
+    {
+      "seed": 50,
+      "sha256": "0c6b6bbb197699296d758f2bfbea505455c6a1bd045ed404f8411210df949f14",
+      "common_initial_state_sha256": "b670a0c3d1c4aa6f0879594e4a916733d6fb20b6c65bf1dbf7123f036a7716b9",
+      "hashes": {
+        "ema": "48ff3bf1055433bc91154947f1bd18b03459f74c7e747241e7b60e003260c427",
+        "gradscaler": "2fdb487b7936a774e43b67159d5b24e25f25fb9e3c125deba4e75f2e94e5b29c",
+        "model": "48ff3bf1055433bc91154947f1bd18b03459f74c7e747241e7b60e003260c427",
+        "optimizer": "5b02f7906a539fc0a342f5b6cf6b592cef61af2ee84eb621c610736c39658e19",
+        "rank_rng": [
+          "d408cb84fb3dc0bd4844965577c4fb2d899f4049f06a6dd6a5fb8dabbc654166"
+        ],
+        "rank_sampler": [
+          "5d05ad1e91b59cf2b3941f92db472d5a5d952c0c9d8e55a0706e9097e097b66a"
+        ]
+      }
+    },
+    {
+      "seed": 51,
+      "sha256": "56d774461e87beade5d9fb50fff5c14ec3777289eae78bbcf02153f7a5fb4a55",
+      "common_initial_state_sha256": "0cfff3c76671965be13524515d46b1a817e40123e7067264b1e08e14b89c74ee",
+      "hashes": {
+        "ema": "48ff3bf1055433bc91154947f1bd18b03459f74c7e747241e7b60e003260c427",
+        "gradscaler": "2fdb487b7936a774e43b67159d5b24e25f25fb9e3c125deba4e75f2e94e5b29c",
+        "model": "48ff3bf1055433bc91154947f1bd18b03459f74c7e747241e7b60e003260c427",
+        "optimizer": "5b02f7906a539fc0a342f5b6cf6b592cef61af2ee84eb621c610736c39658e19",
+        "rank_rng": [
+          "b072aa655e3aa6e0bf651b02a27c93caca10e11355a54596d40b8bcb6df4cdbc"
+        ],
+        "rank_sampler": [
+          "185d2c5a4af6aba0190e20dc6545bf7ba262da8fd5339a086b04ac9f013e0dc4"
+        ]
+      }
+    }
+  ]
+}

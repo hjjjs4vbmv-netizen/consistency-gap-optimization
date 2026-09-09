@@ -1,0 +1,63 @@
+{
+  "seed": 50,
+  "scope": "64 original A telemetry rows versus this run; no extra GPU trajectory",
+  "fields": {
+    "batch_sha256": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "t_sha256": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "base_r_sha256": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "target_r_sha256": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "denominator_r_sha256": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "loss": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "raw_grad_norm": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "raw_grad_nonfinite_count": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "update_norm": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "model_norm": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "ema_norm": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "grad_scale_before": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "grad_scale_after": {
+      "exact_string_matches": 64,
+      "rows": 64
+    },
+    "successful_optimizer_steps": {
+      "exact_string_matches": 64,
+      "rows": 64
+    }
+  },
+  "original_csv_sha256": "d7948af35b876b8b5cc2252f2fe9507c04ec8260c98a3bf1f45ed6a5e6b1dcd0"
+}

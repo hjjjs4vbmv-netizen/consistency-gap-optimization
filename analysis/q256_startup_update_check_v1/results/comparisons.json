@@ -1,0 +1,704 @@
+[
+  {
+    "seed": 50,
+    "candidate": "D_compensate",
+    "reference": "A",
+    "successful_step": 1,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 9,
+    "reference_attempt": 9,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.3711344790093152,
+      "reference_norm": 0.37114090855308063,
+      "absolute_l2_error": 8.598690631035485e-05,
+      "norm_ratio": 0.9999826762730346,
+      "cosine": 0.9999999733111705,
+      "relative_l2_error": 0.00023168264216839082
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874677193961,
+      "reference_norm": 3961.874677193961,
+      "absolute_l2_error": 0.0,
+      "norm_ratio": 1.0,
+      "cosine": 1.0000000000000135,
+      "relative_l2_error": 0.0
+    },
+    "gradients": {
+      "candidate_norm": 3373.949493280719,
+      "reference_norm": 3711.40859419815,
+      "absolute_l2_error": 337.45988415831425,
+      "norm_ratio": 0.9090751954810465,
+      "cosine": 0.99999997889236,
+      "relative_l2_error": 0.09092501555496951
+    },
+    "same_state_local_test": true,
+    "interpretation": "common-state local comparison"
+  },
+  {
+    "seed": 50,
+    "candidate": "D_compensate",
+    "reference": "A",
+    "successful_step": 5,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 14,
+    "reference_attempt": 14,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.3510792339791433,
+      "reference_norm": 0.35658537684348174,
+      "absolute_l2_error": 0.07956554138550162,
+      "norm_ratio": 0.9845586969575726,
+      "cosine": 0.974836760882218,
+      "relative_l2_error": 0.22313181233011087
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.8753383318603,
+      "reference_norm": 3961.875392494447,
+      "absolute_l2_error": 0.14543937756162592,
+      "norm_ratio": 0.9999999863290534,
+      "cosine": 0.9999999993261988,
+      "relative_l2_error": 3.670973040624971e-05
+    },
+    "gradients": {
+      "candidate_norm": 7734.76898471347,
+      "reference_norm": 7559.888354237566,
+      "absolute_l2_error": 8301.889203080107,
+      "norm_ratio": 1.0231327001513029,
+      "cosine": 0.41092799430697025,
+      "relative_l2_error": 1.0981497098997006
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 50,
+    "candidate": "D_compensate",
+    "reference": "A",
+    "successful_step": 6,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 15,
+    "reference_attempt": 15,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.008585110464483707,
+      "reference_norm": 0.008575460668876572,
+      "absolute_l2_error": 0.0021344859486192255,
+      "norm_ratio": 1.0011252801429265,
+      "cosine": 0.9690582850220623,
+      "relative_l2_error": 0.24890627233193918
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.875445240424,
+      "reference_norm": 3961.875524227148,
+      "absolute_l2_error": 0.17607188379103222,
+      "norm_ratio": 0.9999999800632998,
+      "cosine": 0.9999999990124748,
+      "relative_l2_error": 4.444154863380746e-05
+    },
+    "gradients": {
+      "candidate_norm": 8747.177507283666,
+      "reference_norm": 6624.47300130076,
+      "absolute_l2_error": 3306.909306178433,
+      "norm_ratio": 1.3204337168505478,
+      "cosine": 0.9445187179303792,
+      "relative_l2_error": 0.4991958312048519
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 50,
+    "candidate": "A_mimic",
+    "reference": "D",
+    "successful_step": 1,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 9,
+    "reference_attempt": 9,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.33740080511510273,
+      "reference_norm": 0.3373949883707565,
+      "absolute_l2_error": 7.912442756990911e-05,
+      "norm_ratio": 1.0000172401622631,
+      "cosine": 0.9999999726502719,
+      "relative_l2_error": 0.00023451571688125043
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874677193961,
+      "reference_norm": 3961.874677193961,
+      "absolute_l2_error": 0.0,
+      "norm_ratio": 1.0,
+      "cosine": 1.0000000000000135,
+      "relative_l2_error": 0.0
+    },
+    "gradients": {
+      "candidate_norm": 3711.40859419815,
+      "reference_norm": 3373.949493280719,
+      "absolute_l2_error": 337.45988415831425,
+      "norm_ratio": 1.1000190137965866,
+      "cosine": 0.99999997889236,
+      "relative_l2_error": 0.10001924594021686
+    },
+    "same_state_local_test": true,
+    "interpretation": "common-state local comparison"
+  },
+  {
+    "seed": 50,
+    "candidate": "A_mimic",
+    "reference": "D",
+    "successful_step": 5,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 14,
+    "reference_attempt": 14,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.3331687413122489,
+      "reference_norm": 0.3333120659127057,
+      "absolute_l2_error": 0.010397399496198369,
+      "norm_ratio": 0.9995699987635781,
+      "cosine": 0.9995133444822216,
+      "relative_l2_error": 0.031194188748394854
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.875153324196,
+      "reference_norm": 3961.875158181743,
+      "absolute_l2_error": 0.018606215410528624,
+      "norm_ratio": 0.9999999987739273,
+      "cosine": 0.9999999999889765,
+      "relative_l2_error": 4.696315423292573e-06
+    },
+    "gradients": {
+      "candidate_norm": 5773.027840400011,
+      "reference_norm": 5082.058375185235,
+      "absolute_l2_error": 800.4353041633861,
+      "norm_ratio": 1.1359625203418864,
+      "cosine": 0.9972177199569677,
+      "relative_l2_error": 0.15750218613618566
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 50,
+    "candidate": "A_mimic",
+    "reference": "D",
+    "successful_step": 6,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 15,
+    "reference_attempt": 15,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.009170416214932961,
+      "reference_norm": 0.009113655898342454,
+      "absolute_l2_error": 0.0009516424560112496,
+      "norm_ratio": 1.0062280513137247,
+      "cosine": 0.9946013123501147,
+      "relative_l2_error": 0.10441939728976705
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.875202312984,
+      "reference_norm": 3961.87520875867,
+      "absolute_l2_error": 0.024859946763610256,
+      "norm_ratio": 0.999999998373072,
+      "cosine": 0.999999999980316,
+      "relative_l2_error": 6.274792984052455e-06
+    },
+    "gradients": {
+      "candidate_norm": 9860.080459842184,
+      "reference_norm": 9010.561729071702,
+      "absolute_l2_error": 988.3721626693196,
+      "norm_ratio": 1.0942803297190222,
+      "cosine": 0.9985638029731672,
+      "relative_l2_error": 0.10969040470367489
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 50,
+    "candidate": "D",
+    "reference": "A",
+    "successful_step": 1,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 9,
+    "reference_attempt": 9,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.3373949883707565,
+      "reference_norm": 0.37114090855308063,
+      "absolute_l2_error": 0.033746286039649076,
+      "norm_ratio": 0.9090751803300664,
+      "cosine": 0.9999999014043102,
+      "relative_l2_error": 0.09092580543387518
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874677193961,
+      "reference_norm": 3961.874677193961,
+      "absolute_l2_error": 0.0,
+      "norm_ratio": 1.0,
+      "cosine": 1.0000000000000135,
+      "relative_l2_error": 0.0
+    },
+    "gradients": {
+      "candidate_norm": 3373.949493280719,
+      "reference_norm": 3711.40859419815,
+      "absolute_l2_error": 337.45988415831425,
+      "norm_ratio": 0.9090751954810465,
+      "cosine": 0.99999997889236,
+      "relative_l2_error": 0.09092501555496951
+    },
+    "same_state_local_test": true,
+    "interpretation": "common-state local comparison"
+  },
+  {
+    "seed": 50,
+    "candidate": "D",
+    "reference": "A",
+    "successful_step": 5,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 14,
+    "reference_attempt": 14,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.3333120659127057,
+      "reference_norm": 0.35658537684348174,
+      "absolute_l2_error": 0.13879133854984352,
+      "norm_ratio": 0.9347328509744484,
+      "cosine": 0.9212422140091663,
+      "relative_l2_error": 0.389223304046941
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.875158181743,
+      "reference_norm": 3961.875392494447,
+      "absolute_l2_error": 0.41736866441582754,
+      "norm_ratio": 0.9999999408581338,
+      "cosine": 0.9999999944510862,
+      "relative_l2_error": 0.00010534623708926062
+    },
+    "gradients": {
+      "candidate_norm": 5082.058375185235,
+      "reference_norm": 7559.888354237566,
+      "absolute_l2_error": 6020.838888525583,
+      "norm_ratio": 0.6722398714177537,
+      "cosine": 0.6081335108877083,
+      "relative_l2_error": 0.7964190218696424
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 50,
+    "candidate": "D",
+    "reference": "A",
+    "successful_step": 6,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 15,
+    "reference_attempt": 15,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.009113655898342454,
+      "reference_norm": 0.008575460668876572,
+      "absolute_l2_error": 0.004497308375161311,
+      "norm_ratio": 1.0627599204575895,
+      "cosine": 0.8724557916475478,
+      "relative_l2_error": 0.5244392749049225
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.87520875867,
+      "reference_norm": 3961.875524227148,
+      "absolute_l2_error": 0.5274133734419437,
+      "norm_ratio": 0.999999920373955,
+      "cosine": 0.9999999911392481,
+      "relative_l2_error": 0.00013312214637152878
+    },
+    "gradients": {
+      "candidate_norm": 9010.561729071702,
+      "reference_norm": 6624.47300130076,
+      "absolute_l2_error": 4225.44891584347,
+      "norm_ratio": 1.3601929885294148,
+      "cosine": 0.8981324031590576,
+      "relative_l2_error": 0.6378543493216403
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 51,
+    "candidate": "D_compensate",
+    "reference": "A",
+    "successful_step": 1,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 9,
+    "reference_attempt": 9,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.4102027099419407,
+      "reference_norm": 0.4102157549594375,
+      "absolute_l2_error": 8.003256949533191e-05,
+      "norm_ratio": 0.9999681996185199,
+      "cosine": 0.9999999814732872,
+      "relative_l2_error": 0.00019509872189878613
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874677193961,
+      "reference_norm": 3961.874677193961,
+      "absolute_l2_error": 0.0,
+      "norm_ratio": 1.0,
+      "cosine": 1.0000000000000135,
+      "relative_l2_error": 0.0
+    },
+    "gradients": {
+      "candidate_norm": 3729.1154708301547,
+      "reference_norm": 4102.15723875402,
+      "absolute_l2_error": 373.0423597741587,
+      "norm_ratio": 0.9090620504744056,
+      "cosine": 0.999999985567168,
+      "relative_l2_error": 0.09093809380341202
+    },
+    "same_state_local_test": true,
+    "interpretation": "common-state local comparison"
+  },
+  {
+    "seed": 51,
+    "candidate": "D_compensate",
+    "reference": "A",
+    "successful_step": 5,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 13,
+    "reference_attempt": 14,
+    "also_same_attempt": false,
+    "status": "MEASURED",
+    "random_fields_equal": false,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.29256342207536745,
+      "reference_norm": 0.4647994160885216,
+      "absolute_l2_error": 0.5727519639237376,
+      "norm_ratio": 0.6294401669808648,
+      "cosine": -0.0971183871129123,
+      "relative_l2_error": 1.2322562036408762
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.8749148736188,
+      "reference_norm": 3961.874836766526,
+      "absolute_l2_error": 0.28564320383048003,
+      "norm_ratio": 1.0000000197146794,
+      "cosine": 0.9999999974009409,
+      "relative_l2_error": 7.209798784648305e-05
+    },
+    "gradients": {
+      "candidate_norm": 9496.07111542112,
+      "reference_norm": 21211.834909613175,
+      "absolute_l2_error": 29453.65072423451,
+      "norm_ratio": 0.4476779663751538,
+      "cosine": -0.812693513107097,
+      "relative_l2_error": 1.3885479898245934
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 51,
+    "candidate": "D_compensate",
+    "reference": "A",
+    "successful_step": 6,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 15,
+    "reference_attempt": 15,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.009119801482819526,
+      "reference_norm": 0.008888922203041346,
+      "absolute_l2_error": 0.00869698935468523,
+      "norm_ratio": 1.0259738216292615,
+      "cosine": 0.5338054238822353,
+      "relative_l2_error": 0.9784076354847108
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874961369663,
+      "reference_norm": 3961.8749691765547,
+      "absolute_l2_error": 0.4737842214424113,
+      "norm_ratio": 0.9999999980294957,
+      "cosine": 0.9999999928496118,
+      "relative_l2_error": 0.00011958585900071544
+    },
+    "gradients": {
+      "candidate_norm": 7381.408388701116,
+      "reference_norm": 17477.378602697627,
+      "absolute_l2_error": 23037.88673498332,
+      "norm_ratio": 0.4223407043183123,
+      "cosine": -0.6619772059860112,
+      "relative_l2_error": 1.3181545847743683
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 51,
+    "candidate": "A_mimic",
+    "reference": "D",
+    "successful_step": 1,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 9,
+    "reference_attempt": 9,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.3729234113488388,
+      "reference_norm": 0.3729116000859192,
+      "absolute_l2_error": 7.361313932568947e-05,
+      "norm_ratio": 1.0000316730906649,
+      "cosine": 0.9999999810186067,
+      "relative_l2_error": 0.0001974010443996082
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874677193961,
+      "reference_norm": 3961.874677193961,
+      "absolute_l2_error": 0.0,
+      "norm_ratio": 1.0,
+      "cosine": 1.0000000000000135,
+      "relative_l2_error": 0.0
+    },
+    "gradients": {
+      "candidate_norm": 4102.15723875402,
+      "reference_norm": 3729.1154708301547,
+      "absolute_l2_error": 373.0423597741587,
+      "norm_ratio": 1.1000349200344877,
+      "cosine": 0.999999985567168,
+      "relative_l2_error": 0.10003507874512509
+    },
+    "same_state_local_test": true,
+    "interpretation": "common-state local comparison"
+  },
+  {
+    "seed": 51,
+    "candidate": "A_mimic",
+    "reference": "D",
+    "successful_step": 5,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 14,
+    "reference_attempt": 14,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.2973217406880909,
+      "reference_norm": 0.21587877487553359,
+      "absolute_l2_error": 0.10359260993338447,
+      "norm_ratio": 1.3772624977120325,
+      "cosine": 0.9680732007564677,
+      "relative_l2_error": 0.47986472960628723
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874848831752,
+      "reference_norm": 3961.874858696436,
+      "absolute_l2_error": 0.03909102493501694,
+      "norm_ratio": 0.9999999975100969,
+      "cosine": 0.9999999999513255,
+      "relative_l2_error": 9.866799515186844e-06
+    },
+    "gradients": {
+      "candidate_norm": 13731.046910255713,
+      "reference_norm": 7322.138200842272,
+      "absolute_l2_error": 6702.725916292249,
+      "norm_ratio": 1.8752783044543215,
+      "cosine": 0.9808414562003699,
+      "relative_l2_error": 0.9154055458173718
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 51,
+    "candidate": "A_mimic",
+    "reference": "D",
+    "successful_step": 6,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 15,
+    "reference_attempt": 15,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.009052423430638184,
+      "reference_norm": 0.009209991424797488,
+      "absolute_l2_error": 0.004440088583885501,
+      "norm_ratio": 0.9828916242272431,
+      "cosine": 0.8819184877003128,
+      "relative_l2_error": 0.4820947576488249
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.8749557447054,
+      "reference_norm": 3961.874947451292,
+      "absolute_l2_error": 0.07134131891087779,
+      "norm_ratio": 1.000000002093305,
+      "cosine": 0.999999999837876,
+      "relative_l2_error": 1.8006958790249618e-05
+    },
+    "gradients": {
+      "candidate_norm": 15592.589187437792,
+      "reference_norm": 11352.39766151816,
+      "absolute_l2_error": 4628.963803831316,
+      "norm_ratio": 1.373506254127517,
+      "cosine": 0.9902603865187422,
+      "relative_l2_error": 0.40775208390755785
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 51,
+    "candidate": "D",
+    "reference": "A",
+    "successful_step": 1,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 9,
+    "reference_attempt": 9,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.3729116000859192,
+      "reference_norm": 0.4102157549594375,
+      "absolute_l2_error": 0.03730447311265372,
+      "norm_ratio": 0.9090621107977509,
+      "cosine": 0.9999999223941584,
+      "relative_l2_error": 0.09093866498701986
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874677193961,
+      "reference_norm": 3961.874677193961,
+      "absolute_l2_error": 0.0,
+      "norm_ratio": 1.0,
+      "cosine": 1.0000000000000135,
+      "relative_l2_error": 0.0
+    },
+    "gradients": {
+      "candidate_norm": 3729.1154708301547,
+      "reference_norm": 4102.15723875402,
+      "absolute_l2_error": 373.0423597741587,
+      "norm_ratio": 0.9090620504744056,
+      "cosine": 0.999999985567168,
+      "relative_l2_error": 0.09093809380341202
+    },
+    "same_state_local_test": true,
+    "interpretation": "common-state local comparison"
+  },
+  {
+    "seed": 51,
+    "candidate": "D",
+    "reference": "A",
+    "successful_step": 5,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 14,
+    "reference_attempt": 14,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.21587877487553359,
+      "reference_norm": 0.4647994160885216,
+      "absolute_l2_error": 0.2806282581033071,
+      "norm_ratio": 0.4644557789943936,
+      "cosine": 0.9163310810624677,
+      "relative_l2_error": 0.6037620710992054
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874858696436,
+      "reference_norm": 3961.874836766526,
+      "absolute_l2_error": 0.15027296032869839,
+      "norm_ratio": 1.0000000055352354,
+      "cosine": 0.9999999992806669,
+      "relative_l2_error": 3.792975965170653e-05
+    },
+    "gradients": {
+      "candidate_norm": 7322.138200842272,
+      "reference_norm": 21211.834909613175,
+      "absolute_l2_error": 14362.730255329598,
+      "norm_ratio": 0.3451911742686574,
+      "cosine": 0.9569769152244714,
+      "relative_l2_error": 0.6771092796324012
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  },
+  {
+    "seed": 51,
+    "candidate": "D",
+    "reference": "A",
+    "successful_step": 6,
+    "alignment": "same_successful_step",
+    "candidate_attempt": 15,
+    "reference_attempt": 15,
+    "also_same_attempt": true,
+    "status": "MEASURED",
+    "random_fields_equal": true,
+    "clocks_equal": true,
+    "updates": {
+      "candidate_norm": 0.009209991424797488,
+      "reference_norm": 0.008888922203041346,
+      "absolute_l2_error": 0.006124996362412586,
+      "norm_ratio": 1.0361201520749375,
+      "cosine": 0.771504135102469,
+      "relative_l2_error": 0.6890595082851458
+    },
+    "parameters_before": {
+      "candidate_norm": 3961.874947451292,
+      "reference_norm": 3961.8749691765547,
+      "absolute_l2_error": 0.24112909176260428,
+      "norm_ratio": 0.999999994516419,
+      "cosine": 0.9999999981478861,
+      "relative_l2_error": 6.086236785324932e-05
+    },
+    "gradients": {
+      "candidate_norm": 11352.39766151816,
+      "reference_norm": 17477.378602697627,
+      "absolute_l2_error": 7872.437099168743,
+      "norm_ratio": 0.6495480769505058,
+      "cosine": 0.9383603255513392,
+      "relative_l2_error": 0.4504358049412305
+    },
+    "same_state_local_test": false,
+    "interpretation": "diverged trajectory comparison; not a common-state counterfactual"
+  }
+]
