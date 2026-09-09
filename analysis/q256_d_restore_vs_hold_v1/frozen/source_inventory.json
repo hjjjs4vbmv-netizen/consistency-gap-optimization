@@ -1,0 +1,1042 @@
+[
+  {
+    "seed": 50,
+    "archive_group": "cloud29255",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "a1c9a4b6e8b09b2c2ad427d3218fde6183380bd7990bf2ca62c26050550a1b12",
+      "da_branch_init_sha256": "7db8368742d7d5af2339f9861c96c3a8fb950449a611d6de3f88ea3a6e4deedd",
+      "da_terminal_sha256": "62c36b9f4cbedc82cb9b02665f80dfe1fbf45a7f26748f7cbb1e0397f6e4ed3e"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29255/runs/S01/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "a1c9a4b6e8b09b2c2ad427d3218fde6183380bd7990bf2ca62c26050550a1b12"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29255/runs/S01/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "7db8368742d7d5af2339f9861c96c3a8fb950449a611d6de3f88ea3a6e4deedd"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29255/runs/S01/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "62c36b9f4cbedc82cb9b02665f80dfe1fbf45a7f26748f7cbb1e0397f6e4ed3e"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S01-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S01-DA-E_512-B0.json",
+        "receipt_sha256": "0f5d59862418567b71ebf485040ed983a3fecebbeb23a828ccd2f101ae79dc7f",
+        "FID": 9.92265062977172,
+        "KID": 0.006018327549099922
+      },
+      {
+        "job_id": "S01-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S01-DA-E_512-B1.json",
+        "receipt_sha256": "1649f124de5d5ed03eb6016594386ba735b2469183c438dba9bde9b2de97ed4f",
+        "FID": 9.804607584405446,
+        "KID": 0.006001689471304417
+      },
+      {
+        "job_id": "S01-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S01-DA-E_512-B2.json",
+        "receipt_sha256": "3f5b62683cf6b5ba59d39c6f0ef759bffca586be6cd2ff592b6ae3e23ea2b8aa",
+        "FID": 9.681893870677024,
+        "KID": 0.005918864626437426
+      },
+      {
+        "job_id": "S01-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S01-DA-E_KEEP-B0.json",
+        "receipt_sha256": "fb300d1b071c2f24c22ff9ebb2e264a0180af4d2ee08dc09b5c1cd802161386f",
+        "FID": 10.349017332024196,
+        "KID": 0.006412455812096596
+      },
+      {
+        "job_id": "S01-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S01-DA-ONLINE-B0.json",
+        "receipt_sha256": "5859f31534fcab3252515cb783d9eb7e00f00d6d872985b00565285c894acf64",
+        "FID": 13.243559159087209,
+        "KID": 0.008528554812073708
+      }
+    ]
+  },
+  {
+    "seed": 51,
+    "archive_group": "cloud29255",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "719dce15f6f806d9bc644ded5d0e17880228c3204e7f408a7ede766a69ddfa2f",
+      "da_branch_init_sha256": "6ede1767f04c2390eabaf469e3399c135ef476c51e255a1c2ac6b4c820eb6416",
+      "da_terminal_sha256": "ab64b9d6cd0c66379f50baf892dbd2c0cc70d79294f66ab62bcfe71333297ba4"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29255/runs/S02/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "719dce15f6f806d9bc644ded5d0e17880228c3204e7f408a7ede766a69ddfa2f"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29255/runs/S02/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "6ede1767f04c2390eabaf469e3399c135ef476c51e255a1c2ac6b4c820eb6416"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29255/runs/S02/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "ab64b9d6cd0c66379f50baf892dbd2c0cc70d79294f66ab62bcfe71333297ba4"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S02-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S02-DA-E_512-B0.json",
+        "receipt_sha256": "1867fc2b01015b5899082cdfc6682e1cb1d7d994c7002b9b3ec83f902d71c1cd",
+        "FID": 7.225238022887855,
+        "KID": 0.004272238817065954
+      },
+      {
+        "job_id": "S02-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S02-DA-E_512-B1.json",
+        "receipt_sha256": "37ed199388c63ca9114033bc178a1e35a88a49144678a3ab2035dabb906ee3c0",
+        "FID": 7.1262274325113335,
+        "KID": 0.004259421490132809
+      },
+      {
+        "job_id": "S02-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S02-DA-E_512-B2.json",
+        "receipt_sha256": "7fd1a87d38e2e59cf1132186a552b4ff91edff4341b2299fefa37d8651a9e930",
+        "FID": 7.059240834797283,
+        "KID": 0.004175527486950159
+      },
+      {
+        "job_id": "S02-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S02-DA-E_KEEP-B0.json",
+        "receipt_sha256": "dda15094bf3e47f181c84cfef5e6a90f3d5dc15832c5f57a50b40ba8ff3ab064",
+        "FID": 7.340904893515535,
+        "KID": 0.004383601248264313
+      },
+      {
+        "job_id": "S02-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S02-DA-ONLINE-B0.json",
+        "receipt_sha256": "245266866e58c00da4c27fb6eb9172f9a3dd8f8f3d6daeb76d81d99a62e5600c",
+        "FID": 7.511227203262962,
+        "KID": 0.004097456112504005
+      }
+    ]
+  },
+  {
+    "seed": 52,
+    "archive_group": "cloud29255",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "cba6f2bd5a8fa5291ddb4a5b7c406430caf7c48ce866ffa1ed578542fdffd745",
+      "da_branch_init_sha256": "184177fb0eda7921c84e98256a09273e17f4590a52e0b732f33237b0d7b1e0f6",
+      "da_terminal_sha256": "5014a20be4866113c9b48ea7ac77436ffc458ff675ccf489ba19b08475a74e9e"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29255/runs/S03/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720504,
+        "sha256": "cba6f2bd5a8fa5291ddb4a5b7c406430caf7c48ce866ffa1ed578542fdffd745"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29255/runs/S03/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "184177fb0eda7921c84e98256a09273e17f4590a52e0b732f33237b0d7b1e0f6"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29255/runs/S03/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "5014a20be4866113c9b48ea7ac77436ffc458ff675ccf489ba19b08475a74e9e"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S03-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S03-DA-E_512-B0.json",
+        "receipt_sha256": "4d3ef42cf3078c0fd29abfa5922848fae6c72e6c2d61a50b07ae16bde4ad5b12",
+        "FID": 8.112412392774065,
+        "KID": 0.004861030261963606
+      },
+      {
+        "job_id": "S03-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S03-DA-E_512-B1.json",
+        "receipt_sha256": "baefe9c663bb4dd77009386f61cbe18753cd03b664052409882c2be1e71f3cc1",
+        "FID": 7.946140974093765,
+        "KID": 0.004819438327103853
+      },
+      {
+        "job_id": "S03-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S03-DA-E_512-B2.json",
+        "receipt_sha256": "3e837c82afa754e481816a6a4939344d30fc673fd31388c9ad30973cd1993574",
+        "FID": 7.909695507635566,
+        "KID": 0.004784931428730488
+      },
+      {
+        "job_id": "S03-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S03-DA-E_KEEP-B0.json",
+        "receipt_sha256": "4ddc33c2b39d357da3a831e3a12f8cfe7ad467c836fd3f97a299ac219f41dc2f",
+        "FID": 8.324261780258967,
+        "KID": 0.005076897330582142
+      },
+      {
+        "job_id": "S03-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S03-DA-ONLINE-B0.json",
+        "receipt_sha256": "423ab52597973d2fc5d2daa26230dc808724c98f24b10b4333461e04aa861c9a",
+        "FID": 9.017613991994631,
+        "KID": 0.006001081317663193
+      }
+    ]
+  },
+  {
+    "seed": 53,
+    "archive_group": "cloud29255",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "50e065cf3aeff0d7eca0f4c00c8fc3a587e39cfe650e7fc150a732efadc0f1ad",
+      "da_branch_init_sha256": "691e33969ac6b255458d5e6b25fd087b2029b2f88e5f496ed9a67c421e378cc1",
+      "da_terminal_sha256": "9ecfb1d50d80e18a58d5cf5e450a22ab509af73cc7e30edb28d3a9bd2bb5f0c4"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29255/runs/S04/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720632,
+        "sha256": "50e065cf3aeff0d7eca0f4c00c8fc3a587e39cfe650e7fc150a732efadc0f1ad"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29255/runs/S04/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868624,
+        "sha256": "691e33969ac6b255458d5e6b25fd087b2029b2f88e5f496ed9a67c421e378cc1"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29255/runs/S04/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868624,
+        "sha256": "9ecfb1d50d80e18a58d5cf5e450a22ab509af73cc7e30edb28d3a9bd2bb5f0c4"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S04-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S04-DA-E_512-B0.json",
+        "receipt_sha256": "9d341d1eaa1796c77cbd2863fbdb99d1fe25e46a0c58c092c2c543592b67f3df",
+        "FID": 8.212511242657838,
+        "KID": 0.004987727385014296
+      },
+      {
+        "job_id": "S04-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S04-DA-E_512-B1.json",
+        "receipt_sha256": "dea9688a9a0c2081a5ff111bad371a12b0c934f8bc74c05656a095c02d833c88",
+        "FID": 8.068688086343268,
+        "KID": 0.004925893619656563
+      },
+      {
+        "job_id": "S04-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S04-DA-E_512-B2.json",
+        "receipt_sha256": "b0a2d3fcbe2708deba23de999c087e4ed146d4ecb31fc92e9ec2048825f5b378",
+        "FID": 7.955751150176839,
+        "KID": 0.004814252723008394
+      },
+      {
+        "job_id": "S04-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S04-DA-E_KEEP-B0.json",
+        "receipt_sha256": "fdf8f82071b98e8919a241d513bfafcb555ed38334d670be54069b370c0bc281",
+        "FID": 8.450151050817457,
+        "KID": 0.00519885029643774
+      },
+      {
+        "job_id": "S04-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S04-DA-ONLINE-B0.json",
+        "receipt_sha256": "fba059753b43099f5820e31f9a564164dcd3c4d300bbbb939f97e6f119aea40f",
+        "FID": 9.552013810380224,
+        "KID": 0.005620324518531561
+      }
+    ]
+  },
+  {
+    "seed": 54,
+    "archive_group": "cloud29255",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "fdbfc3f0fd0fd8c2c8c093a8b6b020c94d10c7516efd18261bcd95f4a469168e",
+      "da_branch_init_sha256": "9b8435adb3fccfc52ba2ef336b00d73abd8a87a239ef35b9ea1fefbc22c2f35f",
+      "da_terminal_sha256": "cdf16bccc6e4b2419504283b35ba4f1ef1d275d1db2b24b38b1d7fa92a7665c0"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29255/runs/S05/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "fdbfc3f0fd0fd8c2c8c093a8b6b020c94d10c7516efd18261bcd95f4a469168e"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29255/runs/S05/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "9b8435adb3fccfc52ba2ef336b00d73abd8a87a239ef35b9ea1fefbc22c2f35f"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29255/runs/S05/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "cdf16bccc6e4b2419504283b35ba4f1ef1d275d1db2b24b38b1d7fa92a7665c0"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S05-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S05-DA-E_512-B0.json",
+        "receipt_sha256": "fad62e6f5850277b0aaf68002e142d46280980ca40d22fe01a7b9607bdb2397d",
+        "FID": 7.473532137842479,
+        "KID": 0.004577392712235451
+      },
+      {
+        "job_id": "S05-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S05-DA-E_512-B1.json",
+        "receipt_sha256": "cf3e9496ffe64e8f0964730e9d25fcec69dfe32585b06c8f088807d32eede7f9",
+        "FID": 7.380543414522909,
+        "KID": 0.004536728374660015
+      },
+      {
+        "job_id": "S05-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S05-DA-E_512-B2.json",
+        "receipt_sha256": "96654c4c34f839005417e95ee8b6abe5eef14b7885679ead4560bd4fa7fb5a10",
+        "FID": 7.3434587727984795,
+        "KID": 0.0045019532553851604
+      },
+      {
+        "job_id": "S05-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S05-DA-E_KEEP-B0.json",
+        "receipt_sha256": "e9837b7b28829508c82aeb578c73f5010a3513e212062ea8ed3d751478cba019",
+        "FID": 7.686634712706992,
+        "KID": 0.004776589572429657
+      },
+      {
+        "job_id": "S05-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S05-DA-ONLINE-B0.json",
+        "receipt_sha256": "5dd56a499c95b56c752a8814bc4c1bf8c69cf3116482111fbd2d2244524456dd",
+        "FID": 9.902503211202527,
+        "KID": 0.006579921580851078
+      }
+    ]
+  },
+  {
+    "seed": 55,
+    "archive_group": "cloud29623",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "226203cd8c814f83f938646a7765f3c576fa6ee14126d16f8935c906abd9a3ad",
+      "da_branch_init_sha256": "2ab2014e41cf6ec3262cc8d89639d506950d3b3f42d21b07f02d634e79a3cd5a",
+      "da_terminal_sha256": "599900f777b9d39483828e7534f485e1635e0759b6579144850d0317df68bb77"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29623/runs/S06/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "226203cd8c814f83f938646a7765f3c576fa6ee14126d16f8935c906abd9a3ad"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29623/runs/S06/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868624,
+        "sha256": "2ab2014e41cf6ec3262cc8d89639d506950d3b3f42d21b07f02d634e79a3cd5a"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29623/runs/S06/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868624,
+        "sha256": "599900f777b9d39483828e7534f485e1635e0759b6579144850d0317df68bb77"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S06-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S06-DA-E_512-B0.json",
+        "receipt_sha256": "5f272d7301e6d1d0bde0efd5ee34588058b80b7f7a772cbb1f27e7fecc8caa02",
+        "FID": 9.712497150575743,
+        "KID": 0.006048854906111956
+      },
+      {
+        "job_id": "S06-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S06-DA-E_512-B1.json",
+        "receipt_sha256": "74d3b4abc26c03e29ae7487da542fe21aee16350c8c253a6c5ac3428013fd48b",
+        "FID": 9.516073068090131,
+        "KID": 0.0058605563826859
+      },
+      {
+        "job_id": "S06-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S06-DA-E_512-B2.json",
+        "receipt_sha256": "6c9b06f9174a31c3febb58352e319e34379bcae682b0197b12a01905f0cda829",
+        "FID": 9.429869193946885,
+        "KID": 0.005811469629406929
+      },
+      {
+        "job_id": "S06-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S06-DA-E_KEEP-B0.json",
+        "receipt_sha256": "3d38cebd444f082853a4036fa9c54bf17d9a57b68d23f2083396472afc66aab6",
+        "FID": 10.149282489532656,
+        "KID": 0.006477519404143095
+      },
+      {
+        "job_id": "S06-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S06-DA-ONLINE-B0.json",
+        "receipt_sha256": "91472b5761076a77ba21c3c9d424354d369eb42a7244b80157949471e6a3ba06",
+        "FID": 10.728092940340204,
+        "KID": 0.007098478730767965
+      }
+    ]
+  },
+  {
+    "seed": 56,
+    "archive_group": "cloud29623",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "23542c8e54e39704e173fc26813c9c98ddda58334ab68fe09ea8bb76c60047e5",
+      "da_branch_init_sha256": "78a7c290a8d95996de379ae0adab9e5bc329405ac976f6462cfba50d90d3c3cc",
+      "da_terminal_sha256": "509c09791dc19d1072c855bf9e48c9b90359f923eea12e8a77dea909ac1de33e"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29623/runs/S07/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "23542c8e54e39704e173fc26813c9c98ddda58334ab68fe09ea8bb76c60047e5"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29623/runs/S07/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "78a7c290a8d95996de379ae0adab9e5bc329405ac976f6462cfba50d90d3c3cc"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29623/runs/S07/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "509c09791dc19d1072c855bf9e48c9b90359f923eea12e8a77dea909ac1de33e"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S07-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S07-DA-E_512-B0.json",
+        "receipt_sha256": "b89a77c13a484bb6662c1f82454536b8627cf92751974f56bb24f2d0d651b868",
+        "FID": 9.565170973851746,
+        "KID": 0.005747632123529911
+      },
+      {
+        "job_id": "S07-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S07-DA-E_512-B1.json",
+        "receipt_sha256": "31e9a15bb0e0244470c3f343e4deb2c3161b20fa4cef758441a2ebce72076de1",
+        "FID": 9.46753942599821,
+        "KID": 0.00570645509287715
+      },
+      {
+        "job_id": "S07-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S07-DA-E_512-B2.json",
+        "receipt_sha256": "1be9ea692b2185b2ab35ad870319f9822c9af7693a2ad59f374ae20c0c932d1a",
+        "FID": 9.310426481925738,
+        "KID": 0.005540632177144289
+      },
+      {
+        "job_id": "S07-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S07-DA-E_KEEP-B0.json",
+        "receipt_sha256": "88691d1c0f197dfe41a51eb02cc486d782100da0ec1acd736c829a31835a86f8",
+        "FID": 9.74184695121042,
+        "KID": 0.00594716053456068
+      },
+      {
+        "job_id": "S07-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S07-DA-ONLINE-B0.json",
+        "receipt_sha256": "20dffa37cf6a52fd4ba4a3f16aa130383d408314c4e02622ac7ab79f93a21893",
+        "FID": 8.909148928883384,
+        "KID": 0.004993659444153309
+      }
+    ]
+  },
+  {
+    "seed": 57,
+    "archive_group": "cloud29623",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "a8e0bf926347477c5ea4e3a787421e4e56acecfb3403aafe213ca4435bbb133c",
+      "da_branch_init_sha256": "13c6e496f7953538fe10d3faf984b195d951a78af7f5e626772f009d1a36ca9c",
+      "da_terminal_sha256": "852791f3fe7f57df1d60b5dc8516e331ca0586b0751c43d83d60009ef4e0b98b"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29623/runs/S08/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "a8e0bf926347477c5ea4e3a787421e4e56acecfb3403aafe213ca4435bbb133c"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29623/runs/S08/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "13c6e496f7953538fe10d3faf984b195d951a78af7f5e626772f009d1a36ca9c"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29623/runs/S08/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868624,
+        "sha256": "852791f3fe7f57df1d60b5dc8516e331ca0586b0751c43d83d60009ef4e0b98b"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S08-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S08-DA-E_512-B0.json",
+        "receipt_sha256": "e81b97e90375d07b5f5d21529079deda7bc71195c6ffde31d177e74558d4b593",
+        "FID": 8.523732810526207,
+        "KID": 0.005136291496455669
+      },
+      {
+        "job_id": "S08-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S08-DA-E_512-B1.json",
+        "receipt_sha256": "26eb82e7149efe2eb342ce3dae3c21e450c6fc1f0101f5dcded83de379156ef0",
+        "FID": 8.366421344077994,
+        "KID": 0.004995065741240978
+      },
+      {
+        "job_id": "S08-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S08-DA-E_512-B2.json",
+        "receipt_sha256": "27877362a0466d7982845347b3eb2b673c6e73804cd673ed0e33f018c6632640",
+        "FID": 8.241640485249633,
+        "KID": 0.004882370587438345
+      },
+      {
+        "job_id": "S08-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S08-DA-E_KEEP-B0.json",
+        "receipt_sha256": "81d6f3ae024cfdb57a22f373d878a8fceda56bb106d539f1aa8c7f498138fa7c",
+        "FID": 8.753813591250342,
+        "KID": 0.005309633910655975
+      },
+      {
+        "job_id": "S08-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S08-DA-ONLINE-B0.json",
+        "receipt_sha256": "b9278c88bfda8d22cc7f1cb15c562d0f9d3db9aadca717f2ee07c392bfe2c5e9",
+        "FID": 9.001907239382195,
+        "KID": 0.00563198234885931
+      }
+    ]
+  },
+  {
+    "seed": 58,
+    "archive_group": "cloud29623",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "1a5d91741cf3efd21ab44107c051663bd5ca9796b99ec344dbd47eb591eedf17",
+      "da_branch_init_sha256": "6e1d12986072c4eaa6d39fa094de3093156fc1c28e8ab50f8b70692322d6514f",
+      "da_terminal_sha256": "d87414b04cae7d67fd91a6f0ef1332e8704deb7da3797a66ea33223896e9102f"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud29623/runs/S09/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "1a5d91741cf3efd21ab44107c051663bd5ca9796b99ec344dbd47eb591eedf17"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud29623/runs/S09/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "6e1d12986072c4eaa6d39fa094de3093156fc1c28e8ab50f8b70692322d6514f"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud29623/runs/S09/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "d87414b04cae7d67fd91a6f0ef1332e8704deb7da3797a66ea33223896e9102f"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S09-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S09-DA-E_512-B0.json",
+        "receipt_sha256": "d431361123931d87e8fb7d61f3c2d12317bf79eb271e2ffc390823e9407ad0e1",
+        "FID": 13.981942019609178,
+        "KID": 0.009047367610037327
+      },
+      {
+        "job_id": "S09-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S09-DA-E_512-B1.json",
+        "receipt_sha256": "a04be90debd00cb4dc3134ebb67177f01f5953e0e8bbaf10dfeaf766b3d8ad1c",
+        "FID": 13.617240221420069,
+        "KID": 0.008808005601167679
+      },
+      {
+        "job_id": "S09-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S09-DA-E_512-B2.json",
+        "receipt_sha256": "8ae70c4dd7477c9e68e8672dc31c61cd9428e120d81302960e0f6ff6d2b70267",
+        "FID": 13.557266251914752,
+        "KID": 0.008771296590566635
+      },
+      {
+        "job_id": "S09-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S09-DA-E_KEEP-B0.json",
+        "receipt_sha256": "81af89c18512b7e967976c609f7d6426105b137bf307153a144a2956e56f33f8",
+        "FID": 13.488183594909867,
+        "KID": 0.008780207484960556
+      },
+      {
+        "job_id": "S09-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S09-DA-ONLINE-B0.json",
+        "receipt_sha256": "d8cf0b5cc9f6304b07e11e2ac96d45e92060c91103598f1648884de2aed44c66",
+        "FID": 11.845124700691375,
+        "KID": 0.007570322137326002
+      }
+    ]
+  },
+  {
+    "seed": 59,
+    "archive_group": "cloud28157",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "baf549ea1690331202682fdeb70ff0d6e454b3a0530a40e9cee8db9701e75bf2",
+      "da_branch_init_sha256": "6a506c7ec7b72ed048ade7dc08f9a75a008d05d3399f7306d01671d3bfd1e4ce",
+      "da_terminal_sha256": "0d161ffc6dd0ccb18869486d1ef3c898d0a32ca223074ebd58d42b570bafb5a6"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud28157/runs/S10/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "baf549ea1690331202682fdeb70ff0d6e454b3a0530a40e9cee8db9701e75bf2"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud28157/runs/S10/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "6a506c7ec7b72ed048ade7dc08f9a75a008d05d3399f7306d01671d3bfd1e4ce"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud28157/runs/S10/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "0d161ffc6dd0ccb18869486d1ef3c898d0a32ca223074ebd58d42b570bafb5a6"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S10-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S10-DA-E_512-B0.json",
+        "receipt_sha256": "c3d050f30cb65d6d762a01e9ddb20570ab4c34a034e333f51a3e69c8651a50d2",
+        "FID": 7.745805044143795,
+        "KID": 0.004671049769967794
+      },
+      {
+        "job_id": "S10-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S10-DA-E_512-B1.json",
+        "receipt_sha256": "4db5d8eebfc76ff24129e01d3b446b9dcbd7d9d460a67c0d0c8f2df98c348bb7",
+        "FID": 7.6349781661368805,
+        "KID": 0.004630998708307743
+      },
+      {
+        "job_id": "S10-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S10-DA-E_512-B2.json",
+        "receipt_sha256": "ab96e30d4d44a720c6941977f19f703610de32c0e306591cdc04942996d6185c",
+        "FID": 7.567727040203853,
+        "KID": 0.004553178790956736
+      },
+      {
+        "job_id": "S10-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S10-DA-E_KEEP-B0.json",
+        "receipt_sha256": "1e674ab8fe76213fc830b112d8f246c21dc0d9ef36f31baf3d074bc8f4574c8e",
+        "FID": 7.900120113884999,
+        "KID": 0.004817292559891939
+      },
+      {
+        "job_id": "S10-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S10-DA-ONLINE-B0.json",
+        "receipt_sha256": "77bc3cb118c921fd944ad713cc22f85f56246521f6586cbea0b7cf31bc0bbeb0",
+        "FID": 8.545221812491473,
+        "KID": 0.005013320595026016
+      }
+    ]
+  },
+  {
+    "seed": 60,
+    "archive_group": "cloud28157",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "7d4f77abc4f627b57cdd7a43812177b1c83bd8511a52db0a0ad8ec3a78a03029",
+      "da_branch_init_sha256": "e6af9a8db4fcbee77e9281f3fa5c6390f86a7802eddc5e126b2eccec012eb86f",
+      "da_terminal_sha256": "9bf054672548cb443bdeefd97071e3cb35e48d70519f0f1ea4a3fdf3218e772f"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud28157/runs/S11/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "7d4f77abc4f627b57cdd7a43812177b1c83bd8511a52db0a0ad8ec3a78a03029"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud28157/runs/S11/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868624,
+        "sha256": "e6af9a8db4fcbee77e9281f3fa5c6390f86a7802eddc5e126b2eccec012eb86f"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud28157/runs/S11/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868624,
+        "sha256": "9bf054672548cb443bdeefd97071e3cb35e48d70519f0f1ea4a3fdf3218e772f"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S11-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S11-DA-E_512-B0.json",
+        "receipt_sha256": "0f992728aaf6ec4199142a5caa158d959f0ff66ed00dd89d23554bbf12a1080e",
+        "FID": 8.534958305201997,
+        "KID": 0.005178384017199278
+      },
+      {
+        "job_id": "S11-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S11-DA-E_512-B1.json",
+        "receipt_sha256": "64bfa142eebbfe3a42c6877041ac77a807111360371e7bf38321bba388142f44",
+        "FID": 8.503962021483765,
+        "KID": 0.00519910641014576
+      },
+      {
+        "job_id": "S11-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S11-DA-E_512-B2.json",
+        "receipt_sha256": "857c67e084b8e3977aad4941dbbd24419ba691bee82b2d79cc495aab0e7da108",
+        "FID": 8.290325380896446,
+        "KID": 0.005013100802898407
+      },
+      {
+        "job_id": "S11-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S11-DA-E_KEEP-B0.json",
+        "receipt_sha256": "380fe34fcb40f083dac3ffd5ebc8a90956b8d680e36dae62a93c4176836fdd74",
+        "FID": 8.838283929077576,
+        "KID": 0.005447077564895153
+      },
+      {
+        "job_id": "S11-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S11-DA-ONLINE-B0.json",
+        "receipt_sha256": "d80db9ae1b89db13ba0a2ab8f2b27c09e34960d574c9be4df37d535187c0792b",
+        "FID": 8.204651983715701,
+        "KID": 0.004869726486504078
+      }
+    ]
+  },
+  {
+    "seed": 61,
+    "archive_group": "cloud28157",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "3c837ce2d56e346527133729a2116276e59938d45941955625a08fab3a586482",
+      "da_branch_init_sha256": "00337c70610e9a21eb56904cddf5c720c0a560c2fe01660fb7dd3dbb1bced248",
+      "da_terminal_sha256": "1ca1d0fde4b5f9f8789083e9c8c7f28072f1fc21714e6d5dd343578fcbe071b7"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud28157/runs/S12/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "3c837ce2d56e346527133729a2116276e59938d45941955625a08fab3a586482"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud28157/runs/S12/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "00337c70610e9a21eb56904cddf5c720c0a560c2fe01660fb7dd3dbb1bced248"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud28157/runs/S12/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "1ca1d0fde4b5f9f8789083e9c8c7f28072f1fc21714e6d5dd343578fcbe071b7"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S12-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S12-DA-E_512-B0.json",
+        "receipt_sha256": "3165ef86bb8da97400f4021379d04fa33995fb749a5e9d4da4a8eaa05aaeb6cc",
+        "FID": 7.763797826963749,
+        "KID": 0.004733681678771973
+      },
+      {
+        "job_id": "S12-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S12-DA-E_512-B1.json",
+        "receipt_sha256": "83c642d6f4fd867b6bbd92d09f9db0e56f93e543d1e7687fdc34caf7f8a20886",
+        "FID": 7.605814481441257,
+        "KID": 0.004612626973539591
+      },
+      {
+        "job_id": "S12-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S12-DA-E_512-B2.json",
+        "receipt_sha256": "c4966f1234e5cf9a05c530a4d65f7721d75515a455f7b8b6dbd628c7d5f58ec1",
+        "FID": 7.562548671004061,
+        "KID": 0.004616472404450178
+      },
+      {
+        "job_id": "S12-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S12-DA-E_KEEP-B0.json",
+        "receipt_sha256": "60f1143cb406d1ac13a0d52d8971addc2d652516733bd4f8fbb0e439259740b4",
+        "FID": 7.989864511855066,
+        "KID": 0.004953301046043634
+      },
+      {
+        "job_id": "S12-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S12-DA-ONLINE-B0.json",
+        "receipt_sha256": "0dbde94d88f8ac965741a66da8e033d977c6dcd77b34c3f2b0c45a14c2b1589c",
+        "FID": 8.152803714789783,
+        "KID": 0.004888273775577545
+      }
+    ]
+  },
+  {
+    "seed": 62,
+    "archive_group": "cloud28525",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "cd2bf30e5bec4890ce7638d03230c4265975a28be360a2617cd6039515b9d4c9",
+      "da_branch_init_sha256": "e20f727359a2ef4b1a0b37641b416278dec32aabb8ec675fe5450829c3abf538",
+      "da_terminal_sha256": "0f798c0120d7c4a641107015e403f2ed99f519982c8166aed19f414f0b3e5b39"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud28525/runs/S13/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720632,
+        "sha256": "cd2bf30e5bec4890ce7638d03230c4265975a28be360a2617cd6039515b9d4c9"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud28525/runs/S13/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868624,
+        "sha256": "e20f727359a2ef4b1a0b37641b416278dec32aabb8ec675fe5450829c3abf538"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud28525/runs/S13/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868624,
+        "sha256": "0f798c0120d7c4a641107015e403f2ed99f519982c8166aed19f414f0b3e5b39"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S13-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S13-DA-E_512-B0.json",
+        "receipt_sha256": "781835837ddebd1607a69e05e4c75710375dffbf8121468ae892d86d44dcf08f",
+        "FID": 9.680814044065494,
+        "KID": 0.0058889552019536495
+      },
+      {
+        "job_id": "S13-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S13-DA-E_512-B1.json",
+        "receipt_sha256": "6879c44b4b0f52e022d5b27fa144cd9b9f9aa766d63d6f0a8103cef406c5c554",
+        "FID": 9.578314939218888,
+        "KID": 0.005890859756618738
+      },
+      {
+        "job_id": "S13-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S13-DA-E_512-B2.json",
+        "receipt_sha256": "f3d27bdea6aa64c86426060e590a233471f1255dc29335d796aa5abeb801ea16",
+        "FID": 9.494140854384312,
+        "KID": 0.0058113206177949905
+      },
+      {
+        "job_id": "S13-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S13-DA-E_KEEP-B0.json",
+        "receipt_sha256": "261762dd5a69f26a5802a35b0630f33c1963a5d5528ccb51fa2346dcbd9f7f72",
+        "FID": 9.767802891507635,
+        "KID": 0.005996647756546736
+      },
+      {
+        "job_id": "S13-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S13-DA-ONLINE-B0.json",
+        "receipt_sha256": "4a0e92d1d7bca65bac3ef23d9989879c5f9a598e4a2c7bddc4e0205ac2edfab6",
+        "FID": 10.065138282289004,
+        "KID": 0.0064883180893957615
+      }
+    ]
+  },
+  {
+    "seed": 63,
+    "archive_group": "cloud28525",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "a62ffa4567a0fd5c8912865ce8183e8889c55a7ac28cbc23276238226ef383fa",
+      "da_branch_init_sha256": "2eac35aff91a4350c2637babb97231bb173927fcb9c9d3d76b3ab2fb484ffc63",
+      "da_terminal_sha256": "0b9a234550a9aead66b23e9960cc5a211020c14af80a393b464332a09396b265"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud28525/runs/S14/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720568,
+        "sha256": "a62ffa4567a0fd5c8912865ce8183e8889c55a7ac28cbc23276238226ef383fa"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud28525/runs/S14/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868560,
+        "sha256": "2eac35aff91a4350c2637babb97231bb173927fcb9c9d3d76b3ab2fb484ffc63"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud28525/runs/S14/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868560,
+        "sha256": "0b9a234550a9aead66b23e9960cc5a211020c14af80a393b464332a09396b265"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S14-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S14-DA-E_512-B0.json",
+        "receipt_sha256": "0bd43dbc4a9b5094d8105d34b68dcf30575797d6c4f4a503ebd37c4e6354e714",
+        "FID": 10.315737716680083,
+        "KID": 0.00643339566886425
+      },
+      {
+        "job_id": "S14-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S14-DA-E_512-B1.json",
+        "receipt_sha256": "e5fd97cc46b473580d238f99871558af7b964e11c30af9ac9bb46ad2b5f2ddaf",
+        "FID": 10.11634370856001,
+        "KID": 0.0062477439641952515
+      },
+      {
+        "job_id": "S14-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S14-DA-E_512-B2.json",
+        "receipt_sha256": "639d015b1cf1b5e592db3c910412d9d53aaec16bfa710542776adcf876b7d534",
+        "FID": 10.041823586896374,
+        "KID": 0.006232619751244783
+      },
+      {
+        "job_id": "S14-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S14-DA-E_KEEP-B0.json",
+        "receipt_sha256": "3222cc6ed1716560434c768b83b35db8cdb9ac7f33b97b94b049fd8affa99f76",
+        "FID": 10.419712512719245,
+        "KID": 0.006614274810999632
+      },
+      {
+        "job_id": "S14-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S14-DA-ONLINE-B0.json",
+        "receipt_sha256": "48dda1830d5bda0deccef005a255ea969532877553422d6456bec984ed67f24a",
+        "FID": 10.503125259805918,
+        "KID": 0.0063960133120417595
+      }
+    ]
+  },
+  {
+    "seed": 64,
+    "archive_group": "cloud28525",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "5f04df6c14a78435801e93e896d405fca2c081a1ad3b4cfc4f0f3b3a613fdbf3",
+      "da_branch_init_sha256": "af31a6bac334bcc489da01c5bc84bc4212e5d58c4937512d323ab6316fa7cfcd",
+      "da_terminal_sha256": "e753084533458f1c4ab46e8187d6bc31e67a79053441ba783e00a953e56df31e"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "archive/cloud28525/runs/S15/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720632,
+        "sha256": "5f04df6c14a78435801e93e896d405fca2c081a1ad3b4cfc4f0f3b3a613fdbf3"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "archive/cloud28525/runs/S15/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868624,
+        "sha256": "af31a6bac334bcc489da01c5bc84bc4212e5d58c4937512d323ab6316fa7cfcd"
+      },
+      "da_terminal": {
+        "archive_relative_path": "archive/cloud28525/runs/S15/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868624,
+        "sha256": "e753084533458f1c4ab46e8187d6bc31e67a79053441ba783e00a953e56df31e"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S15-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S15-DA-E_512-B0.json",
+        "receipt_sha256": "34dcfb0f53ddddb0ecb3a2f1a45be8906679158ce61bb53b556a30a55322d091",
+        "FID": 10.01697616309027,
+        "KID": 0.006197136361151934
+      },
+      {
+        "job_id": "S15-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S15-DA-E_512-B1.json",
+        "receipt_sha256": "4706a9a56376b7ea0959af0b4d36701fb9911e260f531c0e24b56635ea4310da",
+        "FID": 9.886620524672448,
+        "KID": 0.006098701152950525
+      },
+      {
+        "job_id": "S15-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S15-DA-E_512-B2.json",
+        "receipt_sha256": "93431decc076abf2eff7228ea80db6caf7095a8ce5b3d0842e9ba1c4a9b81902",
+        "FID": 9.759757509178222,
+        "KID": 0.005974977742880583
+      },
+      {
+        "job_id": "S15-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S15-DA-E_KEEP-B0.json",
+        "receipt_sha256": "b743891039438c7029f8e3e8dbffe385c1535177eca8483d29ada7aac21d3f85",
+        "FID": 10.296407093202543,
+        "KID": 0.006459374912083149
+      },
+      {
+        "job_id": "S15-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S15-DA-ONLINE-B0.json",
+        "receipt_sha256": "9990f984196d8c9383eefc27dfeae4cfae91ae76ece00e5df0cf81a207b0d378",
+        "FID": 11.7106857031303,
+        "KID": 0.007524008862674236
+      }
+    ]
+  },
+  {
+    "seed": 65,
+    "archive_group": "ect",
+    "status": "SOURCE_FILES_PRESENT",
+    "binding": {
+      "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+      "prefix_sha256": "3947beb45b3768127449e8e849cee50926dc29b970359fbb2b074faa888e4b62",
+      "da_branch_init_sha256": "f84118d51ecee626ef496118001fe78e7d8df3d0b5df4abe0620d57a05fced20",
+      "da_terminal_sha256": "792699051863c7e15ff66bcd431d16e7f82d6e391a482c65f9e0bc869928d48a"
+    },
+    "files": {
+      "prefix": {
+        "archive_relative_path": "runs/S16/DA/prefix/training-state-kimg000512.pt",
+        "bytes": 895720632,
+        "sha256": "3947beb45b3768127449e8e849cee50926dc29b970359fbb2b074faa888e4b62"
+      },
+      "da_branch_init": {
+        "archive_relative_path": "runs/S16/DA/suffix/training-state-kimg000512.pt",
+        "bytes": 1118868624,
+        "sha256": "f84118d51ecee626ef496118001fe78e7d8df3d0b5df4abe0620d57a05fced20"
+      },
+      "da_terminal": {
+        "archive_relative_path": "runs/S16/DA/suffix/training-state-kimg001024.pt",
+        "bytes": 1118868624,
+        "sha256": "792699051863c7e15ff66bcd431d16e7f82d6e391a482c65f9e0bc869928d48a"
+      }
+    },
+    "old_evaluation_slots": [
+      {
+        "job_id": "S16-DA-E_512-B0",
+        "receipt": "final_delivery/evaluation_receipts/S16-DA-E_512-B0.json",
+        "receipt_sha256": "a1ba0615eb4b01f6ad4a9a1eb61f6b6bb3dbd427410b504545b3380d24a9be42",
+        "FID": 8.696227405981741,
+        "KID": 0.0053724367171525955
+      },
+      {
+        "job_id": "S16-DA-E_512-B1",
+        "receipt": "final_delivery/evaluation_receipts/S16-DA-E_512-B1.json",
+        "receipt_sha256": "041199d4a26f189e0fac01dfd5244952506f67f388e7b27dca85c9ca29273e47",
+        "FID": 8.473706058567178,
+        "KID": 0.0052908617071807384
+      },
+      {
+        "job_id": "S16-DA-E_512-B2",
+        "receipt": "final_delivery/evaluation_receipts/S16-DA-E_512-B2.json",
+        "receipt_sha256": "8dc6925fb99f200bb03bf9df735556c6286249c60ca12cd1e76b1755c36304e9",
+        "FID": 8.377956224752875,
+        "KID": 0.005154477432370186
+      },
+      {
+        "job_id": "S16-DA-E_KEEP-B0",
+        "receipt": "final_delivery/evaluation_receipts/S16-DA-E_KEEP-B0.json",
+        "receipt_sha256": "219b82ea184f35605d1464a6399c28cd16807ec8ceb76756fe5600a8a948000b",
+        "FID": 8.697520535114823,
+        "KID": 0.005451733712106943
+      },
+      {
+        "job_id": "S16-DA-ONLINE-B0",
+        "receipt": "final_delivery/evaluation_receipts/S16-DA-ONLINE-B0.json",
+        "receipt_sha256": "dcc48efd6ab8e1c605e3413fba3d0486d32ad64a867b2f78dd9946688d01e700",
+        "FID": 8.813545583526004,
+        "KID": 0.005392568651586771
+      }
+    ]
+  }
+]

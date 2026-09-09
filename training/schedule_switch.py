@@ -26,12 +26,18 @@ TERMINAL_HISTORY_N30_PROTOCOL = "q256_terminal_history_n30_matpool_v1"
 M1_HISTORY_PERSISTENCE_PROTOCOL = "m1_r1_history_persistence_q256"
 HISTORY_COMPONENT_PROTOCOL = "q256_history_component_chase_v1"
 HISTORY_COMPONENT_ENGINEERING_PROTOCOL = "q256_history_component_chase_engineering_v1"
+D_RESTORE_PROTOCOL = "q256_d_restore_vs_hold_v1"
+D_RESTORE_ENGINEERING_PROTOCOL = "q256_d_restore_vs_hold_engineering_v1"
+D_RESTORE_PROTOCOLS = {D_RESTORE_PROTOCOL, D_RESTORE_ENGINEERING_PROTOCOL}
 COMPACT_SOURCE_PROTOCOLS = {
+    *D_RESTORE_PROTOCOLS,
     M1_HISTORY_PERSISTENCE_PROTOCOL,
     HISTORY_COMPONENT_PROTOCOL,
     HISTORY_COMPONENT_ENGINEERING_PROTOCOL,
 }
 SUPPORTED_PROTOCOL_SEEDS = {
+    D_RESTORE_PROTOCOL: tuple(range(50, 66)),
+    D_RESTORE_ENGINEERING_PROTOCOL: (50, 51),
     PROTOCOL: tuple(range(14, 19)),
     SEED3_7_PROTOCOL: tuple(range(3, 8)),
     SEED3_7_PROTOCOL_V2: tuple(range(3, 8)),
@@ -124,7 +130,16 @@ def load_run_manifest(path: str) -> dict:
              "schedule-switch protocol identity mismatch")
     run_kind = manifest.get("run_kind")
     _require(run_kind in {"parity", "formal"}, "invalid schedule-switch run kind")
-    if experiment_protocol == HISTORY_COMPONENT_PROTOCOL:
+    if experiment_protocol in D_RESTORE_PROTOCOLS:
+        _require(run_kind == "formal", "DD retains the full 1024-kimg plan")
+        branches = {"DD": ("D", "D")}
+        binding = manifest.get("source_binding", {})
+        for key in ("prefix_sha256", "da_branch_init_sha256", "da_terminal_sha256"):
+            _require(_HEX64.fullmatch(str(binding.get(key, ""))) is not None,
+                     "DD requires archived source binding: " + key)
+        _require(binding.get("pr108_head") == "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+                 "DD source PR108 identity mismatch")
+    elif experiment_protocol == HISTORY_COMPONENT_PROTOCOL:
         _require(run_kind == "formal", "history component permits only formal runs")
         branches = HISTORY_COMPONENT_BRANCHES
     elif experiment_protocol == HISTORY_COMPONENT_ENGINEERING_PROTOCOL:
@@ -181,9 +196,12 @@ def load_run_manifest(path: str) -> dict:
         _require(os.path.isabs(str(manifest.get("immutable_output_root", ""))),
                  "M1 output root must be absolute")
         shadow_key = ("m1_shadow_update" if experiment_protocol == M1_HISTORY_PERSISTENCE_PROTOCOL
-                      else "history_component_shadow_update")
+                      else ("d_restore_shadow_update" if experiment_protocol in D_RESTORE_PROTOCOLS
+                            else "history_component_shadow_update"))
         _require(manifest.get(shadow_key) is True,
                  "M1 requires the E_512 shadow readout")
+        if experiment_protocol in D_RESTORE_PROTOCOLS:
+            _require(manifest.get("d_restore_shadow_update") is True, "DD requires E_512")
         return manifest
     _require(_HEX64.fullmatch(str(manifest.get("protocol_sha256", ""))) is not None,
              "invalid protocol SHA256")
@@ -230,6 +248,8 @@ def state_metadata(manifest: dict) -> dict:
     source = manifest["source_state"]
     if manifest["experiment_protocol"] in COMPACT_SOURCE_PROTOCOLS:
         return {
+            **({"source_binding": copy.deepcopy(manifest["source_binding"])}
+               if manifest["experiment_protocol"] in D_RESTORE_PROTOCOLS else {}),
             "schema": STATE_SCHEMA,
             "experiment_protocol": manifest["experiment_protocol"],
             "run_kind": manifest["run_kind"],
@@ -272,6 +292,9 @@ def verify_resume_state_file(path: str, manifest: dict) -> None:
     if manifest["experiment_protocol"] in COMPACT_SOURCE_PROTOCOLS:
         _require(os.path.isfile(path) and not os.path.islink(path),
                  "M1 source state must be a regular file")
+        if manifest["experiment_protocol"] in D_RESTORE_PROTOCOLS:
+            _require(sha256_file(path) == manifest["source_binding"]["prefix_sha256"],
+                     "DD original D-prefix file hash mismatch")
         return
     _require(os.path.getsize(path) == source["bytes"],
              "source-state byte count mismatch")
@@ -301,7 +324,7 @@ def verify_source_state(state: dict, manifest: dict) -> dict:
              and float(factorial.get("denominator_gap_scale")) == denominator,
              "source factorial identity mismatch")
     trajectory = state["trajectory_config"]
-    if manifest["experiment_protocol"] == HISTORY_COMPONENT_PROTOCOL:
+    if manifest["experiment_protocol"] in {HISTORY_COMPONENT_PROTOCOL, *D_RESTORE_PROTOCOLS}:
         _require(state.get("history_component_prefix") == {
             "protocol_id": HISTORY_COMPONENT_PROTOCOL, "seed": manifest["seed"],
             "source_history": origin, "total_kimg": 1024,

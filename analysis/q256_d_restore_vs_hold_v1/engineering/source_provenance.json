@@ -1,0 +1,30 @@
+{
+  "engineering_actual_deployment_commit": "de04beecefe3551aea48620540b46babafb03c0a",
+  "engineering_base_source_commit": "29b5684f90c2048b65455cdae6abffb3a5a8a0f7",
+  "engineering_file_overrides": [
+    {
+      "path": "training/d_restore.py",
+      "source_commit": "9fe442a552745027bebc7762c41010beaad5bdff",
+      "git_blob": "6d536e05698a8e4907c0a908dee2e92054e52301"
+    },
+    {
+      "path": "analysis/q256_d_restore_vs_hold_v1/short_checks.py",
+      "source_commit": "b8a9f69b9b33b41479544ab8462b98de0d278ac6",
+      "git_blob": "87bf577f1fb2bbb1968e90908ce53b57eeaa12c3"
+    },
+    {
+      "path": "analysis/q256_d_restore_vs_hold_v1/audit_entry.py",
+      "source_commit": "1740b9ca6af6236477e0087957531e21ad24dfca",
+      "git_blob": "1948c073f1829338e6e9517e4128204409aa761f"
+    }
+  ],
+  "engineering_manifest_note": "The incrementally stamped source_commit field names the latest patch source, not a full source-tree identity. This reconciled base-plus-overrides map and actual Git tree are authoritative.",
+  "formal_implementation_source_commit": "1740b9ca6af6236477e0087957531e21ad24dfca",
+  "formal_actual_deployment_commit": "28e9ffd8b649f46a0830f498f975be165cbfe088",
+  "formal_deployment_scope": "Same file-verified selected source snapshot on all four nodes; deployment tree omits unrelated artifacts.",
+  "scientific_core_unchanged_after_gpu_checks": true,
+  "historical_DA_training_source_commit": "f6ac75a1c249855c5d789913dbba1cbace3441d5",
+  "historical_DA_training_deployment_commit": "47b8dca9be521d4755e184f46f0314a761b1a618",
+  "pr108_publication_commit": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+  "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810"
+}

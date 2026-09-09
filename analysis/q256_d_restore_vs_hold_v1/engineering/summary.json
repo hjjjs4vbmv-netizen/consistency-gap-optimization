@@ -1,0 +1,899 @@
+{
+  "status": "COMPLETED_ENGINEERING_NOT_QUALITY_EQUIVALENCE",
+  "cases": [
+    {
+      "seed": 50,
+      "boundary": "ECT_initial",
+      "variants": {
+        "A": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.37114090855308063",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed50/ECT_initial/A/first_effective_batch.pt"
+        },
+        "D": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.33739498837075649",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed50/ECT_initial/D/first_effective_batch.pt"
+        },
+        "A_scalar": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.3373920289035261",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed50/ECT_initial/A_scalar/first_effective_batch.pt"
+        },
+        "A_lr": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.33740080511510279",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed50/ECT_initial/A_lr/first_effective_batch.pt"
+        }
+      },
+      "target_times_D_A_bitwise_equal": true,
+      "forward_inputs_outputs_D_A_bitwise_equal": true,
+      "comparisons": {
+        "D_vs_A_scalar": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 7.62939453125e-05,
+            "max_relative_to_nonzero_reference": 1.0066960088944554e-05,
+            "elementwise_bitwise_equal_fraction": 0.046875
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.00146484375,
+            "max_relative_to_nonzero_reference": 171.66666666666666,
+            "elementwise_bitwise_equal_fraction": 0.8274988602300705
+          },
+          "parameters_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "moments_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            false,
+            false
+          ]
+        },
+        "D_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 5.615970611572266,
+            "max_relative_to_nonzero_reference": 0.09091830386538267,
+            "elementwise_bitwise_equal_fraction": 0.0
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.63720703125,
+            "max_relative_to_nonzero_reference": 56.0,
+            "elementwise_bitwise_equal_fraction": 0.7962482877434034
+          },
+          "parameters_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "moments_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            false,
+            false
+          ]
+        },
+        "A_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "gradients": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "parameters_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "moments_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            false,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "seed": 50,
+      "boundary": "D_prefix_512",
+      "variants": {
+        "A": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 183
+          },
+          "scaler_after": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 184
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3991",
+            "update_norm": "0.15831748467554219",
+            "radam_first_moment_norm": "355.53023050590724",
+            "radam_second_moment_norm": "99321.759826175097"
+          },
+          "raw_artifact": "engineering_02/B/seed50/D_prefix_512/A/first_effective_batch.pt"
+        },
+        "D": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 183
+          },
+          "scaler_after": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 184
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3991",
+            "update_norm": "0.15616521476662754",
+            "radam_first_moment_norm": "349.69767867097295",
+            "radam_second_moment_norm": "99314.984243081373"
+          },
+          "raw_artifact": "engineering_02/B/seed50/D_prefix_512/D/first_effective_batch.pt"
+        },
+        "A_scalar": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 183
+          },
+          "scaler_after": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 184
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3991",
+            "update_norm": "0.15616583932803255",
+            "radam_first_moment_norm": "349.68709076678738",
+            "radam_second_moment_norm": "99314.971376743051"
+          },
+          "raw_artifact": "engineering_02/B/seed50/D_prefix_512/A_scalar/first_effective_batch.pt"
+        },
+        "A_lr": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 183
+          },
+          "scaler_after": {
+            "scale": 128.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 184
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3991",
+            "update_norm": "0.14392498696799028",
+            "radam_first_moment_norm": "355.53023050590724",
+            "radam_second_moment_norm": "99321.759826175097"
+          },
+          "raw_artifact": "engineering_02/B/seed50/D_prefix_512/A_lr/first_effective_batch.pt"
+        }
+      },
+      "target_times_D_A_bitwise_equal": true,
+      "forward_inputs_outputs_D_A_bitwise_equal": true,
+      "comparisons": {
+        "D_vs_A_scalar": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 8.7738037109375e-05,
+            "max_relative_to_nonzero_reference": 1.330357904732031e-05,
+            "elementwise_bitwise_equal_fraction": 0.03125
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.08740234375,
+            "max_relative_to_nonzero_reference": 1377.576923076923,
+            "elementwise_bitwise_equal_fraction": 0.027847958450418164
+          },
+          "parameters_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 3.148522228002548e-05,
+            "max_relative_to_nonzero_reference": 9.055738843549227,
+            "elementwise_bitwise_equal_fraction": 0.7371567365458209
+          },
+          "moments_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.01171875,
+            "max_relative_to_nonzero_reference": 1875.457313234056,
+            "elementwise_bitwise_equal_fraction": 0.10649190146001072
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            true,
+            true
+          ]
+        },
+        "D_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 4.718318939208984,
+            "max_relative_to_nonzero_reference": 0.09092117648237115,
+            "elementwise_bitwise_equal_fraction": 0.0
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 17.75,
+            "max_relative_to_nonzero_reference": 3269.875,
+            "elementwise_bitwise_equal_fraction": 9.489933735357955e-05
+          },
+          "parameters_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 3.708037547767162e-05,
+            "max_relative_to_nonzero_reference": 5351.167682926829,
+            "elementwise_bitwise_equal_fraction": 0.008144117948339125
+          },
+          "moments_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 6.638671875,
+            "max_relative_to_nonzero_reference": 693064.4847509951,
+            "elementwise_bitwise_equal_fraction": 0.008262563255447447
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            true,
+            true
+          ]
+        },
+        "A_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "gradients": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "parameters_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 2.1710991859436035e-05,
+            "max_relative_to_nonzero_reference": 1348.5,
+            "elementwise_bitwise_equal_fraction": 0.007429277789487432
+          },
+          "moments_after": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            true,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "seed": 51,
+      "boundary": "ECT_initial",
+      "variants": {
+        "A": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.41021575495943752",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed51/ECT_initial/A/first_effective_batch.pt"
+        },
+        "D": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.37291160008591928",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed51/ECT_initial/D/first_effective_batch.pt"
+        },
+        "A_scalar": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.3729109369008401",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed51/ECT_initial/A_scalar/first_effective_batch.pt"
+        },
+        "A_lr": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": false,
+          "scaler_before": {
+            "scale": 65536.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "scaler_after": {
+            "scale": 32768.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 0
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 9,
+          "first_successful_record": {
+            "attempted_iteration": "9",
+            "successful_optimizer_steps": "1",
+            "update_norm": "0.37292341134883877",
+            "radam_first_moment_norm": null,
+            "radam_second_moment_norm": null
+          },
+          "raw_artifact": "engineering_02/B/seed51/ECT_initial/A_lr/first_effective_batch.pt"
+        }
+      },
+      "target_times_D_A_bitwise_equal": true,
+      "forward_inputs_outputs_D_A_bitwise_equal": true,
+      "comparisons": {
+        "D_vs_A_scalar": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.0001068115234375,
+            "max_relative_to_nonzero_reference": 1.3694451400661565e-05,
+            "elementwise_bitwise_equal_fraction": 0.1015625
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.0009765625,
+            "max_relative_to_nonzero_reference": 6.5,
+            "elementwise_bitwise_equal_fraction": 0.995514970114783
+          },
+          "parameters_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "moments_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            false,
+            false
+          ]
+        },
+        "D_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 5.438667297363281,
+            "max_relative_to_nonzero_reference": 0.09092157220129976,
+            "elementwise_bitwise_equal_fraction": 0.0
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.580078125,
+            "max_relative_to_nonzero_reference": 25.0,
+            "elementwise_bitwise_equal_fraction": 0.9883644153932575
+          },
+          "parameters_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "moments_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            false,
+            false
+          ]
+        },
+        "A_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "gradients": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "parameters_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "moments_after": {
+            "status": "NO_COMMON_FIRST_ATTEMPT_UPDATE"
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            false,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "seed": 51,
+      "boundary": "D_prefix_512",
+      "variants": {
+        "A": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 51
+          },
+          "scaler_after": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 52
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3990",
+            "update_norm": "0.17850801528358448",
+            "radam_first_moment_norm": "514.32959403031896",
+            "radam_second_moment_norm": "91137.819781039201"
+          },
+          "raw_artifact": "engineering_02/B/seed51/D_prefix_512/A/first_effective_batch.pt"
+        },
+        "D": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 51
+          },
+          "scaler_after": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 52
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3990",
+            "update_norm": "0.17459376421335077",
+            "radam_first_moment_norm": "495.31215696118664",
+            "radam_second_moment_norm": "91088.581794484606"
+          },
+          "raw_artifact": "engineering_02/B/seed51/D_prefix_512/D/first_effective_batch.pt"
+        },
+        "A_scalar": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 51
+          },
+          "scaler_after": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 52
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3990",
+            "update_norm": "0.1745928085149486",
+            "radam_first_moment_norm": "495.28851900611141",
+            "radam_second_moment_norm": "91088.516335181805"
+          },
+          "raw_artifact": "engineering_02/B/seed51/D_prefix_512/A_scalar/first_effective_batch.pt"
+        },
+        "A_lr": {
+          "inner_dtype": "torch.float16",
+          "time_dtype": "torch.float32",
+          "base_r_dtype": "torch.float32",
+          "denominator_dtype": "torch.float32",
+          "loss_dtype": "torch.float32",
+          "first_attempt_step_called": true,
+          "scaler_before": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 51
+          },
+          "scaler_after": {
+            "scale": 64.0,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+            "_growth_tracker": 52
+          },
+          "rollout_attempts": 16,
+          "rollout_skips": 0,
+          "first_successful_record": {
+            "attempted_iteration": "4001",
+            "successful_optimizer_steps": "3990",
+            "update_norm": "0.162280019047815",
+            "radam_first_moment_norm": "514.32959403031896",
+            "radam_second_moment_norm": "91137.819781039201"
+          },
+          "raw_artifact": "engineering_02/B/seed51/D_prefix_512/A_lr/first_effective_batch.pt"
+        }
+      },
+      "target_times_D_A_bitwise_equal": true,
+      "forward_inputs_outputs_D_A_bitwise_equal": true,
+      "comparisons": {
+        "D_vs_A_scalar": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 8.392333984375e-05,
+            "max_relative_to_nonzero_reference": 1.1885211308602483e-05,
+            "elementwise_bitwise_equal_fraction": 0.1015625
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.15625,
+            "max_relative_to_nonzero_reference": 5959.464285714285,
+            "elementwise_bitwise_equal_fraction": 0.027283389032790942
+          },
+          "parameters_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 4.545040428638458e-05,
+            "max_relative_to_nonzero_reference": 9.913887270537849,
+            "elementwise_bitwise_equal_fraction": 0.6783334657211088
+          },
+          "moments_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 0.0478515625,
+            "max_relative_to_nonzero_reference": 37262.25547731106,
+            "elementwise_bitwise_equal_fraction": 0.07230103945517183
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            true,
+            true
+          ]
+        },
+        "D_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": false,
+            "max_abs": 4.900566101074219,
+            "max_relative_to_nonzero_reference": 0.09091995931016157,
+            "elementwise_bitwise_equal_fraction": 0.0
+          },
+          "gradients": {
+            "all_bitwise_equal": false,
+            "max_abs": 23.76953125,
+            "max_relative_to_nonzero_reference": 3617.75,
+            "elementwise_bitwise_equal_fraction": 0.00010204056183206787
+          },
+          "parameters_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 5.573686212301254e-05,
+            "max_relative_to_nonzero_reference": 1367.20886981402,
+            "elementwise_bitwise_equal_fraction": 0.007409343366382908
+          },
+          "moments_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 11.87109375,
+            "max_relative_to_nonzero_reference": 861112.3232568552,
+            "elementwise_bitwise_equal_fraction": 0.0055520301124575375
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            true,
+            true
+          ]
+        },
+        "A_vs_A_lr": {
+          "loss": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "gradients": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "parameters_after": {
+            "all_bitwise_equal": false,
+            "max_abs": 2.265721559524536e-05,
+            "max_relative_to_nonzero_reference": 2205.258941344778,
+            "elementwise_bitwise_equal_fraction": 0.0063301033886025235
+          },
+          "moments_after": {
+            "all_bitwise_equal": true,
+            "max_abs": 0,
+            "max_relative_to_nonzero_reference": 0,
+            "elementwise_bitwise_equal_fraction": 1.0
+          },
+          "scaler_after_equal": true,
+          "first_attempt_step_called": [
+            true,
+            true
+          ]
+        }
+      }
+    }
+  ],
+  "all_engineering_process_gpuh": 0.40781716893168374,
+  "full_scalar_quality_arm": "CANCELLED; no automatic expansion on numeric/skip divergence",
+  "scope": "Common first effective batch tensor audit plus fixed16-attempt native rollouts. When the first attempted step skips, there is no common first-attempt parameter update to call identical; first successful norm/counters are reported separately.",
+  "math": "Real-arithmetic D=A/1.1 at common state, finite positive t, fixed q256/k8/b1/stage0 without clipping.",
+  "floating": "Native D and per-sample A/1.1 are not bitwise equivalent in audited cases.",
+  "learning_rate": "A LR/1.1 preserves A gradient/moment input; cannot replace native D from restored RAdam history."
+}
