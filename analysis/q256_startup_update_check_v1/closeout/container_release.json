@@ -1,0 +1,19 @@
+{
+  "schema": "ect.startup.release/v1",
+  "requested_utc": "2026-09-09T16:52:03.762056+00:00",
+  "authorization": "User explicitly requested automatic container release after work completion",
+  "archive_verification": "control/final_persistence_inventory.json",
+  "method": "official matncli node cancel without snapshot",
+  "documentation": "https://matpool.com/supports/reference/faqs/",
+  "status": "RELEASE_COMMAND_RETURNED",
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "",
+  "response_utc": "2026-09-09T16:52:04.053594+00:00",
+  "verification": {
+    "checked_utc": "2026-09-09T16:52:49.830316+00:00",
+    "ssh_exit_code": 255,
+    "observed_response": "Connection refused",
+    "conclusion": "Official cancellation command succeeded; container SSH service is no longer accepting connections. Account billing amount was not queried."
+  }
+}

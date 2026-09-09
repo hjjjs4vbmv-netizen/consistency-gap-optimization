@@ -1,0 +1,44 @@
+{
+  "protocol": "q256_startup_update_check_v1",
+  "engineering_only": true,
+  "seeds": [
+    50,
+    51
+  ],
+  "arms": [
+    "A",
+    "D",
+    "D_compensate",
+    "A_mimic"
+  ],
+  "attempts_per_arm": 64,
+  "max_total_attempts": 512,
+  "total_kimg": 1024,
+  "base_lr": 0.0001,
+  "budget_gpuh": 3,
+  "per_process_timeout_seconds": 1200,
+  "base_commit": "092ab9ab54e3f2dd780654b752bf85643d92af59",
+  "implementation_commit": "4198387b514fedbe43574452b18e021923a1de58",
+  "created_utc": "2026-09-09T16:18:12.825723+00:00",
+  "numerical_hit_threshold": null,
+  "numerical_policy": "Descriptive continuous norm ratio, cosine and relative L2; no post-hoc pass threshold.",
+  "inference_scope": "startup implementation and local updates only; no FID or endpoint mechanism claims",
+  "initialization": "original transfer + seed + configuration; archived full receipt must pass BEFORE attempt1",
+  "tensor_successful_steps": [
+    1,
+    5,
+    6
+  ],
+  "comparison_alignment": [
+    "same_attempt",
+    "same_successful_step"
+  ],
+  "zero_vector_metrics": "relative error/cosine N/A when a required norm is zero",
+  "asset_hashes": {
+    "/mnt/q256_startup_update_check_v1_20260909/assets/cifar10-32x32-training-original.zip": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+    "/mnt/ect_project/pretrained/edm-cifar10-32x32-uncond-vp.pkl": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da"
+  },
+  "cost_policy": "conservative full GPU-training process-group wall duration, including setup/failures; idle rental not GPUh",
+  "retry_policy": "no automatic scientific trajectory retries",
+  "storage_policy": "native atomic writes on container local filesystem; every completed/failed process archived and byte-hash verified to persistent root before next GPU process"
+}

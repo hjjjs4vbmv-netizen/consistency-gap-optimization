@@ -1,0 +1,174 @@
+{
+  "processes": [
+    {
+      "slot": "seed50-A",
+      "started_utc": "2026-09-09T16:18:58.088384+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed50-A.json"
+      ],
+      "pid": 562,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:21:00.968961+00:00",
+      "charged_seconds": 122.88057144731283,
+      "process_gpuh": 0.03413349206869801,
+      "status": "COMPLETED"
+    },
+    {
+      "slot": "seed50-D",
+      "started_utc": "2026-09-09T16:21:37.117870+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed50-D.json"
+      ],
+      "pid": 650,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:23:40.900797+00:00",
+      "charged_seconds": 123.78292998299003,
+      "process_gpuh": 0.03438414721749723,
+      "status": "COMPLETED"
+    },
+    {
+      "slot": "seed50-D_compensate",
+      "started_utc": "2026-09-09T16:24:17.066198+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed50-D_compensate.json"
+      ],
+      "pid": 738,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:26:22.351714+00:00",
+      "charged_seconds": 125.2855233065784,
+      "process_gpuh": 0.03480153425182733,
+      "status": "COMPLETED"
+    },
+    {
+      "slot": "seed50-A_mimic",
+      "started_utc": "2026-09-09T16:26:57.998192+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed50-A_mimic.json"
+      ],
+      "pid": 823,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:29:01.376784+00:00",
+      "charged_seconds": 123.3785939104855,
+      "process_gpuh": 0.03427183164180153,
+      "status": "COMPLETED"
+    },
+    {
+      "slot": "seed51-A",
+      "started_utc": "2026-09-09T16:29:37.836895+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed51-A.json"
+      ],
+      "pid": 908,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:31:42.227972+00:00",
+      "charged_seconds": 124.391079377383,
+      "process_gpuh": 0.03455307760482861,
+      "status": "COMPLETED"
+    },
+    {
+      "slot": "seed51-D",
+      "started_utc": "2026-09-09T16:32:18.400110+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed51-D.json"
+      ],
+      "pid": 988,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:34:21.529703+00:00",
+      "charged_seconds": 123.12959735840559,
+      "process_gpuh": 0.03420266593289044,
+      "status": "COMPLETED"
+    },
+    {
+      "slot": "seed51-D_compensate",
+      "started_utc": "2026-09-09T16:34:57.172067+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed51-D_compensate.json"
+      ],
+      "pid": 1070,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:37:01.008113+00:00",
+      "charged_seconds": 123.83606469631195,
+      "process_gpuh": 0.034398906860086655,
+      "status": "COMPLETED"
+    },
+    {
+      "slot": "seed51-A_mimic",
+      "started_utc": "2026-09-09T16:37:36.742373+00:00",
+      "hard_timeout_seconds": 1200.0,
+      "command": [
+        "/root/ect-startup-env/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--standalone",
+        "--nproc_per_node=1",
+        "/mnt/q256_startup_update_check_v1_20260909/code/analysis/q256_startup_update_check_v1/entry.py",
+        "--manifest",
+        "/mnt/q256_startup_update_check_v1_20260909/control/seed51-A_mimic.json"
+      ],
+      "pid": 1151,
+      "exit_code": 0,
+      "ended_utc": "2026-09-09T16:39:39.827508+00:00",
+      "charged_seconds": 123.0851389169693,
+      "process_gpuh": 0.034190316365824806,
+      "status": "COMPLETED"
+    }
+  ],
+  "process_gpuh": 0.2749359719434546,
+  "gpu_budget": 3
+}

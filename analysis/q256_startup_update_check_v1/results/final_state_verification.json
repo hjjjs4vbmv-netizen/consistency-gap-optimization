@@ -1,0 +1,259 @@
+[
+  {
+    "seed": 50,
+    "arm": "A",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 55,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "A",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 128.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  },
+  {
+    "seed": 50,
+    "arm": "D",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 55,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "D",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 128.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      12
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  },
+  {
+    "seed": 50,
+    "arm": "D_compensate",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 55,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "D_compensate",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 128.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      12
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  },
+  {
+    "seed": 50,
+    "arm": "A_mimic",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 55,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "A_mimic",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 128.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      12
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  },
+  {
+    "seed": 51,
+    "arm": "A",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 54,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "A",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 64.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11,
+      22
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  },
+  {
+    "seed": 51,
+    "arm": "D",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 55,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "D",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 128.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  },
+  {
+    "seed": 51,
+    "arm": "D_compensate",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 55,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "D_compensate",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 128.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      14
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  },
+  {
+    "seed": 51,
+    "arm": "A_mimic",
+    "ordered_64_attempts": true,
+    "checkpoint_attempts": 64,
+    "checkpoint_success": 55,
+    "processed_nimg": 8192,
+    "total_kimg": 1024,
+    "engineering_only": true,
+    "metadata_arm": "A_mimic",
+    "sampler_consumed": [
+      8192
+    ],
+    "final_learning_rates": [
+      0.0001
+    ],
+    "scaler_final": 128.0,
+    "skip_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+    ],
+    "all_losses_finite": true,
+    "all_updates_models_emas_finite": true,
+    "status": "PASS"
+  }
+]
