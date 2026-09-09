@@ -1,0 +1,103 @@
+{
+  "experiment": "q256_d_restore_vs_hold_v1",
+  "pr108_head": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+  "seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65
+  ],
+  "training_paths": [
+    "DD"
+  ],
+  "world_size": 1,
+  "parallel_trajectories": 16,
+  "start_attempt": 4000,
+  "end_attempt": 8000,
+  "duration": 1.024,
+  "target": 1.0,
+  "denominator": 1.1,
+  "readout_blocks": {
+    "E_512": [
+      "B0",
+      "B1",
+      "B2"
+    ],
+    "E_KEEP": [
+      "B0"
+    ],
+    "ONLINE": [
+      "B0"
+    ]
+  },
+  "evaluation_kimg": 1024,
+  "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+  "metric_seed": 20260730,
+  "generation_seeds": {
+    "B0": [
+      0,
+      49999
+    ],
+    "B1": [
+      50000,
+      99999
+    ],
+    "B2": [
+      100000,
+      149999
+    ]
+  },
+  "primary": "mean_seed(mean_block(log(FID_DA)-log(FID_DD)))",
+  "unit": "training_seed",
+  "negative_direction": "restoring A improves FID",
+  "interval": "two-sided paired t 95%",
+  "p_value": "two-sided t, one primary contrast",
+  "equivalence": {
+    "role": "prespecified secondary",
+    "bounds": [
+      "-log(1.03)",
+      "log(1.03)"
+    ],
+    "criterion": "90% t interval strictly inside bounds (TOST alpha .05)"
+  },
+  "scientific_missingness": "complete pairs only; all 16 outcomes retained; no full-cohort equivalence",
+  "technical_missingness": "no final inference until resolved",
+  "aa_auxiliary": "AA/DA/DD common valid seeds only",
+  "da_already_observed": true,
+  "independent_seed_replication": false,
+  "cost_target_gpuh": [
+    50,
+    65
+  ],
+  "process_cap_gpuh": 80,
+  "engineering_target_cap_gpuh": 3,
+  "effective_cap": "min(80, verified actual remaining quota)",
+  "b_audit_seeds": [
+    50,
+    51
+  ],
+  "b_audit_states": [
+    "ECT_initial",
+    "D_prefix_512"
+  ],
+  "b_audit_variants": [
+    "A",
+    "D",
+    "A_per_sample_div_1.1",
+    "A_lr_div_1.1"
+  ],
+  "b_audit_max_attempts_per_rollout": 32,
+  "full_scalar_quality_arm": false
+}

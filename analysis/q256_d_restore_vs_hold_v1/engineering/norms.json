@@ -1,0 +1,134 @@
+[
+  {
+    "seed": 50,
+    "comparison": "D_vs_A_scalar",
+    "gradient": {
+      "l2_left": 1412.4289907260543,
+      "l2_right": 1412.378469674101,
+      "l2_error": 0.928171763227974,
+      "relative_l2_error_to_right": 0.0006571692950276598,
+      "cosine": 0.9999997847117121,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    },
+    "actual_parameter_update": {
+      "l2_left": 0.15616521476662218,
+      "l2_right": 0.1561658393280271,
+      "l2_error": 0.0003518023345875626,
+      "relative_l2_error_to_right": 0.002252748335368019,
+      "cosine": 0.9999974625603172,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    }
+  },
+  {
+    "seed": 50,
+    "comparison": "D_vs_A_lr",
+    "gradient": {
+      "l2_left": 1412.4289907260543,
+      "l2_right": 1553.7085414354947,
+      "l2_error": 141.28379238726953,
+      "relative_l2_error_to_right": 0.0909332661946592,
+      "cosine": 0.9999997269216142,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    },
+    "actual_parameter_update": {
+      "l2_left": 0.15616521476662218,
+      "l2_right": 0.14392498696799016,
+      "l2_error": 0.013211640201400771,
+      "relative_l2_error_to_right": 0.09179531976847859,
+      "cosine": 0.9994499871841792,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    }
+  },
+  {
+    "seed": 50,
+    "comparison": "A_vs_A_lr",
+    "gradient": {
+      "l2_left": 1553.7085414354947,
+      "l2_right": 1553.7085414354947,
+      "l2_error": 0.0,
+      "relative_l2_error_to_right": 0.0,
+      "cosine": 1.0,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    },
+    "actual_parameter_update": {
+      "l2_left": 0.158317484675538,
+      "l2_right": 0.14392498696799016,
+      "l2_error": 0.014393202896002578,
+      "relative_l2_error_to_right": 0.10000489282103404,
+      "cosine": 0.9999995545623506,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    }
+  },
+  {
+    "seed": 51,
+    "comparison": "D_vs_A_scalar",
+    "gradient": {
+      "l2_left": 2651.2144814554963,
+      "l2_right": 2650.949033298148,
+      "l2_error": 1.3456108966025986,
+      "relative_l2_error_to_right": 0.0005075959136522787,
+      "cosine": 0.9999998761989253,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    },
+    "actual_parameter_update": {
+      "l2_left": 0.17459376421334413,
+      "l2_right": 0.17459280851494197,
+      "l2_error": 0.0004979751390279221,
+      "relative_l2_error_to_right": 0.002852208766578748,
+      "cosine": 0.9999959324898229,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    }
+  },
+  {
+    "seed": 51,
+    "comparison": "D_vs_A_lr",
+    "gradient": {
+      "l2_left": 2651.2144814554963,
+      "l2_right": 2916.4566512157417,
+      "l2_error": 265.24772566018277,
+      "relative_l2_error_to_right": 0.09094862615208518,
+      "cosine": 0.9999998094095451,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    },
+    "actual_parameter_update": {
+      "l2_left": 0.17459376421334413,
+      "l2_right": 0.1622800190478119,
+      "l2_error": 0.013919159323188648,
+      "relative_l2_error_to_right": 0.08577247775086656,
+      "cosine": 0.9992567931693105,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    }
+  },
+  {
+    "seed": 51,
+    "comparison": "A_vs_A_lr",
+    "gradient": {
+      "l2_left": 2916.4566512157417,
+      "l2_right": 2916.4566512157417,
+      "l2_error": 0.0,
+      "relative_l2_error_to_right": 0.0,
+      "cosine": 1.0,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    },
+    "actual_parameter_update": {
+      "l2_left": 0.17850801528357427,
+      "l2_right": 0.1622800190478119,
+      "l2_error": 0.016228621564269005,
+      "relative_l2_error_to_right": 0.1000038184583133,
+      "cosine": 0.9999996496850103,
+      "finite_elements": 55732739,
+      "excluded_nonfinite_elements": 0
+    }
+  }
+]

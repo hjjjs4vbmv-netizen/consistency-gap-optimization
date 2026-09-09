@@ -20,7 +20,7 @@ from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
 from training import schedule_switch
-from training import m1, history_component
+from training import m1, history_component, d_restore
 
 from metrics import metric_main
 
@@ -62,6 +62,13 @@ def validate_planned_pause(
         raise ValueError('stop_after_attempts must be an exact integer')
     attempts = int(stop_after_attempts)
     if attempts == 16 and planned_pause_protocol is None:
+        return attempts
+    if planned_pause_protocol == schedule_switch.D_RESTORE_ENGINEERING_PROTOCOL:
+        if (seed not in (50, 51) or total_kimg != 1024
+                or attempts not in (4008, 4016, 4032)
+                or schedule_switch_manifest is None
+                or schedule_switch_experiment_protocol != schedule_switch.D_RESTORE_ENGINEERING_PROTOCOL):
+            raise ValueError('invalid isolated DD engineering pause')
         return attempts
     if planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_ENGINEERING_PROTOCOL:
         if (seed != 50 or total_kimg != 1024
@@ -1009,13 +1016,14 @@ def training_loop(
         schedule_switch.state_metadata(switch_manifest)
         if switch_manifest is not None else None
     )
-    component_run = history_component.is_manifest(switch_manifest)
+    dd_run = d_restore.is_manifest(switch_manifest)
+    component_run = history_component.is_manifest(switch_manifest) or dd_run
     component_prefix = planned_pause_protocol in {
         schedule_switch.HISTORY_COMPONENT_PROTOCOL,
         schedule_switch.HISTORY_COMPONENT_ENGINEERING_PROTOCOL,
     } and switch_manifest is None
-    ema_operations = history_component if component_run else m1
-    ema_metadata_key = 'history_component' if component_run else 'm1'
+    ema_operations = d_restore if dd_run else (history_component if component_run else m1)
+    ema_metadata_key = ema_operations.METADATA_KEY if component_run else 'm1'
     m1_manifest = switch_manifest if (component_run or m1.is_m1_manifest(switch_manifest)) else None
     m1_shadow_update = bool(
         component_run or (m1_manifest is not None and m1_manifest.get('m1_shadow_update', True))
@@ -2036,6 +2044,17 @@ def training_loop(
                 rank_states=branch_init_rank_states,
                 advance_tick=False,
             )
+            if dd_run:
+                da_path = switch_manifest['da_branch_init_path']
+                if schedule_switch.sha256_file(da_path) != switch_manifest['source_binding']['da_branch_init_sha256']:
+                    raise RuntimeError('original DA branch-init checksum mismatch')
+                original_da = torch.load(da_path, map_location='cpu', weights_only=False)
+                original_d = torch.load(switch_manifest['source_state']['path'], map_location='cpu', weights_only=False)
+                d_restore.validate_against_da_init(branch_init, original_da, original_d, switch_manifest)
+                del original_da, original_d
+                reproducibility.atomic_json_dump({'status':'PASS', 'seed':seed,
+                    'scope':'DD/DA boundary net, buffers, E_KEEP, E_512, optimizer, scaler, RNG/sampler and clocks'},
+                    os.path.join(run_dir, 'boundary_comparison.json'), overwrite=False)
             path = ema_operations.save_branch_init_state(branch_init, run_dir)
             dist.print0(f'Saved M1 branch-init state: {path}')
 
@@ -2416,7 +2435,8 @@ def training_loop(
                 })
             if m1_manifest is not None:
                 telemetry_row.update({
-                    'schema': ('ect.q256.history-component-telemetry/v1' if component_run
+                    'schema': ('ect.q256.d-restore-telemetry/v1' if dd_run else
+                               'ect.q256.history-component-telemetry/v1' if component_run
                                else 'ect.m1.training-telemetry/v1'),
                     'seed': seed,
                 })
