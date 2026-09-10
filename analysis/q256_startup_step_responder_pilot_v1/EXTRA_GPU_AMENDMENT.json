@@ -1,0 +1,27 @@
+{
+  "amendment_id": "replacement_gpu_for_unstarted_seed57_D_v4",
+  "authorization": "User supplied one additional A100 for the never-started seed57 D_startup_up5 trajectory.",
+  "old_protocol_sha256": "385049b21ffd5613723cb377c9ed9b912f3c9769f7e09be56022a605d6147732",
+  "new_protocol_sha256": "1e595fa8be5b57fe00bd079ea0e56cbd6c3d9f9cdd8b24521ea25015c528d519",
+  "seed": 57,
+  "arm": "D_startup_up5",
+  "old_dispatch_proven_unstarted": true,
+  "old_waiting_dispatcher_disabled": true,
+  "new_gpu_uuid": "GPU-c08d9770-a08e-0bfe-4b3c-fceb1a62b4d9",
+  "logical_gpu": 7,
+  "local_gpu": 0,
+  "completed_seed57_A_source": "ECT original GPU1; no retraining; copy original checkpoint and manifest for evaluation only",
+  "completed_seed57_A_checkpoint_sha256": "aabf22ce9e23dca9c72c8bbc5973a4300fc1d28dbd3af617dcdf54f8f5313933",
+  "paid_cap_gpuh": 90,
+  "paid_capacity_envelopes": {
+    "matpool": 80,
+    "extra": 10
+  },
+  "evaluation_slots": {
+    "matpool": 36,
+    "ect": 6,
+    "extra": 6
+  },
+  "running_trajectories_migrated": false,
+  "scientific_settings_changed": false
+}

@@ -160,7 +160,20 @@ class HostEvaluationGate(unittest.TestCase):
         from analysis.q256_startup_step_responder_pilot_v1.evaluate import training_gate
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);protocol=root/'protocol.json';protocol.write_text(json.dumps(p.SPEC));matrix=root/'host.json'
-            rows=[dict(seed=s,arm=a,status='PASS') for s in (56,57) for a in p.ARMS];rows[-1]['status']='RUNNING'
+            rows=[dict(seed=s,arm=a,status='PASS') for s in (56,) for a in p.ARMS];rows[-1]['status']='RUNNING'
             matrix.write_text(json.dumps(dict(scope_host='ect',protocol_sha256=p.digest(protocol),outcomes=rows)))
-            config=dict(host='ect',assigned_seeds=[56,57],evaluation_gate_scope='host_completed',host_training_matrix_frozen=str(matrix),protocol_json=str(protocol))
+            config=dict(host='ect',assigned_seeds=[56],evaluation_gate_scope='host_completed',host_training_matrix_frozen=str(matrix),protocol_json=str(protocol))
             with self.assertRaisesRegex(RuntimeError,'not terminal'):training_gate(config)
+
+class ReplacementGpu(unittest.TestCase):
+    def test_replacement_runs_only_unstarted_D(self):
+        from analysis.q256_startup_step_responder_pilot_v1.worker import selected_arms
+        config=dict(host='extra',assigned_arms={'57':['D_startup_up5']},placement_amendment='replacement_gpu_for_unstarted_seed57_D_v4')
+        self.assertEqual(selected_arms(config,57),('D_startup_up5',))
+        with self.assertRaises(RuntimeError):selected_arms(config,56)
+        config['assigned_arms']={'57':['A_startup_down5','D_startup_up5']}
+        with self.assertRaises(RuntimeError):selected_arms(config,57)
+    def test_evaluation_rosters_still_cover_all_48(self):
+        from analysis.q256_startup_step_responder_pilot_v1 import protocol as p
+        self.assertEqual(sum(len(v)*6 for v in p.EVALUATION_ROSTERS.values()),48)
+        self.assertEqual(sorted(s for v in p.EVALUATION_ROSTERS.values() for s in v),list(range(50,58)))

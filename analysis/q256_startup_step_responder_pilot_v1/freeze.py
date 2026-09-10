@@ -17,8 +17,9 @@ def freeze(config,receipt,implementation_commit,training_estimate):
     expected=json.loads((root/'control/expected_source_hashes.json').read_text())
     if hashes!=expected:raise RuntimeError('deployment source hashes differ from implementation')
     cmds=[];jobs={}
+    from .worker import selected_arms
     for s in config['assigned_seeds']:
-        for arm in p.ARMS:
+        for arm in selected_arms(config,s):
             output=Path(config['output_root'])/f'seed{s}'/arm
             mp=Path(config['manifest_root'])/f'seed{s}-{arm}.json';m=p.manifest(config,s,arm,output);p.write(mp,m,True)
             cmd=p.command(config,m,mp);cmds.append(dict(seed=s,arm=arm,command=cmd,manifest_sha256=p.digest(mp)))
@@ -26,13 +27,14 @@ def freeze(config,receipt,implementation_commit,training_estimate):
     owned=config['host']=='ect'
     fraction=len(config['assigned_seeds'])/8 if owned else 1.0
     used=preflight['process_gpuh'] if config['host']=='matpool' else 0.
-    engineering=2.5*fraction
+    engineering=config.get('engineering_reserve_gpuh',2.5*fraction)
+    evaluation=config.get('evaluation_reserve_gpuh',8.5*fraction)
     if used>engineering:raise RuntimeError('engineering process budget exceeds reserved host envelope')
-    budget=dict(protocol_id=p.PROTOCOL,cap_gpuh=None if owned else 90,allocation_cap_gpuh=90,
-        budget_exempt=owned,cap_scope='owned_ect_unmetered' if owned else 'paid_matpool_only',
-        evaluation_reserve_gpuh=8.5*fraction,engineering_reserve_gpuh=engineering,
+    budget=dict(protocol_id=p.PROTOCOL,cap_gpuh=None if owned else 90,allocation_cap_gpuh=config.get('allocation_cap_gpuh',90),
+        budget_exempt=owned,cap_scope='owned_ect_unmetered' if owned else config.get('cap_scope','paid_matpool_only'),
+        evaluation_reserve_gpuh=evaluation,engineering_reserve_gpuh=engineering,
         engineering_used_gpuh=used,engineering_remaining_gpuh=engineering-used,
-        evaluation_used_gpuh=0,evaluation_remaining_gpuh=8.5*fraction,
+        evaluation_used_gpuh=0,evaluation_remaining_gpuh=evaluation,
         jobs=jobs,status='READY',allocation=config['host'],created_wall=time.time())
     from .worker import projection
     budget['projection']=projection(budget)

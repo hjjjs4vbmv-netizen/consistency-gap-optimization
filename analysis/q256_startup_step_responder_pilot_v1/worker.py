@@ -171,13 +171,21 @@ def run_arm(config,seed,arm,mapping):
     p.write(status,result);return result
 
 
+def selected_arms(config,seed):
+    if config.get('host')=='extra':
+        if seed!=57 or config.get('assigned_arms')!={'57':['D_startup_up5']} or config.get('placement_amendment')!='replacement_gpu_for_unstarted_seed57_D_v4':
+            raise RuntimeError('replacement host may run only the authorized unstarted seed57 D arm')
+        return ('D_startup_up5',)
+    return p.ARMS if seed%2==0 else p.ARMS[::-1]
+
+
 def main():
     a=argparse.ArgumentParser();a.add_argument('--deployment',type=Path,required=True);a.add_argument('--seed',type=int,choices=p.SEEDS,required=True);a.add_argument('--gpu',type=int,required=True);args=a.parse_args()
     config=json.loads(args.deployment.read_text());verify_freeze(config)
     if args.seed not in config['assigned_seeds'] or args.gpu!=args.seed-50:raise RuntimeError('fixed seed/GPU mapping differs')
     mapping=gpu_lock(config,args.gpu)
     with locked(Path(config['lock_root'])/(mapping['uuid']+'.lock')):
-        for arm in (p.ARMS if args.seed%2==0 else p.ARMS[::-1]):
+        for arm in selected_arms(config,args.seed):
             result=run_arm(config,args.seed,arm,mapping);print(json.dumps(result),flush=True)
             # A technical failure ends this slot pending audit. Do not overwrite/restart it.
     return 0

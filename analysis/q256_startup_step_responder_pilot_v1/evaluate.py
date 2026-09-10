@@ -16,10 +16,10 @@ def training_gate(config):
     path=Path(config['host_training_matrix_frozen'] if host_gate else config['training_matrix_frozen'])
     matrix=json.loads(path.read_text());rows=matrix['outcomes']
     if host_gate:
-        host=config.get('host');roster={'matpool':tuple(range(50,56)),'ect':(56,57)}
+        host=config.get('host');roster=p.EVALUATION_ROSTERS
         if host not in roster or matrix.get('scope_host')!=host or tuple(config['assigned_seeds'])!=roster[host]:
             raise RuntimeError('host evaluation scope/roster differs')
-        if p.SPEC['evaluation'].get('trigger')!='after_all_training_on_same_host':
+        if p.SPEC['evaluation'].get('trigger')!='after_all_training_in_execution_group':
             raise RuntimeError('host evaluation requires the explicit protocol amendment')
         seeds=roster[host]
     else:
@@ -36,7 +36,12 @@ def training_gate(config):
 def export(config,seed,arm):
     run=Path(config['output_root'])/f'seed{seed}'/arm
     manifest=json.loads((Path(config['manifest_root'])/f'seed{seed}-{arm}.json').read_text())
-    source=run/'training-state-kimg001024.pt';state=torch.load(source,map_location='cpu',weights_only=False);q.validate_state(state,manifest)
+    source=run/'training-state-kimg001024.pt'
+    seal=json.loads(Path(str(source)+'.sha256.json').read_text())
+    if p.digest(source)!=seal['sha256']:raise RuntimeError('endpoint transport/storage hash differs')
+    imported=config.get('imported_training',{}).get(f'seed{seed}-{arm}')
+    if imported and seal['sha256']!=imported['checkpoint_sha256']:raise RuntimeError('imported completed trajectory binding differs')
+    state=torch.load(source,map_location='cpu',weights_only=False);q.validate_state(state,manifest)
     if state['attempted_iteration']!=8000 or state['startup_quality']['ema_512_init_count']!=1:raise RuntimeError('not a final quality endpoint')
     root=Path(config['evaluation_output'])/'readouts'/f'seed{seed}-{arm}';root.mkdir(parents=True,exist_ok=True)
     outputs={}

@@ -10,6 +10,7 @@ BASE = 'd9e0021f7e6a8049a642f81bd22390aec0b383ac'
 EVALUATOR_COMMIT = 'd6aba02fb88e9db0993623895eb2228ed717d810'
 SEEDS = tuple(range(50,58))
 ARMS = ('D_startup_up5','A_startup_down5')
+EVALUATION_ROSTERS = {'matpool':tuple(range(50,56)), 'ect':(56,), 'extra':(57,)}
 ENVIRONMENT = dict(python='3.11.13',torch='2.6.0+cu124',torch_cuda='12.4',cudnn=90100,numpy='2.1.2',scipy='1.16.1')
 SPEC = dict(protocol_id=PROTOCOL, experiment_class='responder_enriched_pilot',
     experiment_identity='responder-enriched exploratory mechanism pilot', base_commit=BASE,
@@ -19,14 +20,15 @@ SPEC = dict(protocol_id=PROTOCOL, experiment_class='responder_enriched_pilot',
     Y='mean(log(FID_B0),log(FID_B1),log(FID_B2))',directions={'S':'>0','C':'>0','M':'<0'},
     evaluation=dict(kimg=1024,readout='E_512',precision='fp32',nfe=1,metrics=['fid50k_full','kid50k_full'],
         metric_seed=20260730,metric_repeats=1,evaluator_commit=EVALUATOR_COMMIT,
-        trigger='after_all_training_on_same_host',aggregate_only_after_both_hosts=True,
+        trigger='after_all_training_in_execution_group',aggregate_only_after_all_execution_groups=True,
         blocks={'B0':[0,49999],'B1':[50000,99999],'B2':[100000,149999]}),
     statistics=dict(unit='training_seed',primary='S',ci='nominal two-sided 95% t',
         simple_effect_tests='two-sided paired t, Holm across C and M',
         equivalence='TOST alpha .05 with bounds +/-log(1.03)',sign_flip='all 2^n paired sign flips'),
     budget=dict(cap_gpuh=90,evaluation_reserve_gpuh=8.5,engineering_reserve_gpuh=2.5,
         accounting='actual process wall time; rental idle recorded separately',cap_scope='paid_matpool_only',owned_ect_budget_exempt=True),
-    allocation={'matpool':list(range(50,56)),'ect':[56,57]},
+    allocation={'matpool':list(range(50,56)),'ect':[56],'extra':[57]},
+    completed_training_placement={'seed57-A_startup_down5':'ECT original GPU1; immutable endpoint copied only for evaluation'},
     preflight=dict(seed=50,max_attempts=64,gpuh_target=3,no_fid=True),
     terminal_statuses=['PASS','SCIENTIFIC_FAILURE','NO_ENDPOINT','TECHNICAL_FAILURE','INCOMPLETE_BUDGET'],
     no_protocol_adaptation=True, no_training_fid=True)
@@ -55,8 +57,8 @@ def write(path,value,immutable=False):
 
 
 def queue():
-    return [dict(seed=s,logical_gpu=s-50,host='matpool' if s<56 else 'ect',
-                 local_gpu=s-50 if s<56 else s-56,arm=a,order=i,status='PENDING')
+    return [dict(seed=s,logical_gpu=s-50,host='matpool' if s<56 else ('extra' if s==57 and a=='D_startup_up5' else 'ect'),
+                 local_gpu=s-50 if s<56 else (0 if s==56 or a=='D_startup_up5' else 1),arm=a,order=i,status='PENDING')
             for s in SEEDS for i,a in enumerate(ARMS if s%2==0 else ARMS[::-1])]
 
 

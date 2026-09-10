@@ -59,8 +59,8 @@
         149999
       ]
     },
-    "trigger": "after_all_training_on_same_host",
-    "aggregate_only_after_both_hosts": true
+    "trigger": "after_all_training_in_execution_group",
+    "aggregate_only_after_all_execution_groups": true
   },
   "statistics": {
     "unit": "training_seed",
@@ -88,7 +88,9 @@
       55
     ],
     "ect": [
-      56,
+      56
+    ],
+    "extra": [
       57
     ]
   },
@@ -106,5 +108,8 @@
     "INCOMPLETE_BUDGET"
   ],
   "no_protocol_adaptation": true,
-  "no_training_fid": true
+  "no_training_fid": true,
+  "completed_training_placement": {
+    "seed57-A_startup_down5": "ECT original GPU1; immutable endpoint copied only for evaluation"
+  }
 }
