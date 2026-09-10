@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "assets": {
+    "status": "PASS",
+    "runtime": {
+      "python": "3.11.13",
+      "torch": "2.6.0+cu124",
+      "torch_cuda": "12.4",
+      "numpy": "2.1.2",
+      "scipy": "1.16.1",
+      "cudnn": 90100
+    },
+    "dataset_sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+    "transfer_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da",
+    "old_control_count": 48
+  },
+  "original_A_fields": {
+    "batch_sha256": 64,
+    "t_sha256": 64,
+    "base_r_sha256": 64,
+    "target_r_sha256": 64,
+    "denominator_r_sha256": 64,
+    "loss": 64,
+    "raw_grad_norm": 64,
+    "raw_grad_nonfinite_count": 64,
+    "update_norm": 64,
+    "model_norm": 64,
+    "ema_norm": 64,
+    "grad_scale_before": 64,
+    "grad_scale_after": 64,
+    "successful_optimizer_steps": 64
+  },
+  "pause_resume_success_boundaries": [
+    3,
+    5,
+    6
+  ],
+  "process_gpuh": 0.20301482354808187,
+  "implementation_commit": "cdd1326fea08548cd2a4b403d9c02cfd97bb37b4"
+}

@@ -267,6 +267,8 @@ def make_loss_kwargs(opts):
     default=None,
 )
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
+@click.option('--startup-quality-manifest', type=str, default=None, help='Independent frozen startup quality manifest')
+@click.option('--quality-preflight-stop-success', type=click.IntRange(1, 6), default=None, hidden=True)
 @click.option('--startup-check-manifest', type=str, default=None, hidden=True)
 @click.option('--planned-pause-protocol', help='Frozen authorization for a non-legacy planned pause', metavar='ID', type=str, default=None, hidden=True)
 @click.option('-n', '--dry_run', help='Print training options and exit',                            is_flag=True)
@@ -350,6 +352,8 @@ def main(**kwargs):
              stop_after_attempts=opts.stop_after_attempts,
              planned_pause_protocol=opts.planned_pause_protocol,
              startup_check_manifest=opts.startup_check_manifest,
+             startup_quality_manifest=opts.startup_quality_manifest,
+             quality_preflight_stop_success=opts.quality_preflight_stop_success,
              schedule_switch_manifest=opts.schedule_switch_manifest)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)
 

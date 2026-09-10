@@ -1,0 +1,29 @@
+{
+  "amendment_id": "host_completed_evaluation_and_early_matpool_archive_v3",
+  "authorization": "MatPool部分训练完直接评估并回传ECT结果和所有数据，核验后通知可以释放；ECT继续，双方完成后汇总。",
+  "old_protocol_sha256": "2fb8f2a59e52c2e3c63a7f93a5d642e383b245f809ff0095f7e1fe4d57033584",
+  "new_protocol_sha256": "385049b21ffd5613723cb377c9ed9b912f3c9769f7e09be56022a605d6147732",
+  "host_rosters": {
+    "matpool": [
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "ect": [
+      56,
+      57
+    ]
+  },
+  "host_evaluation_slots": {
+    "matpool": 36,
+    "ect": 12
+  },
+  "matpool_release_action": "notify_user_only_after_all_data_verified_on_ect",
+  "aggregate_after_all_16_training_outcomes_and_48_evaluation_outcomes": true,
+  "training_configuration_changed": false,
+  "evaluator_configuration_changed": false,
+  "statistics_changed": false
+}
