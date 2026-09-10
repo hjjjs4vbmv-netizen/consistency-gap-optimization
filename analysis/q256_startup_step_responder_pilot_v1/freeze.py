@@ -30,8 +30,8 @@ def freeze(config,receipt,implementation_commit,training_estimate):
     engineering=config.get('engineering_reserve_gpuh',2.5*fraction)
     evaluation=config.get('evaluation_reserve_gpuh',8.5*fraction)
     if used>engineering:raise RuntimeError('engineering process budget exceeds reserved host envelope')
-    budget=dict(protocol_id=p.PROTOCOL,cap_gpuh=None if owned else 90,allocation_cap_gpuh=config.get('allocation_cap_gpuh',90),
-        budget_exempt=owned,cap_scope='owned_ect_unmetered' if owned else config.get('cap_scope','paid_matpool_only'),
+    budget=dict(protocol_id=p.PROTOCOL,cap_gpuh=None if config.get('budget_exempt',owned) else 90,allocation_cap_gpuh=config.get('allocation_cap_gpuh',90),
+        budget_exempt=config.get('budget_exempt',owned),cap_scope='owned_ect_unmetered' if owned else config.get('cap_scope','paid_matpool_only'),
         evaluation_reserve_gpuh=evaluation,engineering_reserve_gpuh=engineering,
         engineering_used_gpuh=used,engineering_remaining_gpuh=engineering-used,
         evaluation_used_gpuh=0,evaluation_remaining_gpuh=evaluation,
