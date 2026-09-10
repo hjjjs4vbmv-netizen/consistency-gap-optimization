@@ -34,6 +34,9 @@ def validate_manifest(m):
     for key in ('reference_initial_receipt', 'immutable_output_root', 'old_control_bindings'):
         if not m.get(key):
             raise ValueError('missing binding: ' + key)
+    bindings = m['old_control_bindings']
+    if len(bindings) != 6 or {(x['seed'], x['arm'], x['block']) for x in bindings} != {(m['seed'], a, b) for a in ('AA', 'DA') for b in ('B0', 'B1', 'B2')}:
+        raise ValueError('old controls must bind exactly this seed and the six fixed readout blocks')
     for key, expected in [('dataset_sha256', engineering.DATA_SHA256),
                           ('transfer_sha256', engineering.TRANSFER_SHA256)]:
         if m.get(key) != expected:

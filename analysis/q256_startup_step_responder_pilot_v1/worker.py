@@ -61,7 +61,16 @@ def budget_update(config,key,action,**fields):
             if job['status'] not in ('PENDING','TECHNICAL_FAILURE'):raise RuntimeError('budget slot already dispatched/terminal')
             job.update(status='RUNNING',started_wall=time.time(),previous_gpuh=job.get('actual_gpuh',0),**fields)
         elif action=='finish':job.update(**fields)
-        elif action=='tick':job.update(**fields)
+        elif action=='tick':
+            job.update(**fields)
+            progress=job.get('current_attempt',job.get('start_attempt',0))-job.get('start_attempt',0)
+            if progress>=200:
+                # Forecast from this process's wall time, never inherited checkpoint elapsed.
+                elapsed=(time.time()-job['started_wall'])/3600
+                observed_full=elapsed/progress*8000
+                job['estimate_gpuh']=max(job['estimate_gpuh'],job.get('previous_gpuh',0)+elapsed+(8000-job['current_attempt'])*elapsed/progress)
+                for pending in ledger['jobs'].values():
+                    if pending['status']=='PENDING':pending['estimate_gpuh']=max(pending['estimate_gpuh'],observed_full)
         ledger['projection']=projection(ledger)
         if ledger['projection']['global_conservative_projected_gpuh']>90:ledger['status']='INCOMPLETE_BUDGET'
         p.write(path,ledger)
@@ -130,7 +139,16 @@ def run_arm(config,seed,arm,mapping):
         p.write(status,dict(seed=seed,arm=arm,status='RUNNING',pid=proc.pid,started_wall=wall,command=cmd,start_attempt=attempt))
         while proc.poll() is None:
             time.sleep(15)
-            budget_update(config,key,'tick',pid=proc.pid,heartbeat_wall=time.time())
+            progress=attempt
+            telemetry=run/'startup_quality_telemetry.jsonl'
+            if telemetry.exists():
+                with telemetry.open('rb') as tf:
+                    tf.seek(0,2);size=tf.tell();tf.seek(max(0,size-8192))
+                    lines=tf.read().splitlines()
+                if lines:
+                    try:progress=json.loads(lines[-1])['attempted_iteration']
+                    except (ValueError,KeyError):pass
+            budget_update(config,key,'tick',pid=proc.pid,heartbeat_wall=time.time(),current_attempt=progress)
         rc=proc.returncode
     elapsed=(time.monotonic()-started)/3600
     result=dict(seed=seed,arm=arm,returncode=rc,process_gpuh=elapsed,started_wall=wall,ended_wall=time.time(),start_attempt=attempt,

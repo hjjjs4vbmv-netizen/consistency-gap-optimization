@@ -65,7 +65,7 @@ def evaluate_seed(config,seed,logical):
                 wire={**{k:str(v) for k,v in slot.items()},'slot_id':slot['job_id'],'metrics':'kid50k_full,fid50k_full'}
                 snapshot=outputs['E_512']['path']
                 cmd=build_command(wire,snapshot,Path(config['evaluation_dataset']),directory,Path(config['evaluator_repo']),Path(config['runtime_python']),46000+logical)
-                env=runtime_environment(mapping['uuid'],Path(config['runtime_python']));env['DNNLIB_CACHE_DIR']=config['evaluation_cache'];env['HOME']=config.get('runtime_home',env['HOME'])
+                env=runtime_environment(mapping['uuid'],Path(config['runtime_python']));env['DNNLIB_CACHE_DIR']=config['evaluation_cache']
                 started=time.monotonic();wall=time.time()
                 with (root/(slot['job_id']+'.process.log')).open('x') as f:
                     rc=subprocess.run(cmd,cwd=config['evaluator_repo'],env=env,stdout=f,stderr=subprocess.STDOUT).returncode

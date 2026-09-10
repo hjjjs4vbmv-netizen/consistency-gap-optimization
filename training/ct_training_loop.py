@@ -1027,6 +1027,8 @@ def training_loop(
     if quality is not None:
         if startup_check is not None or schedule_switch_manifest is not None or planned_pause_protocol is not None or stop_after_attempts is not None:
             raise ValueError('quality protocol is independent of existing pause/switch protocols')
+        if metrics:
+            raise ValueError('quality training cannot compute FID or other evaluation metrics')
         if quality['seed'] != seed or total_kimg != 1024 or not enable_amp:
             raise ValueError('quality seed, budget or AMP differs')
         if not resume_state_dump and not resume_pkl:
@@ -1119,6 +1121,8 @@ def training_loop(
         total_kimg=total_kimg,
         batch_size=batch_size,
     )
+    if quality is not None and set(immutable_checkpoint_nimg) != {512000, 1024000}:
+        raise ValueError('quality requires both fixed immutable prefix and endpoint checkpoints')
     if (
         m1_manifest is not None
         and schedule_switch.SWITCH_NIMG in immutable_checkpoint_nimg
@@ -2330,7 +2334,7 @@ def training_loop(
             p_ema.copy_(p_net.detach().lerp(p_ema, ema_beta))
         if ema_512 is not None and (m1_shadow_update or quality is not None):
             ema_operations.update_ema_512(ema_512, net, ema_beta)
-            if component_run:
+            if component_run or quality is not None:
                 shadow_nonfinite, _, _ = tensor_collection_diagnostics(ema_512.parameters())
                 if shadow_nonfinite:
                     raise FloatingPointError('non-finite E_512 state')
@@ -2571,10 +2575,10 @@ def training_loop(
         # --tick. A checkpoint saved below persists this same cur_tick value.
         done = (cur_nimg >= total_kimg * 1000)
         planned_pause = (
-            (stop_after_attempts is not None and attempted_iteration >= stop_after_attempts)
+            ((stop_after_attempts is not None and attempted_iteration >= stop_after_attempts)
             or (quality is not None and quality.get('preflight_only') and
                 (attempted_iteration >= 64 or (quality_preflight_stop_success is not None and
-                 successful_optimizer_steps >= quality_preflight_stop_success)))
+                 successful_optimizer_steps >= quality_preflight_stop_success))))
             and not done
         )
         natural_maintenance_due = (

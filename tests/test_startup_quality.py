@@ -65,3 +65,57 @@ class StartupQuality(unittest.TestCase):
         self.assertEqual(x.factorial['arm'],'A');self.assertEqual(x.factorial['denominator_gap_scale'],1)
 
 if __name__=='__main__':unittest.main()
+
+class QualityGates(unittest.TestCase):
+    def test_evaluation_requires_full_terminal_matrix(self):
+        import json,tempfile
+        from pathlib import Path
+        from analysis.q256_startup_step_responder_pilot_v1.evaluate import training_gate
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'matrix.json'
+            config={'training_matrix_frozen':str(path)}
+            with self.assertRaises(FileNotFoundError):training_gate(config)
+            path.write_text(json.dumps({'outcomes':[]}))
+            with self.assertRaisesRegex(RuntimeError,'complete'):training_gate(config)
+    def test_global_budget_includes_remote_and_live_cost(self):
+        from analysis.q256_startup_step_responder_pilot_v1.worker import projection
+        import time
+        ledger=dict(allocation_cap_gpuh=67.5,engineering_used_gpuh=.5,engineering_remaining_gpuh=1.375,evaluation_remaining_gpuh=6.375,
+                    jobs={'a':dict(status='RUNNING',started_wall=time.time()-3600,estimate_gpuh=2),
+                          'b':dict(status='PENDING',estimate_gpuh=3),'c':dict(status='PASS',actual_gpuh=2)})
+        x=projection(ledger)
+        self.assertAlmostEqual(x['global_conservative_projected_gpuh'],37.75,places=5)
+        self.assertEqual(x['other_host_reserved_envelope_gpuh'],22.5)
+    def test_exact_sign_flip_and_equivalence(self):
+        from analysis.q256_startup_step_responder_pilot_v1.analyze import summarize
+        x=summarize([.01]*8)
+        self.assertEqual(x['exact_sign_flip_p'],2/256);self.assertTrue(x['TOST']['equivalent'])
+        self.assertEqual(x['n'],8)
+        self.assertFalse(summarize([.1]*8)['TOST']['equivalent'])
+    def test_planned_queue_and_blocks(self):
+        from analysis.q256_startup_step_responder_pilot_v1 import protocol as p
+        self.assertEqual(len(p.queue()),16);self.assertEqual(len(p.slots()),48)
+        for s in p.SEEDS:
+            jobs=[x for x in p.queue() if x['seed']==s]
+            self.assertEqual(jobs[0]['arm'],p.ARMS[0 if s%2==0 else 1])
+            self.assertEqual(jobs[0]['logical_gpu'],s-50)
+
+class IdentityGates(unittest.TestCase):
+    def manifest(self):
+        from training import startup_quality as q,startup_update as e
+        return dict(q.FIXED,seed=50,arm=q.ARMS[0],native_prefix_arm='D',lr_multiplier=1.1,
+                    dataset_sha256=e.DATA_SHA256,transfer_sha256=e.TRANSFER_SHA256,
+                    reference_initial_receipt={'path':'reference','sha256':'a'*64},immutable_output_root='/test/seed50/D_startup_up5',
+                    old_control_bindings=[dict(seed=50,arm=a,block=b) for a in ('AA','DA') for b in ('B0','B1','B2')])
+    def test_engineering_and_cross_identity_rejected(self):
+        from training import startup_quality as q
+        m=self.manifest()
+        with self.assertRaisesRegex(ValueError,'engineering'):q.validate_state({'startup_engineering':{}},m)
+        changed={**m,'seed':51}
+        with self.assertRaisesRegex(ValueError,'identity'):q.validate_state({'startup_quality':{'manifest':changed}},m)
+        changed={**m,'preflight_only':True}
+        with self.assertRaisesRegex(ValueError,'identity'):q.validate_state({'startup_quality':{'manifest':changed}},m)
+    def test_controls_cannot_substitute_seed_or_block(self):
+        from training import startup_quality as q
+        m=self.manifest();m['old_control_bindings'][0]['seed']=51
+        with self.assertRaisesRegex(ValueError,'old controls'):q.validate_manifest(m)
