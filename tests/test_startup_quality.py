@@ -135,3 +135,32 @@ class OwnedGpuBudget(unittest.TestCase):
         x=projection(ledger)
         self.assertEqual(x['global_conservative_projected_gpuh'],71)
         self.assertEqual(x['other_host_reserved_envelope_gpuh'],0)
+
+class HostEvaluationGate(unittest.TestCase):
+    def test_complete_matpool_can_evaluate_without_ect(self):
+        import tempfile,json
+        from pathlib import Path
+        from analysis.q256_startup_step_responder_pilot_v1 import protocol as p
+        from analysis.q256_startup_step_responder_pilot_v1.evaluate import training_gate
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);protocol=root/'protocol.json';protocol.write_text(json.dumps(p.SPEC));matrix=root/'host.json'
+            rows=[dict(seed=s,arm=a,status='PASS') for s in range(50,56) for a in p.ARMS]
+            value=dict(scope_host='matpool',protocol_sha256=p.digest(protocol),outcomes=rows)
+            matrix.write_text(json.dumps(value))
+            config=dict(host='matpool',assigned_seeds=list(range(50,56)),evaluation_gate_scope='host_completed',host_training_matrix_frozen=str(matrix),protocol_json=str(protocol))
+            self.assertEqual(len(training_gate(config)),12)
+            value['outcomes']=rows[:-1];matrix.write_text(json.dumps(value))
+            with self.assertRaisesRegex(RuntimeError,'complete'):training_gate(config)
+            value['outcomes']=rows;value['scope_host']='ect';matrix.write_text(json.dumps(value))
+            with self.assertRaisesRegex(RuntimeError,'scope'):training_gate(config)
+    def test_running_host_trajectory_blocks_evaluation(self):
+        import tempfile,json
+        from pathlib import Path
+        from analysis.q256_startup_step_responder_pilot_v1 import protocol as p
+        from analysis.q256_startup_step_responder_pilot_v1.evaluate import training_gate
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);protocol=root/'protocol.json';protocol.write_text(json.dumps(p.SPEC));matrix=root/'host.json'
+            rows=[dict(seed=s,arm=a,status='PASS') for s in (56,57) for a in p.ARMS];rows[-1]['status']='RUNNING'
+            matrix.write_text(json.dumps(dict(scope_host='ect',protocol_sha256=p.digest(protocol),outcomes=rows)))
+            config=dict(host='ect',assigned_seeds=[56,57],evaluation_gate_scope='host_completed',host_training_matrix_frozen=str(matrix),protocol_json=str(protocol))
+            with self.assertRaisesRegex(RuntimeError,'not terminal'):training_gate(config)

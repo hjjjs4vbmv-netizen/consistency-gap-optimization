@@ -58,7 +58,9 @@
         100000,
         149999
       ]
-    }
+    },
+    "trigger": "after_all_training_on_same_host",
+    "aggregate_only_after_both_hosts": true
   },
   "statistics": {
     "unit": "training_seed",

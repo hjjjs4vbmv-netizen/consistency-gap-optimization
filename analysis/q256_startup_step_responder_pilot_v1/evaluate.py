@@ -12,12 +12,25 @@ from analysis.q256_d_restore_vs_hold_v1.evaluate import validate_result,verify_e
 
 
 def training_gate(config):
-    path=Path(config['training_matrix_frozen']);matrix=json.loads(path.read_text())
-    rows=matrix['outcomes'];expected={(s,a) for s in p.SEEDS for a in p.ARMS}
-    if len(rows)!=16 or {(x['seed'],x['arm']) for x in rows}!=expected:raise RuntimeError('complete training matrix required')
-    if any(r['status'] not in p.SPEC['terminal_statuses'] for r in rows):raise RuntimeError('training outcomes not terminal')
+    host_gate = config.get('evaluation_gate_scope') == 'host_completed'
+    path=Path(config['host_training_matrix_frozen'] if host_gate else config['training_matrix_frozen'])
+    matrix=json.loads(path.read_text());rows=matrix['outcomes']
+    if host_gate:
+        host=config.get('host');roster={'matpool':tuple(range(50,56)),'ect':(56,57)}
+        if host not in roster or matrix.get('scope_host')!=host or tuple(config['assigned_seeds'])!=roster[host]:
+            raise RuntimeError('host evaluation scope/roster differs')
+        if p.SPEC['evaluation'].get('trigger')!='after_all_training_on_same_host':
+            raise RuntimeError('host evaluation requires the explicit protocol amendment')
+        seeds=roster[host]
+    else:
+        seeds=p.SEEDS
+    expected={(seed,arm) for seed in seeds for arm in p.ARMS}
+    if len(rows)!=len(expected) or {(x['seed'],x['arm']) for x in rows}!=expected:
+        raise RuntimeError('complete training matrix required for the declared scope')
+    if any(row['status'] not in p.SPEC['terminal_statuses'] for row in rows):
+        raise RuntimeError('training outcomes not terminal')
     if matrix['protocol_sha256']!=p.digest(config['protocol_json']):raise RuntimeError('training matrix protocol differs')
-    return {(r['seed'],r['arm']):r for r in rows}
+    return {(row['seed'],row['arm']):row for row in rows}
 
 
 def export(config,seed,arm):
