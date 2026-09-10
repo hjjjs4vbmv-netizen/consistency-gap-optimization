@@ -119,3 +119,19 @@ class IdentityGates(unittest.TestCase):
         from training import startup_quality as q
         m=self.manifest();m['old_control_bindings'][0]['seed']=51
         with self.assertRaisesRegex(ValueError,'old controls'):q.validate_manifest(m)
+
+class OwnedGpuBudget(unittest.TestCase):
+    def test_owned_ect_has_no_paid_budget_gate(self):
+        from analysis.q256_startup_step_responder_pilot_v1.worker import projection
+        ledger=dict(allocation_cap_gpuh=90,budget_exempt=True,cap_scope='owned_ect_unmetered',engineering_used_gpuh=0,engineering_remaining_gpuh=0,evaluation_remaining_gpuh=0,
+                    jobs={'a':dict(status='PASS',actual_gpuh=500)})
+        x=projection(ledger)
+        self.assertEqual(x['global_conservative_projected_gpuh'],0)
+        self.assertEqual(x['owned_unmetered_projected_gpuh'],500)
+    def test_paid_matpool_does_not_reserve_owned_ect(self):
+        from analysis.q256_startup_step_responder_pilot_v1.worker import projection
+        ledger=dict(allocation_cap_gpuh=90,budget_exempt=False,cap_scope='paid_matpool_only',engineering_used_gpuh=1,engineering_remaining_gpuh=1.5,evaluation_remaining_gpuh=8.5,
+                    jobs={'a':dict(status='PENDING',estimate_gpuh=60)})
+        x=projection(ledger)
+        self.assertEqual(x['global_conservative_projected_gpuh'],71)
+        self.assertEqual(x['other_host_reserved_envelope_gpuh'],0)

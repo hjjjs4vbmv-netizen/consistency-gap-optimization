@@ -44,10 +44,15 @@ def projection(ledger):
             if job['status']=='PENDING':remaining+=job['estimate_gpuh']
     reserves=ledger['engineering_remaining_gpuh']+ledger['evaluation_remaining_gpuh']
     # Other host's entire allocation remains reserved, including its live and unstarted work.
+    exempt=ledger.get('budget_exempt',False)
+    other=0 if exempt or ledger.get('cap_scope')=='paid_matpool_only' else 90-ledger['allocation_cap_gpuh']
+    paid_forecast=0 if exempt else cost+remaining+reserves+other
     return dict(local_completed_and_live_gpuh=cost,local_remaining_training_gpuh=remaining,
                 local_remaining_evaluation_and_engineering_gpuh=reserves,
-                other_host_reserved_envelope_gpuh=90-ledger['allocation_cap_gpuh'],
-                global_conservative_projected_gpuh=cost+remaining+reserves+90-ledger['allocation_cap_gpuh'])
+                other_host_reserved_envelope_gpuh=other,
+                global_conservative_projected_gpuh=paid_forecast,
+                owned_unmetered_projected_gpuh=cost+remaining+reserves if exempt else 0,
+                cap_scope=ledger.get('cap_scope','legacy_global'))
 
 
 def budget_update(config,key,action,**fields):
@@ -56,7 +61,7 @@ def budget_update(config,key,action,**fields):
         ledger=json.loads(path.read_text());job=ledger['jobs'][key]
         if action=='start':
             view=projection(ledger)
-            if ledger.get('status')=='INCOMPLETE_BUDGET' or view['global_conservative_projected_gpuh']>90:
+            if not ledger.get('budget_exempt',False) and (ledger.get('status')=='INCOMPLETE_BUDGET' or view['global_conservative_projected_gpuh']>90):
                 ledger['status']='INCOMPLETE_BUDGET';p.write(path,ledger);return False
             if job['status'] not in ('PENDING','TECHNICAL_FAILURE'):raise RuntimeError('budget slot already dispatched/terminal')
             job.update(status='RUNNING',started_wall=time.time(),previous_gpuh=job.get('actual_gpuh',0),**fields)
@@ -72,7 +77,7 @@ def budget_update(config,key,action,**fields):
                 for pending in ledger['jobs'].values():
                     if pending['status']=='PENDING':pending['estimate_gpuh']=max(pending['estimate_gpuh'],observed_full)
         ledger['projection']=projection(ledger)
-        if ledger['projection']['global_conservative_projected_gpuh']>90:ledger['status']='INCOMPLETE_BUDGET'
+        if not ledger.get('budget_exempt',False) and ledger['projection']['global_conservative_projected_gpuh']>90:ledger['status']='INCOMPLETE_BUDGET'
         p.write(path,ledger)
         return True
 

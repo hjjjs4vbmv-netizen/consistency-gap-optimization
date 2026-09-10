@@ -53,7 +53,7 @@ def evaluate_seed(config,seed,logical):
                 ledgerpath=Path(config['budget_ledger']);lease=8.5/48
                 with locked(str(ledgerpath)+'.lock'):
                     ledger=json.loads(ledgerpath.read_text());view=projection(ledger)
-                    if ledger['status']=='INCOMPLETE_BUDGET' or view['global_conservative_projected_gpuh']>90 or ledger['evaluation_remaining_gpuh']<lease:
+                    if not ledger.get('budget_exempt',False) and (ledger['status']=='INCOMPLETE_BUDGET' or view['global_conservative_projected_gpuh']>90 or ledger['evaluation_remaining_gpuh']+1e-10<lease):
                         ledger['status']='INCOMPLETE_BUDGET';p.write(ledgerpath,ledger)
                         p.write(receipt,{**slot,'status':'INCOMPLETE_BUDGET'},True);continue
                     ledger['evaluation_remaining_gpuh']-=lease
@@ -80,7 +80,7 @@ def evaluate_seed(config,seed,logical):
                     ledger['evaluation_used_gpuh']=ledger.get('evaluation_used_gpuh',0)+elapsed
                     # Return unused reserved evaluation capacity; completed slots are never re-evaluated.
                     ledger['projection']=projection(ledger)
-                    if ledger['projection']['global_conservative_projected_gpuh']>90:ledger['status']='INCOMPLETE_BUDGET'
+                    if not ledger.get('budget_exempt',False) and ledger['projection']['global_conservative_projected_gpuh']>90:ledger['status']='INCOMPLETE_BUDGET'
                     p.write(ledgerpath,ledger)
                 print(json.dumps(result),flush=True)
 

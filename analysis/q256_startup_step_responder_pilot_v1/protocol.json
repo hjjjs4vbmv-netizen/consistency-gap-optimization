@@ -72,7 +72,9 @@
     "cap_gpuh": 90,
     "evaluation_reserve_gpuh": 8.5,
     "engineering_reserve_gpuh": 2.5,
-    "accounting": "actual process wall time; rental idle recorded separately"
+    "accounting": "actual process wall time; rental idle recorded separately",
+    "cap_scope": "paid_matpool_only",
+    "owned_ect_budget_exempt": true
   },
   "allocation": {
     "matpool": [
