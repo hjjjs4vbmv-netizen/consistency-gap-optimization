@@ -8,6 +8,7 @@ from torch_utils import distributed as dist
 from training import ct_training_loop as training_loop
 from training.loss import (
     Q128_MATCHED_SPACING_PROTOCOL,
+    Q128_STARTUP_NATIVE_PROTOCOL,
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
     resolve_target_weight_factorial,
 )
@@ -16,6 +17,7 @@ from training import schedule_switch
 STRICT_FACTORIAL_PROTOCOLS = {
     TARGET_WEIGHT_FACTORIAL_PROTOCOL,
     Q128_MATCHED_SPACING_PROTOCOL,
+    Q128_STARTUP_NATIVE_PROTOCOL,
 }
 
 import warnings
@@ -268,6 +270,8 @@ def make_loss_kwargs(opts):
 )
 @click.option('--stop-after-attempts', help='Gate-only planned pause after N optimizer attempts', metavar='INT', type=click.IntRange(min=1), default=None, hidden=True)
 @click.option('--startup-quality-manifest', type=str, default=None, help='Independent frozen startup quality manifest')
+@click.option('--startup-window-manifest', type=str, default=None, help='Frozen q128 fresh or q256 delayed window manifest')
+@click.option('--window-preflight-stop-success', type=click.IntRange(1, 16), default=None, hidden=True)
 @click.option('--quality-preflight-stop-success', type=click.IntRange(1, 6), default=None, hidden=True)
 @click.option('--startup-check-manifest', type=str, default=None, hidden=True)
 @click.option('--planned-pause-protocol', help='Frozen authorization for a non-legacy planned pause', metavar='ID', type=str, default=None, hidden=True)
@@ -353,6 +357,8 @@ def main(**kwargs):
              planned_pause_protocol=opts.planned_pause_protocol,
              startup_check_manifest=opts.startup_check_manifest,
              startup_quality_manifest=opts.startup_quality_manifest,
+             startup_window_manifest=opts.startup_window_manifest,
+             window_preflight_stop_success=opts.window_preflight_stop_success,
              quality_preflight_stop_success=opts.quality_preflight_stop_success,
              schedule_switch_manifest=opts.schedule_switch_manifest)
     c.update(mid_t=opts.mid_t, metrics=opts.metrics, sample_ticks=opts.sample_every, eval_ticks=opts.eval_every)

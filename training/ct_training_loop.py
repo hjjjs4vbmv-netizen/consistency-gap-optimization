@@ -21,13 +21,14 @@ from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
 from training import schedule_switch
-from training import m1, history_component, d_restore, startup_update, startup_quality
+from training import m1, history_component, d_restore, startup_update, startup_quality, startup_windows
 
 from metrics import metric_main
 
 _STRICT_FACTORIAL_PROTOCOLS = {
     'q256_target_weight_v1',
     'q128_matched_spacing_v1',
+    'q128_startup_native_v1',
 }
 _AUTHORITATIVE_TRANSFER_SOURCE_POLICY = {
     'schema': 'ect.q256.authoritative-transfer-source-policy/v1',
@@ -1013,6 +1014,8 @@ def training_loop(
     schedule_switch_manifest = None,# Frozen 512-kimg A/B continuation manifest.
     startup_check_manifest = None, # Isolated engineering-only startup intervention.
     startup_quality_manifest = None, # Independent formal quality protocol.
+    startup_window_manifest = None, # Fresh-q128 / delayed-q256 independent protocols.
+    window_preflight_stop_success = None,
     quality_preflight_stop_success = None,
     device              = torch.device('cuda'),
 ):
@@ -1020,7 +1023,15 @@ def training_loop(
     start_time = time.time()
     startup_check = startup_update.read_manifest(startup_check_manifest)
     startup_observer = None
-    quality = startup_quality.read_manifest(startup_quality_manifest)
+    windows = startup_windows.read_manifest(startup_window_manifest)
+    if windows is not None and startup_quality_manifest is not None:
+        raise ValueError('startup window and legacy quality protocols are exclusive')
+    quality = windows if windows is not None else startup_quality.read_manifest(startup_quality_manifest)
+    quality_impl = startup_windows if windows is not None else startup_quality
+    quality_metadata_key = startup_windows.METADATA_KEY if windows is not None else 'startup_quality'
+    quality_stop_success = window_preflight_stop_success if windows is not None else quality_preflight_stop_success
+    if (windows is None and window_preflight_stop_success is not None) or (windows is not None and quality_preflight_stop_success is not None):
+        raise ValueError('preflight pause must use its own protocol interface')
     quality_controller = None
     quality_resume_controller = None
     quality_ema_init_count = 0
@@ -1033,9 +1044,10 @@ def training_loop(
             raise ValueError('quality seed, budget or AMP differs')
         if not resume_state_dump and not resume_pkl:
             raise ValueError('quality requires original fresh transfer')
-        if quality_preflight_stop_success is not None and not quality.get('preflight_only'):
+        is_preflight = windows['mode'] == 'engineering' if windows is not None else quality.get('preflight_only')
+        if quality_stop_success is not None and not is_preflight:
             raise ValueError('success pause is preflight-only')
-    elif quality_preflight_stop_success is not None:
+    elif quality_stop_success is not None:
         raise ValueError('quality pause requires preflight manifest')
     strict_reproducibility = (
         loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
@@ -1225,7 +1237,7 @@ def training_loop(
         startup_update.validate_config(startup_check, strict_trajectory_config, resume_pkl)
 
     if quality is not None:
-        startup_quality.validate_config(quality, strict_trajectory_config, resume_pkl, run_dir)
+        quality_impl.validate_config(quality, strict_trajectory_config, resume_pkl, run_dir)
 
     # Load dataset.
     dist.print0('Loading dataset...')
@@ -1351,13 +1363,16 @@ def training_loop(
         if 'startup_engineering' in data:
             raise ValueError('startup engineering checkpoints cannot seed formal training or be resumed')
         if quality is not None:
-            quality_meta = startup_quality.validate_state(data, quality)
+            quality_meta = quality_impl.validate_state(data, quality)
             quality_resume_controller = quality_meta['controller']
             quality_ema_init_count = quality_meta['ema_512_init_count']
             if quality_ema_init_count:
-                startup_quality.use_native_A(loss_fn)
+                if windows is not None:
+                    startup_windows.use_native_A(loss_fn, windows['q'])
+                else:
+                    startup_quality.use_native_A(loss_fn)
                 ema_512 = copy.deepcopy(data['ema_512']).to(device).eval().requires_grad_(False)
-        elif 'startup_quality' in data:
+        elif 'startup_quality' in data or startup_windows.METADATA_KEY in data:
             raise ValueError('quality checkpoints require their own formal manifest')
         if component_prefix and planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_PROTOCOL:
             if data.get('history_component_prefix') != {
@@ -1951,7 +1966,7 @@ def training_loop(
             elapsed_sec=elapsed_sec,
         )
         if quality is not None:
-            data['startup_quality'] = dict(manifest=copy.deepcopy(quality),
+            data[quality_metadata_key] = dict(manifest=copy.deepcopy(quality),
                 controller=quality_controller.state_dict(), ema_512_init_count=quality_ema_init_count)
             if ema_512 is not None:
                 data['ema_512'] = ema_512
@@ -2095,12 +2110,24 @@ def training_loop(
             )
 
     if quality is not None:
+        if windows is not None:
+            startup_windows.validate_actual_loss(loss_fn, windows, suffix=bool(quality_ema_init_count))
+            if windows['mode'] == 'initialization':
+                if resume_state_dump or attempted_iteration != 0:
+                    raise ValueError('initialization-only run cannot resume or train')
+                if train_summary_csv is not None:
+                    train_summary_csv.close()
+                if factorial_telemetry_csv is not None:
+                    factorial_telemetry_csv.close()
+                dist.print0('Canonical q128 initial receipt created; zero attempted updates.')
+                return
         reference = json.loads(Path(quality['reference_initial_receipt']['path']).read_text())
         current = json.loads(Path(initial_receipt_path).read_text())
-        checked = history_component.validate_initial_receipt(current, reference)
+        checked = (startup_windows.validate_initial(current, reference, windows) if windows is not None
+                   else history_component.validate_initial_receipt(current, reference))
         if not resume_state_dump:
             reproducibility.atomic_json_dump(checked, os.path.join(run_dir, 'startup_quality_initial_check.json'), overwrite=False)
-        quality_controller = startup_quality.Controller(optimizer, quality['arm'], quality_resume_controller)
+        quality_controller = quality_impl.Controller(optimizer, quality if windows is not None else quality['arm'], quality_resume_controller)
 
     if startup_check is not None:
         startup_observer = startup_update.Observer(startup_check, net, optimizer, run_dir)
@@ -2156,9 +2183,21 @@ def training_loop(
         if quality is not None:
             if cur_nimg == 512000 and quality_ema_init_count == 0:
                 # The immutable own-prefix checkpoint has already been saved.
-                ema_512 = history_component.initialize_ema_512(net)
-                quality_ema_init_count = 1
-                startup_quality.use_native_A(loss_fn)
+                branch_path = os.path.join(run_dir, 'training-state-branch-init-kimg000512.pt')
+                if windows is not None and os.path.exists(branch_path):
+                    raise RuntimeError('own branch-init exists; recovery must resume that sealed state')
+                if windows is not None:
+                    ema_512, quality_ema_init_count = startup_windows.transition_to_suffix(
+                        loss_fn, net, ema_512, quality_ema_init_count, windows['q'], cur_nimg)
+                    startup_windows.validate_actual_loss(loss_fn, windows, suffix=True)
+                    branch_rank_states = gather_rank_reproducibility_state(dataset_sampler, local_consumed_samples)
+                    if dist.get_rank() == 0:
+                        reproducibility.atomic_torch_save(build_training_state(None, branch_rank_states, advance_tick=False), branch_path)
+                        startup_windows.seal_checkpoint(branch_path, windows, attempted_iteration)
+                else:
+                    ema_512 = history_component.initialize_ema_512(net)
+                    quality_ema_init_count = 1
+                    startup_quality.use_native_A(loss_fn)
             if cur_nimg > 512000 and quality_ema_init_count != 1:
                 raise RuntimeError('quality suffix has no valid E_512 boundary')
             quality_controller.begin()
@@ -2279,6 +2318,8 @@ def training_loop(
             )
             if startup_observer is not None:
                 startup_observer.after_step(parameters_before_step, scale_before, scale_after, step_skipped)
+            if windows is not None:
+                quality_controller.observe_update(net.parameters(), parameters_before_step, update_norm)
             del parameters_before_step
             (
                 model_nonfinite_count,
@@ -2287,7 +2328,7 @@ def training_loop(
             ) = tensor_collection_diagnostics(net.parameters())
             radam_first_moment_norm = 0.0
             radam_second_moment_norm = 0.0
-            if switch_manifest is not None or component_prefix or startup_observer is not None:
+            if switch_manifest is not None or component_prefix or startup_observer is not None or windows is not None:
                 first_moments = [
                     item['exp_avg'] for item in optimizer.state.values()
                     if 'exp_avg' in item
@@ -2576,9 +2617,9 @@ def training_loop(
         done = (cur_nimg >= total_kimg * 1000)
         planned_pause = (
             ((stop_after_attempts is not None and attempted_iteration >= stop_after_attempts)
-            or (quality is not None and quality.get('preflight_only') and
-                (attempted_iteration >= 64 or (quality_preflight_stop_success is not None and
-                 successful_optimizer_steps >= quality_preflight_stop_success))))
+            or (quality is not None and is_preflight and
+                (attempted_iteration >= (windows['max_attempts'] if windows is not None else 64)
+                 or (quality_stop_success is not None and successful_optimizer_steps >= quality_stop_success))))
             and not done
         )
         natural_maintenance_due = (
@@ -2652,7 +2693,7 @@ def training_loop(
                     cur_nimg,
                 )
                 if quality is not None:
-                    startup_quality.seal_checkpoint(immutable_path, quality, attempted_iteration)
+                    quality_impl.seal_checkpoint(immutable_path, quality, attempted_iteration)
                 dist.print0(
                     'Saved immutable full-state milestone at '
                     f'{cur_nimg / 1000:.3f} kimg: {immutable_path}'
@@ -2791,7 +2832,7 @@ def training_loop(
                 )
 
                 if quality is not None:
-                    startup_quality.seal_checkpoint(os.path.join(run_dir, 'training-state-latest.pt'), quality, attempted_iteration)
+                    quality_impl.seal_checkpoint(os.path.join(run_dir, 'training-state-latest.pt'), quality, attempted_iteration)
 
         # Sample Img
         if (sample_ticks is not None) and (done or cur_tick % sample_ticks == 0) and dist.get_rank() == 0:
