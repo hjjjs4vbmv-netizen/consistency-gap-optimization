@@ -23,11 +23,13 @@ def freeze(config,receipt,implementation_commit,training_estimate):
             mp=Path(config['manifest_root'])/f'seed{s}-{arm}.json';m=p.manifest(config,s,arm,output);p.write(mp,m,True)
             cmd=p.command(config,m,mp);cmds.append(dict(seed=s,arm=arm,command=cmd,manifest_sha256=p.digest(mp)))
             jobs[f'seed{s}-{arm}']=dict(status='PENDING',estimate_gpuh=training_estimate,actual_gpuh=0)
-    fraction=len(config['assigned_seeds'])/8
+    owned=config['host']=='ect'
+    fraction=len(config['assigned_seeds'])/8 if owned else 1.0
     used=preflight['process_gpuh'] if config['host']=='matpool' else 0.
     engineering=2.5*fraction
     if used>engineering:raise RuntimeError('engineering process budget exceeds reserved host envelope')
-    budget=dict(protocol_id=p.PROTOCOL,cap_gpuh=90,allocation_cap_gpuh=90*fraction,
+    budget=dict(protocol_id=p.PROTOCOL,cap_gpuh=None if owned else 90,allocation_cap_gpuh=90,
+        budget_exempt=owned,cap_scope='owned_ect_unmetered' if owned else 'paid_matpool_only',
         evaluation_reserve_gpuh=8.5*fraction,engineering_reserve_gpuh=engineering,
         engineering_used_gpuh=used,engineering_remaining_gpuh=engineering-used,
         evaluation_used_gpuh=0,evaluation_remaining_gpuh=8.5*fraction,
