@@ -1,0 +1,105 @@
+{
+  "protocol_id": "q256_startup_step_responder_pilot_v1",
+  "experiment_identity": "responder-enriched exploratory mechanism pilot",
+  "n_planned": 8,
+  "n_trained_trajectories": 16,
+  "n_trained_paired": 8,
+  "n_finite_paired": 8,
+  "primary": "S",
+  "statistics": {
+    "S": {
+      "n": 8,
+      "mean": 0.09329481087342333,
+      "SD": 0.052945168209617546,
+      "nominal_95_t_CI": [
+        0.04903154255097877,
+        0.13755807919586788
+      ],
+      "paired_dz": 1.7621024548275253,
+      "geometric_FID_contrast_ratio": 1.0977853266175854,
+      "geometric_ratio_nominal_95_CI": [
+        1.050253477891435,
+        1.1474683480757337
+      ],
+      "positive": 8,
+      "negative": 0,
+      "zero": 0,
+      "two_sided_t_p": 0.001593810363281559,
+      "exact_sign_flip_p": 0.0078125,
+      "TOST": {
+        "delta": 0.02955880224154443,
+        "p": 0.9943167398676631,
+        "equivalent": false,
+        "nominal_90_t_CI": [
+          0.05783030056177278,
+          0.12875932118507388
+        ]
+      }
+    },
+    "C": {
+      "n": 8,
+      "mean": 0.05868845889535096,
+      "SD": 0.07681448670108722,
+      "nominal_95_t_CI": [
+        -0.005530059071005178,
+        0.1229069768617071
+      ],
+      "paired_dz": 0.7640285239909088,
+      "geometric_FID_contrast_ratio": 1.0604448171228165,
+      "geometric_ratio_nominal_95_CI": [
+        0.9944852035582847,
+        1.130779227422398
+      ],
+      "positive": 6,
+      "negative": 2,
+      "zero": 0,
+      "two_sided_t_p": 0.06750828353365608,
+      "exact_sign_flip_p": 0.0703125,
+      "TOST": {
+        "delta": 0.02955880224154443,
+        "p": 0.8404847076047812,
+        "equivalent": false,
+        "nominal_90_t_CI": [
+          0.007235451041841118,
+          0.1101414667488608
+        ]
+      },
+      "Holm_adjusted_p": 0.06750828353365608
+    },
+    "M": {
+      "n": 8,
+      "mean": -0.1279011628514957,
+      "SD": 0.06659447700461846,
+      "nominal_95_t_CI": [
+        -0.18357553889234543,
+        -0.07222678681064595
+      ],
+      "paired_dz": -1.920597151662074,
+      "geometric_FID_contrast_ratio": 0.8799403456414299,
+      "geometric_ratio_nominal_95_CI": [
+        0.8322890031738517,
+        0.9303198876049806
+      ],
+      "positive": 0,
+      "negative": 8,
+      "zero": 0,
+      "two_sided_t_p": 0.0009742532510554242,
+      "exact_sign_flip_p": 0.0078125,
+      "TOST": {
+        "delta": 0.02955880224154443,
+        "p": 0.9979232027691733,
+        "equivalent": false,
+        "nominal_90_t_CI": [
+          -0.17250845368262113,
+          -0.08329387202037027
+        ]
+      },
+      "Holm_adjusted_p": 0.0019485065021108484
+    }
+  },
+  "failures": [],
+  "evaluation_failures": [],
+  "KID_role": "auxiliary consistency on the same generated features, not independent replication",
+  "interpretation_scope": "responder-enriched seeds50-57 only; no population or exact-trajectory claim",
+  "missingness_policy": "all planned slots retained; finite complete pairs only; incomplete matrix never presented as complete"
+}

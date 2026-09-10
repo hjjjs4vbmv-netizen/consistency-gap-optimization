@@ -1,0 +1,79 @@
+{
+  "host": "ect",
+  "root": "${ECT_EXPERIMENT}",
+  "code": "${ECT_EXPERIMENT}/code",
+  "runtime_python": "${ECT_RUNTIME}/bin/python3.11",
+  "assigned_seeds": [
+    56
+  ],
+  "output_root": "${ECT_EXPERIMENT}/runs",
+  "reference_root": "${ECT_EXPERIMENT}/references",
+  "old_control_bindings": "${ECT_EXPERIMENT}/references/old_control_bindings.json",
+  "preflight_root": "${ECT_EXPERIMENT}/preflight",
+  "budget_ledger": "${ECT_EXPERIMENT}/control/budget.json",
+  "lock_root": "${ECT_EXPERIMENT}/gpu_locks",
+  "manifest_root": "${ECT_EXPERIMENT}/manifests",
+  "freeze_receipt": "${ECT_EXPERIMENT}/control/freeze.json",
+  "gpu_mapping": {
+    "0": {
+      "uuid": "GPU-dbf0a977-e9bf-8469-c0f3-d9eed4bf0be4",
+      "host": "matpool",
+      "local_gpu": 0,
+      "seed": 50
+    },
+    "1": {
+      "uuid": "GPU-74e16478-3980-7d5d-f504-de28a8022fcd",
+      "host": "matpool",
+      "local_gpu": 1,
+      "seed": 51
+    },
+    "2": {
+      "uuid": "GPU-b6d4a8cf-b094-504a-fcb2-6cc7554185d8",
+      "host": "matpool",
+      "local_gpu": 2,
+      "seed": 52
+    },
+    "3": {
+      "uuid": "GPU-a30c5dfd-23c6-b2d4-0aee-5b2c87a59a13",
+      "host": "matpool",
+      "local_gpu": 3,
+      "seed": 53
+    },
+    "4": {
+      "uuid": "GPU-d0834467-cb74-7998-f3fc-85a1bb472a75",
+      "host": "matpool",
+      "local_gpu": 4,
+      "seed": 54
+    },
+    "5": {
+      "uuid": "GPU-f367feae-962a-c42a-98a6-2cb97a6ecfb2",
+      "host": "matpool",
+      "local_gpu": 5,
+      "seed": 55
+    },
+    "6": {
+      "uuid": "GPU-d79117bb-8d91-4f2e-d7bb-718e347ce859",
+      "host": "ect",
+      "local_gpu": 0,
+      "seed": 56
+    },
+    "7": {
+      "uuid": "GPU-c08d9770-a08e-0bfe-4b3c-fceb1a62b4d9",
+      "host": "extra",
+      "local_gpu": 0,
+      "seed": 57
+    }
+  },
+  "dataset": "${ECT_DATA_ROOT}/q256_terminal_history_n30_full_archive_v1/assets/cifar10-32x32-training-original.zip",
+  "transfer": "${ECT_DATA_ROOT}/q256_terminal_history_n30_full_archive_v1/assets/edm-cifar10-32x32-uncond-vp.pkl",
+  "protocol_json": "${ECT_EXPERIMENT}/code/analysis/q256_startup_step_responder_pilot_v1/protocol.json",
+  "training_matrix_frozen": "${ECT_EXPERIMENT}/control/training_matrix_frozen.json",
+  "evaluation_output": "${ECT_EXPERIMENT}/evaluation",
+  "evaluator_repo": "${ECT_DATA_ROOT}/q256_history_component_chase_v1/frozen_evaluator",
+  "evaluation_cache": "${ECT_DATA_ROOT}/q256_history_component_chase_v1/evaluation_cache",
+  "evaluation_dataset": "${ECT_DATA_ROOT}/q256_terminal_history_n30_full_archive_v1/assets/cifar10-32x32-eval.zip",
+  "evaluation_gate_scope": "host_completed",
+  "host_training_matrix_frozen": "${ECT_EXPERIMENT}/control/training_matrix_frozen.ect.json",
+  "budget_exempt": true,
+  "placement_amendment": "replacement_gpu_for_unstarted_seed57_D_v4"
+}

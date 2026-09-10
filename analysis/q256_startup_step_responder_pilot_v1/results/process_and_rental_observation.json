@@ -1,0 +1,51 @@
+{
+  "actual_experiment_process_gpuh": 66.07081751527679,
+  "paid_matpool_process_gpuh": 51.18767058263222,
+  "owned_ect_process_gpuh": 14.883146932644562,
+  "cap_gpuh": null,
+  "reference_gpuh": 90,
+  "gpu_hour_cutoff_enabled": false,
+  "cap_scope": "completion_priority_usage_recorded",
+  "hosts": {
+    "matpool": {
+      "observation_start_wall": 1789009619.3577235,
+      "observation_end_wall": 1789046131.973985,
+      "allocated_capacity_gpuh_in_observed_interval": 60.85436043580373,
+      "formal_training_process_gpuh": 40.70734396002229,
+      "evaluation_process_gpuh": 6.452730771482455,
+      "preflight_process_gpuh_before_observed_interval": 0.20301482354808187,
+      "capacity_not_used_by_experiment_processes_gpuh": 13.69428570429898,
+      "billing_verified": false,
+      "full_rental_start_known": false,
+      "full_rental_end_known": false,
+      "owned_budget_exempt": false
+    },
+    "ect": {
+      "observation_start_wall": 1789009622.3423817,
+      "observation_end_wall": 1789051682.227572,
+      "allocated_capacity_gpuh_in_observed_interval": 11.683301441735692,
+      "formal_training_process_gpuh": 14.5744842314151,
+      "evaluation_process_gpuh": 0.3086627012294614,
+      "preflight_process_gpuh_before_observed_interval": 0.0,
+      "capacity_not_used_by_experiment_processes_gpuh": 0,
+      "billing_verified": false,
+      "full_rental_start_known": false,
+      "full_rental_end_known": false,
+      "owned_budget_exempt": true
+    },
+    "extra": {
+      "observation_start_wall": 1789034141.42756,
+      "observation_end_wall": 1789049676.477268,
+      "allocated_capacity_gpuh_in_observed_interval": 4.315291585524877,
+      "formal_training_process_gpuh": 3.5168986822374992,
+      "evaluation_process_gpuh": 0.3076823453418911,
+      "preflight_process_gpuh_before_observed_interval": 0.0,
+      "capacity_not_used_by_experiment_processes_gpuh": 0.49071055794548646,
+      "billing_verified": false,
+      "full_rental_start_known": false,
+      "full_rental_end_known": false,
+      "owned_budget_exempt": false
+    }
+  },
+  "note": "Process costs use measured process wall time. Unassigned capacity and pre-observation rental time are separate; these are not account billing totals."
+}
