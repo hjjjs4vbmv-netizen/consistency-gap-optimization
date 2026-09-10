@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import csv
 import time
 import copy
@@ -20,7 +21,7 @@ from torch_utils import training_stats
 from torch_utils import misc
 from training import reproducibility
 from training import schedule_switch
-from training import m1, history_component, d_restore, startup_update
+from training import m1, history_component, d_restore, startup_update, startup_quality
 
 from metrics import metric_main
 
@@ -1011,12 +1012,29 @@ def training_loop(
     planned_pause_protocol = None,  # Explicit authorization for a frozen long pause.
     schedule_switch_manifest = None,# Frozen 512-kimg A/B continuation manifest.
     startup_check_manifest = None, # Isolated engineering-only startup intervention.
+    startup_quality_manifest = None, # Independent formal quality protocol.
+    quality_preflight_stop_success = None,
     device              = torch.device('cuda'),
 ):
     # Initialize.
     start_time = time.time()
     startup_check = startup_update.read_manifest(startup_check_manifest)
     startup_observer = None
+    quality = startup_quality.read_manifest(startup_quality_manifest)
+    quality_controller = None
+    quality_resume_controller = None
+    quality_ema_init_count = 0
+    if quality is not None:
+        if startup_check is not None or schedule_switch_manifest is not None or planned_pause_protocol is not None or stop_after_attempts is not None:
+            raise ValueError('quality protocol is independent of existing pause/switch protocols')
+        if quality['seed'] != seed or total_kimg != 1024 or not enable_amp:
+            raise ValueError('quality seed, budget or AMP differs')
+        if not resume_state_dump and not resume_pkl:
+            raise ValueError('quality requires original fresh transfer')
+        if quality_preflight_stop_success is not None and not quality.get('preflight_only'):
+            raise ValueError('success pause is preflight-only')
+    elif quality_preflight_stop_success is not None:
+        raise ValueError('quality pause requires preflight manifest')
     strict_reproducibility = (
         loss_kwargs.get('factorial_protocol') in _STRICT_FACTORIAL_PROTOCOLS
     )
@@ -1202,6 +1220,9 @@ def training_loop(
     if startup_check is not None:
         startup_update.validate_config(startup_check, strict_trajectory_config, resume_pkl)
 
+    if quality is not None:
+        startup_quality.validate_config(quality, strict_trajectory_config, resume_pkl, run_dir)
+
     # Load dataset.
     dist.print0('Loading dataset...')
     dataset_obj = dnnlib.util.construct_class_by_name(**dataset_kwargs) # subclass of training.dataset.Dataset
@@ -1325,6 +1346,15 @@ def training_loop(
         )
         if 'startup_engineering' in data:
             raise ValueError('startup engineering checkpoints cannot seed formal training or be resumed')
+        if quality is not None:
+            quality_meta = startup_quality.validate_state(data, quality)
+            quality_resume_controller = quality_meta['controller']
+            quality_ema_init_count = quality_meta['ema_512_init_count']
+            if quality_ema_init_count:
+                startup_quality.use_native_A(loss_fn)
+                ema_512 = copy.deepcopy(data['ema_512']).to(device).eval().requires_grad_(False)
+        elif 'startup_quality' in data:
+            raise ValueError('quality checkpoints require their own formal manifest')
         if component_prefix and planned_pause_protocol == schedule_switch.HISTORY_COMPONENT_PROTOCOL:
             if data.get('history_component_prefix') != {
                 'protocol_id': planned_pause_protocol, 'seed': seed,
@@ -1916,6 +1946,11 @@ def training_loop(
             # checkpoint I/O and maintenance work.
             elapsed_sec=elapsed_sec,
         )
+        if quality is not None:
+            data['startup_quality'] = dict(manifest=copy.deepcopy(quality),
+                controller=quality_controller.state_dict(), ema_512_init_count=quality_ema_init_count)
+            if ema_512 is not None:
+                data['ema_512'] = ema_512
         if startup_check is not None:
             data['startup_engineering'] = copy.deepcopy(startup_check)
         if hasattr(loss_fn, 'schedule_state_dict'):
@@ -2055,6 +2090,14 @@ def training_loop(
                 overwrite=False,
             )
 
+    if quality is not None:
+        reference = json.loads(Path(quality['reference_initial_receipt']['path']).read_text())
+        current = json.loads(Path(initial_receipt_path).read_text())
+        checked = history_component.validate_initial_receipt(current, reference)
+        if not resume_state_dump:
+            reproducibility.atomic_json_dump(checked, os.path.join(run_dir, 'startup_quality_initial_check.json'), overwrite=False)
+        quality_controller = startup_quality.Controller(optimizer, quality['arm'], quality_resume_controller)
+
     if startup_check is not None:
         startup_observer = startup_update.Observer(startup_check, net, optimizer, run_dir)
 
@@ -2106,6 +2149,15 @@ def training_loop(
         return
 
     while True:
+        if quality is not None:
+            if cur_nimg == 512000 and quality_ema_init_count == 0:
+                # The immutable own-prefix checkpoint has already been saved.
+                ema_512 = history_component.initialize_ema_512(net)
+                quality_ema_init_count = 1
+                startup_quality.use_native_A(loss_fn)
+            if cur_nimg > 512000 and quality_ema_init_count != 1:
+                raise RuntimeError('quality suffix has no valid E_512 boundary')
+            quality_controller.begin()
 
         # Accumulate gradients.
         optimizer.zero_grad(set_to_none=True)
@@ -2276,7 +2328,7 @@ def training_loop(
             ema_beta = 0.5 ** (batch_size / max(ema_halflife_nimg, 1e-8))
         for p_ema, p_net in zip(ema.parameters(), net.parameters()):
             p_ema.copy_(p_net.detach().lerp(p_ema, ema_beta))
-        if ema_512 is not None and m1_shadow_update:
+        if ema_512 is not None and (m1_shadow_update or quality is not None):
             ema_operations.update_ema_512(ema_512, net, ema_beta)
             if component_run:
                 shadow_nonfinite, _, _ = tensor_collection_diagnostics(ema_512.parameters())
@@ -2470,6 +2522,8 @@ def training_loop(
                                else 'ect.m1.training-telemetry/v1'),
                     'seed': seed,
                 })
+            if quality_controller is not None:
+                quality_controller.record(telemetry_row, run_dir)
             if startup_observer is not None:
                 startup_observer.record(telemetry_row, radam_first_moment_norm, radam_second_moment_norm)
             if factorial_telemetry_writer is not None:
@@ -2517,8 +2571,10 @@ def training_loop(
         # --tick. A checkpoint saved below persists this same cur_tick value.
         done = (cur_nimg >= total_kimg * 1000)
         planned_pause = (
-            stop_after_attempts is not None
-            and attempted_iteration >= stop_after_attempts
+            (stop_after_attempts is not None and attempted_iteration >= stop_after_attempts)
+            or (quality is not None and quality.get('preflight_only') and
+                (attempted_iteration >= 64 or (quality_preflight_stop_success is not None and
+                 successful_optimizer_steps >= quality_preflight_stop_success)))
             and not done
         )
         natural_maintenance_due = (
@@ -2591,6 +2647,8 @@ def training_loop(
                     run_dir,
                     cur_nimg,
                 )
+                if quality is not None:
+                    startup_quality.seal_checkpoint(immutable_path, quality, attempted_iteration)
                 dist.print0(
                     'Saved immutable full-state milestone at '
                     f'{cur_nimg / 1000:.3f} kimg: {immutable_path}'
@@ -2727,6 +2785,9 @@ def training_loop(
                     os.path.join(run_dir, f'training-state-latest.pt'),
                     overwrite=True,
                 )
+
+                if quality is not None:
+                    startup_quality.seal_checkpoint(os.path.join(run_dir, 'training-state-latest.pt'), quality, attempted_iteration)
 
         # Sample Img
         if (sample_ticks is not None) and (done or cur_tick % sample_ticks == 0) and dist.get_rank() == 0:

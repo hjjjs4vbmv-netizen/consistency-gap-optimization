@@ -1,0 +1,106 @@
+{
+  "protocol_id": "q256_startup_step_responder_pilot_v1",
+  "experiment_class": "responder_enriched_pilot",
+  "experiment_identity": "responder-enriched exploratory mechanism pilot",
+  "base_commit": "d9e0021f7e6a8049a642f81bd22390aec0b383ac",
+  "seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57
+  ],
+  "arms": [
+    "D_startup_up5",
+    "A_startup_down5"
+  ],
+  "initialization": "fresh_transfer",
+  "base_lr": 0.0001,
+  "startup_success_steps": 5,
+  "switch_kimg": 512,
+  "final_kimg": 1024,
+  "primary": "S=(C-M)/2",
+  "simple_effects": {
+    "C": "Y_D_startup_up5-Y_DA",
+    "M": "Y_A_startup_down5-Y_AA"
+  },
+  "Y": "mean(log(FID_B0),log(FID_B1),log(FID_B2))",
+  "directions": {
+    "S": ">0",
+    "C": ">0",
+    "M": "<0"
+  },
+  "evaluation": {
+    "kimg": 1024,
+    "readout": "E_512",
+    "precision": "fp32",
+    "nfe": 1,
+    "metrics": [
+      "fid50k_full",
+      "kid50k_full"
+    ],
+    "metric_seed": 20260730,
+    "metric_repeats": 1,
+    "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+    "blocks": {
+      "B0": [
+        0,
+        49999
+      ],
+      "B1": [
+        50000,
+        99999
+      ],
+      "B2": [
+        100000,
+        149999
+      ]
+    }
+  },
+  "statistics": {
+    "unit": "training_seed",
+    "primary": "S",
+    "ci": "nominal two-sided 95% t",
+    "simple_effect_tests": "two-sided paired t, Holm across C and M",
+    "equivalence": "TOST alpha .05 with bounds +/-log(1.03)",
+    "sign_flip": "all 2^n paired sign flips"
+  },
+  "budget": {
+    "cap_gpuh": 90,
+    "evaluation_reserve_gpuh": 8.5,
+    "engineering_reserve_gpuh": 2.5,
+    "accounting": "actual process wall time; rental idle recorded separately"
+  },
+  "allocation": {
+    "matpool": [
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "ect": [
+      56,
+      57
+    ]
+  },
+  "preflight": {
+    "seed": 50,
+    "max_attempts": 64,
+    "gpuh_target": 3,
+    "no_fid": true
+  },
+  "terminal_statuses": [
+    "PASS",
+    "SCIENTIFIC_FAILURE",
+    "NO_ENDPOINT",
+    "TECHNICAL_FAILURE",
+    "INCOMPLETE_BUDGET"
+  ],
+  "no_protocol_adaptation": true,
+  "no_training_fid": true
+}
