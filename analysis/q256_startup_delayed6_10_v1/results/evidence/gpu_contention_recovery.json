@@ -1,0 +1,50 @@
+{
+  "worker-6.json": {
+    "status": "EXCEPTION",
+    "error": "RuntimeError('assigned GPU has another compute process')",
+    "wall": 1789091189.404119
+  },
+  "seed56.json": {
+    "reason": "GPU-contention guard failed before evaluator process; only empty B0 directory removed",
+    "original_exception_preserved": true,
+    "checkpoint_sha256": "db2d25aeef8fef675cb33d6bbfbf71ee284bcc7f261abc0c16b0bc30ab8208d9",
+    "training_repeated": false
+  },
+  "launch-6.json": {
+    "pid": 107236,
+    "command": [
+      "<ECT_ARCHIVE>/m1_optimizer_restart_ema/runtime/python-3.11.13/bin/python3.11",
+      "-m",
+      "analysis.startup_window_experiments_v1.worker",
+      "--deployment",
+      "<OWNED_RUN_ROOT>/owned_ect.json",
+      "--logical-gpu",
+      "6"
+    ],
+    "log": "<OWNED_RUN_ROOT>/control/worker-6-gpu-recovery-1789097549177152019.log"
+  },
+  "worker-7.json": {
+    "status": "EXCEPTION",
+    "error": "RuntimeError('assigned GPU has another compute process')",
+    "wall": 1789091518.8896399
+  },
+  "seed57.json": {
+    "reason": "GPU-contention guard failed before evaluator process; only empty B0 directory removed",
+    "original_exception_preserved": true,
+    "checkpoint_sha256": "495856a59b4fbcfaee961928aaa8673b761b83e486ff49622438154a2bf128f2",
+    "training_repeated": false
+  },
+  "launch-7.json": {
+    "pid": 107239,
+    "command": [
+      "<ECT_ARCHIVE>/m1_optimizer_restart_ema/runtime/python-3.11.13/bin/python3.11",
+      "-m",
+      "analysis.startup_window_experiments_v1.worker",
+      "--deployment",
+      "<OWNED_RUN_ROOT>/owned_ect.json",
+      "--logical-gpu",
+      "7"
+    ],
+    "log": "<OWNED_RUN_ROOT>/control/worker-7-gpu-recovery-1789097549177152019.log"
+  }
+}

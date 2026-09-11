@@ -1,0 +1,25 @@
+name: q256 delayed-window verification
+on:
+  pull_request:
+    paths:
+      - 'analysis/q256_startup_delayed6_10_v1/**'
+      - 'analysis/startup_window_experiments_v1/**'
+      - 'training/startup_windows.py'
+      - 'training/ct_training_loop.py'
+      - 'tests/test_startup_windows.py'
+      - '.github/workflows/q256-delayed-results.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence-and-statistics:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy==2.1.2 scipy==1.16.1
+      - name: Verify hashes, complete matrix, controls, and paired inference
+        run: python analysis/q256_startup_delayed6_10_v1/verify_results.py
