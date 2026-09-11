@@ -11,6 +11,7 @@ from training import reproducibility
 
 TARGET_WEIGHT_FACTORIAL_PROTOCOL = 'q256_target_weight_v1'
 Q128_MATCHED_SPACING_PROTOCOL = 'q128_matched_spacing_v1'
+Q128_STARTUP_NATIVE_PROTOCOL = 'q128_startup_native_v1'
 Q128_MATCHED_SPACING_GAP_SCALE = 0.55
 TARGET_WEIGHT_FACTORIAL_ARMS = {
     (1.0, 1.0): 'A',
@@ -60,6 +61,7 @@ def resolve_target_weight_factorial(
     supported_protocols = {
         TARGET_WEIGHT_FACTORIAL_PROTOCOL,
         Q128_MATCHED_SPACING_PROTOCOL,
+        Q128_STARTUP_NATIVE_PROTOCOL,
     }
     if protocol not in supported_protocols:
         raise ValueError(f'unsupported factorial_protocol: {protocol!r}')
@@ -77,6 +79,10 @@ def resolve_target_weight_factorial(
         if float(q) not in (128.0, 256.0):
             raise ValueError(f'{protocol} requires q in {{128, 256}}, got {q}')
         frozen_arms = TARGET_WEIGHT_FACTORIAL_ARMS
+    elif protocol == Q128_STARTUP_NATIVE_PROTOCOL:
+        if float(q) != 128.0:
+            raise ValueError(f'{protocol} requires q=128, got {q}')
+        frozen_arms = {(1.0, 1.0): 'A', (1.0, 1.1): 'D'}
     else:
         if float(q) != 128.0:
             raise ValueError(f'{protocol} requires q=128, got {q}')

@@ -1,0 +1,220 @@
+{
+  "protocol_id": "q256_startup_delayed6_10_v1",
+  "status": "ANALYZED",
+  "planned_n": 8,
+  "complete_n": 8,
+  "statistical_unit": "training seed",
+  "Y": "mean of three log-FID50k blocks; not FID150k",
+  "cohort_identity": "PR111 enriched exploratory q256 extension",
+  "effects": {
+    "T": {
+      "n": 8,
+      "mean_log_difference": 0.10659591531831997,
+      "ci95_log": [
+        0.04284795584498961,
+        0.1703438747916503
+      ],
+      "p_two_sided": 0.005503772369642984,
+      "geometric_ratio": 1.1124846256455536,
+      "ci95_ratio": [
+        1.0437791822614733,
+        1.1857125178682628
+      ],
+      "auxiliary_TOST": {
+        "bounds_log": [
+          -0.02955880224154443,
+          0.02955880224154443
+        ],
+        "alpha": 0.05,
+        "p": 0.9877886980481699,
+        "equivalent": false
+      },
+      "sign_flip_p_two_sided": 0.0078125,
+      "sign_flip_enumerations": 256
+    },
+    "L": {
+      "n": 8,
+      "mean_log_difference": -0.021305247533175725,
+      "ci95_log": [
+        -0.043577974936209546,
+        0.000967479869858099
+      ],
+      "p_two_sided": 0.058167300963902206,
+      "geometric_ratio": 0.9789201060113253,
+      "ci95_ratio": [
+        0.9573579012591995,
+        1.0009679480294735
+      ]
+    },
+    "M": {
+      "n": 8,
+      "mean_log_difference": -0.1279011628514957,
+      "ci95_log": [
+        -0.18357553889234543,
+        -0.07222678681064595
+      ],
+      "p_two_sided": 0.0009742532510554242,
+      "geometric_ratio": 0.8799403456414299,
+      "ci95_ratio": [
+        0.8322890031738517,
+        0.9303198876049806
+      ]
+    }
+  },
+  "outcomes": [
+    {
+      "seed": 50,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "4dbbc1e834a8b5c7d7e8e5470d38e8aa02bae054a97435c7ea7f9820b80a6483"
+    },
+    {
+      "seed": 51,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "06e7e0ce2bb0d02ce1da08fe4f35d82937ad5a47fec06c15c0b3473770344f6f"
+    },
+    {
+      "seed": 52,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "e2838f66a805783a35a0db2b96ec537845dea6162f85874ba7ea069932e0c200"
+    },
+    {
+      "seed": 53,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "fe9a470c0c35f1b992c3ad1723ded735eb7b510129fcd9a1cb63a533521a4eb2"
+    },
+    {
+      "seed": 54,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "4d4f538d421d49dbf99fc44c7ebf22897e96a52ee75413370a96e4366ea46ebc"
+    },
+    {
+      "seed": 55,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "2c2ad9f66c04824ad8ec78be8d6eb253367a2e383fc4dc42b2817dd77dd7652b"
+    },
+    {
+      "seed": 56,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "db2d25aeef8fef675cb33d6bbfbf71ee284bcc7f261abc0c16b0bc30ab8208d9"
+    },
+    {
+      "seed": 57,
+      "arm": "A_delayed_down6_10",
+      "status": "PASS",
+      "error": null,
+      "checkpoint_sha256": "495856a59b4fbcfaee961928aaa8673b761b83e486ff49622438154a2bf128f2"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 50,
+      "AA": 2.409684319311822,
+      "A_startup_down5": 2.223487188509786,
+      "A_delayed_down6_10": 2.3756560385838936,
+      "L": -0.034028280727928184,
+      "M": -0.18619713080203582,
+      "T": 0.15216885007410763
+    },
+    {
+      "seed": 51,
+      "AA": 2.122820836372153,
+      "A_startup_down5": 2.017941086830488,
+      "A_delayed_down6_10": 2.0554743868329597,
+      "L": -0.06734644953919311,
+      "M": -0.10487974954166468,
+      "T": 0.03753330000247157
+    },
+    {
+      "seed": 52,
+      "AA": 2.122007906790937,
+      "A_startup_down5": 2.0183909691567155,
+      "A_delayed_down6_10": 2.0870900520173934,
+      "L": -0.03491785477354359,
+      "M": -0.10361693763422153,
+      "T": 0.06869908286067794
+    },
+    {
+      "seed": 53,
+      "AA": 2.3229067874591958,
+      "A_startup_down5": 2.0952932784615874,
+      "A_delayed_down6_10": 2.3195257601279957,
+      "L": -0.0033810273312000483,
+      "M": -0.22761350899760835,
+      "T": 0.2242324816664083
+    },
+    {
+      "seed": 54,
+      "AA": 2.007717229319107,
+      "A_startup_down5": 1.971746639352786,
+      "A_delayed_down6_10": 1.9812343123416525,
+      "L": -0.026482916977454307,
+      "M": -0.03597058996632074,
+      "T": 0.009487672988866436
+    },
+    {
+      "seed": 55,
+      "AA": 2.3243679525731804,
+      "A_startup_down5": 2.2755276421117756,
+      "A_delayed_down6_10": 2.3269721938145644,
+      "L": 0.002604241241384031,
+      "M": -0.0488403104614048,
+      "T": 0.05144455170278883
+    },
+    {
+      "seed": 56,
+      "AA": 2.3649618440164737,
+      "A_startup_down5": 2.2125676058090966,
+      "A_delayed_down6_10": 2.339795776203071,
+      "L": -0.02516606781340247,
+      "M": -0.15239423820737708,
+      "T": 0.1272281703939746
+    },
+    {
+      "seed": 57,
+      "AA": 2.3276966360140046,
+      "A_startup_down5": 2.163999798812672,
+      "A_delayed_down6_10": 2.3459730116699364,
+      "L": 0.018276375655931876,
+      "M": -0.16369683720133255,
+      "T": 0.18197321285726442
+    }
+  ],
+  "versions": {
+    "numpy": "2.1.2",
+    "scipy": "1.16.1"
+  },
+  "missing_policy": "complete AA/early/delayed set",
+  "sign_flip_interpretation": "sensitivity under sign symmetry; not randomized arm allocation",
+  "causal_limits": "No natural mediation proportion, unique rectification mechanism, or causal q interaction is established.",
+  "quality_completion_by_arm": {
+    "AA": {
+      "planned": 8,
+      "complete": 8,
+      "rate": 1.0
+    },
+    "A_startup_down5": {
+      "planned": 8,
+      "complete": 8,
+      "rate": 1.0
+    },
+    "A_delayed_down6_10": {
+      "planned": 8,
+      "complete": 8,
+      "rate": 1.0
+    }
+  }
+}

@@ -1,0 +1,510 @@
+[
+  {
+    "status": "PASS",
+    "protocol_id": "q128_startup_fresh8_v1",
+    "seed": 99002,
+    "gpu": {
+      "logical_gpu": 6,
+      "host": "owned",
+      "local_gpu": 0,
+      "name": "NVIDIA A100 80GB PCIe",
+      "uuid": "<GPU_UUID>",
+      "payment_class": "owned"
+    },
+    "checks": {
+      "AA": {
+        "attempts": 128,
+        "successful_updates": 120,
+        "skipped": 8,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 1.0198324811105202,
+            "net_displacement_norm": 0.7922487425753737
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.08084466122132226,
+            "net_displacement_norm": 0.07998872387157123
+          }
+        }
+      },
+      "DA": {
+        "attempts": 128,
+        "successful_updates": 120,
+        "skipped": 8,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 0.8681464656729935,
+            "net_displacement_norm": 0.6160466041697876
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.08426979218767568,
+            "net_displacement_norm": 0.08314589115352768
+          }
+        }
+      },
+      "A_startup_down5": {
+        "attempts": 128,
+        "successful_updates": 120,
+        "skipped": 8,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 0.8716410713068892,
+            "net_displacement_norm": 0.622643289022542
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.08428515388391533,
+            "net_displacement_norm": 0.08318798810827294
+          }
+        }
+      },
+      "D_startup_up5": {
+        "attempts": 128,
+        "successful_updates": 120,
+        "skipped": 8,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 1.014491030363708,
+            "net_displacement_norm": 0.7859121897029565
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.08098929532065516,
+            "net_displacement_norm": 0.08014572798169256
+          }
+        }
+      }
+    },
+    "parity": {},
+    "pause_boundaries": [],
+    "process_gpuh": 0.36126065568532795,
+    "completed_wall": 1789062481.4408178,
+    "no_quality_evaluation": true
+  },
+  {
+    "status": "PASS",
+    "protocol_id": "q256_startup_delayed6_10_v1",
+    "seed": 50,
+    "gpu": {
+      "logical_gpu": 0,
+      "host": "paid",
+      "local_gpu": 0,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "uuid": "<GPU_UUID>",
+      "payment_class": "paid"
+    },
+    "checks": {
+      "A_replay": {
+        "attempts": 64,
+        "successful_updates": 55,
+        "skipped": 9,
+        "q": 256,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 2.2696260045041106,
+            "net_displacement_norm": 1.9501353034508848
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.05971470431998744,
+            "net_displacement_norm": 0.05890669516917498
+          }
+        }
+      },
+      "A_delayed_down6_10": {
+        "attempts": 64,
+        "successful_updates": 55,
+        "skipped": 9,
+        "q": 256,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 2.2696260045041106,
+            "net_displacement_norm": 1.9501353034508848
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.05427501891721111,
+            "net_displacement_norm": 0.05354608340555854
+          }
+        }
+      }
+    },
+    "parity": {
+      "archived_A_all_shared_scientific_fields": {
+        "rows": 64,
+        "exact_fields": [
+          "attempted_iteration",
+          "base_r_sha256",
+          "base_r_zero_count",
+          "batch_sha256",
+          "denominator_delta_max",
+          "denominator_delta_mean",
+          "denominator_delta_min",
+          "denominator_gap_scale",
+          "denominator_r_equal_t_count",
+          "denominator_r_sha256",
+          "denominator_r_zero_count",
+          "denominator_scaled_to_zero_count",
+          "ema_nonfinite_count",
+          "ema_norm",
+          "factor_nonfinite_count",
+          "grad_scale_after",
+          "grad_scale_before",
+          "learning_rate",
+          "loss",
+          "loss_nonfinite_count",
+          "model_nonfinite_count",
+          "model_norm",
+          "nonpositive_denominator_count",
+          "processed_kimg",
+          "processed_nimg",
+          "raw_grad_finite_norm",
+          "raw_grad_nonfinite_count",
+          "raw_grad_norm",
+          "sample_count",
+          "sanitized_grad_nonfinite_count",
+          "sanitized_grad_norm",
+          "stage",
+          "step_skipped",
+          "successful_optimizer_steps",
+          "t_sha256",
+          "target_delta_max",
+          "target_delta_mean",
+          "target_delta_min",
+          "target_gap_scale",
+          "target_r_equal_t_count",
+          "target_r_sha256",
+          "target_r_zero_count",
+          "target_scaled_to_zero_count",
+          "update_nonfinite_count",
+          "update_norm"
+        ]
+      },
+      "delayed_before_sixth_success": {
+        "rows": 14,
+        "exact_fields": [
+          "attempted_iteration",
+          "base_r_sha256",
+          "base_r_zero_count",
+          "batch_sha256",
+          "denominator_delta_max",
+          "denominator_delta_mean",
+          "denominator_delta_min",
+          "denominator_gap_scale",
+          "denominator_r_equal_t_count",
+          "denominator_r_sha256",
+          "denominator_r_zero_count",
+          "denominator_scaled_to_zero_count",
+          "ema_nonfinite_count",
+          "ema_norm",
+          "factor_nonfinite_count",
+          "grad_scale_after",
+          "grad_scale_before",
+          "learning_rate",
+          "loss",
+          "loss_nonfinite_count",
+          "model_nonfinite_count",
+          "model_norm",
+          "nonpositive_denominator_count",
+          "processed_kimg",
+          "processed_nimg",
+          "raw_grad_finite_norm",
+          "raw_grad_nonfinite_count",
+          "raw_grad_norm",
+          "sample_count",
+          "sanitized_grad_nonfinite_count",
+          "sanitized_grad_norm",
+          "stage",
+          "step_skipped",
+          "successful_optimizer_steps",
+          "t_sha256",
+          "target_delta_max",
+          "target_delta_mean",
+          "target_delta_min",
+          "target_gap_scale",
+          "target_r_equal_t_count",
+          "target_r_sha256",
+          "target_r_zero_count",
+          "target_scaled_to_zero_count",
+          "update_nonfinite_count",
+          "update_norm"
+        ]
+      }
+    },
+    "pause_boundaries": [
+      5,
+      6,
+      10,
+      11
+    ],
+    "process_gpuh": 0.1333607347524311,
+    "completed_wall": 1789062681.3784177,
+    "no_quality_evaluation": true
+  },
+  {
+    "status": "PASS",
+    "protocol_id": "q256_startup_delayed6_10_v1",
+    "seed": 51,
+    "gpu": {
+      "logical_gpu": 1,
+      "host": "paid",
+      "local_gpu": 1,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "uuid": "<GPU_UUID>",
+      "payment_class": "paid"
+    },
+    "checks": {
+      "A_replay": {
+        "attempts": 64,
+        "successful_updates": 54,
+        "skipped": 10,
+        "q": 256,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 1.8915624389500343,
+            "net_displacement_norm": 1.0641048795414092
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.06925518709380651,
+            "net_displacement_norm": 0.06709819187624073
+          }
+        }
+      },
+      "A_delayed_down6_10": {
+        "attempts": 64,
+        "successful_updates": 54,
+        "skipped": 10,
+        "q": 256,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 1.8915624389500343,
+            "net_displacement_norm": 1.0641048795414092
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.0629309201857783,
+            "net_displacement_norm": 0.060970608616399066
+          }
+        }
+      }
+    },
+    "parity": {
+      "archived_A_all_shared_scientific_fields": {
+        "rows": 64,
+        "exact_fields": [
+          "attempted_iteration",
+          "base_r_sha256",
+          "base_r_zero_count",
+          "batch_sha256",
+          "denominator_delta_max",
+          "denominator_delta_mean",
+          "denominator_delta_min",
+          "denominator_gap_scale",
+          "denominator_r_equal_t_count",
+          "denominator_r_sha256",
+          "denominator_r_zero_count",
+          "denominator_scaled_to_zero_count",
+          "ema_nonfinite_count",
+          "ema_norm",
+          "factor_nonfinite_count",
+          "grad_scale_after",
+          "grad_scale_before",
+          "learning_rate",
+          "loss",
+          "loss_nonfinite_count",
+          "model_nonfinite_count",
+          "model_norm",
+          "nonpositive_denominator_count",
+          "processed_kimg",
+          "processed_nimg",
+          "raw_grad_finite_norm",
+          "raw_grad_nonfinite_count",
+          "raw_grad_norm",
+          "sample_count",
+          "sanitized_grad_nonfinite_count",
+          "sanitized_grad_norm",
+          "stage",
+          "step_skipped",
+          "successful_optimizer_steps",
+          "t_sha256",
+          "target_delta_max",
+          "target_delta_mean",
+          "target_delta_min",
+          "target_gap_scale",
+          "target_r_equal_t_count",
+          "target_r_sha256",
+          "target_r_zero_count",
+          "target_scaled_to_zero_count",
+          "update_nonfinite_count",
+          "update_norm"
+        ]
+      },
+      "delayed_before_sixth_success": {
+        "rows": 14,
+        "exact_fields": [
+          "attempted_iteration",
+          "base_r_sha256",
+          "base_r_zero_count",
+          "batch_sha256",
+          "denominator_delta_max",
+          "denominator_delta_mean",
+          "denominator_delta_min",
+          "denominator_gap_scale",
+          "denominator_r_equal_t_count",
+          "denominator_r_sha256",
+          "denominator_r_zero_count",
+          "denominator_scaled_to_zero_count",
+          "ema_nonfinite_count",
+          "ema_norm",
+          "factor_nonfinite_count",
+          "grad_scale_after",
+          "grad_scale_before",
+          "learning_rate",
+          "loss",
+          "loss_nonfinite_count",
+          "model_nonfinite_count",
+          "model_norm",
+          "nonpositive_denominator_count",
+          "processed_kimg",
+          "processed_nimg",
+          "raw_grad_finite_norm",
+          "raw_grad_nonfinite_count",
+          "raw_grad_norm",
+          "sample_count",
+          "sanitized_grad_nonfinite_count",
+          "sanitized_grad_norm",
+          "stage",
+          "step_skipped",
+          "successful_optimizer_steps",
+          "t_sha256",
+          "target_delta_max",
+          "target_delta_mean",
+          "target_delta_min",
+          "target_gap_scale",
+          "target_r_equal_t_count",
+          "target_r_sha256",
+          "target_r_zero_count",
+          "target_scaled_to_zero_count",
+          "update_nonfinite_count",
+          "update_norm"
+        ]
+      }
+    },
+    "pause_boundaries": [],
+    "process_gpuh": 0.07222869237315738,
+    "completed_wall": 1789062443.849625,
+    "no_quality_evaluation": true
+  },
+  {
+    "status": "PASS",
+    "protocol_id": "q128_startup_fresh8_v1",
+    "seed": 99001,
+    "gpu": {
+      "logical_gpu": 2,
+      "host": "paid",
+      "local_gpu": 0,
+      "name": "NVIDIA A100-PCIE-40GB",
+      "uuid": "<GPU_UUID>",
+      "payment_class": "paid"
+    },
+    "checks": {
+      "AA": {
+        "attempts": 128,
+        "successful_updates": 120,
+        "skipped": 8,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 0.9254977964858865,
+            "net_displacement_norm": 0.5778705947146631
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.06887298616269505,
+            "net_displacement_norm": 0.06641742040546081
+          }
+        }
+      },
+      "DA": {
+        "attempts": 128,
+        "successful_updates": 121,
+        "skipped": 7,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 0.6952365837328187,
+            "net_displacement_norm": 0.49442032509300987
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.06173543215199222,
+            "net_displacement_norm": 0.05887746283064502
+          }
+        }
+      },
+      "A_startup_down5": {
+        "attempts": 128,
+        "successful_updates": 121,
+        "skipped": 7,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 0.6804897642015426,
+            "net_displacement_norm": 0.492878451665516
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.06376136201023627,
+            "net_displacement_norm": 0.06086498815106224
+          }
+        }
+      },
+      "D_startup_up5": {
+        "attempts": 128,
+        "successful_updates": 120,
+        "skipped": 8,
+        "q": 128,
+        "update_exposure": {
+          "1_5": {
+            "count": 5,
+            "sum_update_norm": 0.9306941904033634,
+            "net_displacement_norm": 0.5772081630681846
+          },
+          "6_10": {
+            "count": 5,
+            "sum_update_norm": 0.06996872535940529,
+            "net_displacement_norm": 0.0674660560057368
+          }
+        }
+      }
+    },
+    "parity": {},
+    "pause_boundaries": [
+      5,
+      6,
+      10,
+      11
+    ],
+    "process_gpuh": 0.3778132694307715,
+    "completed_wall": 1789062672.6999905,
+    "no_quality_evaluation": true
+  }
+]

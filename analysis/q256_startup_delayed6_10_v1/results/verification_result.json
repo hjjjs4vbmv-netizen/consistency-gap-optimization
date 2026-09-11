@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "training_seeds": 8,
+  "new_training": 8,
+  "new_blocks": 24,
+  "reused_blocks": 48,
+  "complete_triplets": 8,
+  "sign_flip_enumerations": 256,
+  "T": {
+    "mean_log_difference": 0.10659591531831997,
+    "ci95_log": [
+      0.04284795584498961,
+      0.1703438747916503
+    ],
+    "p_two_sided": 0.005503772369642984,
+    "geometric_ratio": 1.1124846256455536,
+    "ci95_ratio": [
+      1.0437791822614733,
+      1.1857125178682628
+    ]
+  },
+  "sign_flip_p": 0.0078125,
+  "TOST_p": 0.9877886980481699,
+  "all_eight_early_better": true
+}
