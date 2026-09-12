@@ -1,0 +1,297 @@
+{
+  "wall": 1789104429.2150636,
+  "hosts": [
+    {
+      "host": "owned",
+      "wall": 1789104428.955669,
+      "workers": [
+        {
+          "worker": "worker-6",
+          "status": "RUNNING",
+          "pid": 6191,
+          "attempted_iteration": 2683,
+          "started_wall": 1789098325.3608732,
+          "elapsed_process_gpuh": 1.6922941731449423,
+          "log": "<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed307/A_startup_down5/process-1789098325283165316.log",
+          "error": null
+        },
+        {
+          "worker": "worker-7",
+          "status": "RUNNING",
+          "pid": 6190,
+          "attempted_iteration": 2371,
+          "started_wall": 1789098325.3488908,
+          "elapsed_process_gpuh": 1.6922973940837094,
+          "log": "<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed308/D_startup_up5/process-1789098325261508157.log",
+          "error": null
+        }
+      ],
+      "ledgers": [
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed56-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 6.485524132043227,
+              "process_gpuh": 6.69390867274772,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "owned",
+          "updated_wall": 1789098320.598057
+        },
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed57-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 6.577221823285541,
+              "process_gpuh": 6.785607294702075,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "owned",
+          "updated_wall": 1789098320.8433037
+        }
+      ]
+    },
+    {
+      "host": "paid-node-01",
+      "wall": 1789104429.145446,
+      "workers": [
+        {
+          "worker": "worker-0",
+          "status": "RUNNING",
+          "pid": 33422,
+          "attempted_iteration": 4625,
+          "started_wall": 1789096788.346616,
+          "elapsed_process_gpuh": 2.1209644462543333,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/DA/process-1789096787380643673.log",
+          "error": null
+        },
+        {
+          "worker": "worker-1",
+          "status": "RUNNING",
+          "pid": 33427,
+          "attempted_iteration": 4555,
+          "started_wall": 1789096788.6866753,
+          "elapsed_process_gpuh": 2.120952491017783,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/A_startup_down5/process-1789096788536117726.log",
+          "error": null
+        }
+      ],
+      "ledgers": [
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed51-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 3.716886768037867,
+              "process_gpuh": 4.062739929945932,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            },
+            "q128_startup_fresh8_v1-seed302-DA": {
+              "training_status": "PASS",
+              "training_gpuh": 3.712997590006174,
+              "process_gpuh": 3.971344761559222,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "paid",
+          "updated_wall": 1789096788.5166037
+        },
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed50-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 3.7168821765397055,
+              "process_gpuh": 4.062732609952024,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            },
+            "q128_startup_fresh8_v1-seed301-AA": {
+              "training_status": "PASS",
+              "training_gpuh": 3.725280789935237,
+              "process_gpuh": 3.971127652113274,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "paid",
+          "updated_wall": 1789096787.361128
+        }
+      ]
+    },
+    {
+      "host": "paid-node-02",
+      "wall": 1789104429.202281,
+      "workers": [
+        {
+          "worker": "worker-2",
+          "status": "RUNNING",
+          "pid": 13228,
+          "attempted_iteration": 3116,
+          "started_wall": 1789099007.0595384,
+          "elapsed_process_gpuh": 1.504324085292303,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed303/D_startup_up5/process-1789099006856525569.log",
+          "error": null
+        },
+        {
+          "worker": "worker-3",
+          "status": "RUNNING",
+          "pid": 12875,
+          "attempted_iteration": 3421,
+          "started_wall": 1789098754.4039862,
+          "elapsed_process_gpuh": 1.5751548564216742,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed304/AA/process-1789098754298731438.log",
+          "error": null
+        },
+        {
+          "worker": "worker-4",
+          "status": "RUNNING",
+          "pid": 12244,
+          "attempted_iteration": 3337,
+          "started_wall": 1789098493.7943132,
+          "elapsed_process_gpuh": 1.6460617026345183,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed305/DA/process-1789098493609369656.log",
+          "error": null
+        },
+        {
+          "worker": "worker-5",
+          "status": "RUNNING",
+          "pid": 12510,
+          "attempted_iteration": 3363,
+          "started_wall": 1789098725.8110774,
+          "elapsed_process_gpuh": 1.5834887997330063,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed306/A_startup_down5/process-1789098725389797833.log",
+          "error": null
+        }
+      ],
+      "ledgers": [
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed53-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 3.808763372425197,
+              "process_gpuh": 4.200534755971489,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            },
+            "q128_startup_fresh8_v1-seed304-D_startup_up5": {
+              "training_status": "PASS",
+              "training_gpuh": 3.846162121213145,
+              "process_gpuh": 4.375388408058013,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "paid",
+          "updated_wall": 1789098754.27699
+        },
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed55-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 3.837927205260429,
+              "process_gpuh": 4.250538577277006,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            },
+            "q128_startup_fresh8_v1-seed306-DA": {
+              "training_status": "PASS",
+              "training_gpuh": 3.7962972558858907,
+              "process_gpuh": 4.317194595009917,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "paid",
+          "updated_wall": 1789098725.3280554
+        },
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed52-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 3.846256485163338,
+              "process_gpuh": 4.263019209948058,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            },
+            "q128_startup_fresh8_v1-seed303-A_startup_down5": {
+              "training_status": "PASS",
+              "training_gpuh": 3.9378376709587046,
+              "process_gpuh": 4.383713643898567,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "paid",
+          "updated_wall": 1789099006.8348203
+        },
+        {
+          "jobs": {
+            "q256_startup_delayed6_10_v1-seed54-A_delayed_down6_10": {
+              "training_status": "PASS",
+              "training_gpuh": 3.883742763271762,
+              "process_gpuh": 4.30053478856364,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            },
+            "q128_startup_fresh8_v1-seed305-AA": {
+              "training_status": "PASS",
+              "training_gpuh": 3.7921589215493037,
+              "process_gpuh": 4.200547389871337,
+              "evaluation_statuses": [
+                "PASS",
+                "PASS",
+                "PASS"
+              ]
+            }
+          },
+          "payment_class": "paid",
+          "updated_wall": 1789098493.5562522
+        }
+      ]
+    }
+  ]
+}

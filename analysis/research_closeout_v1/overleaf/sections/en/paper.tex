@@ -1,0 +1,315 @@
+\begin{abstract}
+Changing the training gap in a consistency model can alter both target construction and loss scale, making a quality improvement difficult to attribute. We separate these operations in Easy Consistency Tuning and follow their effects from local updates to generation quality. In the studied CIFAR-10 $q=256$ configuration, an early denominator-only history improves quality after a common continuation and evaluation-EMA rebuilding, without enlarging the target-time gap. This observation motivates startup learning-rate interventions based on RAdam's known scale response. In a responder-enriched eight-seed cohort, a first-five-update reduction improves endpoints, and moving the same nominal reduction to the next five updates produces worse outcomes. A fresh eight-seed $q=128$ cohort, however, does not reproduce the predicted startup benefit or provide stable support for the denominator-history advantage. Existing telemetry confirms that the prescribed interventions were executed and changed local parameter movement; it does not explain the difference in endpoint response. The evidence therefore identifies a persistent scale-history effect and a window-dependent operation in specific $q=256$ cohorts, while limiting their transfer to a new spacing setting and cohort. Local scaling identities specify testable interventions, but neither those identities nor their successful execution establish a general quality mechanism.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+Consistency models (CMs) offer generation in one or a few network evaluations by learning to map noisy states directly to a common endpoint \citep{song2023consistency}. Their fast inference depends on a demanding training problem: predictions at neighboring noise levels must agree without collapsing to an uninformative solution. Easy Consistency Tuning (ECT) makes this problem more accessible by initializing from a pretrained diffusion model and progressively tightening consistency constraints \citep{geng2025ect}. Subsequent work improves training through variance reduction, time-range truncation, and better loss geometry \citep{wang2024sct,lee2024tcm,kim2025ayt}. Understanding what actually changes when a training control is adjusted is therefore relevant to both CM methodology and its implementations.
+
+We examine the training pair spacing. In an inverse-gap objective, enlarging this spacing changes two computations: the lower-noise input used to construct the self-generated target, and the denominator that scales the loss. ECT already recognizes the relationship between mapping and weighting and studies alternative weights. Our question concerns the origin of a measured quality benefit: \emph{does it require changing the target-time rule, or can a loss-scale operation alone produce it?} We further ask whether a specific change in the optimizer's actual updates has a corresponding endpoint consequence.
+
+The distinction is sharper than a generic claim that weighting matters. Reweighting different noise levels can change the direction of the expected training gradient. In the configuration studied here, a denominator-only multiplier instead scales every same-state gradient by the same positive constant. It preserves its direction and the target-time rule. Adaptive normalization might appear to remove such scaling, yet the implemented optimizer also has a startup branch, accumulated moments, and finite-precision execution. Their effects must be examined at the level of actual updates and resulting trajectories.
+
+Our experiments proceed from component attribution to a targeted update test. An early joint spacing intervention yields an 8.60\% endpoint FID improvement across 26 complete pairs after both histories continue under the same rule. A four-arm extension separates target construction from loss scaling: the denominator-only history yields an 8.75\% improvement across 14 complete pairs, even when the evaluation EMA is rebuilt at the boundary. These results motivate learning-rate interventions specified from the startup response of RAdam. In the completed eight-seed pilot, lowering only A's first five successful-update learning rates improves every seed; reversing the scale reduction in D worsens six of eight seeds. The two average directions match the hypothesis, with stronger evidence on the A side. An adjacent-window extension then asks whether the same reduction has the same consequence when delayed by five successful updates. It does not: the early window has lower endpoint FID in all eight paired comparisons, with delayed/early geometric FID ratio 1.11248. The evidence therefore concerns an operation whose placement matters, beyond the observation that an early schedule leaves a lasting effect.
+
+The fresh $q=128$ experiment adds an important limit to this account. All four paths complete for eight response-unselected seeds, yet neither the primary startup contrast nor the supportive denominator-history contrast identifies a stable quality advantage. The implemented LR windows and local update responses are present. Thus the new result limits the scope of the earlier evidence without establishing why the endpoint responses differ: both the spacing parameter and the cohort have changed.
+
+We contribute (i) executable target and scale controls derived from a same-state gradient identity; (ii) evidence that a denominator-only history can improve common-continuation quality in the studied $q=256$ setting; and (iii) startup and adjacent-window interventions that trace a possible route to this effect, together with a fresh cohort that limits its transfer. The theory supplies local relations and experimental motivation. The experiments establish operation-level effects and their observed limits, rather than a complete mediation account.
+
+\section{Background: consistency tuning and its controls}
+\label{sec:background}
+\subsection{From diffusion sampling to a consistency function}
+A diffusion model learns to reverse a noising process, usually requiring multiple network evaluations to generate a sample. Its associated probability-flow ODE has the same time marginals as the diffusion SDE \citep{song2021sde}. An ideal consistency function maps every point on one such ODE trajectory to the same data-end state, anchored by a boundary condition such as $f(x,0)=x$. Evaluating that function on a high-noise input then supports one-step generation. Consistency distillation uses a pretrained diffusion model to construct training targets along approximate ODE steps; consistency training can instead construct pairs from data and shared noise \citep{song2023consistency,song2024improved}.
+
+For the variance-exploding parameterization used here, the practical pair construction is
+\begin{equation}
+ x_t=x_0+t\epsilon,\qquad x_r=x_0+r\epsilon,\qquad 0\leq r<t.
+ \label{eq:pair}
+\end{equation}
+The higher-noise prediction is trained toward a lower-noise prediction whose gradient is stopped. In our configuration, both branches use the current network parameters. This self-generated target is distinct from the EMA used to evaluate sample quality. Shared-noise pairs are a training construction; a particular line $x_0+t\epsilon$ is not generally an exact probability-flow ODE trajectory.
+
+\subsection{What ECT controls}
+ECT starts from a pretrained diffusion model and uses a mapping $r=r(t)$ to choose the paired noise level. Its broader curriculum progressively tightens the consistency constraint. We isolate a fixed stage of this implementation: the baseline unclipped relative gap is
+\begin{equation}
+ \frac{t-r_1}{t}=\frac{n(t)}{q},\qquad n(t)=1+\frac{8}{1+\exp(t)}.
+ \label{eq:gapmapping}
+\end{equation}
+Here $q$ is a training-spacing parameter (256 in the original studies and 128 in the fresh cohort); it is not the number of sampling steps. Increasing $q$ makes pairs closer at a fixed noise level and stage. The joint intervention uses $t-r_g=g(t-r_1)$ with $g=1.1$. This stage-specific formula does not describe every stage of ECT's general curriculum.
+
+A general consistency objective combines a distance between predictions with a weight. The main configuration uses inverse-gap weighting and the $c=0$ limit of its norm-based distance:
+\begin{equation}
+ \ell(r,\delta;\theta)=\frac{\norm{e_r}_2}{\delta},\qquad
+ e_r=f_\theta(x_t,t)-\underbrace{\sg[f_\theta(x_r,r)]}_{\text{target output}},\qquad \delta>0.
+ \label{eq:loss}
+\end{equation}
+Normally $\delta=t-r$. We control $r$ and $\delta$ separately: the former sets the target input, while the latter sets a multiplicative loss scale (Figure~\ref{fig:training}). The result is specific to this objective; ECT also studies weights that do not depend on the gap \citep{geng2025ect}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{\figfile{training_controls}}
+\caption{\textbf{The training computation has two separately executable controls.} The two noisy inputs share $x_0$ and $\epsilon$. Their predictions use the same network parameters, with the lower branch stopped during backpropagation. Changing $r$ changes the target input; changing $\delta$ scales the residual loss. A/B/C/D cross these controls. The bottom panel distinguishes an early component history from the five-successful-update LR interventions and their two placements. Neither changes the sampling NFE.}
+\label{fig:training}
+\end{figure}
+
+\paragraph{Three different clocks.}
+Noise levels $t,r$ index the inputs within an example. Training progress indexes attempts or successful optimizer updates; AMP can skip an attempted update. Sampling NFE counts network evaluations when generating an image. Our ``first five updates'' refer to successful updates at the beginning of ECT transfer tuning; the delayed control uses successful updates 6--10. Both occur near transfer start, whereas the history switch occurs at 512 kimg. One kimg denotes one thousand training images; attempted images count toward the budget even when AMP skips the update.
+
+\section{Separating target construction from loss scale}
+\label{sec:semantics}
+\subsection{A local identity defines the interventions}
+\begin{lemma}[Finite-gap, same-state gradient decomposition]
+\label{prop:decomp}
+Fix the parameters, student input, and random realization. Assume a differentiable student and finite nonzero residuals. Write $J_t=\partial f_\theta(x_t,t)/\partial\theta$, $u_r=e_r/\norm{e_r}_2$, and $s=\delta_1/\delta_g$. The implemented single-sided gradient satisfies
+\begin{align}
+ G(r,\delta)&=\delta^{-1}J_t^\top u_r,\label{eq:field}\\
+ G(r_g,\delta_g)&=sG(r_1,\delta_1)+
+ \underbrace{\delta_g^{-1}J_t^\top(u_{r_g}-u_{r_1})}_{\text{target-dependent correction}}.
+ \label{eq:decomp}
+\end{align}
+\end{lemma}
+The identity follows by adding and subtracting $\delta_g^{-1}J_t^\top u_{r_1}$. Its role is to define controls, rather than to predict FID; Appendix~\ref{app:theory} gives the derivation and its conditions. Crossing the baseline and enlarged target gaps with the two denominators gives Table~\ref{tab:arms}.
+
+\begin{table}[t]
+\centering\small
+\caption{Four early operations. The baseline gap is $\delta_1=t-r_1$; $\delta_g=g\delta_1$ with $g=1.1$ in real arithmetic on unclipped pairs.}
+\label{tab:arms}
+\begin{tabular}{clll}
+\toprule
+Arm & Target input gap & Loss denominator & Changed computation\\
+\midrule
+A & $\delta_1$ & $\delta_1$ & Baseline\\
+B & $g\delta_1$ & $g\delta_1$ & Target and scale\\
+C & $g\delta_1$ & $\delta_1$ & Target only\\
+D & $\delta_1$ & $g\delta_1$ & Scale only\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At the same state,
+\begin{equation}
+ \ell_D=\ell_A/g,\qquad G_D=G_A/g,\qquad G_B=G_C/g.
+ \label{eq:scale}
+\end{equation}
+Thus D preserves the target-time rule and the relative weighting of different noise levels, while reducing the whole gradient by $1/g$. This is different from choosing a new timestep-weighting function. The native denominator is constructed by subtracting noise times, so a scalar loss wrapper need not reproduce every floating-point operation. Also, loss scaling and learning-rate scaling are distinct: only the former directly changes the gradients entering moment estimation and AMP.
+
+\subsection{From one state to an early history}
+A history applies an operation over many attempts. As states diverge, even the same target-time rule produces different target outputs. We write $XY$ for X during 0--512 kimg followed by Y during 512--1,024 kimg. The common A suffix shares the training rule and budget; each branch retains its own parameters, optimizer, scaler, RNG, and data-position state. This design measures whether an early operation leaves an endpoint difference after the rule becomes common. It neither resets the histories to the same model nor directly measures a natural mediator.
+
+The same-state decomposition cannot be summed into an endpoint FID decomposition. Later updates depend on earlier parameter and moment differences, and AMP introduces discrete execution branches. Appendix~\ref{app:propagation} formalizes this separation between producing a local difference and propagating an existing state difference. We use the identity to specify experiments and reserve claims about persistent quality for the measured endpoints.
+
+\section{A denominator history survives common continuation}
+\label{sec:history}\label{sec:component}
+\subsection{Setting, readout, and cohort relationships}
+We use unconditional CIFAR-10, an EDM-pretrained DDPM++ network, the stage-zero $q=256$ mapping, dropout 0.2, and batch size 128 with microbatches of 16 \citep{karras2022edm}. Training uses FP16 AMP and RAdam with LR $10^{-4}$, betas $(0.9,0.999)$, $\varepsilon=10^{-8}$, and zero weight decay; TF32 is disabled. At the 512-kimg switch, the primary component readout initializes a fresh evaluation EMA, $\Ereset$, from each branch's online parameters, then averages its subsequent trajectory under the same rule. This removes the pre-switch EMA accumulator as the readout's initialization requirement, while preserving the source online model and its later influence.
+
+For the component, startup, adjacent-window, and fresh $q128$ studies, three 50k-image evaluation blocks give
+\begin{equation}
+ Y_{s,X}=\frac{1}{3}\sum_{b=0}^{2}\log\FID_{s,X,b},\qquad
+ d_s=Y_{s,X}-Y_{s,A}.
+ \label{eq:metric}
+\end{equation}
+The independent units are training seeds. We report paired geometric FID ratios $\exp(\bar d)$ and seed-level t intervals; FID is lower-is-better and KID is auxiliary \citep{heusel2017fid,binkowski2018kid}. The primary endpoint uses $\Ereset$, FP32 evaluation, and NFE1. The earlier joint-history study retains its own frozen single-block protocol. Table~\ref{tab:cohorts} makes reuse and missing outcomes explicit; these studies are not pooled as independent replications.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{Completion and dependence of the principal evidence.} Counts refer to training endpoints, not evaluation blocks. ``Complete'' requires the paths used by that comparison. Quality estimates with missing paths are conditional on endpoint availability.}
+\label{tab:cohorts}
+\begin{tabularx}{\linewidth}{L{2.05cm}L{1.2cm}L{3.1cm}Y}
+\toprule
+Study & Planned seeds & Available endpoints & Reuse and interpretation\\
+\midrule
+Joint history & 30 & AA 26; BA 29; complete 26 & Discovery cohort; some controls recur below.\\
+Component history & 16 & AA 14; BA 15; CA 15; DA 16; complete 14 & Reuses AA/BA; adds CA/DA.\\
+Startup pilot & 8 & All four paths 8; complete 8 & Reuses AA/DA; seeds selected using prior response.\\
+Adjacent window & 8 & AA/early/delayed each 8; complete 8 & Adds delayed paths; reuses AA/early on the same eight seeds.\\
+Fresh $q128$ & 8 & All four paths 8; complete 8 & Seeds 301--308; four fresh paths, no reused endpoints.\\
+Restore / hold & 16 & DA 16; DD 16; complete 16 & Same D prefixes; DA outcomes reused.\\
+ImageNet boundary & 3 & IA 3; IB 3; complete 3 & Different configuration; 10 checkpoints and 2 NFEs per path.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{The observation and its component test}
+The joint-history comparison finds an 8.60\% geometric FID reduction for BA relative to AA across 26 complete pairs: mean log difference $-0.089946$, 95\% CI $[-0.129886,-0.050006]$, and 22/26 favorable pairs. Five of 60 planned trajectories have numerical failures. Retrospective source evaluation finds 11 pairs in which B has worse FID at 512 kimg but better endpoint FID. This motivates component attribution: source quality alone does not determine the subsequent ranking (Appendix~\ref{app:historyfig}).
+
+The component extension adds C/D histories to the existing A/B controls for seeds 50--65. The primary set contains 14 complete four-path seeds, $S_4=\{50,\ldots,57,59,\ldots,64\}$. AA is unavailable for 58/65, BA for 58, and CA/58 fails at 971.776 kimg. No large finite FID is excluded. On the common set, define
+\begin{equation}
+ H_T=Y_{CA}-Y_{AA},\qquad H_W=Y_{DA}-Y_{AA},\qquad
+ I=Y_{BA}-Y_{CA}-Y_{DA}+Y_{AA}.
+ \label{eq:contrasts}
+\end{equation}
+$H_T$ and $H_W$ are simple effects at the baseline level of the other component. We apply Holm correction to these three tests \citep{holm1979}; displayed intervals are marginal nominal 95\% intervals.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{\figfile{components}}
+\caption{\textbf{A beneficial history with the baseline target-time rule.} Top: each early arm continues under A. Lower left: within-seed geometric FIDs for the 14 complete seeds and their across-seed geometric means. Lower right: paired log-FID contrasts and nominal 95\% t intervals. The denominator-only effect $H_W$ passes the three-comparison Holm procedure. The full 16-seed completion counts are in Table~\ref{tab:cohorts}.}
+\label{fig:components}
+\end{figure}
+
+\begin{table}[t]
+\centering\small
+\caption{Component-history results on the same 14 complete seeds. The upper-panel percentages are descriptive comparisons with AA. Lower-panel tests use seed-level paired log-FID differences.}
+\label{tab:components}
+\begin{tabular}{lrrrr}
+\toprule
+Path & AA & CA & DA & BA\\
+\midrule
+Geometric FID & 9.418 & 8.987 & 8.594 & 8.595\\
+Change vs. AA & -- & $-4.58\%$ & $-8.75\%$ & $-8.74\%$\\
+\midrule
+Contrast & Mean & Seed SD & Nominal 95\% CI & Holm $p$\\
+\midrule
+$H_T$ & $-0.04691$ & 0.13987 & $[-0.12767,\phantom{-}0.03385]$ & 0.30631\\
+$H_W$ & $-0.09153$ & 0.07604 & $[-0.13543,-0.04763]$ & 0.00178\\
+$I$ & $\phantom{-}0.04697$ & 0.11585 & $[-0.01991,\phantom{-}0.11386]$ & 0.30631\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The denominator-only history improves geometric FID by 8.75\%, with ratio CI $[0.87334,0.95349]$ and 13/14 favorable seeds. It can therefore produce a persistent quality benefit while retaining the baseline target-time rule. Target-only history also has a favorable mean, but its interval is wider. The direct CA--DA interval, $[-0.03394,0.12317]$ in log-FID, does not establish a ranking between the components. BA and DA have nearly identical means, but their difference interval $[-0.03660,0.03673]$ does not establish equivalence. Consequently, the factorial comparison identifies an effective operation without allocating a percentage of the original joint benefit to a mediator.
+
+\section{Startup update scale and timing}
+\label{sec:startup}
+\subsection{A known optimizer property specifies the intervention}
+Why might a uniform loss-scale change survive adaptive normalization? RAdam maintains first and second gradient moments and uses a rectification statistic \citep{liu2020radam}:
+\begin{equation}
+ \rho_\infty=\frac{2}{1-\beta_2}-1,\qquad
+ \rho_n=\rho_\infty-\frac{2n\beta_2^n}{1-\beta_2^n}.
+ \label{eq:rho}
+\end{equation}
+The audited implementation rectifies when $\rho_n>5$. For $\beta_2=0.999$, $\rho_5\simeq4.995998$ and $\rho_6\simeq5.994164$: its first five successful updates use the unrectified branch. Ignoring weight decay and the stabilizing denominator term, its update has the form
+\begin{equation}
+ U_n=\begin{cases}
+ -\eta_n\widehat m_n,&\rho_n\leq5,\\
+ -\eta_n r_n\widehat m_n/\sqrt{\widehat v_n},&\rho_n>5,
+ \end{cases}
+ \label{eq:radam}
+\end{equation}
+where $r_n$ is the rectification factor. If all preceding gradients differ by one fixed positive multiplier $s$ and initial moments scale compatibly, then $m'_n=sm_n$ and $v'_n=s^2v_n$. The startup update scales by $s$; the ideal normalized update cancels it. This conditional scaling property does not imply that diverging networks continue to produce proportional gradients.
+
+We hypothesize that D's smaller startup steps contribute to its quality advantage. This predicts two endpoint directions: reducing A's startup LR should improve quality, while compensating D's startup LR upward should worsen it. The optimizer formula specifies the multipliers and the five-successful-update window; the predicted FID directions additionally require the hypothesis and are tested empirically. Define $\Adown$ as native A with LR $\eta/g$ for updates 1--5, and $\Dup$ as native D with LR $g\eta$ for those updates, followed by A after 512 kimg. Both restore the original LR from update 6. The interventions do not directly replace gradients, moments, or scaler states; feedback can subsequently change all of them.
+
+\paragraph{Local manipulation check.}
+Two engineering seeds, 50/51, each run 64 attempts. The first common successful update occurs at attempt 9. Native D/A update-norm ratios are 0.909075/0.909062. D compensation gives ratios to A of 0.999983/0.999968; A reduction gives ratios to D of 1.000017/1.000032. Relative vector discrepancies are 0.0195\%--0.0235\%. This verifies the intended action at the first common state. Later updates include trajectory divergence and possible differences in data position at an equal successful-update index, so the check does not certify five-step trajectory equivalence.
+
+\subsection{A completed eight-seed endpoint pilot}
+\label{sec:pilot}
+The pilot fixes seeds 50--57, reuses their AA/DA controls, and adds two startup trajectories per seed. All 16 new trajectories and 48 new evaluation blocks complete; 48 control blocks are reused. The cohort is responder-enriched, selected using prior response information. Its fixed primary contrast is
+\begin{align}
+ C_{\rm start}&=Y_{\Dup}-Y_{DA},\qquad M_{\rm start}=Y_{\Adown}-Y_{AA},\\
+ S&=(C_{\rm start}-M_{\rm start})/2.
+ \label{eq:startupcontrasts}
+\end{align}
+The two predictions are $C_{\rm start}>0$ and $M_{\rm start}<0$. A positive $S$ alone does not establish both. The protocol fixed these contrasts before the endpoint pilot; a six-seed interim view preceded completion, so ordinary intervals and $p$ values remain nominal with respect to repeated inspection. Training, evaluation, and sample size were not adapted to that view.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{\figfile{startup}}
+\caption{\textbf{A five-update operation changes final generation quality.} The first two panels show all eight paired endpoints: A startup reduction improves 8/8 seeds, while D compensation worsens 6/8. The third panel shows the two simple effects with nominal 95\% paired-t intervals. The cohort was selected using prior response information and reuses controls. Intervals are nominal after an earlier six-seed inspection.}
+\label{fig:startup}
+\end{figure}
+
+\begin{table}[t]
+\centering\small
+\caption{Completed startup pilot, $n=8$. $M$ and $C$ are geometric FID changes; $S$ is in log-FID units. Simple-effect $p$ values are Holm adjusted; $S$ uses the primary paired t test. Intervals and tests are nominal after the interim look.}
+\label{tab:startup}
+\begin{tabular}{lrrr}
+\toprule
+Contrast & Estimate & Nominal 95\% CI & $p$\\
+\midrule
+$M_{\rm start}$ & $-12.01\%$ & $[-16.77\%,-6.97\%]$ & 0.001949\\
+$C_{\rm start}$ & $+6.04\%$ & $[-0.55\%,+13.08\%]$ & 0.06751\\
+$S$ (log scale) & 0.09329 & $[0.04903,0.13756]$ & 0.001594\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A startup reduction lowers geometric FID by 12.01\%, with all eight seeds improving. D compensation raises it by 6.04\%, with six seeds worsening. The latter interval spans a 0.55\% improvement to a 13.08\% deterioration: it supports the predicted direction but is less precise and does not meet the two-sided Holm threshold. $S$ is positive in all eight seeds; its exact sign-flip sensitivity test gives $p=0.0078125$. Appendix~\ref{app:statistics} reports all seed-level values and the scope of these tests.
+
+In the same cohort, DA improves over AA by 11.28\%. The A-reduction/DA ratio is 0.99186 (nominal 95\% CI $[0.95656,1.02846]$), placing their average qualities close without establishing 3\% equivalence. Similar effect sizes do not identify a mediated fraction. The completed experiment shows that a short update operation has a lasting endpoint consequence; its reverse arm gives additional directional support. Together with the component history, it motivates startup scale as a candidate pathway for the original effect. Proving that this pathway carries the full benefit would require further interventions that distinguish it from later parameter, moment, and numerical feedback.
+
+\subsection{Moving the same reduction to the next five updates}
+\label{sec:window}
+The startup result motivates a direct timing question: does lowering LR for five updates have a comparable effect immediately after the unrectified branch? We add $\Adelay$, native A with LR $\eta/g$ on successful updates 6--10, restoring the base LR from update 11. The early arm $\Adown$ retains its updates 1--5 reduction. Each delayed path starts from its seed's original transfer initialization, runs for the same 1,024-kimg budget, and initializes its own $\Ereset$ once at 512 kimg. No optimizer restart occurs.
+
+All eight new trajectories and 24 new evaluation blocks complete. We exactly reuse the 48 AA/early blocks, giving three complete paths for each of seeds 50--57. The extension uses the same responder-enriched cohort and was motivated by the completed startup pilot. Its new quality results were unblinded after the full group completed; this does not make it a fresh independent confirmation. The frozen primary comparison and the secondary baseline comparison are
+\begin{equation}
+ T_s=Y_{s,\Adelay}-Y_{s,\Adown},\qquad
+ L_s=Y_{s,\Adelay}-Y_{s,AA},\qquad T_s=L_s-M_{{\rm start},s}.
+ \label{eq:window}
+\end{equation}
+The identity makes the reuse explicit: the previously measured $M_{\rm start}$ is context, not an additional replication.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{\figfile{windows}}
+\caption{\textbf{The same five-update LR reduction has different endpoint effects in adjacent windows.} Left: all eight paired geometric FIDs under AA, early reduction (successful updates 1--5), and delayed reduction (6--10). AA and early outcomes are reused. Right: the direct delayed/early comparison $T$ and secondary delayed/AA comparison $L$, exponentiated to FID percentage changes with nominal 95\% paired-t intervals. All eight seeds favor early over delayed. Both interventions divide LR by 1.1 for five successful updates; their realized update exposure differs (Figure~\ref{fig:windowdiag}).}
+\label{fig:windows}
+\end{figure}
+
+The direct comparison gives $\bar T=0.106596$, nominal 95\% log interval $[0.042848,0.170344]$, and two-sided paired $p=0.005504$. Delayed/early geometric FID is 1.11248, or 11.25\% higher (95\% interval $[4.38\%,18.57\%]$), with all eight seed differences positive. Exhaustive sign-flip sensitivity gives $p=0.0078125$. Delayed/AA has a smaller estimated improvement of 2.11\%, with interval $[-4.26\%,+0.10\%]$ and $p=0.05817$. This does not establish that delaying has no effect. Evidence for a window difference comes from $T$, not from comparing the significance labels of two baseline tests. Appendix~\ref{app:window} reports every seed and all preset comparisons.
+
+\paragraph{What the timing contrast resolves.}
+The two placements are not interchangeable in this cohort. This strengthens the account from ``a short LR reduction helps'' to a measured dependence on where that operation is applied. It does not isolate time from the rest of the update process. Across all 16 early/delayed trajectories, the sum of actual update norms in updates 1--5 is 22.22--41.82 times its value in updates 6--10. These sums describe realized movement, not the counterfactual perturbation introduced by the LR change. Equal update count and LR multiplier therefore do not equalize actual movement or intervention dose. The branch transition, moment history, numerical execution, and their later feedback remain possible contributors. A unique RAdam mediator, a dose-matched critical-period claim, and the fraction of the natural denominator-history benefit explained by startup scale remain unestablished.
+
+\subsection{A fresh q128 cohort limits transfer of the startup response}
+\label{sec:q128}
+The new cohort fixes seeds 301--308 without selecting them for a previous quality response. Each seed has four fresh trajectories: AA, DA, $\Adown$, and $\Dup$. Native $q=128$ is retained before and after 512 kimg; target and global scales remain one. DA and $\Dup$ use denominator scale 1.1 only in the prefix, then return to native A. Each path retains its own training state and initializes its own $\Ereset$ at the boundary. All 32 trajectories and 96 evaluation blocks complete, yielding eight complete training-seed units.
+
+The prespecified primary contrast remains $S=(C-M)/2$, with $M=Y_{\Adown}-Y_{AA}$ and $C=Y_{\Dup}-Y_{DA}$; $H=Y_{DA}-Y_{AA}$ is supportive. The primary estimate is $S=0.004235$, nominal 95\% paired-t CI $[-0.034159,0.042629]$, $p=0.801741$ (Table~\ref{tab:q128effects}). Four seeds have positive $S$ and four negative. The geometric FID changes corresponding to $M$, $C$, and $H$ are $+0.47\%$, $+1.32\%$, and $-0.89\%$, respectively. Both M/C Holm-adjusted $p$ values are 1.0. The cohort does not reproduce the expected A-side startup benefit or provide stable support for the denominator-history advantage. These intervals do not establish a zero effect or equivalence.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{Fresh q128 results, $n=8$ training seeds.} All estimates and intervals are in log-FID units. $S$ is primary, M/C are the two Holm-adjusted secondary tests, and $H$ is supportive. Intervals are nominal 95\% paired-t intervals, not simultaneous intervals. $\exp(S)$ is a composite ratio, not a model's percentage FID improvement.}
+\label{tab:q128effects}
+\begin{tabular}{lrrrr}
+\toprule Contrast & Mean & Nominal 95\% CI & Raw $p$ & Holm $p$\\\midrule
+\inputrows{data/q128_effect_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{\figfile{q128_endpoints_effects}}
+\caption{\textbf{The fresh q128 cohort does not reproduce a stable endpoint benefit.} Left: all four endpoints for every prespecified seed; each point is the geometric mean of three FID50k blocks. Right: the prespecified seed-level contrasts and nominal 95\% paired-t intervals. The blocks are repeated evaluations of a trained model, not independent training replicates or FID150k.}
+\label{fig:q128}
+\end{figure}
+
+A bounded audit of existing records confirms the operation: 763 continuous attempts cover the first 16 successful updates of all 32 trajectories. The observed LR windows, restoration, scaler events, and successful-call clock checks match the plan. Relative to each seed's own AA path, $\Adown$ reduces the sum of the first five update norms in all eight seeds (ratios 0.768--0.957). Relative to DA, $\Dup$ increases it in all eight (1.005--1.269). Recorded net displacement is smaller in all eight A-reduction pairs and larger in seven of eight D-compensation pairs. These are comparisons of evolving trajectories, not same-state counterfactual perturbation doses. The adjacent-window readings and complete per-seed values are retained in Appendix~\ref{app:q128}.
+
+The local response therefore occurred without stable evidence of the predicted endpoint improvement. The existing material does not explain that discrepancy. Comparing these results with the responder-enriched $q256$ studies changes both $q$ and cohort, so it does not identify a causal effect of $q$ or an explained condition under which the mechanism succeeds or fails.
+
+\section{State interventions, scope, and remaining questions}
+\label{sec:scope}
+\paragraph{Restart and swap answer different questions.}
+M1 crosses A/B history with optimizer retention or restart. Keep-A/B complete 14/16 and 15/16 paths; restart-A/B complete 8/16 and 15/16. The restart-history comparison has seven complete pairs and remains uncertain. A local decomposition on four retrospectively selected seeds shows that clearing moments at a fixed clock can enlarge the next update norm by 12.7--14.7 times. Restart thus changes the update process, beyond deleting a putative historical carrier. Six-seed optimizer swaps and a 512-versus-768-kimg restart comparison do not identify a unique optimizer-source effect or a memory-decay law (Appendix~\ref{app:state}). These observations motivate direct update interventions while leaving optimizer mediation unresolved.
+
+\paragraph{A persistent effect does not imply a benefit from withdrawal.}
+From the same D prefix, DA/DD has geometric FID ratio 1.00889 across all 16 pairs (95\% CI $[0.97817,1.04056]$). Neither the difference test ($p=0.551$) nor the prespecified 3\% equivalence test ($p=0.0869$) passes. The data therefore do not establish that restoring A at 512 kimg improves over maintaining D.
+
+\paragraph{Cross-configuration evidence bounds the claim.}
+ImageNet-$64\times64$ provides three IA/IB pairs, ten checkpoints, and two NFEs. Through 6,400 kimg, all 30 paired FID readouts favor baseline IA over the enlarged-gap IB; over the complete trajectory, 50/60 do so, with heterogeneous late deterioration retained. This setting uses $c=0.06$ and gap-independent snrpk weighting, together with different data, architecture, and other settings. It is a boundary on an unconditional gap-improvement claim, not a matched factorial test of the CIFAR mechanism. Appendix~\ref{app:scope} shows all trajectories, along with unresolved or protocol-limited earlier $q128$ and other history studies.
+
+\paragraph{What the remaining tests can establish.}
+The completed window comparison establishes a placement-dependent endpoint response within the existing $q256$ cohort, with unequal realized movement. The fresh $q128$ cohort now shows that correct execution and the expected direction of local movement are insufficient to secure a stable endpoint benefit in another setting and cohort. The data do not explain which aspect of this change matters. A causal role for spacing, a dose-matched timing effect, and a natural mediation fraction remain unresolved. No further training, sample generation, or optimizer/precision search was performed for this closeout.
+
+\section{Related work and interpretation}
+\label{sec:related}
+\paragraph{Consistency training and pairing.}
+CMs and improved consistency training establish the consistency objective, single-sided targets, and robust-loss design \citep{song2023consistency,song2024improved}. ECT develops diffusion pretraining followed by tuning and explicitly examines mapping and weighting choices \citep{geng2025ect}. TCM changes the noise-time range assigned to consistency training \citep{lee2024tcm}; ADCM selects discretization through a local/global consistency trade-off and adds adaptive loss components \citep{bai2025adcm}. Our experiments ask which separately executed component of a gap change can create a benefit that persists under a shared later rule. They do not establish that these newer methods inherit the same effect.
+
+\paragraph{Relative weighting, global scale, and stabilization.}
+Min-SNR-$\gamma$ treats diffusion timesteps as tasks and balances their optimization conflicts with SNR-dependent weights \citep{hang2023minsnr}. Such changes alter relative emphasis across noise levels. D instead multiplies the complete same-state gradient by $1/g$ under the studied objective. Its effect raises a question about stateful execution that relative reweighting alone does not answer. The sCM/TrigFlow framework improves stability using parameterization, tangent normalization, adaptive weighting, and tangent warmup \citep{lu2025scm}. In particular, its warmup demonstrates that startup stabilization is already part of CM methodology. Our experiments isolate a denominator operation, specify a five-update test from the audited RAdam branch, directly compare early and delayed placement, and test transfer in a fresh cohort. Their contribution is this chain of measured contrasts, rather than the general idea of warmup.
+
+\paragraph{Mechanistic studies of CM learning.}
+Stable Consistency Tuning (SCT) relates consistency learning to temporal-difference learning and reduces variance using a score identity \citep{wang2024sct}. Align Your Tangent (AYT) analyzes oscillatory output tangents and changes the feature-space distance to improve their alignment \citep{kim2025ayt}. These works investigate training behavior and use their analyses to guide modifications. Our local identity separates target-induced direction changes from a uniform scale change; our endpoint experiments then examine history and startup effects. Output tangents along a noise trajectory, parameter-space gradients, and optimizer parameter steps are distinct objects and should not be conflated.
+
+\paragraph{Adaptive optimizers and early training.}
+Adam's ideal scale cancellation and RAdam's startup rectification explain why loss scale need not translate uniformly into update scale \citep{kingma2015adam,liu2020radam}. Finite stabilizers, nonproportional moment histories, and numerical execution qualify that cancellation; Appendix~\ref{app:theory} states the assumptions explicitly. Slingshot documents late-training dynamics in adaptive optimizers \citep{thilak2022slingshot}, while critical-learning-period studies show that early perturbations can have persistent consequences \citep{achille2019critical}. These are relevant precedents for studying training paths, rather than evidence that our setting exhibits the same mechanisms. We have not identified a Slingshot process or a uniquely critical learning period.
+
+\paragraph{Evidence strength and reproducibility.}
+Cohort reuse preserves useful within-seed comparisons but prevents treating every study as an independent replication. Differential failures restrict complete-case quality inference; transparent accounting does not remove that selection. The responder-enriched startup cohort and its interim inspection further limit population claims. The adjacent-window extension adds new delayed trajectories but shares that cohort and its AA/early endpoints; full-group unblinding of the extension does not remove the earlier selection. The accompanying artifact provides the measurements, source hashes, and code needed to reconstruct figures and summary statistics. It does not include all training data, model checkpoints, or private historical execution receipts; reproducing the full training campaign additionally requires those assets. Appendix~\ref{app:windowprovenance} distinguishes verified public result bindings from remaining execution-archive gaps. The new q128 cohort narrows the transfer claim: the earlier operation-level effects remain measured results in their own cohorts, while a broadly transferable mechanism remains unestablished.
+
+\section{Conclusion}
+Separating target construction from loss scale shows that an early denominator-only operation can improve consistency-tuning quality after common continuation in the studied $q256$ setting. Startup and adjacent-window interventions connect this observation to a known optimizer response and reveal placement-dependent endpoint effects in a responder-enriched cohort. The fresh $q128$ cohort does not reproduce a stable startup or denominator-history benefit, despite verified execution and observable local update changes. The resulting contribution is an experimentally delimited account of loss-scale history, not a general mechanism inferred from a local identity. Existing records leave the difference between local response and endpoint benefit unexplained.

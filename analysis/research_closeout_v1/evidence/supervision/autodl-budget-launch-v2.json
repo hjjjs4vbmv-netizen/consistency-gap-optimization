@@ -1,0 +1,19 @@
+{
+  "pid": 38428,
+  "prior": {
+    "pid": 34020,
+    "wall": 1789108097.1002655,
+    "log": "<ECT_ROOT>/supervision/autodl-budget-monitor.log"
+  },
+  "wall": 1789108447.4849558,
+  "review": {
+    "cap_gpuh": 200.0,
+    "spent_gpuh": 89.22231597816301,
+    "remaining_training_gpuh": 86.69734195096886,
+    "remaining_evaluation_gpuh": 10.563510645755247,
+    "projected_total_gpuh": 186.48316857488712,
+    "allowed": true,
+    "estimate_rule": "median completed same-q same-host training, then same-host or same-q fallback; live attempt throughput; median completed same-q evaluation blocks; no quality values used",
+    "wall": 1789108447.2686417
+  }
+}

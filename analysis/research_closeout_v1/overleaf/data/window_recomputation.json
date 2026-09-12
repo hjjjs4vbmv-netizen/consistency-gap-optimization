@@ -1,0 +1,82 @@
+{
+  "status": "PASS",
+  "source_commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+  "scientific_commit": "fcc94d26b1085011ac935084f7c1cf4c149e2947",
+  "n": 8,
+  "block_count": 72,
+  "new_blocks": 24,
+  "reused_blocks": 48,
+  "control_values_exactly_reconciled_with_PR111": 48,
+  "effects": {
+    "T": {
+      "mean_log_difference": 0.10659591531831997,
+      "ci95_log": [
+        0.04284795584498963,
+        0.1703438747916503
+      ],
+      "two_sided_t_p": 0.005503772369642988,
+      "ratio": 1.1124846256455536,
+      "ratio_ci95": [
+        1.0437791822614733,
+        1.1857125178682628
+      ],
+      "percent": 11.248462564555373,
+      "percent_ci95": [
+        4.377918226147322,
+        18.57125178682628
+      ],
+      "sign_flip_p": 0.0078125,
+      "tost_p": 0.9877886980481699
+    },
+    "L": {
+      "mean_log_difference": -0.021305247533175725,
+      "ci95_log": [
+        -0.043577974936209546,
+        0.0009674798698580955
+      ],
+      "two_sided_t_p": 0.05816730096390235,
+      "ratio": 0.9789201060113252,
+      "ratio_ci95": [
+        0.9573579012591994,
+        1.0009679480294735
+      ],
+      "percent": -2.1079893988674767,
+      "percent_ci95": [
+        -4.264209874080054,
+        0.09679480294735474
+      ]
+    },
+    "M": {
+      "mean_log_difference": -0.1279011628514957,
+      "ci95_log": [
+        -0.18357553889234543,
+        -0.07222678681064595
+      ],
+      "two_sided_t_p": 0.0009742532510554255,
+      "ratio": 0.8799403456414299,
+      "ratio_ci95": [
+        0.8322890031738517,
+        0.9303198876049806
+      ],
+      "percent": -12.005965435857016,
+      "percent_ci95": [
+        -16.771099682614835,
+        -6.968011239501937
+      ]
+    }
+  },
+  "T_all_positive": true,
+  "telemetry": {
+    "prefixes": 16,
+    "attempts": 406,
+    "successful_updates": 256,
+    "AMP_skips": 150,
+    "within_path_norm_sum_ratio_1_5_over_6_10_range": [
+      22.215990936433982,
+      41.81713889342176
+    ],
+    "early_net_displacement": "missing; not inferred from norm sums",
+    "early_rho": "derived using native RAdam formula and observed successful clock"
+  },
+  "scope": "Public scalar and telemetry reconstruction; no private checkpoint rehash or GPU rerun."
+}

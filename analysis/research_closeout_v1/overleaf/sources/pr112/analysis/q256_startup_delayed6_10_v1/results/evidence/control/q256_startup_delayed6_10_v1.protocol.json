@@ -1,0 +1,92 @@
+{
+  "protocol_id": "q256_startup_delayed6_10_v1",
+  "q": 256,
+  "base_commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+  "cohort": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57
+  ],
+  "cohort_identity": "PR111_enriched_exploratory_extension",
+  "arms": [
+    "A_delayed_down6_10"
+  ],
+  "reused_arms": [
+    "AA",
+    "A_startup_down5"
+  ],
+  "initialization": "fresh_transfer",
+  "final_kimg": 1024,
+  "switch_kimg": 512,
+  "batch": 128,
+  "microbatch": 16,
+  "world_size": 1,
+  "attempted_iterations": 8000,
+  "global_gap_scale": 1.0,
+  "target_gap_scale": 1.0,
+  "windows": {
+    "A_delayed_down6_10": {
+      "start_success_step": 6,
+      "end_success_step": 10,
+      "lr_multiplier": 0.9090909090909091
+    }
+  },
+  "primary": "T256=Y_delayed-Y_early",
+  "key_secondary": [
+    "L256=Y_delayed-Y_AA"
+  ],
+  "supportive": [],
+  "statistics": {
+    "unit": "training_seed",
+    "Y": "mean of three log-FID50k values",
+    "test": "two-sided paired t",
+    "interval": "95 percent t",
+    "secondary_multiplicity": "none; exploratory nominal intervals",
+    "sign_flip": "all 2^n signs; sensitivity under sign symmetry, not allocation randomization",
+    "missing": "complete AA/early/delayed set",
+    "optional_equivalence": "TOST +/-log(1.03), auxiliary only"
+  },
+  "evaluation": {
+    "endpoint_kimg": 1024,
+    "readout": "E_512",
+    "precision": "fp32",
+    "nfe": 1,
+    "blocks": {
+      "B0": [
+        0,
+        49999
+      ],
+      "B1": [
+        50000,
+        99999
+      ],
+      "B2": [
+        100000,
+        149999
+      ]
+    },
+    "samples_per_block": 50000,
+    "metric_seed": 20260730,
+    "metrics": [
+      "fid50k_full",
+      "kid50k_full"
+    ],
+    "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+    "timing": "all three blocks after each valid endpoint",
+    "unblind": "only after this full group is terminal"
+  },
+  "engineering": {
+    "seeds": [
+      50,
+      51
+    ],
+    "max_attempts": 64,
+    "no_quality_evaluation": true
+  },
+  "failure_policy": "preserve all failures; no replacement, outlier removal or effect-driven changes"
+}

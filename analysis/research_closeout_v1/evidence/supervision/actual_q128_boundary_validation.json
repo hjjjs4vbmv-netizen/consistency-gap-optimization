@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "scope": "actual formal q128 seed302 DA 512-kimg transition, not a synthetic clock fixture",
+  "attempted_iteration": 4000,
+  "q": 128,
+  "source_native_arm": "D",
+  "suffix_native_arm": "A",
+  "ema_init_counts": [
+    0,
+    1
+  ],
+  "online_optimizer_scaler_rng_sampler_unchanged": true,
+  "ema512_matches_own_online": true,
+  "paths": [
+    "<ECT_ROOT>/archive/paid-node-01/runs/q128_startup_fresh8_v1/seed302/DA/training-state-kimg000512.pt",
+    "<ECT_ROOT>/archive/paid-node-01/runs/q128_startup_fresh8_v1/seed302/DA/training-state-branch-init-kimg000512.pt"
+  ]
+}

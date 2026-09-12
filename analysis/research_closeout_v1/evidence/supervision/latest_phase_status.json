@@ -1,0 +1,76 @@
+{
+  "wall": 1789083450.5988317,
+  "hosts": [
+    {
+      "host": "owned",
+      "workers": [
+        {
+          "worker": "worker-6",
+          "status": "RUNNING",
+          "attempted_iteration": 5454,
+          "error": null,
+          "log": "<ECT_ROOT>/runs/q256_startup_delayed6_10_v1/seed56/A_delayed_down6_10/process-1789067826328970545.log"
+        },
+        {
+          "worker": "worker-7",
+          "status": "RUNNING",
+          "attempted_iteration": 5375,
+          "error": null,
+          "log": "<ECT_ROOT>/runs/q256_startup_delayed6_10_v1/seed57/A_delayed_down6_10/process-1789067826322906386.log"
+        }
+      ]
+    },
+    {
+      "host": "paid-node-01",
+      "workers": [
+        {
+          "worker": "worker-0",
+          "status": "RUNNING",
+          "attempted_iteration": 597,
+          "error": null,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/AA/process-1789082471037383240.log"
+        },
+        {
+          "worker": "worker-1",
+          "status": "RUNNING",
+          "attempted_iteration": 597,
+          "error": null,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/DA/process-1789082470180559828.log"
+        }
+      ]
+    },
+    {
+      "host": "paid-node-02",
+      "workers": [
+        {
+          "worker": "worker-2",
+          "status": "RUNNING",
+          "attempted_iteration": 114,
+          "error": null,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed303/A_startup_down5/process-1789083200196029188.log"
+        },
+        {
+          "worker": "worker-3",
+          "status": "RUNNING",
+          "attempted_iteration": 185,
+          "error": null,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed304/D_startup_up5/process-1789082979865781395.log"
+        },
+        {
+          "worker": "worker-4",
+          "status": "RUNNING",
+          "attempted_iteration": 49,
+          "error": null,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed305/AA/process-1789083333199308294.log"
+        },
+        {
+          "worker": "worker-5",
+          "status": "RUNNING",
+          "attempted_iteration": 128,
+          "error": null,
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed306/DA/process-1789083159192623932.log"
+        }
+      ]
+    }
+  ]
+}

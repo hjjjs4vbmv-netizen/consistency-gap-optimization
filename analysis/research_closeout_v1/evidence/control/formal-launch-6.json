@@ -1,0 +1,16 @@
+{
+  "pid": 104771,
+  "logical_gpu": 6,
+  "first_seed": 56,
+  "started_wall": 1789067823.6322522,
+  "command": [
+    "<PRIVATE_PATH>/python3.11",
+    "-m",
+    "analysis.startup_window_experiments_v1.worker",
+    "--deployment",
+    "<ECT_ROOT>/owned.json",
+    "--logical-gpu",
+    "6"
+  ],
+  "log": "<ECT_ROOT>/control/worker-6.process.log"
+}

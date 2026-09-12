@@ -1,0 +1,22 @@
+{
+  "id": "global200_owned_recovery_v1",
+  "scope": "owned lanes 6 and 7 only after legacy cost-review exit",
+  "cap_gpuh": 200,
+  "scientific_implementation": "fcc94d26b1085011ac935084f7c1cf4c149e2947",
+  "frozen_scientific_source_unchanged": true,
+  "reason": "replace implementation-added equal 25 GPUh lane split with original global 200 GPUh forecast, including all remaining fixed jobs and both paid/owned use",
+  "dispatcher_sha256": "c9ec44f9a32c3aca98f0e80789c147da06eeb5efcff01243a921e633f71214fe",
+  "original_worker_sha256": "2fe732412eb5962c04b6125957693e709cc7355f2ed0ec736adeb1b0cb3dcf7b",
+  "preserved_checks": [
+    "original source/config/manifest freeze",
+    "identical frozen scientific commands",
+    "original GPU exclusivity",
+    "own-state recovery only",
+    "no extra resources or matrix changes",
+    "global forecast must remain <=200"
+  ],
+  "preliminary_projection_gpuh": 193.6126314947964,
+  "review_path": "<ECT_ROOT>/supervision/global_budget_pre_amendment_review.json",
+  "unit_checks": "<ECT_ROOT>/supervision/global_budget_unit_checks.json",
+  "created_wall": 1789098142.3375971
+}

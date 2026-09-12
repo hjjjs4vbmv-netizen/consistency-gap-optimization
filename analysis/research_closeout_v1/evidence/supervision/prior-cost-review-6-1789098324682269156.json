@@ -1,0 +1,47 @@
+{
+  "status": "COST_REVIEW_REQUIRED",
+  "projected_slot_gpuh": 34.90496811995084,
+  "fixed_remaining_jobs": [
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "A_startup_down5",
+      "order": 1,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "D_startup_up5",
+      "order": 2,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "AA",
+      "order": 3,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "DA",
+      "order": 4,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>"
+    }
+  ],
+  "reason": "projection exceeds the prepared per-slot share; report full matrix cost before more dispatch"
+}

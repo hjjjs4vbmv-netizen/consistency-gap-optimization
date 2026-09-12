@@ -1,0 +1,502 @@
+{
+  "status": "FINAL_PROCESS_COSTS_VERIFIED",
+  "wall": 1789132019.1779413,
+  "canonical_trajectories": 40,
+  "canonical_evaluation_blocks": 120,
+  "canonical_process_gpuh": 194.36086662403812,
+  "shared_preparation_gpuh": 0.9793135460194511,
+  "excluded_duplicate_process_gpuh": 0.40008836878644716,
+  "total_process_gpuh": 195.74026853884402,
+  "paid_process_gpuh": 170.22299645201701,
+  "owned_process_gpuh": 25.51727208682698,
+  "by_group": {
+    "q256_startup_delayed6_10_v1": {
+      "trajectories": 8,
+      "training_gpuh": 35.87320472602707,
+      "evaluation_gpuh": 2.746411113080879,
+      "total_gpuh": 38.61961583910795,
+      "paid_gpuh": 25.140099871658148,
+      "owned_gpuh": 13.479515967449796
+    },
+    "q128_startup_fresh8_v1": {
+      "trajectories": 32,
+      "training_gpuh": 143.64374762778337,
+      "evaluation_gpuh": 12.097503157146791,
+      "total_gpuh": 155.7412507849302,
+      "paid_gpuh": 144.074766959946,
+      "owned_gpuh": 11.666483824984171
+    }
+  },
+  "by_physical_host": {
+    "owned": {
+      "training_trajectories": 4,
+      "evaluated_endpoints": 4,
+      "training_gpuh": 24.404126249869456,
+      "evaluation_gpuh": 0.7418735425645071,
+      "preparation_gpuh": 0.37127229439301623,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 25.51727208682698
+    },
+    "paid-node-04": {
+      "training_trajectories": 5,
+      "evaluated_endpoints": 0,
+      "training_gpuh": 22.850365354555606,
+      "evaluation_gpuh": 0.0,
+      "preparation_gpuh": 0.0,
+      "excluded_duplicate_gpuh": 0.40008836878644716,
+      "total_gpuh": 23.25045372334205
+    },
+    "paid-node-02": {
+      "training_trajectories": 12,
+      "evaluated_endpoints": 30,
+      "training_gpuh": 46.2800518089419,
+      "evaluation_gpuh": 12.551957176072108,
+      "preparation_gpuh": 0.3949109929261936,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 59.22691997794019
+    },
+    "paid-node-05": {
+      "training_trajectories": 3,
+      "evaluated_endpoints": 0,
+      "training_gpuh": 15.570908705076176,
+      "evaluation_gpuh": 0.0,
+      "preparation_gpuh": 0.0,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 15.570908705076176
+    },
+    "paid-node-01": {
+      "training_trajectories": 6,
+      "evaluated_endpoints": 6,
+      "training_gpuh": 22.380900327929346,
+      "evaluation_gpuh": 1.5500835515910552,
+      "preparation_gpuh": 0.21313025870024124,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 24.14411413822065
+    },
+    "paid-node-08": {
+      "training_trajectories": 4,
+      "evaluated_endpoints": 0,
+      "training_gpuh": 20.711700059790164,
+      "evaluation_gpuh": 0.0,
+      "preparation_gpuh": 0.0,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 20.711700059790164
+    },
+    "paid-node-03": {
+      "training_trajectories": 3,
+      "evaluated_endpoints": 0,
+      "training_gpuh": 11.231108907689858,
+      "evaluation_gpuh": 0.0,
+      "preparation_gpuh": 0.0,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 11.231108907689858
+    },
+    "paid-node-06": {
+      "training_trajectories": 2,
+      "evaluated_endpoints": 0,
+      "training_gpuh": 10.700752662612228,
+      "evaluation_gpuh": 0.0,
+      "preparation_gpuh": 0.0,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 10.700752662612228
+    },
+    "paid-node-07": {
+      "training_trajectories": 1,
+      "evaluated_endpoints": 0,
+      "training_gpuh": 5.3870382773457095,
+      "evaluation_gpuh": 0.0,
+      "preparation_gpuh": 0.0,
+      "excluded_duplicate_gpuh": 0.0,
+      "total_gpuh": 5.3870382773457095
+    }
+  },
+  "canonical_receipts": [
+    {
+      "job": "q256_startup_delayed6_10_v1-seed56-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "owned",
+      "evaluation_host": "owned",
+      "training_gpuh": 6.485524132043227,
+      "evaluation_gpuh": 0.20838454070449292,
+      "total_gpuh": 6.69390867274772
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed307-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "owned",
+      "evaluation_host": "owned",
+      "training_gpuh": 5.139288288089447,
+      "evaluation_gpuh": 0.16254787273135862,
+      "total_gpuh": 5.301836160820805
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed307-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-04",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 4.410818203610834,
+      "evaluation_gpuh": 0.508408744353801,
+      "total_gpuh": 4.919226947964635
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed307-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-04",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 4.473326623902087,
+      "evaluation_gpuh": 0.3958875767317497,
+      "total_gpuh": 4.869214200633836
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed307-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-04",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 4.727584894588735,
+      "evaluation_gpuh": 0.5001151352706883,
+      "total_gpuh": 5.227700029859423
+    },
+    {
+      "job": "q256_startup_delayed6_10_v1-seed57-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "owned",
+      "evaluation_host": "owned",
+      "training_gpuh": 6.577221823285541,
+      "evaluation_gpuh": 0.20838547141653382,
+      "total_gpuh": 6.785607294702075
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed308-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "owned",
+      "evaluation_host": "owned",
+      "training_gpuh": 6.2020920064512435,
+      "evaluation_gpuh": 0.1625556577121218,
+      "total_gpuh": 6.364647664163365
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed308-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-04",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 4.448368514961977,
+      "evaluation_gpuh": 0.4334018485889667,
+      "total_gpuh": 4.881770363550944
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed308-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-04",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 4.790267117491975,
+      "evaluation_gpuh": 0.46672227348407935,
+      "total_gpuh": 5.256989390976055
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed308-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-05",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.298699403397299,
+      "evaluation_gpuh": 0.3583791009295318,
+      "total_gpuh": 5.65707850432683
+    },
+    {
+      "job": "q256_startup_delayed6_10_v1-seed50-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "paid-node-01",
+      "evaluation_host": "paid-node-01",
+      "training_gpuh": 3.7168821765397055,
+      "evaluation_gpuh": 0.34585043341231847,
+      "total_gpuh": 4.062732609952024
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed301-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-01",
+      "evaluation_host": "paid-node-01",
+      "training_gpuh": 3.725280789935237,
+      "evaluation_gpuh": 0.24584686217803714,
+      "total_gpuh": 3.971127652113274
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed301-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-01",
+      "evaluation_host": "paid-node-01",
+      "training_gpuh": 3.741966821536577,
+      "evaluation_gpuh": 0.17917669283433094,
+      "total_gpuh": 3.921143514370908
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed301-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-08",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.244710769057274,
+      "evaluation_gpuh": 0.5334206566286998,
+      "total_gpuh": 5.778131425685974
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed301-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-03",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.754821546157408,
+      "evaluation_gpuh": 0.3583814327605069,
+      "total_gpuh": 4.113202978917915
+    },
+    {
+      "job": "q256_startup_delayed6_10_v1-seed51-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "paid-node-01",
+      "evaluation_host": "paid-node-01",
+      "training_gpuh": 3.716886768037867,
+      "evaluation_gpuh": 0.34585316190806525,
+      "total_gpuh": 4.062739929945932
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed302-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-01",
+      "evaluation_host": "paid-node-01",
+      "training_gpuh": 3.712997590006174,
+      "evaluation_gpuh": 0.25834717155304837,
+      "total_gpuh": 3.971344761559222
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed302-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-01",
+      "evaluation_host": "paid-node-01",
+      "training_gpuh": 3.7668861818737867,
+      "evaluation_gpuh": 0.17500922970525506,
+      "total_gpuh": 3.9418954115790417
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed302-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-08",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.06122481904717,
+      "evaluation_gpuh": 0.3875689837160624,
+      "total_gpuh": 5.448793802763232
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed302-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-03",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.7548099483446116,
+      "evaluation_gpuh": 0.4083944103711595,
+      "total_gpuh": 4.163204358715771
+    },
+    {
+      "job": "q256_startup_delayed6_10_v1-seed52-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.846256485163338,
+      "evaluation_gpuh": 0.4167627247847203,
+      "total_gpuh": 4.263019209948058
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed303-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.9378376709587046,
+      "evaluation_gpuh": 0.44587597293986214,
+      "total_gpuh": 4.383713643898567
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed303-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.8838373242929163,
+      "evaluation_gpuh": 0.42921732607711516,
+      "total_gpuh": 4.313054650370032
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed303-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-06",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.557122805221653,
+      "evaluation_gpuh": 0.4083891018852591,
+      "total_gpuh": 5.965511907106912
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed303-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-05",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.323742113043554,
+      "evaluation_gpuh": 0.3333777960110456,
+      "total_gpuh": 5.6571199090546
+    },
+    {
+      "job": "q256_startup_delayed6_10_v1-seed53-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.808763372425197,
+      "evaluation_gpuh": 0.3917713835462928,
+      "total_gpuh": 4.200534755971489
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed304-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.846162121213145,
+      "evaluation_gpuh": 0.5292262868448678,
+      "total_gpuh": 4.375388408058013
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed304-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.783716387319275,
+      "evaluation_gpuh": 0.3250378985651251,
+      "total_gpuh": 4.1087542858844
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed304-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-08",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.123504557263934,
+      "evaluation_gpuh": 0.39172628966160117,
+      "total_gpuh": 5.515230846925535
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed304-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-03",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.7214774131878383,
+      "evaluation_gpuh": 0.33337823759867913,
+      "total_gpuh": 4.054855650786518
+    },
+    {
+      "job": "q256_startup_delayed6_10_v1-seed54-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.883742763271762,
+      "evaluation_gpuh": 0.4167920252918783,
+      "total_gpuh": 4.30053478856364
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed305-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.7921589215493037,
+      "evaluation_gpuh": 0.4083884683220337,
+      "total_gpuh": 4.200547389871337
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed305-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 4.04215249145093,
+      "evaluation_gpuh": 0.42087676929930845,
+      "total_gpuh": 4.463029260750239
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed305-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-07",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.3870382773457095,
+      "evaluation_gpuh": 0.49589248422326315,
+      "total_gpuh": 5.882930761568972
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed305-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-05",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 4.948467188635323,
+      "evaluation_gpuh": 0.4417575323374735,
+      "total_gpuh": 5.390224720972797
+    },
+    {
+      "job": "q256_startup_delayed6_10_v1-seed55-A_delayed_down6_10",
+      "group": "q256_startup_delayed6_10_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.837927205260429,
+      "evaluation_gpuh": 0.41261137201657727,
+      "total_gpuh": 4.250538577277006
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed306-DA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.7962972558858907,
+      "evaluation_gpuh": 0.5208973391240256,
+      "total_gpuh": 4.317194595009917
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed306-A_startup_down5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-02",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 3.8211998101510107,
+      "evaluation_gpuh": 0.33752782611590293,
+      "total_gpuh": 4.158727636266914
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed306-D_startup_up5",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-08",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.282259914421787,
+      "evaluation_gpuh": 0.47505423945788705,
+      "total_gpuh": 5.757314153879674
+    },
+    {
+      "job": "q128_startup_fresh8_v1-seed306-AA",
+      "group": "q128_startup_fresh8_v1",
+      "training_host": "paid-node-06",
+      "evaluation_host": "paid-node-02",
+      "training_gpuh": 5.143629857390576,
+      "evaluation_gpuh": 0.2667159391339454,
+      "total_gpuh": 5.410345796524521
+    }
+  ],
+  "excluded_duplicates": {
+    "paid-node-04:q128_startup_fresh8_v1-seed301-D_startup_up5": {
+      "host": "paid-node-04",
+      "job": "q128_startup_fresh8_v1-seed301-D_startup_up5",
+      "process_gpuh": 0.16670049302409298,
+      "source_status": "TECHNICAL_FAILURE",
+      "classification": "EXCLUDED_UNAUTHORIZED_DUPLICATE",
+      "last_seen_wall": 1789125057.81265
+    },
+    "paid-node-04:q128_startup_fresh8_v1-seed302-AA": {
+      "host": "paid-node-04",
+      "job": "q128_startup_fresh8_v1-seed302-AA",
+      "process_gpuh": 0.10419263778590701,
+      "source_status": "TECHNICAL_FAILURE",
+      "classification": "EXCLUDED_UNAUTHORIZED_DUPLICATE",
+      "last_seen_wall": 1789125057.8126647
+    },
+    "paid-node-04:q128_startup_fresh8_v1-seed306-AA": {
+      "host": "paid-node-04",
+      "job": "q128_startup_fresh8_v1-seed306-AA",
+      "process_gpuh": 0.12919523797644716,
+      "source_status": "TECHNICAL_FAILURE",
+      "classification": "EXCLUDED_UNAUTHORIZED_DUPLICATE",
+      "last_seen_wall": 1789125057.8126795
+    }
+  },
+  "rental_billing_hours": "not inferred from process GPUh; platform release times and rates are not provided"
+}

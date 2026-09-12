@@ -1,0 +1,190 @@
+Enable tf32: False
+Loading dataset...
+<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/utils/data/sampler.py:77: UserWarning: `data_source` argument is not used and will be removed in 2.2.0.You may still have custom implementation that utilizes it.
+  warnings.warn(
+Constructing network...
+Setting up optimizer...
+P_mean: -1.1, P_std: 2.0, q: 128.0, k 8.0, b 1.0, c: 0.0
+GradScaler enabled: True for mixed precision training
+Setting up GradScaler...
+<TRAINING_ROOT>/code/training/ct_training_loop.py:1278: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+Loss scaling is overwritten when GradScaler is enabled
+Setting up DDP...
+
+ECMPrecond                Parameters  Buffers  Output shape       Datatype
+---                       ---         ---      ---                ---     
+model.map_noise           -           -        [16, 128]          float32 
+model.map_layer0          66048       -        [16, 512]          float32 
+model.map_layer1          262656      -        [16, 512]          float32 
+model.enc.32x32_conv      3584        -        [16, 128, 32, 32]  float16 
+model.enc.32x32_block0    1050368     -        [16, 256, 32, 32]  float16 
+model.enc.32x32_block1    1312512     -        [16, 256, 32, 32]  float16 
+model.enc.32x32_block2    1312512     -        [16, 256, 32, 32]  float16 
+model.enc.32x32_block3    1312512     -        [16, 256, 32, 32]  float16 
+model.enc.16x16_down      1378304     8        [16, 256, 16, 16]  float16 
+model.enc.16x16_block0    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.16x16_block1    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.16x16_block2    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.16x16_block3    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.8x8_down        1378304     8        [16, 256, 8, 8]    float16 
+model.enc.8x8_block0      1312512     -        [16, 256, 8, 8]    float16 
+model.enc.8x8_block1      1312512     -        [16, 256, 8, 8]    float16 
+model.enc.8x8_block2      1312512     -        [16, 256, 8, 8]    float16 
+model.enc.8x8_block3      1312512     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_in0         1576192     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_in1         1312512     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block0      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block1      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block2      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block3      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block4      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.16x16_up        1378304     8        [16, 256, 16, 16]  float16 
+model.dec.16x16_block0    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block1    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block2    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block3    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block4    2297856     -        [16, 256, 16, 16]  float16 
+model.dec.32x32_up        1378304     8        [16, 256, 32, 32]  float16 
+model.dec.32x32_block0    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block1    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block2    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block3    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block4    1706240     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_aux_norm  512         -        [16, 256, 32, 32]  float16 
+model.dec.32x32_aux_conv  6915        -        [16, 3, 32, 32]    float16 
+<top-level>               -           -        [16, 3, 32, 32]    float32 
+---                       ---         ---      ---                ---     
+Total                     55732739    32       -                  -       
+
+Loading network weights from "<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"...
+Exporting sample images...
+Training for 1024 kimg...
+
+Reduce dt every 10000 ticks.
+Update scheduler at 0 ticks, 0.0 kimg, ratio 0.9921875
+tick 0     kimg 0.1       loss nan       grad_scale 65536     step_skipped 1       time 16s          sec/tick 3.2     sec/kimg 24.98   maintenance 12.7   cpumem 2.29   gpumem 2.05   reserved 2.14  
+Exporting sample images...
+tick 1     kimg 10.2      loss 14.78020  grad_scale 256       step_skipped 0       time 2m 47s       sec/tick 150.1   sec/kimg 14.85   maintenance 0.8    cpumem 2.30   gpumem 2.90   reserved 2.98  
+tick 2     kimg 20.4      loss 21.07591  grad_scale 256       step_skipped 0       time 5m 17s       sec/tick 150.7   sec/kimg 14.90   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 3     kimg 30.5      loss 17.33356  grad_scale 256       step_skipped 0       time 7m 48s       sec/tick 150.8   sec/kimg 14.91   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 4     kimg 40.6      loss 15.27566  grad_scale 256       step_skipped 0       time 10m 20s      sec/tick 151.4   sec/kimg 14.97   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 5     kimg 50.7      loss 14.95848  grad_scale 256       step_skipped 0       time 12m 52s      sec/tick 152.3   sec/kimg 15.06   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 6     kimg 60.8      loss 14.93283  grad_scale 256       step_skipped 0       time 15m 24s      sec/tick 152.0   sec/kimg 15.03   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 7     kimg 70.9      loss 14.92949  grad_scale 256       step_skipped 0       time 17m 55s      sec/tick 151.4   sec/kimg 14.97   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 8     kimg 81.0      loss 14.60675  grad_scale 256       step_skipped 0       time 20m 26s      sec/tick 151.0   sec/kimg 14.93   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 9     kimg 91.1      loss 14.75666  grad_scale 256       step_skipped 0       time 22m 57s      sec/tick 150.8   sec/kimg 14.91   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+tick 10    kimg 101.2     loss 14.71961  grad_scale 256       step_skipped 0       time 25m 28s      sec/tick 151.0   sec/kimg 14.93   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+Save the latest checkpoint at 000010 img...
+tick 11    kimg 111.4     loss 14.57212  grad_scale 256       step_skipped 0       time 28m 06s      sec/tick 150.6   sec/kimg 14.89   maintenance 6.9    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 12    kimg 121.5     loss 14.40949  grad_scale 256       step_skipped 0       time 30m 37s      sec/tick 151.1   sec/kimg 14.94   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 13    kimg 131.6     loss 14.72551  grad_scale 256       step_skipped 0       time 33m 09s      sec/tick 151.8   sec/kimg 15.01   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 14    kimg 141.7     loss 14.58567  grad_scale 256       step_skipped 0       time 35m 40s      sec/tick 151.8   sec/kimg 15.01   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 15    kimg 151.8     loss 14.69496  grad_scale 256       step_skipped 0       time 38m 12s      sec/tick 152.0   sec/kimg 15.03   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 16    kimg 161.9     loss 14.31480  grad_scale 256       step_skipped 0       time 40m 43s      sec/tick 150.8   sec/kimg 14.91   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 17    kimg 172.0     loss 14.51639  grad_scale 256       step_skipped 0       time 43m 14s      sec/tick 150.4   sec/kimg 14.87   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 18    kimg 182.1     loss 14.51026  grad_scale 256       step_skipped 0       time 45m 45s      sec/tick 151.1   sec/kimg 14.95   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 19    kimg 192.3     loss 14.54898  grad_scale 256       step_skipped 0       time 48m 15s      sec/tick 150.5   sec/kimg 14.88   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 20    kimg 202.4     loss 14.45625  grad_scale 256       step_skipped 0       time 50m 45s      sec/tick 149.8   sec/kimg 14.82   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+Save the latest checkpoint at 000020 img...
+tick 21    kimg 212.5     loss 14.41128  grad_scale 256       step_skipped 0       time 53m 24s      sec/tick 151.5   sec/kimg 14.98   maintenance 7.1    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 22    kimg 222.6     loss 14.32832  grad_scale 256       step_skipped 0       time 55m 56s      sec/tick 151.9   sec/kimg 15.02   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 23    kimg 232.7     loss 14.48406  grad_scale 256       step_skipped 0       time 58m 27s      sec/tick 151.1   sec/kimg 14.94   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 24    kimg 242.8     loss 14.46193  grad_scale 256       step_skipped 0       time 1h 00m 58s   sec/tick 151.7   sec/kimg 15.00   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 25    kimg 252.9     loss 14.45815  grad_scale 256       step_skipped 0       time 1h 03m 30s   sec/tick 151.9   sec/kimg 15.02   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 26    kimg 263.0     loss 14.37902  grad_scale 256       step_skipped 0       time 1h 06m 02s   sec/tick 151.3   sec/kimg 14.96   maintenance 0.0    cpumem 2.46   gpumem 2.48   reserved 2.98  
+Exporting sample images...
+tick 27    kimg 273.2     loss 14.55071  grad_scale 256       step_skipped 0       time 1h 08m 33s   sec/tick 151.2   sec/kimg 14.95   maintenance 0.7    cpumem 2.46   gpumem 2.48   reserved 2.98  
+tick 28    kimg 283.3     loss 14.50058  grad_scale 256       step_skipped 0       time 1h 11m 03s   sec/tick 149.8   sec/kimg 14.81   maintenance 0.0    cpumem 2.39   gpumem 2.48   reserved 2.98  
+tick 29    kimg 293.4     loss 14.64041  grad_scale 256       step_skipped 0       time 1h 13m 34s   sec/tick 151.1   sec/kimg 14.95   maintenance 0.0    cpumem 2.39   gpumem 2.48   reserved 2.98  
+tick 30    kimg 303.5     loss 14.43712  grad_scale 256       step_skipped 0       time 1h 16m 05s   sec/tick 150.8   sec/kimg 14.91   maintenance 0.0    cpumem 2.39   gpumem 2.48   reserved 2.98  
+Save the latest checkpoint at 000030 img...
+tick 31    kimg 313.6     loss 14.26675  grad_scale 256       step_skipped 0       time 1h 18m 43s   sec/tick 151.3   sec/kimg 14.97   maintenance 6.9    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 32    kimg 323.7     loss 14.46927  grad_scale 256       step_skipped 0       time 1h 21m 15s   sec/tick 151.6   sec/kimg 15.00   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 33    kimg 333.8     loss 14.35085  grad_scale 256       step_skipped 0       time 1h 23m 47s   sec/tick 152.1   sec/kimg 15.04   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 34    kimg 343.9     loss 14.28652  grad_scale 256       step_skipped 0       time 1h 26m 18s   sec/tick 151.2   sec/kimg 14.95   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 35    kimg 354.0     loss 14.41988  grad_scale 256       step_skipped 0       time 1h 28m 49s   sec/tick 150.5   sec/kimg 14.89   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 36    kimg 364.2     loss 14.29267  grad_scale 256       step_skipped 0       time 1h 31m 20s   sec/tick 151.2   sec/kimg 14.95   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 37    kimg 374.3     loss 14.35989  grad_scale 256       step_skipped 0       time 1h 33m 52s   sec/tick 152.3   sec/kimg 15.06   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 38    kimg 384.4     loss 14.42959  grad_scale 256       step_skipped 0       time 1h 36m 25s   sec/tick 152.3   sec/kimg 15.06   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 39    kimg 394.5     loss 14.26872  grad_scale 256       step_skipped 0       time 1h 38m 56s   sec/tick 151.7   sec/kimg 15.00   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 40    kimg 404.6     loss 14.50529  grad_scale 256       step_skipped 0       time 1h 41m 28s   sec/tick 151.5   sec/kimg 14.99   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+Save the latest checkpoint at 000040 img...
+tick 41    kimg 414.7     loss 14.38744  grad_scale 256       step_skipped 0       time 1h 44m 05s   sec/tick 150.1   sec/kimg 14.85   maintenance 7.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 42    kimg 424.8     loss 14.38916  grad_scale 256       step_skipped 0       time 1h 46m 38s   sec/tick 152.4   sec/kimg 15.07   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 43    kimg 434.9     loss 14.28385  grad_scale 256       step_skipped 0       time 1h 49m 09s   sec/tick 151.3   sec/kimg 14.96   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 44    kimg 445.1     loss 14.39722  grad_scale 256       step_skipped 0       time 1h 51m 40s   sec/tick 150.7   sec/kimg 14.91   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 45    kimg 455.2     loss 14.38487  grad_scale 256       step_skipped 0       time 1h 54m 11s   sec/tick 151.7   sec/kimg 15.00   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 46    kimg 465.3     loss 14.36730  grad_scale 256       step_skipped 0       time 1h 56m 43s   sec/tick 151.5   sec/kimg 14.98   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 47    kimg 475.4     loss 14.58181  grad_scale 256       step_skipped 0       time 1h 59m 13s   sec/tick 150.7   sec/kimg 14.91   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 48    kimg 485.5     loss 14.43258  grad_scale 256       step_skipped 0       time 2h 01m 46s   sec/tick 152.9   sec/kimg 15.12   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 49    kimg 495.6     loss 14.44907  grad_scale 256       step_skipped 0       time 2h 04m 18s   sec/tick 151.8   sec/kimg 15.01   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+tick 50    kimg 505.7     loss 14.49012  grad_scale 256       step_skipped 0       time 2h 06m 50s   sec/tick 151.4   sec/kimg 14.97   maintenance 0.0    cpumem 2.61   gpumem 2.48   reserved 2.98  
+Save the latest checkpoint at 000050 img...
+Saved immutable full-state milestone at 512.000 kimg: <TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed307/D_startup_up5/training-state-kimg000512.pt
+tick 51    kimg 515.8     loss 14.27652  grad_scale 512       step_skipped 1       time 2h 09m 44s   sec/tick 167.2   sec/kimg 16.53   maintenance 6.8    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 52    kimg 526.0     loss 14.90342  grad_scale 256       step_skipped 0       time 2h 12m 22s   sec/tick 158.9   sec/kimg 15.71   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+Exporting sample images...
+tick 53    kimg 536.1     loss 15.84312  grad_scale 256       step_skipped 0       time 2h 15m 01s   sec/tick 157.7   sec/kimg 15.59   maintenance 0.7    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 54    kimg 546.2     loss 15.92543  grad_scale 256       step_skipped 0       time 2h 17m 39s   sec/tick 158.3   sec/kimg 15.65   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 55    kimg 556.3     loss 16.07258  grad_scale 256       step_skipped 0       time 2h 20m 18s   sec/tick 159.2   sec/kimg 15.75   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 56    kimg 566.4     loss 16.11800  grad_scale 128       step_skipped 0       time 2h 23m 00s   sec/tick 161.3   sec/kimg 15.95   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 57    kimg 576.5     loss 15.83617  grad_scale 128       step_skipped 0       time 2h 25m 39s   sec/tick 159.2   sec/kimg 15.74   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 58    kimg 586.6     loss 16.04007  grad_scale 128       step_skipped 0       time 2h 28m 18s   sec/tick 158.7   sec/kimg 15.69   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 59    kimg 596.7     loss 15.78452  grad_scale 128       step_skipped 0       time 2h 30m 55s   sec/tick 157.7   sec/kimg 15.60   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 60    kimg 606.8     loss 15.94528  grad_scale 128       step_skipped 0       time 2h 33m 34s   sec/tick 158.6   sec/kimg 15.69   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+Save the latest checkpoint at 000060 img...
+tick 61    kimg 617.0     loss 15.84833  grad_scale 128       step_skipped 0       time 2h 36m 22s   sec/tick 159.8   sec/kimg 15.80   maintenance 8.2    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 62    kimg 627.1     loss 16.10895  grad_scale 128       step_skipped 0       time 2h 39m 02s   sec/tick 160.2   sec/kimg 15.84   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 63    kimg 637.2     loss 15.92261  grad_scale 128       step_skipped 0       time 2h 41m 41s   sec/tick 159.2   sec/kimg 15.74   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 64    kimg 647.3     loss 16.05212  grad_scale 128       step_skipped 0       time 2h 44m 21s   sec/tick 159.4   sec/kimg 15.76   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 65    kimg 657.4     loss 15.70247  grad_scale 128       step_skipped 0       time 2h 47m 00s   sec/tick 159.8   sec/kimg 15.81   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 66    kimg 667.5     loss 15.85924  grad_scale 128       step_skipped 0       time 2h 49m 39s   sec/tick 158.4   sec/kimg 15.66   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 67    kimg 677.6     loss 15.75252  grad_scale 128       step_skipped 0       time 2h 52m 18s   sec/tick 159.0   sec/kimg 15.72   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 68    kimg 687.7     loss 15.98693  grad_scale 128       step_skipped 0       time 2h 54m 57s   sec/tick 158.9   sec/kimg 15.71   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 69    kimg 697.9     loss 15.89295  grad_scale 128       step_skipped 0       time 2h 57m 36s   sec/tick 159.8   sec/kimg 15.80   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+tick 70    kimg 708.0     loss 15.86041  grad_scale 128       step_skipped 0       time 3h 00m 16s   sec/tick 159.3   sec/kimg 15.75   maintenance 0.0    cpumem 2.40   gpumem 2.69   reserved 2.98  
+Save the latest checkpoint at 000070 img...
+tick 71    kimg 718.1     loss 16.09294  grad_scale 128       step_skipped 0       time 3h 03m 02s   sec/tick 157.7   sec/kimg 15.60   maintenance 8.2    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 72    kimg 728.2     loss 15.86430  grad_scale 128       step_skipped 0       time 3h 05m 40s   sec/tick 158.5   sec/kimg 15.67   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 73    kimg 738.3     loss 15.92929  grad_scale 128       step_skipped 0       time 3h 08m 19s   sec/tick 158.7   sec/kimg 15.69   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 74    kimg 748.4     loss 15.71255  grad_scale 128       step_skipped 0       time 3h 10m 57s   sec/tick 158.5   sec/kimg 15.67   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 75    kimg 758.5     loss 15.95929  grad_scale 128       step_skipped 0       time 3h 13m 37s   sec/tick 159.8   sec/kimg 15.80   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 76    kimg 768.6     loss 15.81259  grad_scale 128       step_skipped 0       time 3h 16m 16s   sec/tick 159.2   sec/kimg 15.75   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 77    kimg 778.8     loss 15.97116  grad_scale 128       step_skipped 0       time 3h 18m 57s   sec/tick 160.4   sec/kimg 15.86   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 78    kimg 788.9     loss 16.08868  grad_scale 128       step_skipped 0       time 3h 21m 40s   sec/tick 163.6   sec/kimg 16.18   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+Exporting sample images...
+tick 79    kimg 799.0     loss 15.87608  grad_scale 128       step_skipped 0       time 3h 24m 23s   sec/tick 162.4   sec/kimg 16.06   maintenance 0.7    cpumem 2.61   gpumem 2.69   reserved 2.98  
+tick 80    kimg 809.1     loss 15.77704  grad_scale 128       step_skipped 0       time 3h 27m 02s   sec/tick 159.0   sec/kimg 15.72   maintenance 0.0    cpumem 2.61   gpumem 2.69   reserved 2.98  
+Save the latest checkpoint at 000080 img...
+tick 81    kimg 819.2     loss 15.78817  grad_scale 128       step_skipped 0       time 3h 29m 54s   sec/tick 162.5   sec/kimg 16.07   maintenance 8.6    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 82    kimg 829.3     loss 15.79070  grad_scale 256       step_skipped 0       time 3h 32m 33s   sec/tick 159.9   sec/kimg 15.81   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 83    kimg 839.4     loss 15.86949  grad_scale 128       step_skipped 0       time 3h 35m 14s   sec/tick 160.2   sec/kimg 15.84   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 84    kimg 849.5     loss 16.02040  grad_scale 128       step_skipped 0       time 3h 37m 52s   sec/tick 158.3   sec/kimg 15.66   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 85    kimg 859.6     loss 15.88619  grad_scale 128       step_skipped 0       time 3h 40m 31s   sec/tick 158.7   sec/kimg 15.69   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 86    kimg 869.8     loss 15.87959  grad_scale 128       step_skipped 0       time 3h 43m 11s   sec/tick 160.1   sec/kimg 15.83   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 87    kimg 879.9     loss 15.93612  grad_scale 128       step_skipped 0       time 3h 45m 50s   sec/tick 159.4   sec/kimg 15.76   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 88    kimg 890.0     loss 15.97067  grad_scale 128       step_skipped 0       time 3h 48m 29s   sec/tick 159.2   sec/kimg 15.74   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 89    kimg 900.1     loss 16.00652  grad_scale 128       step_skipped 0       time 3h 51m 10s   sec/tick 160.5   sec/kimg 15.88   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+tick 90    kimg 910.2     loss 15.95016  grad_scale 128       step_skipped 0       time 3h 53m 54s   sec/tick 163.7   sec/kimg 16.19   maintenance 0.0    cpumem 2.59   gpumem 2.69   reserved 2.98  
+Save the latest checkpoint at 000090 img...
+tick 91    kimg 920.3     loss 16.00275  grad_scale 128       step_skipped 0       time 3h 56m 41s   sec/tick 159.2   sec/kimg 15.74   maintenance 8.2    cpumem 2.58   gpumem 2.69   reserved 2.98  
+tick 92    kimg 930.4     loss 15.78219  grad_scale 128       step_skipped 0       time 3h 59m 19s   sec/tick 158.2   sec/kimg 15.65   maintenance 0.0    cpumem 2.58   gpumem 2.69   reserved 2.98  
+tick 93    kimg 940.5     loss 15.93678  grad_scale 128       step_skipped 0       time 4h 01m 57s   sec/tick 157.8   sec/kimg 15.60   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+tick 94    kimg 950.7     loss 15.98965  grad_scale 128       step_skipped 0       time 4h 04m 36s   sec/tick 159.3   sec/kimg 15.75   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+tick 95    kimg 960.8     loss 15.73703  grad_scale 128       step_skipped 0       time 4h 07m 17s   sec/tick 161.1   sec/kimg 15.93   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+tick 96    kimg 970.9     loss 15.90593  grad_scale 128       step_skipped 0       time 4h 09m 58s   sec/tick 160.6   sec/kimg 15.88   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+tick 97    kimg 981.0     loss 15.67611  grad_scale 128       step_skipped 0       time 4h 12m 36s   sec/tick 158.3   sec/kimg 15.65   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+tick 98    kimg 991.1     loss 15.78025  grad_scale 128       step_skipped 0       time 4h 15m 14s   sec/tick 158.3   sec/kimg 15.65   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+tick 99    kimg 1001.2    loss 15.91369  grad_scale 128       step_skipped 0       time 4h 17m 54s   sec/tick 159.3   sec/kimg 15.75   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+tick 100   kimg 1011.3    loss 15.90166  grad_scale 128       step_skipped 0       time 4h 20m 34s   sec/tick 160.5   sec/kimg 15.87   maintenance 0.0    cpumem 2.42   gpumem 2.69   reserved 2.98  
+Save the latest checkpoint at 000100 img...
+tick 101   kimg 1021.4    loss 15.94296  grad_scale 128       step_skipped 0       time 4h 23m 21s   sec/tick 158.6   sec/kimg 15.69   maintenance 8.2    cpumem 2.40   gpumem 2.69   reserved 2.98  
+Saved immutable full-state milestone at 1024.000 kimg: <TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed307/D_startup_up5/training-state-kimg001024.pt
+tick 102   kimg 1024.0    loss 15.94688  grad_scale 128       step_skipped 0       time 4h 24m 08s   sec/tick 47.1    sec/kimg 18.40   maintenance 0.0    cpumem 2.30   gpumem 2.69   reserved 2.98  
+Save the latest checkpoint at 000102 img...
+Exporting sample images...
+Exporting final sample images...
+Evaluating few-step generation...
+
+Exiting...

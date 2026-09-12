@@ -1,0 +1,1888 @@
+[
+  {
+    "file": "data/raw/component_absolute.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+    "path": "analysis/q256_history_component_chase_v1/results/absolute_quality.csv",
+    "sha256": "c6c23b0755c15b1a6f9db8102777b69d911d034846c0f8dcee2834d2e4c18151"
+  },
+  {
+    "file": "data/raw/component_contrasts.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+    "path": "analysis/q256_history_component_chase_v1/results/per_seed_contrasts.csv",
+    "sha256": "eb81c1ff915d6a9d127fed08b38b8cde8e0ae11bf1231656fb12e7dadaca0cb1"
+  },
+  {
+    "file": "data/raw/component_outcomes.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+    "path": "analysis/q256_history_component_chase_v1/results/outcomes_64.csv",
+    "sha256": "0a54fb3044d227d9591d70a3d4ffe1ebc11c9c29f71011d153dcb4010eb8eda3"
+  },
+  {
+    "file": "data/raw/component_statistics.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+    "path": "analysis/q256_history_component_chase_v1/results/statistics.json",
+    "sha256": "930c0f15e746cc79788e5cbcfeeaccc3cf4b866b117842884e05f209bcd5817d"
+  },
+  {
+    "file": "sources/component_report.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+    "path": "analysis/q256_history_component_chase_v1/results/RESULTS_ZH.md",
+    "sha256": "cad8d4c967e15fd49959cb7dbd42f1da2addd6bb44cf7ff8130e501f65b072f9"
+  },
+  {
+    "file": "sources/component_protocol.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "90a0cd3f6ade59c04928b6e58a17bbeb95ed0705",
+    "path": "analysis/q256_history_component_chase_v1/EXECUTION_SPEC.md",
+    "sha256": "aa642689d7a719d9f6b85d2904690fe6e930043d03a06649e5cbc2d528b87cad"
+  },
+  {
+    "file": "data/raw/history_pairs.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "890a85a8ef4d9effb48f653111a70b5f15b249de",
+    "path": "analysis/q256_terminal_history_n30_matpool_v1/final_results/paired_results.csv",
+    "sha256": "272845e3562787d14ff87ba6f3bb2c5a0c359e4926aa3e990eef81cab9caa504"
+  },
+  {
+    "file": "data/raw/history_failures.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "890a85a8ef4d9effb48f653111a70b5f15b249de",
+    "path": "analysis/q256_terminal_history_n30_matpool_v1/final_results/scientific_failures.csv",
+    "sha256": "3c69ef453f28ca1ee1e97334f50fb5afc4f4ea7a36082a91a2e010e9b54a6a11"
+  },
+  {
+    "file": "data/raw/history_statistics.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "890a85a8ef4d9effb48f653111a70b5f15b249de",
+    "path": "analysis/q256_terminal_history_n30_matpool_v1/final_results/statistics.json",
+    "sha256": "7cfeb37da661ac55f6bda8ea41a23dc0b3401cfe22cc991254340a43dfc3c636"
+  },
+  {
+    "file": "data/raw/source_future.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "200739fa1560cca604d976c9bf4a4ea424ee6894",
+    "path": "results/q256_terminal_history_512_source_backfill_v1/source_to_future_per_seed.csv",
+    "sha256": "d8407b7c22e49f1134713407088b77e4ce38f053e2c480af73bac95d3a07a4b4"
+  },
+  {
+    "file": "data/raw/source_statistics.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "200739fa1560cca604d976c9bf4a4ea424ee6894",
+    "path": "results/q256_terminal_history_512_source_backfill_v1/statistics.json",
+    "sha256": "5f75cc00287fd8773d346bd2b0336ab158a1252d129e8b516e4dba64c8b81028"
+  },
+  {
+    "file": "data/raw/restore_hold_per_seed.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "092ab9ab54e3f2dd780654b752bf85643d92af59",
+    "path": "analysis/q256_d_restore_vs_hold_v1/results/per_seed.csv",
+    "sha256": "c6c98974785d0bc6310bf1c655ddd082b2f41ab1285e77566f366932e6b3b43e"
+  },
+  {
+    "file": "data/raw/restore_hold_statistics.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "092ab9ab54e3f2dd780654b752bf85643d92af59",
+    "path": "analysis/q256_d_restore_vs_hold_v1/results/statistics.json",
+    "sha256": "a5ed026f243cd2c078e42f3c9ba72f3b08b15c85ea3f4689cd80712c3c98183b"
+  },
+  {
+    "file": "data/raw/imagenet_trajectories.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "28b411c9a569c5b728d35de4253b45a79ba2831e",
+    "path": "results/imagenet64_gap_ab_full120_20260829/per_trajectory.csv",
+    "sha256": "975b52a18caa186bb69929367e69d4f6f36771f31026b2044fe97f32bc06a184"
+  },
+  {
+    "file": "sources/imagenet_report.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "28b411c9a569c5b728d35de4253b45a79ba2831e",
+    "path": "results/imagenet64_gap_ab_full120_20260829/README.md",
+    "sha256": "49aacc29071d22fd3e20aca90174410116aaf021ecbc7ad0ba17f2dabc52c16c"
+  },
+  {
+    "file": "data/raw/longitudinal_evaluations.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "d7084c7f2f9a7e985ec4d7c5f194a428c80f289a",
+    "path": "results/q256_longitudinal_factorial_seed6_13/evaluation_results.csv",
+    "sha256": "0ad7fbc2c23de2aee46f05e076d2372c74b7fa929dd026a03aa9e6b0af6f509e"
+  },
+  {
+    "file": "data/raw/longitudinal_aulc.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "d7084c7f2f9a7e985ec4d7c5f194a428c80f289a",
+    "path": "results/q256_longitudinal_factorial_seed6_13/aulc_per_seed.csv",
+    "sha256": "c3781797201fe8034189df3389fd7ad45b8f03f0d35bd2e263056458a04f8e6c"
+  },
+  {
+    "file": "sources/longitudinal_report.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "d7084c7f2f9a7e985ec4d7c5f194a428c80f289a",
+    "path": "results/q256_longitudinal_factorial_seed6_13/README.md",
+    "sha256": "6c4385dd5308f67ed6f5ba635cf246c0563a0ed606057ebafe7d07e0fb92ae53"
+  },
+  {
+    "file": "data/raw/startup_per_seed.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/per-seed.csv",
+    "sha256": "3243f12e435de87a36b5dec48d048fe2b66e99ca7b6fefd15bc5ba7066aa8da7"
+  },
+  {
+    "file": "data/raw/startup_statistics.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/statistics.json",
+    "sha256": "5e28533adc2dc717a66482ea85e1d3c6c6dd7626171621a6ca446d5f7c304764"
+  },
+  {
+    "file": "data/raw/startup_evaluation_slots.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/evaluation_slots.json",
+    "sha256": "bced8489990682a30d2ed53c87100ca11f7b0176aeda56d684fac41203c5cb28"
+  },
+  {
+    "file": "data/raw/startup_training_matrix.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/training_matrix_frozen.json",
+    "sha256": "d1709feb15a981b3683c179cb9e612914fe86d74af48d444922531031bf6d2ad"
+  },
+  {
+    "file": "data/raw/startup_old_control_bindings.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/old_control_bindings.json",
+    "sha256": "0a58daeec8f215d4e356e7c4087ab585f0f157f5b78c63fa441331efd7396184"
+  },
+  {
+    "file": "data/raw/startup_protocol.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/protocol.json",
+    "sha256": "6f4dab6908175861582b9d29933cd63fc15ef61d6886acd2a3ccfc28e31bdf64"
+  },
+  {
+    "file": "sources/startup_final_report.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/FINAL_SUMMARY_ZH.md",
+    "sha256": "7fb0f24211d6e27497dae47e77839de7c9ef5f8f177c13574fb2249df231db30"
+  },
+  {
+    "file": "sources/startup_validation.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/VALIDATION.md",
+    "sha256": "f0c9a402bdec6d97acf485e3b18c63e2ca25014da63b51315da6ab5f2a9b5575"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/README.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/README.md",
+    "sha256": "0c609ffb4845fef89bbf6865348d7838a20bc5fc1c832377867e792375f90c5c"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/VALIDATION.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/VALIDATION.md",
+    "sha256": "654e8f11b65ae15a591e30c8d8b455550f77356a6dc5ca6d5164c83bd122a466"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/__init__.py",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/__init__.py",
+    "sha256": "46ec9b2b476f03e03f1fce694beae4deb1f0ee683562c6ff5411960950c17033"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/protocol.py",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/protocol.py",
+    "sha256": "19a22f0fdb4f930b1e6fe3b0b79559ffdacf5744ff1a5c207b90d2d2a86f889b"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/PUBLIC_SHA256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/PUBLIC_SHA256.json",
+    "sha256": "b24b6a9d8e9d1bcc2e2b2be99eaee93a456f6ab2b8db5c117566777b2bb87814"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/RAW_PROVENANCE.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/RAW_PROVENANCE.json",
+    "sha256": "7165d4cc3e4adda5c10606f9fc7efd9c96c83f10ae09424c245d55c77a128055"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/SUMMARY_ZH.md",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/SUMMARY_ZH.md",
+    "sha256": "811f54ec82f7449e16a1b596ad38cbd66c085fe3f16b6bcbfd9f9db7d7f849b4"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/blocks.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/blocks.csv",
+    "sha256": "7bf344a37dffbc00db770f747f98453adc64b73e1661d3aebd5dcc4c7bd8eaa5"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/costs.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/costs.json",
+    "sha256": "96cd4ecd378f6b9faf8b8e0d4b1947879f65628e1064cbb6ae422f14c3488c90"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/effects.png",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/effects.png",
+    "sha256": "83c20c6013f867f6c8bda397e0ad19eaf16b050d86bb3c310caa5deadc5cfa5a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/effects.svg",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/effects.svg",
+    "sha256": "789e7654a6b14d9ec49aae6ee6dbd2a61eacc9adc75b18a3ad5be7afdbd0bdbf"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed50.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed50.json",
+    "sha256": "8ae620691f4bcff60c8f3c54df26db2319caf6af3a3b853f5df025a388dd02be"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed51.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed51.json",
+    "sha256": "76350a96d8f45f0a22ff5eaf8f1e956afe3ec05017b2c891ac3fe9cc98a94b73"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed52.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed52.json",
+    "sha256": "db2e0a82a8b0741ea2f28ddf133526ba4cc6c733dfcb6f203149f45b7b778e03"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed53.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed53.json",
+    "sha256": "f57a0645ec4de0f672e83822ae582a78f5c4d060b0a3b29f3e1adccd363f8f42"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed54.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed54.json",
+    "sha256": "dbd93ce2675d4912662b78478b171a3f908b95319bbd16e7d9e59014bf9c0b90"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed55.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed55.json",
+    "sha256": "918f372f88a7330b7bd1e55a1454c91108ff81081cc60031af5ebd67905cd9e1"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed56.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed56.json",
+    "sha256": "0694a829bb5e26a4562d5463ba33d601b16ad6eb3298cfa1225fb4354636f9cc"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed57.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/archive/seed57.json",
+    "sha256": "633ab35e985a551013f719cb2fad274ceb65449480cfd65b21ea928665fb817a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed50-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed50-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "97c6c279c17e16a5d8b6f9c5292d6ee53c1fca264dff550e59f694464ffdc862"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed50-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed50-training-state-kimg000512.pt.sha256.json",
+    "sha256": "68e6a3ac05be64c8f20971e1916c8ba2fe6a5c791c6d9a01edab0de9d4c0c943"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed50-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed50-training-state-kimg001024.pt.sha256.json",
+    "sha256": "8baf497c2b25968cb4257b9c1e5dd22c803dcf3947a2a61ce1adaa03414ffedd"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed51-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed51-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "b088170e1c7bde9ee4c58c8fe3d902a2210ef2b14ae6adda0425018d508a0b00"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed51-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed51-training-state-kimg000512.pt.sha256.json",
+    "sha256": "de4ddc2af9a32ad0393577582cbd5729b52265bea76bdfac65dc4e8d43660c82"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed51-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed51-training-state-kimg001024.pt.sha256.json",
+    "sha256": "166f9fbedd1f98e3c0aa899dc3dc405778b4d070ea4b1f1068dc6e05f4222968"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed52-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed52-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "b7637db0e79d3ac1311906d8303e007ad5cfa82d2134412a2af99ddfb02d8805"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed52-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed52-training-state-kimg000512.pt.sha256.json",
+    "sha256": "9886517e6e8d66ff1a724ef2ebb8334c090d78d7bc02a6bef1717278ded68bca"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed52-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed52-training-state-kimg001024.pt.sha256.json",
+    "sha256": "4ad6672efd328f6813e02c81b0dca4464ecc80926c8b6a197cde104091ab6ebd"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed53-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed53-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "bf3a31dc251c5e5a440147f2d11cfaf47b06bdd3e5562f20c14d17583519770a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed53-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed53-training-state-kimg000512.pt.sha256.json",
+    "sha256": "4cd2057587bff024f30a95befba1145832f530cec81a7b25648de2f9407014d1"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed53-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed53-training-state-kimg001024.pt.sha256.json",
+    "sha256": "3005645ce8b052fb8368b0188a61cf958a98fc1e0a0b282b9d25fdfce5f330a9"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed54-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed54-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "e9ed314a0ace312a87e348df5dc52ff1ba5bf65e02027aa82d0437d5c2269bed"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed54-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed54-training-state-kimg000512.pt.sha256.json",
+    "sha256": "a5e7058564be62a56eacc57988ba0c8f850efb75ed2495319bf910b7edbffa53"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed54-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed54-training-state-kimg001024.pt.sha256.json",
+    "sha256": "b56c47dac1a5fac6d297ffc8a25bf2afe61015da95ddc140a0a106e7c880e027"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed55-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed55-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "dca0f108d6a9ea85ad9248dc4da12d6fd4da15f1a0de161f2f075dc3ca6c67c9"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed55-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed55-training-state-kimg000512.pt.sha256.json",
+    "sha256": "6480caccb2ef4c97f910562c134a1e050178aa4cb7fa18104f807f15a51d1945"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed55-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed55-training-state-kimg001024.pt.sha256.json",
+    "sha256": "0b64166dc304972edcfe46cff4c4a1b404dfe0d91454d7e4b159400709bdd4be"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed56-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed56-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "a5b81f9e9b512b0ca3ce1d1afddad8a60e392254afb1e1d44d25fc126352d5e6"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed56-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed56-training-state-kimg000512.pt.sha256.json",
+    "sha256": "f1cd7cfe74f6f8928584b73b9f90b38d41123df75c46f32f42163b460553186b"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed56-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed56-training-state-kimg001024.pt.sha256.json",
+    "sha256": "ce77451eaf4aa2f8d838b05ca56613aa922a10bcd920c562670618607af35ecc"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed57-training-state-branch-init-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed57-training-state-branch-init-kimg000512.pt.sha256.json",
+    "sha256": "2c8cb55d1d2c83f306848836fea6503d8a13316923b81a36194676e0a610a025"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed57-training-state-kimg000512.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed57-training-state-kimg000512.pt.sha256.json",
+    "sha256": "b5b4fb76f454f0c6e9ffb2e1ad8d0a7242d127f5f911d41adc76585ee9e43a1f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed57-training-state-kimg001024.pt.sha256.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/checkpoints/seed57-training-state-kimg001024.pt.sha256.json",
+    "sha256": "25c1da8b874bb4c5e5a4cfdcb6d6bad73732b2844c37703755c05067eac16c3a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/commands/owned.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/commands/owned.json",
+    "sha256": "1bce90bdf4cd9f62f3fceae8e2b8ee088469bb2a28721af6d99d05faf08d1e3a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/commands/paid-four-gpu.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/commands/paid-four-gpu.json",
+    "sha256": "f59689bb04ee1a4712e89e5259f72b31e13aeae671adceea0d6d039243e7df60"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/commands/paid-two-gpu.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/commands/paid-two-gpu.json",
+    "sha256": "b470c9e0ca9ca54b9fd540149a549667acbe5f82bc79c9c7778ff5f57930cbfa"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/control/global_engineering_receipts.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/control/global_engineering_receipts.json",
+    "sha256": "5da7a75c74c5e96e4adda31e7a41e3ebc5d4b175b5a6fe2198b18f3b5ae3d53f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/control/old_controls_48.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/control/old_controls_48.json",
+    "sha256": "c2ebcffd595086531a5682f9c6a36bc5983bde8b1708af6063b1cec99646edd2"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/control/q256_startup_delayed6_10_v1.protocol.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/control/q256_startup_delayed6_10_v1.protocol.json",
+    "sha256": "39ab64b8ae8fb4d8cd2ddcc3143f1dd63b9bf6399db8588b89116b366633b5f2"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed50-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed50-B0.json",
+    "sha256": "28ab5359c0e4cf2dd9036c33740a126adc3682fc44b9bb8d32836c2398093177"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed50-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed50-B1.json",
+    "sha256": "0dce46937bc02e3eec98d61a9d2f5b9a6106466c0feed51d5fa75017b78b1d9a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed50-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed50-B2.json",
+    "sha256": "ecd28a15f3bb4cd1267db85d1754797030d79b78d912fc7d2418db353ac903aa"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed51-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed51-B0.json",
+    "sha256": "ec127dcb296b5ed29634833ff233b35d1d97fc51a1a72efcb9a8cf6099248db1"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed51-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed51-B1.json",
+    "sha256": "25b66ba735da9bfdf69d8db4c26c12d047868cff34fdb3fcdf65367f8aa9c957"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed51-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed51-B2.json",
+    "sha256": "8de38593c206d279e7e1799551d23d1df896da7bf9609c70d157a0b83099ec88"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed52-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed52-B0.json",
+    "sha256": "18ce4ade35554e5e71d2380f7f9f9b737dd811b03b3bf6aa2c05a9607e0550e0"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed52-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed52-B1.json",
+    "sha256": "fcf16485cabf6b4cf82be2ae3152e7ede32b0b889fde6a2b76cea8c538ecd9c6"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed52-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed52-B2.json",
+    "sha256": "2f23157bd92ada58e1bfbba3b41f83c126d2ba9027759255ab2dc900af2e3d7f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed53-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed53-B0.json",
+    "sha256": "9469c0436ec2a73e2b614e3f087dd035bda72962af939dd390c6c830f8a23427"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed53-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed53-B1.json",
+    "sha256": "28a5d88a5b3054542611045015f9d55ab2998888c234a20e758d3e6cf73121e6"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed53-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed53-B2.json",
+    "sha256": "afa1436ed2f0ef0e14c49e1974303888f2baf8c3404ab9de40aac3f623170f3c"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed54-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed54-B0.json",
+    "sha256": "0541e247ea881fdf8625c3dec1bc71f24e5ef81878f3808cea7f33443ade4dce"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed54-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed54-B1.json",
+    "sha256": "c68d006be4ff13f8a04edaa9e51ddd4535a61d0175a3869bc664d12faa4031c5"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed54-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed54-B2.json",
+    "sha256": "3c3836746a9f0c66ac528c4f692426e67fe9d3c8de7e5f181885812d346b174f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed55-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed55-B0.json",
+    "sha256": "5b2ebb6e2de54ccd2cdd59b10074a1ac4da6e8ef61cf024c55e428075ea60132"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed55-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed55-B1.json",
+    "sha256": "511ba01f8f701140015d5c2e019459a6e82e7d8ef4cb8e34492dfc0f4c963ac5"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed55-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed55-B2.json",
+    "sha256": "7e9c9f977a2b791b1743ae74f414c954ecf5464551e434776a86a12aede71063"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed56-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed56-B0.json",
+    "sha256": "3f7c354cf08568295cd262a0e97b3791c25a88dede3128982beb5d17ce56b9f4"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed56-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed56-B1.json",
+    "sha256": "3e5b97dda3d7aff0605fad91822b86030d8865b5d5e3155f7e520883216da44c"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed56-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed56-B2.json",
+    "sha256": "f69e92800beb50c89e77c69359e9411ff6d6dffc5a77b62f1b7c114ed8d41765"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed57-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed57-B0.json",
+    "sha256": "aa4869998ddc43c225907acf4fdca46fa5fb800a8afa46fc66fa782662227a54"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed57-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed57-B1.json",
+    "sha256": "e6ed33f7a55cd96585f4dc7ac8a249cae6d740d431390fed205209770c0f7a4b"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed57-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/evaluation/seed57-B2.json",
+    "sha256": "cd0e5a00eba2796c007e3b1b6379193e2e24a551878572b7a26d73eaf1ff3267"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/gpu_contention_recovery.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/gpu_contention_recovery.json",
+    "sha256": "498ec5621a6dc970d63fcd2a7ad840fe348354b2692c4f387223020b60e36d77"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed50-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed50-B0.json",
+    "sha256": "ac83b58840b2a9ca72ce1eb981aacd9c11d80bfe44a828f9e737310343eeb944"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed50-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed50-B1.json",
+    "sha256": "c1e8d2fe52f2e308b410d3efda061832b56ef17b5275270a88b9ce56a4150832"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed50-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed50-B2.json",
+    "sha256": "62180fe28ba715253fe96757403604879e1e5d3c664a655a9417dcad65c6ac9f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed51-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed51-B0.json",
+    "sha256": "f86f8ada62bc3f8089b89c8256ef4603c7ff63d2e5cf8e3d746bd2b2717f6a3b"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed51-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed51-B1.json",
+    "sha256": "dd421a335fd821b407d6a13597da18485904b723516c7e73ab937ad92b8161f9"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed51-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed51-B2.json",
+    "sha256": "2053e2f6802a31af2f13fa0f258bc3cc625b2287cb44fd49436eaf0e0f0fb969"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed52-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed52-B0.json",
+    "sha256": "b2935b7a7f9d784ca3066d30234c83d66412f38ad218d10dd1e42983d4775ce8"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed52-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed52-B1.json",
+    "sha256": "9585cf53ce76c231dfe010ad5e75ec3465b419052bfdb7b3cbef506ded6613ac"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed52-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed52-B2.json",
+    "sha256": "a113785a2f921fcd054cae5ee45c1ea63b4894e69abe4b186eb46f9acf3af20a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed53-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed53-B0.json",
+    "sha256": "77d5a9b29ccdf8dc08a657efb47148d346bac93ed99336102c88ab5ca127c650"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed53-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed53-B1.json",
+    "sha256": "d0b1989f66d0bb5ef617a5c26ed146836342f10ebda4b66f965b4590632dd04f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed53-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed53-B2.json",
+    "sha256": "04302cc0094e22b6690431de8d57918ba3df5f51481c9bc6a5b27abc74fb3e40"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed54-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed54-B0.json",
+    "sha256": "ab47614eb4d377ad43fcec1260f32c9aad5a728add9f468c783dc591c422a449"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed54-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed54-B1.json",
+    "sha256": "2df3a7cc05b1aeaa8a8a8b72a1adec7e36f94f3b66f685ef8d186ed7ab10a6b9"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed54-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed54-B2.json",
+    "sha256": "1fe35fc6a4821d0f13f870a14e5eacd39da69263a0386113a2d66570c2e49be8"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed55-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed55-B0.json",
+    "sha256": "c7f7c50647fd675a3d5e26c8d7f0905e3659be590572cf26da1b9e39a6320ee3"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed55-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed55-B1.json",
+    "sha256": "f4447c69aea1d6d2649c4422c28bec166a00ae27f3bfb80307abce0b1e837f07"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed55-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed55-B2.json",
+    "sha256": "3bdf443b1e00b08a688431c5974b6efc3a33d6e1cfb89615684fa5a4ff664204"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed56-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed56-B0.json",
+    "sha256": "0b8097156aa4ee17af2b8a760bb901111e6b468adef3057bbc7d68db1f480da8"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed56-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed56-B1.json",
+    "sha256": "8871cbcebc0c788bb47ab7790e7868c459ace099adb582eedb6ee512d64fede9"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed56-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed56-B2.json",
+    "sha256": "17b1fdbf203c1d71c71ecfe1214b94f351101c03be8bb253f43f71a0c45ef31e"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed57-B0.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed57-B0.json",
+    "sha256": "8317b467162ea6a20aea209599877f946ccc4411f0be834b78f3a694bb7d1478"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed57-B1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed57-B1.json",
+    "sha256": "8ee05f5f9be14164e993ed9f4bb48a01eb4ca77d932640a303e847f3a31586c9"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed57-B2.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/historical_AA/seed57-B2.json",
+    "sha256": "e07dede0d1da03f9c2d437b1d1fd4f3dbb9035552163b1c6ff127deeaa918711"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed50-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed50-initial_state_receipt_v1.json",
+    "sha256": "ebffd0fb00eca0b43edfaec745ee2d098c7835cfe3447dae3aa22ae9c76b6d72"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed51-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed51-initial_state_receipt_v1.json",
+    "sha256": "4ab1133adb07a9cc1916b78d99a1ea30d9fe5381a46d0b8e7407f9cf508c5382"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed52-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed52-initial_state_receipt_v1.json",
+    "sha256": "b30bc07b3723ffb854d4895b5d842c1d7b462644491703f631edd3f926f0ff5d"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed53-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed53-initial_state_receipt_v1.json",
+    "sha256": "bd9dcae48ed15a5d223b568a46d8b4cd36c457c8fb276f6aa7a6ea81e5e1b655"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed54-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed54-initial_state_receipt_v1.json",
+    "sha256": "a971eab4351e9e296629e6684a7f0fe4d618a200d1c78834acc3731f02a603c6"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed55-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed55-initial_state_receipt_v1.json",
+    "sha256": "883457cc891173855832cf90f94d12ee9bd56349ffc9a5c11fd34ef918972d62"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed56-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed56-initial_state_receipt_v1.json",
+    "sha256": "5c999bf579d1cc28a8c710eafcd2bb3abc2bf081d320ff467eeb71b4c22a5f23"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed57-initial_state_receipt_v1.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/initial/seed57-initial_state_receipt_v1.json",
+    "sha256": "f76b50ae224dfbcafea5bd6c05a4fbb233c546b40c95716a9c9fe874c0749fb3"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed50.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed50.json",
+    "sha256": "4e6ffcd7f0d998067cc3f17eaad8b75d5c49a088d4d5a2d39d85182f77dd4058"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed51.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed51.json",
+    "sha256": "c98ba4e9b6d7121f12602b4c87de51055822829c0cc5a1b6032ad098bb0fbad1"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed52.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed52.json",
+    "sha256": "91864276dca72a4ff325c48e1c1da75af2e059f60c1a0a8ae6eeecfeea5ce092"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed53.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed53.json",
+    "sha256": "fa822768c69c97cf9d978942592a3b4dfe2dc4938d71a9dffc1d66843175f92a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed54.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed54.json",
+    "sha256": "2ba2c3d58010d89c68d7f716cf946787c781d356dfefcb6c05b83381b5b8259d"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed55.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed55.json",
+    "sha256": "20443fdaf6363fa551c72127bb96598e82824fc794bc7901bee1002b5bc7b8d0"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed56.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed56.json",
+    "sha256": "33fd37efecf86422bad7369f711d1a4a434fc023e088f11139c7c925eabac93c"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed57.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/manifests/seed57.json",
+    "sha256": "26d76bdfc1cf41b3b4e79bd68c12c68f455237f52efe4506f39382abd0324647"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed50-process-receipt-1789081212107633568.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed50-process-receipt-1789081212107633568.json",
+    "sha256": "6b966a9403eefc8714030188183a82528592cc19b054394c71ed9b7c6a778902"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed51-process-receipt-1789081212056208587.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed51-process-receipt-1789081212056208587.json",
+    "sha256": "211ebce5661d30aac7d5a068c7feded09db662e5022b68c5482471e816cae99a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed52-process-receipt-1789081678253180390.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed52-process-receipt-1789081678253180390.json",
+    "sha256": "4f7ccfaa868e828ff300ea2e531119c74e81967d0cd338266ef49e37fc67410e"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed53-process-receipt-1789081543202005015.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed53-process-receipt-1789081543202005015.json",
+    "sha256": "dd0f63abae24d5355fd5227c22258a64188daae5451443112d93f4002d49de7b"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed54-process-receipt-1789081813060246410.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed54-process-receipt-1789081813060246410.json",
+    "sha256": "05e2ae780b0f5997d1e4c549f09bc05f3e2650976ea2b97b9f5e2c383f74c84e"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed55-process-receipt-1789081648029079357.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed55-process-receipt-1789081648029079357.json",
+    "sha256": "346be59670168ec7e82c188cf25ee5b7a9cba31feef45baa17e5e70d89bd717d"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed56-process-receipt-1789091182030446016.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed56-process-receipt-1789091182030446016.json",
+    "sha256": "9bf0c6717246d34c9ae225593c6f1b257dd962ea1b56bf8982a82fcdb4cc1dab"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed57-process-receipt-1789091511897183932.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/processes/seed57-process-receipt-1789091511897183932.json",
+    "sha256": "e0f7e68b78bedbd548d18ba86df35e3487302959e450bcb714c232b93a9bdaab"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed50.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed50.json",
+    "sha256": "6b966a9403eefc8714030188183a82528592cc19b054394c71ed9b7c6a778902"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed51.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed51.json",
+    "sha256": "211ebce5661d30aac7d5a068c7feded09db662e5022b68c5482471e816cae99a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed52.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed52.json",
+    "sha256": "4f7ccfaa868e828ff300ea2e531119c74e81967d0cd338266ef49e37fc67410e"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed53.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed53.json",
+    "sha256": "dd0f63abae24d5355fd5227c22258a64188daae5451443112d93f4002d49de7b"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed54.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed54.json",
+    "sha256": "05e2ae780b0f5997d1e4c549f09bc05f3e2650976ea2b97b9f5e2c383f74c84e"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed55.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed55.json",
+    "sha256": "346be59670168ec7e82c188cf25ee5b7a9cba31feef45baa17e5e70d89bd717d"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed56.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed56.json",
+    "sha256": "9bf0c6717246d34c9ae225593c6f1b257dd962ea1b56bf8982a82fcdb4cc1dab"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed57.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/evidence/training/seed57.json",
+    "sha256": "e0f7e68b78bedbd548d18ba86df35e3487302959e450bcb714c232b93a9bdaab"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/execution_identity.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/execution_identity.json",
+    "sha256": "bd70a2bff2a0a34e289c4e8d746a064b7fd1507601deedd85fcbfa6bfe6d5b76"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/paired.png",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/paired.png",
+    "sha256": "8b8a6aa958dc9681e2d7509c88d9986f6e819aa58a0f32c4a13223caf8736ebf"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/paired.svg",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/paired.svg",
+    "sha256": "daff848f28b80a7c6dace60c5996170fe0ce4137f52511c7a25e2da57e3f8857"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/per_seed.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/per_seed.csv",
+    "sha256": "467dd345a0c0d5f96448ea2c98cc81e2a75c4454c3b65153ef0849994fa0d32d"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/statistics.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/statistics.json",
+    "sha256": "2cddb111a0c3e6a86e26381abc07425967560460d6199545823de302a9ef0328"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/attempts_first16.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/attempts_first16.csv",
+    "sha256": "de425fdd6f9bc22571d4a6acb4e742ed30f4b9231f6d067d37a405c40ac77ce5"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/q256_first16_updates.png",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/q256_first16_updates.png",
+    "sha256": "212b0dd0172fbf10feb19d0c5bff26fbc64704f7a3ca130927018e4a7dc678e8"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/q256_first16_updates.svg",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/q256_first16_updates.svg",
+    "sha256": "83e573898fcc9a213c986b52e440e7c1ef8a07b3f57bada9783a5ad46272dec0"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed50-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed50-delayed-first16.jsonl",
+    "sha256": "abeae3e00a5369a1724f04a19b83f581617eefda133c09936bd330c14113e714"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed50-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed50-early-first16.jsonl",
+    "sha256": "5626f3b204ad78913c13706af984757e8afbddd0cc1f845ea92cd3cbe49bf2be"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed51-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed51-delayed-first16.jsonl",
+    "sha256": "20db1614f5070a16db5dffbf3551a7a5a78c4215abaa38cb1f46c1704536fd66"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed51-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed51-early-first16.jsonl",
+    "sha256": "364e2867ab76fd1e1ab14d6ced4cf7b4fe6fecdfe396deafcb8e5648cd1099f3"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed52-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed52-delayed-first16.jsonl",
+    "sha256": "aa85c9ff71f838ef732b8608e6a794353402507b3d5e18f3e65ca501a711f8fd"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed52-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed52-early-first16.jsonl",
+    "sha256": "b17383ad35d062688bd9f6ac41a9aaceb679d6482305fe181dca48f4e9e8cc85"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed53-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed53-delayed-first16.jsonl",
+    "sha256": "4c77015827e17232dce1181d15c8aa3c5c2add2a5edd97144596f14686f43dd4"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed53-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed53-early-first16.jsonl",
+    "sha256": "dbcb2321376aff57f75ed80a65c88cf699c469d1af41514846845ee2b3bc980f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed54-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed54-delayed-first16.jsonl",
+    "sha256": "b73e90b0f4566025d3d994e8606d73901adde8e521298d4733788c0879c8da49"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed54-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed54-early-first16.jsonl",
+    "sha256": "6b8962bc001ebd3f4b7f86abbdfc141c0e7c86dafc92927eac8ecdaee7a3be15"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed55-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed55-delayed-first16.jsonl",
+    "sha256": "e6fcb502a5487cb5973002fb9dad6befd04dbc6e44154165c999ae6a8bcc033c"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed55-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed55-early-first16.jsonl",
+    "sha256": "afe6e88c74f6de91a3be8ad5c2beb8d90986929d877ea41492eab78a9ad9a4b7"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed56-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed56-delayed-first16.jsonl",
+    "sha256": "0ec9d2bfe666e6195745aa911a0dc7eae34814870984e260e547c459edf64843"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed56-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed56-early-first16.jsonl",
+    "sha256": "e26511f34316c690d15060fc152e07c39f6f8e873aaa63a7f03e9f75e1d4561b"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed57-delayed-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed57-delayed-first16.jsonl",
+    "sha256": "3e2f7504d9bfe38e696107b4ca2b2586bc801930643e12df87009f9bb2a45bed"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed57-early-first16.jsonl",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/seed57-early-first16.jsonl",
+    "sha256": "5e73c4cfbd11ca8ddba46ba9cec66121d68daf544724cf8e0a7aa55ae758ca3d"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/source_manifest.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/source_manifest.json",
+    "sha256": "8a93cfd6d0e6cdc48180f028fbe4b687356487155efa004041b65dc486ea25c2"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/window_update_exposure.csv",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/update_diagnostics/window_update_exposure.csv",
+    "sha256": "f2f2dc7b263cd3c6fe04630fd99bb363515280546fcf938b699438b4e86aacd7"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/results/verification_result.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/results/verification_result.json",
+    "sha256": "9291be1c4263d147e7943cd63c77e7bc5c86a4e8e564669cfe1321d4297a482f"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_delayed6_10_v1/verify_results.py",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_delayed6_10_v1/verify_results.py",
+    "sha256": "ae80b367b44b3cc70dce997b320d90e615e572160e7c802cc221791f9a99437a"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_step_responder_pilot_v1/results/evaluation_slots.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/evaluation_slots.json",
+    "sha256": "bced8489990682a30d2ed53c87100ca11f7b0176aeda56d684fac41203c5cb28"
+  },
+  {
+    "file": "sources/pr112/analysis/q256_startup_step_responder_pilot_v1/results/old_control_bindings.json",
+    "repository": "hjjjs4vbmv-netizen/consistency-gap-optimization",
+    "commit": "3d1330f5d794d05fe63b67aa40e2dc6213f1387f",
+    "path": "analysis/q256_startup_step_responder_pilot_v1/results/old_control_bindings.json",
+    "sha256": "0a58daeec8f215d4e356e7c4087ab585f0f157f5b78c63fa441331efd7396184"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/README.md",
+    "sha256": "27fca986f75e9877a87b2de27c85fa9de9a181f01e6bbdb30570cf283316f5d7"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/PUBLIC_SHA256.json",
+    "sha256": "fb8d6c8386cc6667509f5f7b64d67ecdee5960daf9e601593bd1153480716848"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/RAW_PROVENANCE.json",
+    "sha256": "ad6b1af93de0bbefe27554a3040d615a8e94a8bfb14a39d177e5945ccd2bde21"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/SUMMARY_ZH.md",
+    "sha256": "ececdb8064cbe08adbfdf3ae49a67f3f543abe593ee2dc35094b5824c8557278"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/VALIDATION.md",
+    "sha256": "37aabc034f395138c9581c60a0fe925f2e07f86525f224e0fd389b032c316e6d"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/blocks.csv",
+    "sha256": "ecea0ba569efee1f3d5764c010bc822d0b1eaa7e896857c6b51346bb08533599"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/effects.png",
+    "sha256": "4a7f56bcde9f6826195dbf0d6a56c491647b9dc1d4d1005bfa18366bea27e260"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/effects.svg",
+    "sha256": "aeb796b6bbc2c3d9d362adddb1769a56f990404ffbe98f79a573bc1c6c5f6001"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-AA/B0.json",
+    "sha256": "6c97f3560f39e3a120255762f2caffe962e407fc7e9ce3fdcd492bbce6b98268"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-AA/B1.json",
+    "sha256": "c5ad16d4ec8a2b529e3a7ece47c2b76bac64f92d0f6e40754adedc410fa71548"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-AA/B2.json",
+    "sha256": "1eb26e75ab5d34ff5aa20d2d2f8f8e6c1e07c75a797b47f2295a7d2cb15249ad"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-AA/outcome.json",
+    "sha256": "c7a6a7de6516ac0b5b5ee3e869709907c79baf87fdcc17e94c8011efcb4d244a"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-A_startup_down5/B0.json",
+    "sha256": "e68faac27756b077bc754550f7698073b16876326960394ef11828f40677aa91"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-A_startup_down5/B1.json",
+    "sha256": "7d4f68326245ad5678b31ee699c3f4f44d869996b12f86cde2c705e1b66b3ad7"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-A_startup_down5/B2.json",
+    "sha256": "a341f7b94b4c57af44853cb3824c08b211d513b17a0356748e6820545995d6ff"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-A_startup_down5/outcome.json",
+    "sha256": "14592e3adc021f63b865dc021a833be9777831dc31b4876dd0394db92460ef17"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-DA/B0.json",
+    "sha256": "2b5ff839f3ca961660f8ecaebb4868591783809772abed000e6c494f80112886"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-DA/B1.json",
+    "sha256": "cdb557bbf537bfefbf5037db31dcf2b4c4e74a315c64770bd101c6a43dc9e48e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-DA/B2.json",
+    "sha256": "ef9e005c8543151a5f55a8123f9559a7eaf552cb1d469cea646e0e1bb2000320"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-DA/outcome.json",
+    "sha256": "05610a10f4ce7af3acb63b5d04693657d21c2bffb491c7d5d79add55b8c67110"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-D_startup_up5/B0.json",
+    "sha256": "c9a4d514593b8e400d42b771a471c95cd6edc6538ed5f49393ef51e3f6275fd9"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-D_startup_up5/B1.json",
+    "sha256": "178a9fd2dd3e51234c99a917c64c3c1b47fdf20ada6fc0f88e4a128d16f67160"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-D_startup_up5/B2.json",
+    "sha256": "23e4cff61e6c45c5f6419e5b2c1bc6cad1f906cb2388d2b431965575f87f8d66"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed301-D_startup_up5/outcome.json",
+    "sha256": "ee43b345e82c74fcd983dc11c2dfda9ded87e9cabd828543b6ecfa933cc29d95"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-AA/B0.json",
+    "sha256": "f5d2603c1f762bcecd8929ac65e564a24e6f207a50c0a506e193aeb114756259"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-AA/B1.json",
+    "sha256": "4a886576153df1754748587b4ab34656435c0c49fa34394bf6e3b26d445ec8f8"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-AA/B2.json",
+    "sha256": "f460062d5a433a96eff5d123872e9b23c97246dad2578f84d71a0c982e60cc8f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-AA/outcome.json",
+    "sha256": "ea4623764ff8a542ecac4d328c42daf5a8f960902ef4e348da2b1973ebdf8e2c"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-A_startup_down5/B0.json",
+    "sha256": "4dfb28923541766cab160427017455b3ed9f69531c1dbdc595627166e962be0e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-A_startup_down5/B1.json",
+    "sha256": "078401544db60e26ff0760a0c8425a8726a3383bdb2e65852fba2f22eafbe6e6"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-A_startup_down5/B2.json",
+    "sha256": "4d3e2dcd609a10ac7981952a11a02e2c84c731a655ea01e86f81b6c611f0aae5"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-A_startup_down5/outcome.json",
+    "sha256": "d83938a7182495ec7fe23aec0ce25db08deade4d643936b4c4ba1760fb024652"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-DA/B0.json",
+    "sha256": "725722c466b120dbaa09524bfe0106dc34eb174e63d01ac1e404d294b653a37a"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-DA/B1.json",
+    "sha256": "28672d47a1f08e89923c005bdd9d0efd87e98982819900f3eef716ad8e3924ab"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-DA/B2.json",
+    "sha256": "f79ce571965202ec2d27d7ad42bec9ca680bce4bcb318bd73fc6f0981f5c0ba5"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-DA/outcome.json",
+    "sha256": "d881505b7f1c3ee3459441ae9db72a609f9c28970f70f5286d375953a437ce5e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-D_startup_up5/B0.json",
+    "sha256": "ee45b12ec271e052a7a79f60d7113c6f8f9438997bb81da9e2138ab295c051f1"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-D_startup_up5/B1.json",
+    "sha256": "855202882140e14552ed59b4f51567d08b9762a6ae24171aa490eef88e4066ca"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-D_startup_up5/B2.json",
+    "sha256": "68592c7db21167357c69d3b32a3a1f209f48818f9083401ea93d080179937fef"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed302-D_startup_up5/outcome.json",
+    "sha256": "98a7a017a4f2f7e2933b14b440ab1b9aa5b7fe4c0f84299e26e9b29857602ca8"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-AA/B0.json",
+    "sha256": "71204d334c263ca51c84956088a87fdf6181a21bbe2049d5a4165885e6d976a0"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-AA/B1.json",
+    "sha256": "b2c9e9c4f984c5991cb47f30b56a3f555535d3a6e8e80927a45936d5ee72db6f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-AA/B2.json",
+    "sha256": "937d873f00706a5e2769669cf3c944c09de2b402469204e006d95cbcc39c6509"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-AA/outcome.json",
+    "sha256": "6a72a7ed9d81d5c9c5e471aba3aaa63fdca4dde5aaff78523d22b3b11962099e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-A_startup_down5/B0.json",
+    "sha256": "441b2eda6a47bd53b4a6666648994bf22e827537a55ffca90b9b167e04690c67"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-A_startup_down5/B1.json",
+    "sha256": "e80135c807875335069272dac494ce10ac2dfbaccf480c84f53d81fe3e407328"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-A_startup_down5/B2.json",
+    "sha256": "89cf8b211699391b486cad9cb641f410745c04ceb734871fe039e972e9a694e1"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-A_startup_down5/outcome.json",
+    "sha256": "0c09cc9149dc4f8403659370de6dece4ce04b4d93c216393e6f23e051505f71f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-DA/B0.json",
+    "sha256": "a7621f69d8990d3782de25278f0533b62aa5e7d3a37f6dc99462648f101b81c1"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-DA/B1.json",
+    "sha256": "bf33937e1cbae915ca320c1a2dfa8f7dd1bd5605c1f3c1fb740c0bfffd67924c"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-DA/B2.json",
+    "sha256": "453e1d48c2da903e37a91e3eca9144221c89ea01810799fe1d73d4cbfb251e73"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-DA/outcome.json",
+    "sha256": "facef1101a97d352c6d7674a31a83c96ecbc847c4366c1235846ae1eac08653d"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-D_startup_up5/B0.json",
+    "sha256": "349bee47c501a4cfbaa72aae2e6fecfc8a89aada8e48f57b55883292502fd18b"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-D_startup_up5/B1.json",
+    "sha256": "d8d06fddc48f6e54ec2ca616e423e1ba1a869e529cd56b1b130196f566155805"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-D_startup_up5/B2.json",
+    "sha256": "3f033f42a7ae47ec5847b62e13708c74f890ae606d01d597b165918885367065"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed303-D_startup_up5/outcome.json",
+    "sha256": "d9bd02a484a4add8849969d0c905689d7bda2c66204737a36c991a3f7e975669"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-AA/B0.json",
+    "sha256": "e166a1911f29eb045c7e2dc357b88f46810f40fa475949536b7284dcb90b5ea3"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-AA/B1.json",
+    "sha256": "6fe3666a946aa3324cb2776a3ef8019bc4ee7368ebaffb931a09cbfc375cafd7"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-AA/B2.json",
+    "sha256": "644bf37c804e9d5040f3aca893364b2f5ac7f7170e7f5e4e9e2330ce09482b88"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-AA/outcome.json",
+    "sha256": "56457b1898c391ff4d5bbad60e7965b4db7f257f16b0c30cc4e1dd71d329c937"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-A_startup_down5/B0.json",
+    "sha256": "784efba110f05fae155a7e88b12cdf645055ed2b1c7339fcdf386894edd56249"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-A_startup_down5/B1.json",
+    "sha256": "a636a89f4a24bf93a3ee7ff74fc48d700cc1f5905fa9f1cc325d559a92e93ae8"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-A_startup_down5/B2.json",
+    "sha256": "ac91c2a8b678bc4bac46bdb7d3cebde0d50aa6753f0eae243579f35c29bd4b50"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-A_startup_down5/outcome.json",
+    "sha256": "36ccca68b083263e3414c3b301781eb854d8afa1847831f3f68fdf5407877772"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-DA/B0.json",
+    "sha256": "aa81a9d3276209b0774f7b60c160ea5ee0c3c052b74b135704b0827a1cfdbf66"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-DA/B1.json",
+    "sha256": "b5682f6311c8128e536a5d8dd4daad058ece69d569924e3f8567ea539d9ecd0f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-DA/B2.json",
+    "sha256": "c0855839010aff3dcada7706e29687126f7165168407e046c7e78232cfda877f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-DA/outcome.json",
+    "sha256": "706c6746fdd79786a32f6adf49023000c156359e84175ef5ccbb0810a2373f5f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-D_startup_up5/B0.json",
+    "sha256": "4d50e2c0d25964940aa140defc2b2935b94df4d68f469a373238c260dde8155a"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-D_startup_up5/B1.json",
+    "sha256": "dc44b1804fbf44aa9e24384fa40e96043304825d4170f241ae9d6b41fd167e3d"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-D_startup_up5/B2.json",
+    "sha256": "e4d84266d277076bbe98605f226f9aa88603695f8708fbe7a8074fd404d8bb92"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed304-D_startup_up5/outcome.json",
+    "sha256": "d2c5d15774b95570964fe35fe8ceeb5ca482ee5c524762258be23d3a1fd1be06"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-AA/B0.json",
+    "sha256": "ac2bd86da8259712838d9c92cdc146c056eac64099f2cb977cc6105fa5e6c27e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-AA/B1.json",
+    "sha256": "4e33cc61cf9be5bfbb91d68965589fd1e1554ae8e838470bc52bbce3a2894abf"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-AA/B2.json",
+    "sha256": "e2b1933e3a5f1cbcb059dc07eb600424444eeee5f5b2f7432757eafc9cb66124"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-AA/outcome.json",
+    "sha256": "8f6e5bd1d723bff2e952d8cbd47232a6ec4cb34e31cd55fbe85efd87b283c4ff"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-A_startup_down5/B0.json",
+    "sha256": "39ad0251d2d6416f93a1fe1e693238bc5d735e88a9609d006bc7e5762f941359"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-A_startup_down5/B1.json",
+    "sha256": "5919d47508f824480fc3a2338f61565eef0b2433dbffccb967bf1465c5d666f3"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-A_startup_down5/B2.json",
+    "sha256": "19365eed6088f59d1a17b47bde161a3210d62d3a53f27c274093b144630f44fa"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-A_startup_down5/outcome.json",
+    "sha256": "d687600f00d6dc1d13359b0f16d5d46c190d735bd89a1fb6d4afe3e7fd154189"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-DA/B0.json",
+    "sha256": "2f47c7b4fd0432a12e85a8ba7a44d2c625a9e2bb954b047273fc42c0087051e1"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-DA/B1.json",
+    "sha256": "22e6d12c47acaf0b7193f5d51590067f1f961ba6f04aa29f1218da5494dfb569"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-DA/B2.json",
+    "sha256": "29f889140a7f403cc99b7112d4c7ed536bd06270560c5a633a83ed78df3799f0"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-DA/outcome.json",
+    "sha256": "1dac6d20ba3e71dc24d92696701d60f60981b1e10cc91db3892fc9d609600221"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-D_startup_up5/B0.json",
+    "sha256": "f9868451ddd08f00304bd0cf173ecb9e476a836a863c8e65285f5413739ed5ff"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-D_startup_up5/B1.json",
+    "sha256": "cbe3e22b268215f00f4b286827bafd1db35e475d7195513132c09d5b439a92fc"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-D_startup_up5/B2.json",
+    "sha256": "9bf4981aa4904f12bcd9b213e04b7f702edd8ca0517deb659343ac6d15c5a02d"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed305-D_startup_up5/outcome.json",
+    "sha256": "eb77becdb090a9cc3b2949a3a46dcd53365f41d82fada6e586eaefe30d59c746"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-AA/B0.json",
+    "sha256": "39c6498b4644fda45909d4faed37a8daae221d071887db5bd0c11b965c5c9bf8"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-AA/B1.json",
+    "sha256": "f4d8dfe9a68f5f7645ed7857068eb6aa88d1456fdb0a996820dff92084e94087"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-AA/B2.json",
+    "sha256": "e1c8b8579453c42bc0b4899a763e3db009ae3f00403c22bd55b2c1764350ff2f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-AA/outcome.json",
+    "sha256": "5b23300a4ab5fad3630e13f872f8fc5cc8988bfc7cbc6ee2e586ebab7507e708"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-A_startup_down5/B0.json",
+    "sha256": "416646f8dbc50f927f2cc155439a3d93a4cd21060441f0c799771c185d4a45db"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-A_startup_down5/B1.json",
+    "sha256": "38b83208f495bb9f5261ca434cd1372881e67cf82841ba645e3b743517d3ecf1"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-A_startup_down5/B2.json",
+    "sha256": "685f25bf57906c2865e20a00be95b535a2838b7b9e53414bc62c49dbb1a80e63"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-A_startup_down5/outcome.json",
+    "sha256": "0849c57d5bd99f0de9843ddf42383c7e47df267665466102dc4a7c0926744433"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-DA/B0.json",
+    "sha256": "4be1cfa8a004cc7dfa943c3525a2453218b8306ce14b2d5588a2ceac21b1969b"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-DA/B1.json",
+    "sha256": "c3d80fc5b814a03628604daa57b461cbcb32e738083f89ce160f4585a2e88678"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-DA/B2.json",
+    "sha256": "7f643bff3624eba3cebb35ad7dda8256a1f16fab7e9645d222bc1670de890a67"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-DA/outcome.json",
+    "sha256": "58245caf6bcb73d09769203dc028d3075662464f22f56a8093165b44b1a4515e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-D_startup_up5/B0.json",
+    "sha256": "e95adea570ef4c0141f37e36b4f780e74512d813f5519a50b7f6899e3ecc478d"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-D_startup_up5/B1.json",
+    "sha256": "a3fb893c327afe455b5cc2e58b1862032e4d3d613943264eb82e714a8fc5c2f9"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-D_startup_up5/B2.json",
+    "sha256": "b5b86515469270bc7e9f504b94f664ba57c65e133e9e9925db57f0b5b3157eae"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed306-D_startup_up5/outcome.json",
+    "sha256": "e7d5ba22cef408c63a1db95a50872870651ef39e082bcf8d76903e7bd47b9285"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-AA/B0.json",
+    "sha256": "8ec5e914c39ee111582bad9e968b3111c85e4572e01140bd9fb8abac95fb4dc4"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-AA/B1.json",
+    "sha256": "9ee64b3a6e3bdaf93ebed2b36094eb25a28cbea56d08af18fc800465a647c65a"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-AA/B2.json",
+    "sha256": "a91f0ea1534abaacd636840c0ffcb0a8ae038a83892d2b8a0b45a7d5f116e42a"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-AA/outcome.json",
+    "sha256": "5f5014a6a5d2309a177c8826ed2dc2ece1e9adf06c2ea962107b64115b3590cf"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-A_startup_down5/B0.json",
+    "sha256": "f7206b0d936a69431a062085884e52ad41cde8a29ec655982f2c5d3ae2992faf"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-A_startup_down5/B1.json",
+    "sha256": "ff754443815160446c9903df6b4ef485114b2e3ae78dc484b20f8ac453d1047c"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-A_startup_down5/B2.json",
+    "sha256": "82136b864eb13984aa6d6a8e9ec8426abd78a64a3b0167172a2c5975f7a159ff"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-A_startup_down5/outcome.json",
+    "sha256": "548b38f5d330d85203066a55a52748da9593e6c4251416c37512c53a286624f1"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-DA/B0.json",
+    "sha256": "3f01ba2b655f1b4c0c3eb2e1d78902c0dedc05e6267c1c0056c9c61926896d26"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-DA/B1.json",
+    "sha256": "6d85c769fbeab09d7f7e2575e76787ab4e345dfdf0c2d55b5107d848023ff840"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-DA/B2.json",
+    "sha256": "5fea42c2e1abe68abd495cf26d34ccb562d69919e7baac738cb4706870cc4380"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-DA/outcome.json",
+    "sha256": "180aa117fe9e0428ee954ea00c573658720f81a0c4a5026388ba0d20a768f48e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-D_startup_up5/B0.json",
+    "sha256": "4e0cca3f09993214faf82e119ff3200f659f249bd2783c3b113c8eea02fb4faf"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-D_startup_up5/B1.json",
+    "sha256": "20675bc0e860ad8e53e506fa96e5c2ba8b06b4b6b96eb69bba7ae35774fc7dce"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-D_startup_up5/B2.json",
+    "sha256": "f21b5d8be171cfa965a364c171ae4c8f62fcb23b760ccc1b7c00e229bba2b15a"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed307-D_startup_up5/outcome.json",
+    "sha256": "4f13601b364c69dd589735a1d5a88090808985371dc2268f108bc5c154ee3dcc"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-AA/B0.json",
+    "sha256": "83978276c41fba175ab7df60bbf16ae9e41d2fe14d94f3318166f7a093d0947d"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-AA/B1.json",
+    "sha256": "4942d5dd642e97018ad32b0b402e33586668dbf4efb61c641f3c48f8569a27f0"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-AA/B2.json",
+    "sha256": "e871106fd4db873b0d7d664664e74ee196614a41987dfe298f3b3ed8fd9d61b6"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-AA/outcome.json",
+    "sha256": "0ae324147ad826532089c32cbc7b36d7948ed5ef3fa5611fdb65ae0af7ced6eb"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-A_startup_down5/B0.json",
+    "sha256": "744a5cd7ae5809f16ee5474b6d59961647dc8d9c5d82633041e8fe9c33dd24d6"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-A_startup_down5/B1.json",
+    "sha256": "c2d76cf71c93ce6d1b7eeeb7c6905e63678daa88b5cdd05e67896eefa5cffa0e"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-A_startup_down5/B2.json",
+    "sha256": "b6ac308b9062c6d731a212bee213e7fd7d7e24a036172e8d6d0b2e18a9e0ec51"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-A_startup_down5/outcome.json",
+    "sha256": "8d2d152c1d8d853a9715064fe48a253303c1ce31b6dcc87ef8f398b9a59dc33f"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-DA/B0.json",
+    "sha256": "4e939c13d6f003e250ead8c080d0fe4a1bb81ab9c3bc84ad7c4d870542b79712"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-DA/B1.json",
+    "sha256": "c9b8ec6aeaab1035c61dbfc2584a6da4cdf98044859ec7befa05f0640e45a8c1"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-DA/B2.json",
+    "sha256": "802ad6f209754dcc70ba6d144bcc07069a80bcadad9afa8594febbf872aba5b5"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-DA/outcome.json",
+    "sha256": "43c1a6bf1d9cca3c163db30ae098f42930884d99733bba8c202eadbd0cc12172"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-D_startup_up5/B0.json",
+    "sha256": "a5abb20aa0ae74c0501cc0c83829fc480a59cfdde65205614e25181929a04d85"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-D_startup_up5/B1.json",
+    "sha256": "711ca02750705b3cbd13a5b722c879b8ce620782229718a235184e683005a5ba"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-D_startup_up5/B2.json",
+    "sha256": "0769895f51bb2c4a2899e581fa4a2189993df8d778693bfe765df682e8f2d5bf"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/evidence/seed308-D_startup_up5/outcome.json",
+    "sha256": "c055b5ba4620fd97f461c9d4601b812f6d9bdfadef61f29ffeed658a6358d471"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/paired.png",
+    "sha256": "4bf43a5e7461c29a9a280d338a33cc790b647186774364b9986e4e75d22095ab"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/paired.svg",
+    "sha256": "5cd260abd087dddc237095f174eda80e3922dc9fa6a5f910999ff9a900327820"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/per_seed.csv",
+    "sha256": "9ff0e8e0aee764c0e4d61686fee5805d29a08ebd8105b9de9f49fb1825fb1023"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/statistics.json",
+    "sha256": "9e8bd13d92837c747b43e5591bdfe3cb00272a7123d27ca015f872cc8dd5fd63"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/results/verification.json",
+    "sha256": "6d88a1ddb73a9b29577788af9ff6d4a60dc5fa32bc0d93e046d6b67f6860bc20"
+  },
+  {
+    "file": "sources/pr113/analysis/q128_startup_fresh8_v1/verify_results.py",
+    "sha256": "2beb68afffb5f442ce59c1146c43897f20625dc408948da5a911d1ca89598deb"
+  },
+  {
+    "file": "sources/pr113/analysis/startup_window_experiments_v1/results/ARCHIVE_INDEX.json",
+    "sha256": "8cb94023ac356e1eff42391236383e5858f6ec83eab2264b129d16357750d043"
+  },
+  {
+    "file": "sources/pr113/analysis/startup_window_experiments_v1/results/FINAL_SUMMARY_ZH.md",
+    "sha256": "0f85357fb3496b6666cf6eb58491e2982a906b260ae27b5b09d80c03186e159a"
+  },
+  {
+    "file": "sources/pr113/analysis/startup_window_experiments_v1/results/PUBLIC_SHA256.json",
+    "sha256": "ec4c8e5d6ea9afe6e309750841665248b0b5f7bcb307cc75c586f2524f4c83dd"
+  },
+  {
+    "file": "sources/pr113/analysis/startup_window_experiments_v1/results/final_process_costs.json",
+    "sha256": "87225743f94a5d07d6e891044f869319c23c250b11cb0162bbe980c8018b93f9"
+  }
+]

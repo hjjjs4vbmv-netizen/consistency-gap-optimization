@@ -1,0 +1,136 @@
+[
+  {
+    "host": "owned",
+    "wall": 1789075619.9744384,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 104918,
+        "attempted_iteration": 2833,
+        "error": null,
+        "started_wall": 1789067826.4069986,
+        "elapsed_process_gpuh": 2.1632603525132357,
+        "worker": "worker-6",
+        "heartbeat_age_sec": 5.826906681060791,
+        "pid_alive": true,
+        "actual_attempt": 2835,
+        "successful_updates": 2825
+      },
+      {
+        "status": "RUNNING",
+        "pid": 104917,
+        "attempted_iteration": 2784,
+        "error": null,
+        "started_wall": 1789067826.401554,
+        "elapsed_process_gpuh": 2.1632621508355565,
+        "worker": "worker-7",
+        "heartbeat_age_sec": 5.826930284500122,
+        "pid_alive": true,
+        "actual_attempt": 2786,
+        "successful_updates": 2776
+      }
+    ],
+    "outcomes": [],
+    "ledgers": [],
+    "gpu": "0, NVIDIA A100 80GB PCIe, 33446 MiB, 100 %\n1, NVIDIA A100 80GB PCIe, 33446 MiB, 100 %\n",
+    "compute_processes": "<GPU_UUID>, 105079, <PRIVATE_PATH>/python3.11, 3950 MiB\n<GPU_UUID>, 16121, python, 29478 MiB\n<GPU_UUID>, 105076, <PRIVATE_PATH>/python3.11, 3950 MiB\n<GPU_UUID>, 16120, python, 29478 MiB\n"
+  },
+  {
+    "host": "paid-node-01",
+    "wall": 1789075620.2779672,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 11085,
+        "attempted_iteration": 4722,
+        "error": null,
+        "started_wall": 1789067825.380941,
+        "elapsed_process_gpuh": 2.162617667680089,
+        "worker": "worker-0",
+        "heartbeat_age_sec": 9.473027229309082,
+        "pid_alive": true,
+        "actual_attempt": 4728,
+        "successful_updates": 4717
+      },
+      {
+        "status": "RUNNING",
+        "pid": 11084,
+        "attempted_iteration": 4795,
+        "error": null,
+        "started_wall": 1789067825.3644228,
+        "elapsed_process_gpuh": 2.162622276280955,
+        "worker": "worker-1",
+        "heartbeat_age_sec": 9.473105669021606,
+        "pid_alive": true,
+        "actual_attempt": 4800,
+        "successful_updates": 4788
+      }
+    ],
+    "outcomes": [],
+    "ledgers": [],
+    "gpu": "0, NVIDIA A100-PCIE-40GB, 3957 MiB, 51 %\n1, NVIDIA A100-PCIE-40GB, 3957 MiB, 42 %\n",
+    "compute_processes": "<GPU_UUID>, 3555607, [Not Found], 3950 MiB\n<GPU_UUID>, 3555606, [Not Found], 3950 MiB\n"
+  },
+  {
+    "host": "paid-node-02",
+    "wall": 1789075620.5052586,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 5368,
+        "attempted_iteration": 4579,
+        "error": null,
+        "started_wall": 1789067825.5492768,
+        "elapsed_process_gpuh": 2.162722633574158,
+        "worker": "worker-2",
+        "heartbeat_age_sec": 9.153785467147827,
+        "pid_alive": true,
+        "actual_attempt": 4584,
+        "successful_updates": 4573
+      },
+      {
+        "status": "RUNNING",
+        "pid": 5365,
+        "attempted_iteration": 4624,
+        "error": null,
+        "started_wall": 1789067825.5170872,
+        "elapsed_process_gpuh": 2.1627315945385233,
+        "worker": "worker-3",
+        "heartbeat_age_sec": 9.153873443603516,
+        "pid_alive": true,
+        "actual_attempt": 4629,
+        "successful_updates": 4618
+      },
+      {
+        "status": "RUNNING",
+        "pid": 5370,
+        "attempted_iteration": 4512,
+        "error": null,
+        "started_wall": 1789067825.6108403,
+        "elapsed_process_gpuh": 2.1627055568786133,
+        "worker": "worker-4",
+        "heartbeat_age_sec": 9.153995513916016,
+        "pid_alive": true,
+        "actual_attempt": 4517,
+        "successful_updates": 4506
+      },
+      {
+        "status": "RUNNING",
+        "pid": 5366,
+        "attempted_iteration": 4549,
+        "error": null,
+        "started_wall": 1789067825.5324585,
+        "elapsed_process_gpuh": 2.162727324526964,
+        "worker": "worker-5",
+        "heartbeat_age_sec": 9.15414309501648,
+        "pid_alive": true,
+        "actual_attempt": 4555,
+        "successful_updates": 4544
+      }
+    ],
+    "outcomes": [],
+    "ledgers": [],
+    "gpu": "0, NVIDIA A100-PCIE-40GB, 3959 MiB, 38 %\n1, NVIDIA A100-PCIE-40GB, 3959 MiB, 45 %\n2, NVIDIA A100-PCIE-40GB, 3959 MiB, 39 %\n3, NVIDIA A100-PCIE-40GB, 3959 MiB, 44 %\n",
+    "compute_processes": "<GPU_UUID>, 5574, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3950 MiB\n<GPU_UUID>, 5570, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3950 MiB\n<GPU_UUID>, 5573, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3950 MiB\n<GPU_UUID>, 5567, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3950 MiB\n"
+  }
+]
