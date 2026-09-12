@@ -1,0 +1,37 @@
+{
+  "protocol_id": "q128_startup_fresh8_v1",
+  "q": 128,
+  "seed": 305,
+  "arm": "D_startup_up5",
+  "cohort": [
+    301,
+    302,
+    303,
+    304,
+    305,
+    306,
+    307,
+    308
+  ],
+  "mode": "formal",
+  "initialization": "fresh_transfer",
+  "base_lr": 0.0001,
+  "final_kimg": 1024,
+  "switch_kimg": 512,
+  "target_gap_scale": 1.0,
+  "global_gap_scale": 1.0,
+  "diagnostic_success_steps": 16,
+  "native_prefix_arm": "D",
+  "start_success_step": 1,
+  "end_success_step": 5,
+  "lr_multiplier": 1.1,
+  "max_attempts": 8000,
+  "reference_initial_receipt": {
+    "path": "<TRAINING_ROOT>/references/q128/seed305/initial_state_receipt_v1.json",
+    "sha256": "39c35f21d62f7c5caaade338065534bce08cdcd22cafbd8d57b81e8cc85da656"
+  },
+  "dataset_sha256": "9818e4b801a52eac437485bc8a69e40b54e9ae9c5d1427467343c91de868f1b3",
+  "transfer_sha256": "4d5dcc1f1d0d41c8934ad21626eeddbdc0460182becf9fc059a0631b1eedb4da",
+  "immutable_output_root": "<TRAINING_ROOT>/paid-node-05/runs/q128_startup_fresh8_v1/seed305/D_startup_up5",
+  "old_control_bindings": []
+}

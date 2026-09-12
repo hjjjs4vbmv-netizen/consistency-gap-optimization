@@ -1,0 +1,386 @@
+[
+  {
+    "host": "owned",
+    "wall": 1789090025.0318544,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 104918,
+        "attempted_iteration": 7628,
+        "error": null,
+        "started_wall": 1789067826.4069986,
+        "elapsed_process_gpuh": 6.164590168703451,
+        "log": "<ECT_ROOT>/runs/q256_startup_delayed6_10_v1/seed56/A_delayed_down6_10/process-1789067826328970545.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-6",
+        "pid_alive": true,
+        "heartbeat_age": 6.098161458969116
+      },
+      {
+        "status": "RUNNING",
+        "pid": 104917,
+        "attempted_iteration": 7523,
+        "error": null,
+        "started_wall": 1789067826.401554,
+        "elapsed_process_gpuh": 6.164591646624419,
+        "log": "<ECT_ROOT>/runs/q256_startup_delayed6_10_v1/seed57/A_delayed_down6_10/process-1789067826322906386.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-7",
+        "pid_alive": true,
+        "heartbeat_age": 6.099244832992554
+      }
+    ],
+    "runs": [],
+    "gpu": "0, 33446 MiB, 100 %\n1, 33446 MiB, 100 %\n",
+    "compute": "<GPU_UUID>, 105079, 3950 MiB\n<GPU_UUID>, 16121, 29478 MiB\n<GPU_UUID>, 105076, 3950 MiB\n<GPU_UUID>, 16120, 29478 MiB\n",
+    "ledgers": []
+  },
+  {
+    "host": "paid-node-01",
+    "wall": 1789090025.3068933,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 19561,
+        "attempted_iteration": 4638,
+        "error": null,
+        "started_wall": 1789082471.1460383,
+        "elapsed_process_gpuh": 2.0959604790509263,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/AA/process-1789082471037383240.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-0",
+        "pid_alive": true,
+        "heartbeat_age": 8.70243787765503
+      },
+      {
+        "status": "RUNNING",
+        "pid": 19533,
+        "attempted_iteration": 4631,
+        "error": null,
+        "started_wall": 1789082470.3482563,
+        "elapsed_process_gpuh": 2.095970897411462,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/DA/process-1789082470180559828.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-1",
+        "pid_alive": true,
+        "heartbeat_age": 9.462785482406616
+      }
+    ],
+    "runs": [
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 50,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.7168821765397055,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "process_gpuh": 0.11667245770545884,
+            "error": null
+          },
+          "B1": {
+            "status": "PASS",
+            "process_gpuh": 0.11667249331664709,
+            "error": null
+          },
+          "B2": {
+            "status": "PASS",
+            "process_gpuh": 0.11250548239021252,
+            "error": null
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 51,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.716886768037867,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "process_gpuh": 0.11667454010263706,
+            "error": null
+          },
+          "B1": {
+            "status": "PASS",
+            "process_gpuh": 0.11667255729333394,
+            "error": null
+          },
+          "B2": {
+            "status": "PASS",
+            "process_gpuh": 0.11250606451209427,
+            "error": null
+          }
+        }
+      }
+    ],
+    "gpu": "0, 3955 MiB, 39 %\n1, 3957 MiB, 49 %\n",
+    "compute": "<GPU_UUID>, 3695997, 3948 MiB\n<GPU_UUID>, 3695969, 3950 MiB\n",
+    "ledgers": [
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed51-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.716886768037867,
+            "process_gpuh": 4.062739929945932,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789082470.1605628
+      },
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed50-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.7168821765397055,
+            "process_gpuh": 4.062732609952024,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789082471.017458
+      }
+    ]
+  },
+  {
+    "host": "paid-node-02",
+    "wall": 1789090025.7221885,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 9471,
+        "attempted_iteration": 3997,
+        "error": null,
+        "started_wall": 1789083200.3927975,
+        "elapsed_process_gpuh": 1.8918216423483358,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed303/A_startup_down5/process-1789083200196029188.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-2",
+        "pid_alive": true,
+        "heartbeat_age": 14.770126104354858
+      },
+      {
+        "status": "RUNNING",
+        "pid": 8751,
+        "attempted_iteration": 4058,
+        "error": null,
+        "started_wall": 1789082980.2403886,
+        "elapsed_process_gpuh": 1.9543114779403226,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed304/D_startup_up5/process-1789082979865781395.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-3",
+        "pid_alive": true,
+        "heartbeat_age": 9.959198713302612
+      },
+      {
+        "status": "RUNNING",
+        "pid": 9732,
+        "attempted_iteration": 4045,
+        "error": null,
+        "started_wall": 1789083333.4140391,
+        "elapsed_process_gpuh": 1.8585105303043707,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed305/AA/process-1789083333199308294.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-4",
+        "pid_alive": true,
+        "heartbeat_age": 1.669020652770996
+      },
+      {
+        "status": "RUNNING",
+        "pid": 9210,
+        "attempted_iteration": 4082,
+        "error": null,
+        "started_wall": 1789083159.438913,
+        "elapsed_process_gpuh": 1.9043431895102063,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed306/DA/process-1789083159192623932.log",
+        "projected_slot_gpuh": null,
+        "worker": "worker-5",
+        "pid_alive": true,
+        "heartbeat_age": 10.646632671356201
+      }
+    ],
+    "runs": [
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 53,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.808763372425197,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "process_gpuh": 0.07500523851770494,
+            "error": null
+          },
+          "B1": {
+            "status": "PASS",
+            "process_gpuh": 0.16252063773262004,
+            "error": null
+          },
+          "B2": {
+            "status": "PASS",
+            "process_gpuh": 0.1542455072959678,
+            "error": null
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 55,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.837927205260429,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "process_gpuh": 0.12917950140001874,
+            "error": null
+          },
+          "B1": {
+            "status": "PASS",
+            "process_gpuh": 0.11251769774179492,
+            "error": null
+          },
+          "B2": {
+            "status": "PASS",
+            "process_gpuh": 0.1709141728747636,
+            "error": null
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 52,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.846256485163338,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "process_gpuh": 0.16668137511445416,
+            "error": null
+          },
+          "B1": {
+            "status": "PASS",
+            "process_gpuh": 0.11672764560104244,
+            "error": null
+          },
+          "B2": {
+            "status": "PASS",
+            "process_gpuh": 0.13335370406922367,
+            "error": null
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 54,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.883742763271762,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "process_gpuh": 0.1625237464853045,
+            "error": null
+          },
+          "B1": {
+            "status": "PASS",
+            "process_gpuh": 0.1667529421289348,
+            "error": null
+          },
+          "B2": {
+            "status": "PASS",
+            "process_gpuh": 0.08751533667763903,
+            "error": null
+          }
+        }
+      }
+    ],
+    "gpu": "0, 3957 MiB, 49 %\n1, 3959 MiB, 47 %\n2, 3957 MiB, 46 %\n3, 3959 MiB, 51 %\n",
+    "compute": "<GPU_UUID>, 9522, 3948 MiB\n<GPU_UUID>, 8802, 3950 MiB\n<GPU_UUID>, 9783, 3948 MiB\n<GPU_UUID>, 9261, 3950 MiB\n",
+    "ledgers": [
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed53-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.808763372425197,
+            "process_gpuh": 4.200534755971489,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789082979.8024056
+      },
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed55-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.837927205260429,
+            "process_gpuh": 4.250538577277006,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789083159.1619847
+      },
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed52-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.846256485163338,
+            "process_gpuh": 4.263019209948058,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789083200.173984
+      },
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed54-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.883742763271762,
+            "process_gpuh": 4.30053478856364,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789083333.1781805
+      }
+    ]
+  }
+]

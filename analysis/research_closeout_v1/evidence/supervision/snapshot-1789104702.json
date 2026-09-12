@@ -1,0 +1,2017 @@
+{
+  "wall": 1789104702.1125739,
+  "jobs": [
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 56,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 6.485524132043227,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.058348436563068797
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.06668459334979869
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.08335151079162541
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "A_startup_down5",
+      "order": 1,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 1.7673168953953104,
+      "live_elapsed_gpuh": 1.7673168953953104,
+      "attempt": 2803,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "D_startup_up5",
+      "order": 2,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "AA",
+      "order": 3,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "DA",
+      "order": 4,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 57,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "owned",
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 6.577221823285541,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.05835046418011189
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.06668201664617907
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.08335299059024287
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "D_startup_up5",
+      "order": 1,
+      "host": "owned",
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 1.7673200588073168,
+      "live_elapsed_gpuh": 1.7673200588073168,
+      "attempt": 2436,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "AA",
+      "order": 2,
+      "host": "owned",
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "DA",
+      "order": 3,
+      "host": "owned",
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "A_startup_down5",
+      "order": 4,
+      "host": "owned",
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 50,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.7168821765397055,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.11667245770545884
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11667249331664709
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11250548239021252
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "AA",
+      "order": 1,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.725280789935237,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.0583363567176275
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.07917130220448598
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.10833920325592367
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "DA",
+      "order": 2,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 2.1959690476115794,
+      "live_elapsed_gpuh": 2.1959690476115794,
+      "attempt": 4779,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "A_startup_down5",
+      "order": 3,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "D_startup_up5",
+      "order": 4,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 51,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.716886768037867,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.11667454010263706
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11667255729333394
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11250606451209427
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "DA",
+      "order": 1,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.712997590006174,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.06667023636271349
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.07917130190568665
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11250563328464826
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "A_startup_down5",
+      "order": 2,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 2.1959563057422122,
+      "live_elapsed_gpuh": 2.1959563057422122,
+      "attempt": 4710,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "D_startup_up5",
+      "order": 3,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "AA",
+      "order": 4,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 52,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.846256485163338,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.16668137511445416
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11672764560104244
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.13335370406922367
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "A_startup_down5",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.9378376709587046,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1958524410126524
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1791850711736414
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.07083846075356834
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "D_startup_up5",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 1.5793315766596545,
+      "live_elapsed_gpuh": 1.5793315766596545,
+      "attempt": 3266,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "AA",
+      "order": 3,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "DA",
+      "order": 4,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 53,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.808763372425197,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.07500523851770494
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.16252063773262004
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.1542455072959678
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "D_startup_up5",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.846162121213145,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1375098862240298
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.20419356792337365
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.18752283269746436
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "AA",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 1.6501618411019445,
+      "live_elapsed_gpuh": 1.6501618411019445,
+      "attempt": 3590,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "DA",
+      "order": 3,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "A_startup_down5",
+      "order": 4,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 54,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.883742763271762,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1625237464853045
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1667529421289348
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.08751533667763903
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "AA",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.7921589215493037,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1125148897866408
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1625242174323648
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.13334936110302806
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "DA",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 1.721070736668383,
+      "live_elapsed_gpuh": 1.721070736668383,
+      "attempt": 3498,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "A_startup_down5",
+      "order": 3,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "D_startup_up5",
+      "order": 4,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 55,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.837927205260429,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.12917950140001874
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11251769774179492
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.1709141728747636
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "DA",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.7962972558858907,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1375101170492255
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.20836371234721607
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.175023509727584
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "A_startup_down5",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "RUNNING",
+      "training_gpuh": 1.6584959711341394,
+      "live_elapsed_gpuh": 1.6584959711341394,
+      "attempt": 3531,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "D_startup_up5",
+      "order": 3,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "AA",
+      "order": 4,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PENDING",
+      "training_gpuh": 0,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B1": {
+          "status": "PENDING",
+          "gpuh": 0
+        },
+        "B2": {
+          "status": "PENDING",
+          "gpuh": 0
+        }
+      }
+    }
+  ],
+  "review": {
+    "cap_gpuh": 200.0,
+    "spent_gpuh": 79.35386826875829,
+    "remaining_training_gpuh": 103.59245506503225,
+    "remaining_evaluation_gpuh": 10.563510645755247,
+    "projected_total_gpuh": 193.5098339795458,
+    "allowed": true,
+    "remaining_training_matrix": [
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 307,
+        "arm": "A_startup_down5",
+        "host": "owned",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 307,
+        "arm": "D_startup_up5",
+        "host": "owned",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 307,
+        "arm": "AA",
+        "host": "owned",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 307,
+        "arm": "DA",
+        "host": "owned",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 308,
+        "arm": "D_startup_up5",
+        "host": "owned",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 308,
+        "arm": "AA",
+        "host": "owned",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 308,
+        "arm": "DA",
+        "host": "owned",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 308,
+        "arm": "A_startup_down5",
+        "host": "owned",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 301,
+        "arm": "DA",
+        "host": "paid-node-01",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 301,
+        "arm": "A_startup_down5",
+        "host": "paid-node-01",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 301,
+        "arm": "D_startup_up5",
+        "host": "paid-node-01",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 302,
+        "arm": "A_startup_down5",
+        "host": "paid-node-01",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 302,
+        "arm": "D_startup_up5",
+        "host": "paid-node-01",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 302,
+        "arm": "AA",
+        "host": "paid-node-01",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 303,
+        "arm": "D_startup_up5",
+        "host": "paid-node-02",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 303,
+        "arm": "AA",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 303,
+        "arm": "DA",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 304,
+        "arm": "AA",
+        "host": "paid-node-02",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 304,
+        "arm": "DA",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 304,
+        "arm": "A_startup_down5",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 305,
+        "arm": "DA",
+        "host": "paid-node-02",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 305,
+        "arm": "A_startup_down5",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 305,
+        "arm": "D_startup_up5",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 306,
+        "arm": "A_startup_down5",
+        "host": "paid-node-02",
+        "training_status": "RUNNING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 306,
+        "arm": "D_startup_up5",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      },
+      {
+        "protocol_id": "q128_startup_fresh8_v1",
+        "seed": 306,
+        "arm": "AA",
+        "host": "paid-node-02",
+        "training_status": "PENDING"
+      }
+    ],
+    "estimate_rule": "median completed same-q same-host training, then same-host or same-q fallback; live attempt throughput; median completed same-q evaluation blocks; no quality values used",
+    "wall": 1789104701.7815769
+  },
+  "nodes": [
+    {
+      "host": "owned",
+      "wall": 1789104701.8412843,
+      "workers": [
+        {
+          "status": "RUNNING",
+          "pid": 6190,
+          "started_wall": 1789098325.3488908,
+          "heartbeat_wall": 1789104687.701107,
+          "elapsed_process_gpuh": 1.7673200588073168,
+          "attempted_iteration": 2436,
+          "command": [
+            "<PRIVATE_PATH>/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<ECT_ROOT>/code/ct_train.py",
+            "--data=<PRIVATE_PATH>/cifar10-32x32-training-original.zip",
+            "--outdir=<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed308/D_startup_up5",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.1",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=308",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<ECT_ROOT>/control/manifests/q128_startup_fresh8_v1-seed308-D_startup_up5.json",
+            "--transfer=<PRIVATE_PATH>/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed308/D_startup_up5/process-1789098325261508157.log",
+          "gpu": {
+            "logical_gpu": 7,
+            "host": "owned",
+            "local_gpu": 1,
+            "name": "NVIDIA A100 80GB PCIe",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "owned"
+          },
+          "expected_hard_timeout_seconds": 28800
+        },
+        {
+          "status": "RUNNING",
+          "pid": 6191,
+          "started_wall": 1789098325.3608732,
+          "heartbeat_wall": 1789104687.7017002,
+          "elapsed_process_gpuh": 1.7673168953953104,
+          "attempted_iteration": 2803,
+          "command": [
+            "<PRIVATE_PATH>/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<ECT_ROOT>/code/ct_train.py",
+            "--data=<PRIVATE_PATH>/cifar10-32x32-training-original.zip",
+            "--outdir=<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed307/A_startup_down5",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.0",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=307",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<ECT_ROOT>/control/manifests/q128_startup_fresh8_v1-seed307-A_startup_down5.json",
+            "--transfer=<PRIVATE_PATH>/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed307/A_startup_down5/process-1789098325283165316.log",
+          "gpu": {
+            "logical_gpu": 6,
+            "host": "owned",
+            "local_gpu": 0,
+            "name": "NVIDIA A100 80GB PCIe",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "owned"
+          },
+          "expected_hard_timeout_seconds": 28800
+        }
+      ],
+      "gpu": "gpu_uuid, pid, process_name, used_gpu_memory [MiB]\n<GPU_UUID>, 6400, <PRIVATE_PATH>/python3.11, 3948 MiB\n<GPU_UUID>, 6397, <PRIVATE_PATH>/python3.11, 3950 MiB\n<GPU_UUID>, 74248, python, 29478 MiB\n<GPU_UUID>, 74635, python, 29478 MiB\n",
+      "processes": "   PID   PPID   UID     ELAPSED COMMAND\n     1      0     0 170-00:45:36 <PRIVATE_PATH>/systemd --switched-root --system --deserialize 22\n     2      0     0 170-00:45:36 [kthreadd]\n     6      2     0 170-00:45:36 [ksoftirqd/0]\n     7      2     0 170-00:45:36 [migration/0]\n     8      2     0 170-00:45:36 [rcu_bh]\n     9      2     0 170-00:45:36 [rcu_sched]\n    10      2     0 170-00:45:36 [lru-add-drain]\n    11      2     0 170-00:45:36 [watchdog/0]\n    12      2     0 170-00:45:36 [watchdog/1]\n    13      2     0 170-00:45:36 [migration/1]\n    14      2     0 170-00:45:36 [ksoftirqd/1]\n    18      2     0 170-00:45:36 [watchdog/2]\n    19      2     0 170-00:45:36 [migration/2]\n    20      2     0 170-00:45:36 [ksoftirqd/2]\n    23      2     0 170-00:45:36 [watchdog/3]\n    24      2     0 170-00:45:36 [migration/3]\n    25      2     0 170-00:45:36 [ksoftirqd/3]\n    28      2     0 170-00:45:36 [watchdog/4]\n    29      2     0 170-00:45:36 [migration/4]\n    30      2     0 170-00:45:36 [ksoftirqd/4]\n    33      2     0 170-00:45:36 [watchdog/5]\n    34      2     0 170-00:45:36 [migration/5]\n    35      2     0 170-00:45:36 [ksoftirqd/5]\n    38      2     0 170-00:45:36 [watchdog/6]\n    39      2     0 170-00:45:36 [migration/6]\n    40      2     0 170-00:45:36 [ksoftirqd/6]\n    43      2     0 170-00:45:36 [watchdog/7]\n    44      2     0 170-00:45:36 [migration/7]\n    45      2     0 170-00:45:36 [ksoftirqd/7]\n    48      2     0 170-00:45:36 [watchdog/8]\n    49      2     0 170-00:45:36 [migration/8]\n    50      2     0 170-00:45:36 [ksoftirqd/8]\n    53      2     0 170-00:45:36 [watchdog/9]\n    54      2     0 170-00:45:36 [migration/9]\n    55      2     0 170-00:45:36 [ksoftirqd/9]\n    58      2     0 170-00:45:36 [watchdog/10]\n    59      2     0 170-00:45:36 [migration/10]\n    60      2     0 170-00:45:36 [ksoftirqd/10]\n    63      2     0 170-00:45:36 [watchdog/11]\n    64      2     0 170-00:45:36 [migration/11]\n    65      2     0 170-00:45:36 [ksoftirqd/11]\n    68      2     0 170-00:45:36 [watchdog/12]\n    69      2     0 170-00:45:36 [migration/12]\n    70      2     0 170-00:45:36 [ksoftirqd/12]\n    73      2     0 170-00:45:36 [watchdog/13]\n    74      2     0 170-00:45:36 [migration/13]\n    75      2     0 170-00:45:36 [ksoftirqd/13]\n    78      2     0 170-00:45:36 [watchdog/14]\n    79      2     0 170-00:45:36 [migration/14]\n    80      2     0 170-00:45:36 [ksoftirqd/14]\n    83      2     0 170-00:45:36 [watchdog/15]\n    84      2     0 170-00:45:36 [migration/15]\n    85      2     0 170-00:45:36 [ksoftirqd/15]\n    88      2     0 170-00:45:36 [watchdog/16]\n    89      2     0 170-00:45:36 [migration/16]\n    90      2     0 170-00:45:36 [ksoftirqd/16]\n    93      2     0 170-00:45:36 [watchdog/17]\n    94      2     0 170-00:45:36 [migration/17]\n    95      2     0 170-00:45:36 [ksoftirqd/17]\n    98      2     0 170-00:45:36 [watchdog/18]\n    99      2     0 170-00:45:36 [migration/18]\n   100      2     0 170-00:45:36 [ksoftirqd/18]\n   103      2     0 170-00:45:36 [watchdog/19]\n   104      2     0 170-00:45:36 [migration/19]\n   105      2     0 170-00:45:36 [ksoftirqd/19]\n   108      2     0 170-00:45:36 [watchdog/20]\n   109      2     0 170-00:45:36 [migration/20]\n   110      2     0 170-00:45:36 [ksoftirqd/20]\n   113      2     0 170-00:45:36 [watchdog/21]\n   114      2     0 170-00:45:36 [migration/21]\n   115      2     0 170-00:45:36 [ksoftirqd/21]\n   118      2     0 170-00:45:36 [watchdog/22]\n   119      2     0 170-00:45:36 [migration/22]\n   120      2     0 170-00:45:36 [ksoftirqd/22]\n   123      2     0 170-00:45:36 [watchdog/23]\n   124      2     0 170-00:45:36 [migration/23]\n   125      2     0 170-00:45:36 [ksoftirqd/23]\n   128      2     0 170-00:45:36 [watchdog/24]\n   129      2     0 170-00:45:36 [migration/24]\n   130      2     0 170-00:45:36 [ksoftirqd/24]\n   133      2     0 170-00:45:36 [watchdog/25]\n   134      2     0 170-00:45:36 [migration/25]\n   135      2     0 170-00:45:36 [ksoftirqd/25]\n   138      2     0 170-00:45:36 [watchdog/26]\n   139      2     0 170-00:45:36 [migration/26]\n   140      2     0 170-00:45:36 [ksoftirqd/26]\n   144      2     0 170-00:45:36 [watchdog/27]\n   145      2     0 170-00:45:36 [migration/27]\n   146      2     0 170-00:45:36 [ksoftirqd/27]\n   149      2     0 170-00:45:36 [watchdog/28]\n   150      2     0 170-00:45:36 [migration/28]\n   151      2     0 170-00:45:36 [ksoftirqd/28]\n   154      2     0 170-00:45:36 [watchdog/29]\n   155      2     0 170-00:45:36 [migration/29]\n   156      2     0 170-00:45:36 [ksoftirqd/29]\n   158      2     0 170-00:45:36 [kworker/29:0H]\n   159      2     0 170-00:45:36 [watchdog/30]\n   160      2     0 170-00:45:36 [migration/30]\n   161      2     0 170-00:45:36 [ksoftirqd/30]\n   163      2     0 170-00:45:36 [kworker/30:0H]\n   164      2     0 170-00:45:36 [watchdog/31]\n   165      2     0 170-00:45:36 [migration/31]\n   166      2     0 170-00:45:36 [ksoftirqd/31]\n   169      2     0 170-00:45:36 [watchdog/32]\n   170      2     0 170-00:45:36 [migration/32]\n   171      2     0 170-00:45:36 [ksoftirqd/32]\n   174      2     0 170-00:45:36 [watchdog/33]\n   175      2     0 170-00:45:36 [migration/33]\n   176      2     0 170-00:45:36 [ksoftirqd/33]\n   178      2     0 170-00:45:36 [kworker/33:0H]\n   179      2     0 170-00:45:36 [watchdog/34]\n   180      2     0 170-00:45:36 [migration/34]\n   181      2     0 170-00:45:36 [ksoftirqd/34]\n   183      2     0 170-00:45:36 [kworker/34:0H]\n   184      2     0 170-00:45:36 [watchdog/35]\n   185      2     0 170-00:45:36 [migration/35]\n   186      2     0 170-00:45:36 [ksoftirqd/35]\n   189      2     0 170-00:45:36 [watchdog/36]\n   190      2     0 170-00:45:36 [migration/36]\n   191      2     0 170-00:45:36 [ksoftirqd/36]\n   193      2     0 170-00:45:36 [kworker/36:0H]\n   194      2     0 170-00:45:36 [watchdog/37]\n   195      2     0 170-00:45:36 [migration/37]\n   196      2     0 170-00:45:36 [ksoftirqd/37]\n   198      2     0 170-00:45:36 [kworker/37:0H]\n   199      2     0 170-00:45:36 [watchdog/38]\n   200      2     0 170-00:45:36 [migration/38]\n   201      2     0 170-00:45:36 [ksoftirqd/38]\n   204      2     0 170-00:45:36 [watchdog/39]\n   205      2     0 170-00:45:36 [migration/39]\n   206      2     0 170-00:45:36 [ksoftirqd/39]\n   208      2     0 170-00:45:36 [kworker/39:0H]\n   209      2     0 170-00:45:36 [watchdog/40]\n   210      2     0 170-00:45:36 [migration/40]\n   211      2     0 170-00:45:36 [ksoftirqd/40]\n   214      2     0 170-00:45:36 [watchdog/41]\n   215      2     0 170-00:45:36 [migration/41]\n   216      2     0 170-00:45:36 [ksoftirqd/41]\n   218      2     0 170-00:45:36 [kworker/41:0H]\n   219      2     0 170-00:45:36 [watchdog/42]\n   220      2     0 170-00:45:36 [migration/42]\n   221      2     0 170-00:45:36 [ksoftirqd/42]\n   224      2     0 170-00:45:36 [watchdog/43]\n   225      2     0 170-00:45:36 [migration/43]\n   226      2     0 170-00:45:36 [ksoftirqd/43]\n   229      2     0 170-00:45:36 [watchdog/44]\n   230      2     0 170-00:45:36 [migration/44]\n   231      2     0 170-00:45:36 [ksoftirqd/44]\n   233      2     0 170-00:45:36 [kworker/44:0H]\n   234      2     0 170-00:45:36 [watchdog/45]\n   235      2     0 170-00:45:36 [migration/45]\n   236      2     0 170-00:45:36 [ksoftirqd/45]\n   238      2     0 170-00:45:36 [kworker/45:0H]\n   239      2     0 170-00:45:36 [watchdog/46]\n   240      2     0 170-00:45:36 [migration/46]\n   241      2     0 170-00:45:36 [ksoftirqd/46]\n   244      2     0 170-00:45:36 [watchdog/47]\n   245      2     0 170-00:45:36 [migration/47]\n   246      2     0 170-00:45:36 [ksoftirqd/47]\n   249      2     0 170-00:45:36 [watchdog/48]\n   250      2     0 170-00:45:36 [migration/48]\n   251      2     0 170-00:45:36 [ksoftirqd/48]\n   253      2     0 170-00:45:36 [kworker/48:0H]\n   254      2     0 170-00:45:36 [watchdog/49]\n   255      2     0 170-00:45:36 [migration/49]\n   256      2     0 170-00:45:36 [ksoftirqd/49]\n   259      2     0 170-00:45:36 [watchdog/50]\n   260      2     0 170-00:45:36 [migration/50]\n   261      2     0 170-00:45:36 [ksoftirqd/50]\n   264      2     0 170-00:45:36 [watchdog/51]\n   265      2     0 170-00:45:36 [migration/51]\n   266      2     0 170-00:45:36 [ksoftirqd/51]\n   269      2     0 170-00:45:36 [watchdog/52]\n   270      2     0 170-00:45:36 [migration/52]\n   271      2     0 170-00:45:36 [ksoftirqd/52]\n   274      2     0 170-00:45:36 [watchdog/53]\n   275      2     0 170-00:45:36 [migration/53]\n   276      2     0 170-00:45:36 [ksoftirqd/53]\n   279      2     0 170-00:45:36 [watchdog/54]\n   280      2     0 170-00:45:36 [migration/54]\n   281      2     0 170-00:45:36 [ksoftirqd/54]\n   284      2     0 170-00:45:36 [watchdog/55]\n   285      2     0 170-00:45:36 [migration/55]\n   286      2     0 170-00:45:36 [ksoftirqd/55]\n   289      2     0 170-00:45:36 [watchdog/56]\n   290      2     0 170-00:45:36 [migration/56]\n   291      2     0 170-00:45:36 [ksoftirqd/56]\n   294      2     0 170-00:45:36 [watchdog/57]\n   295      2     0 170-00:45:36 [migration/57]\n   296      2     0 170-00:45:36 [ksoftirqd/57]\n   299      2     0 170-00:45:36 [watchdog/58]\n   300      2     0 170-00:45:36 [migration/58]\n   301      2     0 170-00:45:36 [ksoftirqd/58]\n   304      2     0 170-00:45:36 [watchdog/59]\n   305      2     0 170-00:45:36 [migration/59]\n   306      2     0 170-00:45:36 [ksoftirqd/59]\n   309      2     0 170-00:45:36 [watchdog/60]\n   310      2     0 170-00:45:36 [migration/60]\n   311      2     0 170-00:45:36 [ksoftirqd/60]\n   314      2     0 170-00:45:36 [watchdog/61]\n   315      2     0 170-00:45:36 [migration/61]\n   316      2     0 170-00:45:36 [ksoftirqd/61]\n   319      2     0 170-00:45:36 [watchdog/62]\n   320      2     0 170-00:45:36 [migration/62]\n   321      2     0 170-00:45:36 [ksoftirqd/62]\n   324      2     0 170-00:45:36 [watchdog/63]\n   325      2     0 170-00:45:36 [migration/63]\n   326      2     0 170-00:45:36 [ksoftirqd/63]\n   329      2     0 170-00:45:36 [watchdog/64]\n   330      2     0 170-00:45:36 [migration/64]\n   331      2     0 170-00:45:36 [ksoftirqd/64]\n   334      2     0 170-00:45:36 [watchdog/65]\n   335      2     0 170-00:45:36 [migration/65]\n   336      2     0 170-00:45:36 [ksoftirqd/65]\n   339      2     0 170-00:45:36 [watchdog/66]\n   340      2     0 170-00:45:36 [migration/66]\n   341      2     0 170-00:45:36 [ksoftirqd/66]\n   344      2     0 170-00:45:36 [watchdog/67]\n   345      2     0 170-00:45:36 [migration/67]\n   346      2     0 170-00:45:36 [ksoftirqd/67]\n   349      2     0 170-00:45:36 [watchdog/68]\n   350      2     0 170-00:45:36 [migration/68]\n   351      2     0 170-00:45:36 [ksoftirqd/68]\n   354      2     0 170-00:45:36 [watchdog/69]\n   355      2     0 170-00:45:36 [migration/69]\n   356      2     0 170-00:45:36 [ksoftirqd/69]\n   357  18823     0  1-05:14:03 sshd: niezichao [priv]\n   359      2     0 170-00:45:36 [watchdog/70]\n   360      2     0 170-00:45:36 [migration/70]\n   361      2     0 170-00:45:36 [ksoftirqd/70]\n   362    357  1004  1-05:14:03 sshd: niezichao@notty\n   363    362  1004  1-05:14:03 sh\n   364      2     0 170-00:45:36 [watchdog/71]\n   365      2     0 170-00:45:36 [migration/71]\n   366      2     0 170-00:45:36 [ksoftirqd/71]\n   369      2     0 170-00:45:36 [watchdog/72]\n   370      2     0 170-00:45:36 [migration/72]\n   371      2     0 170-00:45:36 [ksoftirqd/72]\n   374      2     0 170-00:45:36 [watchdog/73]\n   375      2     0 170-00:45:36 [migration/73]\n   376      2     0 170-00:45:36 [ksoftirqd/73]\n   379      2     0 170-00:45:36 [watchdog/74]\n   380      2     0 170-00:45:36 [migration/74]\n   381      2     0 170-00:45:36 [ksoftirqd/74]\n   384      2     0 170-00:45:36 [watchdog/75]\n   385      2     0 170-00:45:36 [migration/75]\n   386      2     0 170-00:45:36 [ksoftirqd/75]\n   389      2     0 170-00:45:36 [watchdog/76]\n   390      2     0 170-00:45:36 [migration/76]\n   391      2     0 170-00:45:36 [ksoftirqd/76]\n   394      2     0 170-00:45:36 [watchdog/77]\n   395      2     0 170-00:45:36 [migration/77]\n   396      2     0 170-00:45:36 [ksoftirqd/77]\n   399      2     0 170-00:45:36 [watchdog/78]\n   400      2     0 170-00:45:36 [migration/78]\n   401      2     0 170-00:45:36 [ksoftirqd/78]\n   404      2     0 170-00:45:36 [watchdog/79]\n   405      2     0 170-00:45:36 [migration/79]\n   406      2     0 170-00:45:36 [ksoftirqd/79]\n   408      2     0 170-00:45:36 [kworker/79:0H]\n   409      2     0 170-00:45:36 [watchdog/80]\n   410      2     0 170-00:45:36 [migration/80]\n   411      2     0 170-00:45:36 [ksoftirqd/80]\n   413      2     0 170-00:45:36 [kworker/80:0H]\n   414      2     0 170-00:45:36 [watchdog/81]\n   415      2     0 170-00:45:36 [migration/81]\n   416      2     0 170-00:45:36 [ksoftirqd/81]\n   418      2     0 170-00:45:36 [kworker/81:0H]\n   419      2     0 170-00:45:36 [watchdog/82]\n   420      2     0 170-00:45:36 [migration/82]\n   421      2     0 170-00:45:36 [ksoftirqd/82]\n   423      2     0 170-00:45:36 [kworker/82:0H]\n   424      2     0 170-00:45:36 [watchdog/83]\n   425      2     0 170-00:45:36 [migration/83]\n   426      2     0 170-00:45:36 [ksoftirqd/83]\n   428      2     0 170-00:45:36 [kworker/83:0H]\n   429      2     0 170-00:45:36 [watchdog/84]\n   430      2     0 170-00:45:36 [migration/84]\n   431      2     0 170-00:45:36 [ksoftirqd/84]\n   433      2     0 170-00:45:36 [kworker/84:0H]\n   434      2     0 170-00:45:36 [watchdog/85]\n   435      2     0 170-00:45:36 [migration/85]\n   436      2     0 170-00:45:36 [ksoftirqd/85]\n   437      2     0 170-00:45:36 [kworker/85:0]\n   438      2     0 170-00:45:36 [kworker/85:0H]\n   439      2     0 170-00:45:36 [watchdog/86]\n   440      2     0 170-00:45:36 [migration/86]\n   441      2     0 170-00:45:36 [ksoftirqd/86]\n   443      2     0 170-00:45:36 [kworker/86:0H]\n   444      2     0 170-00:45:36 [watchdog/87]\n   445      2     0 170-00:45:36 [migration/87]\n   446      2     0 170-00:45:36 [ksoftirqd/87]\n   447      2     0 170-00:45:36 [kworker/87:0]\n   448      2     0 170-00:45:36 [kworker/87:0H]\n   449      2     0 170-00:45:36 [watchdog/88]\n   450      2     0 170-00:45:36 [migration/88]\n   451      2     0 170-00:45:36 [ksoftirqd/88]\n   453      2     0 170-00:45:36 [kworker/88:0H]\n   454      2     0 170-00:45:36 [watchdog/89]\n   455      2     0 170-00:45:36 [migration/89]\n   456      2     0 170-00:45:36 [ksoftirqd/89]\n   458      2     0 170-00:45:36 [kworker/89:0H]\n   459      2     0 170-00:45:36 [watchdog/90]\n   460      2     0 170-00:45:36 [migration/90]\n   461      2     0 170-00:45:36 [ksoftirqd/90]\n   463      2     0 170-00:45:36 [kworker/90:0H]\n   464      2     0 170-00:45:36 [watchdog/91]\n   465      2     0 170-00:45:36 [migration/91]\n   466      2     0 170-00:45:36 [ksoftirqd/91]\n   469      2     0 170-00:45:36 [watchdog/92]\n   470      2     0 170-00:45:36 [migration/92]\n   471      2     0 170-00:45:36 [ksoftirqd/92]\n   473      2     0 170-00:45:36 [kworker/92:0H]\n   474      2     0 170-00:45:36 [watchdog/93]\n   475      2     0 170-00:45:36 [migration/93]\n   476      2     0 170-00:45:36 [ksoftirqd/93]\n   478      2     0 170-00:45:36 [kworker/93:0H]\n   479      2     0 170-00:45:36 [watchdog/94]\n   480      2     0 170-00:45:36 [migration/94]\n   481      2     0 170-00:45:36 [ksoftirqd/94]\n   483      2     0 170-00:45:36 [kworker/94:0H]\n   484      2     0 170-00:45:36 [watchdog/95]\n   485      2     0 170-00:45:36 [migration/95]\n   486      2     0 170-00:45:36 [ksoftirqd/95]\n   488      2     0 170-00:45:36 [kworker/95:0H]\n   489      2     0 170-00:45:36 [watchdog/96]\n   490      2     0 170-00:45:36 [migration/96]\n   491      2     0 170-00:45:36 [ksoftirqd/96]\n   493      2     0 170-00:45:36 [kworker/96:0H]\n   494      2     0 170-00:45:36 [watchdog/97]\n   495      2     0 170-00:45:36 [migration/97]\n   496      2     0 170-00:45:36 [ksoftirqd/97]\n   497      2     0 170-00:45:36 [kworker/97:0]\n   498      2     0 170-00:45:36 [kworker/97:0H]\n   499      2     0 170-00:45:36 [watchdog/98]\n   500      2     0 170-00:45:36 [migration/98]\n   501      2     0 170-00:45:36 [ksoftirqd/98]\n   503      2     0 170-00:45:36 [kworker/98:0H]\n   504      2     0 170-00:45:36 [watchdog/99]\n   505      2     0 170-00:45:36 [migration/99]\n   506      2     0 170-00:45:36 [ksoftirqd/99]\n   508      2     0 170-00:45:36 [kworker/99:0H]\n   509      2     0 170-00:45:36 [watchdog/100]\n   510      2     0 170-00:45:36 [migration/100]\n   511      2     0 170-00:45:36 [ksoftirqd/100]\n   513      2     0 170-00:45:36 [kworker/100:0H]\n   514      2     0 170-00:45:36 [watchdog/101]\n   515      2     0 170-00:45:36 [migration/101]\n   516      2     0 170-00:45:36 [ksoftirqd/101]\n   518      2     0 170-00:45:36 [kworker/101:0H]\n   519      2     0 170-00:45:36 [watchdog/102]\n   520      2     0 170-00:45:36 [migration/102]\n   521      2     0 170-00:45:36 [ksoftirqd/102]\n   523      2     0 170-00:45:36 [kworker/102:0H]\n   524      2     0 170-00:45:36 [watchdog/103]\n   525      2     0 170-00:45:36 [migration/103]\n   526      2     0 170-00:45:36 [ksoftirqd/103]\n   527    363  1004  1-05:14:02 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 363 --on-host=<PRIVATE_ADDRESS> --on-port\n   528      2     0 170-00:45:36 [kworker/103:0H]\n   531      2     0 170-00:45:35 [kdevtmpfs]\n   532      2     0 170-00:45:35 [netns]\n   533      2     0 170-00:45:35 [khungtaskd]\n   534      2     0 170-00:45:35 [writeback]\n   535      2     0 170-00:45:35 [kintegrityd]\n   536      2     0 170-00:45:35 [bioset]\n   537      2     0 170-00:45:35 [bioset]\n   538      2     0 170-00:45:35 [bioset]\n   539      2     0 170-00:45:35 [kblockd]\n   541      2     0 170-00:45:34 [md]\n   542      2     0 170-00:45:34 [edac-poller]\n   543      2     0 170-00:45:34 [watchdogd]\n   550      2     0 170-00:45:34 [kswapd0]\n   551      2     0 170-00:45:34 [kswapd1]\n   552      2     0 170-00:45:34 [ksmd]\n   553      2     0 170-00:45:34 [khugepaged]\n   554      2     0 170-00:45:34 [crypto]\n   562      2     0 170-00:45:34 [kthrotld]\n   565      2     0 170-00:45:34 [kmpath_rdacd]\n   566      2     0 170-00:45:34 [kaluad]\n   569      2     0 170-00:45:33 [kpsmoused]\n   577      2     0 170-00:45:33 [ipv6_addrconf]\n   592      2     0 170-00:45:33 [deferwq]\n   624      2     0 170-00:45:33 [kauditd]\n   681    527  1004  1-05:14:02 sh <PRIVATE_PATH>/code-server --connection-token=remotessh --accept-server-license-terms --agent-host-bridge-port=43760 --agent-host-bridge-host=<PRIVATE_ADDRESS> --agent-host-bridge-connection-token=dc3e6891-6eb9-42ac-81b9-25f3be9e7e0c --start-server --enable-remote-auto-shutdown --socket-path=<PRIVATE_PATH>/code-27e936e1-a050-421a-9e48-790201400887\n   692    681  1004  1-05:14:01 <PRIVATE_PATH>/node <PRIVATE_PATH>/server-main.js --connection-token=remotessh --accept-server-license-terms --agent-host-bridge-port=43760 --agent-host-bridge-host=<PRIVATE_ADDRESS> --agent-host-bridge-connection-token=dc3e6891-6eb9-42ac-81b9-25f3be9e7e0c --start-server --enable-remote-auto-shutdown --socket-path=<PRIVATE_PATH>/code-27e936e1-a050-421a-9e48-790201400887\n   778    692  1004  1-05:13:55 <PRIVATE_PATH>/node <PRIVATE_PATH>/bootstrap-fork --type=fileWatcher\n   839    692  1004  1-05:13:51 <PRIVATE_PATH>/node <PRIVATE_PATH>/bootstrap-fork --type=ptyHost --logsPath <PRIVATE_PATH>/20260910T081741\n  1674    839  1004  1-05:13:14 /bin/bash --init-file <PRIVATE_PATH>/shellIntegration-bash.sh\n  1695      2     0 170-00:45:32 [nfit]\n  1715      2     0 16-09:46:25 [kworker/11:0]\n  1879   9456  1004 92-13:49:13 -bash\n  2120  22516 10031 16-19:49:48 -bash\n  2130      2     0  3-20:30:17 [kworker/23:0]\n  2135      2     0 10-02:07:54 [kworker/55:0]\n  2316      2     0 37-13:29:42 [kworker/78:0]\n  2397      2     0 15-13:36:28 [kworker/35:2]\n  2410      2     0    01:50:32 [kworker/77:1]\n  3257      2     0 170-00:45:32 [ata_sff]\n  3533      1  1006    01:49:20 <PRIVATE_PATH>/python3.11 <ECT_ROOT>/supervision/global_budget_recovery.py --logical-gpu 6 --wait-for-legacy-cost-stop\n  3534      1  1006    01:49:20 <PRIVATE_PATH>/python3.11 <ECT_ROOT>/supervision/global_budget_recovery.py --logical-gpu 7 --wait-for-legacy-cost-stop\n  3765      2     0 81-16:42:42 [kworker/94:0]\n  3793      2     0  4-14:21:41 [kworker/11:1]\n  3833      2     0  1-12:21:41 [kworker/67:0]\n  3874      2     0 170-00:45:32 [scsi_eh_0]\n  3875      2     0 170-00:45:32 [scsi_tmf_0]\n  3882      2     0 170-00:45:32 [scsi_eh_1]\n  3884      2     0 170-00:45:32 [scsi_tmf_1]\n  3890      2     0 170-00:45:32 [scsi_eh_2]\n  3891      2     0 170-00:45:32 [scsi_tmf_2]\n  3894      2     0 170-00:45:32 [scsi_eh_3]\n  3895      2     0 170-00:45:32 [scsi_tmf_3]\n  3901      2     0 170-00:45:32 [scsi_eh_4]\n  3904      2     0 170-00:45:32 [scsi_tmf_4]\n  3907      2     0 170-00:45:32 [scsi_eh_5]\n  3908      2     0 170-00:45:32 [scsi_tmf_5]\n  3949      2     0 170-00:45:32 [i40e]\n  4198      2     0  5-13:11:40 [kworker/83:2]\n  4244      2     0 170-00:45:32 [mlx5_health0000]\n  4335      2     0 170-00:45:32 [mlx5_cmd_0000:1]\n  4343      2     0 170-00:45:32 [scsi_eh_6]\n  4345      2     0 170-00:45:32 [scsi_tmf_6]\n  4358      2     0 170-00:45:32 [scsi_eh_7]\n  4360      2     0 170-00:45:32 [scsi_tmf_7]\n  4369      2     0 170-00:45:32 [scsi_eh_8]\n  4371      2     0 170-00:45:32 [scsi_tmf_8]\n  4383      2     0 170-00:45:32 [scsi_eh_9]\n  4384      2     0 170-00:45:32 [scsi_tmf_9]\n  4404      2     0 170-00:45:32 [scsi_eh_10]\n  4406      2     0 170-00:45:32 [scsi_tmf_10]\n  4421      2     0 170-00:45:32 [scsi_eh_11]\n  4422      2     0 170-00:45:32 [scsi_tmf_11]\n  4432      2     0 170-00:45:32 [scsi_eh_12]\n  4434      2     0 170-00:45:32 [scsi_tmf_12]\n  4439      2     0 170-00:45:32 [scsi_eh_13]\n  4440      2     0 170-00:45:32 [scsi_tmf_13]\n  4764      2     0 170-00:45:32 [mlx5_page_alloc]\n  5026      2     0    03:50:55 [kworker/23:1H]\n  5039      1  1006    07:57:11 <PRIVATE_PATH>/python3.11 <ECT_ROOT>/supervision/archive_supervisor.py\n  5068      2     0 15-18:01:40 [kworker/75:1]\n  5101      2     0 21-10:47:45 [kworker/87:1]\n  5227      2     0    22:43:51 [kworker/45:2]\n  5294      2     0  1-21:11:41 [kworker/56:0]\n  5436  41392  1004 63-11:52:19 python -u inference_bundle/toolkit/browse_attention_debug_step_metric_grid_gradio.py --host <PRIVATE_ADDRESS> --port 6872 --root_dir inference_bundle/outputs/5B-Audio_onlyInjText_sharedX_global6600_duallr1456_drop0.9T_fp32_test2train2_pairCompare\n  5622  49414  1004 100-21:07:31 nvtop\n  5996      2     0 170-00:45:32 [kworker/95:1]\n  6016      2     0 170-00:45:32 [scsi_eh_14]\n  6017      2     0 170-00:45:32 [scsi_tmf_14]\n  6018      2     0 170-00:45:32 [mlx5_esw_wq]\n  6019      2     0 170-00:45:32 [mlx5_fw_tracer]\n  6190   3534  1006    01:46:17 <PRIVATE_PATH>/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <ECT_ROOT>/code/ct_train.py --data=<PRIVATE_PATH>/cifar10-32x32-training-original.zip --outdir=<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed308/D_startup_up5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=308 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<ECT_ROOT>/control/manifests/q128_startup_fresh8_v1-seed308-D_startup_up5.json --transfer=<PRIVATE_PATH>/edm-cifar10-32x32-uncond-vp.pkl\n  6191   3533  1006    01:46:17 <PRIVATE_PATH>/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <ECT_ROOT>/code/ct_train.py --data=<PRIVATE_PATH>/cifar10-32x32-training-original.zip --outdir=<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed307/A_startup_down5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=307 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<ECT_ROOT>/control/manifests/q128_startup_fresh8_v1-seed307-A_startup_down5.json --transfer=<PRIVATE_PATH>/edm-cifar10-32x32-uncond-vp.pkl\n  6256      2     0 37-13:17:01 [kworker/102:2]\n  6259      2     0 37-13:17:01 [kworker/100:2]\n  6317      2     0 21-13:50:11 [kworker/67:2]\n  6339      2     0 170-00:45:32 [mlx5_fc]\n  6342      2     0 170-00:45:32 [mlx5_health0000]\n  6343      2     0 170-00:45:32 [mlx5_cmd_0000:1]\n  6397   6190  1006    01:46:13 <PRIVATE_PATH>/python3.11 -u <ECT_ROOT>/code/ct_train.py --data=<PRIVATE_PATH>/cifar10-32x32-training-original.zip --outdir=<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed308/D_startup_up5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=308 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<ECT_ROOT>/control/manifests/q128_startup_fresh8_v1-seed308-D_startup_up5.json --transfer=<PRIVATE_PATH>/edm-cifar10-32x32-uncond-vp.pkl\n  6400   6191  1006    01:46:13 <PRIVATE_PATH>/python3.11 -u <ECT_ROOT>/code/ct_train.py --data=<PRIVATE_PATH>/cifar10-32x32-training-original.zip --outdir=<ECT_ROOT>/runs/q128_startup_fresh8_v1/seed307/A_startup_down5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=307 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<ECT_ROOT>/control/manifests/q128_startup_fresh8_v1-seed307-A_startup_down5.json --transfer=<PRIVATE_PATH>/edm-cifar10-32x32-uncond-vp.pkl\n  6566      2     0 170-00:45:32 [mlx5_page_alloc]\n  6683      2     0    01:46:08 [vidmem lazy fre]\n  6686      2     0    01:46:08 [UVM GPU1 BH]\n  6687      2     0    01:46:08 [UVM GPU1 KC]\n  6691      2     0    01:46:08 [vidmem lazy fre]\n  6692      2     0    01:46:08 [UVM GPU2 BH]\n  6693      2     0    01:46:08 [UVM GPU2 KC]\n  6723   6397  1006    01:46:06 <PRIVATE_PATH>/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(24)\n  6724   6397  1006    01:46:06 <PRIVATE_PATH>/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=25, pipe_handle=29) --multiprocessing-fork\n  6726   6400  1006    01:46:06 <PRIVATE_PATH>/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(24)\n  6727   6400  1006    01:46:06 <PRIVATE_PATH>/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=25, pipe_handle=29) --multiprocessing-fork\n  6799      2     0  4-12:00:37 [kworker/22:1]\n  6962      2     0  9-23:41:38 [kworker/37:1]\n  7056      2     0 170-00:45:31 [mlx5_esw_wq]\n  7057      2     0 170-00:45:31 [mlx5_fw_tracer]\n  7058      2     0 170-00:45:31 [mlx5_fc]\n  7060      2     0 170-00:45:31 [mlx5_health0000]\n  7061      2     0 170-00:45:31 [mlx5_cmd_0000:3]\n  7063      2     0 170-00:45:31 [mlx5_page_alloc]\n  7068      2     0 170-00:45:31 [mlx5_esw_wq]\n  7069      2     0 170-00:45:31 [mlx5_fw_tracer]\n  7103      2     0 170-00:45:30 [mlx5_fc]\n  7112      2     0 170-00:45:30 [mlx5_health0000]\n  7125      2     0 170-00:45:30 [mlx5_cmd_0000:3]\n  7154      2     0 170-00:45:30 [mlx5_page_alloc]\n  7182      2     0 170-00:45:30 [mlx5_esw_wq]\n  7183      2     0 170-00:45:30 [mlx5_fw_tracer]\n  7184      2     0 170-00:45:30 [mlx5_fc]\n  7186      2     0 170-00:45:30 [mlx5e]\n  7189      2     0 170-00:45:30 [mlx5e_arfs]\n  7190      2     0 170-00:45:30 [mlx5e]\n  7191      2     0 170-00:45:30 [mlx5e_arfs]\n  7192      2     0 170-00:45:29 [mlx5e]\n  7193      2     0 170-00:45:29 [mlx5e_arfs]\n  7194      2     0 170-00:45:29 [mlx5e]\n  7195      2     0 170-00:45:29 [mlx5e_arfs]\n  7323      2     0  4-19:02:34 [kworker/74:0]\n  7544      1  1006 18-00:03:38 bash -c while true; do rsync -a --partial --include='network-snapshot-kimg*.pkl' --include='network-snapshot-kimg*.receipt.json' --include='training-state-kimg*.pt' --include='training_options.json' --include='launch_record.json' --include='factorial_training_telemetry_v1.csv' --include='train_summary.csv' --include='log.txt' --exclude='*' -e \"ssh -S <PRIVATE_PATH>/q128-cloud-29199.sock -p 29199\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ <PRIVATE_PATH>/; sleep 30; done\n  7566      1  1006 18-00:03:38 bash -c while true; do rsync -a --partial --include='network-snapshot-kimg*.pkl' --include='network-snapshot-kimg*.receipt.json' --include='training-state-kimg*.pt' --include='training_options.json' --include='launch_record.json' --include='factorial_training_telemetry_v1.csv' --include='train_summary.csv' --include='log.txt' --exclude='*' -e \"ssh -S <PRIVATE_PATH>/q128-cloud-29567.sock -p 29567\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ <PRIVATE_PATH>/; sleep 30; done\n  7571      1  1006 18-00:03:38 bash -c while true; do rsync -a --partial --include='network-snapshot-kimg*.pkl' --include='network-snapshot-kimg*.receipt.json' --include='training-state-kimg*.pt' --include='training_options.json' --include='launch_record.json' --include='factorial_training_telemetry_v1.csv' --include='train_summary.csv' --include='log.txt' --exclude='*' -e \"ssh -S <PRIVATE_PATH>/q128-cloud-29935.sock -p 29935\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ <PRIVATE_PATH>/; sleep 30; done\n  7593      1  1006 18-00:03:38 bash -c while true; do rsync -a --partial --include='network-snapshot-kimg*.pkl' --include='network-snapshot-kimg*.receipt.json' --include='training-state-kimg*.pt' --include='training_options.json' --include='launch_record.json' --include='factorial_training_telemetry_v1.csv' --include='train_summary.csv' --include='log.txt' --exclude='*' -e \"ssh -S <PRIVATE_PATH>/q128-cloud-28101.sock -p 28101\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ <PRIVATE_PATH>/; sleep 30; done\n  7616      1  1006 18-00:03:38 bash -c while true; do rsync -a --partial --include='network-snapshot-kimg*.pkl' --include='network-snapshot-kimg*.receipt.json' --include='training-state-kimg*.pt' --include='training_options.json' --include='launch_record.json' --include='factorial_training_telemetry_v1.csv' --include='train_summary.csv' --include='log.txt' --exclude='*' -e \"ssh -S <PRIVATE_PATH>/q128-cloud-28469.sock -p 28469\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ <PRIVATE_PATH>/; sleep 30; done\n  8261      2     0  7-21:10:47 [kworker/54:1]\n  8298      2     0    05:50:18 [kworker/67:2H]\n  8461      2     0 13-19:24:50 [kworker/15:1]\n  8476   9456  1004 21-10:38:59 -bash\n  8569      2     0 10-01:59:06 [kworker/21:1]\n  8746      2     0  4-19:00:35 [kworker/69:1]\n  9186  22516 10031 16-02:18:28 -bash\n  9194      2     0  4-19:00:01 [kworker/63:0]\n  9456      1  1004 100-20:59:41 tmux new -s 5b\n  9457   9456  1004 100-20:59:41 -bash\n  9526   9457  1004 100-20:59:38 Apptainer runtime parent\n  9552   9526  1004 100-20:59:38 /bin/bash --norc\n  9565   9526  1004 100-20:59:38 <PRIVATE_PATH>/squashfuse_ll -f -o allow_other,ro,uid=1004,gid=1004,offset=36864 /proc/self/fd/3 /dev/fd/4\n  9882      1  1006 15-02:05:27 bash -c while ! rsync -a --partial --append-verify --info=stats2 --include='algorithmic_armB_*' --exclude='*' --log-file='<PRIVATE_PATH>/fromnew-algorithmic-s0-B.retry.rsync.log' -e \"ssh -i <PRIVATE_PATH>/id_ed25519 -p 27887 -o BatchMode=yes -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10\" 'root@<PRIVATE_HOST>:<PRIVATE_PATH>/' '<PRIVATE_PATH>/'; do sleep 60; done\n  9896      1  1006 15-02:05:27 bash -c while ! rsync -a --partial --append-verify --info=stats2 --include='field_armD_*' --exclude='*' --log-file='<PRIVATE_PATH>/fromnew-field-s1-D.retry.rsync.log' -e \"ssh -i <PRIVATE_PATH>/id_ed25519 -p 27887 -o BatchMode=yes -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10\" 'root@<PRIVATE_HOST>:<PRIVATE_PATH>/' '<PRIVATE_PATH>/'; do sleep 60; done\n 10014      2     0    03:45:52 [kworker/14:1H]\n 10194      1  1006 15-02:05:03 bash -c pids=\"9482 $(seq 9484 9499) 9882 9896\"; while true; do alive=0; for p in $pids; do if kill -0 \"$p\" 2>/dev/null; then alive=1; break; fi; done; [ \"$alive\" -eq 0 ] && break; sleep 300; done; dest=<PRIVATE_PATH>/operator-clock-audit-20260826; rsync -a --partial --append-verify --info=stats2 --log-file=\"$dest/transfer-logs/final-from-new.rsync.log\" -e \"$NEW_ECT_RSH\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ \"$dest/\" > \"$dest/transfer-logs/final-from-new.out\" 2>&1 || exit 31; cd \"$dest\" || exit 32; sha256sum -c results/raw_tensor_sha256.txt > transfer-logs/raw-tensor-verification.log 2>&1 || exit 33; fc=$(find results/field -type f -name \"*.pt\" -size 892003599c | wc -l); ac=$(find results/algorithmic -type f -name \"*.pt\" -size 1784044408c | wc -l); files=$(find . -type f | wc -l); bytes=$(du -sb . | awk \"{print \\$1}\"); printf \"status=PASS\\ncompleted_utc=%s\\nfield_pt=%s\\nalgorithmic_pt=%s\\nfiles=%s\\nbytes=%s\\nsource=new-2gpu-node\\n\" \"$(date -u +%FT%TZ)\" \"$fc\" \"$ac\" \"$files\" \"$bytes\" > TRANSFER_COMPLETE; ssh -i <PRIVATE_PATH>/id_ed25519 -p 27887 -o BatchMode=yes root@<PRIVATE_HOST> \"sed -i /operator-clock-transfer-20260826/d <PRIVATE_PATH>/authorized_keys\"; rm -rf <PRIVATE_PATH>/operator-clock-transfer-key\n 10351      2     0    03:45:24 [kworker/11:0H]\n 10404      2     0    12:00:08 [kworker/68:0H]\n 11577      2     0 170-00:45:28 [kdmflush]\n 11579      2     0 170-00:45:28 [bioset]\n 11600      2     0 170-00:45:28 [bioset]\n 11602      2     0 170-00:45:28 [xfsalloc]\n 11609      2     0 170-00:45:28 [xfs_mru_cache]\n 11615      2     0 170-00:45:28 [xfs-buf/dm-0]\n 11621      2     0 170-00:45:28 [xfs-data/dm-0]\n 11624      2     0 170-00:45:28 [xfs-conv/dm-0]\n 11627      2     0 170-00:45:28 [xfs-cil/dm-0]\n 11628      2     0 170-00:45:28 [xfs-reclaim/dm-]\n 11629      2     0 170-00:45:28 [xfs-log/dm-0]\n 11630      2     0 170-00:45:28 [xfs-eofblocks/d]\n 11631      2     0 170-00:45:28 [xfsaild/dm-0]\n 11704      1     0 170-00:45:27 <PRIVATE_PATH>/systemd-journald\n 11719      1     0 170-00:45:27 <PRIVATE_PATH>/lvmetad -f\n 11730      1     0 170-00:45:27 <PRIVATE_PATH>/systemd-udevd\n 11919      2     0  2-12:59:46 [kworker/70:1H]\n 12322      1  1004 103-21:35:26 <PRIVATE_PATH>/code-6a49527b96e326fe62fbdb56f60e16877c9aa724 --cli-data-dir <PRIVATE_PATH>/cli agent host\n 12442      2     0  4-18:55:44 [kworker/2:0]\n 12691  18823     0 16-19:34:54 sshd: cuisen [priv]\n 12727  12691 10031 16-19:34:48 sshd: cuisen\n 12803      2     0    07:48:54 [kworker/13:2H]\n 12929  18823     0 16-19:34:34 sshd: cuisen [priv]\n 12938  12929 10031 16-19:34:27 sshd: cuisen\n 12944   9456  1004 80-11:28:40 -bash\n 12974      2     0    21:13:14 [kworker/18:1]\n 12999      1  1007 15-02:02:14 ssh-agent -s\n 13259      2     0  9-02:48:29 [kworker/27:2H]\n 13425   9456  1004 24-17:24:24 -bash\n 13450      2     0  3-12:24:58 [kworker/94:1H]\n 13646  18823     0 16-19:33:28 sshd: cuisen [priv]\n 13669  13646 10031 16-19:33:24 sshd: cuisen@notty\n 13687      2     0    21:12:41 [kworker/59:0]\n 13984      2     0 91-14:55:17 [kworker/92:2]\n 14085      2     0 170-00:45:27 [irq/642-mei_me]\n 14099      2     0 170-00:45:27 [kipmi0]\n 14654      2     0 170-00:45:27 [ib-comp-wq]\n 14657      2     0 170-00:45:27 [kworker/u227:0]\n 14659      2     0 170-00:45:27 [kworker/u228:0]\n 14661      2     0 170-00:45:27 [kworker/u229:0]\n 14663      2     0 170-00:45:27 [ib-comp-unb-wq]\n 14667      2     0 170-00:45:27 [ib_mcast]\n 14670      2     0 170-00:45:27 [ib_nl_sa_wq]\n 14717      2     0 21-15:46:29 [kworker/64:1]\n 14941      2     0    22:36:50 [kworker/68:1H]\n 15007      2     0 170-00:45:27 [mlx5_ib_page_fa]\n 15061   9456  1004 26-13:48:04 -bash\n 15207      2     0 170-00:45:27 [ib_mad1]\n 15324      2     0 170-00:45:27 [mkey_cache]\n 15356      2     0 170-00:45:27 [mlx5_ib_page_fa]\n 15435      2     0 170-00:45:27 [ib_mad1]\n 15821      2     0 170-00:45:26 [xfs-buf/sda2]\n 15826      2     0 170-00:45:26 [xfs-data/sda2]\n 15827      2     0 170-00:45:26 [xfs-conv/sda2]\n 15830      2     0 170-00:45:26 [xfs-cil/sda2]\n 15832      2     0 170-00:45:26 [xfs-reclaim/sda]\n 15834      2     0 170-00:45:26 [xfs-log/sda2]\n 15835      2     0 170-00:45:26 [xfs-eofblocks/s]\n 15863      2     0 170-00:45:26 [xfsaild/sda2]\n 15976      2     0 170-00:45:26 [mkey_cache]\n 16019      2     0 170-00:45:26 [mlx5_ib_page_fa]\n 16034      2     0 21-10:47:07 [kworker/45:0]\n 16044      2     0 170-00:45:26 [ib_mad1]\n 16076      2     0 170-00:45:26 [kvm-irqfd-clean]\n 16095      2     0 170-00:45:26 [mkey_cache]\n 16358      2     0 170-00:45:26 [mlx5_ib_page_fa]\n 16571      2     0 170-00:45:26 [ib_mad1]\n 16596      2     0 170-00:45:26 [nv_queue]\n 16598      2     0 170-00:45:26 [nv_queue]\n 16678   9456  1004 45-10:09:35 -bash\n 16798      2     0    03:40:14 [kworker/54:0H]\n 17179      2     0 170-00:45:26 [nvidia-modeset/]\n 17180      2     0 170-00:45:26 [nvidia-modeset/]\n 17232      2     0 170-00:45:26 [mkey_cache]\n 17337      2     0 15-20:11:23 [kworker/49:2]\n 17367      1     0 170-00:45:26 <PRIVATE_PATH>/rdma-ndd --systemd\n 17411      2     0 170-00:45:26 [iscsi_eh]\n 17467      2     0 170-00:45:26 [rdma_cm]\n 17511      2     0 170-00:45:26 [rpciod]\n 17512      2     0 170-00:45:26 [xprtiod]\n 17526      2     0 170-00:45:26 [xprtrdma_receiv]\n 17589      1     0 170-00:45:26 /sbin/auditd\n 17621      2     0    21:10:09 [kworker/3:0]\n 17673      1    32 170-00:45:25 /sbin/rpcbind -w\n 17681      1   999 170-00:45:25 <PRIVATE_PATH>/polkitd --no-debug\n 17684      1     0 170-00:45:25 <PRIVATE_PATH>/gssproxy -D\n 17697      1    81 170-00:45:25 <PRIVATE_PATH>/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation\n 17715      1     0 170-00:45:25 <PRIVATE_PATH>/nv-hostengine -n --service-account nvidia-dcgm\n 17719      1     0 170-00:45:25 <PRIVATE_PATH>/dcgm-exporter\n 17725      1     0 170-00:45:25 <PRIVATE_PATH>/NetworkManager --no-daemon\n 17727      2     0 170-00:45:25 [irq/643-nvidia]\n 17728      2     0 170-00:45:25 [irq/644-nvidia]\n 17729      2     0 170-00:45:25 [irq/645-nvidia]\n 17730      2     0 170-00:45:25 [irq/646-nvidia]\n 17731      2     0 170-00:45:25 [irq/647-nvidia]\n 17732      2     0 170-00:45:25 [irq/648-nvidia]\n 17733      2     0 170-00:45:25 [nvidia]\n 17734      2     0 170-00:45:25 [nv_queue]\n 17746      1     0 170-00:45:25 <PRIVATE_PATH>/irqbalance --foreground\n 17774      1   998 170-00:45:25 <PRIVATE_PATH>/chronyd\n 17806   9456  1004 72-23:24:09 -bash\n 17851      2     0 170-00:45:23 [irq/649-nvidia]\n 17852      2     0 170-00:45:23 [irq/650-nvidia]\n 17854      2     0 170-00:45:23 [irq/651-nvidia]\n 17855      2     0 170-00:45:23 [irq/652-nvidia]\n 17856      2     0 170-00:45:23 [irq/653-nvidia]\n 17857      2     0 170-00:45:23 [irq/654-nvidia]\n 17859      2     0 170-00:45:23 [nvidia]\n 17860      2     0 170-00:45:23 [nv_queue]\n 17934      2     0 12-00:38:06 [kworker/26:2H]\n 17962      2     0 170-00:45:21 [UVM global queu]\n 17963      2     0 170-00:45:21 [UVM deferred re]\n 17964      2     0 170-00:45:21 [UVM Tools Event]\n 18071   9456  1004 100-13:10:06 bash -c cd <PRIVATE_PATH>/diff && apptainer shell --nv --bind <PRIVATE_PATH>/niezichao --bind <PRIVATE_PATH>/cuda --bind <PRIVATE_PATH>/cuda-12.2 <PRIVATE_PATH>/wan_pose_env_ubuntu22.sif\n 18073  18071  1004 100-13:10:06 Apptainer runtime parent\n 18081      2     0 69-12:29:26 [kworker/103:0]\n 18112      2     0    09:46:25 [kworker/66:1H]\n 18114  18073  1004 100-13:10:06 /bin/bash --norc\n 18127  18073  1004 100-13:10:06 <PRIVATE_PATH>/squashfuse_ll -f -o allow_other,ro,uid=1004,gid=1004,offset=36864 /proc/self/fd/3 /dev/fd/4\n 18294      2     0 81-16:39:52 [kworker/100:0]\n 18326      2     0 170-00:45:20 [bond0]\n 18367      2     0 170-00:45:20 [iwewq]\n 18369      2     0 170-00:45:20 [iwewq]\n 18370      2     0 170-00:45:20 [iwdwq]\n 18374      2     0 170-00:45:20 [iwdwq]\n 18440      2     0 170-00:45:20 [srp_remove]\n 18457      2     0 170-00:45:20 [target_completi]\n 18459      2     0 170-00:45:20 [tmr-rd_mcp]\n 18464      2     0 170-00:45:20 [xcopy_wq]\n 18564      2     0 170-00:45:19 [iwvch]\n 18565      2     0 170-00:45:19 [iwvch]\n 18567      2     0 170-00:45:19 [l2params]\n 18572      2     0 170-00:45:19 [l2params]\n 18614      2     0    22:34:14 [kworker/50:0]\n 18769      2     0  6-22:11:44 [kworker/35:0]\n 18823      1     0 170-00:45:13 <PRIVATE_PATH>/sshd -D\n 18836      1     0 170-00:45:13 <PRIVATE_PATH>/rsyslogd -n\n 18862      1  1001 170-00:45:13 <PRIVATE_PATH>/munged\n 18874      2     0    21:09:16 [kworker/9:2]\n 18878      1    65 170-00:45:13 <PRIVATE_PATH>/nslcd\n 18884      1     0 170-00:45:13 <PRIVATE_PATH>/python2 -Es <PRIVATE_PATH>/tuned -l -P\n 18888      1     0 170-00:45:13 <PRIVATE_PATH>/node-exporter\n 18892      1     0 170-00:45:13 <PRIVATE_PATH>/containerd\n 18898      1     0 170-00:45:13 <PRIVATE_PATH>/systemd-logind\n 18950      1    29 170-00:45:12 <PRIVATE_PATH>/rpc.statd\n 19076      2     0    09:45:39 [kworker/79:2]\n 19133      2     0  1-18:40:28 [kworker/12:1H]\n 19236      1     0 170-00:45:12 <PRIVATE_PATH>/master -w\n 19240  19236    89 170-00:45:12 qmgr -l -t unix -u\n 19538      2     0  3-20:06:18 [kworker/32:2]\n 19719      2     0 170-00:44:35 [nfsiod]\n 19762      2     0 170-00:44:35 [lockd]\n 19820      1     0 170-00:43:42 <PRIVATE_PATH>/crond -n\n 19870      1     0 170-00:43:42 /sbin/agetty --noclear tty1 linux\n 20082   9456  1004 21-15:16:33 -bash\n 20255      2     0    21:08:24 [kworker/71:2]\n 20367      2     0  4-14:01:41 [kworker/65:0]\n 20415      2     0 14-17:45:26 [kworker/75:0]\n 21154      2     0    09:43:13 [kworker/61:1H]\n 21195      2     0 10-01:43:41 [kworker/61:0]\n 21270      2     0 27-13:42:11 [kworker/32:2H]\n 21407      2     0  9-23:25:25 [kworker/25:1]\n 21882      2     0 81-16:39:12 [kworker/101:0]\n 21939      2     0  3-20:02:58 [kworker/48:2]\n 22149  22516 10031  9-23:24:27 -bash\n 22516      1 10031 66-19:15:47 tmux new -s hg\n 22517  22516 10031 66-19:15:47 -bash\n 23634      2     0  9-02:34:20 [kworker/86:2H]\n 23650      1  1006    11:46:17 ssh -F /dev/null -M -S <PRIVATE_PATH>/matpool29616.sock -o ControlPersist=86400 -fN -p 29616 root@<PRIVATE_HOST>\n 24534   9456  1004 68-18:05:01 -bash\n 25019      2     0 21-12:43:07 [kworker/90:0]\n 25042      2     0  5-12:44:41 [kworker/80:1]\n 25385      2     0 14-17:40:48 [kworker/65:2]\n 25407      2     0 21-12:11:41 [kworker/51:1]\n 25509      2     0    01:24:58 [kworker/u226:1]\n 25783      2     0    22:28:35 [kworker/47:2]\n 26543      2     0    21:03:29 [kworker/22:0]\n 26993      2     0  3-19:56:31 [kworker/27:1]\n 27033  19236    89    01:23:09 pickup -l -t unix -u\n 27101      2     0 16-19:15:51 [kworker/86:0]\n 28128      1  1006 18-00:01:53 bash -c while true; do rsync -a --partial --include='*/' --include='network-snapshot-kimg*.pkl' --include='network-snapshot-kimg*.receipt.json' --include='training-state-kimg*.pt' --include='training_options.json' --include='launch_record.json' --include='factorial_training_telemetry_v1.csv' --include='train_summary.csv' --include='log.txt' --exclude='*' -e \"ssh -S <PRIVATE_PATH>/q128-cloud-29579.sock -p 29579\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ <PRIVATE_PATH>/; sleep 30; done\n 28145      2     0 10-16:58:10 [kworker/50:1]\n 29092      2     0 16-00:40:24 [kworker/46:2]\n 29165      2     0 16-19:13:17 [kworker/41:1]\n 29196      1  1006    11:39:54 ssh -F /dev/null -M -S <PRIVATE_PATH>/matpool27305.sock -o ControlPersist=86400 -o PreferredAuthentications=password -o PubkeyAuthentication=no -fN -p 27305 root@<PRIVATE_HOST>\n 29280      2     0 23-19:11:59 [kworker/60:2]\n 29294      2     0  5-04:41:42 [kworker/30:0]\n 29535      2     0  1-00:00:30 [kworker/71:1H]\n 29547      2     0  1-00:00:29 [kworker/17:0H]\n 29907      2     0  7-20:42:20 [kworker/27:2]\n 29908      2     0 16-02:04:54 [kworker/47:2H]\n 29917      2     0  5-15:01:41 [kworker/68:1]\n 30465      2     0 169-08:50:25 [kworker/78:1H]\n 31195      1     0 168-20:50:25 <PRIVATE_PATH>/slurmd\n 31203      2     0  7-18:40:22 [kworker/4:1]\n 31291      2     0 168-19:00:19 [kworker/98:1H]\n 31513      2     0  2-12:40:09 [kworker/79:2H]\n 32003      2     0  7-20:39:26 [kworker/38:2]\n 32635      2     0  5-22:21:06 [kworker/4:0]\n 32868      2     0    17:34:27 [kworker/67:1H]\n 33023  18823     0  1-01:59:19 sshd: niezichao [priv]\n 33036  33023  1004  1-01:59:15 sshd: niezichao@notty\n 33038  33036  1004  1-01:59:14 sh\n 33080  33038  1004  1-01:59:13 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 33038 --on-host=<PRIVATE_ADDRESS> --on-port\n 33401      2     0    01:15:57 [kworker/u225:0]\n 33670   9456  1004 30-04:26:50 -bash\n 34044   9456  1004 30-04:25:02 -bash\n 34398      2     0 14-23:45:27 [kworker/83:2H]\n 34400      2     0    15:34:21 [kworker/63:1H]\n 34543      2     0  6-10:10:40 [kworker/48:0]\n 34625   9456  1004 93-11:56:15 -bash\n 34649      2     0    17:33:05 [kworker/16:2]\n 34718      2     0 15-01:41:09 [kworker/12:2]\n 34765      2     0  1-10:22:40 [kworker/17:0]\n 34790      2     0    13:30:40 [kworker/3:1]\n 36874      2     0 20-09:03:12 [kworker/39:1]\n 36938  18823     0    01:11:41 sshd: niezichao [priv]\n 36947  36938  1004    01:11:40 sshd: niezichao@notty\n 36954  36947  1004    01:11:40 sh\n 36998  36954  1004    01:11:39 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 36954 --on-host=<PRIVATE_ADDRESS> --on-port\n 37671  18823     0    01:11:02 sshd: niezichao [priv]\n 37685    692  1004    01:11:01 <PRIVATE_PATH>/node --dns-result-order=ipv4first <PRIVATE_PATH>/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false\n 37703  37671  1004    01:10:59 sshd: niezichao@notty\n 37705    692  1004    01:10:59 <PRIVATE_PATH>/node <PRIVATE_PATH>/bootstrap-fork --type=fileWatcher\n 37712  37703  1004    01:10:58 sh\n 37763  37712  1004    01:10:57 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 37712 --on-host=<PRIVATE_ADDRESS> --on-port\n 37866  22516 10031  8-18:48:49 -bash\n 38144      2     0 11-14:56:11 [kworker/26:1]\n 38156      2     0  7-05:21:41 [kworker/20:1]\n 38424      2     0 81-16:14:16 [kworker/78:2]\n 38597      2     0  1-18:16:09 [kworker/61:0H]\n 38606      2     0  1-18:16:06 [kworker/9:0H]\n 38894  22516 10031 66-17:07:00 -bash\n 38941      2     0  1-13:30:43 [kworker/22:2H]\n 39143      2     0  3-17:01:41 [kworker/8:1]\n 39509      2     0 21-10:45:44 [kworker/38:0]\n 39804      2     0  3-04:13:09 [kworker/85:1H]\n 39934  18823     0    01:08:37 sshd: niezichao [priv]\n 39937  39934  1004    01:08:37 sshd: niezichao@notty\n 39938  39937  1004    01:08:37 sh\n 39978  39938  1004    01:08:36 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 39938 --on-host=<PRIVATE_ADDRESS> --on-port\n 40115    692  1004    01:08:35 <PRIVATE_PATH>/node --dns-result-order=ipv4first <PRIVATE_PATH>/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false\n 40126      2     0    20:53:56 [kworker/72:2]\n 40135    692  1004    01:08:34 <PRIVATE_PATH>/node <PRIVATE_PATH>/bootstrap-fork --type=fileWatcher\n 40447  40115  1004    01:08:21 <PRIVATE_PATH>/pet server\n 40475      2     0  3-14:21:41 [kworker/64:2]\n 40520      2     0  3-04:12:27 [kworker/102:2H]\n 40712  22516 10031 66-16:57:09 -bash\n 40734      2     0  3-04:12:14 [kworker/89:1H]\n 40817    839  1004    01:08:16 /bin/bash --init-file <PRIVATE_PATH>/shellIntegration-bash.sh\n 40919  40115  1004    01:08:14 <PRIVATE_PATH>/node <PRIVATE_PATH>/server.bundle.js --cancellationReceive=file:77a6960e9e805103d70a87f722822ab9b0b7c76b3f --node-ipc --clientProcessId=40115\n 41026 108034  1004    01:08:11 tail -f <PRIVATE_PATH>/maskFT8k2000_official.log\n 41209      2     0  6-21:41:23 [kworker/97:2]\n 41392   9456  1004 74-18:30:45 -bash\n 41491      2     0  9-02:13:10 [kworker/43:1H]\n 41604      2     0    20:52:55 [kworker/20:2]\n 41688      2     0  9-23:02:46 [kworker/88:2H]\n 41917      2     0  1-18:11:41 [kworker/7:1]\n 42023      2     0  1-18:11:33 [kworker/8:0H]\n 42143      2     0  1-18:11:29 [kworker/10:0H]\n 42148      2     0  1-18:11:27 [kworker/54:2H]\n 42166      2     0  1-18:11:19 [kworker/69:2H]\n 42254      2     0  1-18:11:12 [kworker/55:1H]\n 42427      2     0  1-18:11:00 [kworker/62:2H]\n 42559      2     0    15:25:40 [kworker/20:1H]\n 43047      2     0  1-18:10:13 [kworker/52:2H]\n 43137      2     0  5-07:05:10 [kworker/0:0]\n 43162      2     0    15:25:01 [kworker/8:2]\n 43427      2     0  1-18:09:47 [kworker/76:0H]\n 44196      2     0  8-09:46:40 [kworker/5:1]\n 44911   9456  1004 81-13:39:54 -bash\n 45296      2     0  5-17:09:26 [kworker/29:1]\n 45474      2     0 15-03:28:11 [kworker/34:2]\n 45795      2     0 10-01:15:23 [kworker/13:2]\n 46204      2     0  8-21:05:06 [kworker/37:2]\n 46210      2     0    15:21:50 [kworker/13:1]\n 46318      2     0    22:12:58 [kworker/17:1]\n 46588      2     0    15:21:27 [kworker/24:1]\n 46661      2     0 10-23:47:56 [kworker/90:2]\n 47899      2     0    15:19:56 [kworker/0:1H]\n 48414      2     0  5-17:06:32 [kworker/103:2H]\n 48692      2     0  5-17:06:08 [kworker/91:2H]\n 49414      1  1004 100-23:35:08 /bin/bash --init-file <PRIVATE_PATH>/shellIntegration-bash.sh\n 49612   9456  1004 48-16:45:38 -bash\n 49631      2     0       58:46 [kworker/21:1H]\n 49999      2     0  5-01:29:31 [kworker/83:0]\n 50055      1  1004  2-04:55:17 python3 vis_compare_gradio.py --port 7861\n 50109   9456  1004 48-16:44:01 -bash\n 50224      2     0    17:17:02 [kworker/25:1H]\n 50321      2     0    15:17:31 [kworker/6:1]\n 50340      2     0    15:17:27 [kworker/58:2]\n 50731      2     0    22:09:34 [kworker/40:0]\n 51024      2     0    17:16:11 [kworker/66:0H]\n 51253      2     0 81-17:39:42 [kworker/98:0]\n 51382      2     0  2-04:53:36 [kworker/33:0]\n 51705      2     0    18:58:03 [kworker/5:0H]\n 51716      1 10031 67-14:31:01 bash -c while pgrep -f \"lpc_robot.train.train_h264_motion_teacher.*k1_2_3_256\" >/dev/null; do sleep 5; done; test -f <PRIVATE_PATH>/metrics.json && cat <PRIVATE_PATH>/metrics.json\n 51860      2     0    23:37:17 [kworker/2:1H]\n 51916      2     0 23-20:35:09 [kworker/42:0]\n 52382      2     0    15:15:31 [kworker/7:0]\n 52411      2     0  4-20:26:51 [kworker/57:0]\n 53348      2     0 21-00:08:24 [kworker/44:0]\n 53703      2     0    15:13:56 [kworker/10:1]\n 53749      2     0    07:04:37 [kworker/59:1H]\n 54923  18823     0  1-01:28:39 sshd: niezichao [priv]\n 54932  54923  1004  1-01:28:36 sshd: niezichao@notty\n 54939  54932  1004  1-01:28:34 sh\n 54941      1  1006 18-13:13:54 bash <PRIVATE_PATH>/eval_evidence_loop.sh <PRIVATE_HOST> 28029 <PRIVATE_PATH>/q256_eval_pool <PRIVATE_PATH>/28029 30\n 54955      1  1006 18-13:13:53 bash <PRIVATE_PATH>/eval_evidence_loop.sh <PRIVATE_HOST> 29507 <PRIVATE_PATH>/q256_eval_pool <PRIVATE_PATH>/29507 30\n 54963      2     0 20-23:56:06 [kworker/36:0]\n 54980  54939  1004  1-01:28:33 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 54939 --on-host=<PRIVATE_ADDRESS> --on-port\n 55174      2     0  1-01:28:29 [kworker/75:2H]\n 55610      2     0       52:04 [kworker/30:1]\n 55878   9456  1004 99-13:14:22 -bash\n 56462      2     0  1-22:19:22 [kworker/1:1H]\n 56720   9456  1004 26-14:58:45 -bash\n 56891   9456  1004 69-00:08:47 -bash\n 57332  18823     0    02:58:07 sshd: niezichao [priv]\n 57389      2     0  5-14:29:36 [kworker/91:0]\n 57411  57332  1004    02:57:59 sshd: niezichao@notty\n 57414  57411  1004    02:57:57 sh\n 57452  57414  1004    02:57:56 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 57414 --on-host=<PRIVATE_ADDRESS> --on-port\n 58110      2     0    22:03:55 [kworker/36:1]\n 58156      2     0  8-20:50:44 [kworker/44:1]\n 58932      2     0 23-21:36:52 [kworker/96:2]\n 59131      2     0       48:12 [kworker/31:0]\n 60224      2     0 20-23:55:28 [kworker/76:0]\n 61227      2     0  1-10:07:15 [kworker/7:0H]\n 61229      2     0 74-16:50:39 [kworker/91:1]\n 61836      1     0 154-20:50:40 <PRIVATE_PATH>/dockerd -H fd:// --containerd=/run/containerd/containerd.sock\n 61889      2     0  4-22:28:51 [kworker/79:1]\n 63360      2     0    22:00:32 [kworker/19:2]\n 63415      2     0       43:30 [kworker/u224:3]\n 63564      2     0  5-03:52:40 [kworker/54:0]\n 63706      2     0 16-06:27:43 [kworker/39:0]\n 64249      2     0  4-02:41:45 [kworker/57:2]\n 64560      2     0    23:26:04 [kworker/32:1]\n 64613      2     0    21:59:37 [kworker/51:0]\n 65136      2     0  4-15:33:11 [kworker/82:2]\n 65387      1  1004  1-10:04:20 bash <PRIVATE_PATH>/sync_omnidance_hf.sh\n 65417      2     0  5-06:33:12 [kworker/86:1]\n 65586      2     0  4-22:25:11 [kworker/51:2H]\n 66021   9456  1004 73-02:56:32 -bash\n 66046      2     0    02:48:45 [kworker/22:0H]\n 66053      2     0    02:48:44 [kworker/58:0H]\n 66183      2     0  6-14:15:01 [kworker/100:1H]\n 66304      2     0 81-23:14:21 [kworker/93:1]\n 66472      2     0       40:00 [kworker/u225:3]\n 67018      2     0  7-19:49:51 [kworker/56:1]\n 67171      2     0 23-21:29:32 [kworker/41:0]\n 67525      2     0  9-04:01:41 [kworker/14:2]\n 69532      2     0 10-23:22:05 [kworker/84:2]\n 69676      2     0  2-00:07:44 [kworker/56:0H]\n 69691      2     0 14-13:00:53 [kworker/46:1H]\n 69855      2     0  7-02:09:49 [kworker/88:0]\n 69874      2     0  2-00:07:39 [kworker/24:2H]\n 69903 103178  1004 15-19:04:38 bash <PRIVATE_PATH>/run_review_part049_human.sh\n 69904  69903  1004 15-19:04:38 python3 gradio_review_labeler.py --review-csv <PRIVATE_PATH>/part049_human.csv --temporal-csv <PRIVATE_PATH>/temporal_analysis.csv --details-csv /nonexistent/crop_mode_details.csv --metrics-csv /nonexistent/frame_pose_metrics.csv --temporal-jsonl /nonexistent/review_temporal.jsonl --temporal-cropped-jsonl /nonexistent/review_cropped_temporal.jsonl --host <PRIVATE_ADDRESS> --port 7862\n 69975      2     0  2-00:07:33 [kworker/4:1H]\n 69987      2     0  2-00:07:30 [kworker/64:1H]\n 70095      1 10031 69-22:45:05 <PRIVATE_PATH>/python3 -m http.server 8008 --bind <PRIVATE_ADDRESS> --directory <PRIVATE_PATH>/lpc_robot\n 70231      2     0  2-00:07:16 [kworker/91:1H]\n 70508      2     0  2-00:06:48 [kworker/40:2H]\n 70517      2     0  2-00:06:46 [kworker/101:1H]\n 70881      2     0  2-12:00:36 [kworker/16:0H]\n 71036      2     0    21:54:58 [kworker/1:1]\n 71766      2     0 23-20:16:44 [kworker/70:2]\n 72272      2     0 21-12:33:08 [kworker/40:1]\n 72987      2     0 148-02:26:31 [kworker/88:2]\n 73785   9456  1004 73-02:27:41 -bash\n 73889      2     0    02:40:01 [kworker/6:0H]\n 73972      2     0 16-01:31:40 [kworker/25:0]\n 74192      1  1004       31:17 /bin/bash -c eval \"$(cat)\"\n 74193  74192  1004       31:17 bash download_maskFT8k2000_official_infer.sh\n 74200  74193  1004       31:17 bash <PRIVATE_PATH>/run_maskFT_step3000_infer.sh\n 74228  74200  1004       31:16 <PRIVATE_PATH>/python <PRIVATE_PATH>/conda run --no-capture-output -n wan_pose python -u inference_bundle/toolkit/run_st_sa_sweep_unit_load_once.py --inference_script <PRIVATE_PATH>/Wan2.2-TI2V-5B-Audio.py --csv_path <PRIVATE_PATH>/part049_val_local_head10.csv --dataset_base_dir <PRIVATE_PATH>/pose-simple --output_dir <PRIVATE_PATH>/maskFT8k-2000_valtest10_officialLinear_nodebug --model_path <PRIVATE_PATH>/Wan2.2-TI2V-5B --mert_path <PRIVATE_PATH>/MERT-v1-330M --device cuda:0 --ckpt_path <PRIVATE_PATH>/step-2000.safetensors --ckpt_type auto --audio_mode real --text_mode original --num_frames 81 --num_inference_steps 50 --seed 42 --fps 16 --save_with_audio --skip_existing --st_sa_pairs 5:6 --cfg_mode text_first --cfg_schedule official_linear --audio_scale_rise_start_step -2 --audio_scale_hold_steps 3 --audio_scale_peak_end_step 5 --audio_scale_decay_end_step 10 --audio_scale_floor 1\n 74235  74228  1004       31:15 <PRIVATE_PATH>/bash <PRIVATE_PATH>/tmp8t9d0quw\n 74248  74235  1004       31:15 python -u inference_bundle/toolkit/run_st_sa_sweep_unit_load_once.py --inference_script <PRIVATE_PATH>/Wan2.2-TI2V-5B-Audio.py --csv_path <PRIVATE_PATH>/part049_val_local_head10.csv --dataset_base_dir <PRIVATE_PATH>/pose-simple --output_dir <PRIVATE_PATH>/maskFT8k-2000_valtest10_officialLinear_nodebug --model_path <PRIVATE_PATH>/Wan2.2-TI2V-5B --mert_path <PRIVATE_PATH>/MERT-v1-330M --device cuda:0 --ckpt_path <PRIVATE_PATH>/step-2000.safetensors --ckpt_type auto --audio_mode real --text_mode original --num_frames 81 --num_inference_steps 50 --seed 42 --fps 16 --save_with_audio --skip_existing --st_sa_pairs 5:6 --cfg_mode text_first --cfg_schedule official_linear --audio_scale_rise_start_step -2 --audio_scale_hold_steps 3 --audio_scale_peak_end_step 5 --audio_scale_decay_end_step 10 --audio_scale_floor 1\n 74308      2     0 16-23:14:37 [kworker/102:0]\n 74318      2     0       31:14 [kworker/u225:1]\n 74327  74248  1004       31:11 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74376      2     0    23:18:26 [kworker/14:1]\n 74399      2     0       31:11 [kworker/u224:1]\n 74513      1  1004       31:08 /bin/bash -c eval \"$(cat)\"\n 74514  74513  1004       31:08 bash download_maskFT8k2000_official_infer.sh\n 74521  74514  1004       31:08 bash <PRIVATE_PATH>/run_maskFT_step3000_infer.sh\n 74527  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74529  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74531  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74532  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74534  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74536  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74538  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74540  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74542  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74544  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74547  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74549  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74551  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74553  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74555  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74557  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74559  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74562  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74564  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74566  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74568  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74570  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74572  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74574  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74576  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74579  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74581  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74586  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74589  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74591  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74594  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74596  74327  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74248\n 74619  74521  1004       31:07 <PRIVATE_PATH>/python <PRIVATE_PATH>/conda run --no-capture-output -n wan_pose python -u inference_bundle/toolkit/run_st_sa_sweep_unit_load_once.py --inference_script <PRIVATE_PATH>/Wan2.2-TI2V-5B-Audio.py --csv_path <PRIVATE_PATH>/part049_val_local_head10.csv --dataset_base_dir <PRIVATE_PATH>/pose-simple --output_dir <PRIVATE_PATH>/maskFT8k-2000_valtest10_officialLinear_nodebug --model_path <PRIVATE_PATH>/Wan2.2-TI2V-5B --mert_path <PRIVATE_PATH>/MERT-v1-330M --device cuda:0 --ckpt_path <PRIVATE_PATH>/step-2000.safetensors --ckpt_type auto --audio_mode real --text_mode original --num_frames 81 --num_inference_steps 50 --seed 42 --fps 16 --save_with_audio --skip_existing --st_sa_pairs 5:6 --cfg_mode text_first --cfg_schedule official_linear --audio_scale_rise_start_step -2 --audio_scale_hold_steps 3 --audio_scale_peak_end_step 5 --audio_scale_decay_end_step 10 --audio_scale_floor 1\n 74620  74619  1004       31:06 <PRIVATE_PATH>/bash <PRIVATE_PATH>/tmpsf4qk9n7\n 74635  74620  1004       31:06 python -u inference_bundle/toolkit/run_st_sa_sweep_unit_load_once.py --inference_script <PRIVATE_PATH>/Wan2.2-TI2V-5B-Audio.py --csv_path <PRIVATE_PATH>/part049_val_local_head10.csv --dataset_base_dir <PRIVATE_PATH>/pose-simple --output_dir <PRIVATE_PATH>/maskFT8k-2000_valtest10_officialLinear_nodebug --model_path <PRIVATE_PATH>/Wan2.2-TI2V-5B --mert_path <PRIVATE_PATH>/MERT-v1-330M --device cuda:0 --ckpt_path <PRIVATE_PATH>/step-2000.safetensors --ckpt_type auto --audio_mode real --text_mode original --num_frames 81 --num_inference_steps 50 --seed 42 --fps 16 --save_with_audio --skip_existing --st_sa_pairs 5:6 --cfg_mode text_first --cfg_schedule official_linear --audio_scale_rise_start_step -2 --audio_scale_hold_steps 3 --audio_scale_peak_end_step 5 --audio_scale_decay_end_step 10 --audio_scale_floor 1\n 74722  74635  1004       31:02 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75022  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75024  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75026  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75027  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75029  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75032  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75034  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75036  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75037  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75040  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75041  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75043  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75045  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75047  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75049  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75051  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75053  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75056  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75058  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75060  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75062  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75064  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75066  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75068  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75070  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75072  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75073  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75075  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75078  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75080  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75082  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75084  74722  1004       30:58 <PRIVATE_PATH>/python <PRIVATE_PATH>/__main__.py --workers=32 --parent=74635\n 75252      2     0 12-06:11:41 [kworker/31:2]\n 75341  18823     0    12:43:22 sshd: ECT001 [priv]\n 75454  75341  1006    12:43:11 sshd: ECT001@pts/30\n 75461  75454  1006    12:43:11 -bash\n 75638      2     0    23:17:22 [kworker/92:1]\n 75936      2     0       30:06 [kworker/u225:5]\n 75952      2     0       30:04 [kworker/15:2H]\n 76013      2     0       30:01 [kworker/u224:6]\n 76038      2     0  9-01:26:15 [kworker/28:2H]\n 76058      2     0       30:00 [kworker/56:1H]\n 76235      2     0       29:51 [kworker/19:2H]\n 76293      2     0       29:44 [kworker/60:1H]\n 76306      2     0       29:40 [kworker/73:0H]\n 76375      2     0 10-23:13:01 [kworker/1:2]\n 76411      2     0  1-03:36:08 [kworker/17:2H]\n 76412      2     0  1-03:36:07 [kworker/70:2H]\n 76413      2     0  1-03:36:07 [kworker/23:2H]\n 76416      2     0  1-03:36:07 [kworker/63:0H]\n 76417      2     0  1-03:36:07 [kworker/29:2H]\n 76418      2     0  1-03:36:07 [kworker/11:1H]\n 76419      2     0  1-03:36:07 [kworker/80:1H]\n 76420      2     0  1-03:36:07 [kworker/58:2H]\n 76421      2     0  1-03:36:07 [kworker/65:2H]\n 76422      2     0  1-03:36:07 [kworker/7:1H]\n 76423      2     0  1-03:36:07 [kworker/53:0H]\n 76424      2     0  1-03:36:07 [kworker/5:2H]\n 76426      2     0  1-03:36:07 [kworker/14:0H]\n 76435      2     0  1-03:36:07 [kworker/52:1H]\n 76436      2     0  1-03:36:07 [kworker/60:2H]\n 76443      2     0  1-03:36:07 [kworker/19:1H]\n 76445      2     0  1-03:36:07 [kworker/9:2H]\n 76449      2     0  1-03:36:06 [kworker/0:2H]\n 76450      2     0  1-03:36:06 [kworker/18:1H]\n 76451      2     0  1-03:36:06 [kworker/8:2H]\n 76452      2     0  1-03:36:06 [kworker/69:0H]\n 76456      2     0  1-03:36:06 [kworker/20:2H]\n 76464      2     0  1-03:36:05 [kworker/41:2H]\n 76465      2     0  1-03:36:05 [kworker/74:1H]\n 76466      2     0  1-03:36:05 [kworker/73:1H]\n 76467      2     0  1-03:36:05 [kworker/13:1H]\n 76468      2     0  1-03:36:05 [kworker/71:2H]\n 76471      2     0  1-03:36:04 [kworker/77:1H]\n 76477      2     0  1-03:36:03 [kworker/75:0H]\n 76478      2     0  1-03:36:03 [kworker/55:2H]\n 76480      2     0  1-03:36:03 [kworker/24:0H]\n 76481      2     0  1-03:36:03 [kworker/46:0H]\n 76482      2     0  1-03:36:02 [kworker/82:1H]\n 76483      2     0  1-03:36:02 [kworker/32:1H]\n 76484      2     0  1-03:36:02 [kworker/48:1H]\n 76486      2     0  1-03:36:02 [kworker/33:1H]\n 76487      2     0  1-03:36:02 [kworker/42:0H]\n 76488      2     0  1-03:36:02 [kworker/31:0H]\n 76489      2     0  1-03:36:01 [kworker/36:1H]\n 76490      2     0  1-03:36:01 [kworker/6:1H]\n 76497      2     0  1-03:36:00 [kworker/10:2H]\n 76508      2     0  1-03:35:58 [kworker/57:2H]\n 76543      2     0  1-03:35:57 [kworker/50:1H]\n 76632      2     0  1-03:35:54 [kworker/30:2H]\n 76653      2     0  1-03:35:54 [kworker/64:2H]\n 76656      2     0  1-03:35:54 [kworker/37:1H]\n 76671      2     0  1-03:35:53 [kworker/12:0H]\n 76702      2     0  1-03:35:51 [kworker/59:0H]\n 76727      2     0  1-03:35:46 [kworker/26:0H]\n 76729      2     0  1-03:35:45 [kworker/3:0H]\n 76730      2     0  1-03:35:44 [kworker/27:0H]\n 76732      2     0  1-03:35:44 [kworker/49:1H]\n 76733      2     0  1-03:35:44 [kworker/43:0H]\n 76734      2     0  1-03:35:44 [kworker/2:0H]\n 76739      2     0  1-03:35:41 [kworker/90:1H]\n 76740      2     0  1-03:35:41 [kworker/34:1H]\n 76742      2     0  1-03:35:40 [kworker/4:2H]\n 76746      2     0  1-03:35:40 [kworker/35:0H]\n 76748      2     0  1-03:35:39 [kworker/28:0H]\n 76758      2     0  7-12:37:03 [kworker/85:1]\n 76760      2     0  1-03:35:37 [kworker/39:2H]\n 76773      2     0 16-13:05:06 [kworker/89:1]\n 76916      2     0  1-03:35:33 [kworker/45:2H]\n 76958      2     0  1-03:35:32 [kworker/38:1H]\n 76962      2     0  1-03:35:31 [kworker/81:1H]\n 76964      2     0  1-03:35:30 [kworker/84:1H]\n 76965      2     0  1-03:35:30 [kworker/1:2H]\n 76981      2     0  1-03:35:25 [kworker/87:1H]\n 76989      2     0  1-03:35:19 [kworker/47:1H]\n 77335      2     0    14:51:41 [kworker/10:0]\n 77930      2     0  2-11:51:29 [kworker/18:2H]\n 78022      2     0  1-03:34:01 [kworker/95:2H]\n 78040      2     0  1-03:33:57 [kworker/51:1H]\n 78045      2     0  1-03:33:56 [kworker/99:1H]\n 78047      2     0  1-03:33:55 [kworker/44:2H]\n 79322   9456  1004 82-10:43:03 -bash\n 79461      2     0 23-21:18:43 [kworker/31:1H]\n 79520      2     0 23-21:18:40 [kworker/35:1H]\n 79849      2     0 16-06:08:49 [kworker/43:1]\n 79850      2     0 16-06:08:49 [kworker/95:2]\n 80264  18823     0    02:32:10 sshd: niezichao [priv]\n 80773  80264  1004    02:31:31 sshd: niezichao@notty\n 80785  80773  1004    02:31:25 sh\n 80887  80785  1004    02:31:19 <PRIVATE_PATH>/code-93cfdd489c3b228840d0f86ec77c3636277c93ea command-shell --cli-data-dir <PRIVATE_PATH>/cli --parent-process-id 80785 --on-host=<PRIVATE_ADDRESS> --on-port\n 81301      2     0    04:30:45 [kworker/72:2H]\n 81970      2     0    18:31:15 [kworker/72:0H]\n 81996      2     0  1-12:51:41 [kworker/81:0]\n 82325    839  1004  1-01:02:51 /bin/bash --init-file <PRIVATE_PATH>/shellIntegration-bash.sh\n 82383    839  1004  1-01:02:47 /bin/bash --init-file <PRIVATE_PATH>/shellIntegration-bash.sh\n 82426      2     0 23-01:14:07 [kworker/12:0]\n 82465  82383  1004  1-01:02:44 nvtop\n 82713      2     0 33-13:03:31 [kworker/103:1]\n 83071   9456  1004 100-14:29:20 -bash\n 83454      2     0    12:34:15 [kworker/81:2]\n 83907  22516 10031 14-22:51:51 -bash\n 84426      2     0  4-04:48:32 [kworker/42:1]\n 84874      2     0  5-08:47:59 [kworker/80:2]\n 84894      2     0    06:30:14 [kworker/15:1H]\n 84983      2     0 23-20:04:28 [kworker/96:0]\n 85027      2     0 25-04:31:54 [kworker/99:6]\n 85030      2     0 25-04:31:54 [kworker/99:7]\n 85411  22516 10031 65-21:35:20 -bash\n 85428  13425  1004 23-22:53:58 bash <PRIVATE_PATH>/run_review_60.sh\n 85429  85428  1004 23-22:53:58 python3 gradio_review_labeler.py --review-csv <PRIVATE_PATH>/review_60.csv --details-csv /nonexistent/crop_mode_details.csv --metrics-csv /nonexistent/frame_pose_metrics.csv --temporal-jsonl /nonexistent/review_temporal.jsonl --temporal-cropped-jsonl /nonexistent/review_cropped_temporal.jsonl --host <PRIVATE_ADDRESS> --port 7860\n 85561      2     0  3-13:21:40 [kworker/71:0]\n 86360      2     0  5-03:20:07 [kworker/29:2]\n 86825      2     0 16-01:21:58 [kworker/43:0]\n 87400  22516 10031 65-21:34:05 -bash\n 87586   9456  1004 92-12:16:48 -bash\n 87935      2     0  9-01:09:55 [kworker/97:1H]\n 88416      2     0       16:50 [kworker/53:1]\n 88459      2     0    02:21:13 [kworker/62:1H]\n 88487      2     0    06:26:29 [kworker/3:2H]\n 89202      1  1004       15:55 /bin/bash -c eval \"$(cat)\"\n 89203  89202  1004       15:55 <PRIVATE_PATH>/python <PRIVATE_PATH>/hf download Minervaaa/m2d OmniDance-fullSFT/OSS_maskFT_from8k/step-3000.safetensors --local-dir <PRIVATE_PATH>/models\n 89264      2     0  7-12:29:21 [kworker/5:0]\n 89276      2     0  9-01:08:02 [kworker/93:1H]\n 89470      2     0       15:41 [kworker/u226:0]\n 89471      2     0       15:41 [kworker/u226:2]\n 89472      2     0       15:41 [kworker/u226:3]\n 89540      2     0 21-01:56:03 [kworker/62:0]\n 89607      2     0  5-13:48:19 [kworker/59:2]\n 89762      2     0  5-23:31:27 [kworker/58:0]\n 90387      2     0 15-04:33:44 [kworker/84:0]\n 90993      2     0 81-16:26:07 [kworker/93:2]\n 91435      2     0    21:39:52 [kworker/33:2]\n 91725      2     0 15-21:05:27 [kworker/6:2]\n 91949      2     0 15-21:05:13 [kworker/66:0]\n 92014      2     0  3-23:29:26 [kworker/49:1]\n 92217      2     0 15-21:04:51 [kworker/76:1]\n 92264      2     0  1-05:41:40 [kworker/77:0]\n 92520      2     0 15-21:04:30 [kworker/69:0]\n 92768      2     0 15-21:04:11 [kworker/52:0]\n 92791      2     0 23-19:58:53 [kworker/9:1]\n 92941      2     0 10-20:37:39 [kworker/46:1]\n 93008      2     0 15-21:03:57 [kworker/63:2]\n 93009      1  1006 17-20:53:31 bash -c while true; do rsync -a --partial --include='*/' --include='network-snapshot-kimg*.pkl' --include='network-snapshot-kimg*.receipt.json' --include='training-state-kimg*.pt' --include='training_options.json' --include='launch_record.json' --include='factorial_training_telemetry_v1.csv' --include='train_summary.csv' --include='log.txt' --exclude='*' -e \"ssh -S <PRIVATE_PATH>/q128-cloud-29579.sock -p 29579\" root@<PRIVATE_HOST>:<PRIVATE_PATH>/ <PRIVATE_PATH>/; sleep 30; done\n 93196      2     0       12:03 [kworker/u225:4]\n 93868      2     0       11:19 [kworker/53:0]\n 93963      2     0       11:10 [kworker/u226:4]\n 94495   9456  1004 63-12:55:26 -bash\n 94501      2     0 26-01:48:01 [kworker/38:2H]\n 95583  44911  1004 63-12:52:29 python -u inference_bundle/toolkit/browse_attention_debug_step_metric_grid_gradio.py --host <PRIVATE_ADDRESS> --port 6870 --root_dir inference_bundle/outputs/5B-Audio_onlyInjText7_sharedX_global6600_duallr1456_drop0.9T_fp32_test2train2_pairCompare\n 95883      2     0 23-19:56:00 [kworker/15:2]\n 95931      2     0 16-05:50:18 [kworker/47:0]\n 96002      2     0 21-10:04:33 [kworker/98:2]\n 96203      1  1006 17-18:32:07 bash <PRIVATE_PATH>/run_q128_stream_eval_worker.sh 0 30\n 96204      1  1006 17-18:32:07 bash <PRIVATE_PATH>/run_q128_stream_eval_worker.sh 1 31\n 96391      2     0 21-11:37:09 [kworker/89:0]\n 96788   9456  1004 95-14:30:11 -bash\n 96843      2     0       07:56 [kworker/u224:2]\n 97393      2     0 23-19:54:34 [kworker/60:0]\n 97973      2     0 23-19:54:00 [kworker/94:1]\n 98164      2     0 23-19:53:49 [kworker/61:2]\n 98170      2     0  4-12:27:26 [kworker/49:0H]\n 98217      2     0 18-18:45:32 [kworker/101:2]\n 98265      2     0 18-18:45:32 [kworker/26:2]\n 99072      2     0    10:19:50 [kworker/0:1]\n 99515  10194  1006       04:50 sleep 300\n 99632      2     0       04:39 [kworker/12:2H]\n 99999      2     0 23-19:52:04 [kworker/68:0]\n100572 106019  1006 15-13:55:50 -bash\n100624      2     0    02:06:41 [kworker/21:2H]\n101206      2     0       02:59 [kworker/u225:2]\n101498  36954  1004       02:39 sleep 180\n101507  39938  1004       02:36 sleep 180\n101826  33038  1004       02:12 sleep 180\n102064    363  1004       02:01 sleep 180\n102072      2     0    02:04:54 [kworker/57:1H]\n102119  37712  1004       01:57 sleep 180\n102180      2     0       01:50 [kworker/u224:0]\n102446  54939  1004       01:32 sleep 180\n102722  80785  1004       01:19 sleep 180\n102931      2     0 23-19:49:16 [kworker/52:2]\n103178   9456  1004 25-13:58:43 -bash\n103207      2     0 23-19:48:59 [kworker/16:0]\n103416  57414  1004       00:56 sleep 180\n103461      2     0       00:47 [kworker/53:2]\n103652   9896  1006       00:39 sleep 60\n103682  65387  1004       00:33 sleep 60\n103685   9882  1006       00:32 sleep 60\n103707  54941  1006       00:26 sleep 30\n103788      2     0    21:30:00 [kworker/72:1]\n103843      2     0 23-19:48:23 [kworker/62:2]\n103848  54955  1006       00:22 sleep 30\n103862   7566  1006       00:21 sleep 30\n103916   7544  1006       00:16 sleep 30\n103929   7571  1006       00:10 sleep 30\n103933  28128  1006       00:08 sleep 30\n103940   7593  1006       00:06 sleep 30\n103977   7616  1006       00:04 sleep 30\n103991      2     0 10-15:13:52 [kworker/82:1]\n104001  93009  1006       00:04 sleep 30\n104024  51716 10031       00:03 sleep 5\n104073  96203  1006       00:01 bash <PRIVATE_PATH>/run_q128_stream_eval_worker.sh 0 30\n104074 104073  1006       00:01 sha256sum <PRIVATE_PATH>/network-snapshot-kimg000384.pkl\n104075 104073  1006       00:01 cut -d  -f1\n104081 111122  1006       00:01 <PRIVATE_PATH>/python3.11 -c  import sys,json,time,pathlib,subprocess,concurrent.futures root=pathlib.Path('<ECT_ROOT>') sys.path.insert(0,str(root/'supervision')) import global_budget_recovery as g jobs=g.collect() review=g.forecast(jobs,g.preparation()) review['wall']=time.time() probe = \"\"\"import json,pathlib,time,subprocess r=pathlib.Path(ROOT) print(json.dumps(dict(host=HOST,wall=time.time(),workers=[json.loads(p.read_text()) for p in (r/'control').glob('worker-*.json')],gpu=subprocess.check_output(['nvidia-smi','--query-compute-apps=gpu_uuid,pid,process_name,used_memory','--format=csv'],text=True),processes=subprocess.check_output(['ps','-eo','pid,ppid,uid,etime,args'],text=True)))) \"\"\" def node(host,sock=None,port=None,dns=None):  import shlex  r=str(root) if sock is None else '<TRAINING_ROOT>'  py=sys.executable if sock is None else r+'/runtime/python-3.11.13/bin/python3.11'  cmd=[py,'-c','ROOT='+repr(r)+'\\nHOST='+repr(host)+'\\n'+probe]  if sock:cmd=['ssh','-F','/dev/null','-o','BatchMode=yes','-S','<PRIVATE_PATH>/'+sock,'-p',str(port),'root@'+dns,shlex.join(cmd)]  return json.loads(subprocess.check_output(cmd,text=True,timeout=45)) with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:  fs=[pool.submit(node,'owned')]+[pool.submit(node,*p) for p in g.PEERS]  nodes=[f.result() for f in fs] archive=json.loads((root/'supervision/archive-status.json').read_text()) out=dict(wall=time.time(),jobs=jobs,review=review,nodes=nodes,archive=archive) p=root/'supervision'/('snapshot-'+str(int(out['wall']))+'.json') p.write_text(json.dumps(out,indent=2)) print(json.dumps(dict(snapshot=str(p),review={k:v for k,v in review.items() if k!='remaining_training_matrix'},counts={s:sum(j['training_status']==s for j in jobs) for s in set(j['training_status'] for j in jobs)},archive=archive,nodes=[dict(host=n['host'],workers=n['workers'],gpu=n['gpu'],processes=[x for x in n['processes'].splitlines() if 'archive_supervisor.py' in x or 'global_budget_recovery.py --logical' in x or '74248' in x or '74635' in x]) for n in nodes]))) \n104094  96204  1006       00:01 bash <PRIVATE_PATH>/run_q128_stream_eval_worker.sh 1 31\n104095 104094  1006       00:01 sha256sum <PRIVATE_PATH>/network-snapshot-kimg000384.pkl\n104096 104094  1006       00:01 cut -d  -f1\n104103 104081  1006       00:00 ssh -F /dev/null -o BatchMode=yes -S <PRIVATE_PATH>/matpool27305.sock -p 27305 root@<PRIVATE_HOST> <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -c 'ROOT='\"'\"'<TRAINING_ROOT>'\"'\"' HOST='\"'\"'paid-node-02'\"'\"' import json,pathlib,time,subprocess r=pathlib.Path(ROOT) print(json.dumps(dict(host=HOST,wall=time.time(),workers=[json.loads(p.read_text()) for p in (r/'\"'\"'control'\"'\"').glob('\"'\"'worker-*.json'\"'\"')],gpu=subprocess.check_output(['\"'\"'nvidia-smi'\"'\"','\"'\"'--query-compute-apps=gpu_uuid,pid,process_name,used_memory'\"'\"','\"'\"'--format=csv'\"'\"'],text=True),processes=subprocess.check_output(['\"'\"'ps'\"'\"','\"'\"'-eo'\"'\"','\"'\"'pid,ppid,uid,etime,args'\"'\"'],text=True)))) '\n104104 104081  1006       00:00 ssh -F /dev/null -o BatchMode=yes -S <PRIVATE_PATH>/matpool29616.sock -p 29616 root@<PRIVATE_HOST> <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -c 'ROOT='\"'\"'<TRAINING_ROOT>'\"'\"' HOST='\"'\"'paid-node-01'\"'\"' import json,pathlib,time,subprocess r=pathlib.Path(ROOT) print(json.dumps(dict(host=HOST,wall=time.time(),workers=[json.loads(p.read_text()) for p in (r/'\"'\"'control'\"'\"').glob('\"'\"'worker-*.json'\"'\"')],gpu=subprocess.check_output(['\"'\"'nvidia-smi'\"'\"','\"'\"'--query-compute-apps=gpu_uuid,pid,process_name,used_memory'\"'\"','\"'\"'--format=csv'\"'\"'],text=True),processes=subprocess.check_output(['\"'\"'ps'\"'\"','\"'\"'-eo'\"'\"','\"'\"'pid,ppid,uid,etime,args'\"'\"'],text=True)))) '\n104105 104081  1006       00:00 <PRIVATE_PATH>/python3.11 -c ROOT='<ECT_ROOT>' HOST='owned' import json,pathlib,time,subprocess r=pathlib.Path(ROOT) print(json.dumps(dict(host=HOST,wall=time.time(),workers=[json.loads(p.read_text()) for p in (r/'control').glob('worker-*.json')],gpu=subprocess.check_output(['nvidia-smi','--query-compute-apps=gpu_uuid,pid,process_name,used_memory','--format=csv'],text=True),processes=subprocess.check_output(['ps','-eo','pid,ppid,uid,etime,args'],text=True)))) \n104108 104105  1006       00:00 ps -eo pid,ppid,uid,etime,args\n105016      2     0    21:29:07 [kworker/23:2]\n105379      2     0 15-20:46:56 [kworker/70:0]\n105778      2     0 15-20:46:24 [kworker/73:0]\n106019      1  1006 22-19:33:22 tmux new-session -d -s q256_smoke_3b0ad3c\n106532      2     0 14-18:15:09 [kworker/50:2H]\n106870      2     0    19:51:40 [kworker/2:2]\n108034    839  1004    10:11:54 /bin/bash --init-file <PRIVATE_PATH>/shellIntegration-bash.sh\n108566      2     0 10-22:31:41 [kworker/74:2]\n108928      2     0  5-02:48:14 [kworker/28:0]\n109398      2     0  1-19:12:57 [kworker/53:1H]\n110080    839  1004    10:09:52 /bin/bash --init-file <PRIVATE_PATH>/shellIntegration-bash.sh\n110651      2     0 15-20:39:34 [kworker/18:2]\n110746      2     0  1-00:33:04 [kworker/74:0H]\n110821      2     0 10-15:09:54 [kworker/34:0]\n110882      2     0    10:09:06 [kworker/25:0H]\n110903      2     0  1-00:33:00 [kworker/76:1H]\n110924      2     0  1-00:32:59 [kworker/77:2H]\n111057  18823     0    08:05:51 sshd: ECT001 [priv]\n111058      2     0  5-10:51:38 [kworker/55:1]\n111122 111057  1006    08:05:44 sshd: ECT001@notty\n111282      2     0 14-18:09:40 [kworker/42:1H]\n111590      2     0  2-13:12:43 [kworker/65:0H]\n111805      2     0    18:05:08 [kworker/21:2]\n112191      2     0  2-13:12:20 [kworker/40:0H]\n112390      2     0    01:54:45 [kworker/19:0]\n112419      2     0  2-13:12:14 [kworker/96:2H]\n113021      2     0  6-17:51:42 [kworker/28:2]\n113032      2     0  2-13:11:58 [kworker/92:1H]\n113069      2     0 15-20:36:18 [kworker/73:2]\n113287      2     0    21:22:55 [kworker/24:2]\n114331      2     0 17-22:01:41 [kworker/66:2]\n114435      2     0    01:52:19 [kworker/78:0H]\n114464      2     0    01:52:18 [kworker/16:2H]\n"
+    },
+    {
+      "host": "paid-node-01",
+      "wall": 1789104701.975049,
+      "workers": [
+        {
+          "status": "RUNNING",
+          "pid": 33427,
+          "started_wall": 1789096788.6866753,
+          "heartbeat_wall": 1789104694.1293762,
+          "elapsed_process_gpuh": 2.1959563057422122,
+          "attempted_iteration": 4710,
+          "command": [
+            "<TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<TRAINING_ROOT>/code/ct_train.py",
+            "--data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+            "--outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/A_startup_down5",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.0",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=302",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed302-A_startup_down5.json",
+            "--transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/A_startup_down5/process-1789096788536117726.log",
+          "gpu": {
+            "logical_gpu": 1,
+            "host": "paid-node-01",
+            "local_gpu": 1,
+            "name": "NVIDIA A100-PCIE-40GB",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "paid"
+          },
+          "expected_hard_timeout_seconds": 28800
+        },
+        {
+          "status": "RUNNING",
+          "pid": 33422,
+          "started_wall": 1789096788.346616,
+          "heartbeat_wall": 1789104693.8351884,
+          "elapsed_process_gpuh": 2.1959690476115794,
+          "attempted_iteration": 4779,
+          "command": [
+            "<TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<TRAINING_ROOT>/code/ct_train.py",
+            "--data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+            "--outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/DA",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.1",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=301",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed301-DA.json",
+            "--transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/DA/process-1789096787380643673.log",
+          "gpu": {
+            "logical_gpu": 0,
+            "host": "paid-node-01",
+            "local_gpu": 0,
+            "name": "NVIDIA A100-PCIE-40GB",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "paid"
+          },
+          "expected_hard_timeout_seconds": 28800
+        }
+      ],
+      "gpu": "gpu_uuid, pid, process_name, used_gpu_memory [MiB]\n<GPU_UUID>, 108735, [Not Found], 3950 MiB\n<GPU_UUID>, 108738, [Not Found], 3948 MiB\n",
+      "processes": "    PID    PPID   UID     ELAPSED COMMAND\n      1       0     0       00:00 <PRIVATE_PATH>/tini -- <PRIVATE_PATH>/start_all_services.sh\n     57       1     0       00:00 /bin/bash <PRIVATE_PATH>/start_all_services.sh\n     97       1     0       00:00 sshd: <PRIVATE_PATH>/sshd -E <PRIVATE_PATH>/sshd_running.log [listener] 0 of 10-100 startups\n     98      57     0       00:00 tail -f /dev/null\n   3843       1     0       00:00 ssh -F /dev/null -M -S <TRAINING_ROOT>/control/transport-27305.sock -o ControlPersist=86400 -fN -p 27305 root@<PRIVATE_HOST>\n   5607      97     0       00:00 sshd: root@notty\n  11028       1     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m analysis.startup_window_experiments_v1.worker --deployment <TRAINING_ROOT>/paid-node-01.json --logical-gpu 0\n  11029       1     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m analysis.startup_window_experiments_v1.worker --deployment <TRAINING_ROOT>/paid-node-01.json --logical-gpu 1\n  33422   11028     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/DA --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=301 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed301-DA.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  33427   11029     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/A_startup_down5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=302 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed302-A_startup_down5.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  33478   33422     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -u <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/DA --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=301 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed301-DA.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  33481   33427     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -u <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/A_startup_down5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=302 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed302-A_startup_down5.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  33580   33481     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(29)\n  33581   33478     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(29)\n  33582   33481     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=30, pipe_handle=34) --multiprocessing-fork\n  33583   33478     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=30, pipe_handle=34) --multiprocessing-fork\n  42463    5607     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -c ROOT='<TRAINING_ROOT>' HOST='paid-node-01' import json,pathlib,time,subprocess r=pathlib.Path(ROOT) print(json.dumps(dict(host=HOST,wall=time.time(),workers=[json.loads(p.read_text()) for p in (r/'control').glob('worker-*.json')],gpu=subprocess.check_output(['nvidia-smi','--query-compute-apps=gpu_uuid,pid,process_name,used_memory','--format=csv'],text=True),processes=subprocess.check_output(['ps','-eo','pid,ppid,uid,etime,args'],text=True)))) \n  42685   42463     0       00:00 ps -eo pid,ppid,uid,etime,args\n"
+    },
+    {
+      "host": "paid-node-02",
+      "wall": 1789104701.8422668,
+      "workers": [
+        {
+          "status": "RUNNING",
+          "pid": 12875,
+          "started_wall": 1789098754.4039862,
+          "heartbeat_wall": 1789104694.9866157,
+          "elapsed_process_gpuh": 1.6501618411019445,
+          "attempted_iteration": 3590,
+          "command": [
+            "<TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<TRAINING_ROOT>/code/ct_train.py",
+            "--data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+            "--outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed304/AA",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.0",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=304",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed304-AA.json",
+            "--transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed304/AA/process-1789098754298731438.log",
+          "gpu": {
+            "logical_gpu": 3,
+            "host": "paid-node-02",
+            "local_gpu": 1,
+            "name": "NVIDIA A100-PCIE-40GB",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "paid"
+          },
+          "expected_hard_timeout_seconds": 28800
+        },
+        {
+          "status": "RUNNING",
+          "pid": 12510,
+          "started_wall": 1789098725.8110774,
+          "heartbeat_wall": 1789104696.3965743,
+          "elapsed_process_gpuh": 1.6584959711341394,
+          "attempted_iteration": 3531,
+          "command": [
+            "<TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<TRAINING_ROOT>/code/ct_train.py",
+            "--data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+            "--outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed306/A_startup_down5",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.0",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=306",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed306-A_startup_down5.json",
+            "--transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed306/A_startup_down5/process-1789098725389797833.log",
+          "gpu": {
+            "logical_gpu": 5,
+            "host": "paid-node-02",
+            "local_gpu": 3,
+            "name": "NVIDIA A100-PCIE-40GB",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "paid"
+          },
+          "expected_hard_timeout_seconds": 28800
+        },
+        {
+          "status": "RUNNING",
+          "pid": 13228,
+          "started_wall": 1789099007.0595384,
+          "heartbeat_wall": 1789104692.6532154,
+          "elapsed_process_gpuh": 1.5793315766596545,
+          "attempted_iteration": 3266,
+          "command": [
+            "<TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<TRAINING_ROOT>/code/ct_train.py",
+            "--data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+            "--outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed303/D_startup_up5",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.1",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=303",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed303-D_startup_up5.json",
+            "--transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed303/D_startup_up5/process-1789099006856525569.log",
+          "gpu": {
+            "logical_gpu": 2,
+            "host": "paid-node-02",
+            "local_gpu": 0,
+            "name": "NVIDIA A100-PCIE-40GB",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "paid"
+          },
+          "expected_hard_timeout_seconds": 28800
+        },
+        {
+          "status": "RUNNING",
+          "pid": 12244,
+          "started_wall": 1789098493.7943132,
+          "heartbeat_wall": 1789104689.648966,
+          "elapsed_process_gpuh": 1.721070736668383,
+          "attempted_iteration": 3498,
+          "command": [
+            "<TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11",
+            "-m",
+            "torch.distributed.run",
+            "--standalone",
+            "--nproc_per_node=1",
+            "<TRAINING_ROOT>/code/ct_train.py",
+            "--data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+            "--outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed305/DA",
+            "--nosubdir",
+            "--cond=False",
+            "--arch=ddpmpp",
+            "--precond=ect",
+            "--batch=128",
+            "--batch-gpu=16",
+            "--optim=RAdam",
+            "--lr=0.0001",
+            "--dropout=0.2",
+            "--augment=0",
+            "--xflip=False",
+            "--mean=-1.1",
+            "--std=2.0",
+            "--mapping=sigmoid",
+            "--global-gap-scale=1.0",
+            "--factorial-protocol=q128_startup_native_v1",
+            "--target-gap-scale=1.0",
+            "--denominator-gap-scale=1.1",
+            "-q",
+            "128",
+            "-k",
+            "8",
+            "-b",
+            "1",
+            "-c",
+            "0",
+            "--double=10000",
+            "--ema_beta=0.9993",
+            "--seed=305",
+            "--fp16=True",
+            "--tf32=False",
+            "--ls=1.0",
+            "--enable_amp=True",
+            "--bench=False",
+            "--cache=True",
+            "--workers=1",
+            "--metrics=none",
+            "--duration=1.024",
+            "--tick=10",
+            "--snap=0",
+            "--dump=0",
+            "--ckpt=10",
+            "--sample_every=26",
+            "--eval_every=50",
+            "--mid_t=0.821",
+            "--adaptive-update-kimg=0.5",
+            "--immutable-checkpoint-kimg=512,1024",
+            "--startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed305-DA.json",
+            "--transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"
+          ],
+          "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed305/DA/process-1789098493609369656.log",
+          "gpu": {
+            "logical_gpu": 4,
+            "host": "paid-node-02",
+            "local_gpu": 2,
+            "name": "NVIDIA A100-PCIE-40GB",
+            "uuid": "<GPU_UUID>",
+            "payment_class": "paid"
+          },
+          "expected_hard_timeout_seconds": 28800
+        }
+      ],
+      "gpu": "gpu_uuid, pid, process_name, used_gpu_memory [MiB]\n<GPU_UUID>, 13279, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3950 MiB\n<GPU_UUID>, 13011, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3948 MiB\n<GPU_UUID>, 12295, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3950 MiB\n<GPU_UUID>, 12561, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 3948 MiB\n",
+      "processes": "    PID    PPID   UID     ELAPSED COMMAND\n      1       0     0       00:00 <PRIVATE_PATH>/tini -- <PRIVATE_PATH>/start_all_services.sh\n     69       1     0       00:00 /bin/bash <PRIVATE_PATH>/start_all_services.sh\n     93       1     0       00:00 sshd: <PRIVATE_PATH>/sshd -E <PRIVATE_PATH>/sshd_running.log [listener] 0 of 10-100 startups\n     94      69     0       00:00 <PRIVATE_PATH>/python <PRIVATE_PATH>/jupyter-lab --notebook-dir=/ --allow-root --no-browser --NotebookApp.token=pLkQqThXE8 --ip=<PRIVATE_ADDRESS>\n    162      93     0       00:00 sshd: root@notty\n   3051      93     0       00:00 sshd: root@notty\n   5159       1     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m analysis.startup_window_experiments_v1.worker --deployment <TRAINING_ROOT>/paid-node-02.json --logical-gpu 2\n   5160       1     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m analysis.startup_window_experiments_v1.worker --deployment <TRAINING_ROOT>/paid-node-02.json --logical-gpu 3\n   5161       1     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m analysis.startup_window_experiments_v1.worker --deployment <TRAINING_ROOT>/paid-node-02.json --logical-gpu 4\n   5162       1     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m analysis.startup_window_experiments_v1.worker --deployment <TRAINING_ROOT>/paid-node-02.json --logical-gpu 5\n  12244    5161     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed305/DA --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=305 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed305-DA.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  12295   12244     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -u <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed305/DA --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=305 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed305-DA.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  12393   12295     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(37)\n  12394   12295     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=38, pipe_handle=42) --multiprocessing-fork\n  12510    5162     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed306/A_startup_down5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=306 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed306-A_startup_down5.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  12561   12510     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -u <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed306/A_startup_down5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=306 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed306-A_startup_down5.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  12660   12561     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(37)\n  12661   12561     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=38, pipe_handle=42) --multiprocessing-fork\n  12875    5160     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed304/AA --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=304 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed304-AA.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  13011   12875     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -u <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed304/AA --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.0 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=304 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed304-AA.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  13110   13011     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(37)\n  13111   13011     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=38, pipe_handle=42) --multiprocessing-fork\n  13228    5159     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -m torch.distributed.run --standalone --nproc_per_node=1 <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed303/D_startup_up5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=303 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed303-D_startup_up5.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  13279   13228     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -u <TRAINING_ROOT>/code/ct_train.py --data=<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip --outdir=<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed303/D_startup_up5 --nosubdir --cond=False --arch=ddpmpp --precond=ect --batch=128 --batch-gpu=16 --optim=RAdam --lr=0.0001 --dropout=0.2 --augment=0 --xflip=False --mean=-1.1 --std=2.0 --mapping=sigmoid --global-gap-scale=1.0 --factorial-protocol=q128_startup_native_v1 --target-gap-scale=1.0 --denominator-gap-scale=1.1 -q 128 -k 8 -b 1 -c 0 --double=10000 --ema_beta=0.9993 --seed=303 --fp16=True --tf32=False --ls=1.0 --enable_amp=True --bench=False --cache=True --workers=1 --metrics=none --duration=1.024 --tick=10 --snap=0 --dump=0 --ckpt=10 --sample_every=26 --eval_every=50 --mid_t=0.821 --adaptive-update-kimg=0.5 --immutable-checkpoint-kimg=512,1024 --startup-window-manifest=<TRAINING_ROOT>/control/manifests/q128_startup_fresh8_v1-seed303-D_startup_up5.json --transfer=<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl\n  13377   13279     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.resource_tracker import main;main(37)\n  13378   13279     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -B -s -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=38, pipe_handle=42) --multiprocessing-fork\n  13508    3051     0       00:00 <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11 -c ROOT='<TRAINING_ROOT>' HOST='paid-node-02' import json,pathlib,time,subprocess r=pathlib.Path(ROOT) print(json.dumps(dict(host=HOST,wall=time.time(),workers=[json.loads(p.read_text()) for p in (r/'control').glob('worker-*.json')],gpu=subprocess.check_output(['nvidia-smi','--query-compute-apps=gpu_uuid,pid,process_name,used_memory','--format=csv'],text=True),processes=subprocess.check_output(['ps','-eo','pid,ppid,uid,etime,args'],text=True)))) \n  13512   13508     0       00:00 ps -eo pid,ppid,uid,etime,args\n"
+    }
+  ],
+  "archive": {
+    "wall": 1789104562.0968535,
+    "hosts": [
+      {
+        "host": "paid-node-01",
+        "immutable_milestones_verified": 16,
+        "completed_runs_verified": 4
+      },
+      {
+        "host": "paid-node-02",
+        "immutable_milestones_verified": 24,
+        "completed_runs_verified": 8
+      }
+    ],
+    "errors": []
+  }
+}

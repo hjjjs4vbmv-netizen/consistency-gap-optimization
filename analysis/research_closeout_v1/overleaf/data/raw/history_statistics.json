@@ -1,0 +1,96 @@
+{
+  "arms": {
+    "AA": {
+      "available_n": 26,
+      "mean_fid50k": 9.855882206772712,
+      "mean_kid50k": 0.00622492079408123,
+      "missing_n": 4,
+      "planned_n": 30
+    },
+    "BA": {
+      "available_n": 29,
+      "mean_fid50k": 8.972883398884386,
+      "mean_kid50k": 0.005544037766883086,
+      "missing_n": 1,
+      "planned_n": 30
+    }
+  },
+  "ci90": [
+    -0.12307181038232248,
+    -0.056820322659604953
+  ],
+  "ci95": [
+    -0.12988642045356227,
+    -0.05000571258836516
+  ],
+  "classification": "DIRECTIONAL_NEGATIVE",
+  "cohen_dz": -0.9096064236123724,
+  "complete_pairs_n": 26,
+  "degrees_of_freedom": 25,
+  "equivalence_margin": [
+    -0.02955880224154443,
+    0.02955880224154443
+  ],
+  "geometric_fid_percent_change_ba_vs_aa": -8.601952191109575,
+  "geometric_fid_ratio_ba_over_aa": 0.9139804780889043,
+  "mean_delta_kid_ba_minus_aa": -0.0006626876286016061,
+  "mean_log_fid_contrast": -0.08994606652096372,
+  "negative_pairs": 22,
+  "planned_endpoint_failure": {
+    "AA": {
+      "failed": 4,
+      "planned": 30,
+      "rate": 0.13333333333333333
+    },
+    "BA": {
+      "failed": 1,
+      "planned": 30,
+      "rate": 0.03333333333333333
+    },
+    "fisher_exact_odds_ratio": 4.461538461538462,
+    "fisher_exact_two_sided_p": 0.35325602140945594
+  },
+  "positive_pairs": 4,
+  "prefix_history_failure": {
+    "A": {
+      "failed": 1,
+      "planned": 30,
+      "rate": 0.03333333333333333
+    },
+    "B": {
+      "failed": 0,
+      "planned": 30,
+      "rate": 0.0
+    },
+    "fisher_exact_odds_ratio": null,
+    "fisher_exact_two_sided_p": 1.0,
+    "odds_ratio_note": "infinite because the B-history failure cell is zero"
+  },
+  "primary_estimand": "log(FID50k_BA)-log(FID50k_AA)",
+  "sd_log_fid_contrast": 0.09888459908160688,
+  "se_log_fid_contrast": 0.019392865396573564,
+  "t_statistic": -4.638100903688832,
+  "tost": {
+    "equivalent_at_0.05": false,
+    "p_lower": 0.9977074177112891,
+    "p_tost": 0.9977074177112891,
+    "p_upper": 9.596478937907818e-07,
+    "t_lower": -3.1138907554161044,
+    "t_upper": -6.1623110519615585
+  },
+  "training_node_subgroups": {
+    "training_node7_seeds66_79": {
+      "mean_log_fid_contrast": -0.09082427351701401,
+      "n": 12,
+      "negative_count": 10,
+      "positive_count": 2
+    },
+    "training_node8_seeds50_65": {
+      "mean_log_fid_contrast": -0.08919331766720633,
+      "n": 14,
+      "negative_count": 12,
+      "positive_count": 2
+    }
+  },
+  "two_sided_p": 9.520085404637619e-05
+}

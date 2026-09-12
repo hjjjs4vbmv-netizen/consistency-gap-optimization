@@ -1,0 +1,64 @@
+{
+  "id": "autodl_one_round_matpool_remainder_v2",
+  "wall": 1789108332.6889799,
+  "user_instruction": "把5卡的分给matool，autodl就跑一轮训练",
+  "redirected_jobs": [
+    "q128_startup_fresh8_v1-seed301-D_startup_up5",
+    "q128_startup_fresh8_v1-seed302-AA",
+    "q128_startup_fresh8_v1-seed304-A_startup_down5",
+    "q128_startup_fresh8_v1-seed306-AA"
+  ],
+  "rows": [],
+  "autodl_training_count": 8,
+  "autodl_expected_by_host": {
+    "paid-node-04": 5,
+    "paid-node-05": 3
+  },
+  "previous_amendment_sha256": "0f31aabd0aee43c91cbfd90e829be7978d8087abdcacde46ae9a7a1e4df09304",
+  "scientific_parameters_changed": false,
+  "delegated_rows": [
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "D_startup_up5",
+      "order": 4,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "AA",
+      "order": 4,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "A_startup_down5",
+      "order": 4,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "AA",
+      "order": 4,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>"
+    }
+  ],
+  "execution_host": "paid-node-03",
+  "superseded_execution_by": "matpool_three_gpu_remainder_v3",
+  "updated_wall": 1789108794.048657
+}

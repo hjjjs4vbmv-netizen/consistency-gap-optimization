@@ -1,0 +1,28 @@
+{
+  "block": "B0",
+  "branch": "K_A",
+  "elapsed_seconds": 391.2555324845016,
+  "ended_utc": "2026-09-06T09:39:02.230263+00:00",
+  "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+  "gpu": 1,
+  "host": "paid",
+  "lane": "2",
+  "metric_seed": "20260730",
+  "metrics": {
+    "fid50k_full": 10.386523244030014,
+    "kid50k_full": 0.006487114354968071
+  },
+  "nfe": "1",
+  "original_status_path": "<ECT_ARCHIVE>/m1_optimizer_restart_ema/archive/hub2_26065/runs/S06/K_A/branch_status.json",
+  "precision": "fp32",
+  "readout": "E_512",
+  "roster_slot": "S06",
+  "sample_count": "50000",
+  "sample_seed_end": "49999",
+  "sample_seed_start": "0",
+  "seed": "55",
+  "slot_id": "S06-K_A-E_512-B0",
+  "source_state": "<ECT_ARCHIVE>/m1_optimizer_restart_ema/archive/hub2_26065/runs/S06/K_A/training-state-kimg001024.pt",
+  "started_utc": "2026-09-06T09:32:30.765381+00:00",
+  "status": "PASS"
+}

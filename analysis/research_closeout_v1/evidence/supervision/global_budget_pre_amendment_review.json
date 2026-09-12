@@ -1,0 +1,193 @@
+{
+  "cap_gpuh": 200.0,
+  "spent_gpuh": 64.3389618819313,
+  "remaining_training_gpuh": 119.89817705740715,
+  "remaining_evaluation_gpuh": 9.37549255545795,
+  "projected_total_gpuh": 193.6126314947964,
+  "allowed": true,
+  "remaining_training_matrix": [
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "A_startup_down5",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "D_startup_up5",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "AA",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "DA",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "D_startup_up5",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "AA",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "DA",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "A_startup_down5",
+      "host": "owned",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "DA",
+      "host": "paid-node-01",
+      "training_status": "RUNNING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "A_startup_down5",
+      "host": "paid-node-01",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "D_startup_up5",
+      "host": "paid-node-01",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "A_startup_down5",
+      "host": "paid-node-01",
+      "training_status": "RUNNING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "D_startup_up5",
+      "host": "paid-node-01",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "AA",
+      "host": "paid-node-01",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "D_startup_up5",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "AA",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "DA",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "AA",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "DA",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "A_startup_down5",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "DA",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "A_startup_down5",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "D_startup_up5",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "A_startup_down5",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "D_startup_up5",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "AA",
+      "host": "paid-node-02",
+      "training_status": "PENDING"
+    }
+  ],
+  "estimate_rule": "median completed same-q same-host training, then same-host or same-q fallback; live attempt throughput; median completed same-q evaluation blocks; no quality values used"
+}

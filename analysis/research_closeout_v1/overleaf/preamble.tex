@@ -1,0 +1,51 @@
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,booktabs,tabularx,array,multirow}
+\usepackage[table]{xcolor}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{placeins}
+\usepackage{longtable}
+\definecolor{ink}{HTML}{17324D}
+\definecolor{teal}{HTML}{007F82}
+\definecolor{amber}{HTML}{A66910}
+\definecolor{pale}{HTML}{F1F5F8}
+\hypersetup{colorlinks=true,citecolor=ink,linkcolor=ink,urlcolor=teal,pdfborder={0 0 0}}
+\urlstyle{same}
+\setlength{\emergencystretch}{1.5em}
+\setlength{\tabcolsep}{4pt}
+\setlength{\headheight}{14pt}
+\setlist[itemize]{leftmargin=*,topsep=2pt,itemsep=1pt}
+\setlist[enumerate]{leftmargin=*,topsep=2pt,itemsep=1pt}
+\renewcommand{\arraystretch}{1.13}
+\raggedbottom
+\newcommand{\sg}{\operatorname{sg}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\Ekeep}{E_{\mathrm{keep}}}
+\newcommand{\Ereset}{E_{512}}
+\newcommand{\Adown}{A_{\downarrow 5}}
+\newcommand{\Adelay}{A_{\downarrow 6:10}}
+\newcommand{\Dup}{D_{\uparrow 5}}
+\newcommand{\FID}{\operatorname{FID}}
+\newcommand{\KID}{\operatorname{KID}}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{corollary}[proposition]{Corollary}
+\newcommand{\figfile}[1]{figures/en/#1.pdf}
+\newcommand{\draftnote}[1]{\par\smallskip\noindent\begingroup\setlength{\fboxsep}{7pt}\colorbox{pale}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small #1}}\endgroup\par\smallskip}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+% Primitive input avoids file-hook tokens inside a tabular alignment.
+\makeatletter
+\newcommand{\inputrows}[1]{\@@input#1 }
+\makeatother
+
+% Keep figure-only appendix pages aligned at the top with consistent gaps.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt plus 2pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother

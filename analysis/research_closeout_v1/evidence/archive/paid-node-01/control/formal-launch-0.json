@@ -1,0 +1,16 @@
+{
+  "pid": 11028,
+  "logical_gpu": 0,
+  "first_seed": 50,
+  "started_wall": 1789067823.829299,
+  "command": [
+    "<TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11",
+    "-m",
+    "analysis.startup_window_experiments_v1.worker",
+    "--deployment",
+    "<TRAINING_ROOT>/paid-node-01.json",
+    "--logical-gpu",
+    "0"
+  ],
+  "log": "<TRAINING_ROOT>/control/worker-0.process.log"
+}

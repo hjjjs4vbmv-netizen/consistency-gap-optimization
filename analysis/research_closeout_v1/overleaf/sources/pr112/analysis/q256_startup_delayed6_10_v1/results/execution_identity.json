@@ -1,0 +1,20 @@
+{
+  "scientific_implementation": "fcc94d26b1085011ac935084f7c1cf4c149e2947",
+  "baseline_commit": "e429ab29476b23c4417cc2b1df7268a2b192f175",
+  "baseline_pr": 111,
+  "evaluator_commit": "d6aba02fb88e9db0993623895eb2228ed717d810",
+  "runtime": {
+    "python": "3.11.13",
+    "torch": "2.6.0+cu124",
+    "cuda": "12.4",
+    "cudnn": 90100,
+    "numpy": "2.1.2",
+    "scipy": "1.16.1"
+  },
+  "new_training": 8,
+  "new_evaluation_blocks": 24,
+  "reused_evaluation_blocks": 48,
+  "cohort": "PR111 responder-enriched exploratory extension",
+  "q128_results": "ongoing; no q128 quality results included",
+  "redaction": "Raw source hashes preserved; public-file hashes cover the redacted representations separately. No checkpoints, generated sample/feature arrays, credentials, private absolute paths or physical GPU UUIDs are published."
+}

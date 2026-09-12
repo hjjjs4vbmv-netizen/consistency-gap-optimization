@@ -1,0 +1,224 @@
+
+Training options:
+{
+  "dataset_kwargs": {
+    "class_name": "training.dataset.ImageFolderDataset",
+    "path": "<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+    "use_labels": false,
+    "xflip": false,
+    "cache": true,
+    "resolution": 32,
+    "max_size": 50000
+  },
+  "data_loader_kwargs": {
+    "pin_memory": true,
+    "num_workers": 1,
+    "prefetch_factor": 2
+  },
+  "network_kwargs": {
+    "model_type": "SongUNet",
+    "embedding_type": "positional",
+    "encoder_type": "standard",
+    "decoder_type": "standard",
+    "channel_mult_noise": 1,
+    "resample_filter": [
+      1,
+      1
+    ],
+    "model_channels": 128,
+    "channel_mult": [
+      2,
+      2,
+      2
+    ],
+    "class_name": "training.networks.ECMPrecond",
+    "dropout": 0.2,
+    "use_fp16": true
+  },
+  "loss_kwargs": {
+    "P_mean": -1.1,
+    "P_std": 2.0,
+    "q": 128.0,
+    "c": 0.0,
+    "k": 8.0,
+    "b": 1.0,
+    "adj": "sigmoid",
+    "adaptive_loss_ema_beta": 0.9,
+    "adaptive_warmup_updates": 2,
+    "adaptive_max_adjust": 0.05,
+    "adaptive_min_gap": 0.001,
+    "local_tbin_num_bins": 4,
+    "local_tbin_short_beta": 0.9,
+    "local_tbin_long_beta": 0.99,
+    "local_tbin_warmup_updates": 32,
+    "local_tbin_gain": 0.5,
+    "local_tbin_min_scale": 0.75,
+    "local_tbin_max_scale": 1.5,
+    "local_tbin_deadband": 0.02,
+    "local_tbin_min_gap": 0.001,
+    "global_gap_scale": 1.0,
+    "factorial_protocol": "q128_startup_native_v1",
+    "target_gap_scale": 1.0,
+    "denominator_gap_scale": 1.0,
+    "class_name": "training.loss.ECMLoss"
+  },
+  "optimizer_kwargs": {
+    "class_name": "torch.optim.RAdam",
+    "lr": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "total_kimg": 1024,
+  "ema_halflife_kimg": null,
+  "ema_beta": 0.9993,
+  "batch_size": 128,
+  "batch_gpu": 16,
+  "loss_scaling": 1.0,
+  "cudnn_benchmark": false,
+  "enable_tf32": false,
+  "enable_amp": true,
+  "kimg_per_tick": 10.0,
+  "snapshot_ticks": null,
+  "state_dump_ticks": null,
+  "ckpt_ticks": 10,
+  "immutable_checkpoint_kimg": [
+    512,
+    1024
+  ],
+  "double_ticks": 10000,
+  "adaptive_update_kimg": 0.5,
+  "stop_after_attempts": null,
+  "planned_pause_protocol": null,
+  "startup_check_manifest": null,
+  "startup_quality_manifest": null,
+  "startup_window_manifest": "<TRAINING_ROOT>/autodl/paid-node-04/control/manifests/q128_startup_fresh8_v1-seed302-AA.json",
+  "window_preflight_stop_success": null,
+  "quality_preflight_stop_success": null,
+  "schedule_switch_manifest": null,
+  "mid_t": [
+    0.821
+  ],
+  "metrics": [],
+  "sample_ticks": 26,
+  "eval_ticks": 50,
+  "seed": 302,
+  "resume_pkl": "<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl",
+  "ema_rampup_ratio": null,
+  "run_dir": "<TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed302/AA"
+}
+
+Output directory:        <TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed302/AA
+Dataset path:            <TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip
+Class-conditional:       False
+Network architecture:    ddpmpp
+Preconditioning & loss:  ect
+Number of GPUs:          1
+Batch size:              128
+Mixed-precision:         True
+
+Creating output directory...
+Enable tf32: False
+Loading dataset...
+<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/utils/data/sampler.py:77: UserWarning: `data_source` argument is not used and will be removed in 2.2.0.You may still have custom implementation that utilizes it.
+  warnings.warn(
+Constructing network...
+Setting up optimizer...
+P_mean: -1.1, P_std: 2.0, q: 128.0, k 8.0, b 1.0, c: 0.0
+GradScaler enabled: True for mixed precision training
+Setting up GradScaler...
+<TRAINING_ROOT>/code/training/ct_training_loop.py:1278: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+Loss scaling is overwritten when GradScaler is enabled
+Setting up DDP...
+
+ECMPrecond                Parameters  Buffers  Output shape       Datatype
+---                       ---         ---      ---                ---     
+model.map_noise           -           -        [16, 128]          float32 
+model.map_layer0          66048       -        [16, 512]          float32 
+model.map_layer1          262656      -        [16, 512]          float32 
+model.enc.32x32_conv      3584        -        [16, 128, 32, 32]  float16 
+model.enc.32x32_block0    1050368     -        [16, 256, 32, 32]  float16 
+model.enc.32x32_block1    1312512     -        [16, 256, 32, 32]  float16 
+model.enc.32x32_block2    1312512     -        [16, 256, 32, 32]  float16 
+model.enc.32x32_block3    1312512     -        [16, 256, 32, 32]  float16 
+model.enc.16x16_down      1378304     8        [16, 256, 16, 16]  float16 
+model.enc.16x16_block0    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.16x16_block1    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.16x16_block2    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.16x16_block3    1576192     -        [16, 256, 16, 16]  float16 
+model.enc.8x8_down        1378304     8        [16, 256, 8, 8]    float16 
+model.enc.8x8_block0      1312512     -        [16, 256, 8, 8]    float16 
+model.enc.8x8_block1      1312512     -        [16, 256, 8, 8]    float16 
+model.enc.8x8_block2      1312512     -        [16, 256, 8, 8]    float16 
+model.enc.8x8_block3      1312512     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_in0         1576192     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_in1         1312512     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block0      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block1      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block2      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block3      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.8x8_block4      2034176     -        [16, 256, 8, 8]    float16 
+model.dec.16x16_up        1378304     8        [16, 256, 16, 16]  float16 
+model.dec.16x16_block0    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block1    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block2    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block3    2034176     -        [16, 256, 16, 16]  float16 
+model.dec.16x16_block4    2297856     -        [16, 256, 16, 16]  float16 
+model.dec.32x32_up        1378304     8        [16, 256, 32, 32]  float16 
+model.dec.32x32_block0    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block1    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block2    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block3    2034176     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_block4    1706240     -        [16, 256, 32, 32]  float16 
+model.dec.32x32_aux_norm  512         -        [16, 256, 32, 32]  float16 
+model.dec.32x32_aux_conv  6915        -        [16, 3, 32, 32]    float16 
+<top-level>               -           -        [16, 3, 32, 32]    float32 
+---                       ---         ---      ---                ---     
+Total                     55732739    32       -                  -       
+
+Loading network weights from "<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl"...
+Exporting sample images...
+Training for 1024 kimg...
+
+Reduce dt every 10000 ticks.
+Update scheduler at 0 ticks, 0.0 kimg, ratio 0.9921875
+tick 0     kimg 0.1       loss nan       grad_scale 65536     step_skipped 1       time 15s          sec/tick 3.1     sec/kimg 24.60   maintenance 12.1   cpumem 2.29   gpumem 2.05   reserved 2.14  
+Exporting sample images...
+tick 1     kimg 10.2      loss 14.28058  grad_scale 128       step_skipped 0       time 2m 47s       sec/tick 151.2   sec/kimg 14.95   maintenance 0.8    cpumem 2.30   gpumem 2.90   reserved 2.98  
+tick 2     kimg 20.4      loss 19.64939  grad_scale 128       step_skipped 0       time 5m 19s       sec/tick 151.3   sec/kimg 14.96   maintenance 0.0    cpumem 2.30   gpumem 2.48   reserved 2.98  
+W0911 18:57:02.737000 12980 site-packages/torch/distributed/elastic/agent/server/api.py:719] Received 15 death signal, shutting down workers
+W0911 18:57:02.738000 12980 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 13047 closing signal SIGTERM
+<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 11 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/run.py", line 922, in <module>
+    main()
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/run.py", line 918, in main
+    run(args)
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/run.py", line 909, in run
+    elastic_launch(
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 711, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 870, in _invoke_run
+    time.sleep(monitor_interval)
+  File "<TRAINING_ROOT>/runtime/python-3.11.13/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 12980 got signal: 15

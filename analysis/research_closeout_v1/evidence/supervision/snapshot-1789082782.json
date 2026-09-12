@@ -1,0 +1,309 @@
+[
+  {
+    "host": "owned",
+    "wall": 1789082781.0430696,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 104918,
+        "attempted_iteration": 5231,
+        "error": null,
+        "started_wall": 1789067826.4069986,
+        "elapsed_process_gpuh": 4.151422265343265,
+        "projected_slot_gpuh": null,
+        "worker": "worker-6",
+        "pid_alive": true,
+        "heartbeat_age": 9.513872623443604,
+        "log": "<ECT_ROOT>/runs/q256_startup_delayed6_10_v1/seed56/A_delayed_down6_10/process-1789067826328970545.log"
+      },
+      {
+        "status": "RUNNING",
+        "pid": 104917,
+        "attempted_iteration": 5152,
+        "error": null,
+        "started_wall": 1789067826.401554,
+        "elapsed_process_gpuh": 4.151423787616918,
+        "projected_slot_gpuh": null,
+        "worker": "worker-7",
+        "pid_alive": true,
+        "heartbeat_age": 9.514739751815796,
+        "log": "<ECT_ROOT>/runs/q256_startup_delayed6_10_v1/seed57/A_delayed_down6_10/process-1789067826322906386.log"
+      }
+    ],
+    "runs": [],
+    "gpu": "0, 33446 MiB, 100 %\n1, 33446 MiB, 99 %\n",
+    "compute": "<GPU_UUID>, 105079, <PRIVATE_PATH>/python3.11, 3950 MiB\n<GPU_UUID>, 16121, python, 29478 MiB\n<GPU_UUID>, 105076, <PRIVATE_PATH>/python3.11, 3950 MiB\n<GPU_UUID>, 16120, python, 29478 MiB\n",
+    "ledgers": []
+  },
+  {
+    "host": "paid-node-01",
+    "wall": 1789082781.412911,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 19561,
+        "attempted_iteration": 175,
+        "error": null,
+        "started_wall": 1789082471.1460383,
+        "elapsed_process_gpuh": 0.08333777880606552,
+        "projected_slot_gpuh": null,
+        "worker": "worker-0",
+        "pid_alive": true,
+        "heartbeat_age": 10.250169277191162,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed301/AA/process-1789082471037383240.log"
+      },
+      {
+        "status": "RUNNING",
+        "pid": 19533,
+        "attempted_iteration": 174,
+        "error": null,
+        "started_wall": 1789082470.3482563,
+        "elapsed_process_gpuh": 0.0833383185403525,
+        "projected_slot_gpuh": null,
+        "worker": "worker-1",
+        "pid_alive": true,
+        "heartbeat_age": 11.046077013015747,
+        "log": "<TRAINING_ROOT>/runs/q128_startup_fresh8_v1/seed302/DA/process-1789082470180559828.log"
+      }
+    ],
+    "runs": [
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 50,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.7168821765397055,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11667245770545884
+          },
+          "B1": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11667249331664709
+          },
+          "B2": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11250548239021252
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 51,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.716886768037867,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11667454010263706
+          },
+          "B1": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11667255729333394
+          },
+          "B2": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11250606451209427
+          }
+        }
+      }
+    ],
+    "gpu": "0, 3955 MiB, 46 %\n1, 3957 MiB, 40 %\n",
+    "compute": "<GPU_UUID>, 3695997, [Not Found], 3948 MiB\n<GPU_UUID>, 3695969, [Not Found], 3950 MiB\n",
+    "ledgers": [
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed51-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.716886768037867,
+            "process_gpuh": 4.062739929945932,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789082470.1605628
+      },
+      {
+        "jobs": {
+          "q256_startup_delayed6_10_v1-seed50-A_delayed_down6_10": {
+            "training_status": "PASS",
+            "training_gpuh": 3.7168821765397055,
+            "process_gpuh": 4.062732609952024,
+            "evaluation_statuses": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ]
+          }
+        },
+        "payment_class": "paid",
+        "updated_wall": 1789082471.017458
+      }
+    ]
+  },
+  {
+    "host": "paid-node-02",
+    "wall": 1789082781.7499666,
+    "workers": [
+      {
+        "status": "RUNNING",
+        "pid": 8551,
+        "attempted_iteration": null,
+        "error": null,
+        "started_wall": 1789082717.6681683,
+        "elapsed_process_gpuh": 0.016675677504390477,
+        "projected_slot_gpuh": null,
+        "worker": "worker-2",
+        "pid_alive": true,
+        "heartbeat_age": 4.048290729522705,
+        "log": "<TRAINING_ROOT>/runs/q256_startup_delayed6_10_v1/seed52/A_delayed_down6_10/evaluation/B2.process.log"
+      },
+      {
+        "status": "RUNNING",
+        "pid": 8070,
+        "attempted_iteration": null,
+        "error": null,
+        "started_wall": 1789082413.6129873,
+        "elapsed_process_gpuh": 0.10001271522603929,
+        "projected_slot_gpuh": null,
+        "worker": "worker-3",
+        "pid_alive": true,
+        "heartbeat_age": 8.090203046798706,
+        "log": "<TRAINING_ROOT>/runs/q256_startup_delayed6_10_v1/seed53/A_delayed_down6_10/evaluation/B2.process.log"
+      },
+      {
+        "status": "RUNNING",
+        "pid": 7967,
+        "attempted_iteration": null,
+        "error": null,
+        "started_wall": 1789082408.4286766,
+        "elapsed_process_gpuh": 0.1000205219299015,
+        "projected_slot_gpuh": null,
+        "worker": "worker-4",
+        "pid_alive": true,
+        "heartbeat_age": 13.246474981307983,
+        "log": "<TRAINING_ROOT>/runs/q256_startup_delayed6_10_v1/seed54/A_delayed_down6_10/evaluation/B1.process.log"
+      },
+      {
+        "status": "RUNNING",
+        "pid": 8356,
+        "attempted_iteration": null,
+        "error": null,
+        "started_wall": 1789082539.8588526,
+        "elapsed_process_gpuh": 0.06673960912041366,
+        "projected_slot_gpuh": null,
+        "worker": "worker-5",
+        "pid_alive": true,
+        "heartbeat_age": 1.627640962600708,
+        "log": "<TRAINING_ROOT>/runs/q256_startup_delayed6_10_v1/seed55/A_delayed_down6_10/evaluation/B2.process.log"
+      }
+    ],
+    "runs": [
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 53,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.808763372425197,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.07500523851770494
+          },
+          "B1": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.16252063773262004
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 55,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.837927205260429,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.12917950140001874
+          },
+          "B1": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11251769774179492
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 52,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.846256485163338,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.16668137511445416
+          },
+          "B1": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.11672764560104244
+          }
+        }
+      },
+      {
+        "protocol_id": "q256_startup_delayed6_10_v1",
+        "seed": 54,
+        "arm": "A_delayed_down6_10",
+        "status": "PASS",
+        "process_gpuh": 3.883742763271762,
+        "error": null,
+        "evaluations": {
+          "B0": {
+            "status": "PASS",
+            "returncode": 0,
+            "error": null,
+            "process_gpuh": 0.1625237464853045
+          }
+        }
+      }
+    ],
+    "gpu": "0, 23105 MiB, 90 %\n1, 1605 MiB, 0 %\n2, 1605 MiB, 0 %\n3, 1587 MiB, 0 %\n",
+    "compute": "<GPU_UUID>, 8602, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 23096 MiB\n<GPU_UUID>, 8168, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 1596 MiB\n<GPU_UUID>, 8018, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 1596 MiB\n<GPU_UUID>, 8407, <TRAINING_ROOT>/runtime/python-3.11.13/bin/python3.11, 1578 MiB\n",
+    "ledgers": []
+  }
+]

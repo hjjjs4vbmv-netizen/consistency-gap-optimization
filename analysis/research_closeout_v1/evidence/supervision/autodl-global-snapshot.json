@@ -1,0 +1,1214 @@
+{
+  "wall": 1789133527.1270792,
+  "jobs": [
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 56,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 6.485524132043227,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.058348436563068797
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.06668459334979869
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.08335151079162541
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "A_startup_down5",
+      "order": 1,
+      "host": "owned",
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 5.139288288089447,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.05417948470657898
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.054188779153757624
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.05417960887102203
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "D_startup_up5",
+      "order": 2,
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-04",
+      "training_status": "PASS",
+      "training_gpuh": 4.410818203610834,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.15836000987328588
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1458478618775391
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.20420087260297604
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed307/D_startup_up5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "AA",
+      "order": 3,
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-04",
+      "training_status": "PASS",
+      "training_gpuh": 4.473326623902087,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1416855014819238
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.08751907604125639
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.16668299920856952
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed307/AA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 307,
+      "arm": "DA",
+      "order": 4,
+      "local_gpu": 0,
+      "logical_gpu": 6,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-04",
+      "training_status": "PASS",
+      "training_gpuh": 4.727584894588735,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.19586421264438994
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.15834593559304874
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.1459049870332496
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed307/DA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 57,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "owned",
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 6.577221823285541,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.05835046418011189
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.06668201664617907
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.08335299059024287
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "D_startup_up5",
+      "order": 1,
+      "host": "owned",
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 6.2020920064512435,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.05417998515224705
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.05418963566008541
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.05418603689978934
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "AA",
+      "order": 2,
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-04",
+      "training_status": "PASS",
+      "training_gpuh": 4.448368514961977,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.14586009423455432
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1708483271062788
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11669342724813356
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed308/AA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "DA",
+      "order": 3,
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-04",
+      "training_status": "PASS",
+      "training_gpuh": 4.790267117491975,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1708491769205365
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.15835791705693636
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.13751517950660652
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed308/DA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 308,
+      "arm": "A_startup_down5",
+      "order": 4,
+      "local_gpu": 1,
+      "logical_gpu": 7,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-05",
+      "training_status": "PASS",
+      "training_gpuh": 5.298699403397299,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.12918924125532308
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.10834446710430913
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.12084539256989955
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-05/runs/q128_startup_fresh8_v1/seed308/A_startup_down5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 50,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.7168821765397055,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.11667245770545884
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11667249331664709
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11250548239021252
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "AA",
+      "order": 1,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.725280789935237,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.0583363567176275
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.07917130220448598
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.10833920325592367
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "DA",
+      "order": 2,
+      "host": "paid-node-01",
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.741966821536577,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.058336692164238126
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.0625036810617894
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.058336319608303405
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "A_startup_down5",
+      "order": 3,
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-08",
+      "training_status": "PASS",
+      "training_gpuh": 5.244710769057274,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1917086208032237
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.18335207837116388
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.15835995745431217
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-08/runs/q128_startup_fresh8_v1/seed301/A_startup_down5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 301,
+      "arm": "D_startup_up5",
+      "order": 4,
+      "local_gpu": 0,
+      "logical_gpu": 0,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-03",
+      "training_status": "PASS",
+      "training_gpuh": 3.754821546157408,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.11667640338030955
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.07918046154288783
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.1625245678373095
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-03/runs/q128_startup_fresh8_v1/seed301/D_startup_up5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 51,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.716886768037867,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.11667454010263706
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11667255729333394
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11250606451209427
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "DA",
+      "order": 1,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.712997590006174,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.06667023636271349
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.07917130190568665
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11250563328464826
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "A_startup_down5",
+      "order": 2,
+      "host": "paid-node-01",
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.7668861818737867,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.06666996681364253
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.05833667528608607
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.05000258760552646
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "D_startup_up5",
+      "order": 3,
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-08",
+      "training_status": "PASS",
+      "training_gpuh": 5.06122481904717,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.0791816690377891
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.13336605747023392
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.17502125720803938
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-08/runs/q128_startup_fresh8_v1/seed302/D_startup_up5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 302,
+      "arm": "AA",
+      "order": 4,
+      "local_gpu": 1,
+      "logical_gpu": 1,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-03",
+      "training_status": "PASS",
+      "training_gpuh": 3.7548099483446116,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.13751755756119058
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.12918888011429872
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.14168797269567018
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-03/runs/q128_startup_fresh8_v1/seed302/AA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 52,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.846256485163338,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.16668137511445416
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11672764560104244
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.13335370406922367
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "A_startup_down5",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.9378376709587046,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1958524410126524
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1791850711736414
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.07083846075356834
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "D_startup_up5",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.8838373242929163,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.20002323515092332
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11251404158771038
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11668004933848149
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "AA",
+      "order": 3,
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-06",
+      "training_status": "PASS",
+      "training_gpuh": 5.557122805221653,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1291932367378225
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.16668354316304126
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11251232198439538
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-06/runs/q128_startup_fresh8_v1/seed303/AA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 303,
+      "arm": "DA",
+      "order": 4,
+      "local_gpu": 0,
+      "logical_gpu": 2,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-05",
+      "training_status": "PASS",
+      "training_gpuh": 5.323742113043554,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.104184719853931
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.10834526399978334
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.12084781215733124
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-05/runs/q128_startup_fresh8_v1/seed303/DA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 53,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.808763372425197,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.07500523851770494
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.16252063773262004
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.1542455072959678
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "D_startup_up5",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.846162121213145,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1375098862240298
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.20419356792337365
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.18752283269746436
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "AA",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.783716387319275,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.07500434779458576
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.08751199397982823
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.16252155679071115
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "DA",
+      "order": 3,
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-08",
+      "training_status": "PASS",
+      "training_gpuh": 5.123504557263934,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.11669016006609632
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.16668968352799615
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.10834644606750872
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-08/runs/q128_startup_fresh8_v1/seed304/DA",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 304,
+      "arm": "A_startup_down5",
+      "order": 4,
+      "local_gpu": 1,
+      "logical_gpu": 3,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-03",
+      "training_status": "PASS",
+      "training_gpuh": 3.7214774131878383,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.07083924146989981
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11251661409003039
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.15002238203874893
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-03/runs/q128_startup_fresh8_v1/seed304/A_startup_down5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 54,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.883742763271762,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1625237464853045
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1667529421289348
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.08751533667763903
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "AA",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.7921589215493037,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1125148897866408
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.1625242174323648
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.13334936110302806
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "DA",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 4.04215249145093,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.18751920166321925
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11251415729108784
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.12084341034500136
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "A_startup_down5",
+      "order": 3,
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-07",
+      "training_status": "PASS",
+      "training_gpuh": 5.3870382773457095,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.16669003144630956
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.15418654123631617
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.17501591154063742
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-07/runs/q128_startup_fresh8_v1/seed305/A_startup_down5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 305,
+      "arm": "D_startup_up5",
+      "order": 4,
+      "local_gpu": 2,
+      "logical_gpu": 4,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-05",
+      "training_status": "PASS",
+      "training_gpuh": 4.948467188635323,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1541923601169967
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.15417842492771647
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.13338674729276034
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-05/runs/q128_startup_fresh8_v1/seed305/D_startup_up5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q256_startup_delayed6_10_v1",
+      "seed": 55,
+      "arm": "A_delayed_down6_10",
+      "order": 0,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.837927205260429,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.12917950140001874
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.11251769774179492
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.1709141728747636
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "DA",
+      "order": 1,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.7962972558858907,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1375101170492255
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.20836371234721607
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.175023509727584
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "A_startup_down5",
+      "order": 2,
+      "host": "paid-node-02",
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "training_status": "PASS",
+      "training_gpuh": 3.8211998101510107,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.07500444760339128
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.08333801918663085
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.1791853593258808
+        }
+      }
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "D_startup_up5",
+      "order": 3,
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-08",
+      "training_status": "PASS",
+      "training_gpuh": 5.282259914421787,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.1791894111678832
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.18335689330783983
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11250793498216403
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-08/runs/q128_startup_fresh8_v1/seed306/D_startup_up5",
+      "heartbeat": null
+    },
+    {
+      "protocol_id": "q128_startup_fresh8_v1",
+      "seed": 306,
+      "arm": "AA",
+      "order": 4,
+      "local_gpu": 3,
+      "logical_gpu": 5,
+      "gpu_uuid": "<GPU_UUID>",
+      "host": "paid-node-06",
+      "training_status": "PASS",
+      "training_gpuh": 5.143629857390576,
+      "live_elapsed_gpuh": 0,
+      "attempt": 0,
+      "start_attempt": 0,
+      "evaluations": {
+        "B0": {
+          "status": "PASS",
+          "gpuh": 0.07918430664990511
+        },
+        "B1": {
+          "status": "PASS",
+          "gpuh": 0.07501721368171274
+        },
+        "B2": {
+          "status": "PASS",
+          "gpuh": 0.11251441880232758
+        }
+      },
+      "run": "<TRAINING_ROOT>/paid-node-06/runs/q128_startup_fresh8_v1/seed306/AA",
+      "heartbeat": null
+    }
+  ],
+  "review": {
+    "cap_gpuh": 200.0,
+    "spent_gpuh": 195.74026853884402,
+    "remaining_training_gpuh": 0.0,
+    "remaining_evaluation_gpuh": 0.0,
+    "projected_total_gpuh": 195.74026853884402,
+    "allowed": true,
+    "remaining_training_matrix": [],
+    "estimate_rule": "median completed same-q same-host training, then same-host or same-q fallback; live attempt throughput; median completed same-q evaluation blocks; no quality values used",
+    "wall": 1789133527.1201897,
+    "canonical_process_spent_gpuh": 195.34018017005758,
+    "excluded_duplicate_process_gpuh": 0.40008836878644716
+  }
+}

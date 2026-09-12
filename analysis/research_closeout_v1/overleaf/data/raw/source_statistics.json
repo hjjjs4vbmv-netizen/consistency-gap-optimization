@@ -1,0 +1,113 @@
+{
+  "analysis_role": "post-hoc descriptive",
+  "correlation": {
+    "pearson": -0.4570164307764825,
+    "role": "descriptive; no confirmatory p-value",
+    "spearman": -0.4871794871794871
+  },
+  "evaluation_failures": [],
+  "failed_count": 0,
+  "formal_jobs": 58,
+  "joint_counts": {
+    "H_A_lt_zero": 22,
+    "Q_gt_zero": 13,
+    "delayed_reversals": 11,
+    "joint_n": 26
+  },
+  "joint_seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    66,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "not_run_count": 0,
+  "pass_count": 58,
+  "pr101_primary_verdict_unchanged": true,
+  "protocol_sha256": "87b51a7383c67772cdbc1f96ef1bda3766af233995c41f2b36ce57ba1abcad72",
+  "quadrants": {
+    "bad_to_bad": 2,
+    "good_to_good": 11,
+    "on_axis": 0,
+    "reversal": 11,
+    "reverse_loss": 2
+  },
+  "source_exclusions": [
+    {
+      "arm": "A",
+      "reason": "RuntimeError: MISSING_512_SOURCE_STATE",
+      "seed": 67
+    }
+  ],
+  "source_pair_seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "source_pairs_without_complete_frozen_endpoint": [
+    58,
+    65,
+    68
+  ],
+  "source_quality": {
+    "Q_eq_zero": 0,
+    "Q_gt_zero": 13,
+    "Q_lt_zero": 16,
+    "ci95": [
+      -0.19005976656099008,
+      0.15210913063406126
+    ],
+    "mean": -0.018975317963464404,
+    "median": -0.04147152440591739,
+    "n": 29,
+    "sd": 0.4497728663589579
+  },
+  "source_valid_pairs": 29
+}

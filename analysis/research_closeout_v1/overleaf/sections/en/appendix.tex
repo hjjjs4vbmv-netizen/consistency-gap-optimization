@@ -1,0 +1,429 @@
+\section{Mathematical details and interpretation limits}
+\label{app:theory}
+\subsection{Consistency paths and the training coupling}
+For the variance-exploding parameterization $x_t=x_0+t\epsilon$, the probability-flow ODE can be written as
+\begin{equation}
+ \frac{\mathrm dx_t}{\mathrm dt}=-t\nabla_x\log p_t(x_t).
+\end{equation}
+An ideal consistency function is constant along each ODE trajectory and satisfies the corresponding data-end boundary condition \citep{song2021sde,song2023consistency}. Along a smooth trajectory,
+\begin{equation}
+ \frac{\mathrm d}{\mathrm dt}f(x_t,t)
+ =\partial_t f(x_t,t)+D_x f(x_t,t)\frac{\mathrm dx_t}{\mathrm dt}=0.
+\end{equation}
+In the shared-noise training construction, the samplewise tangent is instead $\epsilon$. Its conditional mean satisfies
+\begin{equation}
+ \E[\epsilon\mid x_t]=-t\nabla_x\log p_t(x_t),
+\end{equation}
+using the conditional score identity for Gaussian perturbations. Equality after conditional expectation does not make each shared-noise line an exact ODE path. Our experiments change the training coupling and its weight; they do not intervene on a sampling solver's discretization.
+
+\subsection{Proof of the finite-gap decomposition}
+For fixed student input and random realization, differentiation of Equation~\ref{eq:loss} through the student alone gives
+\begin{equation}
+ \nabla_\theta^{\rm sg}\ell(r,\delta)
+ =\frac{1}{\delta}J_t^\top\frac{e_r}{\norm{e_r}_2}.
+\end{equation}
+Substituting $s=\delta_1/\delta_g$ and adding and subtracting the baseline residual direction proves Lemma~\ref{prop:decomp}. The associated forward-value identity is
+\begin{equation}
+ \ell(r_g,\delta_g)=s\ell(r_1,\delta_1)
+ +\frac{\norm{e_{r_g}}_2-\norm{e_{r_1}}_2}{\delta_g}.
+\end{equation}
+The field identity compares the same student Jacobian. It requires finite nonzero residuals; the Euclidean norm at zero requires a specified subgradient convention and is outside the stated lemma. The $c>0$ pseudo-Huber case uses a different residual-direction factor.
+
+For the four arms, $G_D=sG_A$ and $G_B=sG_C$ under the stated conditions, giving
+\begin{equation}
+ G_B-G_C-G_D+G_A=(s-1)(G_C-G_A).
+\end{equation}
+This is a same-state factorial identity. The endpoint interaction $I$ is evaluated after independently evolving trajectories and need not satisfy an analogous gradient-based formula. In particular, its sign cannot be inferred from the factor $s-1$ alone.
+
+\subsection{Why stop-gradient changes an asymptotic argument}
+Introduce a two-parameter residual
+\begin{equation}
+ e_\delta(\theta_s,\theta_t)=
+ f_{\theta_s}(x_t,t)-f_{\theta_t}(x_{t-\delta},t-\delta).
+\end{equation}
+The forward value is evaluated on the diagonal $(\theta,\theta)$, but the training derivative acts only on $\theta_s$. Suppose
+\begin{equation}
+ e_\delta(\theta,\theta)=\delta^\nu v(\theta)+O(\delta^{\nu+1}),\qquad
+ w(\delta)\sim w_0\delta^{-\alpha}.
+\end{equation}
+Here $\delta\downarrow0$, $\nu>0$, $w_0>0$, and $v(\theta)\neq0$. Let the outer loss $\varphi$ be locally homogeneous of degree $p_{\rm hom}$, with the differentiability and nondegeneracy conditions needed for its leading derivative. If the student Jacobian converges and its projection onto $\nabla\varphi(v)$ is nonzero, the leading single-sided field scales as
+\begin{equation}
+ \nabla_{\theta_s}[w(\delta)\varphi(e_\delta)]_{\theta_s=\theta_t=\theta}
+ \sim\delta^{\nu(p_{\rm hom}-1)-\alpha}
+ w_0J_0^\top\nabla\varphi(v).
+ \label{eq:sgpower}
+\end{equation}
+This follows from $\nabla\varphi(\delta^\nu v)=\delta^{\nu(p_{\rm hom}-1)}\nabla\varphi(v)$ and the nonvanishing Jacobian limit. Differentiating the diagonal expansion as a \emph{two-sided} forward function would instead give exponent $\nu p_{\rm hom}-\alpha$, provided its remainder is uniformly differentiable in the parameters. That extra assumption does not follow from a pointwise residual expansion.
+
+For the norm-over-gap objective, $p_{\rm hom}=1$ and $\alpha=1$, so Equation~\ref{eq:sgpower} gives exponent $-1$ under the stated nondegeneracy assumptions. This is a conditional local statement, not a universal divergence theorem for trained networks. A scalar example makes the derivative distinction explicit: for $f_\theta(s)=\theta s$, $t=1$, $r=1-\delta$, the diagonal forward loss is $|\theta|$, with ordinary derivative $\operatorname{sign}(\theta)$; its single-sided derivative is $\operatorname{sign}(\theta)/\delta$ for $\theta\neq0$.
+
+\subsection{State differences and a conditional propagation bound}
+\label{app:propagation}
+Let $Z_k$ collect the full resumable state: parameters, optimizer and evaluation-EMA states, scaler state, random generators, and data position. Write $\Phi_X$ for one native attempt under operation X. On compatible state coordinates, adding and subtracting $\Phi_A(Z_k^B)$ gives
+\begin{align}
+ Z^B_{k+1}-Z^A_{k+1}
+ =&\underbrace{\Phi_A(Z^B_k)-\Phi_A(Z^A_k)}_{\text{propagation of different states}}
+ +\underbrace{\Phi_B(Z^B_k)-\Phi_A(Z^B_k)}_{\text{same-state operation difference}}.
+ \label{eq:state}
+\end{align}
+The first term includes feedback through subsequent targets and parameter updates. This bookkeeping identity separates two questions; it does not identify a carrier or explain the sign of a quality change. Equation~\ref{eq:state} remains an algebraic identity without a smoothness assumption. A useful bound requires more. Restrict attention to compatible continuous state coordinates, a fixed external random input sequence, and a region in which the reference transition is $L_k$-Lipschitz. Let $b_k$ denote the same-state operation difference. Then
+\begin{equation}
+ \norm{\Delta Z_{k+1}}\leq L_k\norm{\Delta Z_k}+\norm{b_k},
+\end{equation}
+and iteration yields
+\begin{equation}
+ \norm{\Delta Z_K}\leq
+ \left(\prod_{j=0}^{K-1}L_j\right)\norm{\Delta Z_0}
+ +\sum_{i=0}^{K-1}\left(\prod_{j=i+1}^{K-1}L_j\right)\norm{b_i}.
+ \label{eq:bound}
+\end{equation}
+Empty products are one. This inequality illustrates how local differences can be propagated or contracted. It neither determines the realized signs of state differences nor the direction of FID. Random-generator state and discrete AMP branches cannot silently be treated as globally differentiable coordinates. We do not estimate a validated sequence of $L_k$ or claim a global contraction property.
+
+\subsection{RAdam scaling and its execution limits}
+With $G_n$ the gradient supplied on a successful update,
+\begin{equation}
+ m_n=\beta_1m_{n-1}+(1-\beta_1)G_n,\qquad
+ v_n=\beta_2v_{n-1}+(1-\beta_2)G_n^{\odot2}.
+\end{equation}
+If $G'_n=sG_n$ for every previous successful update, $m'_0=sm_0$, $v'_0=s^2v_0$, and clocks coincide, induction gives $m'_n=sm_n$ and $v'_n=s^2v_n$. Bias corrections preserve these relations. Unrectified updates then scale by $s$. In the ideal normalized branch with a zero stabilizing term, on coordinates with positive second moment, $s\widehat m_n/\sqrt{s^2\widehat v_n}=\widehat m_n/\sqrt{\widehat v_n}$ for $s>0$.
+
+The actual optimizer uses $\varepsilon=10^{-8}$ and finite arithmetic, and scaled startup updates change the later network state. The required proportional-gradient history therefore need not continue. AMP can also change which attempts produce updates. These qualifications are the reason for both a local manipulation check and a full endpoint test. Compensating the LR does not overwrite moments with those from the comparator trajectory.
+
+\paragraph{Why a finite stabilizer matters.}
+For the schematic Adam normalization $U=-\eta\widehat m/(\sqrt{\widehat v}+\varepsilon)$ and a positive scale $s$, proportional moments give
+\begin{equation}
+ U'=-\eta\frac{s\widehat m}{s\sqrt{\widehat v}+\varepsilon}
+    =-\eta\frac{\widehat m}{\sqrt{\widehat v}+\varepsilon/s}.
+\end{equation}
+Thus a fixed nonzero stabilizer breaks exact cancellation; its magnitude relative to the second moment determines the discrepancy. The precise placement of the stabilizer and bias corrections is implementation dependent. This illustration is not a measurement that $\varepsilon$ drives the observed FID effect. Moreover, cancellation requires proportional \emph{histories}, not merely two current gradients related by a scalar. Once startup steps separate the networks, this requirement can fail even in exact arithmetic. Our present intervention therefore targets a concrete update operation while leaving the relative contributions of moment transients, finite stabilizers, and AMP unresolved.
+
+\subsection{Spacing parameters and floating-point equivalence}
+In the audited stage-zero mapping, $n(t)=1+8/(1+\exp(t))$ and the unclipped baseline relative gap is $n(t)/q$. For $t>0$, $1<n(t)<5$, and at $q=256$ the relative gap lies between approximately 0.39\% and 1.95\%. Multiplying the gap by $g$ changes the real-arithmetic ratio to $gn(t)/q$. Thus changing $(q,g)$ while fixing $g/q$ does not create a new independent pair geometry in this stage. The general code uses a stage exponent; the same statement must be re-evaluated if that stage changes.
+
+Recomputing a time and subtracting it from $t$ can round differently from multiplying an already computed gap. The included analysis treats real identities as definitions of intervention meaning, while preserving the native execution path in training. Local numerical agreement is reported only at the tested states and precisions, rather than promoted to whole-trajectory equivalence.
+
+\section{Protocol, readouts, and data provenance}
+\label{app:protocol}
+\begin{table}[htbp]
+\centering\small
+\caption{Main component-history and startup configuration.}
+\begin{tabularx}{\linewidth}{lY}
+\toprule
+Item & Setting\\
+\midrule
+Data / transfer & CIFAR-10 $32\times32$; native EDM-pretrained unconditional transfer\\
+Network & DDPM++; ECT preconditioning; dropout 0.2\\
+Mapping / loss & Sigmoid; $q=256$, $k=8$, $b=1$, $c=0$; stage remains zero\\
+Batching & Global batch 128; microbatch 16; one GPU per trajectory\\
+Optimizer & RAdam; LR $10^{-4}$; betas $(0.9,0.999)$; eps $10^{-8}$; weight decay 0\\
+Precision & Native FP16 + AMP training; TF32 disabled; FP32 quality evaluation\\
+Augmentation & No augmentation; no x-flip\\
+Noise sampling & Lognormal parameters mean $-1.1$, standard deviation $2.0$\\
+Budget / boundary & 1,024 kimg; switch at 512 kimg; attempted images count toward budget\\
+Evaluation EMA & Beta 0.9993; $\Ereset$ initialized once from online weights at 512 kimg\\
+Endpoint blocks & NFE1; sample seeds 0--49,999, 50,000--99,999, and 100,000--149,999\\
+\bottomrule
+\end{tabularx}
+\end{table}
+All continuation experiments preserve resumable training state except for the operation explicitly under test. Normal AMP skips advance the attempt and data counters but not RAdam's successful-update clock; no extra examples are supplied to equalize successful-update counts. Nonfinite scientific failures are recorded under the original stopping rules. The component study retains native denominator construction rather than substituting a scalar loss wrapper.
+
+\paragraph{Scope of pairing checks.}
+The component extension verifies initial states and available prefix telemetry, including batch, labels where applicable, $t$, and base $r$, against the original controls. The available record does not provide per-attempt hashes for every historical epsilon and dropout realization. Short resume checks support the implementation paths they cover; they do not establish a full 8,000-attempt bitwise replay of every old and new trajectory. Controls were reused across execution periods, which is a limitation in addition to cohort reuse.
+
+\paragraph{Evaluation EMA.}
+If $\Ereset$ starts from $\theta_{512}$ and updates once per attempt with coefficient $\beta$, then after $N$ suffix attempts
+\begin{equation}
+ E_N=\beta^N\theta_{512}+(1-\beta)\sum_{j=1}^N\beta^{N-j}\theta_j.
+\end{equation}
+For $\beta=0.9993$ and $N=4000$, the direct initialization coefficient is about 0.061. Rebuilding the EMA does not erase the source online weights or the influence they exert through later trajectories. The teacher used in Equation~\ref{eq:loss} is not this evaluation EMA.
+
+\paragraph{Artifact provenance.}
+The accompanying source manifest maps each plotted CSV and archived statistic to a repository commit, original path, and SHA-256 hash. Main snapshots include the joint-history study (890a85a8), source backfill (200739fa), component extension (90a0cd3f), restore/hold study (092ab9ab), longitudinal study (d7084c7f), completed startup pilot (e429ab29), and adjacent-window extension (3d1330f5). The startup figures now use full-precision block FIDs and the final eight-seed table; the earlier screenshot transcription is archived separately and excluded from current calculations. The artifact contains measurements and plotting code, not model checkpoints or generated samples.
+
+\section{Completion accounting and seed-level component results}
+\label{app:completion}
+The component cohort plans all four paths for seeds 50--65. AA completes for 14 seeds, BA for 15, CA for 15, and DA for all 16. Seed 58 lacks AA, BA, and CA; seed 65 lacks AA. All other planned paths complete. The 14-seed complete set excludes neither a large finite FID nor a seed on the basis of its contrast. CA/58 fails near the endpoint, after 7,576 successful updates and 16 skips, at 971.776 kimg. Failure does not justify substituting a different-precision rescue into the primary analysis.
+
+\begin{table}[htbp]
+\centering\small
+\caption{All complete component seeds. Cells are geometric means of the three per-seed FIDs; $H_W$ is computed on the original log values.}
+\begin{tabular}{rrrrrr}
+\toprule
+Seed & AA & CA & DA & BA & $H_W$\\
+\midrule
+\inputrows{data/component_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 30-seed history study, M1 keep controls, the component extension, restore/hold study, startup pilot, and adjacent-window extension overlap in seeds and/or checkpoints. Repeated readouts and additional interventions do not create additional independent realizations of the original A/B history. Completion rates are reported alongside conditional quality effects; an unconditional effect over failed and successful runs would require an explicitly defined outcome for failure or a different estimand.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Availability for all 16 planned component seeds. Yes means a recorded usable endpoint; dashes mark missing or failed outcomes. The primary quality contrast uses only the common four-path set, without imputing an FID for failure.}
+\begin{tabular}{rccccc}
+\toprule
+Seed & AA & BA & CA & DA & In primary set\\
+\midrule
+\inputrows{data/completion_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Joint-history observation and retrospective source evaluation}
+\label{app:historyfig}
+The source-to-future comparison uses 29 valid source pairs at 512 kimg, 26 of which also have both endpoints. Of 13 pairs with worse B source FID in the common set, 11 have better B-history endpoint FID. Figure~\ref{fig:history} shows the paired observations; they reuse the joint-history endpoint cohort and do not constitute an independent replication.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{\figfile{history}}
+\caption{\textbf{Earlier quality does not fully determine later relative quality.} Left: all 26 complete AA/BA endpoint log-FID contrasts. Right: retrospective source contrast $Q=\log(\FID_{B,512}/\FID_{A,512})$ versus the endpoint contrast $H$. Eleven common pairs have $Q>0$ and $H<0$. Both panels use the same endpoint cohort.}
+\label{fig:history}
+\end{figure}
+
+\section{Statistical definitions and startup observations}
+\label{app:statistics}
+For complete seed-level differences $d_s$, our displayed nominal 95\% t interval is
+\begin{equation}
+ \bar d\ \pm\ t_{n-1,0.975}\,s_d/\sqrt n.
+\end{equation}
+Exponentiating gives an interval for the geometric FID ratio. This is not the same as a ratio of arithmetic FID means or an FID computed from pooling 150k images. The component family's three tests use Holm correction at 0.05; these adjusted decisions do not turn the displayed marginal intervals into simultaneous intervals.
+
+To assess a multiplicative 3\% equivalence margin, the log bounds are $[-\log(1.03),\log(1.03)]$. At level 0.05, the two one-sided tests require the corresponding 90\% interval to lie strictly within those bounds \citep{schuirmann1987}. A nonsignificant difference with a wide interval is not equivalence. For DA--DD, both the difference test and the equivalence decision remain unresolved at their stated thresholds.
+
+\begin{table}[htbp]
+\centering\small
+\caption{All eight startup seeds from the final full-precision results. Cells show geometric means over three evaluation blocks, rounded only for display. All statistical calculations use the unrounded block values.}
+\begin{tabular}{rrrrr}
+\toprule
+Seed & AA & $\Adown$ & DA & $\Dup$\\
+\midrule
+\inputrows{data/startup_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+Recomputation from the 96 block FIDs (48 new and 48 reused controls) gives $\bar M=-0.127901$, $\bar C=0.058688$, and $\bar S=0.093295$. The corresponding nominal 95\% log-FID intervals are $[-0.183576,-0.072227]$, $[-0.005530,0.122907]$, and $[0.049032,0.137558]$. Exact paired sign-flip sensitivity $p$ values for $M,C,S$ are 0.0078125, 0.0703125, and 0.0078125. These enumerate all $2^8$ sign patterns and rely on the relevant sign-exchangeability assumptions; they do not remove selection or interim-inspection effects. None of the protocol's three contrasts passes the prespecified equivalence test.
+
+The final matrix contains all 16 planned new trajectories, 48 successful new evaluations, and eight finite complete seed pairs. Block values reconcile with the published new evaluation records and old-control bindings; new checkpoint identifiers match the final training outcomes. This is a numerical reconciliation of the public records, not a rerun of training or an independent rehash of all private historical model and feature archives.
+
+The cohort was selected using prior response information, and a six-seed interim view preceded completion of the fixed eight-seed plan. Training, evaluation, and sample size were not adapted to that view. Holm adjustment covers only the two simple effects, and ordinary intervals and $p$ values remain nominal with respect to repeated looks. Completing seeds 56--57 completes this exploratory pilot; it does not create fresh unselected replication. Directional support for D compensation should therefore be reported with its interval and selection scope, rather than reduced to either proof or absence of an effect.
+
+\subsection{Adjacent-window protocol and complete results}
+\label{app:window}
+The delayed-window extension uses the same $q=256$, $g=1.1$, $c=0$, native-A loss and mapping, optimizer, precision, and evaluator as the startup pilot. Its only prescribed update modification divides LR by 1.1 on successful updates 6--10. The controller advances only after an actual optimizer step; AMP skips do not consume a successful-update position. After update 10 the controller is inactive, with the native LR restored. Every delayed trajectory begins at transfer initialization, completes 8,000 attempted iterations (1,024 kimg), and rebuilds its own evaluation EMA exactly once at attempt 4,000. This is an independent training path from the matched seed initialization, not a branch resumed after observing its early quality.
+
+The plan fixes eight seeds, 50--57, and uses the complete three-path set. Eight new delayed trajectories and all 24 new FID50k/KID evaluation blocks complete. Exactly 48 AA/early control blocks are reused; the combined 72 blocks represent eight training-seed comparisons, not 72 independent observations or FID150k. The analysis was unblinded after the complete new group was available. The design is an outcome-informed extension of the responder-enriched pilot. The original pilot's six-seed interim inspection and the reuse of its endpoints are disclosed; no new unselected cohort is created by adding the delayed arm.
+
+\begin{table}[htbp]
+\centering\small
+\caption{All eight adjacent-window seeds. Endpoint cells are geometric FID over three blocks; $T_s$ is delayed minus early in log-FID units. AA and early cells are exact reuse of the previous pilot, rounded here only for display.}
+\label{tab:windowseeds}
+\begin{tabular}{rrrrr}
+\toprule
+Seed & AA & Early $\Adown$ & Delayed $\Adelay$ & $T_s$\\
+\midrule
+\inputrows{data/window_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption{All preset window comparisons, $n=8$. Differences and intervals are on the log-FID scale. Tests are nominal two-sided paired t tests. $T$ is the primary direct comparison, $L$ the secondary baseline contrast, and $M$ is a previously measured contextual effect. Its raw $p$ differs from the pilot's two-simple-effect Holm-adjusted value.}
+\label{tab:windoweffects}
+\begin{tabular}{lrrr}
+\toprule
+Contrast & Mean & Nominal 95\% CI & Raw $p$\\
+\midrule
+\inputrows{data/window_effect_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+Exponentiating $\bar T$ gives delayed/early ratio 1.112485 with 95\% interval $[1.043779,1.185713]$. The delayed/AA ratio is 0.978920, interval $[0.957358,1.000968]$; six delayed seeds improve over AA and two worsen. The reused early/AA ratio is 0.879940, interval $[0.832289,0.930320]$. The difference in window effects is tested directly by $T=L-M$; different significance labels for $L$ and $M$ would not establish this difference. The raw tests shown here are not a correction for all outcome-informed questions in the research program.
+
+For $T$, enumerating all 256 sign patterns gives a two-sided sign-flip sensitivity $p=0.0078125$. This calculation assumes symmetry of the paired differences under the null; it is not a randomization test arising from random arm assignment. An auxiliary TOST at $\pm\log(1.03)$ gives $p=0.987789$, failing the equivalence criterion. The difference evidence and the failed equivalence check should be reported with their distinct purposes.
+
+\subsection{Observed update exposure and its limits}
+\label{app:windowtelemetry}
+The archive binds the first 16 successful updates of all 16 early/delayed paths to immutable attempt-level prefixes. The 406 retained attempt rows contain 256 successful updates and 150 skipped attempts. Every path applies its reduction on exactly five successful updates at the assigned positions. Figure~\ref{fig:windowdiag} shows the successful-update LR and norm traces, the rectification statistic, and the scaler/skip records. A successful-update plot alone would hide the attempts on which AMP prevented a parameter update.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{\figfile{window_diagnostics}}
+\caption{\textbf{Executed windows and their update exposure.} The top panels show the LR multipliers and recorded parameter-update norms for the first 16 successful updates; thin curves are individual paths and bold curves are arithmetic means. The lower-left panel shows RAdam's $\rho_n$ and its strict rectification threshold; historical early branches are reconstructed from the recorded clock and the native formula, while delayed branches are recorded directly. The lower-right panel retains attempt-level scaler values and marks AMP skips with crosses; no step occurs at those crosses. Vertical shading in the top panels identifies the two successful-update windows. Actual update magnitudes differ sharply across those windows, so equal LR multipliers and counts do not match intervention dose.}
+\label{fig:windowdiag}
+\end{figure}
+
+For a window $W$, let $E_W=\sum_{n\in W}\norm{\theta_n-\theta_{n-1}}_2$ be the sum of actual update norms on one trajectory. Table~\ref{tab:windowexposure} reports these sums. Across the 16 paths, $E_{1:5}/E_{6:10}$ ranges from 22.22 to 41.82. These are descriptive realized movements; they do not measure how far an intervened path moves relative to a counterfactual path without the LR reduction. A shared LR factor therefore cannot be read as equal perturbation dose across the windows.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Sum of recorded update norms in each window. All entries use the same model-parameter norm. The two windows are measured on each early and delayed path separately.}
+\label{tab:windowexposure}
+\begin{tabular}{rrrrr}
+\toprule
+& \multicolumn{2}{c}{Early path} & \multicolumn{2}{c}{Delayed path}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Seed & $E_{1:5}$ & $E_{6:10}$ & $E_{1:5}$ & $E_{6:10}$\\
+\midrule
+\inputrows{data/window_exposure_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+Net displacement, $\norm{\sum_{n\in W}(\theta_n-\theta_{n-1})}_2$, additionally depends on update directions. The historical early logs did not retain the vectors needed to calculate it. Early net-displacement cells are explicitly missing in the archived exposure table and are never inferred from scalar norm sums. Delayed paths have recorded vector-accumulation values, but that does not fill the early-path gap. Later parameter feedback, moment histories, AMP execution, and the branch transition can all differ between placements. The observed endpoint contrast establishes the response to these two implemented operations, without selecting one of these pathways as its unique explanation.
+
+\FloatBarrier
+\subsection{Window provenance and execution record}
+\label{app:windowprovenance}
+The result snapshot is \texttt{3d1330f5d794d05fe63b67aa40e2dc6213f1387f}; the reported scientific implementation is \texttt{fcc94d26b1085011ac935084f7c1cf4c149e2947}. The evaluator remains the same pinned version as in the startup pilot. The bundled, unchanged result verifier and an independent reconstruction from the 72 FID blocks reconcile all three effects, intervals, tests, and seed counts. The public manifest covers 152 result files; receipt, checkpoint-identifier, control-reuse, and telemetry bindings reconcile within the supplied records. These checks verify the public evidence package, without rehashing every private training checkpoint or rerunning GPU training.
+
+Seeds 56/57 completed training before unrelated GPU contention prevented evaluation from starting. Their original endpoints and exception records were preserved; only empty, unexecuted evaluation directories were removed before completing the original evaluations. Neither trajectory was retrained. Recorded training/evaluation process time totals 38.62 GPUh, excluding preparation, rental idle time, and the separate $q128$ campaign. This is an execution-accounting figure, not a benchmark of optimized training cost.
+
+The closeout supplement now publishes the existing freeze/source-hash records and the global-budget scheduling amendment with separate raw and redacted hashes. All 351 recorded source hashes match the pinned scientific implementation. This strengthens the deployment binding; it is not a new pre-execution freeze or a retrospective training rerun. The q128-specific trajectory and duplicate-dispatch checks are detailed in Appendix~\ref{app:q128audit}. The scientific source identity remains distinct from the result-publication commits.
+
+\section{State interventions and continuation contrasts}
+\label{app:state}
+\begin{table}[htbp]
+\centering\small
+\caption{Selected state-intervention contrasts in log-FID. These rows use different complete sets and are not pooled. All displayed intervals are nominal.}
+\begin{tabularx}{\linewidth}{YrrL{3.25cm}}
+\toprule
+Contrast & $n$ & Mean & 95\% CI\\
+\midrule
+M1, restarted B minus restarted A & 7 & $-0.91661$ & $[-2.03814,0.20491]$\\
+M1, history $\times$ restart interaction & 6 & $-1.00540$ & $[-2.32150,0.31070]$\\
+SWAP, B vs. A optimizer on A parameters & 6 & $-0.02596$ & $[-0.05593,0.00401]$\\
+SWAP, B vs. A optimizer on B parameters & 6 & $-0.01531$ & $[-0.05428,0.02365]$\\
+M2, between-history change in restart effect & 6 & $1.65306$ & $[-0.28913,3.59525]$\\
+\bottomrule
+\end{tabularx}
+\end{table}
+M1 keep-A/keep-B/restart-A/restart-B completion counts are 14/15/8/15 out of 16 each. The four-way complete set has six seeds. The swap experiments replace optimizer-source state while retaining the chosen parameter history and continuation protocol, but neither source contrast identifies a direction at the available precision. M2 compares restart at 768 versus 512 kimg; equal endpoint budget leaves different recovery durations. These interventions are informative about what has and has not been identified, but they do not prove a memory-decay law.
+
+The local restart decomposition examines four retrospectively selected seeds. Clearing moments at a fixed step gives first-update norm ratios about 12.7--14.7 relative to keeping the optimizer; resetting the step and fully restarting yield different operations. Such interventions alter the transition map itself and cannot be treated as interventions on a single inert storage variable.
+
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{\figfile{restore_hold}}
+\caption{Restore/hold comparison from the same D prefix. All 16 paired endpoints are retained, including seed 58. The shaded band displays the prespecified 3\% equivalence margin for individual log ratios; membership of individual points does not constitute a group equivalence test.}
+\end{figure}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Complete DA/DD pairs. This table includes seeds absent from the four-arm complete set.}
+\begin{tabular}{rrrr@{\qquad}rrrr}
+\toprule
+Seed & DA FID & DD FID & DA/DD & Seed & DA FID & DD FID & DA/DD\\
+\midrule
+\inputrows{data/restore_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Longitudinal and cross-configuration evidence}
+\label{app:scope}
+\subsection{Earlier four-arm learning curves}
+An earlier longitudinal experiment has six complete four-arm seeds, 8--13, with six checkpoints from 384 to 1,024 kimg and NFE1/NFE2 evaluation. Figure~\ref{fig:long} displays arithmetic means over these same seeds. Seeds 6--7 have a different/incomplete matrix and are not silently combined with the six complete trajectories.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{\figfile{longitudinal}}
+\caption{Earlier four-arm trajectories, complete seeds 8--13. Error magnitudes early in tuning make the log axis useful. These experiments keep their assigned objective throughout; their estimand differs from the later common-continuation study.}
+\label{fig:long}
+\end{figure}
+
+The descriptive NFE2 normalized raw-FID areas are 32.740, 18.852, 31.942, and 21.221 for A/B/C/D. D--A is favorable in 6/6 seeds and B--A in 5/6; the corresponding endpoint means are 3.045, 2.914, 3.082, and 2.930. A normalized curve area here means the trapezoidal integral over 384--1,024 kimg divided by the interval length. It was not the prespecified primary endpoint, and it is not numerically interchangeable with a log-FID curve area used in other studies. The NFE1/NFE2 curves provide motivation for studying trajectories without establishing a new general budget law.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Additional scope studies. Their outcomes do not share a single estimand or validity status.}
+\begin{tabularx}{\linewidth}{L{2.35cm}YL{3.35cm}}
+\toprule
+Design & Observed result & Interpretation\\
+\midrule
+Fresh $q256$ crossed switch & 11 complete pairs; mean history contrast $-0.07557$, CI $[-0.15532,0.00419]$ & Direction unresolved under its frozen analysis\\
+Short pulse and chase & Prespecified primary contrast satisfies its 3\% equivalence criterion & Informative null for that exposure and readout\\
+Fresh $q128$ history & 8 analyzed seeds; mean $-0.03202$, CI $[-0.08577,0.02173]$ & Direction unresolved; seed replacement and AMP-gate deviations prevent confirmatory interpretation\\
+Switch-time scan & 12 seeds; prespecified Page ordering test $p=0.6719$ & No established ordering or universal critical window\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\FloatBarrier
+\subsection{Complete ImageNet readouts}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{\figfile{imagenet}}
+\caption{\textbf{A configuration boundary for enlarged-gap gains.} Three paired ImageNet-$64\times64$ seeds, ten checkpoints, and two NFEs are retained, including deterioration in both seed-103 paths. IA uses gap factor 1 and IB uses 1.1. The log scale accommodates the quality range. This configuration uses $c=0.06$ and gap-independent snrpk timestep weighting, and differs from the main experiment in data, architecture, and other settings. Repeated readouts do not increase the independent training-seed count.}
+\label{fig:imagenet}
+\end{figure}
+\FloatBarrier
+Tables~\ref{tab:imfid}--\ref{tab:imkid} retain every recorded paired checkpoint for seeds 101--103. Ten checkpoints, two arms, and two NFEs give 120 evaluation cells; the independent training replication count is three pairs. The favorable early IA comparisons are repeated observations within those pairs. Late deterioration is retained, and no best-checkpoint selection is used as a primary result.
+
+{\small\renewcommand{\arraystretch}{1.0}
+\begin{longtable}{rrrrrr}
+\caption{All ImageNet FID readouts; IA/IB denote gap factors 1/1.1.}\label{tab:imfid}\\
+\toprule Seed & kimg & IA NFE1 & IB NFE1 & IA NFE2 & IB NFE2\\\midrule\endfirsthead
+\toprule Seed & kimg & IA NFE1 & IB NFE1 & IA NFE2 & IB NFE2\\\midrule\endhead
+\inputrows{data/imagenet_fid_rows}
+\bottomrule
+\end{longtable}
+}
+{\small\renewcommand{\arraystretch}{1.0}
+\begin{longtable}{rrrrrr}
+\caption{All corresponding ImageNet KID readouts. These use the same features as FID and are not independent replications.}\label{tab:imkid}\\
+\toprule Seed & kimg & IA NFE1 & IB NFE1 & IA NFE2 & IB NFE2\\\midrule\endfirsthead
+\toprule Seed & kimg & IA NFE1 & IB NFE1 & IA NFE2 & IB NFE2\\\midrule\endhead
+\inputrows{data/imagenet_kid_rows}
+\bottomrule
+\end{longtable}
+}
+
+\section{Complete fresh q128 results and bounded diagnostics}
+\label{app:q128}
+The cohort comprises all seeds 301--308 and all four fresh trajectories per seed, with no result-driven replacements. Table~\ref{tab:q128full} reports every endpoint and contrast. For each seed and arm, $Y$ is the mean of three log-FID50k values. The primary test is the paired-t test of $S=(C-M)/2$; M/C use Holm across those two tests, and H is supportive. Exhaustive sign flips for S/M/C are sensitivity analyses under sign symmetry, not design-based randomization tests. Neither blocks nor metrics increase the number of independent training seeds.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{All fresh q128 endpoints and seed-level log contrasts. Arm columns contain $\exp(Y)$, the geometric mean of three FID50k blocks; contrast columns contain log-FID differences. These values are recomputed from the unchanged 96-block table.}\label{tab:q128full}
+\begin{tabular}{rrrrrrrrr}
+\toprule Seed & AA & DA & $\Adown$ & $\Dup$ & M & C & H & S\\\midrule
+\inputrows{data/q128_rows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Local update response and its limits}
+For a successful-update window $W$, the scalar path-length reading is $\sum_{k\in W}\norm{\Delta\theta_k}_2$ and the net displacement is $\norm{\sum_{k\in W}\Delta\theta_k}_2$. The latter comes from the existing float64 vector accumulator, not from scalar norms. The original vectors are not available in this small-file supplement, so its net-displacement readings are preserved recorded statistics rather than independently reconstructed vectors. Windows 1--5 and 6--10 were already recorded; no additional window was selected using endpoint quality.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{\figfile{q128_local_response}}
+\caption{\textbf{Local response in every fresh q128 seed.} Ratios compare each intervened path with its stated reference within the same training seed. Top: sums of actual update norms. Bottom: existing net-displacement readings. Columns retain the predefined adjacent successful-update windows. These paths can differ in parameters, moments and AMP events; the ratios are not same-state counterfactual doses. Lines connect seed labels for readability and do not describe a time series or fitted relationship.}
+\label{fig:q128local}
+\end{figure}
+
+The first-window scalar sums decrease for all eight A-reduction paths and increase for all eight D-compensation paths. Net displacement has one different direction on the D side, illustrating why norm sums cannot replace vector accumulation. Later-window ratios are heterogeneous. No seed selection, quality-prediction model, threshold search or update--FID correlation search is used. The existing material does not explain why this local response lacks a stable endpoint benefit.
+
+The q256 early/delayed readings remain in Table~\ref{tab:windowexposure}; the supplement places them alongside all q128 readings as descriptive references. All 16 missing q256 early net-displacement cells remain missing. Since q and cohort change together, neither differences in movement nor endpoint effects identify a causal q interaction.
+
+{\small\renewcommand{\arraystretch}{1.0}
+\begin{longtable}{rlrrrr}
+\caption{Complete q128 movement readings, all eight seeds and four arms, for the two existing windows. ``Sum'' is the sum of update norms; ``Net'' is the recorded vector-sum norm.}\label{tab:q128exposure}\\
+\toprule Seed & Arm & Sum 1--5 & Net 1--5 & Sum 6--10 & Net 6--10\\\midrule\endfirsthead
+\toprule Seed & Arm & Sum 1--5 & Net 1--5 & Sum 6--10 & Net 6--10\\\midrule\endhead
+\inputrows{data/q128_exposure_rows}
+\bottomrule
+\end{longtable}
+}
+
+\subsection{Scientific identity and evidence coverage}
+\label{app:q128audit}
+The reviewed PR113 result commit is \texttt{42871769be317f6baa1bd6e030bec120c22d9371}; the scientific implementation is \texttt{fcc94d26b1085011ac935084f7c1cf4c149e2947}, and the evaluator is \texttt{d6aba02fb88e9db0993623895eb2228ed717d810}. The source Overleaf edition was already bound to PR112 \texttt{3d1330f5d794d05fe63b67aa40e2dc6213f1387f}. Publication commits are not substituted for run-code identities.
+
+The existing public verifiers pass unchanged. The additional audit binds each canonical initial receipt to all four same-seed initial model, EMA, optimizer, scaler, RNG and sampler hashes; checks the effective full scientific configuration, actual manifests and endpoint seals; and retains continuous telemetry through successful update 16, including all intervening skips. All 32 paths pass the checked startup conditions. The 763 attempts include 251 skips and 512 successful updates. Successful calls report checks of all active parameter clocks; skip rows carry the unchanged successful-call counter and are not mislabeled as fresh direct parameter-clock measurements. LR multipliers on skip rows denote no applied optimizer update.
+
+All 32 readable process receipts are byte-identical, by original SHA256, to the archived outcome identities; this provides a readable equivalent where the outcome filename itself is permission-restricted. The frozen worker checks the endpoint's actual loss phase/q, optimizer state, and single own-$\Ereset$ initialization before issuing PASS. The small-file seals bind q128 at 512 kimg, branch initialization and 1024 kimg. An existing explicit before/after full-state boundary check is available for seed302 DA. The other 31 boundaries were not independently rehashed from checkpoint tensors in this zero-GPU closeout; this narrower evidence coverage is recorded as unverified, not as an execution failure. Existing engineering checks for seeds 99001/99002 are reused, with no rerun.
+
+\subsection{Three excluded partial duplicate launches}
+The retained routing amendment assigns the affected formal jobs to their canonical hosts before those jobs begin training or produce quality results. Later host-permit handling inadvertently launches three partial duplicates. They are stopped, separately archived, and do not replace the formal trajectories. Their recorded process costs sum to 0.400088 GPUh and are included in the original campaign ledger. Two canonical jobs had already produced some quality results before the duplicate launches; the exclusion evidence rests on the earlier host assignment, not on a claim that incident handling preceded every outcome. No duplicate evaluation appears in the retained duplicate inventories.
+
+The supplement publishes the routing, incident, stopping, archive and cost records using stable host aliases, with raw-file hashes distinguished from public-file hashes and explicit extraction boundaries. These materials are an after-the-fact evidence supplement, not a newly claimed pre-execution record. No training, sample generation or FID/KID generation was performed for the closeout: additional training/generation GPU cost is zero. The work stops at the limits of the existing records.

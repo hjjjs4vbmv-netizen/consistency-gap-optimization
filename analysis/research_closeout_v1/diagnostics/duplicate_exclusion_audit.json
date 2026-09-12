@@ -1,0 +1,84 @@
+{
+  "records": [
+    {
+      "seed": 301,
+      "arm": "D_startup_up5",
+      "status": "PASS",
+      "checks": {
+        "assignment_before_canonical_start": true,
+        "assignment_before_relevant_quality": true,
+        "canonical_host_matches_prior_assignment": true,
+        "duplicate_is_distinct_host": true,
+        "duplicate_stopped": true,
+        "duplicate_no_quality": true,
+        "cost_matches": true,
+        "formal_endpoint_separate": true
+      },
+      "assignment_wall": 1789109217.4813812,
+      "canonical_host": "paid-node-03",
+      "canonical_start": 1789109415.2789674,
+      "first_quality_start": 1789123002.5953321,
+      "first_quality_end": 1789123422.6303864,
+      "duplicate_host": "paid-node-04",
+      "duplicate_start": 1789123635.1485977,
+      "duplicate_end": 1789124235.2703743,
+      "duplicate_gpuh": 0.16670049302409298,
+      "duplicate_after_some_canonical_quality": true
+    },
+    {
+      "seed": 302,
+      "arm": "AA",
+      "status": "PASS",
+      "checks": {
+        "assignment_before_canonical_start": true,
+        "assignment_before_relevant_quality": true,
+        "canonical_host_matches_prior_assignment": true,
+        "duplicate_is_distinct_host": true,
+        "duplicate_stopped": true,
+        "duplicate_no_quality": true,
+        "cost_matches": true,
+        "formal_endpoint_separate": true
+      },
+      "assignment_wall": 1789109217.4813812,
+      "canonical_host": "paid-node-03",
+      "canonical_start": 1789109415.3207314,
+      "first_quality_start": 1789123032.5879135,
+      "first_quality_end": 1789123527.6511223,
+      "duplicate_host": "paid-node-04",
+      "duplicate_start": 1789123860.1744215,
+      "duplicate_end": 1789124235.26792,
+      "duplicate_gpuh": 0.10419263778590701,
+      "duplicate_after_some_canonical_quality": true
+    },
+    {
+      "seed": 306,
+      "arm": "AA",
+      "status": "PASS",
+      "checks": {
+        "assignment_before_canonical_start": true,
+        "assignment_before_relevant_quality": true,
+        "canonical_host_matches_prior_assignment": true,
+        "duplicate_is_distinct_host": true,
+        "duplicate_stopped": true,
+        "duplicate_no_quality": true,
+        "cost_matches": true,
+        "formal_endpoint_separate": true
+      },
+      "assignment_wall": 1789109217.4813812,
+      "canonical_host": "paid-node-06",
+      "canonical_start": 1789109425.2450633,
+      "first_quality_start": 1789128067.0960886,
+      "first_quality_end": 1789128352.159594,
+      "duplicate_host": "paid-node-04",
+      "duplicate_start": 1789123770.3909502,
+      "duplicate_end": 1789124235.4938107,
+      "duplicate_gpuh": 0.12919523797644716,
+      "duplicate_after_some_canonical_quality": false
+    }
+  ],
+  "extra_gpuh": 0.40008836878644716,
+  "included_in_existing_total_gpuh": 195.74026853884402,
+  "cost_ledger_reconciliation": "PASS",
+  "interpretation": "Prior assignment precedes affected quality results. For two jobs some canonical quality results already existed when duplicate launches occurred; exclusion is based on prior assignment, not a claim of pre-outcome incident handling.",
+  "existing_cost_ledger": "analysis/startup_window_experiments_v1/results/final_process_costs.json"
+}

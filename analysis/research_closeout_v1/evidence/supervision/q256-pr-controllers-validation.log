@@ -1,0 +1,38 @@
+test_complete_matpool_can_evaluate_without_ect (test_startup_quality.HostEvaluationGate.test_complete_matpool_can_evaluate_without_ect) ... ok
+test_running_host_trajectory_blocks_evaluation (test_startup_quality.HostEvaluationGate.test_running_host_trajectory_blocks_evaluation) ... ok
+test_controls_cannot_substitute_seed_or_block (test_startup_quality.IdentityGates.test_controls_cannot_substitute_seed_or_block) ... ok
+test_engineering_and_cross_identity_rejected (test_startup_quality.IdentityGates.test_engineering_and_cross_identity_rejected) ... ok
+test_owned_has_no_paid_budget_gate (test_startup_quality.OwnedGpuBudget.test_owned_has_no_paid_budget_gate) ... ok
+test_paid_matpool_does_not_reserve_owned (test_startup_quality.OwnedGpuBudget.test_paid_matpool_does_not_reserve_owned) ... ok
+test_evaluation_requires_full_terminal_matrix (test_startup_quality.QualityGates.test_evaluation_requires_full_terminal_matrix) ... ok
+test_exact_sign_flip_and_equivalence (test_startup_quality.QualityGates.test_exact_sign_flip_and_equivalence) ... ok
+test_global_budget_includes_remote_and_live_cost (test_startup_quality.QualityGates.test_global_budget_includes_remote_and_live_cost) ... ok
+test_planned_queue_and_blocks (test_startup_quality.QualityGates.test_planned_queue_and_blocks) ... ok
+test_evaluation_rosters_still_cover_all_48 (test_startup_quality.ReplacementGpu.test_evaluation_rosters_still_cover_all_48) ... ok
+test_replacement_runs_only_unstarted_D (test_startup_quality.ReplacementGpu.test_replacement_runs_only_unstarted_D) ... ok
+test_actual_gradscaler_skip (test_startup_quality.StartupQuality.test_actual_gradscaler_skip) ... ok
+test_disagreeing_clocks_fail_closed (test_startup_quality.StartupQuality.test_disagreeing_clocks_fail_closed) ... ok
+test_exact_native_intervention_and_boundaries (test_startup_quality.StartupQuality.test_exact_native_intervention_and_boundaries) ... ok
+test_exception_restores_lr (test_startup_quality.StartupQuality.test_exception_restores_lr) ... ok
+test_inactive_does_not_scan (test_startup_quality.StartupQuality.test_inactive_does_not_scan) ... ok
+test_native_A_configuration (test_startup_quality.StartupQuality.test_native_A_configuration) ... ok
+test_pause_resume_steps_3_5_6 (test_startup_quality.StartupQuality.test_pause_resume_steps_3_5_6) ... ok
+test_skip_does_not_advance (test_startup_quality.StartupQuality.test_skip_does_not_advance) ... ok
+test_exception_restores_lr_inside_native_step (test_startup_update.StartupTests.test_exception_restores_lr_inside_native_step) ... ok
+test_inconsistent_active_clocks_rejected (test_startup_update.StartupTests.test_inconsistent_active_clocks_rejected) ... ok
+test_native_formula_and_moments (test_startup_update.StartupTests.test_native_formula_and_moments) ... ok
+test_real_cpu_amp_skip_and_observer_boundary (test_startup_update.StartupTests.test_real_cpu_amp_skip_and_observer_boundary) ... ok
+test_strict_pause_and_old_guards (test_startup_update.StartupTests.test_strict_pause_and_old_guards) ... ok
+test_complete_queue_and_balanced_four_arm_order (test_startup_windows.WindowControllerTests.test_complete_queue_and_balanced_four_arm_order) ... ok
+test_delayed_uses_successes_and_recovers_at_eleven (test_startup_windows.WindowControllerTests.test_delayed_uses_successes_and_recovers_at_eleven) ... ok
+test_finally_restores_lr_on_exception (test_startup_windows.WindowControllerTests.test_finally_restores_lr_on_exception) ... ok
+test_historical_comparators_are_exactly_AA_and_early (test_startup_windows.WindowControllerTests.test_historical_comparators_are_exactly_AA_and_early) ... ok
+test_noop_is_bitwise_native_with_skips (test_startup_windows.WindowControllerTests.test_noop_is_bitwise_native_with_skips) ... ok
+test_pause_resume_state_and_exposure_match_all_boundaries (test_startup_windows.WindowControllerTests.test_pause_resume_state_and_exposure_match_all_boundaries) ... ok
+test_q128_native_identity_and_once_only_boundary (test_startup_windows.WindowControllerTests.test_q128_native_identity_and_once_only_boundary) ... ok
+test_same_state_local_scaling_and_unchanged_moments (test_startup_windows.WindowControllerTests.test_same_state_local_scaling_and_unchanged_moments) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 2.696s
+
+OK

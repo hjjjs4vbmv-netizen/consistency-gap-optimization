@@ -1,0 +1,109 @@
+{
+  "dataset_kwargs": {
+    "class_name": "training.dataset.ImageFolderDataset",
+    "path": "<TRAINING_ROOT>/assets/cifar10-32x32-training-original.zip",
+    "use_labels": false,
+    "xflip": false,
+    "cache": true,
+    "resolution": 32,
+    "max_size": 50000
+  },
+  "data_loader_kwargs": {
+    "pin_memory": true,
+    "num_workers": 1,
+    "prefetch_factor": 2
+  },
+  "network_kwargs": {
+    "model_type": "SongUNet",
+    "embedding_type": "positional",
+    "encoder_type": "standard",
+    "decoder_type": "standard",
+    "channel_mult_noise": 1,
+    "resample_filter": [
+      1,
+      1
+    ],
+    "model_channels": 128,
+    "channel_mult": [
+      2,
+      2,
+      2
+    ],
+    "class_name": "training.networks.ECMPrecond",
+    "dropout": 0.2,
+    "use_fp16": true
+  },
+  "loss_kwargs": {
+    "P_mean": -1.1,
+    "P_std": 2.0,
+    "q": 128.0,
+    "c": 0.0,
+    "k": 8.0,
+    "b": 1.0,
+    "adj": "sigmoid",
+    "adaptive_loss_ema_beta": 0.9,
+    "adaptive_warmup_updates": 2,
+    "adaptive_max_adjust": 0.05,
+    "adaptive_min_gap": 0.001,
+    "local_tbin_num_bins": 4,
+    "local_tbin_short_beta": 0.9,
+    "local_tbin_long_beta": 0.99,
+    "local_tbin_warmup_updates": 32,
+    "local_tbin_gain": 0.5,
+    "local_tbin_min_scale": 0.75,
+    "local_tbin_max_scale": 1.5,
+    "local_tbin_deadband": 0.02,
+    "local_tbin_min_gap": 0.001,
+    "global_gap_scale": 1.0,
+    "factorial_protocol": "q128_startup_native_v1",
+    "target_gap_scale": 1.0,
+    "denominator_gap_scale": 1.1,
+    "class_name": "training.loss.ECMLoss"
+  },
+  "optimizer_kwargs": {
+    "class_name": "torch.optim.RAdam",
+    "lr": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "total_kimg": 1024,
+  "ema_halflife_kimg": null,
+  "ema_beta": 0.9993,
+  "batch_size": 128,
+  "batch_gpu": 16,
+  "loss_scaling": 1.0,
+  "cudnn_benchmark": false,
+  "enable_tf32": false,
+  "enable_amp": true,
+  "kimg_per_tick": 10.0,
+  "snapshot_ticks": null,
+  "state_dump_ticks": null,
+  "ckpt_ticks": 10,
+  "immutable_checkpoint_kimg": [
+    512,
+    1024
+  ],
+  "double_ticks": 10000,
+  "adaptive_update_kimg": 0.5,
+  "stop_after_attempts": null,
+  "planned_pause_protocol": null,
+  "startup_check_manifest": null,
+  "startup_quality_manifest": null,
+  "startup_window_manifest": "<TRAINING_ROOT>/autodl/paid-node-04/control/manifests/q128_startup_fresh8_v1-seed308-DA.json",
+  "window_preflight_stop_success": null,
+  "quality_preflight_stop_success": null,
+  "schedule_switch_manifest": null,
+  "mid_t": [
+    0.821
+  ],
+  "metrics": [],
+  "sample_ticks": 26,
+  "eval_ticks": 50,
+  "seed": 308,
+  "resume_pkl": "<TRAINING_ROOT>/assets/edm-cifar10-32x32-uncond-vp.pkl",
+  "ema_rampup_ratio": null,
+  "run_dir": "<TRAINING_ROOT>/paid-node-04/runs/q128_startup_fresh8_v1/seed308/DA"
+}
