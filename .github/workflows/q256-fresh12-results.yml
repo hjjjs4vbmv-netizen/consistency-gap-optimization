@@ -1,0 +1,29 @@
+name: F12 q256 results replay
+
+on:
+  pull_request:
+    paths:
+      - 'results/q256_response_unselected_fresh12_v1/**'
+      - '.github/workflows/q256-fresh12-results.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'results/q256_response_unselected_fresh12_v1/**'
+      - '.github/workflows/q256-fresh12-results.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: results/q256_response_unselected_fresh12_v1/requirements-reproduce.txt
+      - run: python -m pip install -r results/q256_response_unselected_fresh12_v1/requirements-reproduce.txt
+      - run: python results/q256_response_unselected_fresh12_v1/reproduce.py

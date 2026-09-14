@@ -1,0 +1,67 @@
+{
+  "event": "One user-requested inspection before the complete-cohort gate",
+  "observed_NFE1_blocks": 117,
+  "complete_seeds": [
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408
+  ],
+  "complete_n": 7,
+  "complete_case_H": {
+    "n": 7,
+    "mean_log": -0.0498560851407258,
+    "se_log": 0.0407839261559611,
+    "ci95_log": [
+      -0.14965075738796832,
+      0.04993858710651672
+    ],
+    "ci90_log": [
+      -0.12910660620898168,
+      0.029394435927530063
+    ],
+    "p_two_sided": 0.2673771511881491,
+    "geometric_ratio": 0.9513663304006389,
+    "ci95_ratio": [
+      0.8610086248235012,
+      1.051206536758577
+    ],
+    "TOST": {
+      "alpha": 0.05,
+      "bounds_log": [
+        -0.02955880224154443,
+        0.02955880224154443
+      ],
+      "p": 0.681789279458995,
+      "equivalent": false
+    }
+  },
+  "available_pair_H": {
+    "n": 9,
+    "mean_log": -0.07318911520775376,
+    "se_log": 0.0390342120560711,
+    "ci95_log": [
+      -0.16320216962349002,
+      0.016823939207982502
+    ],
+    "ci90_log": [
+      -0.14577510763287124,
+      -0.0006031227826362728
+    ],
+    "p_two_sided": 0.09765363448629474,
+    "geometric_ratio": 0.9294250449940297,
+    "ci95_ratio": [
+      0.8494194442452201,
+      1.0169662586777015
+    ]
+  },
+  "snapshot_sha256": "2b2418ac6cb121a69a011d69e5aeafecfa1052ddcac4d542f9e2c21f42184766",
+  "snapshot_recorded_wall": 1789317545.208919,
+  "original_statistics_sha256": "6697701b46708ff8b6cd2e4928b92f78ad7a0d45e0dfa173254a7959aa93a488",
+  "retained": true,
+  "response_based_changes_to_seeds_protocol_contrasts_reserve_or_stopping": false,
+  "interpretation": "Protocol deviation: do not describe this as a fully blinded run with no interim look. Final p values are the frozen fixed-sample calculations, without sequential adjustment."
+}

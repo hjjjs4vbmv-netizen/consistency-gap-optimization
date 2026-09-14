@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "paths": 48,
+    "clock_checks_pass": 48,
+    "lr_window_checks_pass": 48,
+    "A_down_first5_lower": 10,
+    "D_up_first5_higher": 11,
+    "first_common_ratio_within_tolerance": 12,
+    "same_stochastic_inputs": 12,
+    "snapshot_hashes_present": 96,
+    "total_amp_skips": 618
+  },
+  "prelaunch": {
+    "status": "PASS",
+    "protocol_id": "q256_response_unselected_fresh12_v1",
+    "seed": 99401,
+    "pause_boundaries": [
+      5
+    ],
+    "full_state_resume_exact": true,
+    "process_gpuh": 0.1792358987985386,
+    "no_quality_evaluation": true,
+    "source_freeze_sha256": "974cb6fdf3d51efd584a593c6fdfc20feb541ead6a5fe18a7aa6bac6a8da91b5",
+    "completed_wall": 1789277448.1844354
+  },
+  "direction_exceptions": {
+    "A_startup_down5": [
+      401,
+      407
+    ],
+    "D_startup_up5": [
+      405
+    ]
+  },
+  "exclusion_policy": "Norm direction was explicitly descriptive before launch; all seeds retained."
+}
