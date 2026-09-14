@@ -1,0 +1,54 @@
+{
+  "metrics": {
+    "NFE1": {
+      "AA": {
+        "FID_geometric_mean": 8.880426550060545,
+        "KID_mean_raw": 0.005435657972056005,
+        "blocks": 36
+      },
+      "DA": {
+        "FID_geometric_mean": 8.304484393466637,
+        "KID_mean_raw": 0.00502078737028771,
+        "blocks": 36
+      },
+      "A_startup_down5": {
+        "FID_geometric_mean": 8.208743673782513,
+        "KID_mean_raw": 0.004923546078821851,
+        "blocks": 36
+      },
+      "D_startup_up5": {
+        "FID_geometric_mean": 8.949363169359108,
+        "KID_mean_raw": 0.005454017172774507,
+        "blocks": 36
+      }
+    },
+    "NFE2": {
+      "AA": {
+        "FID_geometric_mean": 2.8514513795891463,
+        "KID_mean_raw": 0.0009456741633281732,
+        "blocks": 36
+      },
+      "DA": {
+        "FID_geometric_mean": 2.7960004888225916,
+        "KID_mean_raw": 0.0009255404276902684,
+        "blocks": 36
+      },
+      "A_startup_down5": {
+        "FID_geometric_mean": 2.7855201315921887,
+        "KID_mean_raw": 0.0009171822780950202,
+        "blocks": 36
+      },
+      "D_startup_up5": {
+        "FID_geometric_mean": 2.8704038823214657,
+        "KID_mean_raw": 0.0009746119499646334,
+        "blocks": 36
+      }
+    }
+  },
+  "process_gpu_hours": {
+    "training": 207.65832809012355,
+    "evaluation": 40.596882648162,
+    "engineering": 0.1792358987985386
+  },
+  "scope": "NFE2 and KID are descriptive only. GPU hours are recorded process time, not billing or allocation time."
+}

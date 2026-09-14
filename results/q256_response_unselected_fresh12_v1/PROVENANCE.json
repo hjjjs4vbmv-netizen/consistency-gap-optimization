@@ -1,0 +1,94 @@
+{
+  "protocol_id": "q256_response_unselected_fresh12_v1",
+  "scientific_commit": "9d1ecc519d91d36d76bf1089d2800e8fea92ce62",
+  "source_archive_sha256": "72ff265065ddbc778ee1bf4747e1ed57e39e9f3f3c91e6ff1589e7b86d84ca44",
+  "original_artifacts": {
+    "per_seed.csv": "909e9fe7607edb5e95f1a8c428b1d3a3ff4333cb97b72868f0a37ab16d798807",
+    "completion.csv": "3ff9ed3e83141f938f175c04ecebb0b1954a2e0ccda9b7727a6f2ec1ae8b496c",
+    "engineering_paths.csv": "9cb4ebd8fd067a38611bc778423d5edd8819a41995814c0950d9c204ef8b4350",
+    "engineering_pairs.csv": "ddb3f250e46ce6052227f538cf71341a6b31d71e5f2c1a6e2346b61d2916069a",
+    "switch_snapshot_hashes.csv": "3c2ea43c46fcd01bd57c16fe2513ab3bb781f6a3ed899b194356c38815acae30",
+    "failure_counts.csv": "9f81b917c3ac24394424efe8c9015acbdf55a619cb85bab648bf8d3586271d01",
+    "per_seed_fid.csv": "82594efc511b51ff4ec4fa6987871c97eb343f4a0d03a9df3802f244321e93d7",
+    "source_freeze.json": "974cb6fdf3d51efd584a593c6fdfc20feb541ead6a5fe18a7aa6bac6a8da91b5",
+    "final/statistics.json": "e61b932aab253bf0644c54756a6fee842abdf538214477c0d91a73e409845540",
+    "final/blocks.csv": "ec84028cec0f8c71f13b0b2ca87a88a3cab3eba02fb85ed5f0d844229bd6895c",
+    "final/final_summary.json": "da9908f44a799cb17f20c292c6c6fc80b8364b6361b6e0500d969888807f3e6e",
+    "final/engineering_summary.json": "6828aaccb620f49aa373fe37549be06dc77a35555f0d1f9cd086520f2af14618",
+    "final/final_archival_closeout.json": "a46696c4f6ba0aed6a503b13dc703259d326443a1d562e1a57209d85609f0193",
+    "final/completed_receipts_snapshot.json": "108af06891a4fa0e949417f74bc9e7900643a7b76add5a7f8dcea2ffb6764f34",
+    "operations/engineering_receipts.json": "c9e1d227074d432bce7a2db71a9a64b9a56691138a03ceca30690e1a50844252",
+    "final/analysis_ready.json": "4c545892dfbfd7116cf549c6f794fe7ebd57d259d121946ff0b847b518be53f9",
+    "final/reserve_decision.json": "27385a493e11771c0a77cff6726d9420a4f984838823c9add333ff189a5e8890",
+    "operations/final_complete_cohort_analysis_receipt.json": "4ab94101d5baa70587f2f661c84bc7f7c6886a20cf8bb1c02a6d91d4f599a769"
+  },
+  "publication_transforms": {
+    "per_seed.csv": "Unmodified byte-for-byte copy.",
+    "completion.csv": "Unmodified byte-for-byte copy.",
+    "engineering_paths.csv": "Unmodified byte-for-byte copy.",
+    "engineering_pairs.csv": "Unmodified byte-for-byte copy.",
+    "switch_snapshot_hashes.csv": "Unmodified byte-for-byte copy.",
+    "failure_counts.csv": "Unmodified byte-for-byte copy.",
+    "per_seed_fid.csv": "Unmodified byte-for-byte copy.",
+    "statistics.json": {
+      "removed_duplicate_tables": [
+        "per_seed",
+        "completion",
+        "descriptive_blocks"
+      ],
+      "retained_fields": "Unchanged values from frozen final output; removed tables are published separately."
+    },
+    "blocks.csv": {
+      "removed": [
+        "source"
+      ],
+      "added": [
+        "receipt_id",
+        "sample_seed_start",
+        "sample_seed_end",
+        "metric_seed",
+        "readout",
+        "precision",
+        "evaluator_commit",
+        "snapshot_sha256",
+        "feature_sha256",
+        "process_gpuh"
+      ],
+      "rule": "Metric strings, identities and original receipt SHA256 are unchanged. Added metadata comes from the hash-verified original receipts; receipt_id is a logical identifier, not a file path."
+    }
+  },
+  "frozen_copies": {
+    "frozen/PREREGISTRATION_ZH.md": {
+      "source_path": "analysis/q256_fresh12_v1/PREREGISTRATION_ZH.md",
+      "sha256": "5e14b2d836b32605bcc7d898cb6642b7e7b9af02fc8a03c9872b72f0c6913e15"
+    },
+    "frozen/analysis.py": {
+      "source_path": "analysis/q256_fresh12_v1/analysis.py",
+      "sha256": "ab7a49423df2bdb22bd5c603638242a9692cbb37b06cb7a8732770f3cb79db97"
+    },
+    "frozen/protocol.py": {
+      "source_path": "analysis/q256_fresh12_v1/protocol.py",
+      "sha256": "0128d420b63904b7d76f0ca3c5290db6b3d329803d9f50dce2db78c4525cc0ef"
+    },
+    "frozen/worker.py": {
+      "source_path": "analysis/q256_fresh12_v1/worker.py",
+      "sha256": "cba46df395105aa0935421c5255e18666074060e526eb7d9b1da436965c86a4f"
+    },
+    "frozen/evaluation.py": {
+      "source_path": "analysis/q256_fresh12_v1/evaluation.py",
+      "sha256": "6fcaffa9dc5bb4b9041e9bef74bf116428a703bbb222349fa6ea84f0ea3f6189"
+    }
+  },
+  "original_runtime": {
+    "python": "3.11.13",
+    "torch": "2.6.0+cu124",
+    "torch_cuda": "12.4",
+    "cudnn": 90100,
+    "numpy": "2.1.2",
+    "scipy": "1.16.1"
+  },
+  "final_analysis_ready_sha256": "4c545892dfbfd7116cf549c6f794fe7ebd57d259d121946ff0b847b518be53f9",
+  "reserve_activated": false,
+  "public_artifact_policy": "A portable projection of the immutable archive. Original SHA256 values commit to archived originals; PUBLIC_SHA256SUMS.txt verifies the published files. Raw checkpoints, arrays, host inventories and authentication material are not included.",
+  "source_scope": "The five exact frozen files and full source-hash manifest are audit snapshots. Historical training dependencies are not installed by this results PR. reproduce.py is the standalone CPU verification entry point."
+}
